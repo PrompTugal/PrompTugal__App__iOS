@@ -169,7 +169,7 @@ def features(root=ROOT):
             scope = app_scope(PLATFORM_APP[platform], root)
             scene = root_scene(root, scope)
             # Screens are reachable only when the shell is the app's root view.
-            built = [d for d in destinations(root, scope) if not d['pending']] if 'AppShell(' in scene else []
+            built = [d for d in destinations(root, scope) if not d['pending']] if ('AppShell(' in scene or 'PublicShell(' in scene) else []
             checks[platform] = (scope, scene, {d['id'] for d in built},
                                 set().union(*(d['views'] for d in built)) if built else set())
         return checks[platform]
