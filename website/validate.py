@@ -5,7 +5,7 @@ Checks every page in the output directory:
   * internal links and images resolve, and every page is reachable from the home page
   * every page has a Markdown twin listed in llms.txt and sitemap.xml
   * JSON-LD parses, and the home page's softwareVersion matches the Xcode project
-  * product pages (outside admin/) name no other brand: PrompTugal only
+  * product pages (outside admin/) name no other brand: PrompTugal and sgit (both ours) only
   * every feature in features.json is on its platform page, labelled as the source says
   * the push dashboard lists every status page of the overnight pack
   * no scripts other than JSON-LD, no external stylesheets, no inline event handlers
@@ -28,8 +28,9 @@ ROOT = WEBSITE.parent
 sys.path.insert(0, str(WEBSITE))
 import admin  # noqa: E402
 
-# Product pages are PrompTugal only. Host names inside <code> are data, not branding.
-OTHER_BRANDS = ('riskmandate', 'sgit')
+# Product pages name only our own products: PrompTugal and sgit (Dinis, 8 Nov: sgit is one of the
+# things we do). Host names inside <code> are data, not branding.
+OTHER_BRANDS = ('riskmandate',)
 BANNED = ('seamless', 'revolutionary', 'cutting-edge', 'game-changing', 'game changer', 'effortless',
           'blazing', 'unleash', 'world-class', 'best-in-class', 'supercharge', 'lorem ipsum', 'todo')
 

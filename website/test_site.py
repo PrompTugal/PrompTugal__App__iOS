@@ -174,6 +174,13 @@ class SiteTest(unittest.TestCase):
         self.assertRefused(self.broken('readers.html', lambda t: t.replace('</main>', '<p>Powered by RiskMandate.</p></main>')),
                            'names another brand ("riskmandate")')
 
+    def test_allows_sgit_on_product_pages(self):
+        out = self.tmp / 'sgit-ok'
+        shutil.copytree(self.clean, out)
+        page = out / 'overnight.html'
+        page.write_text(page.read_text().replace('</main>', '<p>Vaults are made with sgit.</p></main>'))
+        self.assertEqual(validate.validate(out), [])
+
     def test_allows_host_names_in_code_and_brands_in_admin(self):
         out = self.tmp / 'brands-ok'
         shutil.copytree(self.clean, out)

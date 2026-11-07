@@ -26,7 +26,7 @@
      "text": "Agent wakes by hour, activity per person, runs by day and desk runs, drawn with Swift Charts from the public JSON, plus the health of every endpoint the app reads.",
      "note": "Reader traffic is sealed in a write-only vault lane. The screen says so."},
     {"id": "vault", "kicker": "Vault", "title": "Your vault on the phone",
-     "text": "Paste or scan a team key, or use a recovery code. Keys stay on the device, in the Keychain behind Face ID, and are never shown or logged. The Swift reader and writer are proven against vaults written by the vault command-line tool."},
+     "text": "Paste or scan a team key, or use a recovery code. Keys stay on the device, in the Keychain behind Face ID, and are never shown or logged. The Swift reader and writer are proven against vaults written by sgit 0.27, our encrypted-vault tool."},
     {"id": "debug", "kicker": "Debug", "title": "How the app works",
      "text": "Every request, every vault object and its decryption steps, every bridge message, what is stored, and which keys exist. Never a key's value. \"Native and web\" counts how many screens are native."},
     {"id": "settings", "kicker": "Settings", "title": "Settings",

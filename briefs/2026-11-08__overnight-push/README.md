@@ -6,6 +6,7 @@
 
 ## Positioning, from Dinis
 
+- **Update, 8 Nov (Dinis): sgit is one of the things we do**, so product pages may name sgit as our own. RiskMandate and other summit sites stay out of the product.
 - **This is PrompTugal, and only PrompTugal.** The app and its website are about PrompTugal. Leave RiskMandate, sgit.ai marketing and the other summit sites out of the product, its copy and its default shortcuts. Team data sources stay usable, as data.
 - **Native is the point.** Large parts should be native. That is why we are building an app.
 - **The team is the first customer.** Seven to nine of us use it at Web Summit Lisbon (9–12 November). Silvio has already installed it from Xcode, so everyone can. The App Store is a bonus, not a dependency.
