@@ -528,15 +528,15 @@ struct AIConsentTests {
 /// A vault seam for tests: files by vault id, and which one is "mine".
 @MainActor
 final class FakeCollabVault: CollabVaultAccess {
-    var files: [String: [String: Data]] = [:]       // vault id → path → data
+    var contents: [String: [String: Data]] = [:]       // vault id → path → data
     var ownVaultId: String?
     var reads: [(String, String)] = []
-    var isOpen: Bool { !files.isEmpty }
+    var isOpen: Bool { !contents.isEmpty }
     var canWrite: Bool { ownVaultId != nil }
 
     init(own: String?, files: [String: [String: Data]]) {
         ownVaultId = own
-        self.files = files
+        self.contents = files
     }
 
     func read(_ path: String) async throws -> Data? {
@@ -545,11 +545,11 @@ final class FakeCollabVault: CollabVaultAccess {
     }
     func read(_ path: String, vaultId: String) async throws -> Data? {
         reads.append((vaultId, path))
-        return files[vaultId]?[path]
+        return contents[vaultId]?[path]
     }
     func write(_ path: String, _ data: Data, _ message: String) async throws {
         guard let own = ownVaultId else { throw CollabHooks.HookError.noOwnVault }
-        files[own, default: [:]][path] = data
+        contents[own, default: [:]][path] = data
     }
     func openShared(readKey: String, label: String) async throws -> String { "teammate1" }
     func savePicks(_ document: Data) async throws -> Data { document }
