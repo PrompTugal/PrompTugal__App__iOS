@@ -34,6 +34,13 @@
 			remoteGlobalIDString = 810000000000000000000001;
 			remoteInfo = PrompTugalIntents;
 		};
+		740000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A50000000000000000000002 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A50000000000000000000001;
+			remoteInfo = PrompTugal;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -72,6 +79,7 @@
 		F20000000000000000000006 /* PrompTugalWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrompTugalWidgets.entitlements; sourceTree = "<group>"; };
 		920000000000000000000001 /* PrompTugalWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PrompTugalWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		820000000000000000000001 /* PrompTugalIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = PrompTugalIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		720000000000000000000001 /* PrompTugalUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrompTugalUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E20000000000000000000001 /* build-info.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-info.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -148,6 +156,11 @@
 			path = PrompTugalIntents;
 			sourceTree = "<group>";
 		};
+		B10000000000000000000006 /* PrompTugalUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PrompTugalUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +193,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		730000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -191,6 +211,7 @@
 				B10000000000000000000004 /* PrompTugalWidgets */,
 				B10000000000000000000005 /* PrompTugalIntents */,
 				B10000000000000000000002 /* PrompTugalTests */,
+				B10000000000000000000006 /* PrompTugalUITests */,
 				F40000000000000000000001 /* Config */,
 				E40000000000000000000001 /* Scripts */,
 				A40000000000000000000003 /* Products */,
@@ -202,6 +223,7 @@
 			children = (
 				A20000000000000000000005 /* PrompTugal.app */,
 				D20000000000000000000001 /* PrompTugalTests.xctest */,
+				720000000000000000000001 /* PrompTugalUITests.xctest */,
 				920000000000000000000001 /* PrompTugalWidgets.appex */,
 				820000000000000000000001 /* PrompTugalIntents.appex */,
 			);
@@ -330,6 +352,29 @@
 			productReference = 820000000000000000000001 /* PrompTugalIntents.appex */;
 			productType = "com.apple.product-type.extensionkit-extension";
 		};
+		710000000000000000000001 /* PrompTugalUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 790000000000000000000001 /* Build configuration list for PBXNativeTarget "PrompTugalUITests" */;
+			buildPhases = (
+				770000000000000000000001 /* Sources */,
+				730000000000000000000001 /* Frameworks */,
+				760000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				750000000000000000000001 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B10000000000000000000006 /* PrompTugalUITests */,
+			);
+			name = PrompTugalUITests;
+			packageProductDependencies = (
+			);
+			productName = PrompTugalUITests;
+			productReference = 720000000000000000000001 /* PrompTugalUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -344,6 +389,10 @@
 						CreatedOnToolsVersion = 26.0;
 					};
 					D10000000000000000000001 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = A50000000000000000000001;
+					};
+					710000000000000000000001 = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = A50000000000000000000001;
 					};
@@ -374,6 +423,7 @@
 			targets = (
 				A50000000000000000000001 /* PrompTugal */,
 				D10000000000000000000001 /* PrompTugalTests */,
+				710000000000000000000001 /* PrompTugalUITests */,
 				910000000000000000000001 /* PrompTugalWidgets */,
 				810000000000000000000001 /* PrompTugalIntents */,
 			);
@@ -403,6 +453,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		860000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		760000000000000000000001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -464,6 +521,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		770000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -481,6 +545,11 @@
 			isa = PBXTargetDependency;
 			target = 810000000000000000000001 /* PrompTugalIntents */;
 			targetProxy = 840000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		750000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A50000000000000000000001 /* PrompTugal */;
+			targetProxy = 740000000000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -697,6 +766,32 @@
 			};
 			name = Release;
 		};
+		780000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.reader.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PrompTugal;
+			};
+			name = Debug;
+		};
+		780000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.reader.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PrompTugal;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -741,6 +836,15 @@
 			buildConfigurations = (
 				880000000000000000000001 /* Debug */,
 				880000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		790000000000000000000001 /* Build configuration list for PBXNativeTarget "PrompTugalUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				780000000000000000000001 /* Debug */,
+				780000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
