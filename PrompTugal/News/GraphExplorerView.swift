@@ -18,6 +18,8 @@ struct GraphExplorerView: View {
     @GestureState private var pinch: CGFloat = 1
     @GestureState private var drag: CGSize = .zero
     @State private var showsDetail = false
+    /// On iPhone the legend starts folded, so the graph gets the whole screen.
+    @State private var legendOpen: Bool?
 
     private var feed: RemoteFeed<GraphExplorer> { data.graph }
 
@@ -104,7 +106,17 @@ struct GraphExplorerView: View {
     }
 
     private func legend(_ index: GraphIndex) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        let open = legendOpen ?? (width != .compact)
+        return VStack(alignment: .leading, spacing: 4) {
+            Button {
+                withAnimation(.snappy) { legendOpen = !open }
+            } label: {
+                Label(open ? "Worlds" : "\(index.graph.nodes.count.formatted()) nodes",
+                      systemImage: open ? "chevron.up" : "line.3.horizontal.decrease.circle")
+                    .font(.caption.weight(.semibold))
+            }
+            .buttonStyle(.plain)
+            if open {
             ForEach(index.graph.worlds ?? []) { world in
                 Button {
                     if hiddenWorlds.contains(world.id) { hiddenWorlds.remove(world.id) } else { hiddenWorlds.insert(world.id) }
@@ -125,6 +137,7 @@ struct GraphExplorerView: View {
             if pathStart != nil {
                 Label("Tap a second node for the path", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
                     .font(.caption).foregroundStyle(Palette.green)
+            }
             }
         }
         .padding(Space.s)
