@@ -229,9 +229,9 @@ struct AgentStatusChart: View {
 }
 
 #Preview("Newsroom · iPhone") {
-    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Newsroom · iPad") {
-    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.previewData()).padPreview()
 }

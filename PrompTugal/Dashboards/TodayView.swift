@@ -31,7 +31,6 @@ struct TodayView: View {
 struct ChooseIdentityView: View {
     @Environment(DashboardData.self) private var data
     @AppStorage(DashboardData.meKey) private var me = ""
-    @AppStorage(SampleMode.key) private var sampleMode = false
 
     var body: some View {
         Page(maxWidth: 760) {
@@ -62,8 +61,7 @@ struct ChooseIdentityView: View {
             // Two ways in for anyone without a team identity, both always shown (also offline).
             VStack(alignment: .leading, spacing: Space.m) {
                 Button {
-                    sampleMode = true
-                    me = SampleMode.samplePersonID
+                    SampleMode.enter()
                 } label: {
                     Label("Try with sample data", systemImage: "theatermasks")
                         .frame(maxWidth: .infinity)
@@ -218,9 +216,9 @@ struct StandupCard: View {
 }
 
 #Preview("My day · iPhone") {
-    NavigationStack { TodayView() }.environment(PreviewSamples.data()).teamFeatures().phonePreview()
+    NavigationStack { TodayView() }.environment(PreviewSamples.previewData()).teamFeatures().phonePreview()
 }
 
 #Preview("My day · iPad") {
-    NavigationStack { TodayView() }.environment(PreviewSamples.data()).teamFeatures().padPreview()
+    NavigationStack { TodayView() }.environment(PreviewSamples.previewData()).teamFeatures().padPreview()
 }

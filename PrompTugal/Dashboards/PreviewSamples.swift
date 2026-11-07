@@ -57,14 +57,20 @@ enum PreviewSamples {
         try? JSONDecoder().decode(Value.self, from: Data(text.utf8))
     }
 
-    /// A DashboardData filled with the samples, with "ana" as the device's person.
+    /// A DashboardData filled with the samples. It does not touch "who am I": sample mode sets
+    /// the sample person itself and restores the previous choice when it is left.
     static func data() -> DashboardData {
         let data = DashboardData()
         if let me = decode(me, as: Wire.Me.self) { data.team.preview(me) }
         if let dashboard = decode(dashboard, as: Wire.NewsroomDashboard.self) { data.dashboard.preview(dashboard) }
         if let status = decode(status, as: Wire.NewsroomStatus.self) { data.status.preview(status) }
         if let board = decode(board, as: Wire.StoryBoard.self) { data.board.preview(board) }
-        UserDefaults.standard.set("ana", forKey: DashboardData.meKey)
         return data
+    }
+
+    /// For SwiftUI previews only: the samples, with the sample person as "me".
+    static func previewData() -> DashboardData {
+        UserDefaults.standard.set(SampleMode.samplePersonID, forKey: DashboardData.meKey)
+        return data()
     }
 }

@@ -4,11 +4,11 @@ import SwiftUI
 // Previews for the debug panels and settings, at iPhone and iPad sizes.
 
 #Preview("Debug · iPhone") {
-    NavigationStack { DebugHomeView() }.environment(PreviewSamples.data()).environment(VaultTrafficLog()).phonePreview()
+    NavigationStack { DebugHomeView() }.environment(PreviewSamples.previewData()).environment(VaultTrafficLog()).phonePreview()
 }
 
 #Preview("Debug · iPad") {
-    NavigationStack { DebugHomeView() }.environment(PreviewSamples.data()).environment(VaultTrafficLog()).padPreview()
+    NavigationStack { DebugHomeView() }.environment(PreviewSamples.previewData()).environment(VaultTrafficLog()).padPreview()
 }
 
 #Preview("Network · iPhone") {
@@ -28,9 +28,9 @@ import SwiftUI
 }
 
 #Preview("Build · iPhone") {
-    NavigationStack { BuildPanel() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { BuildPanel() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Settings · iPhone") {
-    NavigationStack { SettingsView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { SettingsView() }.environment(PreviewSamples.previewData()).phonePreview()
 }

@@ -10,4 +10,20 @@ enum SampleMode {
     static let readerID = "reader"
     /// The made-up person sample mode acts as (see `PreviewSamples`).
     static let samplePersonID = "ana"
+    /// "Who am I" before sample mode was turned on, restored when it is left.
+    static let previousKey = "sample.previousMe"
+
+    /// Turns sample mode on, keeping the current "who am I" to restore later.
+    @MainActor static func enter(defaults: UserDefaults = .standard) {
+        defaults.set(defaults.string(forKey: DashboardData.meKey) ?? "", forKey: previousKey)
+        defaults.set(samplePersonID, forKey: DashboardData.meKey)
+        defaults.set(true, forKey: key)
+    }
+
+    /// Turns sample mode off and puts "who am I" back as it was.
+    @MainActor static func leave(defaults: UserDefaults = .standard) {
+        defaults.set(false, forKey: key)
+        defaults.set(defaults.string(forKey: previousKey) ?? "", forKey: DashboardData.meKey)
+        defaults.removeObject(forKey: previousKey)
+    }
 }

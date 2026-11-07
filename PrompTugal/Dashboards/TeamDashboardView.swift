@@ -209,9 +209,9 @@ struct StandupTimeline: View {
 }
 
 #Preview("Team · iPhone") {
-    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Team · iPad") {
-    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.previewData()).padPreview()
 }

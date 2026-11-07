@@ -91,9 +91,6 @@ struct DebugLinkTests {
 struct SampleDataTests {
     @Test("Sample data fills the team, agents and newsroom, and stays put")
     func sampleData() async {
-        let saved = UserDefaults.standard.string(forKey: DashboardData.meKey)
-        defer { UserDefaults.standard.set(saved, forKey: DashboardData.meKey) }
-
         let data = PreviewSamples.data()
         #expect(data.team.value?.people?.count == 2)
         #expect(data.person(SampleMode.samplePersonID)?.first == "Ana")
@@ -107,6 +104,28 @@ struct SampleDataTests {
         await data.team.load(force: true)
         #expect(data.team.updated == before)
         #expect(data.team.value?.people?.count == 2)
+    }
+
+    @Test("Loading sample data does not change who I am")
+    func dataLeavesIdentity() {
+        let saved = UserDefaults.standard.string(forKey: DashboardData.meKey)
+        defer { UserDefaults.standard.set(saved, forKey: DashboardData.meKey) }
+        UserDefaults.standard.set("someone", forKey: DashboardData.meKey)
+        _ = PreviewSamples.data()
+        #expect(UserDefaults.standard.string(forKey: DashboardData.meKey) == "someone")
+    }
+
+    @Test("Leaving sample mode puts the previous choice back")
+    func enterAndLeave() throws {
+        let defaults = try #require(UserDefaults(suiteName: "pt.tests.sample.\(UUID().uuidString)"))
+        defaults.set(SampleMode.readerID, forKey: DashboardData.meKey)
+        SampleMode.enter(defaults: defaults)
+        #expect(defaults.bool(forKey: SampleMode.key))
+        #expect(defaults.string(forKey: DashboardData.meKey) == SampleMode.samplePersonID)
+        SampleMode.leave(defaults: defaults)
+        #expect(!defaults.bool(forKey: SampleMode.key))
+        #expect(defaults.string(forKey: DashboardData.meKey) == SampleMode.readerID)
+        #expect(defaults.string(forKey: SampleMode.previousKey) == nil)
     }
 
     @Test("The reader and sample ids are distinct from each other and from any real person")

@@ -393,9 +393,9 @@ enum GraphLayout {
 }
 
 #Preview("Graph · iPhone") {
-    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Graph · iPad") {
-    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.previewData()).padPreview()
 }

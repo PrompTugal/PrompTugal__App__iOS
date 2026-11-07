@@ -45,7 +45,6 @@ struct AppShell: View {
         }
         .onOpenURL { url in route(url) }
         .onAppear {
-            if let me = LaunchOptions.me { UserDefaults.standard.set(me, forKey: DashboardData.meKey) }
             if let id = LaunchOptions.destination, let destination = Destinations.openable(id, debug: debug) {
                 selection = id
                 tab = destination.phoneTab != nil ? id : "more"
@@ -96,8 +95,7 @@ struct AppShell: View {
 
 extension AppShell {
     private func leaveSampleMode() {
-        sampleMode = false
-        UserDefaults.standard.set("", forKey: DashboardData.meKey)
+        SampleMode.leave()
     }
 }
 
