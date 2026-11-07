@@ -202,7 +202,7 @@ class SiteTest(unittest.TestCase):
                            f"feature {first['id']} from features.json is missing")
 
     def test_refuses_push_dashboard_without_a_session(self):
-        self.assertRefused(self.broken('admin/push.html', lambda t: t.replace('/status/vault.html"', '/status/x.html"')),
+        self.assertRefused(self.broken('admin/push.html', lambda t: re.sub(r'/status/vault\.(html|md)"', '/status/x.html"', t)),
                            'status page vault is missing')
 
     def test_feature_status_follows_the_files(self):
@@ -229,6 +229,13 @@ class SiteTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             build.project_setting('MARKETING_VERSION', text + config(
                 {'PRODUCT_BUNDLE_IDENTIFIER': 'news.promptugal.reader', 'MARKETING_VERSION': '0.5.0'}))
+
+    def test_status_text_cannot_inject_markup_or_tokens(self):
+        out = admin.plain('Run `x={{ github.token }}` <script> and [the doc](../x.md)')
+        self.assertNotIn('{{', out)
+        self.assertNotIn('<script>', out)
+        self.assertIn('the doc', out)
+        self.assertNotIn('](', out)
 
     def test_status_page_counts(self):
         info = admin.parse_status('# Status · X\n\n> Going well.\n\n## Done\n\n- a\n- b\n  more\n\n## Blocked\n\n## Next\n* c\n')

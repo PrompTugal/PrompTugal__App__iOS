@@ -211,7 +211,7 @@ def validate(out):
     if 'admin/push.html' in pages:
         dash = pages['admin/push.html'].read_text()
         for path in sorted(ROOT.glob('briefs/*__overnight-push/status/*.md')):
-            if f'/status/{path.stem}.html"' not in dash:
+            if f'/status/{path.stem}.html"' not in dash and f'/status/{path.stem}.md"' not in dash:
                 problems.append(f'admin/push.html: status page {path.stem} is missing')
     return problems
 
