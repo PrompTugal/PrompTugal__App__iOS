@@ -1,12 +1,12 @@
 # PrompTugal
 
-SwiftUI beta for iPhone and iPad. Version 0.3.1 opens the live [PrompTugal website](https://promptugal.news/) with a sidebar for switching among five websites. Use the book icon in the bottom bar for the native agenda, saved sessions, and cached news. The project targets iOS and iPadOS 17 and later and uses the system SDK without third-party packages.
+SwiftUI beta for iPhone and iPad. Version 0.3.1 opens the live [PrompTugal website](https://promptugal.news/) with a sidebar for switching among five websites. Use the book icon in the bottom bar for the native agenda, saved sessions, and cached news. The project targets iOS and iPadOS 18 and later and uses the system SDK without third-party packages.
 
 ## Run from Xcode
 
 1. Open `PrompTugal.xcodeproj` on a Mac with Xcode 26 or later.
 2. Select the **PrompTugal** scheme and an iPhone or iPad simulator, then choose **Product → Run**.
-3. For a physical device or a TestFlight archive, open the app target’s **Signing & Capabilities** tab and select your Apple Developer team. Confirm that `news.promptugal.reader` is available to your team or change the bundle identifier.
+3. For a physical device or a TestFlight archive, copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and set `DEVELOPMENT_TEAM` (or pick your team in **Signing & Capabilities**). Confirm that `news.promptugal.reader` is available to your team or change the bundle identifier. See [Building and CI](#building-and-ci) for the capabilities the app asks for.
 
 For a command-line simulator build from this directory:
 
@@ -14,6 +14,35 @@ For a command-line simulator build from this directory:
 xcodebuild -project PrompTugal.xcodeproj -scheme PrompTugal \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 ```
+
+## Building and CI
+
+**Layout.** The Xcode project uses folder-synchronized groups (Xcode 16 and later). Every file under `PrompTugal/` belongs to the app target and every file under `PrompTugalTests/` to the unit tests, so adding a Swift file needs no change to `project.pbxproj`.
+
+| Path | What it holds |
+| --- | --- |
+| `PrompTugal/App/` | App entry, reader, HTTP client, build info, web views (`Web/`), resources (`Resources/`) |
+| `PrompTugal/<Feature>/` | One folder per feature: Shell, Design, Dashboards, Debug, News, Schedule, Bridge, Team, Notifications, Store, Vault, AI, Lanes, Coordination |
+| `PrompTugalTests/` | Unit tests (Swift Testing), hosted in the app |
+| `Packages/SGitVault/` | The Swift vault reader, a local package with its own tests |
+| `Config/` | Base build settings, entitlements, an example for your local signing settings |
+| `Scripts/build-info.sh` | Build phase that writes `BuildInfo.json` (commit, branch, site release) into the app |
+
+Resource files are copied flat into the app bundle, so two files with the same name in different folders (two `README.md`, say) break the build. Keep notes outside `PrompTugal/`.
+
+**Capabilities.** `Config/PrompTugal.entitlements` asks for the App Group `group.news.promptugal.reader` and the associated domains `webcredentials:promptugal.news` and `applinks:promptugal.news`. In-App Purchase is enabled on the App ID and needs no entitlement key. A free personal team cannot sign these, so set `PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements` in `Config/Local.xcconfig` to build without them.
+
+**StoreKit testing.** The scheme’s Run action uses `PrompTugal/Store/PrompTugal.storekit`, with two consumables: `news.promptugal.reader.credit.5` and `news.promptugal.reader.credit.20`. Purchases in the simulator or a debug build go to this local file, not to the App Store.
+
+**Tests.** In Xcode, **Product → Test** (⌘U). From the command line:
+
+```sh
+xcodebuild test -project PrompTugal.xcodeproj -scheme PrompTugal \
+  -destination 'platform=iOS Simulator,name=iPhone 17' CODE_SIGNING_ALLOWED=NO
+(cd Packages/SGitVault && swift test)
+```
+
+**CI.** `.github/workflows/ios.yml` runs on every push to `dev` and `night/**`, and on pull requests, on a macOS runner with the newest stable Xcode. Its jobs are `SGitVault swift test`, `App build (simulator)`, `App unit tests (iPhone simulator)`, and `Simulator .app artifact`, which uploads an unsigned Release simulator app (`PrompTugal-simulator-app`). A failed step writes its `error:` lines to the job summary and repeats them as the last lines of the step’s log, so they can be read with a short log tail.
 
 ## Distribute a private beta
 
@@ -28,7 +57,7 @@ xcodebuild -project PrompTugal.xcodeproj -scheme PrompTugal \
 
 On iPad, the sidebar appears beside the current website and the sidebar button toggles it. On iPhone or in a narrow window, the same button opens the list in a sheet. Each shortcut keeps its own page and back history while the app is running.
 
-- To change the bundled defaults in Xcode, edit `PrompTugal/Websites.json`.
+- To change the bundled defaults in Xcode, edit `PrompTugal/App/Resources/Websites.json`.
 - To customize one device without rebuilding, launch PrompTugal once, then edit or replace `Websites.json` under **Files → On My iPad** (or **On My iPhone**) **→ PrompTugal**. Quit and reopen the app. Delete the local copy and reopen to recreate it from the bundled defaults.
 - Each entry has a unique `id`, a display `name`, an HTTPS `url`, an SF Symbols `icon` name, and a `color`. Supported colors are red, orange, green, teal, blue, indigo, and purple. The array sets the sidebar order and its first entry opens at launch. Invalid local JSON falls back to the bundled shortcuts. Optional `iconAsset` selects a bundled image and `iconText` supplies a text badge. A custom shortcut can keep using its SF Symbol.
 - Existing 0.3.0 configurations still load. The original summit-team URL is updated to web-summit.sgit.ai on launch, with custom entries and order preserved.

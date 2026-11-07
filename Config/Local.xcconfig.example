@@ -8,3 +8,4 @@ DEVELOPMENT_TEAM = ABCDE12345
 // Uncomment to build without them: the vault, widgets and passkeys that need
 // them will not work, everything else will.
 // PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements
+// PT_WIDGET_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements

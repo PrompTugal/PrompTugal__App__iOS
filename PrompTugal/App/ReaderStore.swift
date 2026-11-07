@@ -29,6 +29,12 @@ final class ReaderStore {
         directory = URL.applicationSupportDirectory.appendingPathComponent("PrompTugal", isDirectory: true)
         if let decoded: Cache = read("content.json") { cache = decoded }
         if let decoded: [String: Event] = read("saved.json") { bookmarks = decoded }
+        publishNowNext()
+    }
+
+    /// Keeps the widgets' "Now and next" in step with the agenda and saved sessions.
+    func publishNowNext() {
+        NowNextPublisher.publish(agenda: cache.agenda, saved: saved)
     }
 
     func event(id: String) -> Event? {
@@ -46,6 +52,7 @@ final class ReaderStore {
         do {
             try write(updated, to: "saved.json")
             bookmarks = updated
+            publishNowNext()
         } catch {
             storageMessage = "The change couldn’t be saved on this device. Please try again."
         }
@@ -79,6 +86,7 @@ final class ReaderStore {
             cache.agendaUpdated = .now
             agendaUnavailable = false
             persistCache()
+            publishNowNext()
         } catch {
             if !Task.isCancelled { agendaUnavailable = true }
         }

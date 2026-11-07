@@ -110,6 +110,8 @@ jobs:
   archive:
     name: Simulator .app artifact
     needs: build
+    # Only on dev and by hand: macOS runners are shared by every session.
+    if: github.ref == 'refs/heads/dev' || github.event_name == 'workflow_dispatch'
     runs-on: macos-26
     timeout-minutes: 40
     steps:
