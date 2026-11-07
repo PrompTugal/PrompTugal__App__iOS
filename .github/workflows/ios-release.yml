@@ -5,8 +5,12 @@ name: iOS release
 #   package   pushes to dev (not docs/site-only), tags ios-v*, and by hand.
 #             Unsigned: .xcarchive, .ipa (Payload/PrompTugal.app zipped) and a
 #             simulator .app, uploaded as artifacts. Needs no Apple account.
-#   testflight  only by hand (workflow_dispatch with upload) or on a tag ios-v*.
-#             Signs, exports and uploads to App Store Connect / TestFlight.
+#   testflight  on every push to dev that builds (same filters as package), on a
+#             tag ios-v*, and by hand (workflow_dispatch with upload or dry_run).
+#             Signs, exports and uploads to App Store Connect / TestFlight, so
+#             the team's internal testers get each dev build automatically.
+#             Turn the push uploads off with the repo variable
+#             TESTFLIGHT_ON_PUSH = false (tags and manual runs still upload).
 #             Skips cleanly, with "skipped: secret X missing" in the summary,
 #             until the signing secrets exist.
 #
@@ -171,7 +175,8 @@ jobs:
     needs: package
     if: >-
       (github.event_name == 'workflow_dispatch' && (inputs.upload || inputs.dry_run)) ||
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ios-v'))
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ios-v')) ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/dev' && vars.TESTFLIGHT_ON_PUSH != 'false')
     runs-on: macos-26
     timeout-minutes: 60
     environment: testflight   # optional protection rules; secrets may live here or at repo level

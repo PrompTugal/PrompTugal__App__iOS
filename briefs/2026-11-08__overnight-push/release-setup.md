@@ -20,7 +20,7 @@ For Dinis. Each step links to the detail further down. Nothing in the code chang
 7. **Dry run.** Actions → **iOS release** → Run workflow → branch `dev` → tick **dry_run** → Run. In the run's summary, the **Profiles against entitlements** table must be all ✅. A ❌ row names the capability to enable; fix it in step 1, regenerate that profile, update its secret, run again.
 8. **Upload.** Run workflow again on `dev` with **upload** ticked. When it is green (about 15–25 minutes, depending on the runner queue), App Store Connect processes the build in 5–30 minutes. The team gets it in the TestFlight app automatically. "What to Test" is filled from the night's status pages and commits.
 
-After that, every upload is step 8 only, or a tag: `git tag ios-v0.4.0 && git push origin ios-v0.4.0`.
+After that, **every push to `dev` that builds the app uploads to TestFlight by itself** (pushes that only touch docs, the site or `VERSION` are skipped), and the team gets it automatically. A tag or a manual run still works: `git tag ios-v0.4.0 && git push origin ios-v0.4.0`. To pause the push uploads, set the repository variable `TESTFLIGHT_ON_PUSH` to `false` (**Settings → Secrets and variables → Actions → Variables**).
 
 ## What CI does today, with no keys
 
@@ -35,7 +35,7 @@ Every push to `dev` that changes more than docs or the site (pushes touching onl
 
 The job summary lists the Info.plist values (bundle id, version, build, minimum iOS, SDK, device family) and a size breakdown. The job fails if the app is not built for both iPhone and iPad (`UIDeviceFamily` must be `1,2`).
 
-The **testflight** job runs only when someone starts it by hand with **upload** ticked, or on a tag `ios-v*`. Without secrets it does nothing and writes one `skipped: secret X missing` line per missing secret.
+The **testflight** job runs on every push to `dev` that builds (unless the variable `TESTFLIGHT_ON_PUSH` is `false`), on a tag `ios-v*`, and when someone starts it by hand with **upload** or **dry_run** ticked. Without secrets it does nothing and writes one `skipped: secret X missing` line per missing secret, so pushes stay green until the secrets exist. When `dev` gets several pushes close together, one upload runs and only the newest waiting push follows it; the ones in between are skipped.
 
 ## Version and build numbers
 
