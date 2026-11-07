@@ -41,5 +41,12 @@ enum AIPrompts {
         """,
         include: [.team, .agents])
 
-    static let starters: [AIStarter] = [briefMe, planMyDay, myAgents]
+    static let whereToMeet = AIStarter(
+        id: "meet", title: "Where should we meet today?", symbol: "person.2.wave.2",
+        prompt: """
+        Using where_is_everyone for today (and my picks), tell me: which sessions two or more of us are at, where and when we could meet in person (right after a shared session, or in a free window that keeps the 13:00 and 18:00 stand-ups free), and any clash in my own picks. If no teammate has shared a plan, say so and tell me how to link one (Where is everyone → Add key).
+        """,
+        include: [.picks])
+
+    static let starters: [AIStarter] = [briefMe, planMyDay, whereToMeet, myAgents]
 }

@@ -192,6 +192,7 @@ struct AskDebugDisclosure: View {
 private struct AskComposer: View {
     @Bindable var store: ChatStore
     var focused: FocusState<Bool>.Binding
+    @State private var dictation = SpeechDictation()
 
     var body: some View {
         VStack(spacing: 8) {
@@ -213,8 +214,20 @@ private struct AskComposer: View {
                 }
                 .padding(.horizontal)
             }
+            if let error = dictation.error {
+                Text(error).font(.caption).foregroundStyle(.orange).padding(.horizontal)
+            }
             HStack(alignment: .bottom, spacing: 8) {
-                TextField("Ask about today, your picks, the team…", text: $store.draft, axis: .vertical)
+                Image(systemName: dictation.isRecording ? "waveform.circle.fill" : "mic.circle")
+                    .font(.title)
+                    .foregroundStyle(dictation.isRecording ? Color.red : Color.secondary)
+                    .gesture(DragGesture(minimumDistance: 0)
+                        .onChanged { _ in if !dictation.isRecording { Task { await dictation.start() } } }
+                        .onEnded { _ in dictation.stop() })
+                    .accessibilityLabel("Hold to dictate")
+                    .accessibilityAddTraits(.isButton)
+                TextField(dictation.isRecording ? "Listening…" : "Ask about today, your picks, the team…",
+                          text: $store.draft, axis: .vertical)
                     .lineLimit(1...6)
                     .textFieldStyle(.plain)
                     .padding(10)
@@ -241,6 +254,7 @@ private struct AskComposer: View {
         }
         .padding(.vertical, 8)
         .background(.bar)
+        .onChange(of: dictation.transcript) { _, text in if !text.isEmpty { store.draft = text } }
     }
 
     private func chipTitle(_ kind: AIContextKind) -> String {
