@@ -23,10 +23,11 @@
 The wire format is the website’s, unchanged:
 
 ```json
-{ "v": 1, "picks": [ { "id": "events/<slug>", "at": 1762650000000 } ] }
+{ "v": 1, "picks": [ { "id": "events/<slug>", "at": "2026-11-08T02:45:00.000Z" } ] }
 ```
 
-- `id` is the event’s `page` path without `/index.html` (the website uses the event slug, so check its JavaScript and match it exactly). `at` is the time picked, in Unix milliseconds.
+- `id` is the event’s `page` path without `/index.html` (the website uses the event slug, so check its JavaScript and match it exactly). `at` is the time the pick was made, as an **ISO 8601 string** (the website writes `new Date().toISOString()` in `assets/schedule/schedule.js`). The app writes ISO 8601 and reads both ISO 8601 and Unix milliseconds.
+- The website mirrors picks to the reader vault when it is open: `window.__vault` path `agenda/picks`, stored as **`apps/agenda/picks.json`** in the vault, merged as a union by `id`.
 - Merge rule (the website’s): union by `id`. A removal wins only if it is later than the pick.
 - The Swift API in `PrompTugal/Schedule/`:
 
@@ -112,3 +113,7 @@ struct Destination: Identifiable { let id: String; let title: String; let symbol
 
 - OpenRouter key: entered by the user, stored in the Keychain (`.biometryCurrentSet` optional), optionally saved to the user’s vault under `apps/ai/openrouter.json` once vault writes exist. Sent only to `openrouter.ai`.
 - No key of any kind in git, logs, fixtures, screenshots or status pages.
+
+## Changes
+
+- **03:15 UTC, §3 Schedule:** a pick’s `at` is an ISO 8601 string, not Unix milliseconds (checked against the website’s `assets/schedule/schedule.js`). The app writes ISO and reads both. Added the vault mirror path `apps/agenda/picks.json`. Requested by the conductor.
