@@ -37,6 +37,7 @@ final class ReminderScheduler {
         static let lead = "reminders.leadMinutes"
         static let picks = "reminders.picks"
         static let standups = "reminders.standups"
+        static let asked = "reminders.askedOnce"
     }
 
     init(schedule: ScheduleStore, team: TeamStore, identity: TeamIdentityStore, defaults: UserDefaults = .standard) {
@@ -48,8 +49,12 @@ final class ReminderScheduler {
         picksOn = defaults.object(forKey: Keys.picks) as? Bool ?? true
         standupsOn = defaults.object(forKey: Keys.standups) as? Bool ?? true
         for name in [Notification.Name.scheduleDidChange, .teamStandupsDidChange, .teamIdentityDidChange] {
-            observers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-                MainActor.assumeIsolated { self?.scheduleSoon() }
+            observers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] note in
+                let personal = note.name != .teamStandupsDidChange
+                MainActor.assumeIsolated {
+                    if personal { self?.askOnceWhenUseful() }
+                    self?.scheduleSoon()
+                }
             })
         }
     }
@@ -64,6 +69,19 @@ final class ReminderScheduler {
         self.delegate = delegate
         UNUserNotificationCenter.current().delegate = delegate
         scheduleSoon()
+    }
+
+    /// The first time a person picks a session or says who they are, ask for notification permission, once.
+    /// That is the moment reminders make sense; asking at launch gets refused.
+    private func askOnceWhenUseful() {
+        guard !defaults.bool(forKey: Keys.asked) else { return }
+        guard !schedule.picks.isEmpty || identity.current != nil else { return }
+        defaults.set(true, forKey: Keys.asked)
+        Task {
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            guard settings.authorizationStatus == .notDetermined else { return }
+            if await requestAuthorization() { await reschedule() }
+        }
     }
 
     /// Asks once; later calls return the answer given.
