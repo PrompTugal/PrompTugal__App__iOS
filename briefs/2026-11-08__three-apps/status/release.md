@@ -14,6 +14,12 @@
 - `screens.yml`: per app, for apps that have a shared `<Scheme>Screens` scheme.
 - Artifacts are named per app (`build-info-<app>`); the size check and the website's latest-build script were updated to match.
 
+## Screens artifact names (for the site's screens.json)
+
+- The app with bundle `news.promptugal.reader`: `screens-<sha>` (unchanged). Every other app: `screens-<sha>-<app>`.
+- Files inside: `<iphone|ipad>-<destination id>.png`, longest side 1600 px.
+- Only apps with a shared `<Scheme>Screens` scheme are photographed.
+
 ## In progress
 
 - First CI runs on `split/release` (push run and manual runs). Not green yet.
