@@ -112,9 +112,9 @@ struct WallView: View {
 }
 
 #Preview("Wall · iPad") {
-    NavigationStack { WallView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { WallView() }.environment(PreviewSamples.data()).teamFeatures().padPreview()
 }
 
 #Preview("Wall · iPhone") {
-    NavigationStack { WallView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { WallView() }.environment(PreviewSamples.data()).teamFeatures().phonePreview()
 }

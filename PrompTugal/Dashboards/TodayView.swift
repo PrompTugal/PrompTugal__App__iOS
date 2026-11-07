@@ -196,9 +196,9 @@ struct StandupCard: View {
 }
 
 #Preview("My day · iPhone") {
-    NavigationStack { TodayView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { TodayView() }.environment(PreviewSamples.data()).teamFeatures().phonePreview()
 }
 
 #Preview("My day · iPad") {
-    NavigationStack { TodayView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { TodayView() }.environment(PreviewSamples.data()).teamFeatures().padPreview()
 }
