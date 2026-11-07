@@ -2,7 +2,7 @@
 
 > Done and on dev, with unit tests green on iPhone and iPad: one schedule on the website's format, synced with the web view and the vault; reminders before picks and stand-ups; team data and identity; the day planner and "next 3 hours"; the meter with a native StoreKit top-up. The bridge is checked against the live website.
 
-Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 07:50 UTC
+Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 08:40 UTC
 
 ## Done
 
@@ -23,8 +23,9 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 07:50 
   - iPhone unit tests: run 150 (dev 991cbfa), passed.
   - iPad unit tests: run 154 (dev d33acfe), passed.
   - App build and SGitVault tests: run 104 and run 128, passed; the test jobs above also compile the app.
+  - Full runs green on dev since then (build, SGitVault, iPhone and iPad tests): run 160 (3fff23e) and run 173 (8a060e8).
 - Earlier failures, fixed: one test expression the type checker timed out on (396968c); the schedule's JSON key order, not stable across devices (500b5ad, now written by hand as the website's `JSON.stringify` writes it).
-- **Bridge against the live website** (`Tools/bridge-e2e/`, Chromium, rerun 07:47 UTC): the app's schedule write repaints the website's own "Add to my day" button and appears on /my-day/; a toggle on the website is read back; the meter credit goes £4.99 → £9.99 once and the same reference is refused; the Stripe top-up is hidden and "Top up in the app" shows; `window.ptApp.call` round-trips and refusals reject. Not covered there: WebKit's content worlds and the native origin check (read in code, not run).
+- **Bridge against the live website** (`Tools/bridge-e2e/`, Chromium, rerun 08:40 UTC): the app's schedule write repaints the website's own "Add to my day" button and appears on /my-day/; a toggle on the website is read back; the meter credit goes £4.99 → £9.99 once and the same reference is refused; the Stripe top-up is hidden and "Top up in the app" shows; `window.ptApp.call` round-trips and refusals reject. Not covered there: WebKit's content worlds and the native origin check (read in code, not run).
 
 ## What I learned from the websites
 
