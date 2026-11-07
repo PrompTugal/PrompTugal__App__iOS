@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyLists-1.0.dtd">
+<!--
+  Privacy manifest for the PrompTugal app target (news.promptugal.reader).
+  Draft from release engineering, 04:30 UTC 8 Nov. Platform: copy it to
+  PrompTugal/App/Resources/PrivacyInfo.xcprivacy (folder-synchronized, so it is
+  bundled at the app root). App Store Connect rejects uploads that call
+  "required reason" APIs without declaring them (ITMS-91053), TestFlight included.
+
+  Found in the code on dev (scripts/release/report.sh warns if the file is missing):
+    UserDefaults            Team/TeamIdentityStore, Notifications/ReminderScheduler,
+                            Vault/VaultConfig, Vault/VaultSession, Dashboards
+                            -> CA92.1 (read and write data only this app uses)
+    File timestamps         Team/TeamStore, Schedule/ScheduleStore,
+                            Dashboards/RemoteFeed (cache ages)  -> C617.1
+                            Debug/SystemPanels (shown to the user) -> DDA9.1
+  Not found: system boot time, disk space, active keyboards.
+  The extensions (widgets, intents) and SGitVault call none of these today.
+  If a target starts using UserDefaults(suiteName: "group.news.promptugal.reader"),
+  add 1C8F.1 to that target's own manifest.
+
+  Data collection: the app sends no analytics and does no tracking. Data the user
+  types (OpenRouter prompts) goes to the service the user chose; declare it here
+  and in App Store Connect's privacy answers if that changes.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+				<string>DDA9.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

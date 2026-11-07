@@ -1,0 +1,91 @@
+name: Screens
+
+# Screenshots of every main screen on an iPhone and an iPad simulator, so the
+# team can see the app without a Mac. Only on dev and by hand: macOS runners
+# are shared, and branch CI (ios.yml) stays at three jobs.
+# Artifact: screens-<sha>, files <iphone|ipad>-<destination id>.png, longest side
+# 1600 px. The editor publishes them on the site from successful dev runs.
+
+on:
+  push:
+    branches: [dev]
+    paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: screens-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shoot:
+    name: Screens (${{ matrix.device }})
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [iPhone, iPad]
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Pick and boot an ${{ matrix.device }} simulator
+        id: sim
+        timeout-minutes: 8
+        run: |
+          udid=$(.github/scripts/pick-simulator.py "${{ matrix.device }}")
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$udid" || true
+          for i in $(seq 1 60); do
+            xcrun simctl list devices | grep "$udid" | grep -q "(Booted)" && break
+            sleep 5
+          done
+
+      - name: Take the screenshots
+        timeout-minutes: 25
+        run: |
+          .github/scripts/run-and-summarize.sh "Screens (${{ matrix.device }})" "$RUNNER_TEMP/logs/screens.log" -- \
+            xcodebuild test \
+              -project PrompTugal.xcodeproj -scheme PrompTugalScreens -configuration Debug \
+              -destination "id=${{ steps.sim.outputs.udid }}" \
+              -derivedDataPath "$RUNNER_TEMP/dd" \
+              -resultBundlePath "$RUNNER_TEMP/Screens.xcresult" \
+              -parallel-testing-enabled NO \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Export PNGs
+        if: always()
+        run: |
+          # Names are the site's contract: <iphone|ipad>-<destination id>.png, longest side 1600 px.
+          label=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
+          .github/scripts/export-screens.py "$RUNNER_TEMP/Screens.xcresult" "$RUNNER_TEMP/screens" "$label"
+          for f in "$RUNNER_TEMP"/screens/*.png; do sips -Z 1600 "$f" >/dev/null; done
+          ls -la "$RUNNER_TEMP/screens"
+          ls "$RUNNER_TEMP/screens" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: screens-${{ github.sha }}-${{ matrix.device }}
+          path: ${{ runner.temp }}/screens/
+          if-no-files-found: warn
+          retention-days: 14
+
+  collect:
+    name: One artifact for both devices
+    needs: shoot
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/upload-artifact/merge@v4
+        with:
+          name: screens-${{ github.sha }}
+          pattern: screens-${{ github.sha }}-*
+          delete-merged: true

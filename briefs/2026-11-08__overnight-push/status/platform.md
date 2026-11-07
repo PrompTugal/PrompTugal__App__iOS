@@ -2,7 +2,7 @@
 
 > Design, team and vault are on dev. Platform wired them together at 04:15: AppShell is the root, the team bridge runs in the website view, saved sessions are schedule picks, and both background refreshes are registered. Waiting for CI on the combined app.
 
-Branch: `night/platform` · Last update: 04:16 UTC
+Branch: `night/platform` · Last update: 04:42 UTC
 
 ## Ready for other sessions
 
@@ -53,6 +53,10 @@ Jobs: `App build and SGitVault tests` (the build, then `swift test` for the pack
 
 ## In progress
 
+- **04:25** The conductor merged the wiring with design and vault into `dev` (`3b77e1c`). `AppShell` is the root on `dev`. The first full integration run (88) is queued for runners.
+- **04:28** **Screens** (design's request): `PrompTugalUITests/ScreensTests` opens the 12 main destinations with `-PTDestination <id> -PTSampleData -PTMe ana` and keeps a screenshot of each. It has its own scheme, `PrompTugalScreens`, so ⌘U and `ios.yml` still run only unit tests. `.github/workflows/screens.yml` runs on `dev` and by hand, on one iPhone and one iPad. It uploads `screens-<sha>` with `iphone-<id>.png` and `ipad-<id>.png`, longest side 1600 px (the editor's contract).
+- **04:31** **Privacy manifest** (release's TestFlight blocker, ITMS-91053): `App/Resources/PrivacyInfo.xcprivacy` declares UserDefaults (CA92.1) and file timestamps (C617.1, DDA9.1), no tracking. A unit test checks it ships. The extensions call no required-reason APIs.
+- **04:24** CI uses 3 macOS runners per push instead of 4: SGitVault's `swift test` runs inside the build job.
 - **04:09** The conductor merged design, team and vault into `dev`. I merged `dev` into `night/platform` and pushed the wiring in one commit (`5365593`):
   - `AppShell()` is the root view, with `.environment(store)` and `.teamFeatures()`.
   - `WebsiteBrowser` goes through the team bridge: `configure`, `attach`, `pageDidFinish`, and `handlesNavigation` (in-page and new-window links).
