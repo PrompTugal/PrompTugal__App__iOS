@@ -2,7 +2,7 @@
 
 > Done. Every dev build is packaged by CI without keys (unsigned .ipa, simulator app, archive). Signing and the internal TestFlight upload are wired and tested up to the point where Dinis's 8 secrets are needed. His checklist is at the top of release-setup.md.
 
-Branch: `night/release` (merged into dev; nothing open) · Final update: 08:45 UTC
+Branch: `night/release` (merged into dev; nothing open) · Final update: 09:15 UTC
 
 ## What Dinis does next
 
@@ -26,7 +26,7 @@ No code change is needed for any of this.
 - Artifacts named `PrompTugal-<version>-<build>-<sha>-…`: unsigned .ipa, simulator .app zip, .xcarchive (with dSYMs), `build-info.json` and release notes.
 - Job summary: Info.plist values, size breakdown, largest files, size check against `size-budget.json` and the latest dev build, the targets to sign with each one's entitlements and profile secret, and a warning if the privacy manifest is missing.
 - Fails if the app stops being built for both iPhone and iPad (`UIDeviceFamily` 1,2).
-- Green on dev throughout the night: runs 11, 13, 16, 18, 24, 28, 31, 32, 35 and 36; run 37 building at 08:45 (latest packaged app: iOS 18 minimum, app, widgets and intents extensions, SGitVault).
+- Green on dev throughout the night: runs 11, 13, 16, 18, 24, 28, 31, 32, 35, 36, 37 and 38 (last at 09:04; latest packaged app: iOS 18 minimum, app, widgets and intents extensions, SGitVault).
 
 **Build numbers:** `CFBundleVersion` = this workflow's run number + `IOS_BUILD_OFFSET` (repository variable, default 100), passed as `CURRENT_PROJECT_VERSION`. `MARKETING_VERSION` stays in the project. README updated by the editor to match.
 
