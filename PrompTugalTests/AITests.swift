@@ -179,7 +179,8 @@ struct AIContextTests {
     }
 
     private func person(_ json: String) throws -> TeamPerson {
-        let me = try JSONDecoder().decode(TeamMe.self, from: Data(#"{"built_at":"x","version":"v","people":{"dinis":"#.utf8 + Data(json.utf8) + Data("}}".utf8))
+        let text = "{\"built_at\":\"x\",\"version\":\"v\",\"people\":{\"dinis\":" + json + "}}"
+        let me = try JSONDecoder().decode(TeamMe.self, from: Data(text.utf8))
         return try #require(me.person("dinis"))
     }
 
