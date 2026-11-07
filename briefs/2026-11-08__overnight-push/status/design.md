@@ -2,7 +2,7 @@
 
 > The shell is the app's root on dev: every section is reachable on iPhone and iPad. Team and vault screens are wired in; collab's land with night/collab. Now polishing every screen on both devices.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 04:30 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 05:30 UTC
 
 ## Done
 
@@ -45,6 +45,11 @@ Branch: `night/design` (rebased on `night/platform`) · Last update: 04:30 UTC
 - **No nested navigation:** a destination can say it owns its navigation (`ownsNavigation`, the vault's three-column split view). On iPad the shell's sidebar steps aside; on iPhone it opens full screen from More.
 - **One identity:** `IdentitySync` keeps the design screens' "who am I" and the team session's `TeamIdentityStore` in step, both ways.
 - **Debug → Native and web:** how many screens are native, hybrid or web, screen by screen.
+
+- **Wall** (`Dashboards/WallView.swift`, Today → Wall): the team's load, the agents' 24-hour wake grid, the pipeline, the latest runs and the next stand-up on one screen that refreshes every five minutes and keeps the iPad awake. For a stand or a desk at the summit.
+- **Collab hooks:** `WebPage` tells Ask which page is on screen (`CollabHooks.noteCurrentPage`); Debug → Collaboration and AI (`CollabDebugPanel`); the Keys panel lists collab's keys by presence only.
+- **Launch arguments** for screenshots and UI tests: `-PTDestination <id> -PTSampleData -PTMe <id>` (platform's screens.yml uses them).
+- **CI:** dev run 104 is the first fully green integrated run (build, SGitVault, iPhone and iPad tests), with design's code in it.
 
 ## In progress
 
