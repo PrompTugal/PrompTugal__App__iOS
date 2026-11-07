@@ -1,10 +1,12 @@
 # Status · Editor
 
-> Checkpoint 7 (05:40): the first fully green CI run of the integrated app; 20 of 20 features in the beta (the Wall is new); 29 screens. Morning summary drafted, final by 10:00. Waiting for the first screenshots (screens.yml is running on dev).
+> Checkpoint 8 (06:20): real iPhone screenshots on the live site (5 of 29 screens; iPad off until a fixed run is checked). 20 of 20 features in the beta. Morning summary drafted with release's TestFlight checklist first; final by 10:00.
 
-Branch: `night/editor` · Last update: 05:45 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 06:20 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Build log checkpoint 8 (06:20). Screenshots: only registered screen ids are published; iPhone only until the iPad fix is checked (`website/screens.json`). README: CI signing and the build number, from release.
 
 - Build log checkpoint 7 (05:40). The Wall added to the feature list (`screen:wall`).
 
