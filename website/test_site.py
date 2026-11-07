@@ -55,8 +55,10 @@ class SiteTest(unittest.TestCase):
         pbxproj = build.PROJECT.read_text()
         self.assertIn(f"MARKETING_VERSION = {self.facts['version']};", pbxproj)
         self.assertEqual(int(self.facts['site_count']), len(self.facts['websites']))
-        files = [f for f in list(build.APP.rglob('*.swift')) + list((build.ROOT / 'Packages').rglob('*.swift'))
-                 if '.build' not in f.parts]
+        import subprocess
+        tracked = subprocess.run(['git', 'ls-files', '*.swift'], cwd=build.ROOT, capture_output=True, text=True).stdout.split()
+        files = [build.ROOT / f for f in tracked if not f.startswith(('website/', 'scripts/', 'briefs/'))]
+        self.assertEqual(sorted(files), sorted(build.swift_sources()))
         lines = sum(len(f.read_text().splitlines()) for f in files)
         self.assertEqual(self.facts['swift_lines'], f'{lines:,}')
         self.assertIn(f">{self.facts['swift_lines']}<", (self.clean / 'index.html').read_text())
@@ -182,15 +184,29 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(validate.validate(out), [])
 
     def test_refuses_feature_claimed_before_it_is_in_the_source(self):
-        coming = next((f for f in admin.features() if not f['shipped']), None)
-        if coming is None:
-            self.skipTest('every feature in features.json has shipped; needs a synthetic unshipped feature')
-        page = f"{coming['platform']}.html"
-        def claim(text):
-            start = text.index(f'id="f-{coming["id"]}"')
+        """A feature whose files do not exist must not be labelled as in the beta.
+
+        Every real feature may be shipped, so the test adds one that cannot be."""
+        import os
+        extra = self.tmp / 'extra-features.json'
+        extra.write_text(json.dumps([{'id': 'not-built', 'platform': 'teams', 'name': 'Not built yet', 'kind': 'native',
+                                      'what': 'A feature with no code.', 'evidence': ['PrompTugal/NoSuchFolder/*.swift']}]))
+        out = self.tmp / 'with-unbuilt-feature'
+        os.environ['PT_EXTRA_FEATURES'] = str(extra)
+        try:
+            build.build(out)
+            coming = next(f for f in admin.features() if f['id'] == 'not-built')
+            self.assertFalse(coming['shipped'])
+            self.assertEqual(validate.validate(out), [])
+            page = out / 'teams.html'
+            text = page.read_text()
+            start = text.index('id="f-not-built"')
             end = text.index('</li>', start)
-            return text[:start] + text[start:end].replace('status soon', 'status on') + text[end:]
-        self.assertRefused(self.broken(page, claim), f"feature {coming['id']} is labelled wrongly")
+            self.assertIn('status soon', text[start:end])
+            page.write_text(text[:start] + text[start:end].replace('status soon', 'status on') + text[end:])
+            self.assertRefused(validate.validate(out), 'feature not-built is labelled wrongly')
+        finally:
+            del os.environ['PT_EXTRA_FEATURES']
 
     def test_refuses_shipped_feature_labelled_coming(self):
         shipped = next(f for f in admin.features() if f['shipped'])

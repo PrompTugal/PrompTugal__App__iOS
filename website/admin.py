@@ -7,6 +7,7 @@ screen list from the app's Destinations.swift. Standard library only.
 """
 import html
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -40,8 +41,14 @@ def root_scene(root=ROOT):
 
 
 def features(root=ROOT):
-    """features.json with each feature's status worked out from the files on disk."""
+    """features.json with each feature's status worked out from the files on disk.
+
+    PT_EXTRA_FEATURES (a path to a JSON list of features) adds features for tests, so a
+    negative control always has a feature whose evidence does not exist."""
     data = json.loads((root / 'website' / 'features.json').read_text())['features']
+    extra = os.environ.get('PT_EXTRA_FEATURES')
+    if extra:
+        data = data + json.loads(Path(extra).read_text())
     scene = root_scene(root)
     # Screens are reachable only when the shell is the app's root view.
     built = [d for d in destinations(root) if not d['pending']] if 'AppShell(' in scene else []

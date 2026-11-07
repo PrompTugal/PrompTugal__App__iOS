@@ -82,17 +82,22 @@ def project_setting(name, text=None):
 
 
 def swift_sources():
-    """Every Swift file in the app and its local packages, tests included."""
-    files = sorted(APP.rglob('*.swift')) + sorted((ROOT / 'Packages').rglob('*.swift'))
-    return [f for f in files if '.build' not in f.parts]
+    """Every Swift file in the repository: the app, its extensions, shared code, local
+    packages and tests. Build folders, hidden folders and the website are skipped."""
+    skip = {'.build', 'website', 'scripts', 'briefs'}
+    return [f for f in sorted(ROOT.rglob('*.swift'))
+            if not skip & set(f.relative_to(ROOT).parts) and not any(p.startswith('.') for p in f.relative_to(ROOT).parts)]
 
 
 def code_areas(files):
-    """Swift files and lines per folder (PrompTugal/<area> or Packages/<name>)."""
+    """Swift files and lines per folder: PrompTugal/<area>, Packages/<name>, or another target's folder."""
     areas = {}
     for f in files:
         rel = f.relative_to(ROOT).parts
-        area = '/'.join(rel[:2]) if len(rel) > 2 else rel[0] + ' (top level)'
+        if rel[0] in ('PrompTugal', 'Packages'):
+            area = '/'.join(rel[:2]) if len(rel) > 2 else rel[0] + ' (top level)'
+        else:
+            area = rel[0]
         n, lines = areas.get(area, (0, 0))
         areas[area] = (n + 1, lines + len(f.read_text(errors='replace').splitlines()))
     return areas
@@ -101,7 +106,7 @@ def code_areas(files):
 def app_facts():
     swift = swift_sources()
     websites = json.loads(WEBSITES_JSON.read_text())
-    tests = [f for f in swift if 'Tests' in f.as_posix()]
+    tests = [f for f in swift if any(p.endswith('Tests') for p in f.relative_to(ROOT).parts)]
     return {
         'version': project_setting('MARKETING_VERSION'),
         'build': project_setting('CURRENT_PROJECT_VERSION'),
