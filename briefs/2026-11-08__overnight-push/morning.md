@@ -2,7 +2,7 @@
 
 > For Dinis and Silvio. What the seven sessions shipped overnight, what is still open, the decisions and Apple set-up only you can do, and what to test first on a phone and an iPad. Draft, updated through the night; final by 10:00 UTC.
 
-**Last updated:** 05:58 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
+**Last updated:** 06:45 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
 
 ## In one paragraph
 
@@ -66,7 +66,20 @@ With a free Apple ID, also set `PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitl
 
 ## What to test first
 
-To be completed at the end of the night.
+In this order, on an iPad first and then an iPhone. Each step names what should happen; if it does not, a screenshot with the build number (Settings → Debug → Build) is the most useful report.
+
+1. **Launch.** The app opens on the shell: a sidebar on iPad, four tabs and More on iPhone. Turn the iPad to landscape and back.
+2. **Who am I.** My day asks who you are the first time. Pick yourself; My day then shows your stand-up, what only you can do, decisions and overdue items.
+3. **One schedule.** On promptugal.news inside the app (Web → PrompTugal.news), add a session to your day. Open My schedule: it is there. Remove one in the app and check the website. (A removal does not yet sync through the vault; see the decision above.)
+4. **Reminders.** Allow notifications when asked. A picked session gets a reminder 10 minutes before, by default; the time is set in Settings → Reminders.
+5. **The team and the agents.** The team, Agents (the 24-hour wake grid), Briefed and Newsroom load, and say how old their data is. Turn on airplane mode, force quit, reopen: they still show, marked as stale.
+6. **Vault.** Vault → paste a team key or scan its QR code → Import. It opens on its files. Close and reopen the app: Face ID opens it, with no typing. Debug → Vault traffic shows every request and decryption step, and no key.
+7. **Ask.** Open Ask and paste your own OpenRouter key in its key settings (the key is kept in the Keychain; only a masked hint shows after). Ask "what is next for me?" with the agenda and picks switched on as context. On iPad, Ask opens beside any screen.
+8. **Top-up.** Reading credit shows the website's meter. In a build from Xcode the purchase uses the local StoreKit file; in TestFlight it uses the sandbox. Nobody is charged.
+9. **The wall.** On an iPad on a stand: Today → Wall. It should refresh by itself.
+10. **Debug.** Network shows every request with its host, size and time; Keys lists which keys exist and where, never their values.
+
+Known limits: passkey unlock needs the `apple-app-site-association` file on promptugal.news; sending a message to a teammate needs their lane, which the share button on Messages creates; writing to a vault needs the vault key, not only a read key.
 
 ## What is still in progress
 
