@@ -82,7 +82,8 @@
       "kind": "native",
       "what": "Vault keys stay on this device, in the Keychain, behind Face ID. They are never synced, logged or shown.",
       "evidence": [
-        "PrompTugal/Vault/VaultKeychain.swift"
+        "PrompTugal/Vault/VaultKeychain.swift",
+        "screen:vault"
       ]
     },
     {
