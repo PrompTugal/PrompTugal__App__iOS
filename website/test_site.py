@@ -184,13 +184,29 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(validate.validate(out), [])
 
     def test_refuses_feature_claimed_before_it_is_in_the_source(self):
-        coming = next(f for f in admin.features() if not f['shipped'])
-        page = f"{coming['platform']}.html"
-        def claim(text):
-            start = text.index(f'id="f-{coming["id"]}"')
+        """A feature whose files do not exist must not be labelled as in the beta.
+
+        Every real feature may be shipped, so the test adds one that cannot be."""
+        import os
+        extra = self.tmp / 'extra-features.json'
+        extra.write_text(json.dumps([{'id': 'not-built', 'platform': 'teams', 'name': 'Not built yet', 'kind': 'native',
+                                      'what': 'A feature with no code.', 'evidence': ['PrompTugal/NoSuchFolder/*.swift']}]))
+        out = self.tmp / 'with-unbuilt-feature'
+        os.environ['PT_EXTRA_FEATURES'] = str(extra)
+        try:
+            build.build(out)
+            coming = next(f for f in admin.features() if f['id'] == 'not-built')
+            self.assertFalse(coming['shipped'])
+            self.assertEqual(validate.validate(out), [])
+            page = out / 'teams.html'
+            text = page.read_text()
+            start = text.index('id="f-not-built"')
             end = text.index('</li>', start)
-            return text[:start] + text[start:end].replace('status soon', 'status on') + text[end:]
-        self.assertRefused(self.broken(page, claim), f"feature {coming['id']} is labelled wrongly")
+            self.assertIn('status soon', text[start:end])
+            page.write_text(text[:start] + text[start:end].replace('status soon', 'status on') + text[end:])
+            self.assertRefused(validate.validate(out), 'feature not-built is labelled wrongly')
+        finally:
+            del os.environ['PT_EXTRA_FEATURES']
 
     def test_refuses_shipped_feature_labelled_coming(self):
         shipped = next(f for f in admin.features() if f['shipped'])

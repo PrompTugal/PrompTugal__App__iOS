@@ -57,6 +57,7 @@ The conductor merges green branches into `dev` about once an hour. Each merge re
 
 The build log on the site has one page per checkpoint: [/admin/build-log/](https://ios.app.promptugal.news/admin/build-log/index.html).
 
+- **05:15** Collab merged: all 19 features in the beta, 28 screens, no placeholders.
 - **04:45** Dev at v0.1.20: screenshot workflow, privacy manifest, schedule key-order fix, launch arguments per screen. 16 of 19 features in the beta; collab is the last branch.
 
 ## Rules for every session
