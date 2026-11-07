@@ -22,9 +22,35 @@
 		E20000000000000000000001 /* build-info.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "build-info.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B20000000000000000000001 /* Exceptions for "PrompTugal" folder in "PrompTugal" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AI/.gitkeep,
+				Bridge/.gitkeep,
+				Coordination/.gitkeep,
+				Dashboards/.gitkeep,
+				Debug/.gitkeep,
+				Design/.gitkeep,
+				Lanes/.gitkeep,
+				News/.gitkeep,
+				Notifications/.gitkeep,
+				Schedule/.gitkeep,
+				Shell/.gitkeep,
+				Store/.gitkeep,
+				Team/.gitkeep,
+				Vault/.gitkeep,
+			);
+			target = A50000000000000000000001 /* PrompTugal */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B10000000000000000000001 /* PrompTugal */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B20000000000000000000001 /* Exceptions for "PrompTugal" folder in "PrompTugal" target */,
+			);
 			path = PrompTugal;
 			sourceTree = "<group>";
 		};

@@ -48,13 +48,6 @@ jobs:
           "$GITHUB_WORKSPACE/.github/scripts/run-and-summarize.sh" "SGitVault swift test" \
             "$RUNNER_TEMP/logs/swift-test.log" -- swift test
 
-      - name: Upload log
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: swift-test-log
-          path: ${{ runner.temp }}/logs/
-          if-no-files-found: ignore
 
   build:
     name: App build (simulator)
@@ -77,13 +70,6 @@ jobs:
               -derivedDataPath "$RUNNER_TEMP/dd" \
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
-      - name: Upload log
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: build-log
-          path: ${{ runner.temp }}/logs/
-          if-no-files-found: ignore
 
   test:
     name: App unit tests (iPhone simulator)
