@@ -30,15 +30,24 @@ WEBSITE = Path(__file__).resolve().parent
 ROOT = WEBSITE.parent
 APP = ROOT / 'PrompTugal'
 PROJECT = ROOT / 'PrompTugal.xcodeproj' / 'project.pbxproj'
-ASSETS = APP / 'Assets.xcassets'
+
+
+def _one(pattern):
+    """The single file in the app matching a name, wherever the project layout puts it."""
+    found = sorted(p for p in APP.rglob(pattern) if '.build' not in p.parts)
+    if len(found) != 1:
+        raise SystemExit(f'build: expected one {pattern} under PrompTugal/, found {[str(f) for f in found]}')
+    return found[0]
+
+
+ASSETS = _one('Assets.xcassets')
+WEBSITES_JSON = _one('Websites.json')
 
 # Published path -> source file in the Xcode asset catalog (artwork exists once).
-IMAGES = {
-    'assets/app-icon.png': ASSETS / 'AppIcon.appiconset' / 'AppIcon.png',
-    'assets/shortcut-ShortcutPrompTugal.png': ASSETS / 'ShortcutPrompTugal.imageset' / 'Icon.png',
-    'assets/shortcut-ShortcutWebSummit.png': ASSETS / 'ShortcutWebSummit.imageset' / 'Icon.png',
-    'assets/shortcut-ShortcutRiskMandate.png': ASSETS / 'ShortcutRiskMandate.imageset' / 'Icon.png',
-}
+# Every Shortcut*.imageset is published, so a removed shortcut leaves no dangling image.
+IMAGES = {'assets/app-icon.png': ASSETS / 'AppIcon.appiconset' / 'AppIcon.png'}
+IMAGES.update({f'assets/shortcut-{d.stem}.png': next(d.glob('*.png'))
+               for d in sorted(ASSETS.glob('Shortcut*.imageset')) if any(d.glob('*.png'))})
 
 # Websites.json colour names -> CSS colours close to the iOS system tints.
 TINTS = {'red': '#d93a33', 'orange': '#e8870e', 'green': '#2f9e44', 'teal': '#2a9fb0',
@@ -91,7 +100,7 @@ def code_areas(files):
 
 def app_facts():
     swift = swift_sources()
-    websites = json.loads((APP / 'Websites.json').read_text())
+    websites = json.loads(WEBSITES_JSON.read_text())
     tests = [f for f in swift if 'Tests' in f.as_posix()]
     return {
         'version': project_setting('MARKETING_VERSION'),

@@ -240,7 +240,9 @@ def workflows_html(items, repo_url):
                       f'<p>Runs on: {", ".join("<code>" + esc(t) + "</code>" for t in w["triggers"]) or "not stated"}. '
                       f'{len(w["jobs"])} jobs, {sum(len(j["steps"]) for j in w["jobs"])} named steps.</p>'
                       f'{comment}<ol class="jobs">{jobs}</ol></article>')
-    return '\n'.join(blocks)
+    # GitHub expressions such as ${{ matrix.device }} are shown as ‹matrix.device›, so they
+    # never look like an unfilled build token to the validator (or to a reader).
+    return re.sub(r'\$\{\{\s*(.*?)\s*\}\}', r'‹\1›', '\n'.join(blocks))
 
 
 # --- screens ---------------------------------------------------------------
