@@ -6,7 +6,7 @@ import SwiftUI
 struct AppShell: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
-    @State private var data = DashboardData()
+    @State private var data = LaunchOptions.sampleData ? PreviewSamples.data() : DashboardData()
     /// The vault session's reader logs here; Debug → Vault traffic reads it.
     private var vaultLog: VaultTrafficLog { VaultSession.shared.log }
     @SceneStorage("shell.selection") private var selection: String = "today"
@@ -24,12 +24,20 @@ struct AppShell: View {
         }
         .environment(data)
         .environment(vaultLog)
-        .teamFeatures()
+        // .teamFeatures() is applied once, by the app root (PrompTugalApp), outside the shell.
+        .identitySync()
         .tint(Palette.red)
         .onChange(of: scenePhase, initial: true) { _, phase in
-            if phase == .active { Task { await data.refreshAll() } }
+            if phase == .active, !LaunchOptions.sampleData { Task { await data.refreshAll() } }
         }
         .onOpenURL { url in route(url) }
+        .onAppear {
+            if let me = LaunchOptions.me { UserDefaults.standard.set(me, forKey: DashboardData.meKey) }
+            if let id = LaunchOptions.destination, let destination = Destinations.destination(id) {
+                selection = id
+                tab = destination.phoneTab != nil ? id : "more"
+            }
+        }
     }
 
     private var splitView: some View {
@@ -37,17 +45,26 @@ struct AppShell: View {
             ShellSidebar(selection: $selection, debug: debug)
                 .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
         } detail: {
-            NavigationStack {
-                if let destination = Destinations.destination(selection) {
-                    destination.view()
-                        .id(destination.id)
-                        .surfaceKind(destination.kind)
-                } else {
-                    ContentUnavailableView("Choose a screen", systemImage: "sidebar.left")
+            if let destination = Destinations.destination(selection), destination.ownsNavigation {
+                // The screen brings its own columns; the shell's sidebar steps aside (the system
+                // sidebar button brings it back).
+                destination.view().id(destination.id)
+            } else {
+                NavigationStack {
+                    if let destination = Destinations.destination(selection) {
+                        destination.view()
+                            .id(destination.id)
+                            .surfaceKind(destination.kind)
+                    } else {
+                        ContentUnavailableView("Choose a screen", systemImage: "sidebar.left")
+                    }
                 }
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .onChange(of: selection) { _, id in
+            if Destinations.destination(id)?.ownsNavigation == true { columns = .detailOnly }
+        }
         .background(ShellKeyboardShortcuts(selection: $selection))
     }
 
@@ -169,6 +186,9 @@ private struct PhoneShell: View {
 
 private struct MoreList: View {
     let debug: Bool
+    @State private var fullScreen: String? = LaunchOptions.launchedMoreDestination(ownsNavigation: true)?.id
+    /// A screen opened by -PTDestination that lives under More (for screenshots and UI tests).
+    @State private var launched = LaunchOptions.launchedMoreDestination(ownsNavigation: false) != nil
 
     var body: some View {
         List {
@@ -177,18 +197,14 @@ private struct MoreList: View {
                 if !rows.isEmpty {
                     Section(section.rawValue) {
                         ForEach(rows) { destination in
-                            NavigationLink {
-                                destination.view().surfaceKind(destination.kind)
-                            } label: {
-                                Label {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(destination.title)
-                                        if !destination.summary.isEmpty {
-                                            Text(destination.summary).font(.caption).foregroundStyle(Palette.muted)
-                                        }
-                                    }
-                                } icon: {
-                                    Image(systemName: destination.symbol)
+                            if destination.ownsNavigation {
+                                Button { fullScreen = destination.id } label: { MoreRow(destination: destination) }
+                                    .foregroundStyle(Palette.ink)
+                            } else {
+                                NavigationLink {
+                                    destination.view().surfaceKind(destination.kind)
+                                } label: {
+                                    MoreRow(destination: destination)
                                 }
                             }
                         }
@@ -197,6 +213,42 @@ private struct MoreList: View {
             }
         }
         .navigationTitle("More")
+        .navigationDestination(isPresented: $launched) {
+            if let destination = LaunchOptions.launchedMoreDestination(ownsNavigation: false) {
+                destination.view().surfaceKind(destination.kind)
+            }
+        }
+        .fullScreenCover(item: Binding(get: { fullScreen.map(FullScreenID.init) }, set: { fullScreen = $0?.id })) { item in
+            if let destination = Destinations.destination(item.id) {
+                destination.view()
+                    .overlay(alignment: .topTrailing) {
+                        Button { fullScreen = nil } label: {
+                            Image(systemName: "xmark.circle.fill").font(.title2).symbolRenderingMode(.hierarchical)
+                        }
+                        .padding(Space.m)
+                        .accessibilityLabel("Close \(destination.title)")
+                    }
+            }
+        }
+    }
+}
+
+private struct FullScreenID: Identifiable { let id: String }
+
+private struct MoreRow: View {
+    let destination: AppDestination
+
+    var body: some View {
+        Label {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(destination.title)
+                if !destination.summary.isEmpty {
+                    Text(destination.summary).font(.caption).foregroundStyle(Palette.muted)
+                }
+            }
+        } icon: {
+            Image(systemName: destination.symbol)
+        }
     }
 }
 
@@ -225,9 +277,9 @@ private struct ShellKeyboardShortcuts: View {
 }
 
 #Preview("Shell · iPhone") {
-    AppShell().environment(ReaderStore()).phonePreview()
+    AppShell().environment(ReaderStore()).teamFeatures().phonePreview()
 }
 
 #Preview("Shell · iPad") {
-    AppShell().environment(ReaderStore()).padPreview()
+    AppShell().environment(ReaderStore()).teamFeatures().padPreview()
 }

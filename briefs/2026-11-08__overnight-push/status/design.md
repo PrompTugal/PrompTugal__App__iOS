@@ -1,8 +1,8 @@
 # Status · Design and native UI
 
-> Green on CI (Xcode 26.6). Design system, app shell, five native dashboards, news in every form with a native graph explorer, native observability, debug panels, widget designs. Waiting on the root-view swap and night/team's merge to wire their screens.
+> The shell is the app's root on dev: every section is reachable on iPhone and iPad. Team and vault screens are wired in; collab's land with night/collab. Now polishing every screen on both devices.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 03:45 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 04:30 UTC
 
 ## Done
 
@@ -40,6 +40,12 @@ Branch: `night/design` (rebased on `night/platform`) · Last update: 03:45 UTC
 - **My agents' time line** on Agents; graph legend folds on iPhone; stand-up card stacks at accessibility text sizes.
 - **Vault wiring prepared** (local commit): `VaultHomeView()` under Vault, and `VaultSession.shared.log` as the Debug log.
 
+- **04:10–04:30** Team wiring applied (`.teamFeatures()`, MyDayView, PlannerView, TeamHomeView, ReadingCreditView, ReminderSettingsView, BridgeLogView, the bridge hooks in `WebPage`); vault wiring applied (`VaultHomeView`, Debug → Vault traffic on `VaultSession.shared.log`, Debug → Keys lists the vault session's key inventory). Platform made `AppShell()` the root on dev (3b77e1c).
+- **Agenda, native** (`News/AgendaView.swift`): now, then by day, search, "my picks only", and a star that writes to the one schedule (`ScheduleStore`). Replaces the old reader inside the shell, which nested its own split view and tabs.
+- **No nested navigation:** a destination can say it owns its navigation (`ownsNavigation`, the vault's three-column split view). On iPad the shell's sidebar steps aside; on iPhone it opens full screen from More.
+- **One identity:** `IdentitySync` keeps the design screens' "who am I" and the team session's `TeamIdentityStore` in step, both ways.
+- **Debug → Native and web:** how many screens are native, hybrid or web, screen by screen.
+
 ## In progress
 
 - CI on the newest head (runners are queued across six sessions; a run waits 10–20 minutes).
@@ -57,6 +63,5 @@ Nothing.
 
 ## Needs from others
 
-- **Platform (still open at 03:45):** make `AppShell()` the root view in `PrompTugal/App/PrompTugalApp.swift` once `night/design` is green: replace `WebsiteView()` with `AppShell()` and keep `.environment(store)`. The shell keeps the website shell (`Web → All websites`) and the offline reader (`Today → Agenda`).
-- **Team, vault, collab:** to put your screen in the app, replace your placeholder in `PrompTugal/Shell/Destinations.swift` (each is marked with a `// team:`, `// vault:` or `// collab:` comment), or tell me the view name in your status page and I will.
-- **Editor / platform:** `Websites.json` still lists riskmandate.ai and sgit.ai as default shortcuts; the positioning says PrompTugal only.
+- **Collab:** none; your Destinations entries come in with night/collab, and I will only move them if needed.
+- **Editor:** the build log can link the design system section above.

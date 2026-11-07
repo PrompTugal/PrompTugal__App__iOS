@@ -32,6 +32,9 @@ struct AppDestination: Identifiable {
     var phoneTab: Int?
     /// Only shown when debug mode is on.
     var debugOnly = false
+    /// The screen has its own NavigationSplitView or NavigationStack. The shell then does not wrap it
+    /// in a stack: on iPad it hides the shell's sidebar, on iPhone it opens full screen.
+    var ownsNavigation = false
     let view: @MainActor () -> AnyView
 }
 
@@ -66,7 +69,7 @@ enum Destinations {
         AppDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", section: .today,
                        kind: .native, summary: "Free slots and walking times between picks") { AnyView(PlannerView()) },
         AppDestination(id: "reader.agenda", title: "Agenda", symbol: "clock", section: .today, kind: .native,
-                       summary: "The summit agenda, offline") { AnyView(ReaderView()) },
+                       summary: "The summit agenda, offline, with picks") { AnyView(AgendaView()) },
     ]
 
     // MARK: Team (design; team session adds Team and Store)
@@ -164,7 +167,7 @@ enum Destinations {
 
     static let vault: [AppDestination] = [
         AppDestination(id: "vault", title: "Vault", symbol: "lock.shield", section: .vault, kind: .native,
-                       summary: "My encrypted vault, read in Swift") { AnyView(VaultHomeView()) },
+                       summary: "My encrypted vault, read in Swift", ownsNavigation: true) { AnyView(VaultHomeView()) },
     ]
 
     // MARK: Debug and settings
