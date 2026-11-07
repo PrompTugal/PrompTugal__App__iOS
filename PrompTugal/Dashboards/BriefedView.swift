@@ -110,5 +110,5 @@ struct BriefedView: View {
 }
 
 #Preview("Briefed") {
-    NavigationStack { BriefedView() }.environment(DashboardData())
+    NavigationStack { BriefedView() }.environment(PreviewSamples.data())
 }

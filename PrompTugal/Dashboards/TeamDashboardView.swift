@@ -200,5 +200,5 @@ struct StandupTimeline: View {
 }
 
 #Preview("Team") {
-    NavigationStack { TeamDashboardView() }.environment(DashboardData())
+    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.data())
 }

@@ -229,5 +229,5 @@ struct AgentStatusChart: View {
 }
 
 #Preview("Newsroom") {
-    NavigationStack { NewsroomStatusView() }.environment(DashboardData())
+    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.data())
 }

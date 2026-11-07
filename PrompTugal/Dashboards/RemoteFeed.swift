@@ -45,6 +45,14 @@ final class RemoteFeed<Value: Decodable & Sendable> {
         }
     }
 
+    /// Puts a value in without loading, for previews and tests.
+    func preview(_ value: Value, updated: Date = .now) {
+        self.value = value
+        self.updated = updated
+        cacheLoaded = true
+        phase = .loaded
+    }
+
     private func loadCache() async {
         cacheLoaded = true
         guard value == nil, let cached = FeedCache.read(name: name) else { return }

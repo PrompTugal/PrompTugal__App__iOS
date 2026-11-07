@@ -133,5 +133,5 @@ struct HandoffChart: View {
 }
 
 #Preview("Agents") {
-    NavigationStack { AgentsDashboardView() }.environment(DashboardData())
+    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.data())
 }

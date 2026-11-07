@@ -181,5 +181,5 @@ struct StandupCard: View {
 }
 
 #Preview("My day") {
-    NavigationStack { TodayView() }.environment(DashboardData())
+    NavigationStack { TodayView() }.environment(PreviewSamples.data())
 }

@@ -208,5 +208,5 @@ struct EndpointHealth: View {
 }
 
 #Preview("Observability") {
-    NavigationStack { ObservabilityView() }.environment(DashboardData())
+    NavigationStack { ObservabilityView() }.environment(PreviewSamples.data())
 }

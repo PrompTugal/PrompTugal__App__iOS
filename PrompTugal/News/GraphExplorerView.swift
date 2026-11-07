@@ -357,5 +357,5 @@ struct GraphCanvas: View {
 }
 
 #Preview("Graph") {
-    NavigationStack { GraphExplorerView() }.environment(DashboardData())
+    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data())
 }
