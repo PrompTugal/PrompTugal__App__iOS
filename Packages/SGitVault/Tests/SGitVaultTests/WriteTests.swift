@@ -137,12 +137,14 @@ final class WriteTests: XCTestCase {
     // MARK: Export for sgit
 
     /// Write the vault (as the server holds it) and what sgit should find, for the Linux read-back job.
-    func exportForSgit(fixture: Fixture, server: URL, branch: String, reader: SGitVault) async throws {
+    func exportForSgit(fixture: Fixture, server: URL, branch: String, reader _: SGitVault) async throws {
         guard let out = ProcessInfo.processInfo.environment["SGITVAULT_ROUNDTRIP_OUT"], !out.isEmpty else { return }
         let dest = URL(fileURLWithPath: out).appending(path: fixture.name, directoryHint: .isDirectory)
         try? FileManager.default.removeItem(at: dest)
         try FileManager.default.createDirectory(at: dest, withIntermediateDirectories: true)
         try FileManager.default.copyItem(at: server, to: dest.appending(path: "server"))
+        // A fresh reader: `reader` may have pulled before the test's later commits.
+        let reader = openVault(fixture, branch: branch, server: server)
         var files: [String: [String: Any]] = [:]
         for file in try await reader.files() {
             let data = try await reader.read(file.path)

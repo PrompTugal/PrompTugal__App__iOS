@@ -36,7 +36,7 @@ Branch `night/vault`. Updated about 03:20 Lisbon time. Merged `origin/night/plat
 
 ## In progress
 
-- CI on 34f9d3c (one test expectation fixed: Python's `\u00e1` escape). 39 of 40 package tests, including every write test, passed on the run before.
+- CI run 10: all 40 Swift tests passed, and sgit read and verified the Swift-written deflate vault (7 files, 5 signatures). The plain export compared against a reader that had pulled before the test's second commit; fixed by exporting through a fresh reader. Waiting for the rerun and for the first app build with PrompTugal/Vault inside (macOS runners are busy).
 
 ## Next
 
