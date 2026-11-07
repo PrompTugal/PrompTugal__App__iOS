@@ -1,8 +1,8 @@
 # Status · platform · App Review readiness
 
-> Done except item 6, which waits for team's code on dev. CI run 210 on `2b0644e` is green: Debug build, Release build (device, unsigned, both extensions embedded), and 141 tests in 38 suites on iPhone and on iPad. Swift 6 mode not switched (inventory below). applinks: removed until the site serves its AASA file.
+> Done: items 1–8, design's Q9 and team's Q6/Q8. Last full CI run 260 (`60b4070`): green, 200 tests in 55 suites on iPhone, Release build green. StoreKit products cannot be loaded on the CI simulator by any setup tried (details below), so team's purchase tests stay a known issue. Ready for the conductor to merge.
 
-Branch: `night/platform` · Last update: 14:52 UTC
+Branch: `night/platform` · Last update: 17:45 UTC
 
 ## Done · CI run 210 (`2b0644e`, workflow_dispatch): all jobs green
 
@@ -30,6 +30,20 @@ Build and SGitVault tests ✅ · Release build (device, unsigned) ✅, `PrompTug
 9. **Q9 Websites column** (`aaa6a34`, design's request): `App/Web/WebsiteView.swift` sizes the shortcuts column to min(250 pt, 32% of the width) and hides it below 600 pt (Split View, Slide Over), where the toolbar button opens the shortcuts sheet. Tests: `WebsiteSidebarWidthTests`.
 8. **Privacy manifest re-checked** after these changes: the app's reasons still match. UserDefaults → CA92.1. File dates inside the container (`TeamStore`, `ScheduleStore`, `RemoteFeed`) → C617.1. Shown to the user (Debug → `SystemPanels`) → DDA9.1. No system boot time, disk space or keyboard APIs anywhere. The widget, intents and `Shared/` code use no required-reason API, so the extensions need no manifest of their own.
 
+## Later today
+
+6. **Q6 notification delegate** (`c270bfa`, after team reached dev): `PrompTugalApp.init` calls `ReminderScheduler.installNotificationDelegate()` next to the background-task registrations, so a reminder tapped on a cold launch is delivered. **Q8:** the app's private `lisbonDay` is replaced by team's `Lisbon.day`; `LisbonDayHelperTests` pins summer and winter boundaries. Run 254: green, 198 tests in 55 suites.
+10. **StoreKit in CI tests** (conductor's request, for team's `CreditStoreTests`). The `PrompTugal` scheme's Test action now names `Store/PrompTugal.storekit` (`2ecc2fc`; it is what Xcode uses locally). On the CI simulator (Xcode 26.6) StoreKit returned **0 products and no error** in every setup I tried:
+
+    | Run | Setup | Products |
+    |---|---|---|
+    | 245 | scheme Test action configuration only | 0 |
+    | 245 | `SKTestSession(contentsOf:)` with the file path | 0 |
+    | 254 | both of the above, test host signed ad hoc (`signed=true`) | 0 |
+    | 260 | copy in the test bundle, `SKTestSession(configurationFileNamed:)` | 0 |
+
+    The signing, the bundled copy and the probe test were removed again (`02176c0`); only the scheme setting stays. Team's three purchase tests keep their `withKnownIssue`. **For Dinis or anyone with a Mac:** run `CreditStoreTests` from Xcode (⌘U) once; if products load there, the gap is the headless CI simulator, not the code or the file.
+
 ## Swift 6 mode: not switched
 
 The app targets stay in Swift 5 mode with complete concurrency checking. Switching now turns every remaining warning across six sessions' folders into an error, a day before review; I'd do it in a quiet week, folder by folder. The unchecked escapes, each with why it is safe:
@@ -51,7 +65,7 @@ Nothing. (`99c4e1c` after run 210 changes only this page.)
 
 ## Waiting
 
-- **Item 6** (Q6): team asked (via the conductor, `night/team` `9471fa9`): call `ReminderScheduler.installNotificationDelegate()` in `PrompTugalApp.init`, and optionally use `Lisbon.day(_:)` instead of the app's private `lisbonDay` (Q8). Both exist only on `night/team`; the conductor merges team into dev first, then I merge dev and add them.
+Nothing.
 
 ## For other sessions
 
