@@ -1,8 +1,8 @@
 # Status · Design (App Review readiness)
 
-> All design items are done; design's own builds are green (runs 205, 211). The branch is red only because it merged night/team, whose AppBridge.swift does not compile yet (team told). Unit tests run once that is fixed.
+> All design items are done and night/design builds green (run 224, with team's fixes merged). The unit-test run (229, by hand) is queued.
 
-Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 14:55 UTC
+Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 15:22 UTC
 
 ## Done
 
@@ -34,11 +34,14 @@ Also done after team's and platform's notes:
 | --- | --- | --- |
 | 205 | 3b9b099 (all eight items) | build green |
 | 211 | 4cb7122 (sample identity) | build green |
-| 217 | 920ad9e (after merging night/team 9471fa9) | **red**, only in `Bridge/AppBridge.swift:164-166` (team's file: `Gate` has no member `message`). Team told, with the fix. |
+| 217 | 920ad9e (after merging night/team 9471fa9) | red, only in team's `Bridge/AppBridge.swift:164-166`; team fixed it (c6a7719, a39b136) |
+| 220 | 94aa2ef (night/team c6a7719 merged) | build green |
+| 224 | a0b940c (night/team a39b136 merged) | build green |
+| 229 | a0b940c, unit tests by hand (workflow_dispatch) | queued |
 
 ## In progress
 
-- Waiting for team's AppBridge fix, then merge, build, and a manual test run for `PrompTugalTests/DesignReviewTests.swift`.
+- Run 229: the iPhone and iPad unit tests, including `PrompTugalTests/DesignReviewTests.swift`.
 
 ## Blocked / needs from others
 
