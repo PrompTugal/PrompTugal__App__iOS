@@ -1,0 +1,42 @@
+[
+  {
+    "id": "promptugal",
+    "name": "PrompTugal.news",
+    "url": "https://promptugal.news/",
+    "icon": "newspaper.fill",
+    "color": "red",
+    "iconAsset": "ShortcutPrompTugal"
+  },
+  {
+    "id": "summit-team",
+    "name": "web-summit.sgit.ai",
+    "url": "https://web-summit.sgit.ai/",
+    "icon": "person.3.fill",
+    "color": "indigo",
+    "iconAsset": "ShortcutWebSummit"
+  },
+  {
+    "id": "newsroom",
+    "name": "newsroom.sgit.ai",
+    "url": "https://newsroom.sgit.ai/",
+    "icon": "mic.fill",
+    "color": "orange",
+    "iconText": "news\nroom"
+  },
+  {
+    "id": "riskmandate",
+    "name": "riskmandate.ai",
+    "url": "https://riskmandate.ai/",
+    "icon": "shield.lefthalf.filled",
+    "color": "teal",
+    "iconAsset": "ShortcutRiskMandate"
+  },
+  {
+    "id": "sgit",
+    "name": "sgit.ai",
+    "url": "https://sgit.ai/",
+    "icon": "lock.doc.fill",
+    "color": "blue",
+    "iconText": "sgit.ai"
+  }
+]
