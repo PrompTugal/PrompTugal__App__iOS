@@ -2,7 +2,7 @@
 
 > Done for the night. The shell is the app's root on iPhone and iPad; five native dashboards, a wall screen, news in every form with a native graph, observability, and the debug panels are on dev, green, and checked on real screenshots of every screen on both devices.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 08:45 UTC (wrap-up)
+Branch: `night/design` (rebased on `night/platform`) · Last update: 09:15 UTC (wrap-up)
 
 ## Done
 
@@ -78,7 +78,7 @@ Nothing. Everything above is on dev (fadf27e) with a green build.
 
 ## Next (for whoever picks this up)
 
-1. Look at the next screens.yml run: the Graph should now draw on iPhone and iPad (fixed at ea0d411), and the Agenda test (`test11_reader_agenda`) should pass with the faster list.
+1. Checked on screens run 15 (dev fadf27e): the Graph draws on iPhone and iPad (1,707 nodes, 2,903 edges), Agenda opens, NextHoursCard shows on My day and the Wall. Last fix (e384447): the graph now fits to the 2nd–98th percentile of node positions, so a few far-out nodes no longer shrink it to a dot; confirm on the next run.
 2. iPhone pass at the largest Dynamic Type sizes (the stand-up card already stacks; the wake grid's labels are fixed-size).
 3. Switch My day and Team to the team session's `TeamStore` models and drop the `Wire` copies of me.json and data.json, so there is one model per file.
 4. The Ask side panel and the web twin are both trailing columns on iPad. If both are opened on one screen, check which wins; if it looks wrong, open the twin as a sheet while Ask is open.
