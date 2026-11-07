@@ -177,9 +177,6 @@ jobs:
 
       - name: xcodebuild test
         timeout-minutes: 20
-        # Signed ad hoc ("-", no team or profile): StoreKit's local testing identifies the app by its
-        # signature, and an unsigned test host gets no products from SKTestSession or the scheme's
-        # StoreKit configuration.
         run: |
           .github/scripts/run-and-summarize.sh "App unit tests (${{ matrix.device }})" "$RUNNER_TEMP/logs/test.log" -- \
             xcodebuild test \
@@ -191,7 +188,7 @@ jobs:
               -test-timeouts-enabled YES \
               -default-test-execution-time-allowance 60 \
               -maximum-test-execution-time-allowance 180 \
-              CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER=
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Upload log and results (failures only; the bundle is about 60 MB)
         if: failure()
