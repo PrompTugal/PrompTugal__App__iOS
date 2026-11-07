@@ -88,18 +88,20 @@ jobs:
       - name: Latest app screenshots
         env:
           GH_TOKEN: ${{ github.token }}
-        # The newest successful screens.yml run on dev, if any; its artifact screens-<sha> holds <device>-<id>.png.
-        # Never fails the site: without screenshots the pages say so.
+        # The newest screens.yml run on dev that left a screens-* artifact with PNGs, whatever the run's
+        # overall result: one device's job can fail or be cancelled while the other's images are good.
+        # Files are <device>-<id>.png; the site publishes only registered screen ids and the devices in
+        # website/screens.json. Never fails the site: without screenshots the pages say so.
         run: |
           mkdir -p "$RUNNER_TEMP/screens"
-          run=$(gh run list --workflow screens.yml --branch dev --status success --limit 1 \
-                  --json databaseId -q '.[0].databaseId' 2>/dev/null || true)
-          if [ -n "$run" ]; then
-            gh run download "$run" --pattern 'screens-*' -D "$RUNNER_TEMP/screens" || echo "No screens artifact in run $run."
-          else
-            echo "No successful screens.yml run on dev yet."
-          fi
-          find "$RUNNER_TEMP/screens" -name '*.png' | wc -l
+          for run in $(gh run list --workflow screens.yml --branch dev --status completed --limit 10 \
+                         --json databaseId -q '.[].databaseId' 2>/dev/null); do
+            rm -rf "$RUNNER_TEMP/screens"/*
+            gh run download "$run" --pattern 'screens-*' -D "$RUNNER_TEMP/screens" >/dev/null 2>&1 || true
+            n=$(find "$RUNNER_TEMP/screens" -name 'iphone-*.png' | wc -l)   # the site publishes iPhone shots first
+            if [ "$n" -gt 0 ]; then echo "Screenshots from screens.yml run $run: $n iPhone PNGs"; break; fi
+          done
+          find "$RUNNER_TEMP/screens" -name '*.png' | sed 's|.*/||' | sort
 
       - name: Build
         env:

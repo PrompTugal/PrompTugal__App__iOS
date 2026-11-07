@@ -555,12 +555,15 @@ def screens_gallery(items, shots, root='../'):
         return ('<p class="notice">No screenshots in this site build. When the app’s screens workflow has run on '
                 '<code>dev</code>, the site shows every screen on iPhone and iPad here.</p>')
     cards = []
-    for d in items:
+    missing = [d for d in items if d['id'] not in shots]
+    for d in (x for x in items if x['id'] in shots):
         pics = ''.join(shot_img(shots, d['id'], d['title'], root=root, device=dev, width=240 if dev == 'iphone' else 360)
                        for dev in DEVICES if dev in shots.get(d['id'], {}))
         body = pics or '<p class="muted">No screenshot of this screen yet.</p>'
         cards.append(f'<figure class="card shot-card" id="shot-{esc(d["id"])}"><div class="shots">{body}</div>'
                      f'<figcaption><strong>{esc(d["title"])}</strong> <code>{esc(d["id"])}</code></figcaption></figure>')
-    have = sum(1 for d in items if d['id'] in shots)
+    have = len(items) - len(missing)
+    rest = ('<p class="muted">No screenshot yet: ' + ', '.join(f'{esc(d["title"])} (<code>{esc(d["id"])}</code>)'
+                                                     for d in missing) + '.</p>') if missing else ''
     return (f'<p>{have} of {len(items)} screens have a screenshot, taken by CI on a simulator from the code on '
-            '<code>dev</code>.</p><div class="gallery">' + ''.join(cards) + '</div>')
+            '<code>dev</code>.</p><div class="gallery">' + ''.join(cards) + '</div>' + rest)
