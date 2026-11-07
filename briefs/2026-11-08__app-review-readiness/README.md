@@ -2,7 +2,25 @@
 
 > Three read-only reviews of the app at v0.1.44 (security, App Store guidelines, code quality), what they found, which session fixes what, and the decisions Dinis still has to take before the app goes to Apple.
 
-**Pack date:** 8 November 2026 · **App at time of review:** v0.1.44, commit `d4f4292` · **Status:** fixes in progress. Each session works on its own `night/<role>` branch. The conductor merges into `dev` once CI is green.
+**Pack date:** 8 November 2026 · **App at time of review:** v0.1.44, commit `d4f4292` · **Status:** fixes done. Every item in the lists below is on `dev` (17:15 Lisbon, 8 Nov), each branch green in CI on iPhone and iPad before it was merged. What remains is in [Decisions for Dinis](#decisions-for-dinis).
+
+## Outcome (17:15)
+
+- **All six sessions' lists are on `dev`:** vault, collab, team, design, platform and editor. CI covers the Debug build, the Release build, the SGitVault tests, and 198 unit tests in 55 suites on iPhone and on iPad.
+- **The five likely rejections are addressed in the code:**
+  - R1: "Try with sample data", and "not on the team" opens the reader view.
+  - R2: the Ask consent sheet, with context off except the public agenda.
+  - R3: the privacy page matches the code, and Settings links to it.
+  - R4: Report… and Block in Messages.
+  - R5: Reading credit is hidden in release builds and its prices match.
+- **Both High security findings are fixed:**
+  - S1: signatures are required, from pinned signers.
+  - S2: the consent sheet above.
+- **Not proven:** the purchase tests. StoreKit returns no products in the CI simulator (tried: the scheme's StoreKit configuration, `SKTestSession(contentsOf:)`, an ad hoc signed host). The three purchase tests record a known issue instead of passing. Platform is trying the configuration as a test-bundle resource. Check a purchase by hand in Xcode before submitting.
+- **Still needs Dinis:**
+  - the contact address (support page and `LaneReport.contactAddress`)
+  - the reviewer's demo credentials
+  - the decisions below
 
 ## The short answer
 
