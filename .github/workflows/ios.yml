@@ -4,11 +4,18 @@ name: iOS
 # Every job copies compiler and test errors into its job summary, so a session
 # can read a failure through the GitHub tools (actions_list, get_job_logs).
 #
-#   build    xcodebuild build for the iOS Simulator, unsigned, then swift test in
-#            Packages/SGitVault on the same runner (skipped if the folder is missing)
-#   release  xcodebuild build -configuration Release for a device, unsigned (app + extensions)
-#   test     xcodebuild test on an iPhone and an iPad simulator: dev, pull requests
-#            and workflow_dispatch only (night/** pushes get the build job alone)
+# Only what a change touches is built (contracts section 5). The `changes` job
+# (ubuntu, ios-changes.yml) reads apps.json and the diff, then:
+#
+#   build     per affected app: Debug build for the iOS Simulator and Release build
+#             for a device (unsigned), as two matrix legs
+#   test      per affected app, on an iPhone and an iPad simulator: dev, pull requests
+#             and workflow_dispatch only (night/** and split/** pushes build only)
+#   packages  per affected Swift package with a Tests/ folder
+#   result    one stable check name that is green when everything above is
+#
+# An app whose project does not exist yet is skipped, with a line in the summary.
+# Before apps.json exists, the built-in config builds today's single app.
 #
 # Pushes that change only briefs/, website/, root Markdown or VERSION don't run
 # it: macOS runners are shared by every session, and those files can't break
@@ -16,11 +23,17 @@ name: iOS
 
 on:
   push:
-    branches: [dev, 'night/**']
+    branches: [dev, 'night/**', 'split/**']
     paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
   pull_request:
     paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
   workflow_dispatch:
+    inputs:
+      app:
+        description: 'Which app to build and test'
+        type: choice
+        options: [all, team, promptugal, riskmandate]
+        default: all
 
 permissions:
   contents: read
@@ -30,13 +43,9 @@ permissions:
 # (With a run-level group, GitHub cancelled whole runs whose test jobs had
 # started but whose other jobs were still queued.)
 
-env:
-  PROJECT: PrompTugal.xcodeproj
-  SCHEME: PrompTugal
-
 jobs:
-  # Cheap Ubuntu check so a night branch that only merged dev costs no macOS runner:
-  # on a push to night/**, if the pushed commit is already in origin/dev, dev's own
+  # Cheap Ubuntu check so a night or split branch that only merged dev costs no macOS runner:
+  # on a push to night/** or split/**, if the pushed commit is already in origin/dev, dev's own
   # run covers it and the macOS jobs are skipped.
   gate:
     name: Already on dev?
@@ -50,7 +59,7 @@ jobs:
       - id: check
         run: |
           run=true
-          if [ "${{ github.event_name }}" = push ] && [[ "${{ github.ref }}" == refs/heads/night/* ]]; then
+          if [ "${{ github.event_name }}" = push ] && [[ "${{ github.ref }}" == refs/heads/night/* || "${{ github.ref }}" == refs/heads/split/* ]]; then
             git fetch --quiet origin dev
             if git merge-base --is-ancestor "$GITHUB_SHA" origin/dev; then
               run=false
@@ -60,15 +69,48 @@ jobs:
           echo "run=$run" >> "$GITHUB_OUTPUT"
           echo "run=$run"
 
+  changes:
+    name: Changes
+    uses: ./.github/workflows/ios-changes.yml
+    with:
+      app: ${{ inputs.app || 'all' }}
+
+  # Platform's test (contracts section 4). A job of its own, so a bad apps.json turns the
+  # run red without stopping the builds that the plan already chose.
+  check-apps:
+    name: apps.json matches the projects
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: check_apps.py
+        run: |
+          if [ -f scripts/apps/check_apps.py ]; then
+            python3 scripts/apps/check_apps.py
+          else
+            echo "scripts/apps/check_apps.py is not on this ref yet; skipped."
+            echo "- ⏭️ check_apps.py: not on this ref yet, skipped" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   build:
-    name: App build and SGitVault tests
-    needs: gate
-    if: needs.gate.outputs.run == 'true'
+    name: ${{ matrix.config }} build (${{ matrix.app.app }})
+    needs: [gate, changes]
+    if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_apps == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.apps) }}
+        # Debug for the simulator; Release is what App Store and TestFlight builds use:
+        # optimised, DEBUG not defined, so code behind #if DEBUG compiles out cleanly.
+        config: [Debug, Release]
     runs-on: macos-26
     concurrency:
-      group: ios-build-${{ github.ref }}
+      group: ios-build-${{ matrix.app.app }}-${{ matrix.config }}-${{ github.ref }}
       cancel-in-progress: false
     timeout-minutes: 40
+    env:
+      PROJECT: ${{ matrix.app.project }}
+      SCHEME: ${{ matrix.app.scheme }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -77,51 +119,20 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: xcodebuild build
+      - name: Debug build (iOS Simulator)
+        if: matrix.config == 'Debug'
         run: |
-          .github/scripts/run-and-summarize.sh "App build (iOS Simulator)" "$RUNNER_TEMP/logs/build.log" -- \
+          .github/scripts/run-and-summarize.sh "${{ matrix.app.app }}: Debug build (iOS Simulator)" "$RUNNER_TEMP/logs/build.log" -- \
             xcodebuild build \
               -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
               -destination 'generic/platform=iOS Simulator' \
               -derivedDataPath "$RUNNER_TEMP/dd" \
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
-      - name: SGitVault swift test
-        # Runs after the app build on the same runner: one runner fewer per push.
-        if: always()
+      - name: Release build (device, unsigned)
+        if: matrix.config == 'Release'
         run: |
-          if [ ! -f Packages/SGitVault/Package.swift ]; then
-            echo "Packages/SGitVault does not exist on this branch; nothing to test."
-            echo "### ⏭️ SGitVault: no package on this branch, skipped" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          cd Packages/SGitVault
-          "$GITHUB_WORKSPACE/.github/scripts/run-and-summarize.sh" "SGitVault swift test" \
-            "$RUNNER_TEMP/logs/swift-test.log" -- swift test
-
-  release:
-    name: Release build (device, unsigned)
-    # The configuration App Store and TestFlight builds use: optimised, DEBUG not defined, so
-    # code behind #if DEBUG (launch arguments, the web inspector) must compile out cleanly.
-    # Builds the app with its embedded widget and intents extensions and SGitVault. No signing.
-    needs: gate
-    if: needs.gate.outputs.run == 'true'
-    runs-on: macos-26
-    concurrency:
-      group: ios-release-build-${{ github.ref }}
-      cancel-in-progress: false
-    timeout-minutes: 40
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0   # build info needs the commit count and tags
-
-      - name: Select Xcode
-        run: .github/scripts/select-xcode.sh
-
-      - name: xcodebuild build -configuration Release
-        run: |
-          .github/scripts/run-and-summarize.sh "Release build (iOS device, unsigned)" "$RUNNER_TEMP/logs/release.log" -- \
+          .github/scripts/run-and-summarize.sh "${{ matrix.app.app }}: Release build (iOS device, unsigned)" "$RUNNER_TEMP/logs/release.log" -- \
             xcodebuild build \
               -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
               -destination 'generic/platform=iOS' \
@@ -129,30 +140,30 @@ jobs:
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
           app=$(find "$RUNNER_TEMP/dd/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' | head -1)
           echo "Built: $app"
-          ls "$app/PlugIns" "$app/Extensions" 2>/dev/null || true
-          # The extensions must be inside the app, or the archive would ship without them.
-          for ext in PrompTugalWidgets.appex PrompTugalIntents.appex; do
-            find "$app" -maxdepth 2 -name "$ext" | grep -q . || { echo "::error::$ext is not embedded in $app"; exit 1; }
-          done
-          echo "### ✅ Release build: app, widget and intents extensions" >> "$GITHUB_STEP_SUMMARY"
+          # Each extension target of the project must be inside the app.
+          scripts/release/check-embedded.sh "$app"
 
   test:
-    name: App unit tests (${{ matrix.device }} simulator)
-    # Runner capacity: on night/** pushes only the build job runs (compile + SGitVault tests,
-    # one runner). The unit tests run on dev, on pull requests and by hand. Run them for a
-    # night branch from the Actions tab (workflow_dispatch) when you need them before a merge.
-    needs: gate
-    if: needs.gate.outputs.run == 'true' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
+    name: ${{ matrix.app.app }} unit tests (${{ matrix.device }} simulator)
+    # Runner capacity: on night/** and split/** pushes only the build legs run. The unit tests
+    # run on dev, on pull requests and by hand. Run them for a branch from the Actions tab
+    # (workflow_dispatch) when you need them before a merge.
+    needs: [gate, changes]
+    if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_apps == 'true' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     strategy:
       fail-fast: false
       matrix:
+        app: ${{ fromJSON(needs.changes.outputs.apps) }}
         # The app must work on iPhone and iPad; both run every test.
         device: [iPhone, iPad]
     runs-on: macos-26
     timeout-minutes: 45
     concurrency:
-      group: ios-test-${{ matrix.device }}-${{ github.ref }}
+      group: ios-test-${{ matrix.app.app }}-${{ matrix.device }}-${{ github.ref }}
       cancel-in-progress: false
+    env:
+      PROJECT: ${{ matrix.app.project }}
+      SCHEME: ${{ matrix.app.scheme }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -178,7 +189,7 @@ jobs:
       - name: xcodebuild test
         timeout-minutes: 20
         run: |
-          .github/scripts/run-and-summarize.sh "App unit tests (${{ matrix.device }})" "$RUNNER_TEMP/logs/test.log" -- \
+          .github/scripts/run-and-summarize.sh "${{ matrix.app.app }}: unit tests (${{ matrix.device }})" "$RUNNER_TEMP/logs/test.log" -- \
             xcodebuild test \
               -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
               -destination "id=${{ steps.sim.outputs.udid }}" \
@@ -194,7 +205,58 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: test-log-${{ matrix.device }}
+          name: test-log-${{ matrix.app.app }}-${{ matrix.device }}
           path: ${{ runner.temp }}/logs/
           if-no-files-found: ignore
 
+  packages:
+    name: Package ${{ matrix.package.name }}
+    # A package's own tests, when it or something it depends on changed. They run on every
+    # push where they are affected, as SGitVault's did before the split (one runner each).
+    needs: [gate, changes]
+    if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_packages == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.changes.outputs.packages) }}
+    runs-on: macos-26
+    timeout-minutes: 30
+    concurrency:
+      group: ios-package-${{ matrix.package.name }}-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Boot an iPhone simulator
+        id: sim
+        if: matrix.package.name != 'SGitVault'
+        timeout-minutes: 8
+        run: |
+          udid=$(.github/scripts/pick-simulator.py iPhone)
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$udid" || true
+          for i in $(seq 1 60); do
+            xcrun simctl list devices | grep "$udid" | grep -q "(Booted)" && break
+            sleep 5
+          done
+
+      - name: Test ${{ matrix.package.name }}
+        run: scripts/release/test-package.sh "${{ matrix.package.path }}" "${{ steps.sim.outputs.udid }}"
+
+  # One check name that does not change with the matrix: green when every job that ran is
+  # green (skipped jobs do not count against it). Branch protection can require this one.
+  result:
+    name: iOS result
+    if: always()
+    needs: [gate, changes, check-apps, build, test, packages]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo '${{ toJSON(needs) }}' | python3 -c '
+          import json, sys
+          bad = {k: v["result"] for k, v in json.load(sys.stdin).items() if v["result"] in ("failure", "cancelled")}
+          print("failed:", bad or "none")
+          sys.exit(1 if bad else 0)'
