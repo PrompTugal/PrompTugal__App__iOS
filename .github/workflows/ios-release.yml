@@ -212,6 +212,15 @@ jobs:
           MODE: ${{ steps.gate.outputs.mode }}
         run: scripts/release/testflight.sh
 
+      - name: Wait for processing, answer export compliance, set What to Test
+        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true'
+        continue-on-error: true   # the upload is done; these are conveniences
+        run: |
+          scripts/release/release-notes.sh > "$RUNNER_TEMP/release/notes.txt"
+          python3 scripts/release/asc.py wait-build --version "$MARKETING_VERSION" --build "$BUILD_NUMBER" --timeout 1200
+          python3 scripts/release/asc.py compliance --version "$MARKETING_VERSION" --build "$BUILD_NUMBER"
+          python3 scripts/release/asc.py whats-new  --version "$MARKETING_VERSION" --build "$BUILD_NUMBER" --file "$RUNNER_TEMP/release/notes.txt"
+
       - name: Upload signed .ipa
         if: steps.gate.outputs.ready == 'true'
         uses: actions/upload-artifact@v5
