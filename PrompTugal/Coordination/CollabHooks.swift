@@ -31,9 +31,10 @@ protocol CollabVaultAccess: AnyObject {
 @MainActor
 enum CollabHooks {
     enum HookError: Error, LocalizedError {
-        case noVault, noWritableVault
+        case noVault, noWritableVault, noNotesLane
         var errorDescription: String? {
             switch self {
+            case .noNotesLane: "Your account has no newsroom notes lane yet. The website makes it the first time you send to the newsroom."
             case .noVault: "Open your vault first (Vault in the sidebar)."
             case .noWritableVault: "Writing needs your vault opened with its vault key (or passkey), not a read key."
             }
