@@ -6,12 +6,18 @@ name: iOS
 #
 #   package  swift test in Packages/SGitVault (skipped cleanly if the folder is missing)
 #   build    xcodebuild build for the iOS Simulator, unsigned
-#   test     xcodebuild test on an iPhone simulator
+#   test     xcodebuild test on an iPhone and an iPad simulator
+#
+# Pushes that change only briefs/, website/, root Markdown or VERSION don't run
+# it: macOS runners are shared by every session, and those files can't break
+# the app. (A .md file inside PrompTugal/ can, so those still run.)
 
 on:
   push:
     branches: [dev, 'night/**']
+    paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
   pull_request:
+    paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
   workflow_dispatch:
 
 permissions:
