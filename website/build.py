@@ -28,20 +28,10 @@ REPO_URL = 'https://github.com/PrompTugal/PrompTugal__App__iOS'
 
 WEBSITE = Path(__file__).resolve().parent
 ROOT = WEBSITE.parent
-APP = ROOT / 'PrompTugal'
-PROJECT = ROOT / 'PrompTugal.xcodeproj' / 'project.pbxproj'
-
-
-def _one(pattern):
-    """The single file in the app matching a name, wherever the project layout puts it."""
-    found = sorted(p for p in APP.rglob(pattern) if '.build' not in p.parts)
-    if len(found) != 1:
-        raise SystemExit(f'build: expected one {pattern} under PrompTugal/, found {[str(f) for f in found]}')
-    return found[0]
-
-
-ASSETS = _one('Assets.xcassets')
-WEBSITES_JSON = _one('Websites.json')
+PROJECT = admin.public_project() / 'project.pbxproj'
+PROJECT_PATH = PROJECT.parent.relative_to(ROOT).as_posix()
+ASSETS = admin.find_in_app('Assets.xcassets', prefer='AppIcon.appiconset')
+WEBSITES_JSON = admin.find_in_app('Websites.json')
 
 # Published path -> source file in the Xcode asset catalog (artwork exists once).
 # Every Shortcut*.imageset is published, so a removed shortcut leaves no dangling image.
@@ -90,11 +80,11 @@ def swift_sources():
 
 
 def code_areas(files):
-    """Swift files and lines per folder: PrompTugal/<area>, Packages/<name>, or another target's folder."""
+    """Swift files and lines per folder: PrompTugal/<area>, Packages/<name>, Apps/<app>, or another target's folder."""
     areas = {}
     for f in files:
         rel = f.relative_to(ROOT).parts
-        if rel[0] in ('PrompTugal', 'Packages'):
+        if rel[0] in ('PrompTugal', 'Packages', 'Apps'):
             area = '/'.join(rel[:2]) if len(rel) > 2 else rel[0] + ' (top level)'
         else:
             area = rel[0]
@@ -396,19 +386,21 @@ def build(out):
     template = (WEBSITE / 'template.html').read_text()
     tokens = {k: v for k, v in facts.items() if isinstance(v, str)}
     tokens.update(websites_sidebar=websites_sidebar(facts), websites_list=websites_list(facts),
-                  repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages),
+                  repo_url=REPO_URL, site_url=SITE_URL, project_path=PROJECT_PATH, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages),
                   build_log_list=build_log_list(pages))
     # Only screenshots of screens the shell registers: a file whose id is not a screen is left out.
     screen_ids = {d['id'] for d in admin.destinations()}
     shots = {i: v for i, v in admin.screenshots(os.environ.get('SCREENS_DIR')).items() if i in screen_ids}
     tokens.update(admin.feature_tokens(REPO_URL, shots=shots))
+    tokens.update(admin.split_tokens())
     tokens.update(screens_gallery=admin.screens_gallery(admin.destinations(), shots))
     night = admin.overnight()
-    tokens.update(overnight_bands=admin.overnight_bands(night['screens'], shots),
-                  overnight_hero=admin.overnight_hero(shots, night.get('hero')))
+    # The Overnight page is in the admin area, one folder down, so its images start with ../
+    tokens.update(overnight_bands=admin.overnight_bands(night['screens'], shots, root='../'),
+                  overnight_hero=admin.overnight_hero(shots, night.get('hero'), root='../'))
     # The home page shows a real iPad screenshot when CI took one; otherwise the drawn mock-up.
-    hero = next((i for i in ('today', 'team.people', 'news.home') if 'ipad' in shots.get(i, {})), None)
-    tokens['hero_device'] = (f'<figure class="device-shot">{admin.shot_img(shots, hero, {"today": "My day", "team.people": "The team", "news.home": "News"}[hero], device="ipad", width=640)}'
+    hero = next((i for i in ('news.home', 'reader.agenda', 'today') if 'ipad' in shots.get(i, {})), None)
+    tokens['hero_device'] = (f'<figure class="device-shot">{admin.shot_img(shots, hero, {"today": "My day", "reader.agenda": "The agenda", "news.home": "News"}[hero], device="ipad", width=640)}'
                              '<figcaption class="muted">The app on iPad, from the latest CI screenshots.</figcaption></figure>'
                              if hero else fill((WEBSITE / 'hero_mock.html').read_text(), tokens))
     status = admin.push_status()
@@ -438,10 +430,10 @@ def build(out):
         shutil.copy(source, out / published)
 
     llms = ['# PrompTugal for iOS', '',
-            f"> PrompTugal {facts['version']} for iPhone and iPad, in beta. Today it is the PrompTugal team's internal "
-            'app for Web Summit Lisbon 2026, being built to hold the news, the agenda and each person\'s day offline, and what the team '
-            'and its AI agents are doing. Where it is going: a platform for readers and for teams. '
-            'Independent of Web Summit.', '', '## Pages', '']
+            f"> PrompTugal {facts['version']} for iPhone and iPad, in beta. The public PrompTugal app, for readers and "
+            'participants at Web Summit Lisbon 2026: the news, the agenda in Lisbon time and each person\'s day, offline. '
+            'It is one of three apps from one repository; the others are the PrompTugal team\'s own app and RiskMandate, '
+            'which comes after the summit. Independent of Web Summit.', '', '## Pages', '']
     llms_team = ['', '## For the team: developer area and briefs', '']
     sitemap = []
     for page in pages:

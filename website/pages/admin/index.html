@@ -10,11 +10,15 @@ order: 10
     <h1>Briefs, releases and source</h1>
     <p class="lede">Working material for the PrompTugal team and the agents that build with us. Everything here is public and readable. It is kept out of search engines, but anyone with the link can read it. Every page below is generated from the repository when the site is built.</p>
     <div class="admin-grid">
+      <a class="card" href="briefs/2026-11-08__three-apps/index.html"><h3>Three apps</h3><p>The split into the PrompTugal, Team and RiskMandate apps: the plan, the contracts and each session’s status.</p></a>
+      <a class="card" href="team-app.html"><h3>Team app</h3><p>The team’s own app: its features, dashboards and debug panels.</p></a>
+      <a class="card" href="team-privacy.html"><h3>Team app privacy</h3><p>What the Team app keeps, what it sends and to whom.</p></a>
+      <a class="card" href="overnight.html"><h3>Overnight</h3><p>How the app was built on 7 and 8 November, screen by screen.</p></a>
       <a class="card" href="briefs/2026-11-08__app-review-readiness/index.html"><h3>App Review readiness</h3><p>What App Review would reject, the security and stability findings, and who fixes what.</p></a>
       <a class="card" href="briefs/2026-11-08__overnight-push/morning.html"><h3>Morning summary</h3><p>For Dinis and Silvio: what shipped overnight, what to set up and what to test first.</p></a>
-      <a class="card" href="build-log/index.html"><h3>Build log</h3><p>The overnight push, checkpoint by checkpoint.</p></a>
+      <a class="card" href="build-log/index.html"><h3>Build log</h3><p>The overnight push and the split, checkpoint by checkpoint.</p></a>
       <a class="card" href="push.html"><h3>Push dashboard</h3><p>Every push, every session: done, in progress and blocked, from their status pages.</p></a>
-      <a class="card" href="screens.html"><h3>Screens</h3><p>Every native screen and web page in the app, and the code per folder.</p></a>
+      <a class="card" href="screens.html"><h3>Screens</h3><p>Every native screen and web page in the Team app, and the code per folder.</p></a>
       <a class="card" href="releases.html"><h3>Releases</h3><p>Every site release, from the git tags, with what changed.</p></a>
       <a class="card" href="ci.html"><h3>CI</h3><p>The {{workflow_count}} GitHub workflows, their jobs and steps.</p></a>
       <a class="card" href="#briefs"><h3>Briefs</h3><p>Brief packs on where the app is going.</p></a>
@@ -41,7 +45,7 @@ order: 10
       <dt>Site release</dt>
       <dd>{{release}}, from the <code>VERSION</code> file. CI bumps it, tags it and pushes it on every push to <code>dev</code>, then deploys and checks the live <a href="../version.json"><code>version.json</code></a>.</dd>
       <dt>App version</dt>
-      <dd>{{version}} (build {{build}}), from <code>MARKETING_VERSION</code> and <code>CURRENT_PROJECT_VERSION</code> in the Xcode project. Bumped by hand before each TestFlight upload.</dd>
+      <dd>The PrompTugal app is {{version}} (build {{build}}), from <code>MARKETING_VERSION</code> and <code>CURRENT_PROJECT_VERSION</code> in its Xcode project. Bumped by hand before each TestFlight upload.</dd>
       <dt>The app’s code</dt>
       <dd>{{swift_lines}} lines of Swift in {{swift_files}} files ({{swift_test_files}} of them tests), with no third-party packages, on <a href="{{repo_url}}">GitHub</a>. <a href="screens.html#code">Lines per folder</a>.</dd>
     </dl>

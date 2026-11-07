@@ -1,22 +1,22 @@
 <!--
 title: PrompTugal for iPhone and iPad
-description: PrompTugal for iPhone and iPad is, today, the PrompTugal team's internal app for Web Summit Lisbon 2026, in beta. Where it is going: a platform for readers and attendees, and for teams and newsrooms that work with AI agents.
+description: PrompTugal is the public iPhone and iPad app of PrompTugal.news for Web Summit Lisbon 2026, in beta: the news, the agenda in Lisbon time and your own day, offline, with no account.
 nav: Home
 order: 1
 -->
 <section class="band">
   <div class="wrap hero">
     <div>
-      <p class="kicker">Internal beta · iPhone and iPad · iOS and iPadOS {{min_ios}}+</p>
-      <h1>The PrompTugal team’s <em>own app</em>, in beta.</h1>
-      <p class="lede">Today this is an internal app: the first people to use it are the PrompTugal team, at Web Summit Lisbon, 9 to 12 November 2026. It is native on iPhone and iPad. It is being built to put the news, the agenda and each person’s day on the device, offline, and to show what the team and its AI agents are doing ({{features_shipped}} of {{features_total}} features so far). Where it is going is a platform for readers and for teams; this site shows both, and what is built so far.</p>
+      <p class="kicker">Beta · iPhone and iPad · iOS and iPadOS {{min_ios}}+</p>
+      <h1>The summit, the news and <em>your day</em>, in one app.</h1>
+      <p class="lede">PrompTugal is the app of PrompTugal.news for readers and for everyone at Web Summit Lisbon, 9 to 12 November 2026. It is native on iPhone and iPad. It puts the news, the agenda in Lisbon time and your own day on the device, offline, and it needs no account and no keys ({{features_readers_shipped}} of {{features_readers_total}} planned features so far). It is in beta and not yet in the App Store.</p>
       <p class="actions">
-        <a class="button" href="features.html">What is built</a>
-        <a class="button button-ghost" href="admin/build-log/index.html">How it is being built</a>
+        <a class="button" href="readers.html">What it does</a>
+        <a class="button button-ghost" href="support.html#beta">Get the beta</a>
       </p>
       <ul class="facts">
         <li>Version {{version}}</li>
-        <li>{{features_shipped}} of {{features_total}} planned features in the beta</li>
+        <li>{{features_readers_shipped}} of {{features_readers_total}} planned features in the beta</li>
         <li>No account, no tracking</li>
         <li>Apple frameworks only</li>
       </ul>
@@ -25,34 +25,21 @@ order: 1
   </div>
 </section>
 
-<section class="band band-alt" id="two">
+<section class="band band-alt" id="three">
   <div class="wrap">
-    <p class="kicker">Where it is going</p>
-    <h2>Two platforms, one app</h2>
-    <p class="prose">Both are being built inside the team’s app first. Nothing here is on sale or in the App Store yet.</p>
-    <div class="two">
-      <article class="card">
-        <h3><span class="num">01</span> Readers and attendees</h3>
-        <p class="count">{{features_readers_shipped}} of {{features_readers_total}} features in the beta</p>
-        <p>The news, the agenda in Lisbon time, the sessions you picked on the website and in the app as one list, reminders, and an offline copy for when the venue Wi-Fi fails. Your private data can live in your own encrypted vault, opened with Face ID.</p>
-        <p><a href="readers.html">What readers get</a></p>
-      </article>
-      <article class="card">
-        <h3><span class="num">02</span> Teams and newsrooms</h3>
-        <p class="count">{{features_teams_shipped}} of {{features_teams_total}} features in the beta</p>
-        <p>Native iPad dashboards of who is doing what: decisions waiting, briefings, what each agent reported, newsroom status. Messages to teammates go through vaults that only the team can read. Debug panels show every request and every decryption step.</p>
-        <p><a href="teams.html">What teams get</a></p>
-      </article>
-    </div>
+    <p class="kicker">One of three apps</p>
+    <h2>This site is about the public app</h2>
+    <p class="prose">The PrompTugal team builds three apps from one repository. This is the one for the public. The team has an app of its own for its people and agents, and a RiskMandate app comes after the summit.</p>
+    <p><a href="apps.html">Which app is which</a></p>
   </div>
 </section>
 
 <section class="band" id="first-customer">
   <div class="wrap prose">
-    <p class="kicker">Who it is for today</p>
-    <h2>Our own team, at Web Summit Lisbon</h2>
-    <p>Seven to nine of us use PrompTugal at Web Summit Lisbon, 9 to 12 November 2026. That week tells us which features are worth keeping. After the summit we will offer the team features to other teams that work an event with agents. <a href="plans.html">How that will be sold</a>.</p>
-    <p>Today the beta is installed from Xcode or through TestFlight (<a href="support.html#beta">how to get it</a>). The App Store comes later.</p>
+    <p class="kicker">Who it is for</p>
+    <h2>Readers, and everyone at Web Summit Lisbon</h2>
+    <p>The PrompTugal team uses it at Web Summit Lisbon, 9 to 12 November 2026, and so can you. That week tells us which features are worth keeping. The news stays free, and the app has no account to make.</p>
+    <p>Today the beta is installed from Xcode or through TestFlight (<a href="support.html#beta">how to get it</a>). The App Store comes later. <a href="plans.html">What stays free, and what may not</a>.</p>
   </div>
 </section>
 
@@ -60,12 +47,12 @@ order: 1
   <div class="wrap">
     <p class="kicker">Built small, and shown</p>
     <h2>Counted from the source on every build</h2>
-    <p class="prose">Apple’s own frameworks only, with no third-party packages and no analytics. These numbers are counted from the repository each time this site is built, and the <a href="features.html">feature list</a> is checked against the files that implement each feature.</p>
+    <p class="prose">Apple’s own frameworks only, with no third-party packages and no analytics. These numbers are counted from the repository each time this site is built, and the <a href="features.html">feature list</a> is checked against the files that implement each feature. The line and file counts cover all three apps and the code they share.</p>
     <dl class="stats">
-      <div><dt>{{swift_lines}}</dt><dd>lines of Swift</dd></div>
+      <div><dt>{{swift_lines}}</dt><dd>lines of Swift in the repository</dd></div>
       <div><dt>{{swift_files}}</dt><dd>Swift files</dd></div>
       <div><dt>0</dt><dd>third-party packages</dd></div>
-      <div><dt>{{features_shipped}}/{{features_total}}</dt><dd>features in the beta</dd></div>
+      <div><dt>{{features_readers_shipped}}/{{features_readers_total}}</dt><dd>features in the beta</dd></div>
     </dl>
   </div>
 </section>

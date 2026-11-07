@@ -1,5 +1,5 @@
 {
-  "_about": "The feature list on the product site. A feature is shown as 'In the beta' only when every entry in 'evidence' is present at build time: a file glob must match at least one file, and 'screen:<id>' must be a screen registered in Shell/Destinations.swift with a real view, not a PendingFeatureView; 'view:<Name>' must be a view used by such a registration, whatever its id. Otherwise it is shown as 'Coming'. Write 'what' so it is true once the code is merged. Screens and views count only when AppShell is the root view of the app's @main WindowGroup; 'root:<text>' must appear in that WindowGroup. 'text:<glob>::<text>' must find that exact text in a matching file. A feature whose 'hidden_in_release' evidence is all present is labelled 'Debug builds only', not 'In the beta'.",
+  "_about": "The feature list on the product site and the Team app page. A feature has a platform: 'readers' is the public PrompTugal app, 'teams' is the Team app (shown in the admin area). A feature is shown as 'In the beta' only when every entry in 'evidence' is present at build time, inside the folders that app is built from (its own folder in Apps/ and the packages apps.json gives it; before the split, the old PrompTugal/ folder). A file glob must match at least one file there, and test folders never count. Write globs by folder or file name, not by full path, so a file that moves to a package stays found. 'screen:<id>' must be a screen registered in a Destinations.swift of that app with a real view, not a PendingFeatureView; 'view:<Name>' must be a view used by such a registration, whatever its id. Otherwise it is shown as 'Coming'. Write 'what' so it is true once the code is merged. Screens and views count only when AppShell is the root view of the app's @main WindowGroup; 'root:<text>' must appear in that WindowGroup. 'text:<glob>::<text>' must find that exact text in a matching file. A feature whose 'hidden_in_release' evidence is all present is labelled 'Debug builds only', not 'In the beta'.",
   "features": [
     {
       "id": "websites",
@@ -8,7 +8,7 @@
       "kind": "web",
       "what": "The live PrompTugal.news site opens in the app, with its own page and Back history, and updates the moment the site is released.",
       "evidence": [
-        "PrompTugal/**/WebsiteView.swift"
+        "**/WebsiteView.swift"
       ]
     },
     {
@@ -18,18 +18,18 @@
       "kind": "native",
       "what": "Native Now, Agenda, Saved and News lists, kept on the device for when the venue Wi-Fi fails. Every time is shown in Lisbon time.",
       "evidence": [
-        "PrompTugal/**/ReaderStore.swift",
-        "PrompTugal/**/Content.swift"
+        "**/ReaderStore.swift",
+        "**/Content.swift"
       ]
     },
     {
       "id": "sample-data",
-      "platform": "readers",
+      "platform": "teams",
       "name": "Try with sample data",
       "kind": "native",
       "what": "\"Who are you?\" offers \"Try with sample data\": every team screen fills with made-up people and data that ship with the app, with a banner to turn it off.",
       "evidence": [
-        "text:PrompTugal/**/*.swift::Try with sample data",
+        "text:**/*.swift::Try with sample data",
         "root:AppShell("
       ]
     },
@@ -40,7 +40,7 @@
       "kind": "hybrid",
       "what": "Sessions picked on the website and sessions saved in the app become one list, in the website's own format, so a pick made in one place shows in the other.",
       "evidence": [
-        "PrompTugal/Schedule/ScheduleStore.swift",
+        "**/ScheduleStore.swift",
         "screen:team.schedule"
       ]
     },
@@ -51,7 +51,7 @@
       "kind": "hybrid",
       "what": "A small, fixed set of messages between the website and the app, checked against a list of allowed sites. No message ever returns a key.",
       "evidence": [
-        "PrompTugal/Bridge/*.swift",
+        "**/AppBridge.swift",
         "root:.teamFeatures()"
       ]
     },
@@ -62,7 +62,7 @@
       "kind": "native",
       "what": "A notification before each picked session, with the venue, in Lisbon time.",
       "evidence": [
-        "PrompTugal/Notifications/*.swift",
+        "**/ReminderScheduler.swift",
         "root:.teamFeatures()"
       ]
     },
@@ -95,9 +95,9 @@
       "kind": "native",
       "what": "Vault keys stay on this device, in the Keychain, behind Face ID or the device passcode. The app never stores a vault key without one. Keys are never synced, logged or shown.",
       "evidence": [
-        "PrompTugal/Vault/VaultKeychain.swift",
+        "**/VaultKeychain.swift",
         "screen:vault",
-        "text:PrompTugal/Vault/VaultKeychain.swift::for protection in [Protection.faceID, .userPresence]"
+        "text:**/VaultKeychain.swift::for protection in [Protection.faceID, .userPresence]"
       ]
     },
     {
@@ -105,10 +105,10 @@
       "platform": "readers",
       "name": "Trusted signers and your own vault",
       "kind": "native",
-      "what": "A vault's changes count only when signed by a key you trust: \"Trust this signer\" adds one. \"Make this my vault\" says which vault is yours, so a teammate's imported vault never is.",
+      "what": "A vault's changes count only when signed by a key you trust: \"Trust this signer\" adds one. \"Make this my vault\" says which vault is yours, so a vault imported from someone else never is.",
       "evidence": [
-        "text:PrompTugal/Vault/VaultViews.swift::Trust this signer",
-        "text:PrompTugal/Vault/VaultViews.swift::Make this my vault"
+        "text:**/VaultViews.swift::Trust this signer",
+        "text:**/VaultViews.swift::Make this my vault"
       ]
     },
     {
@@ -128,7 +128,7 @@
       "kind": "native",
       "what": "Chat about the agenda, your picks and the news, using your own OpenRouter key, kept in the Keychain and sent only to openrouter.ai and the model provider you choose.",
       "evidence": [
-        "PrompTugal/AI/*.swift",
+        "**/OpenRouterClient.swift",
         "screen:collab.ai"
       ]
     },
@@ -139,21 +139,21 @@
       "kind": "native",
       "what": "Before the first message, Ask says what it sends and to whom, and sends nothing until you allow it. Each kind of context has its own switch; only the public agenda is on by default.",
       "evidence": [
-        "text:PrompTugal/AI/*.swift::AskConsentSheet"
+        "text:**/AskView.swift::AskConsentSheet"
       ]
     },
     {
       "id": "topup",
-      "platform": "readers",
+      "platform": "teams",
       "name": "Reading meter top-up in the app",
       "kind": "native",
       "what": "The website's reading meter, topped up with an Apple in-app purchase instead of a card link. Hidden in release builds until it does something in the app; available in builds from Xcode for testing.",
       "evidence": [
-        "PrompTugal/Store/*.swift",
+        "**/ReadingCredit.swift",
         "screen:team.store"
       ],
       "hidden_in_release": [
-        "text:PrompTugal/Store/ReadingCredit.swift::static let isAvailable = false"
+        "text:**/ReadingCredit.swift::static let isAvailable = false"
       ]
     },
     {
@@ -203,7 +203,7 @@
       "kind": "native",
       "what": "Append-only lanes in the vault for notes to teammates and tips to the newsroom. Only people with the vault's keys can read them.",
       "evidence": [
-        "PrompTugal/Lanes/*.swift",
+        "**/LanesStore.swift",
         "screen:collab.lanes"
       ]
     },
@@ -214,7 +214,7 @@
       "kind": "native",
       "what": "Every message can be reported, and its lane or sender blocked on this device; blocked lanes and senders are listed and can be unblocked.",
       "evidence": [
-        "text:PrompTugal/Lanes/*.swift::ReportBlockMenu"
+        "text:**/LanesView.swift::ReportBlockMenu"
       ]
     },
     {
@@ -224,7 +224,7 @@
       "kind": "native",
       "what": "Teammates' picks, read from the vaults they choose to share, next to your own schedule.",
       "evidence": [
-        "PrompTugal/Coordination/*.swift",
+        "**/CoordinationStore.swift",
         "view:TeamPlansView"
       ]
     },
@@ -246,7 +246,7 @@
       "what": "Every request the app makes, every vault read and decryption step with its size and timing, the bridge messages, storage and the build. Which keys exist and where, never their values. Debug mode is turned on in Settings.",
       "evidence": [
         "screen:debug",
-        "PrompTugal/Debug/*.swift"
+        "**/DebugHomeView.swift"
       ]
     },
     {
@@ -256,7 +256,7 @@
       "kind": "native",
       "what": "When the app leaves the screen, a cover hides its contents, so the app switcher never shows keys, messages or a conversation.",
       "evidence": [
-        "text:PrompTugal/Shell/*.swift::struct PrivacyCover"
+        "text:**/*.swift::struct PrivacyCover"
       ]
     },
     {
