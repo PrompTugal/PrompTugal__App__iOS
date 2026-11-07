@@ -1,8 +1,8 @@
 # Status · Design (App Review readiness)
 
-> All design items are done and night/design builds green (run 224, with team's fixes merged). The unit-test run (229, by hand) is queued.
+> Done. All design items are fixed, built green (run 224) and their unit tests pass on iPhone and iPad (run 237: all 7 design suites green). The only failures in that run are team's 3 StoreKit tests, which team owns.
 
-Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 15:22 UTC
+Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 16:00 UTC
 
 ## Done
 
@@ -37,11 +37,12 @@ Also done after team's and platform's notes:
 | 217 | 920ad9e (after merging night/team 9471fa9) | red, only in team's `Bridge/AppBridge.swift:164-166`; team fixed it (c6a7719, a39b136) |
 | 220 | 94aa2ef (night/team c6a7719 merged) | build green |
 | 224 | a0b940c (night/team a39b136 merged) | build green |
-| 229 | a0b940c, unit tests by hand (workflow_dispatch) | queued |
+| 229 | a0b940c, unit tests by hand | test target did not compile (team's `AppReviewTests.swift`, fixed by team in de93864) |
+| 237 | a3ee648, unit tests by hand (iPhone and iPad) | **167 tests pass; all 7 design suites green.** 3 failures, all team's StoreKit tests (`AppReviewTests.swift:184, 194, 209`: products do not load in CI); team told |
 
 ## In progress
 
-- Run 229: the iPhone and iPad unit tests, including `PrompTugalTests/DesignReviewTests.swift`.
+Nothing. The design list is done; the conductor can merge night/design once team's StoreKit tests are green (or judged separately).
 
 ## Blocked / needs from others
 
