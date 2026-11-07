@@ -395,6 +395,7 @@ def build(out):
                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
                   workflow_count=str(len(admin.workflows())),
                   screens=admin.screens_html(admin.destinations(), facts['websites']),
+                  branch_screens=admin.branch_screens_html(admin.branch_destinations()),
                   code_areas=admin.areas_html(facts['areas']),
                   latest_build=admin.latest_build_html(admin.latest_build(os.environ.get('IOS_BUILD_JSON')), REPO_URL))
 
