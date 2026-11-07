@@ -9,6 +9,7 @@ struct MyDayView: View {
     @Environment(PlannerStore.self) private var planner
     @Environment(AppBridge.self) private var bridge
     @Environment(\.openURL) private var openURL
+    @State private var calendarMessage: String?
 
     private struct Row: Identifiable {
         let id: String
@@ -55,6 +56,29 @@ struct MyDayView: View {
         }
         .navigationTitle("My day")
         .refreshable { await team.refresh(person: identity.current?.id) }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    Task {
+                        let upcoming = schedule.picks.filter { ($0.start ?? .distantPast) > .now }
+                        switch await CalendarExport.add(upcoming) {
+                        case .added(let count): calendarMessage = "\(count) sessions added to your calendar."
+                        case .denied: calendarMessage = "Calendar access was not given. You can allow it in Settings."
+                        case .failed(let message): calendarMessage = message
+                        }
+                    }
+                } label: {
+                    Label("Add to Calendar", systemImage: "calendar.badge.plus")
+                }
+                .disabled(schedule.picks.isEmpty)
+            }
+        }
+        .alert("Calendar", isPresented: Binding(get: { calendarMessage != nil },
+                                                set: { if !$0 { calendarMessage = nil } })) {
+            Button("OK") { calendarMessage = nil }
+        } message: {
+            Text(calendarMessage ?? "")
+        }
     }
 
     @ViewBuilder private func header(now: Date) -> some View {

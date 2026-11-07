@@ -21,6 +21,8 @@ final class TeamFeatures {
     let planner: PlannerStore
 
     private var started = false
+    private var agenda: [Event] = []
+    private var observers: [NSObjectProtocol] = []
 
     init(directory: URL? = nil) {
         schedule = ScheduleStore(directory: directory)
@@ -40,13 +42,26 @@ final class TeamFeatures {
         started = true
         credits.start()
         reminders.start()
+        observers.append(NotificationCenter.default.addObserver(forName: .scheduleDidChange, object: schedule,
+                                                                queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.publishNowNext() }
+        })
+        publishNowNext()
         Task { await team.refresh(person: identity.current?.id) }
     }
 
     /// Gives the schedule the current agenda (call after each agenda refresh), so picks sort and remind by start time.
     func agendaDidLoad(_ events: [Event]) {
+        agenda = events
         schedule.updateEvents(events)
         planner.updateAgenda(events)
+        publishNowNext()
+    }
+
+    /// The widgets' "Now and next" (platform's `NowNextPublisher`), with the schedule's picks as mine.
+    func publishNowNext() {
+        guard !agenda.isEmpty else { return }       // until the agenda arrives, the reader's snapshot stands
+        NowNextPublisher.publish(agenda: agenda, saved: schedule.picks.compactMap(\.event))
     }
 }
 

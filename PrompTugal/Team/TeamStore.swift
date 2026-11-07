@@ -86,8 +86,11 @@ final class TeamStore {
     func refreshCentre(for person: String) async {
         guard ScheduleID.isValid(person) else { return }
         let url = TeamEndpoints.base.appendingPathComponent("people/\(person)/app/data.json")
-        let fetch = self.fetch
-        receive("centre.\(person)", await Result { try await fetch(url) })
+        do {
+            receive("centre.\(person)", .success(try await fetch(url)))
+        } catch {
+            receive("centre.\(person)", .failure(error))
+        }
     }
 
     private func receive(_ key: String, _ result: Result<Data, Error>) {
