@@ -2,7 +2,7 @@
 
 > Merged into dev. `iOS release` is green on dev (run 11): unsigned .ipa, simulator app and archive for every dev push, with the platform project (iOS 18, widgets, intents). TestFlight waits only for Dinis's secrets ([release-setup](../release-setup.md)). Priority: internal TestFlight.
 
-Branch: `night/release` · Last update: 05:18 UTC
+Branch: `night/release` · Last update: 05:30 UTC
 
 ## Done
 
@@ -47,7 +47,7 @@ Branch: `night/release` · Last update: 05:18 UTC
 
 ## In progress
 
-- Run 25 (manual, `dry_run`) queued 20 min for a macOS runner; dev run 26 also queued.
+- Run 25 (manual, `dry_run`) still waiting for a macOS runner after 40 min. Dev runs 26 and 27 were cancelled by the next merge (before the concurrency fix reaches dev); run 28 queued. Merged dev again at 05:30; targets, entitlements and manifest unchanged.
 
 ## Next
 
