@@ -4,7 +4,8 @@ import XCTest
 /// Screenshots of every main screen, for the team and Dinis to see without a Mac.
 /// Run by .github/workflows/screens.yml on dev (scheme PrompTugalScreens), one iPhone and one iPad.
 /// The shell reads the launch arguments (Shell/LaunchOptions.swift): -PTDestination <id> opens that
-/// screen, -PTSampleData uses bundled sample data instead of the network, -PTMe <id> picks who "me" is.
+/// screen, -PTSampleData uses bundled sample data instead of the network, -team.me <id> picks who "me" is for
+/// this launch (a UserDefaults argument, never saved).
 ///
 /// One test per screen, so a crash or a slow accessibility query on one screen cannot stop the others.
 final class ScreensTests: XCTestCase {
@@ -46,7 +47,7 @@ final class ScreensTests: XCTestCase {
             XCUIDevice.shared.orientation = .landscapeLeft
         }
         let app = XCUIApplication()
-        app.launchArguments = ["-PTDestination", id, "-PTSampleData", "-PTMe", "ana"]
+        app.launchArguments = ["-PTDestination", id, "-PTSampleData", "-team.me", "ana"]
         app.launch()
         sleep(3)
         // Keep the screenshot first: the check below can time out on a screen with a very large

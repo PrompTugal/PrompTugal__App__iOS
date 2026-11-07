@@ -30,7 +30,7 @@ xcodebuild -project PrompTugal.xcodeproj -scheme PrompTugal \
 
 Resource files are copied flat into the app bundle, so two files with the same name in different folders (two `README.md`, say) break the build. Keep notes outside `PrompTugal/`.
 
-**Capabilities.** `Config/PrompTugal.entitlements` asks for the App Group `group.news.promptugal.reader` and the associated domains `webcredentials:promptugal.news` and `applinks:promptugal.news`. In-App Purchase is enabled on the App ID and needs no entitlement key. A free personal team cannot sign these, so set `PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements` in `Config/Local.xcconfig` to build without them.
+**Capabilities.** `Config/PrompTugal.entitlements` asks for the App Group `group.news.promptugal.reader` and the associated domain `webcredentials:promptugal.news` (for passkey vault unlock, behind `VaultConfig.passkeyPRFEnabled`). `applinks:` is left out until promptugal.news serves `/.well-known/apple-app-site-association`; links into the app use the `promptugal://` scheme. In-App Purchase is enabled on the App ID and needs no entitlement key. A free personal team cannot sign these, so set `PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements` in `Config/Local.xcconfig` to build without them.
 
 **StoreKit testing.** The scheme’s Run action uses `PrompTugal/Store/PrompTugal.storekit`, with two consumables: `news.promptugal.reader.credit.5` and `news.promptugal.reader.credit.20`. Purchases in the simulator or a debug build go to this local file, not to the App Store.
 

@@ -11,6 +11,11 @@ final class ReaderStore {
         var newsUpdated: Date?
     }
 
+    /// Session details kept in the offline cache. The agenda has a few hundred sessions; details are
+    /// fetched one at a time as sessions are opened, so this bounds content.json without losing any
+    /// detail the reader is likely to open again.
+    nonisolated static let maxDetails = 300
+
     private var cache = Cache()
     private let directory: URL
     /// Saved sessions are the schedule's picks (contracts §3); the schedule imported the old saved.json.
@@ -28,8 +33,55 @@ final class ReaderStore {
 
     init() {
         directory = URL.applicationSupportDirectory.appendingPathComponent("PrompTugal", isDirectory: true)
-        if let decoded: Cache = read("content.json") { cache = decoded }
+        // Read the offline cache off the main thread: content.json can be a few MB with every
+        // session's details, and decoding it here would hold up the first frame.
+        let file = directory.appendingPathComponent("content.json")
+        Task { [weak self] in
+            let decoded = await Self.decodeCache(at: file)
+            self?.adoptCachedContent(decoded)
+        }
+    }
+
+    private nonisolated static func decodeCache(at file: URL) async -> Cache? {
+        await Task.detached(priority: .userInitiated) { () -> Cache? in
+            guard let data = try? Data(contentsOf: file) else { return nil }
+            return try? JSONDecoder().decode(Cache.self, from: data)
+        }.value
+    }
+
+    /// Takes what the cache file holds, unless a refresh already brought something newer.
+    private func adoptCachedContent(_ decoded: Cache?) {
+        if let decoded {
+            if cache.agendaUpdated == nil {
+                cache.agenda = decoded.agenda
+                cache.agendaUpdated = decoded.agendaUpdated
+            }
+            if cache.newsUpdated == nil {
+                cache.news = decoded.news
+                cache.newsUpdated = decoded.newsUpdated
+            }
+            cache.details = Self.trimmed(decoded.details.merging(cache.details) { _, fresh in fresh },
+                                         keeping: keptDetailIDs)
+        }
         publishNowNext()
+    }
+
+    /// The ids whose details stay first when the cache is trimmed: today's agenda, then the picks.
+    private var keptDetailIDs: [String] {
+        cache.agenda.map(\.id) + schedule.picks.compactMap(\.event?.id)
+    }
+
+    /// At most `limit` details: those for `keeping` first (in that order), then the rest by id.
+    nonisolated static func trimmed<Detail>(_ details: [String: Detail], keeping: [String],
+                                            limit: Int = maxDetails) -> [String: Detail] {
+        guard details.count > limit else { return details }
+        var order: [String] = []
+        var seen = Set<String>()
+        for id in keeping where details[id] != nil && seen.insert(id).inserted { order.append(id) }
+        for id in details.keys.sorted() where seen.insert(id).inserted { order.append(id) }
+        var result: [String: Detail] = [:]
+        for id in order.prefix(limit) { result[id] = details[id] }
+        return result
     }
 
     /// Gives the schedule the cached agenda (offline start) and keeps the widgets' "Now and next" current.
@@ -93,6 +145,7 @@ final class ReaderStore {
             let detail = try await FeedClient.detail(for: event)
             try Task.checkCancellation()
             cache.details[event.id] = detail
+            cache.details = Self.trimmed(cache.details, keeping: [event.id] + keptDetailIDs)
             persistCache()
         } catch {
             // The event page remains available when the detail feed cannot be reached.
@@ -105,11 +158,6 @@ final class ReaderStore {
         } catch {
             storageMessage = "The latest content couldn’t be stored for offline use."
         }
-    }
-
-    private func read<Value: Decodable>(_ name: String) -> Value? {
-        guard let data = try? Data(contentsOf: directory.appendingPathComponent(name)) else { return nil }
-        return try? JSONDecoder().decode(Value.self, from: data)
     }
 
     private func write<Value: Encodable>(_ value: Value, to name: String) throws {

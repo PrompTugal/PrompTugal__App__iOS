@@ -23,7 +23,6 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
-		<string>processing</string>
 	</array>
 	<key>WKAppBoundDomains</key>
 	<array>
