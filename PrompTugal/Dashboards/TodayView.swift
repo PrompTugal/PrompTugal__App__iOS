@@ -78,6 +78,10 @@ struct PersonBriefView: View {
             FreshnessLabel(updated: data.team.updated, failed: data.team.failed)
 
             StandupCard(person: person)
+            if isMe {
+                // The team session's "my next 3 hours": picks and stand-ups with a Lisbon countdown.
+                NextHoursCard()
+            }
 
             StatGrid {
                 StatTile(label: "Only you", value: "\(person.onlyYou ?? 0)", detail: "nobody else can do these",

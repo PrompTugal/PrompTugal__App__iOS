@@ -15,12 +15,13 @@ struct WallView: View {
                     header(context.date)
                     if width == .regular {
                         HStack(alignment: .top, spacing: Space.l) {
-                            VStack(spacing: Space.l) { teamTile; standupTile }
+                            VStack(spacing: Space.l) { teamTile; standupTile; NextHoursCard() }
                                 .frame(width: 360)
                             VStack(spacing: Space.l) { agentsTile; pipelineTile; runsTile }
                         }
                     } else {
                         standupTile
+                        NextHoursCard()
                         teamTile
                         agentsTile
                         pipelineTile
