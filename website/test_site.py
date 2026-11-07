@@ -273,6 +273,24 @@ class SiteTest(unittest.TestCase):
         swift.write_text('AppDestination(id: "vault", kind: .native) { AnyView(VaultView()) }\n')
         self.assertTrue(admin.features(root)[0]['shipped'])
 
+    def test_latest_build_panel(self):
+        self.assertIsNone(admin.latest_build(None))
+        bad = self.tmp / 'bad.json'
+        bad.write_text('{"available": false}')
+        self.assertIsNone(admin.latest_build(bad))
+        bad.write_text('not json')
+        self.assertIsNone(admin.latest_build(bad))
+        self.assertIn('No CI build information', admin.latest_build_html(None, build.REPO_URL))
+        good = self.tmp / 'good.json'
+        good.write_text(json.dumps({'available': True, 'version': '0.4.0', 'build': '103', 'commit': 'abcdef123',
+                                    'builtAt': '2026-11-07T03:00:00Z', 'deviceFamily': [1, 2], 'minimumOS': '18.0',
+                                    'appBytes': 1048576 * 2, 'ipaBytes': 657000,
+                                    'runUrl': 'https://github.com/x/y/actions/runs/42', 'artifacts': [{'name': 'a', 'size': 10}]}))
+        out = admin.latest_build_html(admin.latest_build(good), build.REPO_URL)
+        for want in ('0.4.0 (build 103)', 'iPhone and iPad', '2.0 MB', '642 KB', '>42<', 'abcdef1'):
+            self.assertIn(want, out)
+        self.assertEqual(json.loads((self.clean / 'ios-build.json').read_text()), {'available': False})
+
     def test_build_log_checkpoints_are_published(self):
         for source in sorted((build.WEBSITE / 'build-log').glob('*.md')):
             page = self.clean / 'admin' / 'build-log' / f'{source.stem}.html'

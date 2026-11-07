@@ -59,6 +59,9 @@ jobs:
     needs: release
     if: always() && (needs.release.result == 'success' || needs.release.result == 'skipped')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read   # the latest iOS build panel reads the release workflow's runs and artifacts
     steps:
       - uses: actions/checkout@v4
         with:
@@ -72,9 +75,20 @@ jobs:
       - name: Test the builder and the validator
         run: python3 -m unittest website/test_site.py -v
 
+      - name: Latest iOS build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -x scripts/release/latest-build.sh ]; then
+            scripts/release/latest-build.sh "$RUNNER_TEMP/ios-build.json" dev || echo '{"available": false}' > "$RUNNER_TEMP/ios-build.json"
+          else
+            echo '{"available": false}' > "$RUNNER_TEMP/ios-build.json"
+          fi
+
       - name: Build
         env:
           SITE_COMMIT: ${{ needs.release.outputs.sha || github.sha }}
+          IOS_BUILD_JSON: ${{ runner.temp }}/ios-build.json
         run: python3 website/build.py
 
       - name: Validate

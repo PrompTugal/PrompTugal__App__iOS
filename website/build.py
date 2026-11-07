@@ -386,7 +386,8 @@ def build(out):
                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
                   workflow_count=str(len(admin.workflows())),
                   screens=admin.screens_html(admin.destinations(), facts['websites']),
-                  code_areas=admin.areas_html(facts['areas']))
+                  code_areas=admin.areas_html(facts['areas']),
+                  latest_build=admin.latest_build_html(admin.latest_build(os.environ.get('IOS_BUILD_JSON')), REPO_URL))
 
     if out.exists():
         shutil.rmtree(out)
@@ -432,6 +433,8 @@ def build(out):
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + '\n'.join(sitemap) + '\n</urlset>\n')
     (out / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n')
+    build_json = admin.latest_build(os.environ.get('IOS_BUILD_JSON'))
+    (out / 'ios-build.json').write_text(json.dumps(build_json or {'available': False}, indent=2) + '\n')
     (out / 'version.json').write_text(json.dumps(
         {key: facts[key] for key in ('release', 'version', 'build', 'site_commit')}, indent=2) + '\n')
     return facts, pages
