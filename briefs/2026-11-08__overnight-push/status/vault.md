@@ -1,8 +1,8 @@
 # Status · Swift vault
 
-> The Swift vault reader and writer are on dev: 40 package tests, the app builds with the vault inside, and sgit reads back what Swift writes (all green at 309e02a; CI for the 471916c pipeline-logging change was still pending at 04:10). Platform, design and team have wired the vault screen, Face ID, Secure Enclave keys, passkey door and picks mirror into the app.
+> The Swift vault reader and writer are on dev. At 05:05 the latest vault code passed the app build and all package tests; sgit reads back what Swift writes. The vault screen, Face ID, Secure Enclave keys, passkey door, picks mirror and collab's append lanes run on the vault API.
 
-Branch `night/vault`. Updated about 04:10 Lisbon time. On dev: 309e02a, then 471916c (merged into dev 4c78207).
+Branch `night/vault`. Updated about 05:05 Lisbon time; in sync with dev.
 
 ## Done
 
@@ -37,9 +37,11 @@ Branch `night/vault`. Updated about 04:10 Lisbon time. On dev: 309e02a, then 471
 - **Debug pipeline data**: each object's events on one path, in order: fetch or cache hit, verify (sha256), key, AES-256-GCM, inflate (deflated blobs), JSON (with a tree summary). This fills every step of design's decrypt-pipeline panel.
 - **Unlock polish**: one Face ID prompt when the vault screen opens with stored keys; the opened vault is selected; three columns on iPad. Pull on foreground and the end of the Face ID reuse window are driven from `VaultSession` itself (app notifications), so the app needs no extra code.
 
+- **Append lanes for collab**: `VaultSession.files(in:)` and `append(_:to:)` (a new uniquely named file per append, so devices never conflict), used by collab's team notes.
+
 ## In progress
 
-- CI run 10: all 40 Swift tests passed, and sgit read and verified the Swift-written deflate vault (7 files, 5 signatures). The plain export compared against a reader that had pulled before the test's second commit; fixed by exporting through a fresh reader. Waiting for the rerun and for the first app build with PrompTugal/Vault inside (macOS runners are busy).
+- Nothing blocking. App unit tests on night/vault were red only from team's ScheduleTests key order (reported 04:39, fixed on dev in 500b5ad).
 
 ## Next
 
