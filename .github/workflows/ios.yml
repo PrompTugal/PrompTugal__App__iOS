@@ -1,0 +1,155 @@
+name: iOS
+
+# CI is the compiler: nobody in the overnight push can build Swift on Linux.
+# Every job copies compiler and test errors into its job summary, so a session
+# can read a failure through the GitHub tools (actions_list, get_job_logs).
+#
+#   package  swift test in Packages/SGitVault (skipped cleanly if the folder is missing)
+#   build    xcodebuild build for the iOS Simulator, unsigned
+#   test     xcodebuild test on an iPhone simulator
+#   archive  an unsigned simulator .app, uploaded as an artifact
+
+on:
+  push:
+    branches: [dev, 'night/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PROJECT: PrompTugal.xcodeproj
+  SCHEME: PrompTugal
+
+jobs:
+  package:
+    name: SGitVault swift test
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: swift test
+        run: |
+          if [ ! -f Packages/SGitVault/Package.swift ]; then
+            echo "Packages/SGitVault does not exist on this branch; nothing to test."
+            echo "### ⏭️ SGitVault: no package on this branch, skipped" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          cd Packages/SGitVault
+          "$GITHUB_WORKSPACE/.github/scripts/run-and-summarize.sh" "SGitVault swift test" \
+            "$RUNNER_TEMP/logs/swift-test.log" -- swift test
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swift-test-log
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore
+
+  build:
+    name: App build (simulator)
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # build info needs the commit count and tags
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: xcodebuild build
+        run: |
+          .github/scripts/run-and-summarize.sh "App build (iOS Simulator)" "$RUNNER_TEMP/logs/build.log" -- \
+            xcodebuild build \
+              -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination 'generic/platform=iOS Simulator' \
+              -derivedDataPath "$RUNNER_TEMP/dd" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore
+
+  test:
+    name: App unit tests (iPhone simulator)
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Pick an iPhone simulator
+        id: sim
+        run: |
+          udid=$(.github/scripts/pick-simulator.py)
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: xcodebuild test
+        run: |
+          .github/scripts/run-and-summarize.sh "App unit tests" "$RUNNER_TEMP/logs/test.log" -- \
+            xcodebuild test \
+              -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination "id=${{ steps.sim.outputs.udid }}" \
+              -derivedDataPath "$RUNNER_TEMP/dd" \
+              -resultBundlePath "$RUNNER_TEMP/logs/Tests.xcresult" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Upload log and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-log
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore
+
+  archive:
+    name: Simulator .app artifact
+    needs: build
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Build a Release simulator app
+        run: |
+          .github/scripts/run-and-summarize.sh "Release simulator build" "$RUNNER_TEMP/logs/archive.log" -- \
+            xcodebuild build \
+              -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
+              -destination 'generic/platform=iOS Simulator' \
+              -derivedDataPath "$RUNNER_TEMP/dd" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          app=$(find "$RUNNER_TEMP/dd/Build/Products/Release-iphonesimulator" -maxdepth 1 -name '*.app' | head -1)
+          mkdir -p "$RUNNER_TEMP/out"
+          ditto -c -k --keepParent "$app" "$RUNNER_TEMP/out/PrompTugal-simulator.app.zip"
+          ls -la "$RUNNER_TEMP/out"
+          echo "Simulator app: \`PrompTugal-simulator.app.zip\` ($(du -h "$RUNNER_TEMP/out/PrompTugal-simulator.app.zip" | cut -f1)). Install with \`xcrun simctl install booted PrompTugal.app\`." >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PrompTugal-simulator-app
+          path: ${{ runner.temp }}/out/PrompTugal-simulator.app.zip
+          retention-days: 14
