@@ -1,6 +1,9 @@
 import Foundation
 import Observation
 import SGitVault
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// The vaults open on this device, for the UI and the debug panel.
 ///
@@ -50,6 +53,20 @@ final class VaultSession {
     /// Access token for writes (from the master vault's `.vault/access-token.json`, or entered). Memory only.
     private var accessToken: String?
     var canPush: Bool { accessToken != nil }
+
+    init() {
+        #if canImport(UIKit)
+        // Pull when the app comes to the foreground; end the Face ID reuse window when it leaves.
+        // Observed here so the app needs no scene-phase code for the vault.
+        let center = NotificationCenter.default
+        center.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.sceneBecameActive() }
+        }
+        center.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.sceneMovedToBackground() }
+        }
+        #endif
+    }
 
     var isLocked: Bool { vaults.isEmpty }
     var hasStoredKeys: Bool { !keychain.inventory().isEmpty }
