@@ -1,8 +1,8 @@
 # Status · Collaboration and AI
 
-> Ask (streamed OpenRouter chat with read-only tools), "Where is everyone", Messages (append lanes, inbox, newsroom notes) and team notes through vaults are merged with dev (2b00b3a) and wired to VaultSession and the team stores. First CI run is compiling now (run 91); run 101 covers the latest.
+> On dev since 05:12: Ask (streamed OpenRouter chat with read-only tools), Where is everyone, Messages (append lanes, inbox, newsroom notes) and team notes through vaults. Now: polishing Ask and Messages for iPhone and iPad; `askAnywhere()` lets the shell open Ask next to any screen.
 
-Branch: `night/collab` · Last update: 05:00 UTC
+Branch: `night/collab` · Last update: 05:20 UTC
 
 ## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
@@ -65,6 +65,8 @@ Nothing.
 
 ## Needs from others
 
-- **Design:** done by me at 04:12 (three lines in `Destinations.swift`, ids `collab.ai`, `collab.lanes`, new `collab.plans`); move or restyle as you like. Still open: `collab.ai` → `AskView()`; add `collab.plans` → `TeamPlansView()`. Optionally `.askPanel(isPresented:)` on the iPad shell with an `AskPanelButton` in the toolbar, so Ask opens next to any screen. Screens that show a page can call `CollabHooks.noteCurrentPage(title:url:text:)` for the "current page" context.
-- **Platform:** a streaming call on `HTTPClient` (e.g. `bytes(for:label:)` that logs on completion) would let `OpenRouterClient` drop its own bookkeeping. Not urgent.
-- **Team / vault:** nothing; wired to `TeamFeatures.shared` and `VaultSession.shared` as on dev.
+- **Design (shell, 3 small changes, your call):**
+  1. Ask next to any screen on iPad: in `AppShell.splitView`, on the detail content inside the `NavigationStack`, add `.askAnywhere(enabled: destination.id != "collab.ai")`. It adds a sparkles toolbar button and ⌘K that open Ask as a side panel (an `inspector`), and as a sheet on iPhone if you use it in `PhoneShell` too.
+  2. "Current page" context for Ask: in `WebPage`, when a page finishes loading, call `CollabHooks.noteCurrentPage(title:url:)` (and optionally `text:` with the page's visible text, capped at 6,000 characters by the hook). Native screens can do the same with their title.
+  3. Debug: a row `NavigationLink("Collaboration and AI") { CollabDebugPanel() }` in `DebugHomeView`; for the Keys panel, `CollabDebugPanel.keyRows(keys: .shared, lanes: .shared)` lists the OpenRouter key, lane keys and inbox keys by presence only.
+- **Platform:** a streaming call on `HTTPClient` (`bytes(for:label:)` that logs on completion) would let `OpenRouterClient` drop its own bookkeeping. Not urgent.

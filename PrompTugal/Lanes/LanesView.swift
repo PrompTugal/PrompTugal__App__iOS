@@ -126,12 +126,13 @@ struct LanesView: View {
         .navigationTitle("Messages")
         .sheet(item: $composing) { target in
             NavigationStack { LaneComposeView(store: store, target: target) }
+                .presentationSizing(.form)
         }
         .sheet(isPresented: $addingLane) {
-            NavigationStack { AddLaneView(store: store) }.presentationDetents([.medium, .large])
+            NavigationStack { AddLaneView(store: store) }.presentationDetents([.medium, .large]).presentationSizing(.form)
         }
         .sheet(isPresented: $showInboxSetup) {
-            NavigationStack { InboxSetupView(store: store) }.presentationDetents([.medium, .large])
+            NavigationStack { InboxSetupView(store: store) }.presentationDetents([.medium, .large]).presentationSizing(.form)
         }
     }
 }

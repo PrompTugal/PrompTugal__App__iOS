@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Ask: the native AI chat (entry view for `collab.ai`). On iPhone it is a screen or a sheet; on iPad it also
 /// opens as a side panel next to any screen with `.askPanel(isPresented:)`.
@@ -30,6 +31,8 @@ struct AskView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
+                .frame(maxWidth: 760)                      // a readable line on iPad and in landscape
+                .frame(maxWidth: .infinity)
             }
             .scrollDismissesKeyboard(.interactively)
             .onChange(of: store.turns.last?.text) { _, _ in
@@ -129,10 +132,17 @@ struct AskTurnView: View {
         case .assistant:
             VStack(alignment: .leading, spacing: 6) {
                 if turn.text.isEmpty && turn.streaming {
-                    ProgressView().controlSize(.small)
+                    HStack(spacing: 6) {
+                        ProgressView().controlSize(.small)
+                        Text("Thinking…").font(.subheadline).foregroundStyle(.secondary)
+                    }
                 } else {
                     Text(AIMarkdown.render(turn.text))
                         .textSelection(.enabled)
+                        .contextMenu {
+                            Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = turn.text }
+                            ShareLink(item: turn.text) { Label("Share", systemImage: "square.and.arrow.up") }
+                        }
                 }
                 HStack(spacing: 8) {
                     Text(OpenRouter.label(for: turn.model ?? ""))
@@ -182,6 +192,7 @@ struct AskDebugDisclosure: View {
 private struct AskComposer: View {
     @Bindable var store: ChatStore
     var focused: FocusState<Bool>.Binding
+    @State private var dictation = SpeechDictation()
 
     var body: some View {
         VStack(spacing: 8) {
@@ -203,8 +214,20 @@ private struct AskComposer: View {
                 }
                 .padding(.horizontal)
             }
+            if let error = dictation.error {
+                Text(error).font(.caption).foregroundStyle(.orange).padding(.horizontal)
+            }
             HStack(alignment: .bottom, spacing: 8) {
-                TextField("Ask about today, your picks, the team…", text: $store.draft, axis: .vertical)
+                Image(systemName: dictation.isRecording ? "waveform.circle.fill" : "mic.circle")
+                    .font(.title)
+                    .foregroundStyle(dictation.isRecording ? Color.red : Color.secondary)
+                    .gesture(DragGesture(minimumDistance: 0)
+                        .onChanged { _ in if !dictation.isRecording { Task { await dictation.start() } } }
+                        .onEnded { _ in dictation.stop() })
+                    .accessibilityLabel("Hold to dictate")
+                    .accessibilityAddTraits(.isButton)
+                TextField(dictation.isRecording ? "Listening…" : "Ask about today, your picks, the team…",
+                          text: $store.draft, axis: .vertical)
                     .lineLimit(1...6)
                     .textFieldStyle(.plain)
                     .padding(10)
@@ -224,12 +247,14 @@ private struct AskComposer: View {
                     }
                     .disabled(store.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !store.keys.hasKey)
                     .accessibilityLabel("Send")
+                    .keyboardShortcut(.return, modifiers: [.command])
                 }
             }
             .padding(.horizontal)
         }
         .padding(.vertical, 8)
         .background(.bar)
+        .onChange(of: dictation.transcript) { _, text in if !text.isEmpty { store.draft = text } }
     }
 
     private func chipTitle(_ kind: AIContextKind) -> String {
@@ -346,6 +371,30 @@ extension View {
             }
             .inspectorColumnWidth(min: 320, ideal: 400, max: 560)
             .presentationDetents([.medium, .large])
+        }
+    }
+}
+
+extension View {
+    /// Ask next to any screen, in one line: a toolbar button and ⌘K open it as a side panel on iPad (regular
+    /// width) and as a sheet on iPhone. For the shell's detail view, e.g.
+    /// `destination.view().askAnywhere(enabled: destination.id != "collab.ai")`.
+    func askAnywhere(enabled: Bool = true) -> some View {
+        modifier(AskAnywhere(enabled: enabled))
+    }
+}
+
+private struct AskAnywhere: ViewModifier {
+    let enabled: Bool
+    @State private var open = false
+
+    func body(content: Content) -> some View {
+        if enabled {
+            content
+                .toolbar { ToolbarItem(placement: .primaryAction) { AskPanelButton(isPresented: $open) } }
+                .askPanel(isPresented: $open)
+        } else {
+            content
         }
     }
 }
