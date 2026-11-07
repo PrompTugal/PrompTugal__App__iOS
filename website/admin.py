@@ -508,12 +508,21 @@ def png_size(path):
     return int.from_bytes(head[16:20], 'big'), int.from_bytes(head[20:24], 'big')
 
 
-def screen_devices(root=ROOT):
-    """The devices whose screenshots the site publishes (website/screens.json)."""
+def screen_devices(root=ROOT, folder=None):
+    """The devices whose screenshots the site publishes (website/screens.json).
+
+    A device listed under min_run is published only when the screenshots came from that
+    screens.yml run number or later; the deploy writes the run number to <folder>/run.txt."""
     try:
-        return set(json.loads((root / 'website' / 'screens.json').read_text())['devices']) & set(DEVICES)
+        config = json.loads((root / 'website' / 'screens.json').read_text())
+        devices = set(config['devices']) & set(DEVICES)
     except (OSError, ValueError, KeyError):
-        return set(DEVICES)
+        return {'iphone'}
+    try:
+        run = int((Path(folder) / 'run.txt').read_text().strip()) if folder else 0
+    except (OSError, ValueError):
+        run = 0
+    return {d for d in devices if run >= config.get('min_run', {}).get(d, 0)}
 
 
 def png_orientation(path):
@@ -547,7 +556,7 @@ def screenshots(folder, devices=None):
     """{screen id: {device: (source path, width, height)}} from files named <device>-<id>.png,
     for the devices the site publishes."""
     out = {}
-    devices = screen_devices() if devices is None else devices
+    devices = screen_devices(folder=folder) if devices is None else devices
     if not folder or not Path(folder).is_dir():
         return out
     for path in sorted(Path(folder).rglob('*.png')):

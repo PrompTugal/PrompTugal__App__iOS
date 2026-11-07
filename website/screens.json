@@ -1,6 +1,10 @@
 {
-  "_about": "Which devices' screenshots the site publishes. iPad is off: in screens.yml run 12 (3fff23e) the iPad PNGs carry an EXIF orientation of 8, so browsers show them as 1103x1600 portrait with a black band across the top and the right of the screen cut off. The site also leaves out any PNG whose EXIF orientation is not 1, and the validator refuses one. Add \"ipad\" when a run's iPad image shows correctly in a browser.",
+  "_about": "Which devices' screenshots the site publishes, and from which screens.yml run. iPad images before run 15 are wrong (run 12: rotated by an EXIF tag; run 13: a cropped square, part black). Platform's fix (0616379, checked by the editor in Chromium on run 14: upright, whole screen) reaches dev at the next merge, so iPad is published only from run 15 on. Any PNG with an EXIF orientation other than 1 is left out regardless.",
   "devices": [
-    "iphone"
-  ]
+    "iphone",
+    "ipad"
+  ],
+  "min_run": {
+    "ipad": 15
+  }
 }
