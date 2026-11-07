@@ -191,7 +191,7 @@ def parse_status(text):
 
 
 def push_status(root=ROOT, remote='origin'):
-    """Every session's status page in the overnight pack.
+    """Every session's status page, in every brief pack that has a status/ folder.
 
     A session's own branch (origin/night/<slug>) is newer than dev between merges,
     so when the branch is in this checkout (the deploy fetches every branch) its copy
@@ -201,7 +201,9 @@ def push_status(root=ROOT, remote='origin'):
     branches = {line.strip()[len(remote) + len('/night/'):]: line.strip()
                 for line in git('branch', '-r', '--format=%(refname:short)', root=root).splitlines()
                 if line.strip().startswith(f'{remote}/night/')}
-    packs = sorted({p.parent.parent for p in root.glob('briefs/*__overnight-push/status/*.md')})
+    packs = sorted({p.parent.parent for p in root.glob('briefs/*/status/*.md')},
+                   key=lambda pack: git('log', '-1', '--format=%cI', '--', pack.relative_to(root).as_posix(),
+                                        root=root).strip() or '9999', reverse=True)   # newest push first
     for pack in packs:
         rel_pack = pack.relative_to(root).as_posix()
         slugs = {p.stem for p in pack.glob('status/*.md')}
@@ -226,9 +228,29 @@ def push_status(root=ROOT, remote='origin'):
     return out
 
 
+def pack_title(pack, root=ROOT):
+    """A brief pack's title, from its README's first heading."""
+    readme = root / 'briefs' / pack / 'README.md'
+    m = re.search(r'^#\s+(.+)$', readme.read_text(), re.M) if readme.exists() else None
+    return re.sub(r'[`*]', '', m.group(1)).strip() if m else pack
+
+
 def push_dashboard(items, repo_url=''):
+    """One table per brief pack, newest pack first."""
     if not items:
         return '<p>No status pages yet.</p>'
+    packs = []
+    for s in items:
+        if s['pack'] not in packs:
+            packs.append(s['pack'])
+    out = []
+    for pack in packs:
+        out.append(f'<h3 id="pack-{esc(pack)}"><a href="briefs/{esc(pack)}/index.html">{esc(pack_title(pack))}</a></h3>'
+                   + _dashboard_table([s for s in items if s['pack'] == pack], repo_url))
+    return '\n'.join(out)
+
+
+def _dashboard_table(items, repo_url):
     head = ''.join(f'<th scope="col">{s}</th>' for s in STATUS_SECTIONS)
     rows = []
     for s in items:
@@ -255,7 +277,7 @@ def push_blockers(items):
         name = re.sub(r'^Status\s*·\s*', '', s['title']) or s['slug']
         for kind in ('Blocked', 'Needs from others'):
             for item in s['sections'].get(kind, []):
-                rows.append(f'<li><strong>{esc(name)}</strong> ({kind.lower()}): {plain(item)}</li>')
+                rows.append(f'<li><strong>{esc(name)}</strong> ({kind.lower()}, {esc(pack_title(s["pack"]))}): {plain(item)}</li>')
     return '<ul>' + ''.join(rows) + '</ul>' if rows else '<p>Nothing blocked and nothing asked of others.</p>'
 
 
