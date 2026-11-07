@@ -1,66 +1,56 @@
 # Status · Release engineering
 
-> CI packages every dev build unsigned (.ipa, simulator app, archive) and is ready to sign and upload to internal TestFlight as soon as Dinis adds 8 secrets. His 8-step morning checklist is at the top of release-setup.md.
+> Done. Every dev build is packaged by CI without keys (unsigned .ipa, simulator app, archive). Signing and the internal TestFlight upload are wired and tested up to the point where Dinis's 8 secrets are needed. His checklist is at the top of release-setup.md.
 
-Branch: `night/release` · Last update: 08:16 UTC
+Branch: `night/release` (merged into dev; nothing open) · Final update: 09:15 UTC
+
+## What Dinis does next
+
+Follow **Morning checklist** at the top of [release-setup](../release-setup.md) (8 steps, about 45 minutes):
+
+1. Apple Developer portal: three App IDs (`news.promptugal.reader`, `.widgets`, `.intents`), App Group `group.news.promptugal.reader`, and on the app ID Associated Domains and Time Sensitive Notifications.
+2. Apple Distribution certificate as a .p12.
+3. Three App Store profiles, one per App ID.
+4. App Store Connect: app record, and an API key with the App Manager role.
+5. TestFlight internal group "Team" with automatic distribution.
+6. Eight GitHub secrets: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64`, `IOS_DIST_CERT_P12_BASE64`, `IOS_DIST_CERT_PASSWORD`, `IOS_PROFILE_APP_BASE64`, `IOS_PROFILE_WIDGETS_BASE64`, `IOS_PROFILE_INTENTS_BASE64`.
+7. Actions → **iOS release** → Run workflow on `dev` with **dry_run**. The "Profiles against entitlements" table must be all ✅.
+8. Run again with **upload**. The team gets the build in TestFlight.
+
+No code change is needed for any of this.
 
 ## Done
 
-- `.github/workflows/ios-release.yml`:
-  - **package** runs on pushes to `dev` and `night/release` (not docs-only), on tags `ios-v*` and by hand. It runs `xcodebuild archive` for `generic/platform=iOS` with signing off, packages an unsigned `.ipa`, builds a Release simulator app, and uploads all three as artifacts named `PrompTugal-<version>-<build>-<sha>-…`. The job summary shows Info.plist values and a size breakdown. It fails if the app is not built for both iPhone and iPad.
-  - **testflight** runs only by hand (with **upload** ticked) or on a tag `ios-v*`. It skips with a `skipped: secret X missing` line until the secrets exist. With the secrets, it signs (manual: .p12 and profiles, or automatic: API key), exports an App Store .ipa and uploads it with `xcodebuild -exportArchive` (destination upload).
-- `scripts/release/`: `select-xcode.sh`, `version.sh` (build number), `package-unsigned.sh`, `report.sh`, `signing-setup.sh`, `testflight.sh`, `signing-cleanup.sh`, two ExportOptions templates.
-- **Run 3 green** (42331786804): archive 49 s, Xcode 26.6 (`DTXcode 2660`), iOS SDK 26.5, `UIDeviceFamily [1,2]`, app 1.0 MB, .ipa 657 KB, executable 524 KB. Artifacts: `PrompTugal-0.3.1-103-742a304-unsigned-ipa`, `…-simulator-app`, `…-xcarchive`, `build-info`.
-- Size check (`size-check.sh`, budgets in `size-budget.json`, compares with the latest dev build) and release notes from git log (`release-notes.sh`) in every package run.
-- `scripts/release/asc.py`: App Store Connect API client (standard library and `openssl` for the token; signature verified locally with a throwaway key). The TestFlight job uses it to wait for processing, answer export compliance and set "What to Test".
-- `.github/workflows/ios-submit.yml`: App Store review submission, by hand only, dry run unless **confirm** is ticked. Metadata stays manual.
-- `scripts/release/latest-build.sh`: writes the latest successful dev build's info (version, build, commit, sizes, run link, artifacts) as JSON for the website.
-- [release-setup.md](../release-setup.md): the portal, App Store Connect and GitHub secrets checklist, how to trigger an upload, how testers install, how to re-sign the unsigned .ipa, and the gotchas.
-- Build number: `CFBundleVersion` = this workflow's run number + 100 (repo variable `IOS_BUILD_OFFSET`), passed as `CURRENT_PROJECT_VERSION`. `MARKETING_VERSION` stays in the project.
+**Unsigned packaging, every dev build** (`.github/workflows/ios-release.yml`, job `package`)
+- `xcodebuild archive` for `generic/platform=iOS` with signing off, on `macos-26` with the newest stable Xcode (26.6, iOS SDK 26.5 tonight), printed in the summary.
+- Artifacts named `PrompTugal-<version>-<build>-<sha>-…`: unsigned .ipa, simulator .app zip, .xcarchive (with dSYMs), `build-info.json` and release notes.
+- Job summary: Info.plist values, size breakdown, largest files, size check against `size-budget.json` and the latest dev build, the targets to sign with each one's entitlements and profile secret, and a warning if the privacy manifest is missing.
+- Fails if the app stops being built for both iPhone and iPad (`UIDeviceFamily` 1,2).
+- Green on dev throughout the night: runs 11, 13, 16, 18, 24, 28, 31, 32, 35, 36, 37 and 38 (last at 09:04; latest packaged app: iOS 18 minimum, app, widgets and intents extensions, SGitVault).
 
-- **03:10** Run 8 (manual, `upload` ticked, `source_ref: night/platform`): package green on the platform project, minimum iOS 18.0, `UIDeviceFamily [1,2]`, app 1.7 MB, .ipa 892 KB. TestFlight job green and skipped: `skipped: secret ASC_KEY_ID missing`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64`, `APPLE_TEAM_ID`. Nothing printed but empty values.
-- Runs 4, 5 and 7 green. Pushes no longer cancel manual or tag runs (separate concurrency group).
-- New manual inputs: `internal_only` (`testFlightInternalTestingOnly`), `source_ref` (build another branch with these scripts), `build_number`.
+**Build numbers:** `CFBundleVersion` = this workflow's run number + `IOS_BUILD_OFFSET` (repository variable, default 100), passed as `CURRENT_PROJECT_VERSION`. `MARKETING_VERSION` stays in the project. README updated by the editor to match.
 
-- **03:24** Push trigger narrowed for the macOS queue (conductor): `dev` and `night/release` only, docs/site-only pushes skipped (`paths-ignore` like `ios.yml`). Tags and manual runs unfiltered.
-- Rebased on dev `cbbbb89`, which has the platform project (iOS 18, SGitVault, widgets, intents).
+**Signed path and TestFlight** (job `testflight`, by hand or on tag `ios-v*`, never on push)
+- Skips cleanly with one `skipped: secret X missing` line per missing secret (runs 5, 8 and 25).
+- Manual signing (default): .p12 into a temporary keychain, App Store profiles installed, one profile per target through a CI-only xcconfig, profiles checked against each target's entitlements before archiving.
+- Automatic signing (alternative): `-allowProvisioningUpdates` with the API key.
+- Export with `app-store-connect` ExportOptions, upload with `xcodebuild -exportArchive` (destination upload) and the API key; `altool --upload-package` as fallback. No third-party tools.
+- After upload: waits for processing, answers export compliance, sets "What to Test" from each session's status summary and the commits (`asc.py`, Python standard library and `openssl`).
+- Inputs: `dry_run`, `internal_only`, `signing`, `build_number`, `source_ref`.
+- Keychain, profiles and key removed at the end of every run. No secret values in logs.
 
-- **03:32** Conductor merged `night/release` into dev (`d6b9cd2`). Run 11 on dev green. From now on I merge dev into `night/release` (no rebase).
-- Editor wired `latest-build.sh` into `website.yml`; the site shows the latest dev build.
-- Checklist: Time Sensitive Notifications capability (new app entitlement on dev). Each package run now lists every target's entitlements next to its profile secret, so the portal setup can be checked against the build.
+**Other**
+- `.github/workflows/ios-submit.yml`: App Store review submission, by hand, dry run unless confirmed. Backlog by Dinis's priority (internal first).
+- Export compliance: the app uses only encryption built into iOS, so `ITSAppUsesNonExemptEncryption = NO` (added by platform).
+- Privacy manifest: required-reason APIs found in the code (`UserDefaults`, file timestamps), draft written, added by platform.
+- Website: `latest-build.sh` feeds the site's latest CI build panel (wired by the editor).
+- CI load: runs only on dev pushes that change more than docs, never cancels a started run, at most one running and one waiting.
 
-- **03:48** Run 13 on dev (`f4d84fd`, with the entitlements table) green. Merged dev into `night/release` twice (merge, not rebase).
-- Push trigger is now `dev` only. Night branches are built by `ios.yml`; release workflow changes are tested by a manual run. Saves one macOS run per merge.
-- Checked dev's targets and entitlements against the checklist: app (Associated Domains, Time Sensitive Notifications, App Groups), widgets and intents (App Groups). No drift.
+## Open items
 
-- **04:08** Run 15 (manual, `night/release` at `93339e6`, trigger change) green; no push run started for `night/release`. Run 16 on dev (`96012e5`, after the vault merge) green. Merged dev again; targets and entitlements unchanged (app, widgets, intents).
-
-- **04:30** Run 18 on dev (team merge) green. Merged dev (`417be29`). Scanned the merged app for capabilities: no new entitlements; NFC usage string but no Core NFC code; background modes need no portal step; StoreKit products go in App Store Connect. Checklist updated.
-- **Privacy manifest missing.** The app uses `UserDefaults` (5 files) and file timestamps (4 files), which App Store Connect requires to be declared (ITMS-91053, rejects the upload). Drafted `scripts/release/templates/PrivacyInfo.xcprivacy` with the reasons; package runs now warn while it is missing.
-
-- **04:50** Run 20 (manual, privacy-manifest warning) green. Platform added `PrompTugal/App/Resources/PrivacyInfo.xcprivacy`, identical to the draft. A UI-test target appeared (`news.promptugal.reader.uitests`); it is not archived or signed, so the checklist is unchanged.
-- **Dry run for signing:** manual input `dry_run` signs and exports the App Store .ipa without uploading. Before archiving, `check-profiles.sh` checks each signed target's entitlements against its profile and names any missing capability (tested locally with good and bad profiles).
-
-- **05:08** Run 24 on dev (editor merge) green. Merged dev (`b00dc15`); targets, entitlements and privacy manifest unchanged.
-
-- **05:17** `ios-release.yml` no longer cancels a started run (`cancel-in-progress: false`): dev runs 21-23 had been cancelled mid-archive by the next merge. A newer push now replaces only a run still waiting for a runner. Same fix as platform's.
-
-- **05:50** Run 25 (manual `dry_run`) green after 22 min in the runner queue: package green (archive step about 5 min now), TestFlight job ran and skipped on missing secrets. Conductor merged `night/release` into dev (`0b0fe88`): the concurrency fix is live, and dev run 28 was not cancelled by run 29. Targets, entitlements and manifest unchanged.
-- **07:38** Dev run 32 (collab merge) green; runs 33 and 34 replaced while waiting; run 35 (`3fff23e`) queued. Merged dev; targets, entitlements and manifest unchanged.
-- **08:15** Dev run 35 (`3fff23e`) green; run 36 building. Targets, entitlements and manifest unchanged.
-
-- **06:05** Release notes: `release-notes.sh` now starts with each session's status summary (changed since the last `ios-v*` tag), then the commits; 3,454 characters for tonight, under Apple's 4,000. The TestFlight job sets it as "What to Test".
-- `release-setup.md`: a morning checklist (8 steps, about 45 minutes, secret names and where to click) at the top, and the install section rewritten for the two extensions: build from Xcode first, simulator app, or re-sign the CI .ipa inside-out with three profiles.
-
-## In progress
-
-- Dev run 28 green at 06:20 after an hour in the runner queue; it was not cancelled by later merges (runs 29 and 30 were replaced while still waiting, as designed). Run 31 (platform merge) building. With no-cancel concurrency, iOS release holds at most one running and one waiting run on dev, so it cannot pile up in the queue. Targets, entitlements and manifest unchanged at 06:40.
-- **07:06** Dev run 31 (platform merge) green; run 32 building, 33 waiting. Editor updated the README: the private-beta section points to release-setup.md, and the build-number row says CI sets it. Targets, entitlements and manifest unchanged.
-
-## Next
-
-1. Re-check the workflow against the platform branch once it is merged (iOS 18, SGitVault package, entitlements).
-2. Latest build on the website (needs the editor, below).
+- The signed path has never run with real secrets. The first dry run will be its first real test. If it fails, the summary names the step and the missing capability.
+- Signing and upload need macOS runners. Tonight the queue was often 20–60 minutes, so allow for that in the morning.
+- App Store submission, external testers and the App Store listing are later. Metadata stays manual.
 
 ## Blocked
 
@@ -68,8 +58,4 @@ Nothing.
 
 ## Needs from others
 
-- ~~**Platform (blocks the first TestFlight upload):** copy `scripts/release/templates/PrivacyInfo.xcprivacy` to `PrompTugal/App/Resources/PrivacyInfo.xcprivacy` (app target). It declares `UserDefaults` (CA92.1) and file timestamps (C617.1, DDA9.1), found in Team, Schedule, Vault, Dashboards, Debug and Notifications. Keep it current when new code uses required-reason APIs.~~ Done by platform.
-
-- ~~**Platform:** add `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO`~~ Done by platform (`Config/PrompTugal.xcconfig`). The app uses only encryption built into iOS (CryptoKit, URLSession), which Apple's export compliance table puts under "no documentation required". Without the key, every TestFlight build waits for someone to answer the question in App Store Connect.
-- **Editor:** to show the latest CI build on the site, run `GH_TOKEN=${{ github.token }} scripts/release/latest-build.sh website/public/ios-build.json dev` in the website build job (it needs `permissions: actions: read`). It writes `{"available": false}` when there is no build, so it never fails the site. Fields: `version`, `build`, `commit`, `builtAt`, `minimumOS`, `deviceFamily`, `ipaBytes`, `appBytes`, `runUrl`, `artifacts[]`. I can make the `website.yml` change myself if you prefer; tell me in your status page.
-- **Platform:** nothing needed for per-target profiles: CI passes its own `-xcconfig` with `PROVISIONING_PROFILE_SPECIFIER = $(PT_PROFILE_$(TARGET_NAME))`. The checklist covers `news.promptugal.reader.widgets` and `.intents`. If you add or rename an extension, the package job's **Targets to sign** table shows it automatically.
+Nothing open. Platform added the encryption key and the privacy manifest. The editor wired the latest-build panel and updated the README.
