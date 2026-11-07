@@ -178,7 +178,11 @@ struct ScheduleStoreTests {
 
     @Test func migratesEverySavedSession() throws {
         let dir = try folder()
-        let events = (1...12).map { event("session-\($0)", time: String(format: "%02d:00-%02d:30", 8 + $0 % 10, 8 + $0 % 10)) }
+        var events: [Event] = []
+        for n in 1...12 {
+            let hour: Int = 8 + n % 10
+            events.append(event("session-\(n)", time: String(format: "%02d:00-%02d:30", hour, hour)))
+        }
         try writeSaved(events, to: dir, modified: at(0))
         let store = ScheduleStore(directory: dir, clock: { at(1) })
         #expect(store.picks.count == 12)

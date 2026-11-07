@@ -174,8 +174,12 @@ struct ReminderPlanTests {
     }
 
     @Test func neverMoreThanTheLimit() {
-        let picks = (0..<100).map { i in
-            pick(event("s\(i)", String(format: "%02d:%02d-%02d:%02d", 11 + i / 60, i % 60, 11 + i / 60, i % 60)))
+        var picks: [SchedulePick] = []
+        for i in 0..<100 {
+            let hour: Int = 11 + i / 60
+            let minute: Int = i % 60
+            let clock = String(format: "%02d:%02d", hour, minute)
+            picks.append(pick(event("s\(i)", "\(clock)-\(clock)")))
         }
         let items = ReminderPlan.items(picks: picks, standups: [], person: nil, leadMinutes: 10, now: now)
         #expect(items.count == 60)
