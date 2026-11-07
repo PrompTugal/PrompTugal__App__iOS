@@ -37,3 +37,17 @@ struct WebsitesJSONTests {
         #expect(shortcuts.allSatisfy { !$0.isValid })
     }
 }
+
+@Suite("Positioning")
+struct PositioningTests {
+    @Test("Default shortcuts: promptugal.news first, then the team site, nothing else")
+    func onlyPrompTugal() throws {
+        let url = try #require(Bundle.main.url(forResource: "Websites", withExtension: "json"))
+        let shortcuts = try JSONDecoder().decode([WebsiteShortcut].self, from: Data(contentsOf: url))
+        let hosts = shortcuts.compactMap { $0.url.host() }
+        #expect(hosts == ["promptugal.news", "web-summit.sgit.ai"])
+        for dropped in ["riskmandate.ai", "sgit.ai", "newsroom.sgit.ai"] {
+            #expect(!hosts.contains(dropped), "\(dropped) must not be a default shortcut")
+        }
+    }
+}

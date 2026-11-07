@@ -30,7 +30,7 @@ private enum ReaderSection: String, CaseIterable, Identifiable {
     }
 }
 
-private enum Destination: Hashable {
+private enum ReaderDestination: Hashable {
     case event(String)
     case story(Story)
 }
@@ -40,7 +40,7 @@ struct ReaderView: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
     @State private var section: ReaderSection = .now
-    @State private var selection: Destination?
+    @State private var selection: ReaderDestination?
     @State private var columns: NavigationSplitViewVisibility = .all
 
     var body: some View {
@@ -51,8 +51,8 @@ struct ReaderView: View {
                 TabView(selection: $section) {
                     ForEach(ReaderSection.allCases) { tab in
                         NavigationStack {
-                            SectionView(section: tab)
-                                .navigationDestination(for: Destination.self, destination: detail)
+                            ReaderSectionView(section: tab)
+                                .navigationDestination(for: ReaderDestination.self, destination: detail)
                         }
                         .tabItem { Label(tab.rawValue, systemImage: tab.icon) }
                         .tag(tab)
@@ -92,7 +92,7 @@ struct ReaderView: View {
             .listStyle(.sidebar)
             .navigationTitle("PrompTugal")
         } content: {
-            SectionView(section: section, selection: $selection)
+            ReaderSectionView(section: section, selection: $selection)
                 .id(section)
                 .navigationSplitViewColumnWidth(min: 260, ideal: 330, max: 420)
         } detail: {
@@ -105,30 +105,30 @@ struct ReaderView: View {
         }
     }
 
-    @ViewBuilder private func detail(_ destination: Destination) -> some View {
+    @ViewBuilder private func detail(_ destination: ReaderDestination) -> some View {
         switch destination {
         case .event(let id):
             if let event = store.event(id: id) {
-                EventDetailView(event: event)
+                ReaderEventDetailView(event: event)
             } else {
                 ContentUnavailableView("Session unavailable", systemImage: "calendar.badge.exclamationmark",
                                        description: Text("This session is missing from the current agenda."))
             }
         case .story(let story):
-            StoryDetailView(story: story)
+            ReaderStoryDetailView(story: story)
         }
     }
 }
 
-private struct SectionView: View {
+private struct ReaderSectionView: View {
     @Environment(ReaderStore.self) private var store
     let section: ReaderSection
-    let selection: Binding<Destination?>?
+    let selection: Binding<ReaderDestination?>?
     @State private var query = ""
     @State private var day = "all"
     @State private var sideOnly = false
 
-    init(section: ReaderSection, selection: Binding<Destination?>? = nil) {
+    init(section: ReaderSection, selection: Binding<ReaderDestination?>? = nil) {
         self.section = section
         self.selection = selection
     }
@@ -336,7 +336,7 @@ private struct SectionView: View {
         }
     }
 
-    @ViewBuilder private func route<Label: View>(_ destination: Destination, @ViewBuilder label: () -> Label) -> some View {
+    @ViewBuilder private func route<Label: View>(_ destination: ReaderDestination, @ViewBuilder label: () -> Label) -> some View {
         if selection != nil {
             label().tag(destination)
         } else {
@@ -345,7 +345,7 @@ private struct SectionView: View {
     }
 }
 
-private struct EventDetailView: View {
+private struct ReaderEventDetailView: View {
     @Environment(ReaderStore.self) private var store
     let event: Event
 
@@ -393,7 +393,7 @@ private struct EventDetailView: View {
     }
 }
 
-private struct StoryDetailView: View {
+private struct ReaderStoryDetailView: View {
     let story: Story
 
     var body: some View {
