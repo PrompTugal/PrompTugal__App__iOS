@@ -15,9 +15,9 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: screens-${{ github.ref }}
-  cancel-in-progress: true
+# Per job, never cancelling a started job: a run takes about 20 minutes and dev
+# gets a merge every 10-15, so cancel-in-progress meant no run ever finished.
+# A job still waiting for a runner is replaced by the newer push's.
 
 jobs:
   shoot:
@@ -28,6 +28,9 @@ jobs:
         device: [iPhone, iPad]
     runs-on: macos-26
     timeout-minutes: 40
+    concurrency:
+      group: screens-${{ matrix.device }}-${{ github.ref }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v5
         with:
