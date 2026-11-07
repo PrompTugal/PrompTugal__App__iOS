@@ -49,7 +49,7 @@ final class CoordinationStore {
 
     var days: [String] {
         let all = Set(events.map(\.date)).sorted()
-        return all.isEmpty ? [DayPlanner.lisbonDay(.now)] : all
+        return all.isEmpty ? [Lisbon.day(.now)] : all
     }
 
     func name(_ person: String) -> String {
@@ -63,7 +63,7 @@ final class CoordinationStore {
         defer { loading = false }
         events = await CollabHooks.agenda()
         if day.isEmpty || !days.contains(day) {
-            let today = DayPlanner.lisbonDay(.now)
+            let today = Lisbon.day(.now)
             day = days.first { $0 >= today } ?? days.first ?? today
         }
         await loadPeople()

@@ -130,7 +130,7 @@ enum AITools {
         case "where_is_everyone":
             let store = CoordinationStore.shared
             if store.plans.isEmpty { await store.load() }
-            let day = args["day"] ?? DayPlanner.lisbonDay(now)
+            let day = args["day"] ?? Lisbon.day(now)
             return (cap(store.summary(for: day)), "\(store.plans.count) plans")
         default:
             return ("error: no tool called \(call.function.name)", "unknown tool")
