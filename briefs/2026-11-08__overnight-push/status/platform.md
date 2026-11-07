@@ -2,7 +2,7 @@
 
 > Done. CI builds and tests the integrated app on an iPhone and an iPad simulator (124 of 124 unit tests pass on both) and screenshots all 13 screens on both devices; the project, targets, entitlements, privacy manifest and widget/Siri extensions are in place. Dinis must set the signing team and register the App ID capabilities before a device build or TestFlight.
 
-Branch: `night/platform` (equal to `dev` at `44fbe3f`) · Last update: 09:15 UTC · Final for the overnight push
+Branch: `night/platform` (equal to `dev` at `a6e9d32`, v0.1.39) · Last update: 10:02 UTC · Final for the overnight push
 
 ## What's on dev
 
@@ -40,14 +40,14 @@ Branch: `night/platform` (equal to `dev` at `44fbe3f`) · Last update: 09:15 UTC
 
 - Pushes that change only `briefs/`, `website/`, root Markdown or `VERSION` don't run it.
 - Concurrency is per job: a started job always finishes; a queued one is replaced by the newer push's.
-- Last result on `dev` (`8a060e8`, run 173): all green, **124 tests in 33 suites on iPhone and on iPad**.
+- Unit tests on `dev` (`8a060e8`, run 173): **124 tests in 33 suites on iPhone and on iPad**. Latest `dev` run (`6ea854f`, run 194): all green.
 - A failed step writes its `error:` lines to the job summary and repeats them at the end of the log, so `get_job_logs` with `tail_lines: 80` shows them.
 
 **`screens.yml`** (push to `dev`, by hand)
 
 - `ScreensTests` (scheme `PrompTugalScreens`): one test per destination, 13 ids, launched with `-PTDestination <id> -PTSampleData -PTMe ana`. iPad in landscape.
 - Artifact `screens-<sha>` with `iphone-<id>.png` (736×1600) and `ipad-<id>.png` (1600×1103), longest side 1600 px, no EXIF/XMP. Exactly 13 per device or the job fails.
-- iPad screenshots are the whole screen (`XCUIScreen.main.screenshot()`), turned upright from their own EXIF orientation, then stripped. Fixed at 08:35 (`0616379`); run 14 checked by me and by the editor in Chromium. The site publishes iPad from `dev` screens run 15 on.
+- iPad screenshots are the whole screen (`XCUIScreen.main.screenshot()`), turned upright from their own EXIF orientation, then stripped. Fixed at 08:35 (`0616379`); run 14 checked by me and by the editor in Chromium. First `dev` run with the fix: 16 (`bf704b5`); run 17 (`6ea854f`) also green. The site publishes iPad from run 16 on.
 
 **`ios-release.yml`** belongs to the release engineer (archives and TestFlight).
 
