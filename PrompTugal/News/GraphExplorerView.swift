@@ -335,7 +335,7 @@ struct GraphCanvas: View {
                 }
 
                 // Labels: the most central nodes, the selection and its neighbours, and more as you zoom in.
-                let labelBudget = zoom < 2 ? 18 : (zoom < 6 ? 60 : 160)
+                let labelBudget = zoom < 1.5 ? 8 : (zoom < 4 ? 30 : (zoom < 8 ? 80 : 160))
                 var labelled = 0
                 let ranked = index.graph.nodes.indices.sorted { (index.graph.nodes[$0].pr ?? 0) > (index.graph.nodes[$1].pr ?? 0) }
                 let priority = (selected.map { [$0] } ?? []) + path + neighbourSet.sorted()
