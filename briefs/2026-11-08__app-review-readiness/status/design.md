@@ -1,10 +1,10 @@
 # Status · Design (App Review readiness)
 
-> All eight design items are written, with unit tests. Waiting for the build job on night/design. The payment-host block list waits for team's shared constant; WebsiteView's fixed width is platform's file.
+> All design items are done; design's own builds are green (runs 205, 211). The branch is red only because it merged night/team, whose AppBridge.swift does not compile yet (team told). Unit tests run once that is fixed.
 
-Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 14:50 UTC
+Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 14:55 UTC
 
-## Done (pushed, waiting for CI)
+## Done
 
 | # | Item | What changed | Test |
 | --- | --- | --- | --- |
@@ -18,16 +18,33 @@ Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 14:
 | — | Dynamic Type | The Wall's stand-up time and the avatar initials use `@ScaledMetric`. | — |
 | — | Colour-only dot | The sidebar's native/web/hybrid dot is now a symbol (shape and colour) with a text label and tooltip. | — |
 
+Also done after team's and platform's notes:
+
+| Item | What changed | Test |
+| --- | --- | --- |
+| R5 | Reading credit is in the shell only when `ReadingCredit.isAvailable` (debug builds). | `TeamNotesTests.readingCredit` |
+| 3.1.1 | `WebPage` refuses every navigation, in every frame, and every new-window link to a checkout (`CheckoutPolicy.isBlocked`) or a page the bridge handles. | `TeamNotesTests.checkout` |
+| Q6 | `promptugal://open/team.schedule?session=<slug>` opens that session's page; `?url=` opens a briefing, only on promptugal.news and web-summit.sgit.ai. | `TeamNotesTests.links` |
+| Q8 | `TeamEndpoints.base` replaces design's `TeamSite`. | — |
+| Platform | No `-PTMe` persistence; `PreviewSamples.data()` no longer writes "who am I"; sample mode saves and restores the previous choice. | `SampleDataTests` |
+
+## CI
+
+| Run | Commit | Result |
+| --- | --- | --- |
+| 205 | 3b9b099 (all eight items) | build green |
+| 211 | 4cb7122 (sample identity) | build green |
+| 217 | 920ad9e (after merging night/team 9471fa9) | **red**, only in `Bridge/AppBridge.swift:164-166` (team's file: `Gate` has no member `message`). Team told, with the fix. |
+
 ## In progress
 
-- CI on the push below.
+- Waiting for team's AppBridge fix, then merge, build, and a manual test run for `PrompTugalTests/DesignReviewTests.swift`.
 
 ## Blocked / needs from others
 
-- **Team (3.1.1):** the shared payment-host block list in `Bridge/` is not on dev yet. I asked for its name; I will call it from `WebPage`'s navigation policy as soon as it lands. Until then `WebPage` routes every navigation through `TeamFeatures.shared.bridge.handlesNavigation(to:)`, which already stops `buy.stripe.com` and the top-up page.
-- **Team (Q8):** one copy of the team models. Proposed: team's `TeamMe`/`TeamPerson`/`CommandCentre` become the only models for me.json and data.json; design moves its screens to them and deletes `Wire.Me`/`Person`/`CommandCentre`. Waiting for team's answer on which fields `TeamPerson` has.
+- **Team (Q8), agreed, next after review:** team's `TeamModels` become the only models for me.json and data.json (`TeamPerson` has every field design uses); design moves My day, Team, Briefed, Wall and Command centre to `TeamStore` and deletes `Wire.Me`/`Person`/`CommandCentre`. `Wire.*` stays for the newsroom JSON. Left until after review, at the conductor's preference.
 - **Collab:** use `DebugMode.defaultOn` in `AskView.swift:13` and `LanesView.swift:9` (sent).
-- **Platform:** keep `PreviewSamples` out of `#if DEBUG` (the R1 button uses it in release); `WebsiteView.swift:20` (App/Web) still has the fixed 250 pt sidebar from Q9; the other fixed font sizes are in `Team/TeamHomeView.swift:174` and `App/Web/WebsiteShortcuts.swift:143, 150`.
+- **Platform:** keep `PreviewSamples` out of `#if DEBUG` (the R1 button uses it in release); the other fixed font sizes are in `Team/TeamHomeView.swift:174` and `App/Web/WebsiteShortcuts.swift:143, 150`.
 
 ## Questions for Dinis
 
