@@ -75,6 +75,23 @@ enum LaneCrypto {
         return key
     }
 
+    /// An RSA private key from PKCS#8 bytes (WebCrypto's `exportKey('pkcs8')`, as the newsroom inbox keeps it).
+    static func privateKey(pkcs8: Data) throws -> SecKey {
+        var reader = DERReader(Array(pkcs8))
+        var outer = try reader.read(tag: 0x30)                  // PrivateKeyInfo
+        _ = try outer.read(tag: 0x02)                           // version
+        var algorithm = try outer.read(tag: 0x30)
+        guard try algorithm.read(tag: 0x06).bytes == [0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01] else { throw Failure.notRSA }
+        let pkcs1 = try outer.read(tag: 0x04)                   // OCTET STRING: RSAPrivateKey
+        let attributes: [String: Any] = [kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+                                         kSecAttrKeyClass as String: kSecAttrKeyClassPrivate]
+        var error: Unmanaged<CFError>?
+        guard let key = SecKeyCreateWithData(Data(pkcs1.bytes) as CFData, attributes as CFDictionary, &error) else {
+            throw Failure.keyImport(error.map { CFErrorCopyDescription($0.takeRetainedValue()) as String } ?? "unknown")
+        }
+        return key
+    }
+
     // MARK: Envelope
 
     struct Envelope: Codable, Equatable {

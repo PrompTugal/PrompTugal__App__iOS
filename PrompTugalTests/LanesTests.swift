@@ -182,3 +182,61 @@ struct LaneAddressTests {
         #expect(object["n"] is NSNull)
     }
 }
+
+@Suite("Lanes: the website's inbox formats")
+struct NewsroomInboxTests {
+    private func spki(of privateKey: SecKey) throws -> Data {
+        let publicKey = try #require(SecKeyCopyPublicKey(privateKey))
+        let pkcs1 = try #require(SecKeyCopyExternalRepresentation(publicKey, nil) as Data?)
+        return LaneCrypto.spki(fromPKCS1: pkcs1)
+    }
+
+    private func pkcs8(of privateKey: SecKey) throws -> Data {
+        let pkcs1 = try #require(SecKeyCopyExternalRepresentation(privateKey, nil) as Data?)
+        let algorithm: [UInt8] = [0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00]
+        let body = [0x02, 0x01, 0x00] + algorithm + DERReader.encode(tag: 0x04, Array(pkcs1))
+        return Data(DERReader.encode(tag: 0x30, body))
+    }
+
+    @Test("An sgi1 link is a lane to a newsroom inbox, inside a URL or alone")
+    func link() throws {
+        let key = try makeKeyPair()
+        let der = try spki(of: key)
+        let b64url = der.base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+        let code = "sgi1.abcd1234.\(dummyToken).\(b64url)"
+        let address = try #require(LaneAddress.parseInboxLink("https://newsroom.sgit.ai/vault/send.html#\(code)"))
+        #expect(address.vault == "abcd1234" && address.token == dummyToken)
+        #expect(address.isNewsroomInbox)
+        #expect(address.fingerprint == LaneCrypto.fingerprint(spki: der))
+        #expect(try LaneAddress.parse(Data(code.utf8)).isNewsroomInbox)
+        // Negative controls: an upper-case token, a truncated key.
+        #expect(LaneAddress.parseInboxLink("sgi1.abcd1234.\(dummyToken.uppercased()).\(b64url)") == nil)
+        #expect(LaneAddress.parseInboxLink("sgi1.abcd1234.\(dummyToken).\(b64url.prefix(150))") == nil)
+    }
+
+    @Test("A website inbox record opens with its PKCS#8 key, and decrypts what was sealed to it")
+    func record() throws {
+        let key = try makeKeyPair()
+        let object: [String: Any] = ["v": 1, "vault": "abcd1234", "endpoint": "https://dev.send.sgraph.ai", "token": dummyToken,
+                                     "enum_key": "e" + String(repeating: "0", count: 63),
+                                     "public": try spki(of: key).base64EncodedString(), "private": try pkcs8(of: key).base64EncodedString()]
+        let (address, enumKey, privateKey) = try LanesStore.inboxRecord(JSONSerialization.data(withJSONObject: object))
+        #expect(address.vault == "abcd1234" && enumKey.count == 64)
+        let note = LanesStore.newsroomNoteObject(kind: "idea", text: "Meet at Stage 2", title: nil, path: nil, device: "ios-1", id: "n1")
+        let message = try LaneAddress.newsroomInboxMessage(note: note, to: address.fingerprint, device: "ios-1")
+        let enc = try LaneCrypto.encrypt(message, to: LaneCrypto.publicKey(pem: address.publicKeyPEM))
+        let plain = try LaneCrypto.decrypt(enc, with: privateKey)
+        let decoded = try #require(try JSONSerialization.jsonObject(with: plain) as? [String: Any])
+        #expect(decoded["kind"] as? String == "sgit-newsroom-inbox/v1")
+        #expect(decoded["to"] as? String == address.fingerprint)
+        let file = try #require(decoded["file"] as? [String: Any])
+        #expect(file["v"] as? Int == 1)
+        #expect((file["device"] as? [String: Any])?["id"] as? String == "ios-1")
+        #expect(LanesStore.readable(plain).contains("• idea: Meet at Stage 2"))
+        // Negative control: a record without its private key.
+        var broken = object
+        broken["private"] = nil
+        #expect(throws: (any Error).self) { try LanesStore.inboxRecord(JSONSerialization.data(withJSONObject: broken)) }
+    }
+}

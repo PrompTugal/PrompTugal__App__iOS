@@ -15,6 +15,12 @@ struct LaneAddress: Codable, Identifiable, Hashable, Sendable {
     var fingerprint: String
     /// What the recipient asks for on this lane (free text from the descriptor).
     var use: String?
+    /// What the recipient's drainer accepts: nil or "eml" (one .eml), or "sgit-newsroom-inbox/v1" (a reader's
+    /// newsroom inbox, from an `sgi1.` link: a device file with notes, newsroom.sgit.ai assets/vault-pane/inbox.js).
+    var format: String?
+
+    static let newsroomInboxFormat = "sgit-newsroom-inbox/v1"
+    var isNewsroomInbox: Bool { format == Self.newsroomInboxFormat }
 
     static let defaultEndpoint = URL(string: "https://dev.send.sgraph.ai")!
 
@@ -38,11 +44,23 @@ struct LaneAddress: Codable, Identifiable, Hashable, Sendable {
         (4...64).contains(id.count) && id.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-" || $0 == "_") }
     }
 
+    /// `sgi1.<vault>.<token>.<SPKI, base64url>`, alone or inside a link (`…/vault/send.html#sgi1.…`).
+    static func parseInboxLink(_ text: String, name: String = "Newsroom inbox") -> LaneAddress? {
+        guard let match = text.firstMatch(of: #/sgi1\.([a-z0-9]{4,24})\.([0-9a-f]{16,128})\.([A-Za-z0-9_-]{200,3000})/#) else { return nil }
+        var base64 = String(match.3).replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        while base64.count % 4 != 0 { base64 += "=" }
+        guard let spki = Data(base64Encoded: base64), (try? LaneCrypto.pkcs1(fromSPKI: spki)) != nil else { return nil }
+        return LaneAddress(name: name, vault: String(match.1), endpoint: defaultEndpoint, token: String(match.2),
+                           publicKeyPEM: LaneCrypto.pem(spki: spki), fingerprint: LaneCrypto.fingerprint(spki: spki),
+                           use: "a reader's newsroom inbox: notes arrive as a device file", format: newsroomInboxFormat)
+    }
+
     /// Reads an `sgit-subscribe/v1` file (`inbox.vault`, `inbox.endpoint`, `inbox.lane.append_token`,
     /// `recipient.encrypt`, `recipient.fingerprint`) or this app's own `promptugal-lane/v1`
     /// (`vault`, `endpoint`, `append_token`, `public_key`, `fingerprint`, `name`). Checks the fingerprint
     /// against the key, as the sgit.ai form does.
     static func parse(_ data: Data, name fallback: String = "Lane") throws -> LaneAddress {
+        if let link = parseInboxLink(String(decoding: data, as: UTF8.self)) { return link }
         guard let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw Failure.notJSON }
         let inbox = root["inbox"] as? [String: Any]
         let lane = inbox?["lane"] as? [String: Any]
@@ -61,15 +79,26 @@ struct LaneAddress: Codable, Identifiable, Hashable, Sendable {
         if let published, published != computed { throw LaneCrypto.Failure.fingerprintMismatch }
         guard endpoint.scheme == "https" else { throw Failure.missing("https endpoint") }
         return LaneAddress(name: name, vault: vault, endpoint: endpoint, token: token, publicKeyPEM: pem,
-                           fingerprint: computed, use: lane?["use"] as? String ?? root["use"] as? String)
+                           fingerprint: computed, use: lane?["use"] as? String ?? root["use"] as? String,
+                           format: root["format"] as? String)
     }
 
     /// This app's descriptor, to hand to a sender.
     func descriptor() throws -> Data {
         let object: [String: Any] = ["schema": "promptugal-lane/v1", "name": name, "vault": vault,
                                      "endpoint": endpoint.absoluteString, "append_token": token,
-                                     "public_key": publicKeyPEM, "fingerprint": fingerprint, "use": use ?? "notes from the PrompTugal app"]
+                                     "public_key": publicKeyPEM, "fingerprint": fingerprint, "use": use ?? "notes from the PrompTugal app",
+                                     "format": format ?? "eml"]
         return try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes])
+    }
+
+    /// A newsroom inbox message carrying one note, as `problems()` in inbox.js accepts it.
+    static func newsroomInboxMessage(note: [String: Any], to fingerprint: String, device: String,
+                                     at date: Date = .now) throws -> Data {
+        let file: [String: Any] = ["v": 1, "device": ["id": device, "label": "PrompTugal iOS"], "reads": [], "notes": [note]]
+        let message: [String: Any] = ["kind": newsroomInboxFormat, "to": fingerprint,
+                                      "sent_at": ISO8601DateFormatter.collabJS.string(from: date), "file": file]
+        return try JSONSerialization.data(withJSONObject: message, options: [.sortedKeys, .withoutEscapingSlashes])
     }
 
     var writeURL: URL { endpoint.appendingPathComponent("api/vault/append/write/\(vault)") }

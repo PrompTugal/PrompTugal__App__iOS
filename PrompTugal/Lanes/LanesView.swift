@@ -66,24 +66,31 @@ struct LanesView: View {
                               subject: Text("My PrompTugal lane"), message: Text("Paste this in PrompTugal → Messages → Add a lane.")) {
                         Label("Share my lane description", systemImage: "square.and.arrow.up")
                     }
+                }
+                if let site = store.websiteInbox {
+                    LabeledContent("Account inbox", value: "vault \(site.vault)")
+                } else if CollabHooks.vault?.isOpen ?? false {
+                    Button("Open my account's inbox", systemImage: "tray") { Task { await store.openWebsiteInbox() } }
+                }
+                if store.myLane != nil || store.websiteInbox != nil {
                     Button(store.working ? "Reading…" : "Check inbox", systemImage: "tray.and.arrow.down") {
                         Task { await store.refreshInbox() }
                     }
                     .disabled(store.working)
-                    if let error = store.inboxError { Text(error).font(.footnote).foregroundStyle(.orange) }
-                    ForEach(store.inbox) { item in
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(item.subject).font(.headline)
-                            Text(item.from).font(.caption).foregroundStyle(.secondary)
-                            Text(item.body).font(.subheadline).lineLimit(6).textSelection(.enabled)
-                            if let at = item.sentAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.caption2).foregroundStyle(.secondary) }
-                        }
-                    }
-                    if !store.inbox.isEmpty {
-                        Button("Mark all as read") { Task { await store.markRead(store.inbox.map(\.id)) } }
+                }
+                if let error = store.inboxError { Text(error).font(.footnote).foregroundStyle(.orange) }
+                ForEach(store.inbox) { item in
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(item.subject).font(.headline)
+                        Text(item.from).font(.caption).foregroundStyle(.secondary)
+                        Text(item.body).font(.subheadline).lineLimit(6).textSelection(.enabled)
+                        if let at = item.sentAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.caption2).foregroundStyle(.secondary) }
                     }
                 }
-                Button(store.myLane == nil ? "Set up my inbox" : "Inbox settings", systemImage: "gearshape") { showInboxSetup = true }
+                if !store.inbox.isEmpty {
+                    Button("Mark all as read") { Task { await store.markRead(store.inbox.map(\.id)) } }
+                }
+                Button(store.myLane == nil ? "Set up an inbox on this device" : "Inbox settings", systemImage: "gearshape") { showInboxSetup = true }
             } header: {
                 Text("My inbox")
             }

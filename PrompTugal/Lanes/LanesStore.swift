@@ -1,4 +1,5 @@
 import Foundation
+import Security
 import Observation
 
 /// Lanes I can write to, my own inbox lane, and notes to the newsroom.
@@ -100,7 +101,14 @@ final class LanesStore {
                                kind: kind, body: body,
                                extraHeaders: [("X-PrompTugal-Person", me?.id ?? ""), ("X-PrompTugal-Kind", kind)])
         do {
-            try await client.send(mail, to: address, log: log)
+            if address.isNewsroomInbox {
+                let note = Self.newsroomNoteObject(kind: kind, text: subject.isEmpty ? body : "\(subject)\n\n\(body)",
+                                                       title: nil, path: nil, device: "ios-\(UIDeviceName.short)")
+                let data = try LaneAddress.newsroomInboxMessage(note: note, to: address.fingerprint, device: "ios-\(UIDeviceName.short)")
+                try await client.send(data, subject: mail.subject, to: address, log: log)
+            } else {
+                try await client.send(mail, to: address, log: log)
+            }
             sent.insert(Sent(at: .now, lane: address.name, subject: mail.subject, bytes: body.utf8.count), at: 0)
             persist()
             message = "Sent to \(address.name). The lane answers only \"ok\": it cannot say who else wrote."
@@ -151,14 +159,56 @@ final class LanesStore {
         try? secrets.delete(Self.enumKeyAccount)
     }
 
-    func refreshInbox() async {
-        guard let lane = myLane else { return }
-        guard let enumKey = (try? secrets.read(Self.enumKeyAccount)) ?? nil else {
-            inboxError = "Add the lane's enumeration key to read it."
-            return
+    /// The inbox the website made for my account (`inbox.json` in my master vault: vault, token, enum key and
+    /// the PKCS#8 private key). Held in memory only, dropped when the app quits.
+    private(set) var websiteInbox: LaneAddress?
+    @ObservationIgnored private var websiteInboxSecrets: (enumKey: String, key: SecKey)?
+
+    func openWebsiteInbox() async {
+        guard let vault = CollabHooks.vault, vault.isOpen else { message = CollabHooks.HookError.noVault.localizedDescription; return }
+        do {
+            guard let data = try await vault.readMaster("inbox.json") else { message = "Your account has no inbox yet (the website makes one)."; return }
+            let record = try Self.inboxRecord(data)
+            websiteInbox = record.address
+            websiteInboxSecrets = (record.enumKey, record.key)
+            log.add(.decrypt, lane: LanesLog.describe(record.address), detail: "inbox record read from the master vault; key \(record.address.fingerprint)")
+            await refreshInbox()
+        } catch {
+            message = error.localizedDescription
         }
-        guard let privateKey = LaneIdentity.privateKey() else {
-            inboxError = "This device has no inbox key."
+    }
+
+    /// `{ v, vault, endpoint, token, enum_key, public, private, fingerprint }` (newsroom.sgit.ai inbox.js `create`).
+    static func inboxRecord(_ data: Data) throws -> (address: LaneAddress, enumKey: String, key: SecKey) {
+        guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let vault = object["vault"] as? String, let token = object["token"] as? String,
+              let enumKey = object["enum_key"] as? String, let publicB64 = object["public"] as? String,
+              let privateB64 = object["private"] as? String,
+              let spki = Data(base64Encoded: publicB64), let pkcs8 = Data(base64Encoded: privateB64) else {
+            throw LaneAddress.Failure.missing("inbox record fields")
+        }
+        let endpoint = (object["endpoint"] as? String).flatMap(URL.init(string:)) ?? LaneAddress.defaultEndpoint
+        let address = LaneAddress(name: "My account inbox", vault: vault, endpoint: endpoint, token: token,
+                                  publicKeyPEM: LaneCrypto.pem(spki: spki), fingerprint: LaneCrypto.fingerprint(spki: spki),
+                                  use: "my account's inbox", format: LaneAddress.newsroomInboxFormat)
+        return (address, enumKey, try LaneCrypto.privateKey(pkcs8: pkcs8))
+    }
+
+    func refreshInbox() async {
+        let lane: LaneAddress
+        let enumKey: String
+        let privateKey: SecKey
+        if let mine = myLane, let key = (try? secrets.read(Self.enumKeyAccount)) ?? nil, let identity = LaneIdentity.privateKey() {
+            lane = mine
+            enumKey = key
+            privateKey = identity
+        } else if let site = websiteInbox, let secrets = websiteInboxSecrets {
+            lane = site
+            enumKey = secrets.enumKey
+            privateKey = secrets.key
+        } else {
+            inboxError = myLane == nil ? "Set up an inbox, or open your account's inbox from your vault."
+                                       : "Add the lane's enumeration key to read it."
             return
         }
         working = true
@@ -170,13 +220,17 @@ final class LanesStore {
             log.add(.list, lane: name, ms: LaneClient.ms(since: started), detail: "\(entries.count) waiting")
             let ids = entries.map(\.fileId).filter { id in !inbox.contains { $0.id == id } }
             guard !ids.isEmpty else { inboxError = nil; return }
-            let contents = try await client.fetch(lane, enumKey: enumKey, fileIds: Array(ids.prefix(100)))
+            var contents: [String: String] = [:]
+            for start in stride(from: 0, to: ids.count, by: 100) {
+                let batch = Array(ids[start..<min(start + 100, ids.count)])
+                contents.merge(try await client.fetch(lane, enumKey: enumKey, fileIds: batch)) { $1 }
+            }
             log.add(.fetch, lane: name, bytes: contents.values.reduce(0) { $0 + $1.utf8.count }, detail: "\(contents.count) files")
             for entry in entries where contents[entry.fileId] != nil {
                 do {
                     let enc = try LaneCrypto.encText(fromLaneContent: contents[entry.fileId]!)
                     let plain = try LaneCrypto.decrypt(enc, with: privateKey)
-                    inbox.append(InboxMessage(id: entry.fileId, sentAt: entry.sentAt, text: String(decoding: plain, as: UTF8.self)))
+                    inbox.append(InboxMessage(id: entry.fileId, sentAt: entry.sentAt, text: Self.readable(plain)))
                     log.add(.decrypt, lane: name, bytes: plain.count, detail: "\(entry.fileId): RSA-OAEP + AES-256-GCM, \(enc.utf8.count) B → \(plain.count) B")
                 } catch {
                     log.add(.error, lane: name, detail: "\(entry.fileId): \(error.localizedDescription)")
@@ -190,9 +244,26 @@ final class LanesStore {
         }
     }
 
+    /// An .eml as is; a newsroom inbox message as headers and its notes, so both read the same in the list.
+    static func readable(_ plain: Data) -> String {
+        guard let object = try? JSONSerialization.jsonObject(with: plain) as? [String: Any],
+              object["kind"] as? String == LaneAddress.newsroomInboxFormat,
+              let file = object["file"] as? [String: Any] else { return String(decoding: plain, as: UTF8.self) }
+        let device = (file["device"] as? [String: Any]).flatMap { ($0["label"] ?? $0["id"]) as? String } ?? "a browser"
+        let notes = (file["notes"] as? [[String: Any]]) ?? []
+        let reads = (file["reads"] as? [Any])?.count ?? 0
+        let lines = notes.map { note in "• \(note["kind"] as? String ?? "note"): \(note["text"] as? String ?? "")" }
+        return "From: \(device)\nSubject: \(notes.count) note(s), \(reads) read(s)\n\n" + lines.joined(separator: "\n")
+    }
+
     /// Moves read messages to processed (they can no longer be fetched; they stay on this device until relaunch).
     func markRead(_ ids: [String]) async {
-        guard let lane = myLane, let enumKey = (try? secrets.read(Self.enumKeyAccount)) ?? nil, !ids.isEmpty else { return }
+        let pair: (LaneAddress, String)?
+        if let mine = myLane, let key = (try? secrets.read(Self.enumKeyAccount)) ?? nil { pair = (mine, key) }
+        else if let site = websiteInbox, let secrets = websiteInboxSecrets { pair = (site, secrets.enumKey) }
+        else { pair = nil }
+        guard let pair, !ids.isEmpty else { return }
+        let (lane, enumKey) = pair
         do {
             try await client.markProcessed(lane, enumKey: enumKey, fileIds: ids)
             log.add(.markProcessed, lane: LanesLog.describe(lane), detail: "\(ids.count) files")
@@ -207,12 +278,18 @@ final class LanesStore {
     /// `{ id, at, kind, path, title, n, story, text, quote, persona, device, sent_at }`.
     static func newsroomNote(kind: String, text: String, title: String?, path: String?, device: String,
                              at date: Date = .now, id: String = UUID().uuidString.lowercased()) throws -> (path: String, data: Data) {
+        let object = newsroomNoteObject(kind: kind, text: text, title: title, path: path, device: device, at: date, id: id)
+        let data = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes])
+        return ("notes/\(id).json", data)
+    }
+
+    static func newsroomNoteObject(kind: String, text: String, title: String?, path: String?, device: String,
+                                   at date: Date = .now, id: String = UUID().uuidString.lowercased()) -> [String: Any] {
         let iso = ISO8601DateFormatter.collabJS.string(from: date)
         let object: [String: Any] = ["id": id, "at": iso, "kind": kind, "path": path.map { $0 as Any } ?? NSNull(), "title": title.map { $0 as Any } ?? NSNull(),
                                      "n": NSNull(), "story": NSNull(), "text": String(text.prefix(2_000)), "quote": NSNull(),
                                      "persona": NSNull(), "device": device, "sent_at": iso, "source": "promptugal-ios"]
-        let data = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes])
-        return ("notes/\(id).json", data)
+        return object
     }
 
     /// The newsroom's notes lane is a vault of the reader's own that the newsroom reads with its read key.

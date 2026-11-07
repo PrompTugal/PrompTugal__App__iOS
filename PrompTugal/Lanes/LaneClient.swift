@@ -35,8 +35,13 @@ struct LaneClient: Sendable {
     /// Encrypts `message` to the lane's recipient and appends it. The answer is blind: `{"ok": true}`.
     @MainActor
     func send(_ message: LaneMessage, to address: LaneAddress, log: LanesLog = .shared) async throws {
+        try await send(Data(message.eml().utf8), subject: message.subject, to: address, log: log)
+    }
+
+    /// Encrypts `text` to the lane's recipient and appends it.
+    @MainActor
+    func send(_ text: Data, subject: String, to address: LaneAddress, log: LanesLog = .shared) async throws {
         let lane = LanesLog.describe(address)
-        let text = Data(message.eml().utf8)
         let started = ContinuousClock.now
         let encText: String
         do {
@@ -47,7 +52,7 @@ struct LaneClient: Sendable {
             throw error
         }
         log.add(.encrypt, lane: lane, bytes: encText.utf8.count, ms: Self.ms(since: started),
-                detail: "RSA-OAEP-SHA256 to \(address.fingerprint) + AES-256-GCM, \(text.count) B → \(encText.utf8.count) B .enc; subject \"\(LaneMessage.header(message.subject).prefix(60))\"")
+                detail: "RSA-OAEP-SHA256 to \(address.fingerprint) + AES-256-GCM, \(text.count) B → \(encText.utf8.count) B .enc; subject \"\(LaneMessage.header(subject).prefix(60))\"")
         let request = try Self.writeRequest(to: address, payload: LaneCrypto.lanePayload(encText: encText))
         let sent = ContinuousClock.now
         do {
@@ -116,10 +121,21 @@ struct LaneClient: Sendable {
         return data
     }
 
-    func list(_ address: LaneAddress, enumKey: String, after: String? = nil) async throws -> [Entry] {
-        var body: [String: Any] = ["include_content": false, "inbox": address.token]
-        if let after { body["after_file_id"] = after }
-        return try await Self.entries(fromList: post("list", address: address, enumKey: enumKey, body: body, label: "lanes.list"))
+    /// Every pending file of this lane (the token's), metadata only, following `truncated` pages.
+    func list(_ address: LaneAddress, enumKey: String) async throws -> [Entry] {
+        var out: [Entry] = []
+        var after: String?
+        for _ in 0..<50 {
+            var body: [String: Any] = ["include_content": false]
+            if let after { body["after_file_id"] = after }
+            let data = try await post("list", address: address, enumKey: enumKey, body: body, label: "lanes.list")
+            let entries = try Self.entries(fromList: data)
+            out += entries
+            let truncated = ((try? JSONSerialization.jsonObject(with: data)) as? [String: Any])?["truncated"] as? Bool ?? false
+            guard truncated, let last = entries.last?.fileId else { break }
+            after = last
+        }
+        return out.filter { $0.inbox == nil || $0.inbox == address.token }
     }
 
     /// The stored content of each file (base64 of the `.enc` text), by file id.
