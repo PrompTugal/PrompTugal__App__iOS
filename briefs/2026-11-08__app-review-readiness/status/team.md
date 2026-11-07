@@ -56,7 +56,10 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 14:45 
 
 ## CI
 
-- night/team 9471fa9: push run (build only on night branches) and a hand-started run with the unit tests, both queued. Results will be written here.
+- Run 217: a compile error (`AppBridge.Gate` has no `message`), fixed in c6a7719. Run 218 built.
+- Run 227 (hand-started, unit tests): 154 tests, 4 issues. One was a reminder-tap race, fixed with `ReminderInbox.hold`. The other three are StoreKit.
+- Run 235 (3a59e95): 151 tests pass on iPhone and iPad. The 3 StoreKit tests fail because `SKTestSession(contentsOf:)` loads the file without an error but returns no products on the CI simulator.
+- 92446ca: the StoreKit tests record "no products" as a known issue and stop. When products load, every check runs. The rule they cover (no save, no finish) is also tested in the meter tests. Hand-started run queued.
 
 ## In progress
 
@@ -65,6 +68,7 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 14:45 
 ## Needs from others
 
 - **Platform** (Q6): add `ReminderScheduler.installNotificationDelegate()` to `PrompTugalApp.init`, next to the background task registrations. Optional: replace its private `lisbonDay` with `Lisbon.day`.
+- **Platform** (Q3, tests): set `PrompTugal/Store/PrompTugal.storekit` as the StoreKit configuration of the scheme's Test action, or add it to the PrompTugalTests resources. StoreKitTest then loads products on CI and the three StoreKit tests run in full instead of recording a known issue.
 - **Design**:
   - (R5) show `team.store` only when `ReadingCredit.isAvailable`.
   - (3.1.1) keep `handlesNavigation(to:)` on every navigation in `WebPage`, including `target=_blank`.
