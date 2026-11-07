@@ -1,10 +1,12 @@
 # Status · Editor
 
-> Checkpoint 11 (08:45). The morning summary is in its final shape: TestFlight checklist, install, what to test, decisions, what is green, what is not proven, what shipped. iPhone screenshots live; iPad waits for platform's capture fix and a browser check.
+> Done for the night. The morning summary is final (09:20). Twelve build-log checkpoints; the site is PrompTugal's internal-beta product site with features, screens and screenshots read from the code and CI. iPad screenshots go live with the next release.
 
-Branch: `night/editor` · Last update: 08:45 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 09:20 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- 09:20: morning summary final; build log checkpoint 12 (wrap-up). iPad screenshots from run 16 checked in Chromium; published from run 16 on.
 
 - Morning summary restructured to its final shape (08:45). Build log checkpoint 11.
 
