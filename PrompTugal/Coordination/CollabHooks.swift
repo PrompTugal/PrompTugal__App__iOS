@@ -116,8 +116,8 @@ enum ReaderFiles {
     }
 }
 
-/// Pick ids: the website writes `events/<slug>` (the event's page without `/index.html`, contracts §3);
-/// the reader's `Event.id` is the page with it.
+/// Pick ids are the bare event slug (contracts §3, changed 03:45 UTC): the website takes it from
+/// `events/<slug>/index.html`. Older forms (`events/<slug>`, the page path) are read and turned into the slug.
 enum PickId {
     static func normalise(_ raw: String) -> String {
         var id = raw.trimmingCharacters(in: .whitespaces)
@@ -125,6 +125,7 @@ enum PickId {
         for suffix in ["/index.html", "/"] where id.hasSuffix(suffix) {
             id.removeLast(suffix.count)
         }
+        if let range = id.range(of: "events/", options: .backwards) { id = String(id[range.upperBound...]) }
         return id
     }
 

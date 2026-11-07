@@ -121,6 +121,7 @@ enum AIContextAssembler {
             return AIContextPart(kind: .picks, summary: "No picks yet", body: "", source: "this device")
         }
         let byId = Dictionary(events.map { (PickId.of($0), $0) }, uniquingKeysWith: { first, _ in first })
+        let ids = ids.map(PickId.normalise)
         let known = ids.compactMap { byId[$0] }.sorted(by: Event.earlier)
         let upcoming = known.filter { ($0.end ?? $0.start ?? .distantFuture) >= now }
         var lines = ["My picks (\(ids.count); \(upcoming.count) still ahead):"]

@@ -22,7 +22,7 @@ struct CoordinationTests {
     func together() {
         let plans = [plan("dinis", ["events/alpha", "events/gamma"]),
                      plan("silvio", ["events/gamma/index.html", "events/alpha"]),
-                     plan("vicky", ["events/beta"])]
+                     plan("vicky", ["beta"])]
         let result = CoordinationAnalysis.build(plans: plans, events: events, day: "2026-11-10")
         #expect(result.together.map(\.event.title) == ["Alpha", "Gamma"])
         #expect(result.together.first?.people == ["dinis", "silvio"])

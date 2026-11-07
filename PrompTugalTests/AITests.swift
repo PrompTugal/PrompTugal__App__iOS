@@ -133,7 +133,7 @@ struct AIContextTests {
     @Test("Today's agenda lists today's sessions in order and marks picks")
     func agendaToday() throws {
         let now = try #require(Lisbon.instant(day: "2026-11-10", clock: "08:00"))
-        let part = AIContextAssembler.agendaPart(events, now: now, picked: ["events/agentic"])
+        let part = AIContextAssembler.agendaPart(events, now: now, picked: ["agentic"])
         #expect(part.summary.hasPrefix("2 sessions"))
         let lines = part.body.split(separator: "\n")
         #expect(lines[1].contains("Opening"))
@@ -157,7 +157,7 @@ struct AIContextTests {
         let part = AIContextAssembler.picksPart(ids: ["events/opening", "events/agentic", "events/gone"], events: events, now: now)
         #expect(part.summary == "3 picks, 1 ahead")
         #expect(part.body.contains("Opening · Centre Stage (over)"))
-        #expect(part.body.contains("Picks not in the agenda: events/gone"))
+        #expect(part.body.contains("Picks not in the agenda: gone"))
         #expect(AIContextAssembler.picksPart(ids: [], events: events, now: now).body.isEmpty)
     }
 
@@ -217,13 +217,14 @@ struct AIContextTests {
         #expect(out.map(\.content) == ["S", "q1", "a1", "q2"])
     }
 
-    @Test("Pick ids: page paths and website ids are the same id")
+    @Test("Pick ids are the bare slug, whatever form they arrive in")
     func pickIds() throws {
-        #expect(PickId.normalise("events/abc/index.html") == "events/abc")
-        #expect(PickId.normalise("/events/abc/") == "events/abc")
-        #expect(PickId.normalise("events/abc") == "events/abc")
-        let doc = try PickId.scheduleDocument(ids: ["events/a/index.html", "events/b"])
-        #expect(PickId.ids(inScheduleDocument: doc) == ["events/a", "events/b"])
+        #expect(PickId.normalise("events/ai-doom-or-boom/index.html") == "ai-doom-or-boom")
+        #expect(PickId.normalise("/events/abc/") == "abc")
+        #expect(PickId.normalise("events/abc") == "abc")
+        #expect(PickId.normalise("abc") == "abc")
+        let doc = try PickId.scheduleDocument(ids: ["events/a/index.html", "b"])
+        #expect(PickId.ids(inScheduleDocument: doc) == ["a", "b"])
         let text = String(decoding: doc, as: UTF8.self)
         #expect(text.contains("\"v\":1"))
         #expect(text.range(of: #"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z"#, options: .regularExpression) != nil)
