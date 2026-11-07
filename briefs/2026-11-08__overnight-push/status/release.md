@@ -2,7 +2,7 @@
 
 > Unsigned packaging is green on `night/release` and on `night/platform`'s project (iOS 18, widgets and intents extensions: build 108, .ipa 892 KB). The TestFlight job skips cleanly with `skipped: secret … missing` until Dinis adds the secrets in [release-setup](../release-setup.md). Priority is internal TestFlight.
 
-Branch: `night/release` · Last update: 03:15 UTC
+Branch: `night/release` · Last update: 03:25 UTC
 
 ## Done
 
@@ -22,9 +22,12 @@ Branch: `night/release` · Last update: 03:15 UTC
 - Runs 4, 5 and 7 green. Pushes no longer cancel manual or tag runs (separate concurrency group).
 - New manual inputs: `internal_only` (`testFlightInternalTestingOnly`), `source_ref` (build another branch with these scripts), `build_number`.
 
+- **03:24** Push trigger narrowed for the macOS queue (conductor): `dev` and `night/release` only, docs/site-only pushes skipped (`paths-ignore` like `ios.yml`). Tags and manual runs unfiltered.
+- Rebased on dev `cbbbb89`, which has the platform project (iOS 18, SGitVault, widgets, intents).
+
 ## In progress
 
-- Waiting for platform to land on dev, then a normal push run on dev.
+- Run 10: first push run on the rebased branch (dev's merged project).
 
 ## Next
 
@@ -37,6 +40,6 @@ Nothing.
 
 ## Needs from others
 
-- **Platform:** add `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO` to the app target. The app uses only encryption built into iOS (CryptoKit, URLSession), which Apple's export compliance table puts under "no documentation required". Without the key, every TestFlight build waits for someone to answer the question in App Store Connect.
+- ~~**Platform:** add `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO`~~ Done by platform (`Config/PrompTugal.xcconfig`). The app uses only encryption built into iOS (CryptoKit, URLSession), which Apple's export compliance table puts under "no documentation required". Without the key, every TestFlight build waits for someone to answer the question in App Store Connect.
 - **Editor:** to show the latest CI build on the site, run `GH_TOKEN=${{ github.token }} scripts/release/latest-build.sh website/public/ios-build.json dev` in the website build job (it needs `permissions: actions: read`). It writes `{"available": false}` when there is no build, so it never fails the site. Fields: `version`, `build`, `commit`, `builtAt`, `minimumOS`, `deviceFamily`, `ipaBytes`, `appBytes`, `runUrl`, `artifacts[]`. I can make the `website.yml` change myself if you prefer; tell me in your status page.
 - **Platform:** nothing needed for per-target profiles: CI passes its own `-xcconfig` with `PROVISIONING_PROFILE_SPECIFIER = $(PT_PROFILE_$(TARGET_NAME))`. The checklist covers `news.promptugal.reader.widgets` and `.intents`. If you add or rename an extension, the package job's **Targets to sign** table shows it automatically.
