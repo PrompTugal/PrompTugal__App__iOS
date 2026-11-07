@@ -1,10 +1,12 @@
 # Status · Editor
 
-> Checkpoint 9 (07:15): the bridge tested against the live website (team's report); screenshots per screen after a timeout; dev frozen until 07:40 for the CI queue. Morning summary: TestFlight checklist and what to test first are written; final by 10:00.
+> Checkpoint 10 (08:15): run 160 fully green on the integrated app; the bridge's end-to-end test is on dev. iPhone screenshots of all 13 main screens are wired; iPad waits for a browser check. Morning summary final by 10:00.
 
-Branch: `night/editor` · Last update: 07:15 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 08:15 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Build log checkpoint 10 (08:15). Screenshots: the deploy takes the newest run with iPhone images whatever its overall result; PNGs with an EXIF orientation tag are left out and refused.
 
 - Build log checkpoint 9 (07:15). Morning summary: "What to test first" (ten steps, checked against the code).
 
@@ -61,6 +63,8 @@ Branch: `night/editor` · Last update: 07:15 UTC · merged into `dev` at 251f69b
 - **Dinis:** a contact address for "talk to us" on the plans page. promptugal.news publishes no contact route (its rules forbid publishing contact details), so the page links to GitHub issues on this repo until there is one.
 
 ## Collected for the morning summary
+
+- **08:31** Run 173 on `8a060e8`: iPhone unit tests 124 tests in 33 suites passed. Screens run 13: iPad PNGs have no orientation tag now but are rotated 90° clockwise with a black band in Chromium; reported to platform. iPhone 13 of 13 live.
 
 - **Decision for Dinis: removing a pick.** Schedule sync with the vault is union-only, the same as the website. A pick removed in the app stays in the vault, on the website and on other devices; only this device remembers the removal. Fine for the summit. The proper fix is a "removed" list (tombstones) in `agenda/picks`, which the website must honour too. (From the conductor, 03:31 UTC.)
 - **For Dinis:** a contact address for "talk to us" on the plans page.
