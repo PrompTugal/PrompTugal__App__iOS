@@ -30,6 +30,32 @@ enum ScheduleVaultSync {
         return Outcome(found: true, added: outcome.added.count, removed: outcome.removed.count)
     }
 
+    /// The vault session's form (night/vault): `VaultSession.shared.loadPicks() -> Data?` and
+    /// `savePicks(_:) -> Data`, which unions by id, commits to the branch the website reads, and returns the result.
+    ///
+    ///     if VaultSession.shared.reader != nil {
+    ///         _ = try await ScheduleVaultSync.sync(schedule, load: { try await session.loadPicks() },
+    ///                                              save: { try await session.savePicks($0) })
+    ///     }
+    static func sync(_ schedule: ScheduleStore, load: () async throws -> Data?,
+                     save: (Data) async throws -> Data) async throws -> Outcome {
+        var added = 0, removed = 0
+        let found: Bool
+        if let data = try await load(), let document = ScheduleDocument.decode(data) {
+            let outcome = schedule.merge(document, from: .vault)
+            added = outcome.added.count; removed = outcome.removed.count
+            found = true
+        } else {
+            found = false
+        }
+        let saved = try await save(schedule.document.encoded())
+        if let document = ScheduleDocument.decode(saved) {
+            let outcome = schedule.merge(document, from: .vault)
+            added += outcome.added.count; removed += outcome.removed.count
+        }
+        return Outcome(found: found, added: added, removed: removed)
+    }
+
     /// Writes the merged schedule back, in the website's form.
     static func push(from schedule: ScheduleStore, write: (String, String) async throws -> Void) async throws {
         try await write(path, schedule.document.json)

@@ -104,10 +104,24 @@ enum ScheduleID {
 
 /// The ISO 8601 form JavaScript's `toISOString()` writes: UTC, milliseconds, `Z`.
 enum ScheduleTime {
+    /// Exactly `toISOString()`'s form. Built from whole milliseconds (rounded), so a time read from the website is
+    /// written back character for character, whatever binary rounding the `Date` picked up on the way.
     static func format(_ date: Date) -> String {
         guard date != .distantPast else { return "1970-01-01T00:00:00.000Z" }
-        return withFractional.string(from: date)
+        let millis = Int64((date.timeIntervalSince1970 * 1000).rounded())
+        let seconds = millis >= 0 ? millis / 1000 : (millis - 999) / 1000
+        let fraction = Int(millis - seconds * 1000)
+        let parts = utc.dateComponents([.year, .month, .day, .hour, .minute, .second],
+                                       from: Date(timeIntervalSince1970: TimeInterval(seconds)))
+        return String(format: "%04d-%02d-%02dT%02d:%02d:%02d.%03dZ", parts.year ?? 1970, parts.month ?? 1,
+                      parts.day ?? 1, parts.hour ?? 0, parts.minute ?? 0, parts.second ?? 0, fraction)
     }
+
+    private static let utc: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar
+    }()
 
     /// Also reads the team site's short form, "2026-11-06T22:29Z" (no seconds).
     static func parse(_ text: String) -> Date? {

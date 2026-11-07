@@ -261,3 +261,57 @@ struct ScheduleVaultSyncTests {
         #expect(!none.found)
     }
 }
+
+@Suite("Website round trip")
+struct ScheduleRoundTripTests {
+    /// The shape schedule.js writes: ISO strings from toISOString(), any order, odd milliseconds.
+    static let website = #"{"v":1,"picks":[{"id":"ai-doom-or-boom","at":"2026-11-08T03:12:45.120Z"},{"id":"ai-s-octopus-era","at":"2026-11-08T03:13:01.007Z"},{"id":"a-identity-auth-tips-to-secure-ai-agents-and-mcp-servers","at":"2026-11-08T23:59:59.999Z"}]}"#
+
+    @Test func everyTimeComesBackCharacterForCharacter() throws {
+        let document = try #require(ScheduleDocument.decode(Self.website))
+        let again = try #require(ScheduleDocument.decode(document.json))
+        let original = try JSONSerialization.jsonObject(with: Data(Self.website.utf8)) as! [String: Any]
+        let written = try JSONSerialization.jsonObject(with: document.encoded()) as! [String: Any]
+        let before = (original["picks"] as! [[String: String]]).map { [$0["id"]!, $0["at"]!] }
+        let after = (written["picks"] as! [[String: String]]).map { [$0["id"]!, $0["at"]!] }
+        #expect(before == after)
+        #expect(again == document)
+    }
+
+    @Test func thousandsOfMillisecondValuesSurvive() {
+        // every millisecond of one second, plus some far dates: format(parse(x)) == x
+        for ms in 0..<1000 {
+            let text = String(format: "2026-11-10T14:20:07.%03dZ", ms)
+            #expect(ScheduleTime.format(ScheduleTime.parse(text)!) == text)
+        }
+        for text in ["1999-12-31T23:59:59.999Z", "2038-01-19T03:14:08.001Z", "2026-03-29T01:00:00.000Z"] {
+            #expect(ScheduleTime.format(ScheduleTime.parse(text)!) == text)
+        }
+    }
+
+    @Test func numbersAreReadAndWrittenAsTheWebsitesString() throws {
+        let document = try #require(ScheduleDocument.decode(#"{"v":1,"picks":[{"id":"a","at":1762650000123}]}"#))
+        #expect(document.json == #"{"v":1,"picks":[{"id":"a","at":"2025-11-09T01:00:00.123Z"}]}"#)
+    }
+}
+
+@Suite("Vault sync, vault session's API")
+@MainActor
+struct ScheduleVaultAPITests {
+    @Test func loadMergeSaveMerge() async throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("vsync-\(UUID().uuidString)")
+        let store = ScheduleStore(directory: dir, clock: { Date(timeIntervalSince1970: 1_762_650_000) })
+        store.toggle("local-pick")
+        var sent: Data?
+        let outcome = try await ScheduleVaultSync.sync(store, load: { Data(ScheduleRoundTripTests.website.utf8) }, save: { data in
+            sent = data
+            // the vault answers with the union, plus a pick another device made meanwhile
+            var doc = ScheduleDocument.decode(data)!
+            doc.picks.append(.init(id: "from-phone-2", at: Date(timeIntervalSince1970: 1_762_650_100)))
+            return doc.encoded()
+        })
+        #expect(outcome.found && outcome.added == 4)
+        #expect(ScheduleDocument.decode(try #require(sent))?.picks.count == 4)
+        #expect(store.document.picks.count == 5)
+    }
+}
