@@ -55,13 +55,17 @@ ditto -c -k --sequesterRsrc --keepParent "$simapp" "$DIST/$ARTIFACT_BASE-simulat
 summary ""
 summary "### Targets to sign (App Store profiles needed)"
 summary ""
-summary "| Target | Bundle id | Type | Profile secret |"
-summary "| --- | --- | --- | --- |"
-"$(dirname "$0")/targets.sh" | while IFS=$'\t' read -r target bundle type; do
+summary "| Target | Bundle id | Type | Profile secret | Entitlements (enable on the App ID) |"
+summary "| --- | --- | --- | --- | --- |"
+"$(dirname "$0")/targets.sh" | while IFS=$'\t' read -r target bundle type ent; do
   case "$type" in *application|*app-extension|*extensionkit-extension) ;; *) continue ;; esac
   suffix=${bundle#news.promptugal.reader}; suffix=${suffix#.}
   slot=$(echo "${suffix:-app}" | tr '[:lower:]' '[:upper:]')
-  summary "| \`$target\` | \`$bundle\` | ${type##*.} | \`IOS_PROFILE_${slot}_BASE64\` |"
+  keys="none"
+  if [ -n "$ent" ] && [ -f "$ent" ]; then
+    keys=$(plutil -convert json -o - "$ent" | python3 -c 'import json,sys; print(", ".join("`%s`" % k.replace("com.apple.developer.","").replace("com.apple.security.","") for k in sorted(json.load(sys.stdin))) or "none")')
+  fi
+  summary "| \`$target\` | \`$bundle\` | ${type##*.} | \`IOS_PROFILE_${slot}_BASE64\` | $keys |"
 done
 
 summary ""
