@@ -11,6 +11,7 @@
 - **The team is the first customer.** Seven to nine of us use it at Web Summit Lisbon (9–12 November). Silvio has already installed it from Xcode, so everyone can. The App Store is a bonus, not a dependency.
 - **Two products in one:** a **user platform** (readers and attendees) and a **creator platform** (the team, our agents, our newsroom). The platform itself is something we will sell.
 - **Make it spectacular on iPad.** The iPad is a better place than the website to see what agents and the team are doing. What we learn natively goes back to the website.
+- **The first audience of this version is us.** As it stands, this is fundamentally an internal application for the team.
 - **Make everything visible.** Like our websites, the app should show its working: debug panels, traffic, encryption, data and versions.
 
 ## Decisions taken (answers to brief pack 2026-11-07, D1–D7)

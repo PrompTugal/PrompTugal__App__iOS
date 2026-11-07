@@ -2,7 +2,7 @@
 
 > CI builds the app on Xcode 26.6. The folder-synchronized layout is ready: add Swift files to your folder and push. Tests, SGitVault, HTTPClient, build info and entitlements are pushed and in CI.
 
-Branch: `night/platform` · Last update: 02:52 UTC
+Branch: `night/platform` · Last update: 03:08 UTC
 
 ## Ready for other sessions
 
@@ -23,7 +23,7 @@ Branch: `night/platform` · Last update: 02:52 UTC
 2. `actions_list` → `list_workflow_jobs` with the run id.
 3. `get_job_logs` with the failed job's id, `return_content: true`, `tail_lines: 80`. A failed step ends with `===== … failed. Errors: =====` and the `error:` lines, above about 40 lines of post-job noise.
 
-Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App build (simulator)`, `App unit tests (iPhone simulator)`. The `Simulator .app artifact` job runs on `dev` and by hand only, to save macOS runners for everyone.
+Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App build (simulator)`, `App unit tests (iPhone simulator)` and `App unit tests (iPad simulator)`. Every feature must work on both. Artifacts belong to the release engineer's `ios-release.yml`.
 
 ## Done
 
@@ -37,9 +37,23 @@ Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App bu
 - **Capabilities groundwork:** `Config/PrompTugal.entitlements` (App Group `group.news.promptugal.reader`; `webcredentials:promptugal.news`, `applinks:promptugal.news`), wired through `Config/PrompTugal.xcconfig`. `PrompTugal/Store/PrompTugal.storekit` with consumables `news.promptugal.reader.credit.5` (0.99) and `.credit.20` (2.99), on the scheme's Run action. Usage strings for Face ID, camera, microphone, speech recognition and NFC.
 - File-private reader types renamed with a `Reader` prefix (`ReaderDestination`, `ReaderSectionView`, …) so they can't clash with design's `Destination`.
 
+## Since 02:55
+
+- **Widget** `PrompTugalWidgets` (Now and next: small, medium, lock screen), reading `now-next.json` from the App Group. `Shared/` is compiled into the app and every extension.
+- **App Intents extension** `PrompTugalIntents`: "Next session".
+- **SGitVault**: the vault session's package, as is, linked into the app.
+- **CI**: unit tests on an iPhone **and** an iPad simulator. A push no longer cancels a running run. The artifact job moved to release's `ios-release.yml`.
+- **Default shortcuts**: promptugal.news, then web-summit.sgit.ai. Nothing else (conductor ruling).
+- **Info and entitlements**: `ITSAppUsesNonExemptEncryption = NO`; `WKAppBoundDomains` = promptugal.news, web-summit.sgit.ai (in `Config/PrompTugal-Info.plist`); Time Sensitive Notifications; calendar write-only usage string.
+- **Bundle IDs**: app `news.promptugal.reader`, widget `.widgets`, intents `.intents`, tests `.tests`. Version and build number are set once at project level.
+
+**Design, note:** with `WKAppBoundDomains` set, WebKit allows script injection, user scripts and message handlers only on promptugal.news and web-summit.sgit.ai. Pages on other hosts still load, but script injection on them stops working.
+
+**Team, note:** your code hooks in `App/` (WebsiteBrowser bridge, ReaderStore → `TeamFeatures`) go in as soon as `night/team` is on `dev`.
+
 ## In progress
 
-- Confirming run 4 (SGitVault + entitlements) is green.
+- Waiting for the first completed unit-test run (run 12) on iPhone and iPad. Builds are green.
 
 ## Next
 

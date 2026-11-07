@@ -7,6 +7,8 @@
 		<string>webcredentials:promptugal.news</string>
 		<string>applinks:promptugal.news</string>
 	</array>
+	<key>com.apple.developer.usernotifications.time-sensitive</key>
+	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.news.promptugal.reader</string>

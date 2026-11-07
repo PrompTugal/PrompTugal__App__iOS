@@ -17,6 +17,14 @@ KIND_LABEL = {'native': 'Native', 'web': 'Web', 'hybrid': 'Native and web'}
 esc = html.escape
 
 
+def plain(text):
+    """Markdown from a status page as safe, plain HTML text: links become their text,
+    code ticks and emphasis go, and braces are escaped so they never look like build tokens."""
+    text = re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', text)
+    text = re.sub(r'[`*]', '', text)
+    return esc(text).replace('{', '&#123;').replace('}', '&#125;')
+
+
 # --- features --------------------------------------------------------------
 
 def features(root=ROOT):
@@ -97,6 +105,13 @@ def git(*args, root=ROOT):
     return out.stdout if out.returncode == 0 else ''
 
 
+def git_ok(*args, root=ROOT):
+    try:
+        return subprocess.run(['git', *args], cwd=root, capture_output=True, timeout=30).returncode == 0
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
 def releases(root=ROOT):
     """Every v0.1.* tag, newest first, with the changes it released."""
     tags = [t for t in git('tag', '-l', 'v*', '--sort=-v:refname', root=root).split() if re.fullmatch(r'v\d+\.\d+\.\d+', t)]
@@ -143,34 +158,63 @@ def parse_status(text):
             'sections': sections}
 
 
-def push_status(root=ROOT):
-    """Every session's status page in the overnight pack, with its last change in git."""
-    out = []
-    for path in sorted(root.glob('briefs/*__overnight-push/status/*.md')):
-        info = parse_status(path.read_text())
-        info['slug'] = path.stem
-        info['pack'] = path.parent.parent.name
-        info['updated'] = git('log', '-1', '--format=%cI', '--', path.relative_to(root).as_posix(), root=root).strip()
-        out.append(info)
+def push_status(root=ROOT, remote='origin'):
+    """Every session's status page in the overnight pack.
+
+    A session's own branch (origin/night/<slug>) is newer than dev between merges,
+    so when the branch is in this checkout (the deploy fetches every branch) its copy
+    of the status page is read instead, with how many commits it is ahead of HEAD.
+    Status pages that exist only on a branch are included too, linked to GitHub."""
+    out, seen = [], set()
+    branches = {line.strip()[len(remote) + len('/night/'):]: line.strip()
+                for line in git('branch', '-r', '--format=%(refname:short)', root=root).splitlines()
+                if line.strip().startswith(f'{remote}/night/')}
+    packs = sorted({p.parent.parent for p in root.glob('briefs/*__overnight-push/status/*.md')})
+    for pack in packs:
+        rel_pack = pack.relative_to(root).as_posix()
+        slugs = {p.stem for p in pack.glob('status/*.md')}
+        slugs |= {s for s, ref in branches.items() if git_ok('cat-file', '-e', f'{ref}:{rel_pack}/status/{s}.md', root=root)}
+        for slug in sorted(slugs):
+            rel = f'{rel_pack}/status/{slug}.md'
+            local = root / rel
+            text = local.read_text() if local.exists() else ''
+            info = {'source': 'dev', 'ahead': None, 'on_site': local.exists()}
+            updated = git('log', '-1', '--format=%cI', '--', rel, root=root).strip() if local.exists() else ''
+            ref = branches.get(slug)
+            if ref:
+                info['ahead'] = int(git('rev-list', '--count', f'HEAD..{ref}', root=root).strip() or 0)
+                branch_text = git('show', f'{ref}:{rel}', root=root)
+                branch_updated = git('log', '-1', '--format=%cI', ref, '--', rel, root=root).strip()
+                if branch_text and branch_updated and branch_updated > updated:
+                    text, updated, info['source'] = branch_text, branch_updated, f'night/{slug}'
+            info.update(parse_status(text))
+            info.update(slug=slug, pack=pack.name, updated=updated, branch=ref)
+            seen.add(slug)
+            out.append(info)
     return out
 
 
-def push_dashboard(items):
+def push_dashboard(items, repo_url=''):
     if not items:
         return '<p>No status pages yet.</p>'
     head = ''.join(f'<th scope="col">{s}</th>' for s in STATUS_SECTIONS)
     rows = []
     for s in items:
         name = re.sub(r'^Status\s*·\s*', '', s['title']) or s['slug']
-        href = f'briefs/{s["pack"]}/status/{s["slug"]}.html'
+        if s['source'] == 'dev' and s['on_site']:
+            href = f'briefs/{s["pack"]}/status/{s["slug"]}.html'
+        else:
+            href = f'{repo_url}/blob/night/{s["slug"]}/briefs/{s["pack"]}/status/{s["slug"]}.md'
         counts = ''.join(f'<td class="n{" warn" if k == "Blocked" and s["sections"].get(k) else ""}">'
                          f'{len(s["sections"].get(k, []))}</td>' for k in STATUS_SECTIONS)
         when = s['updated'][11:16] + ' UTC' if s['updated'] else 'not in git'
+        ahead = '' if s['ahead'] is None else str(s['ahead'])
         rows.append(f'<tr><th scope="row"><a href="{href}">{esc(name)}</a></th>{counts}'
-                    f'<td>{esc(when)}</td><td>{esc(s["summary"])}</td></tr>')
+                    f'<td>{esc(when)}</td><td><code>{esc(s["source"])}</code></td><td class="n">{ahead}</td>'
+                    f'<td>{plain(s["summary"])}</td></tr>')
     return ('<div class="table-wrap"><table class="dash"><thead><tr><th scope="col">Session</th>' + head +
-            '<th scope="col">Last change</th><th scope="col">Summary</th></tr></thead><tbody>' + ''.join(rows) +
-            '</tbody></table></div>')
+            '<th scope="col">Last change</th><th scope="col">Read from</th><th scope="col">Commits not on dev</th>'
+            '<th scope="col">Summary</th></tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>')
 
 
 def push_blockers(items):
@@ -179,7 +223,7 @@ def push_blockers(items):
         name = re.sub(r'^Status\s*·\s*', '', s['title']) or s['slug']
         for kind in ('Blocked', 'Needs from others'):
             for item in s['sections'].get(kind, []):
-                rows.append(f'<li><strong>{esc(name)}</strong> ({kind.lower()}): {esc(re.sub(r"[`*]", "", item))}</li>')
+                rows.append(f'<li><strong>{esc(name)}</strong> ({kind.lower()}): {plain(item)}</li>')
     return '<ul>' + ''.join(rows) + '</ul>' if rows else '<p>Nothing blocked and nothing asked of others.</p>'
 
 
@@ -240,7 +284,9 @@ def workflows_html(items, repo_url):
                       f'<p>Runs on: {", ".join("<code>" + esc(t) + "</code>" for t in w["triggers"]) or "not stated"}. '
                       f'{len(w["jobs"])} jobs, {sum(len(j["steps"]) for j in w["jobs"])} named steps.</p>'
                       f'{comment}<ol class="jobs">{jobs}</ol></article>')
-    return '\n'.join(blocks)
+    # GitHub expressions such as ${{ matrix.device }} are shown as ‹matrix.device›, so they
+    # never look like an unfilled build token to the validator (or to a reader).
+    return re.sub(r'\$\{\{\s*(.*?)\s*\}\}', r'‹\1›', '\n'.join(blocks))
 
 
 # --- screens ---------------------------------------------------------------
@@ -316,3 +362,48 @@ def areas_html(areas):
                    for a, (n, lines) in sorted(areas.items()))
     return ('<div class="table-wrap"><table><thead><tr><th scope="col">Folder</th><th scope="col">Swift files</th>'
             '<th scope="col">Lines</th></tr></thead><tbody>' + rows + '</tbody></table></div>')
+
+
+# --- latest iOS build (from scripts/release/latest-build.sh) ----------------
+
+def latest_build(path):
+    """The JSON latest-build.sh wrote, or None when there is none or it does not parse."""
+    if not path:
+        return None
+    try:
+        data = json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) and data.get('available') else None
+
+
+def _size(n):
+    try:
+        n = int(n)
+    except (TypeError, ValueError):
+        return '?'
+    return f'{n / 1_048_576:.1f} MB' if n >= 1_048_576 else f'{round(n / 1024):,} KB'
+
+
+def latest_build_html(data, repo_url):
+    if not data:
+        return ('<p class="notice">No CI build information in this site build. The site build asks for the latest '
+                'successful iOS release run on <code>dev</code>; it shows here once there is one.</p>')
+    devices = {1: 'iPhone', 2: 'iPad'}
+    family = ' and '.join(devices.get(d, str(d)) for d in data.get('deviceFamily', [])) or '?'
+    commit = str(data.get('commit', ''))[:7]
+    built = str(data.get('builtAt', ''))[:16].replace('T', ' ')
+    run = data.get('runUrl') or data.get('run') or ''
+    rows = [('App version', f'{esc(str(data.get("version", "?")))} (build {esc(str(data.get("build", "?")))})'),
+            ('Commit', f'<a href="{repo_url}/commit/{esc(commit)}"><code>{esc(commit)}</code></a>' if commit else '?'),
+            ('Built', f'{esc(built)} UTC' if built else '?'),
+            ('Devices', esc(family)),
+            ('Minimum iOS', esc(str(data.get('minimumOS', '?')))),
+            ('Xcode and SDK', f'{esc(str(data.get("xcode", "?")))}, {esc(str(data.get("sdk", "?")))}'),
+            ('Sizes', f'app {_size(data.get("appBytes"))}, unsigned .ipa {_size(data.get("ipaBytes"))}'),
+            ('Run', f'<a href="{esc(run)}">{esc(run.rsplit("/", 1)[-1])}</a>' if run.startswith('https://') else '?')]
+    arts = ''.join(f'<li><code>{esc(str(a.get("name", "")))}</code> ({_size(a.get("size"))})</li>'
+                   for a in data.get('artifacts', []) if isinstance(a, dict))
+    table = ''.join(f'<div><dt>{k}</dt><dd>{v}</dd></div>' for k, v in rows)
+    return (f'<dl class="kv">{table}</dl>'
+            + (f'<p>Artifacts of that run (GitHub keeps them for a limited time):</p><ul>{arts}</ul>' if arts else ''))

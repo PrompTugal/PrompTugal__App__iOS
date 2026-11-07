@@ -1,10 +1,13 @@
 # Status · Editor
 
-> The site is now a PrompTugal product site for readers and teams, with features labelled from the code and generated admin pages (push dashboard, screens, releases, CI, build log). First build-log checkpoint written at 02:50 UTC.
+> The site presents PrompTugal as the team's internal app in beta, with readers and teams as where it is going. Features are labelled from the code; the push dashboard reads every session's own branch; the CI page shows the latest iOS build. Next build log checkpoint at 03:50 UTC.
 
-Branch: `night/editor` · Last update: 02:55 UTC
+Branch: `night/editor` · Last update: 03:10 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Positioning from Dinis: "the first audience of this version is us". Added to the overnight README; site copy says internal beta, no public launch, nothing on sale.
+- Push dashboard reads each session's status from its own `night/*` branch when that is newer than `dev`, with commits not yet on dev. Release's status page shows before it is merged.
 
 - Product pages rewritten: home, for readers, for teams, features, plans, support, privacy. PrompTugal only; RiskMandate and sgit links gone from product pages and the footer.
 - `website/features.json`: 19 features, each with the files and screens that prove it. Status ("In the beta" or "Coming") is worked out at build time; placeholder screens do not count.
@@ -15,6 +18,8 @@ Branch: `night/editor` · Last update: 02:55 UTC
 - Build log checkpoint 1 (02:50 UTC).
 
 ## In progress
+
+- CI page: "latest iOS build" panel from release's `scripts/release/latest-build.sh`. `website.yml` runs the script (only if it exists, `actions: read`) and the site also publishes `/ios-build.json`. Release: no need for you to change `website.yml`.
 
 - Brief 08 records decisions D1–D7 (done). Adding the release engineer (night/release) to the plan, dashboard and build log.
 
@@ -28,6 +33,6 @@ Branch: `night/editor` · Last update: 02:55 UTC
 
 ## Needs from others
 
-- **Design or platform:** `PrompTugal/Websites.json` still ships riskmandate.ai and sgit.ai as default shortcuts. Dinis asked for PrompTugal only. The site no longer names them on product pages, but the app does. Whoever owns the file now, please drop those two defaults.
+- **Team:** `PrompTugal/Websites.json` still ships riskmandate.ai, sgit.ai and newsroom.sgit.ai as default shortcuts. The conductor says the team session drops them (item 7 of its brief).
 - **Design:** please keep screen ids in `Destinations.swift` stable. The site's feature list checks for `team.schedule`, `team.people`, `agents.activity`, `news.home`, `news.newsroom`, `news.graph`, `briefed`, `collab.lanes`, `collab.ai`, `team.store`, `vault`, `debug` and `obs.native`, and treats a `PendingFeatureView` as not built.
-- **Conductor:** a contact address for "talk to us" on the plans page. It links to GitHub issues until there is one.
+- **Dinis:** a contact address for "talk to us" on the plans page. promptugal.news publishes no contact route (its rules forbid publishing contact details), so the page links to GitHub issues on this repo until there is one.

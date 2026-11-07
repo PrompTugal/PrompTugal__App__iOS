@@ -14,13 +14,5 @@
     "icon": "person.3.fill",
     "color": "indigo",
     "iconAsset": "ShortcutWebSummit"
-  },
-  {
-    "id": "newsroom",
-    "name": "newsroom.sgit.ai",
-    "url": "https://newsroom.sgit.ai/",
-    "icon": "mic.fill",
-    "color": "orange",
-    "iconText": "news\nroom"
   }
 ]
