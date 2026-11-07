@@ -1,8 +1,8 @@
 # Status · iOS platform
 
-> Design, team and vault are on dev. Platform wired them together at 04:15: AppShell is the root, the team bridge runs in the website view, saved sessions are schedule picks, and both background refreshes are registered. Waiting for CI on the combined app.
+> CI and the project are done and on dev; the app builds with every session's code. Since 06:00: screenshots on dev (screens.yml, one UI test per screen), per-job CI concurrency, and night/** pushes run the build only (unit tests on dev, PRs, by hand).
 
-Branch: `night/platform` · Last update: 05:40 UTC
+Branch: `night/platform` · Last update: 07:36 UTC
 
 ## Ready for other sessions
 
@@ -53,6 +53,11 @@ Jobs: `App build and SGitVault tests` (the build, then `swift test` for the pack
 
 ## In progress
 
+- **07:15** For runner capacity, `night/**` pushes run only `App build and SGitVault tests` (1 runner). The unit tests run on `dev`, pull requests and by hand (Actions → iOS → Run workflow).
+- **06:45** `screens.yml` (`dev` only): `ScreensTests` has one test per destination (13, design's ids). Each screenshot is kept before the `pt.destination.<id>` check, and only `.png` attachments are exported. Fixed on the way: dotted ids lost their tail in file names (run 4), the export picked up failure `.txt`/`.mp4` attachments (run 8), and iPad PNGs are rotated upright. Each device must produce exactly 13 PNGs.
+- **06:00** Per-job concurrency in `ios.yml` and `screens.yml`: a job that has started always finishes; a job still waiting for a runner is replaced by the newer push's.
+- **05:40** Integrated app (`c53c2c0`): iPad unit tests, 64 of 66 passed. The 2 failures were team's key-order tests, fixed in `500b5ad`.
+- **07:36** Running on `dev`: iPhone unit tests (`991cbfa`) and iPhone screens (`d33acfe`, design's agenda fix). Results to the conductor when done.
 - **05:40 Integration result** (`c53c2c0` on `night/platform`, which already held design, team and vault): app build and SGitVault tests green. Unit tests on iPad: **64 of 66 passed**. The 2 failures are team's key-order tests (`ScheduleTests.swift:34`, `:298`), fixed by team in `500b5ad` on `dev`. The conductor cancelled `dev` run 88 on purpose for the same reason. Per-job concurrency (`ios.yml` and `screens.yml`) is on `dev`, so started jobs now always finish.
 - **04:25** The conductor merged the wiring with design and vault into `dev` (`3b77e1c`). `AppShell` is the root on `dev`. The first full integration run (88) is queued for runners.
 - **04:28** **Screens** (design's request): `PrompTugalUITests/ScreensTests` opens the 12 main destinations with `-PTDestination <id> -PTSampleData -PTMe ana` and keeps a screenshot of each. It has its own scheme, `PrompTugalScreens`, so ⌘U and `ios.yml` still run only unit tests. `.github/workflows/screens.yml` runs on `dev` and by hand, on one iPhone and one iPad. It uploads `screens-<sha>` with `iphone-<id>.png` and `ipad-<id>.png`, longest side 1600 px (the editor's contract).
