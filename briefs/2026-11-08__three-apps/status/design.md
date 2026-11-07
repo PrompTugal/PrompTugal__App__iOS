@@ -1,6 +1,6 @@
 # Status · Design (three apps)
 
-> Planning, waiting for phase 2 (PTCore) on dev. PTNews cannot move as the contract says: News/ pulls in ReaderStore, DashboardData and ScheduleStore, which sit above it. Proposed fixes below need a yes from the conductor. The PrompTugal app's shell is drafted.
+> Plan approved by the conductor; waiting for phase 2 (PTCore) on dev. PTNews cannot move as the contract says: News/ pulls in ReaderStore, DashboardData and ScheduleStore, which sit above it. Proposed fixes below need a yes from the conductor. The PrompTugal app's shell is drafted.
 
 Branch: `split/design` (from `origin/dev`) · Last update: 8 Nov, planning · Last CI run: none yet (no code moved)
 
@@ -8,6 +8,12 @@ Branch: `split/design` (from `origin/dev`) · Last update: 8 Nov, planning · La
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
 - Mapped Shell, Dashboards, Debug and News (below).
 - Drafted the PrompTugal app's shell and the sharing options.
+
+## Decisions (conductor)
+- AgendaView and ReaderStore go to PTAgenda (team moves them; ReaderStore gets the schedule injected). PTAgenda must not depend on PTNews.
+- PTNews gets `NewsSource` and `NewsFeeds`; `DashboardData` forwards to it. Each app adds `extension ReaderStore: NewsSource {}` (or a small adapter).
+- Shell option C: shared parts in `Packages/PTCore/Sources/PTCore/Shell/` (mine); each app keeps its own root and Destinations.
+- Team app scheme is `ptteam://`; PrompTugal keeps `promptugal://`. Reminders and links take the scheme as a parameter, not hard-coded.
 
 ## In progress
 - Waiting for phase 2.
