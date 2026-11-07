@@ -18,6 +18,9 @@ struct GraphExplorerView: View {
     @GestureState private var pinch: CGFloat = 1
     @GestureState private var drag: CGSize = .zero
     @State private var showsDetail = false
+    /// The explorer's real width (iPad Split View can make it narrow): the detail opens beside
+    /// the graph only when there is room, otherwise as a sheet.
+    @State private var explorerWidth: CGFloat = 0
     /// On iPhone the legend starts folded, so the graph gets the whole screen.
     @State private var legendOpen: Bool?
 
@@ -52,7 +55,8 @@ struct GraphExplorerView: View {
 
     private var webURL: URL {
         var components = URLComponents(url: FeedClient.site.appendingPathComponent("graph/"), resolvingAgainstBaseURL: false)!
-        if let selected, let id = index?.graph.nodes[selected].id {
+        if let selected, let index, index.contains(selected) {
+            let id = index.graph.nodes[selected].id
             components.queryItems = [URLQueryItem(name: "focus", value: id)]
         }
         return components.url ?? FeedClient.site
@@ -63,6 +67,11 @@ struct GraphExplorerView: View {
         if let index, index.graph.nodes.count == graph.nodes.count, index.graph.version == graph.version { return }
         indexing = true
         let built = await Task.detached(priority: .userInitiated) { GraphIndex(graph) }.value
+        // A new graph has new node numbers: anything pointing into the old one must go.
+        selected = nil
+        path = []
+        pathStart = nil
+        showsDetail = false
         index = built
         indexing = false
     }
@@ -70,7 +79,9 @@ struct GraphExplorerView: View {
     // MARK: Explorer layout
 
     @ViewBuilder private func explorer(_ index: GraphIndex) -> some View {
-        let canvas = GraphCanvas(index: index, selected: selected, path: path, hiddenWorlds: hiddenWorlds,
+        let safeSelected = index.contains(selected) ? selected : nil
+        let safePath = path.allSatisfy { index.contains($0) } ? path : []
+        let canvas = GraphCanvas(index: index, selected: safeSelected, path: safePath, hiddenWorlds: hiddenWorlds,
                                  zoom: zoom * pinch, pan: CGSize(width: pan.width + drag.width, height: pan.height + drag.height),
                                  select: select)
             .gesture(MagnifyGesture().updating($pinch) { value, state, _ in state = value.magnification }
@@ -81,12 +92,13 @@ struct GraphExplorerView: View {
             .overlay(alignment: .topLeading) { legend(index) }
             .overlay(alignment: .bottomTrailing) { zoomControls }
 
-        if width == .regular {
+        Group {
+        if width == .regular, GraphLayout.sidePanel(width: explorerWidth) {
             HStack(spacing: 0) {
                 canvas
-                if selected != nil {
+                if safeSelected != nil {
                     Divider()
-                    detail(index).frame(width: 340)
+                    detail(index).frame(width: GraphLayout.panelWidth(width: explorerWidth))
                 }
             }
         } else {
@@ -94,6 +106,8 @@ struct GraphExplorerView: View {
                 NavigationStack { detail(index) }.presentationDetents([.medium, .large])
             }
         }
+        }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { explorerWidth = $0 }
     }
 
     private func select(_ node: Int?) {
@@ -192,7 +206,7 @@ struct GraphExplorerView: View {
 
     private func detail(_ index: GraphIndex) -> some View {
         Group {
-            if let selected {
+            if let selected, index.contains(selected) {
                 let node = index.graph.nodes[selected]
                 List {
                     Section {
@@ -219,7 +233,7 @@ struct GraphExplorerView: View {
                         }
                         Button { focus(on: selected, in: index) } label: { Label("Zoom to it", systemImage: "scope") }
                     }
-                    if path.count > 1 {
+                    if path.count > 1, path.allSatisfy({ index.contains($0) }) {
                         Section("Path, \(path.count - 1) steps") {
                             ForEach(Array(zip(path, path.dropFirst())), id: \.0) { from, to in
                                 if let edge = index.neighbours[from].map({ index.edges[$0] })
@@ -369,10 +383,19 @@ struct GraphCanvas: View {
     }
 }
 
+/// Where the node detail goes, from the width the explorer really has.
+enum GraphLayout {
+    /// Beside the graph from 700 pt; below that a sheet, so the graph keeps a usable width.
+    static func sidePanel(width: CGFloat) -> Bool { width >= 700 }
+
+    /// The panel: up to 340 pt, never more than 38 % of the width.
+    static func panelWidth(width: CGFloat) -> CGFloat { min(340, max(260, width * 0.38)) }
+}
+
 #Preview("Graph · iPhone") {
-    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Graph · iPad") {
-    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.previewData()).padPreview()
 }

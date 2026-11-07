@@ -178,9 +178,9 @@ struct HandoffChart: View {
 }
 
 #Preview("Agents · iPhone") {
-    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Agents · iPad") {
-    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.previewData()).padPreview()
 }

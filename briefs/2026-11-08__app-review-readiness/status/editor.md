@@ -1,8 +1,8 @@
 # Status · Editor
 
-> Done and green. Round 1: privacy page, support contact, review notes, privacy labels, pack status on the dashboard. Round 2 (15:20): product pages follow the App Review fixes as they merge (markers in the code), Reading credit labelled 'Debug builds only' once hidden in Release, release-setup and the overnight summary corrected, build-log entry.
+> Done and green, all merges checked. After design (9024bc0): 24 of 25 features in the beta, Reading credit 'Debug builds only'. Review notes, support and privacy pages match the app's real UI text. Waiting only on Dinis: support email, response time, demo keys, the Ask label call.
 
-Branch: `night/editor` · Last update: 15:58 UTC
+Branch: `night/editor` · Last update: 17:10 UTC
 
 ## Done
 
@@ -26,6 +26,18 @@ Branch: `night/editor` · Last update: 15:58 UTC
 - Labels on dev: 23 of 25 in the beta. Ask asks first (`AskConsentSheet`) and Report and block (`ReportBlockMenu`) flipped by themselves. Still Coming: Try with sample data and the app-switcher cover (design, not merged).
 - Privacy page, Ask paragraph, checked against `AI/AskView.swift` and `AI/AIContext.swift`: it sends the question, the conversation so far and the switched-on context; nothing until **Allow**; one switch per kind of context; only the public agenda on by default (`AIContextKind.defaults = [.agenda]`); withdraw in Ask → Key and settings ("Withdraw permission").
 - Support page, checked against `Lanes/LanesView.swift` and `Lanes/LaneReport.swift`: press and hold a message for **Report…** or **Block**; Report opens a pre-filled email with no recipient until the support address is set (`LaneReport.contactAddress` is empty); Block hides the sender or lane on this device, listed and reversible with Unblock.
+
+## Done, round 4 (16:35, after team merged at 8c6bfcb)
+
+- Reading credit reads **Debug builds only** (`ReadingCredit.isAvailable` is false in Release). Labels: 23 of 25 in the beta, 1 Debug only, 2 Coming (design).
+- plans.html states no prices, so the StoreKit prices (£4.99 and £19.99 in the local StoreKit file, shown from `Product.displayPrice`) need nothing there.
+- Support FAQ: payment pages (Stripe, PayPal and other hosted checkouts, the site's top-up page) are not opened in the app (`Bridge/CheckoutPolicy.swift`, `AppBridge.handlesNavigation`); and the app asks for notification permission only after a tap ("Turn on reminders?", `Team/TeamFeatures.swift:156`; `notify.plan` never prompts, `AppBridge.swift:216-221`). The privacy page's reminders line says the same. No wording points people to pay outside the app (guideline 3.1.1).
+
+## Done, round 5 (17:10, after design merged at 9024bc0)
+
+- Labels: **24 of 25 in the beta** (Try with sample data and the app-switcher cover flipped by themselves), Reading credit **Debug builds only**.
+- Review notes matched to design's UI text: My day's "Who are you?" with **Try with sample data** and **I am not on the team** (`Dashboards/TodayView.swift:61-74`); the **Sample data** banner with **Leave** (`Shell/AppShell.swift:140-156`); change it later in Settings → Team; the **Debug mode** switch in Settings (`Shell/SettingsView.swift:31`); Privacy and Support links and the non-affiliation line in Settings → About (`SettingsView.swift:43-50`, `SupportLinks.independence`); Report… and Block on press and hold. The checklist now has an "On dev" column: everything is on dev except Dinis's contact address and the demo keys.
+- Privacy and support pages say they are linked from Settings → About.
 
 ## Next
 

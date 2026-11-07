@@ -8,7 +8,7 @@ final class DashboardData {
     /// identity store replaces this once it lands.
     static let meKey = "team.me"
 
-    let team = RemoteFeed<Wire.Me>(name: "team/me", url: TeamSite.base.appendingPathComponent("me.json"))
+    let team = RemoteFeed<Wire.Me>(name: "team/me", url: TeamEndpoints.base.appendingPathComponent("me.json"))
     let dashboard = RemoteFeed<Wire.NewsroomDashboard>(name: "newsroom/dashboard", url: NewsroomAPI.url("newsroom/dashboard.json"))
     let status = RemoteFeed<Wire.NewsroomStatus>(name: "newsroom/status", url: NewsroomAPI.url("newsroom/status.json"))
     let board = RemoteFeed<Wire.StoryBoard>(name: "newsroom/stories", url: NewsroomAPI.url("newsroom/stories.json"))
@@ -29,7 +29,7 @@ final class DashboardData {
     func commandCentre(_ id: String) -> RemoteFeed<Wire.CommandCentre> {
         if let feed = centres[id] { return feed }
         let feed = RemoteFeed<Wire.CommandCentre>(
-            name: "team/cc-\(id)", url: TeamSite.base.appendingPathComponent("people/\(id)/app/data.json"))
+            name: "team/cc-\(id)", url: TeamEndpoints.base.appendingPathComponent("people/\(id)/app/data.json"))
         centres[id] = feed
         return feed
     }

@@ -5,10 +5,12 @@ import SwiftUI
 struct BriefedView: View {
     @Environment(DashboardData.self) private var data
     @AppStorage(DashboardData.meKey) private var me = ""
+    @AppStorage(SampleMode.key) private var sampleMode = false
 
     var body: some View {
         let person = data.person(me)
-        let centre = me.isEmpty ? nil : data.commandCentre(me)
+        // Sample people have no command centre on the team site.
+        let centre = me.isEmpty || sampleMode ? nil : data.commandCentre(me)
         Page {
             ScreenHeader(kicker: "Briefed", title: person.map { "\($0.first ?? $0.displayName)'s briefing" } ?? "Briefings",
                          summary: "The stand-up briefing, the decisions that wait on you, and what the agents ask.")
@@ -51,9 +53,9 @@ struct BriefedView: View {
                     }
                 }
                 TitledCard("Briefs on the web", kicker: "Web twins") {
-                    WebLinkRow(title: "The pulse, summarised", url: TeamSite.base.appendingPathComponent("pulse-summary/"))
-                    WebLinkRow(title: "The board's health", url: TeamSite.base.appendingPathComponent("board-health/"))
-                    WebLinkRow(title: "Reports every two hours", url: TeamSite.base.appendingPathComponent("reports/"))
+                    WebLinkRow(title: "The pulse, summarised", url: TeamEndpoints.base.appendingPathComponent("pulse-summary/"))
+                    WebLinkRow(title: "The board's health", url: TeamEndpoints.base.appendingPathComponent("board-health/"))
+                    WebLinkRow(title: "Reports every two hours", url: TeamEndpoints.base.appendingPathComponent("reports/"))
                     WebLinkRow(title: "Newsroom decisions", url: FeedClient.site.appendingPathComponent("newsroom/decisions/"))
                 }
             }
@@ -61,12 +63,12 @@ struct BriefedView: View {
         .navigationTitle("Briefed")
         .refreshable { await reload(force: true) }
         .task { await reload(force: false) }
-        .webTwin(person?.briefingURL ?? TeamSite.base.appendingPathComponent("meetings/"), title: "Briefing")
+        .webTwin(person?.briefingURL ?? TeamEndpoints.base.appendingPathComponent("meetings/"), title: "Briefing")
     }
 
     private func reload(force: Bool) async {
         async let all: Void = data.refreshAll(force: force)
-        if !me.isEmpty { await data.commandCentre(me).load(force: force) }
+        if !me.isEmpty, !sampleMode { await data.commandCentre(me).load(force: force) }
         await all
     }
 
@@ -110,9 +112,9 @@ struct BriefedView: View {
 }
 
 #Preview("Briefed · iPhone") {
-    NavigationStack { BriefedView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { BriefedView() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Briefed · iPad") {
-    NavigationStack { BriefedView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { BriefedView() }.environment(PreviewSamples.previewData()).padPreview()
 }

@@ -74,10 +74,10 @@ struct GraphIndex: Sendable {
         self.graph = graph
         let count = graph.nodes.count
         let edges = graph.edges.compactMap { row -> Edge? in
-            guard row.count >= 3, let a = row[0].number, let b = row[1].number else { return nil }
-            let from = Int(a), to = Int(b)
-            guard from >= 0, from < count, to >= 0, to < count else { return nil }
-            return Edge(from: from, to: to, verb: Int(row[2].number ?? -1))
+            guard row.count >= 3,
+                  let from = Self.slot(row[0].number, count: count),
+                  let to = Self.slot(row[1].number, count: count) else { return nil }
+            return Edge(from: from, to: to, verb: Self.slot(row[2].number, count: Int.max) ?? -1)
         }
         self.edges = edges
         var neighbours = Array(repeating: [Int](), count: count)
@@ -103,6 +103,19 @@ struct GraphIndex: Sendable {
         byID = Dictionary(graph.nodes.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
+    /// A JSON number as an index into an array of `count` items, or nil when it is not a whole,
+    /// finite number in range. `Int(Double)` would trap on NaN, infinity or 1e300.
+    static func slot(_ value: Double?, count: Int) -> Int? {
+        guard let value, value.isFinite, let whole = Int(exactly: value), whole >= 0, whole < count else { return nil }
+        return whole
+    }
+
+    /// True when `node` is a valid node index in this graph.
+    func contains(_ node: Int?) -> Bool {
+        guard let node else { return false }
+        return graph.nodes.indices.contains(node)
+    }
+
     func position(_ index: Int) -> CGPoint {
         let node = graph.nodes[index]
         return CGPoint(x: node.x ?? 0, y: node.y ?? 0)
@@ -121,6 +134,7 @@ struct GraphIndex: Sendable {
 
     /// The shortest path between two nodes, by breadth-first search over undirected edges.
     func path(from start: Int, to goal: Int, limit: Int = 8) -> [Int]? {
+        guard contains(start), contains(goal) else { return nil }
         if start == goal { return [start] }
         var previous = [Int: Int]()
         var frontier = [start]
