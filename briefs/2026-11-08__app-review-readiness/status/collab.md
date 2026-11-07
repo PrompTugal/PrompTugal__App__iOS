@@ -1,8 +1,8 @@
 # Status · Collaboration and AI (App Review readiness)
 
-> All seven items are coded with tests. Build job green for all of them (runs 203, 209, 214); the iPhone and iPad unit tests are running by hand on night/collab. Nothing decided for Dinis.
+> Done and CI green: all seven items, with tests. Run 233 (7ca0a00) passed the build, SGitVault tests and the iPhone and iPad unit tests. Ready to merge. One follow-up after team lands: switch to Lisbon.day(_:).
 
-Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last update: 14:55 UTC
+Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last update: 15:55 UTC
 
 ## Done (pushed, with tests)
 
@@ -38,10 +38,14 @@ Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last upd
    - Debug literals in `AskView` and `LanesView` use `DebugMode.key` / `DebugMode.defaultOn`.
 7. **Readable errors (Q7)**: `CollabErrorText.short` for every error shown in `AI/`, `Lanes/` and `Coordination/`: network errors in plain words, no `Error Domain=…`, no object paths. Test.
 
+## CI
+
+- Run 233 (workflow_dispatch, 7ca0a00): **green**. App build and SGitVault tests, App unit tests on the iPhone and the iPad simulator (all suites, including AIConsentTests, AIKeyVaultOwnershipTests, AILinkTests, LanesReviewTests).
+- Earlier build-only runs: 203, 209, 214 green. Run 226 failed to compile one test helper (a raw-string fixture at AITests.swift:183); fixed in 7ca0a00.
+
 ## In progress
 
-- Unit tests (iPhone and iPad) dispatched by hand on night/collab at 14:54 for 5afdf59. Build runs: 203 (consent, S5) green, 209 (report/block, hosts, tokens, Q4, Q7, Split View) green, 214 (one set of team models) green.
-- After team is on dev: merge origin/dev and switch my three `DayPlanner.lisbonDay` calls to `Lisbon.day(_:)` (agreed with the conductor).
+- After team is on dev: merge origin/dev and switch my three `DayPlanner.lisbonDay` calls to `Lisbon.day(_:)` (agreed with the conductor), then re-run the build.
 
 ## Blocked
 
