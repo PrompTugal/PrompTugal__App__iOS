@@ -30,15 +30,24 @@ WEBSITE = Path(__file__).resolve().parent
 ROOT = WEBSITE.parent
 APP = ROOT / 'PrompTugal'
 PROJECT = ROOT / 'PrompTugal.xcodeproj' / 'project.pbxproj'
-ASSETS = APP / 'Assets.xcassets'
+
+
+def _one(pattern):
+    """The single file in the app matching a name, wherever the project layout puts it."""
+    found = sorted(p for p in APP.rglob(pattern) if '.build' not in p.parts)
+    if len(found) != 1:
+        raise SystemExit(f'build: expected one {pattern} under PrompTugal/, found {[str(f) for f in found]}')
+    return found[0]
+
+
+ASSETS = _one('Assets.xcassets')
+WEBSITES_JSON = _one('Websites.json')
 
 # Published path -> source file in the Xcode asset catalog (artwork exists once).
-IMAGES = {
-    'assets/app-icon.png': ASSETS / 'AppIcon.appiconset' / 'AppIcon.png',
-    'assets/shortcut-ShortcutPrompTugal.png': ASSETS / 'ShortcutPrompTugal.imageset' / 'Icon.png',
-    'assets/shortcut-ShortcutWebSummit.png': ASSETS / 'ShortcutWebSummit.imageset' / 'Icon.png',
-    'assets/shortcut-ShortcutRiskMandate.png': ASSETS / 'ShortcutRiskMandate.imageset' / 'Icon.png',
-}
+# Every Shortcut*.imageset is published, so a removed shortcut leaves no dangling image.
+IMAGES = {'assets/app-icon.png': ASSETS / 'AppIcon.appiconset' / 'AppIcon.png'}
+IMAGES.update({f'assets/shortcut-{d.stem}.png': next(d.glob('*.png'))
+               for d in sorted(ASSETS.glob('Shortcut*.imageset')) if any(d.glob('*.png'))})
 
 # Websites.json colour names -> CSS colours close to the iOS system tints.
 TINTS = {'red': '#d93a33', 'orange': '#e8870e', 'green': '#2f9e44', 'teal': '#2a9fb0',
@@ -91,7 +100,7 @@ def code_areas(files):
 
 def app_facts():
     swift = swift_sources()
-    websites = json.loads((APP / 'Websites.json').read_text())
+    websites = json.loads(WEBSITES_JSON.read_text())
     tests = [f for f in swift if 'Tests' in f.as_posix()]
     return {
         'version': project_setting('MARKETING_VERSION'),
@@ -380,13 +389,14 @@ def build(out):
                   build_log_list=build_log_list(pages))
     tokens.update(admin.feature_tokens(REPO_URL))
     status = admin.push_status()
-    tokens.update(push_dashboard=admin.push_dashboard(status), push_blockers=admin.push_blockers(status),
+    tokens.update(push_dashboard=admin.push_dashboard(status, REPO_URL), push_blockers=admin.push_blockers(status),
                   push_sessions=str(len(status)),
                   releases=admin.releases_html(admin.releases(), REPO_URL),
                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
                   workflow_count=str(len(admin.workflows())),
                   screens=admin.screens_html(admin.destinations(), facts['websites']),
-                  code_areas=admin.areas_html(facts['areas']))
+                  code_areas=admin.areas_html(facts['areas']),
+                  latest_build=admin.latest_build_html(admin.latest_build(os.environ.get('IOS_BUILD_JSON')), REPO_URL))
 
     if out.exists():
         shutil.rmtree(out)
@@ -432,6 +442,8 @@ def build(out):
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + '\n'.join(sitemap) + '\n</urlset>\n')
     (out / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n')
+    build_json = admin.latest_build(os.environ.get('IOS_BUILD_JSON'))
+    (out / 'ios-build.json').write_text(json.dumps(build_json or {'available': False}, indent=2) + '\n')
     (out / 'version.json').write_text(json.dumps(
         {key: facts[key] for key in ('release', 'version', 'build', 'site_commit')}, indent=2) + '\n')
     return facts, pages

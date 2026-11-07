@@ -18,7 +18,16 @@ order: 14
   </div>
 </section>
 
-<section class="band band-alt" id="workflows">
+<section class="band band-alt" id="latest">
+  <div class="wrap">
+    <p class="kicker">Latest app build</p>
+    <h2>The newest successful iOS build on dev</h2>
+    <p class="prose">Read when this site was built, from the release workflow’s <code>build-info</code> artifact (<code>scripts/release/latest-build.sh</code>). The same data is in <a href="../ios-build.json"><code>ios-build.json</code></a>. The builds are unsigned; installing one needs re-signing (see the release setup brief).</p>
+    {{latest_build}}
+  </div>
+</section>
+
+<section class="band" id="workflows">
   <div class="wrap">
     <p class="kicker">From .github/workflows</p>
     <h2>{{workflow_count}} workflows</h2>
