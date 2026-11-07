@@ -47,6 +47,21 @@ enum AITools {
         .map { $0 }
     }
 
+    /// Agenda sessions whose full title appears in `text` (case and accents ignored), in the order they appear.
+    /// Short titles (under 12 characters) are skipped: they match too much by chance.
+    static func mentioned(in text: String, events: [Event], limit: Int = 6) -> [Event] {
+        let haystack = fold(text)
+        var found: [(String.Index, Event)] = []
+        var seen = Set<String>()
+        for event in events where event.title.count >= 12 && !seen.contains(event.id) {
+            if let range = haystack.range(of: fold(event.title)) {
+                found.append((range.lowerBound, event))
+                seen.insert(event.id)
+            }
+        }
+        return found.sorted { $0.0 < $1.0 }.prefix(limit).map(\.1)
+    }
+
     static func line(_ event: Event) -> String {
         "\(Lisbon.dayLabel(event.date)) \(event.time) · \(event.title) · \(event.place)"
     }
