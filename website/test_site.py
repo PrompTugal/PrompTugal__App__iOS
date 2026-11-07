@@ -360,7 +360,7 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(admin.screen_devices(folder=folder), {'iphone'})          # no run.txt: iPhone only
         (folder / 'run.txt').write_text('13\n')
         self.assertEqual(admin.screen_devices(folder=folder), {'iphone'})
-        (folder / 'run.txt').write_text('15\n')
+        (folder / 'run.txt').write_text('16\n')
         self.assertEqual(admin.screen_devices(folder=folder), {'iphone', 'ipad'})
 
     def test_no_screenshots_means_a_notice_not_a_broken_image(self):

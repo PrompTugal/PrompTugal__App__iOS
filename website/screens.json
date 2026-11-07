@@ -1,10 +1,10 @@
 {
-  "_about": "Which devices' screenshots the site publishes, and from which screens.yml run. iPad images before run 15 are wrong (run 12: rotated by an EXIF tag; run 13: a cropped square, part black). Platform's fix (0616379, checked by the editor in Chromium on run 14: upright, whole screen) reaches dev at the next merge, so iPad is published only from run 15 on. Any PNG with an EXIF orientation other than 1 is left out regardless.",
+  "_about": "Which devices' screenshots the site publishes, and from which screens.yml run. iPad images before run 16 are wrong (run 12: rotated by an EXIF tag; runs 13 and 15: a cropped square, part black). Platform's fix (0616379, checked by the editor in Chromium on run 14: upright, whole screen) reaches dev at the next merge, so iPad is published only from run 16 on (run 15 ran on fadf27e, before the fix was merged). Any PNG with an EXIF orientation other than 1 is left out regardless.",
   "devices": [
     "iphone",
     "ipad"
   ],
   "min_run": {
-    "ipad": 15
+    "ipad": 16
   }
 }
