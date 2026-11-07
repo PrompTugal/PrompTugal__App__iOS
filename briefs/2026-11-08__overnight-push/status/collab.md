@@ -1,8 +1,8 @@
 # Status · Collaboration and AI
 
-> On dev since 05:12: Ask (streamed OpenRouter chat with read-only tools), Where is everyone, Messages (append lanes, inbox, newsroom notes) and team notes through vaults. Now: polishing Ask and Messages for iPhone and iPad; `askAnywhere()` lets the shell open Ask next to any screen.
+> On dev: Ask, Where is everyone, Messages and team notes. night/collab run 117 (b006051) is green on iPhone and iPad and ready to merge; newer Ask polish (dictation, where to meet, check key) is in the next run.
 
-Branch: `night/collab` · Last update: 05:20 UTC
+Branch: `night/collab` · Last update: 06:18 UTC
 
 ## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
@@ -46,18 +46,23 @@ Branch: `night/collab` · Last update: 05:20 UTC
 - Registering my own inbox lane on my vault (`configure`) needs the vault's write key and an access token; this build does not do that step.
 - No PrompTugal newsroom append lane is published (promptugal.news has no `/.well-known/sgit-subscribe.json`), so newsroom notes go through the vault notes lane.
 
+## Since 05:15 (iPhone and iPad)
+
+- `askAnywhere()`: Ask next to any screen (toolbar button and ⌘K; side panel on iPad, sheet on iPhone). For design to put on the shell's detail view.
+- Ask: readable width (760 pt) on iPad and in landscape; ⌘↩ sends; Copy and Share on answers; "Thinking…" while waiting; hold-to-talk dictation in the composer.
+- Ask: "Where should we meet today?" prepared prompt (uses the where_is_everyone tool).
+- Ask settings: Check key (OpenRouter `/api/v1/key`: works, usage, limit), logged as `ai.key.check`.
+- Messages: compose, add-lane and inbox sheets are form-sized on iPad.
+
 ## In progress
 
-- CI: run 91 (dev 3b77e1c merge) is compiling on the iPad runner; run 101 (team notes, dev 2b00b3a) waits behind it.
-
-- CI on the merged branch (7e097f2). Earlier queued runs that never started were cancelled so one run covers the lot.
+- CI for 08d64a9 (the items above after b006051).
 
 ## Next
 
-1. Fix whatever CI finds.
-2. Ask: show the tool results' sources as links; a "send this answer to a lane" action.
-3. Coordination: offer "share my plan" right after picks change; read teammates' plans in the background.
-
+1. Messages on iPad: two columns (lanes and team notes on the left, the conversation on the right).
+2. Accessibility pass: labels and values on chips, buttons and rows in Ask, Messages and Where is everyone.
+3. Ask: answers that cite agenda sessions link to them.
 
 ## Blocked
 

@@ -38,6 +38,7 @@ struct TeamPlansView: View {
                         Text(item.event.title).font(.headline)
                         Text(item.people.map { store.name($0) }.joined(separator: ", ")).font(.subheadline).foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .combine)
                 }
             }
 
@@ -50,6 +51,8 @@ struct TeamPlansView: View {
                             Text("\(clash.second.time) \(clash.second.title)")
                         }
                         .font(.subheadline)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Clash for \(store.name(clash.person)): \(clash.first.title) at \(clash.first.time), and \(clash.second.title) at \(clash.second.time)")
                     }
                 }
             }
@@ -188,6 +191,7 @@ private struct PersonPlanRow: View {
                     } label: {
                         Image(systemName: "link")
                     }
+                    .accessibilityLabel("Linked. Options")
                 } else {
                     Button("Add key", action: link)
                         .buttonStyle(.bordered)

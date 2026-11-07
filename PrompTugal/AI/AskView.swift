@@ -119,9 +119,11 @@ struct AskTurnView: View {
                     .padding(10)
                     .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
                     .textSelection(.enabled)
+                    .accessibilityLabel("You: \(turn.text)")
             }
         case .tool:
             Label(turn.text, systemImage: "wrench.and.screwdriver")
+                .accessibilityLabel("Ask read: \(turn.text)")
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
