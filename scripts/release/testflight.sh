@@ -28,24 +28,34 @@ profile_for() { awk -F'\t' -v b="$1" '$1==b{print $2; exit}' "$OUT/profiles.tsv"
 settings=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER" DEVELOPMENT_TEAM="$APPLE_TEAM_ID")
 extra=()
 if [ "$MODE" = manual ]; then
-  app_profile=$(profile_for news.promptugal.reader)
-  settings+=(CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution")
-  [ -n "${KEYCHAIN_PATH:-}" ] && settings+=(OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH")
-  # Per-target profiles. The project reads PT_PROFILE_<SLOT> in each target's
-  # settings (requested from the platform session); until it does, set the
-  # app's profile for every target, which works while the app has no
-  # extensions and its packages are static libraries.
-  if grep -rqs 'PT_PROFILE_APP' Config "$PROJECT/project.pbxproj"; then
-    settings+=(PT_PROFILE_APP="$app_profile")
-    for slot in WIDGET INTENTS SHARE; do
-      b=$(awk -F'\t' -v s="$slot" 'BEGIN{m["WIDGET"]="widget";m["INTENTS"]="intents";m["SHARE"]="share"} $1 ~ ("\\." m[s] "$"){print $2; exit}' "$OUT/profiles.tsv")
-      [ -n "$b" ] && settings+=(PT_PROFILE_$slot="$b")
+  # One profile per target, with no project change: a CI-only xcconfig sets
+  # PROVISIONING_PROFILE_SPECIFIER = $(PT_PROFILE_$(TARGET_NAME)) and one
+  # PT_PROFILE_<target> per signed target. Targets without a value (Swift
+  # packages, tests) get an empty specifier, which is what they need.
+  xc=$OUT/signing.xcconfig
+  {
+    echo "CODE_SIGN_STYLE = Manual"
+    echo "CODE_SIGN_IDENTITY = Apple Distribution"
+    echo "DEVELOPMENT_TEAM = $APPLE_TEAM_ID"
+    echo 'PROVISIONING_PROFILE_SPECIFIER = $(PT_PROFILE_$(TARGET_NAME))'
+    [ -n "${KEYCHAIN_PATH:-}" ] && echo "OTHER_CODE_SIGN_FLAGS = --keychain $KEYCHAIN_PATH"
+  } > "$xc"
+  missing=()
+  while IFS=$'\t' read -r target bundle type; do
+    case "$type" in *application|*app-extension|*extensionkit-extension) ;; *) continue ;; esac
+    pname=$(profile_for "$bundle")
+    if [ -z "$pname" ]; then missing+=("$bundle ($target)"); continue; fi
+    echo "PT_PROFILE_$target = $pname" >> "$xc"
+    summary "- \`$target\` (\`$bundle\`) → profile \`$pname\`"
+  done < <("$(dirname "$0")/targets.sh")
+  if [ ${#missing[@]} -gt 0 ]; then
+    for m in "${missing[@]}"; do
+      echo "::error::no App Store profile installed for $m. Add it as a secret (see release-setup.md)."
+      summary "- ❌ no profile for \`$m\`: add \`IOS_PROFILE_<APP|WIDGETS|INTENTS|SHARE>_BASE64\`"
     done
-    summary "- Profiles passed per target (PT_PROFILE_*)."
-  else
-    settings+=(PROVISIONING_PROFILE_SPECIFIER="$app_profile")
-    summary "- Profile passed for all targets (project has no PT_PROFILE_APP yet)."
+    exit 1
   fi
+  extra+=(-xcconfig "$xc")
 else
   extra+=(-allowProvisioningUpdates "${auth[@]}")
   settings+=(CODE_SIGN_STYLE=Automatic)

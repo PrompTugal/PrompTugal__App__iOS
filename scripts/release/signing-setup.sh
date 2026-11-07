@@ -6,7 +6,7 @@
 #     -> $RUNNER_TEMP/asc/AuthKey_<id>.p8 (also ~/.appstoreconnect/private_keys for altool)
 #   MODE=manual
 #     IOS_DIST_CERT_P12_BASE64 + IOS_DIST_CERT_PASSWORD -> temporary keychain
-#     IOS_PROFILE_{APP,WIDGET,INTENTS,SHARE}_BASE64     -> ~/Library/MobileDevice/Provisioning Profiles
+#     IOS_PROFILE_{APP,WIDGETS,INTENTS,SHARE}_BASE64     -> ~/Library/MobileDevice/Provisioning Profiles
 #     Writes $OUT/profiles.tsv: bundle id <TAB> profile name <TAB> uuid <TAB> team
 #   MODE=automatic
 #     Only the API key; Xcode creates or fetches certificates and profiles.
@@ -65,7 +65,7 @@ fi
 pdir=~/Library/MobileDevice/Provisioning\ Profiles
 mkdir -p "$pdir" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
 : > "$OUT/profiles.tsv"
-for slot in APP WIDGET INTENTS SHARE; do
+for slot in APP WIDGETS INTENTS SHARE; do
   var=IOS_PROFILE_${slot}_BASE64
   [ -n "${!var:-}" ] || continue
   tmp=$RUNNER_TEMP/profile-$slot.mobileprovision

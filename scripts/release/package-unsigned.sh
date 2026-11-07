@@ -51,6 +51,19 @@ ditto -c -k --sequesterRsrc --keepParent "$simapp" "$DIST/$ARTIFACT_BASE-simulat
 
 "$(dirname "$0")/report.sh" "$app" "$ipa"
 
+# Which targets a signed build has to sign, and which profile secret each needs.
+summary ""
+summary "### Targets to sign (App Store profiles needed)"
+summary ""
+summary "| Target | Bundle id | Type | Profile secret |"
+summary "| --- | --- | --- | --- |"
+"$(dirname "$0")/targets.sh" | while IFS=$'\t' read -r target bundle type; do
+  case "$type" in *application|*app-extension|*extensionkit-extension) ;; *) continue ;; esac
+  suffix=${bundle#news.promptugal.reader}; suffix=${suffix#.}
+  slot=$(echo "${suffix:-app}" | tr '[:lower:]' '[:upper:]')
+  summary "| \`$target\` | \`$bundle\` | ${type##*.} | \`IOS_PROFILE_${slot}_BASE64\` |"
+done
+
 summary ""
 summary "### Files"
 summary ""

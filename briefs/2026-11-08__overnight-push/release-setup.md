@@ -35,9 +35,13 @@ The **testflight** job runs only when someone starts it by hand with **upload** 
    - **In-App Purchase** is on for every explicit App ID. It has no entitlement key. The products themselves are created in App Store Connect.
    - **NFC Tag Reading**: not used today. Enable it only if a session adds Core NFC.
    - Push Notifications: not needed for local reminders. Enable it only if remote push is added.
-2. **Extensions.** There are none yet. When the platform session adds a widget, intents or share extension, each one needs its own App ID (for example `news.promptugal.reader.widget`) with App Groups and the same group, and its own App Store profile. The workflow installs up to three extension profiles (`IOS_PROFILE_WIDGET_BASE64`, `IOS_PROFILE_INTENTS_BASE64`, `IOS_PROFILE_SHARE_BASE64`) and reads the bundle id from each profile, so their exact names do not matter.
+2. **Extensions.** The platform branch has two, each needing its own explicit App ID with **App Groups** on and the group `group.news.promptugal.reader` assigned, and its own App Store profile:
+   - `news.promptugal.reader.widgets`: the widget extension (target `PrompTugalWidgets`), profile secret `IOS_PROFILE_WIDGETS_BASE64`.
+   - `news.promptugal.reader.intents`: the App Intents extension (target `PrompTugalIntents`), profile secret `IOS_PROFILE_INTENTS_BASE64`.
+   - A share extension, if one is added later, uses `IOS_PROFILE_SHARE_BASE64`.
+   The workflow reads the bundle id from each profile and matches it to the target with the same bundle id, so profile names do not matter. Every package run lists the targets to sign and the secret each one needs under **Targets to sign** in its summary. If a profile is missing, the signed job stops and names it.
 3. **Certificate** (only for manual signing, the default). Create an **Apple Distribution** certificate: Keychain Access → Certificate Assistant → Request a Certificate from a Certificate Authority, save to disk, upload the CSR, download the `.cer`, double-click it, then in Keychain Access → My Certificates, right-click it → Export → `.p12` with a strong password. A team can have only a few distribution certificates, so reuse an existing one if you have its private key. It is valid for one year.
-4. **Provisioning profile.** Profiles → + → **App Store Connect** (Distribution) → App ID `news.promptugal.reader` → the distribution certificate → name it `PrompTugal App Store`. Download it. Recreate it whenever you add a capability or renew the certificate, and update the secret.
+4. **Provisioning profiles.** Profiles → + → **App Store Connect** (Distribution) → App ID `news.promptugal.reader` → the distribution certificate → name it `PrompTugal App Store`. Download it. Repeat for `news.promptugal.reader.widgets` and `news.promptugal.reader.intents`: three profiles in all. Recreate it whenever you add a capability or renew the certificate, and update the secret.
 
 ## Step 2. App Store Connect (appstoreconnect.apple.com)
 
@@ -60,7 +64,9 @@ Make the base64 on a Mac with `base64 -i <file> | pbcopy` and paste it as the se
 | `IOS_DIST_CERT_P12_BASE64` | `base64 -i distribution.p12` | manual signing |
 | `IOS_DIST_CERT_PASSWORD` | the .p12 export password | manual signing |
 | `IOS_PROFILE_APP_BASE64` | `base64 -i PrompTugal_App_Store.mobileprovision` | manual signing |
-| `IOS_PROFILE_WIDGET_BASE64`, `IOS_PROFILE_INTENTS_BASE64`, `IOS_PROFILE_SHARE_BASE64` | extension profiles | only once those extensions exist |
+| `IOS_PROFILE_WIDGETS_BASE64` | widget extension profile | manual signing |
+| `IOS_PROFILE_INTENTS_BASE64` | App Intents extension profile | manual signing |
+| `IOS_PROFILE_SHARE_BASE64` | share extension profile | only if one is added |
 
 Variables (not secret), under the **Variables** tab:
 
@@ -139,7 +145,7 @@ Both modes upload with `xcodebuild -exportArchive` with `destination = upload` a
 - **Build numbers must be unique per version** and must grow. See above.
 - **TestFlight builds expire after 90 days.** Upload at least every couple of months, or testers lose the app.
 - **External testers need Beta App Review** for the first build of each version. Internal testers do not.
-- **Capabilities and profiles must match.** Adding an entitlement (App Groups, Associated Domains, NFC, push) in the project without enabling it on the App ID and regenerating the profile fails the signed archive with "Provisioning profile doesn't include the … entitlement". Regenerate the profile and update `IOS_PROFILE_APP_BASE64`.
+- **Capabilities and profiles must match.** Adding an entitlement (App Groups, Associated Domains, NFC, push) in the project without enabling it on the App ID and regenerating the profile fails the signed archive with "Provisioning profile doesn't include the … entitlement". Regenerate the profile and update its `IOS_PROFILE_*_BASE64` secret.
 - **Certificates last one year, profiles last one year.** The job summary prints both expiry dates on every signed run.
 - **iPhone and iPad.** `TARGETED_DEVICE_FAMILY = 1,2` must stay. The package job fails if it changes. The iPad needs all four orientations unless full screen is required, and App Review checks the iPad layout.
 - **The website's `apple-app-site-association`** must list `<TEAMID>.news.promptugal.reader` for `webcredentials` and `applinks`, or passkeys and universal links fail silently.
