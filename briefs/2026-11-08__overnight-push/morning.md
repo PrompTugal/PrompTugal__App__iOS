@@ -2,7 +2,7 @@
 
 > For Dinis and Silvio. The night's work is on `dev` and green in CI. Start with the 45-minute TestFlight checklist, then test on an iPad and an iPhone. Below: the decisions only you can take, what CI has proven, and what is not proven yet.
 
-**Status:** final draft at 08:45 UTC; last pass before 10:00 · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html) · **Release setup:** [the full checklist](release-setup.md)
+**Status:** final, 09:20 UTC · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html) · **Release setup:** [the full checklist](release-setup.md)
 
 ## In one paragraph
 
@@ -62,10 +62,10 @@ Known limits: passkey unlock needs the `apple-app-site-association` file on prom
 
 ## 5. What is green in CI
 
-- **Unit tests on the integrated app:** iPhone, **124 tests in 33 suites** passed on `8a060e8` (iOS run 173). Run 160 (on the 07:12 commit) was fully green: app build, vault package tests, iPhone and iPad unit tests.
-- **The vault package:** reads and writes vaults made by sgit 0.27, and sgit reads back what it writes; tamper and wrong-key cases are refused.
+- **Every job on dev passed** in iOS run 188 (on `bf704b5`, the 08:50 merge): app build, vault package tests, iPhone unit tests and iPad unit tests. Earlier, the iPhone unit tests passed 124 tests in 33 suites on `8a060e8` (run 173).
+- **The vault package:** reads and writes vaults made by sgit 0.27, and sgit reads back what it writes; tampered objects and wrong keys are refused.
 - **The bridge against the live website:** [`Tools/bridge-e2e`](https://github.com/PrompTugal/PrompTugal__App__iOS/tree/dev/Tools/bridge-e2e) runs the app's injected JavaScript in Chromium against promptugal.news: a pick made in the app shows on the site, the meter is credited once per purchase, and the Stripe top-up is hidden.
-- **Screenshots:** all **13 main screens on iPhone** are taken by CI and published on the site. **iPad is pending** platform's capture fix: the first iPad images held only part of the screen. The site shows iPad only after one image has been checked in a browser.
+- **Screenshots:** screens run 16 took all **13 main screens on iPhone and iPad**. The iPad images were checked in a browser (upright, whole screen); the site's [screens page](https://ios.app.promptugal.news/admin/screens.html) shows them from the next release.
 - **Every push to `dev`** builds an unsigned archive, `.ipa` and simulator app, and redeploys this site.
 
 ## 6. Not proven yet
@@ -77,7 +77,6 @@ From the vault and collab sessions' own lists:
 - **Large vault files** (over 4 MB encrypted) and **pack vaults** are refused with a clear error.
 - **Where is everyone** needs each teammate's vault read key: the team site's public data gives everyone the same shortlist, so it cannot show who goes where.
 - **Messages to a teammate** need their lane description, which the share button on Messages creates; none is published yet. Registering your own inbox lane needs a vault write key and an access token. promptugal.news publishes no newsroom lane, so newsroom notes go through the vault notes lane.
-- **iPad screenshots**, as above.
 
 ## 7. What shipped
 
