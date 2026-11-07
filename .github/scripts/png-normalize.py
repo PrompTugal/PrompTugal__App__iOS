@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """Make screenshot PNGs display the same everywhere: drop orientation metadata.
 
-    png-normalize.py [--landscape] FILE...
+    png-normalize.py --orientation FILE     print the EXIF Orientation (1 if none)
+    png-normalize.py [--landscape] FILE...  strip eXIf and XMP, then check
 
-XCTest's iPad landscape screenshots store upright landscape pixels but carry an
-EXIF Orientation tag (8). Browsers obey it and turn the picture on its side;
-viewers that ignore EXIF don't. This rewrites each PNG without eXIf chunks and
-without XMP text chunks, so the stored pixels are the picture. Pixel data is
-not touched. Then it checks: no eXIf left, and with --landscape, width > height
-(from IHDR, the real stored size). Exit 1 if any check fails.
+XCTest's iPad landscape screenshots store the portrait framebuffer and carry an
+EXIF Orientation tag saying how to turn it. screens.yml reads the tag first
+(--orientation), strips it, and turns the pixels with sips, so the stored pixels
+are the picture and every viewer shows the same thing. Stripping rewrites each
+PNG without eXIf chunks and without XMP text chunks; pixel data is not touched.
+Then it checks: no eXIf left, and with --landscape, width > height (from IHDR,
+the real stored size). Exit 1 if any check fails.
 """
 import struct, sys, zlib
 
@@ -47,11 +49,29 @@ def normalize(path):
     return size, dropped
 
 
+def orientation(path):
+    """EXIF Orientation (1-8) from the eXIf chunk, or 1 if there is none."""
+    for kind, body in chunks(open(path, "rb").read()):
+        if kind != b"eXIf" or len(body) < 8:
+            continue
+        e = ">" if body[:2] == b"MM" else "<"
+        ifd = struct.unpack(e + "I", body[4:8])[0]
+        (n,) = struct.unpack(e + "H", body[ifd:ifd + 2])
+        for i in range(n):
+            tag, typ, _, value = struct.unpack(e + "HHI4s", body[ifd + 2 + 12 * i:ifd + 14 + 12 * i])
+            if tag == 0x0112:
+                return struct.unpack(e + "H", value[:2])[0]
+    return 1
+
+
 def check(path):
     return [k for k, _ in chunks(open(path, "rb").read()) if k == b"eXIf"]
 
 
 def main(argv):
+    if argv[:1] == ["--orientation"]:
+        print(orientation(argv[1]))
+        return 0
     landscape = "--landscape" in argv
     files = [a for a in argv if not a.startswith("--")]
     bad = 0
@@ -74,7 +94,8 @@ if __name__ == "__main__":
         exif = b"MM\0*\0\0\0\x08\0\x01\x01\x12\0\x03\0\0\0\x01\0\x08\0\0\0\0\0\0"
         png = SIG + chunk(b"IHDR", ihdr) + chunk(b"eXIf", exif) + chunk(b"IDAT", raw) + chunk(b"IEND", b"")
         fd, p = tempfile.mkstemp(suffix=".png"); os.write(fd, png); os.close(fd)
-        assert main([p, "--landscape"]) == 0 and not check(p)
+        assert orientation(p) == 8
+        assert main([p, "--landscape"]) == 0 and orientation(p) == 1 and not check(p)
         assert open(p, "rb").read().count(b"IDAT") == 1
         os.remove(p)
         print("ok")

@@ -57,6 +57,7 @@ The conductor merges green branches into `dev` about once an hour. Each merge re
 
 The build log on the site has one page per checkpoint: [/admin/build-log/](https://ios.app.promptugal.news/admin/build-log/index.html).
 
+- **08:45** Wind-down: every session's last work merged at 08:10 and 08:40; iPhone unit tests 124 of 124 (run 173); 13 iPhone screenshots live, iPad pending. The [morning summary](morning.md) is in its final shape.
 - **08:15** Run 160 fully green: build, vault tests, iPhone and iPad unit tests on the integrated app. The bridge's end-to-end test against the live website is in `Tools/bridge-e2e`.
 - **07:15** Team reports the bridge passing every check against the live promptugal.news. Screenshot test split per screen after a timeout. Dev frozen until 07:40 so queued iOS runs can finish; last green full run still 04:41.
 - **06:20** First real screenshots on the site (5 iPhone screens); design fixed four interface bugs they showed. iOS tests on dev queued since 05:16.

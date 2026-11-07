@@ -99,7 +99,11 @@ jobs:
             rm -rf "$RUNNER_TEMP/screens"/*
             gh run download "$run" --pattern 'screens-*' -D "$RUNNER_TEMP/screens" >/dev/null 2>&1 || true
             n=$(find "$RUNNER_TEMP/screens" -name 'iphone-*.png' | wc -l)   # the site publishes iPhone shots first
-            if [ "$n" -gt 0 ]; then echo "Screenshots from screens.yml run $run: $n iPhone PNGs"; break; fi
+            if [ "$n" -gt 0 ]; then
+              gh run view "$run" --json number -q .number > "$RUNNER_TEMP/screens/run.txt"
+              echo "Screenshots from screens.yml run $(cat "$RUNNER_TEMP/screens/run.txt") ($run): $n iPhone PNGs"
+              break
+            fi
           done
           find "$RUNNER_TEMP/screens" -name '*.png' | sed 's|.*/||' | sort
 
