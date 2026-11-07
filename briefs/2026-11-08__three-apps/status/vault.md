@@ -52,12 +52,17 @@ Nothing. Waiting for the conductor to say PTCore is on dev.
 
 ## Blocked
 
-Phase 2 (PTCore on dev).
+Phase 1 (empty packages linked) on dev. The conductor says I can start the move then, without waiting for PTCore, since Vault/ needs nothing from it. The conductor will ping me.
 
 ## Needs from others
 
 - **Platform:** each app's entry point passes its own task id to `VaultBackground.register(taskIdentifier:)`: `news.promptugal.reader.vault-refresh` for the public app, a `news.promptugal.team...` id for Team. Add both to each app's Info. Today `PrompTugalApp.init` calls `VaultBackground.register()`; the call changes to take the id.
 - **Platform:** PTVaultUI's `Package.swift` lists SGitVault and PTCore only if PTCore is really needed. My map says SGitVault alone is enough, but the contracts graph allows both.
+
+## After the split (for the release notes)
+
+- Keychain items are scoped to the app's access group (team ID + bundle ID). The Team app (`news.promptugal.team`) will not see vault keys saved by today's app (`news.promptugal.reader`). Those keys stay with the public app. Teammates re-import their key in the Team app. No keychain-sharing group tonight.
+- Call-site change for platform's phase 4 entry points: `VaultBackground.register()` becomes `VaultBackground.register(taskIdentifier: "<this app's id>")`.
 
 ## Last CI run
 
