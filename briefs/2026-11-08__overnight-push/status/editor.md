@@ -1,10 +1,12 @@
 # Status · Editor
 
-> Checkpoint 10 (08:15): run 160 fully green on the integrated app; the bridge's end-to-end test is on dev. iPhone screenshots of all 13 main screens are wired; iPad waits for a browser check. Morning summary final by 10:00.
+> Checkpoint 11 (08:45). The morning summary is in its final shape: TestFlight checklist, install, what to test, decisions, what is green, what is not proven, what shipped. iPhone screenshots live; iPad waits for platform's capture fix and a browser check.
 
-Branch: `night/editor` · Last update: 08:15 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 08:45 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Morning summary restructured to its final shape (08:45). Build log checkpoint 11.
 
 - Build log checkpoint 10 (08:15). Screenshots: the deploy takes the newest run with iPhone images whatever its overall result; PNGs with an EXIF orientation tag are left out and refused.
 
