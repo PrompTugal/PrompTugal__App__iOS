@@ -31,6 +31,10 @@ struct DebugHomeView: View {
                 panel("Keys", symbol: "key", tint: Palette.red, line: "Which keys exist, and where. Never values") {
                     KeysPanel()
                 }
+                panel("Collaboration and AI", symbol: "sparkles", tint: Palette.series(5),
+                      line: "Ask requests, lanes log, which secrets exist") {
+                    CollabDebugPanel()
+                }
                 panel("Native and web", symbol: "square.split.2x1", tint: Palette.green,
                       line: "\(Destinations.all.filter { $0.kind == .native }.count) of \(Destinations.all.count) screens native") {
                     BalancePanel()

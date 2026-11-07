@@ -129,6 +129,14 @@ struct KeysPanel: View {
                 Text("Names and protection only. The app never reads a key's value for this screen.")
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
+            Section("Collaboration and AI keys") {
+                let rows = CollabDebugPanel.keyRows(keys: .shared, lanes: .shared)
+                ForEach(rows.indices, id: \.self) { index in
+                    LabeledContent(rows[index].0) {
+                        Text(rows[index].1).font(.caption).foregroundStyle(Palette.muted)
+                    }
+                }
+            }
             let vaultKeys = VaultSession.shared.keyInventory
             if !vaultKeys.isEmpty {
                 Section("Vault keys (from the vault session)") {

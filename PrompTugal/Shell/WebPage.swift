@@ -137,6 +137,7 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         TeamFeatures.shared.bridge.pageDidFinish(webView)
+        CollabHooks.noteCurrentPage(title: webView.title ?? webView.url?.host() ?? "Page", url: webView.url)
         guard let url = webView.url else { return }
         log(url, error: nil)
     }
