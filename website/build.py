@@ -398,7 +398,9 @@ def build(out):
     tokens.update(websites_sidebar=websites_sidebar(facts), websites_list=websites_list(facts),
                   repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages),
                   build_log_list=build_log_list(pages))
-    shots = admin.screenshots(os.environ.get('SCREENS_DIR'))
+    # Only screenshots of screens the shell registers: a file whose id is not a screen is left out.
+    screen_ids = {d['id'] for d in admin.destinations()}
+    shots = {i: v for i, v in admin.screenshots(os.environ.get('SCREENS_DIR')).items() if i in screen_ids}
     tokens.update(admin.feature_tokens(REPO_URL, shots=shots))
     tokens.update(screens_gallery=admin.screens_gallery(admin.destinations(), shots))
     # The home page shows a real iPad screenshot when CI took one; otherwise the drawn mock-up.
@@ -424,7 +426,7 @@ def build(out):
         shutil.rmtree(out)
     (out / 'assets').mkdir(parents=True)
     shutil.copy(WEBSITE / 'site.css', out / 'assets' / 'site.css')
-    for ident, devices in admin.screenshots(os.environ.get('SCREENS_DIR')).items():
+    for ident, devices in shots.items():
         for device, (source, _, _) in devices.items():
             target = out / admin.shot_name(device, ident)
             target.parent.mkdir(parents=True, exist_ok=True)

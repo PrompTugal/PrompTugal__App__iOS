@@ -1,8 +1,8 @@
 # Status · Release engineering
 
-> Merged into dev. `iOS release` is green on dev (run 11): unsigned .ipa, simulator app and archive for every dev push, with the platform project (iOS 18, widgets, intents). TestFlight waits only for Dinis's secrets ([release-setup](../release-setup.md)). Priority: internal TestFlight.
+> CI packages every dev build unsigned (.ipa, simulator app, archive) and is ready to sign and upload to internal TestFlight as soon as Dinis adds 8 secrets. His 8-step morning checklist is at the top of release-setup.md.
 
-Branch: `night/release` · Last update: 05:30 UTC
+Branch: `night/release` · Last update: 06:15 UTC
 
 ## Done
 
@@ -45,9 +45,14 @@ Branch: `night/release` · Last update: 05:30 UTC
 
 - **05:17** `ios-release.yml` no longer cancels a started run (`cancel-in-progress: false`): dev runs 21-23 had been cancelled mid-archive by the next merge. A newer push now replaces only a run still waiting for a runner. Same fix as platform's.
 
+- **05:50** Run 25 (manual `dry_run`) green after 22 min in the runner queue: package green (archive step about 5 min now), TestFlight job ran and skipped on missing secrets. Conductor merged `night/release` into dev (`0b0fe88`): the concurrency fix is live, and dev run 28 was not cancelled by run 29. Targets, entitlements and manifest unchanged.
+
+- **06:05** Release notes: `release-notes.sh` now starts with each session's status summary (changed since the last `ios-v*` tag), then the commits; 3,454 characters for tonight, under Apple's 4,000. The TestFlight job sets it as "What to Test".
+- `release-setup.md`: a morning checklist (8 steps, about 45 minutes, secret names and where to click) at the top, and the install section rewritten for the two extensions: build from Xcode first, simulator app, or re-sign the CI .ipa inside-out with three profiles.
+
 ## In progress
 
-- Run 25 (manual, `dry_run`) still waiting for a macOS runner after 40 min. Dev runs 26 and 27 were cancelled by the next merge (before the concurrency fix reaches dev); run 28 queued. Merged dev again at 05:30; targets, entitlements and manifest unchanged.
+- Dev run 28 waiting for a macOS runner since 05:16 (runner shortage across all workflows), run 29 waiting behind it; neither cancelled, as intended. Targets, entitlements and manifest unchanged at 06:15.
 
 ## Next
 

@@ -508,16 +508,26 @@ def png_size(path):
     return int.from_bytes(head[16:20], 'big'), int.from_bytes(head[20:24], 'big')
 
 
-def screenshots(folder):
-    """{screen id: {device: (source path, width, height)}} from files named <device>-<id>.png."""
+def screen_devices(root=ROOT):
+    """The devices whose screenshots the site publishes (website/screens.json)."""
+    try:
+        return set(json.loads((root / 'website' / 'screens.json').read_text())['devices']) & set(DEVICES)
+    except (OSError, ValueError, KeyError):
+        return set(DEVICES)
+
+
+def screenshots(folder, devices=None):
+    """{screen id: {device: (source path, width, height)}} from files named <device>-<id>.png,
+    for the devices the site publishes."""
     out = {}
+    devices = screen_devices() if devices is None else devices
     if not folder or not Path(folder).is_dir():
         return out
     for path in sorted(Path(folder).rglob('*.png')):
         device, _, ident = path.stem.partition('-')
         device = device.lower()
         size = png_size(path)
-        if device in DEVICES and ident and size:
+        if device in devices and ident and size:
             out.setdefault(ident, {})[device] = (path, *size)
     return out
 

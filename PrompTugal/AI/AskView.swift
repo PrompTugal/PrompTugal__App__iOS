@@ -278,6 +278,14 @@ struct AskSettingsView: View {
             Section {
                 if keys.hasKey {
                     LabeledContent("Key", value: keys.hint ?? "saved")
+                    Button(working ? "Checking…" : "Check key") {
+                        working = true
+                        Task {
+                            do { message = try await keys.check().summary } catch { message = error.localizedDescription }
+                            working = false
+                        }
+                    }
+                    .disabled(working)
                     Button("Forget key", role: .destructive) { keys.forget(); message = "Key removed from this device." }
                 } else {
                     SecureField("sk-or-…", text: $entry)

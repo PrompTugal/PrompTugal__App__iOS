@@ -1,10 +1,12 @@
 # Status · Editor
 
-> Checkpoint 6 (05:15): collab merged, all 19 features in the beta, 28 screens, no placeholders. Site negative control restored with a synthetic unbuilt feature. Morning summary drafted (briefs/…/morning.md), final by 10:00. Waiting for the first screenshots.
+> Checkpoint 7 (05:40): the first fully green CI run of the integrated app; 20 of 20 features in the beta (the Wall is new); 29 screens. Morning summary drafted, final by 10:00. Waiting for the first screenshots (screens.yml is running on dev).
 
-Branch: `night/editor` · Last update: 05:15 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 05:45 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Build log checkpoint 7 (05:40). The Wall added to the feature list (`screen:wall`).
 
 - Build log checkpoint 6 (05:15). Morning summary draft at 04:55, updated 05:15.
 - The "refuses a feature claimed before its code exists" test now adds a synthetic unbuilt feature (`PT_EXTRA_FEATURES`), so it still proves the rule when every real feature ships.
