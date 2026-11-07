@@ -42,6 +42,10 @@ on:
         description: 'Override CFBundleVersion (leave empty for run number + offset)'
         type: string
         default: ''
+      dry_run:
+        description: 'Sign and export the App Store .ipa, check profiles, but do not upload'
+        type: boolean
+        default: false
       internal_only:
         description: 'TestFlight internal testing only (build can never go to external testers or the App Store)'
         type: boolean
@@ -56,9 +60,12 @@ permissions:
 
 concurrency:
   group: ios-release-${{ github.ref }}-${{ github.event_name }}
-  # Pushes cancel older pushes on the same branch. Manual runs and tags have
-  # their own group (event name), so a push never cancels a TestFlight upload.
-  cancel-in-progress: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') }}
+  # Never cancel a started run: dev gets merges every 15-30 min and an archive
+  # takes ~8 min plus queue time, so cancel-in-progress left dev with no
+  # finished build. With false, GitHub keeps one running and one waiting run
+  # per group; a newer push replaces only the waiting one. Manual runs and
+  # tags have their own group (event name), so pushes never touch them.
+  cancel-in-progress: false
 
 env:
   PROJECT: PrompTugal.xcodeproj
@@ -163,7 +170,7 @@ jobs:
     name: Sign and upload to TestFlight
     needs: package
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.upload) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.upload || inputs.dry_run)) ||
       (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ios-v'))
     runs-on: macos-26
     timeout-minutes: 60
@@ -182,6 +189,7 @@ jobs:
       APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
       SIGNING: ${{ inputs.signing || 'auto' }}
       INTERNAL_ONLY: ${{ inputs.internal_only && 'true' || 'false' }}
+      SKIP_UPLOAD: ${{ inputs.dry_run && 'true' || 'false' }}
       BUILD_NUMBER: ${{ needs.package.outputs.build }}
       MARKETING_VERSION: ${{ needs.package.outputs.version }}
       ARTIFACT_BASE: ${{ needs.package.outputs.base }}
