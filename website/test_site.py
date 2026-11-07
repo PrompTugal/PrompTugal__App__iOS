@@ -328,6 +328,32 @@ class SiteTest(unittest.TestCase):
         (broken / 'screens' / 'ipad-debug.png').unlink()
         self.assertTrue(any('broken link' in p and 'ipad-debug.png' in p for p in validate.validate(broken)))
 
+    def _png_with_orientation(self, path, w, h, orientation):
+        import struct, zlib
+        self._png(path, w, h)
+        data = path.read_bytes()
+        tiff = b'MM\x00*' + struct.pack('>I', 8) + struct.pack('>H', 1) + struct.pack('>HHIHH', 0x0112, 3, 1, orientation, 0) + b'\x00' * 4
+        chunk = struct.pack('>I', len(tiff)) + b'eXIf' + tiff + struct.pack('>I', zlib.crc32(b'eXIf' + tiff) & 0xffffffff)
+        path.write_bytes(data[:33] + chunk + data[33:])   # after IHDR (8 + 25 bytes)
+
+    def test_rotated_screenshots_are_left_out_and_refused(self):
+        shots = self.tmp / 'rotated'
+        self._png_with_orientation(shots / 'ipad-today.png', 40, 30, 8)
+        self._png_with_orientation(shots / 'iphone-today.png', 30, 65, 1)
+        self.assertEqual(admin.png_orientation(shots / 'ipad-today.png'), 8)
+        self.assertEqual(admin.png_orientation(shots / 'iphone-today.png'), 1)
+        found = admin.screenshots(shots, devices={'iphone', 'ipad'})
+        self.assertEqual(sorted(found['today']), ['iphone'])
+        # the validator refuses one that slips through
+        out = self.tmp / 'rotated-site'
+        shutil.copytree(self.clean, out)
+        (out / 'screens').mkdir()
+        shutil.copy(shots / 'ipad-today.png', out / 'screens' / 'ipad-today.png')
+        page = out / 'privacy.html'
+        page.write_text(page.read_text().replace('</main>', '<img src="screens/ipad-today.png" alt="x" width="40" height="30" '
+                                                 'data-png-width="40" data-png-height="30"></main>'))
+        self.assertRefused(validate.validate(out), 'EXIF orientation tag')
+
     def test_no_screenshots_means_a_notice_not_a_broken_image(self):
         self.assertIn('No screenshots in this site build', (self.clean / 'admin' / 'screens.html').read_text())
         self.assertFalse((self.clean / 'screens').exists())

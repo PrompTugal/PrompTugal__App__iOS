@@ -194,6 +194,8 @@ def validate(out):
             real = admin.png_size(out / target) if target else None
             if not real:
                 continue  # a missing file is already reported as a broken link
+            if admin.png_orientation(out / target) != 1:
+                problems.append(f"{name}: screenshot {a['src']} has an EXIF orientation tag, so browsers show it rotated")
             declared = (int(a['data-png-width']), int(a['data-png-height']))
             if declared != real:
                 problems.append(f"{name}: screenshot {a['src']} says {declared[0]}x{declared[1]}, the file is {real[0]}x{real[1]}")
