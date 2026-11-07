@@ -1,10 +1,13 @@
 # Status · platform · App Review readiness
 
-> Items 1–5, 7, 8 and design's Q9 request are pushed on `night/platform`; CI results below. Swift 6 mode is not switched (inventory below). Item 6 waits for team. applinks: removed until the site serves its AASA file.
+> Done except item 6, which waits for team's code on dev. CI run 210 on `2b0644e` is green: Debug build, Release build (device, unsigned, both extensions embedded), and 141 tests in 38 suites on iPhone and on iPad. Swift 6 mode not switched (inventory below). applinks: removed until the site serves its AASA file.
 
-Branch: `night/platform` · Last update: 14:45 UTC
+Branch: `night/platform` · Last update: 14:52 UTC
 
-## Done (pushed, CI result below)
+## Done · CI run 210 (`2b0644e`, workflow_dispatch): all jobs green
+
+Build and SGitVault tests ✅ · Release build (device, unsigned) ✅, `PrompTugalWidgets.appex` in PlugIns and `PrompTugalIntents.appex` in Extensions · unit tests **141 in 38 suites passed on iPhone and on iPad** (124 before today; new: InfoPlist, LaunchOptions, HTTP size cap, ReaderStore, Websites column).
+
 
 1. **Q5 release builds**
    - Launch options and `isInspectable`: **design gated both on `night/design`** (`Shell/LaunchOptions.swift`: every option absent in Release; `Shell/WebPage.swift`: inspector Debug only). I had done the same; I put my copies back to dev's version (`aaa6a34`), and a trial merge of `night/design` into `night/platform` is clean.
@@ -44,11 +47,11 @@ The app targets stay in Swift 5 mode with complete concurrency checking. Switchi
 
 ## In progress
 
-- CI on the latest push, then a dispatched run so the unit tests (with the new suites) run on iPhone and iPad.
+Nothing. (`99c4e1c` after run 210 changes only this page.)
 
 ## Waiting
 
-- **Item 6** (notification delegate early in `PrompTugalApp.init`): only if team asks. Not asked yet.
+- **Item 6** (Q6): team asked (via the conductor, `night/team` `9471fa9`): call `ReminderScheduler.installNotificationDelegate()` in `PrompTugalApp.init`, and optionally use `Lisbon.day(_:)` instead of the app's private `lisbonDay` (Q8). Both exist only on `night/team`; the conductor merges team into dev first, then I merge dev and add them.
 
 ## For other sessions
 
