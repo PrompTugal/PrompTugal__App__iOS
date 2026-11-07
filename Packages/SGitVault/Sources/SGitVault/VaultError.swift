@@ -29,6 +29,8 @@ public enum VaultError: Error, Equatable, Sendable, CustomStringConvertible {
     case inflateFailed(path: String)
     /// A commit signature did not verify and the vault requires signatures.
     case signatureInvalid(commitId: String)
+    /// The branch moved on the server while pushing. Nothing was overwritten: pull, then push again.
+    case pushConflict(branch: String)
 
     public var description: String {
         switch self {
@@ -45,6 +47,7 @@ public enum VaultError: Error, Equatable, Sendable, CustomStringConvertible {
         case .fileNotFound(let path): "No file \(path) in this commit"
         case .inflateFailed(let path): "Could not inflate \(path)"
         case .signatureInvalid(let id): "Commit \(id) has an invalid signature"
+        case .pushConflict(let branch): "\(branch) moved on the server first; nothing was overwritten. Pull and try again."
         }
     }
 }
