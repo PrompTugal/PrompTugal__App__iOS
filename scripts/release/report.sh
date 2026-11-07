@@ -51,7 +51,7 @@ cat > "$OUT/dist/build-info.json" <<JSON
   "version": "$(plist_get "$plist" CFBundleShortVersionString)",
   "build": "$(plist_get "$plist" CFBundleVersion)",
   "commit": "${SOURCE_SHA:-${GITHUB_SHA:-unknown}}",
-  "ref": "${GITHUB_REF_NAME:-unknown}",
+  "ref": "${SOURCE_REF:-${GITHUB_REF_NAME:-unknown}}",
   "run": "${GITHUB_SERVER_URL:-}/${GITHUB_REPOSITORY:-}/actions/runs/${GITHUB_RUN_ID:-}",
   "builtAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "xcode": "$(plist_get "$plist" DTXcode)",

@@ -1,8 +1,8 @@
 # Status · Release engineering
 
-> Unsigned packaging is green on `night/release` (run 3: 0.3.1 build 103, iPhone and iPad, .ipa 657 KB). The TestFlight and App Store submit paths are written and wait for Dinis's secrets. The checklist is in [release-setup](../release-setup.md).
+> Unsigned packaging is green on `night/release` and on `night/platform`'s project (iOS 18, widgets and intents extensions: build 108, .ipa 892 KB). The TestFlight job skips cleanly with `skipped: secret … missing` until Dinis adds the secrets in [release-setup](../release-setup.md). Priority is internal TestFlight.
 
-Branch: `night/release` · Last update: 03:05 UTC
+Branch: `night/release` · Last update: 03:15 UTC
 
 ## Done
 
@@ -18,9 +18,13 @@ Branch: `night/release` · Last update: 03:05 UTC
 - [release-setup.md](../release-setup.md): the portal, App Store Connect and GitHub secrets checklist, how to trigger an upload, how testers install, how to re-sign the unsigned .ipa, and the gotchas.
 - Build number: `CFBundleVersion` = this workflow's run number + 100 (repo variable `IOS_BUILD_OFFSET`), passed as `CURRENT_PROJECT_VERSION`. `MARKETING_VERSION` stays in the project.
 
+- **03:10** Run 8 (manual, `upload` ticked, `source_ref: night/platform`): package green on the platform project, minimum iOS 18.0, `UIDeviceFamily [1,2]`, app 1.7 MB, .ipa 892 KB. TestFlight job green and skipped: `skipped: secret ASC_KEY_ID missing`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64`, `APPLE_TEAM_ID`. Nothing printed but empty values.
+- Runs 4, 5 and 7 green. Pushes no longer cancel manual or tag runs (separate concurrency group).
+- New manual inputs: `internal_only` (`testFlightInternalTestingOnly`), `source_ref` (build another branch with these scripts), `build_number`.
+
 ## In progress
 
-- Testing the TestFlight secret gate with a manual run (expect "skipped: secret … missing").
+- Waiting for platform to land on dev, then a normal push run on dev.
 
 ## Next
 

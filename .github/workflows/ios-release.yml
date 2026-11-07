@@ -85,6 +85,7 @@ jobs:
           git checkout --detach FETCH_HEAD
           git checkout "$GITHUB_SHA" -- scripts/release
           echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "SOURCE_REF=$SOURCE_REF" >> "$GITHUB_ENV"
           echo "**Source:** \`$SOURCE_REF\` at \`$(git rev-parse --short HEAD)\`, release scripts from \`${GITHUB_SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Select Xcode
@@ -203,6 +204,10 @@ jobs:
               echo "- ⏭️ skipped: secret \`$s\` missing" >> "$GITHUB_STEP_SUMMARY"
             done
             echo "" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$mode" = automatic ] && [ ${#cert_missing[@]} -gt 0 ]; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "For manual signing (the default once present) add instead of \`APPLE_TEAM_ID\`: $(printf '\`%s\` ' "${cert_missing[@]}")and the extension profiles \`IOS_PROFILE_WIDGETS_BASE64\`, \`IOS_PROFILE_INTENTS_BASE64\`." >> "$GITHUB_STEP_SUMMARY"
+            fi
             echo "Nothing was signed or uploaded (signing mode \`$mode\`). Add the secrets listed in \`briefs/2026-11-08__overnight-push/release-setup.md\`, then run this workflow again with **upload** ticked." >> "$GITHUB_STEP_SUMMARY"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
@@ -226,6 +231,7 @@ jobs:
           git checkout --detach FETCH_HEAD
           git checkout "$GITHUB_SHA" -- scripts/release
           echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "SOURCE_REF=$SOURCE_REF" >> "$GITHUB_ENV"
           echo "**Source:** \`$SOURCE_REF\` at \`$(git rev-parse --short HEAD)\`, release scripts from \`${GITHUB_SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Select Xcode
