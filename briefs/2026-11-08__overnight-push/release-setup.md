@@ -6,6 +6,22 @@
 
 Owner: release engineering (`night/release`) · Workflow: `.github/workflows/ios-release.yml` · Scripts: `scripts/release/`
 
+## Morning checklist: first internal TestFlight build (about 45 minutes)
+
+For Dinis. Each step links to the detail further down. Nothing in the code changes.
+
+1. **App IDs** (developer.apple.com → Certificates, IDs & Profiles → Identifiers). Make sure these three exist as explicit App IDs: `news.promptugal.reader`, `news.promptugal.reader.widgets`, `news.promptugal.reader.intents`. Create the App Group `group.news.promptugal.reader`. Enable on the app ID: **App Groups** (that group), **Associated Domains**, **Time Sensitive Notifications**. Enable on both extension IDs: **App Groups** (same group). (See Step 1 below.)
+2. **Certificate.** Certificates → + → **Apple Distribution**, or reuse one whose private key you have. Export it from Keychain Access as `distribution.p12` with a password.
+3. **Profiles.** Profiles → + → **App Store Connect**, once for each of the three App IDs, all with that certificate. Download the three `.mobileprovision` files.
+4. **App Store Connect** (appstoreconnect.apple.com). Create the app record for `news.promptugal.reader` if it does not exist. Users and Access → Integrations → App Store Connect API → Team Keys → + with role **App Manager**. Download `AuthKey_<KEYID>.p8` and note the **Key ID** and **Issuer ID**. (See Step 2 below.)
+5. **Testers.** TestFlight → Internal Testing → + group "Team", **automatic distribution** on. Add each teammate as an App Store Connect user (any role) and to the group.
+6. **GitHub secrets** (repo → Settings → Secrets and variables → Actions → New repository secret). Paste `base64 -i <file> | pbcopy` output for files:
+   `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` (the .p8), `IOS_DIST_CERT_P12_BASE64` (the .p12), `IOS_DIST_CERT_PASSWORD`, `IOS_PROFILE_APP_BASE64`, `IOS_PROFILE_WIDGETS_BASE64`, `IOS_PROFILE_INTENTS_BASE64`. (See Step 3 below.)
+7. **Dry run.** Actions → **iOS release** → Run workflow → branch `dev` → tick **dry_run** → Run. In the run's summary, the **Profiles against entitlements** table must be all ✅. A ❌ row names the capability to enable; fix it in step 1, regenerate that profile, update its secret, run again.
+8. **Upload.** Run workflow again on `dev` with **upload** ticked. When it is green (about 15–25 minutes, depending on the runner queue), App Store Connect processes the build in 5–30 minutes. The team gets it in the TestFlight app automatically. "What to Test" is filled from the night's status pages and commits.
+
+After that, every upload is step 8 only, or a tag: `git tag ios-v0.4.0 && git push origin ios-v0.4.0`.
+
 ## What CI does today, with no keys
 
 Every push to `dev` that changes more than docs or the site (pushes touching only `briefs/`, `website/`, `*.md` or `VERSION` are skipped to save macOS runner time), and every manual run, runs the **package** job of `iOS release` on a macOS runner with the newest stable Xcode. It produces four artifacts, named `PrompTugal-<version>-<build>-<sha>-…`:
@@ -134,20 +150,29 @@ Both modes upload with `xcodebuild -exportArchive` with `destination = upload` a
 
 ## Installing the unsigned builds (today, without TestFlight)
 
-- **Simulator:** download `…-simulator-app`, unzip, `xcrun simctl install booted PrompTugal.app`, then `xcrun simctl launch booted news.promptugal.reader`.
-- **Device, from the archive (easiest):** unzip `…-xcarchive` into `~/Library/Developer/Xcode/Archives/`. It appears in Xcode → Organizer. **Distribute App → Custom → Release Testing** (or Debugging) re-signs it with your own team and profile. Then drag the .ipa onto the device in Finder or Xcode → Devices and Simulators.
-- **Device, from the .ipa:** re-sign with Apple's tools. Install a development or ad hoc profile for `news.promptugal.reader` (or your own bundle id) that includes your device, then:
+Quickest for tonight, in this order:
 
-  ```sh
-  unzip PrompTugal-…-unsigned.ipa -d x
-  cp my.mobileprovision x/Payload/PrompTugal.app/embedded.mobileprovision
-  security cms -D -i my.mobileprovision > p.plist
-  /usr/libexec/PlistBuddy -x -c 'Print :Entitlements' p.plist > ent.plist
-  codesign -f -s "Apple Development: Your Name" --entitlements ent.plist x/Payload/PrompTugal.app
-  (cd x && zip -qry ../PrompTugal-signed.ipa Payload)
-  ```
-  Then install it via Finder or Xcode → Devices. Sign any frameworks under `Payload/PrompTugal.app/Frameworks` first (there are none today). A free Apple ID cannot sign App Groups or Associated Domains: use `Config/PrompTugal-Basic.entitlements`-style empty entitlements, and the vault and passkeys will not work.
-- Building from Xcode, as Silvio did, still works and is still the quickest for a single device.
+1. **Build from Xcode (recommended, as Silvio did).** `git pull` on `dev`, open `PrompTugal.xcodeproj`, copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and put your team ID in it, pick your iPhone or iPad, press Run. Xcode makes the three development profiles (app, widgets, intents) itself. With a free Apple ID, also set `PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements` there: the app then runs without App Groups and associated domains, so widgets, the vault cache shared with widgets and passkeys will not work.
+2. **Simulator, no Apple account:** download the `…-simulator-app` artifact from the latest green **iOS release** run on `dev`, unzip, `xcrun simctl install booted PrompTugal.app`, then `xcrun simctl launch booted news.promptugal.reader`.
+3. **Re-sign the CI .ipa** (for a device without building). The app embeds two extensions, so sign inside-out: each extension with its own profile, then the app. You need three development or ad hoc profiles that include the device: `news.promptugal.reader`, `.widgets`, `.intents`.
+
+   ```sh
+   unzip PrompTugal-…-unsigned.ipa -d x && app=x/Payload/PrompTugal.app
+   sign() {  # sign <bundle> <profile.mobileprovision>
+     cp "$2" "$1/embedded.mobileprovision"
+     security cms -D -i "$2" > p.plist
+     /usr/libexec/PlistBuddy -x -c 'Print :Entitlements' p.plist > ent.plist
+     codesign -f -s "Apple Development: Your Name" --entitlements ent.plist "$1"
+   }
+   sign "$app/PlugIns/PrompTugalWidgets.appex"  widgets.mobileprovision
+   sign "$app/Extensions/PrompTugalIntents.appex" intents.mobileprovision
+   sign "$app" app.mobileprovision
+   codesign --verify --deep --strict "$app" && (cd x && zip -qry ../PrompTugal-signed.ipa Payload)
+   ```
+   Install with Finder (drag onto the device) or Xcode → Devices and Simulators. Check the folder names with `ls $app/PlugIns $app/Extensions` first; they follow the target names.
+4. **From the archive:** unzip `…-xcarchive` into `~/Library/Developer/Xcode/Archives/` and use Organizer → Distribute App → Custom → Debugging. Xcode may refuse an archive built without signing; if it does, use option 1 or 3.
+
+Once the TestFlight secrets are in, option 1 is only for developers; everyone else installs from TestFlight.
 
 ## Gotchas
 
