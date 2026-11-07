@@ -1,10 +1,13 @@
 # Status · Editor
 
-> The site is now a PrompTugal product site for readers and teams, with features labelled from the code and generated admin pages (push dashboard, screens, releases, CI, build log). First build-log checkpoint written at 02:50 UTC.
+> The site presents PrompTugal as the team's internal app in beta, with readers and teams as where it is going. Features are labelled from the code; the push dashboard reads every session's own branch; the CI page shows the latest iOS build. Build log checkpoint 2 at 03:50 UTC.
 
 Branch: `night/editor` · Last update: 03:10 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Positioning from Dinis: "the first audience of this version is us". Added to the overnight README; site copy says internal beta, no public launch, nothing on sale.
+- Push dashboard reads each session's status from its own `night/*` branch when that is newer than `dev`, with commits not yet on dev. Release's status page shows before it is merged.
 
 - Product pages rewritten: home, for readers, for teams, features, plans, support, privacy. PrompTugal only; RiskMandate and sgit links gone from product pages and the footer.
 - `website/features.json`: 19 features, each with the files and screens that prove it. Status ("In the beta" or "Coming") is worked out at build time; placeholder screens do not count.

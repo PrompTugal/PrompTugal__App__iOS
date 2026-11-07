@@ -380,7 +380,7 @@ def build(out):
                   build_log_list=build_log_list(pages))
     tokens.update(admin.feature_tokens(REPO_URL))
     status = admin.push_status()
-    tokens.update(push_dashboard=admin.push_dashboard(status), push_blockers=admin.push_blockers(status),
+    tokens.update(push_dashboard=admin.push_dashboard(status, REPO_URL), push_blockers=admin.push_blockers(status),
                   push_sessions=str(len(status)),
                   releases=admin.releases_html(admin.releases(), REPO_URL),
                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
