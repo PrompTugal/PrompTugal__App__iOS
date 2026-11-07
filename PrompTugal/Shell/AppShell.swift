@@ -6,7 +6,7 @@ import SwiftUI
 struct AppShell: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
-    @State private var data = DashboardData()
+    @State private var data = LaunchOptions.sampleData ? PreviewSamples.data() : DashboardData()
     /// The vault session's reader logs here; Debug → Vault traffic reads it.
     private var vaultLog: VaultTrafficLog { VaultSession.shared.log }
     @SceneStorage("shell.selection") private var selection: String = "today"
@@ -28,9 +28,16 @@ struct AppShell: View {
         .identitySync()
         .tint(Palette.red)
         .onChange(of: scenePhase, initial: true) { _, phase in
-            if phase == .active { Task { await data.refreshAll() } }
+            if phase == .active, !LaunchOptions.sampleData { Task { await data.refreshAll() } }
         }
         .onOpenURL { url in route(url) }
+        .onAppear {
+            if let me = LaunchOptions.me { UserDefaults.standard.set(me, forKey: DashboardData.meKey) }
+            if let id = LaunchOptions.destination, let destination = Destinations.destination(id) {
+                selection = id
+                tab = destination.phoneTab != nil ? id : "more"
+            }
+        }
     }
 
     private var splitView: some View {
@@ -179,7 +186,9 @@ private struct PhoneShell: View {
 
 private struct MoreList: View {
     let debug: Bool
-    @State private var fullScreen: String?
+    @State private var fullScreen: String? = LaunchOptions.launchedMoreDestination(ownsNavigation: true)?.id
+    /// A screen opened by -PTDestination that lives under More (for screenshots and UI tests).
+    @State private var launched = LaunchOptions.launchedMoreDestination(ownsNavigation: false) != nil
 
     var body: some View {
         List {
@@ -204,6 +213,11 @@ private struct MoreList: View {
             }
         }
         .navigationTitle("More")
+        .navigationDestination(isPresented: $launched) {
+            if let destination = LaunchOptions.launchedMoreDestination(ownsNavigation: false) {
+                destination.view().surfaceKind(destination.kind)
+            }
+        }
         .fullScreenCover(item: Binding(get: { fullScreen.map(FullScreenID.init) }, set: { fullScreen = $0?.id })) { item in
             if let destination = Destinations.destination(item.id) {
                 destination.view()
