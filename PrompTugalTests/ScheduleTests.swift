@@ -238,3 +238,26 @@ struct ScheduleStoreTests {
         #expect(store.document.picks.map(\.id) == ["b"])
     }
 }
+
+@Suite("Vault mirror")
+@MainActor
+struct ScheduleVaultSyncTests {
+    @Test func pullsAndPushesTheWebsitesDocument() async throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("vault-\(UUID().uuidString)")
+        let store = ScheduleStore(directory: dir, clock: { at(0) })
+        store.toggle("mine")
+        let fromVault = #"{"v":1,"picks":[{"id":"from-vault","at":"2026-11-08T03:12:45.120Z"}]}"#
+        let result = try await ScheduleVaultSync.pull(into: store) { path in
+            #expect(path == "agenda/picks")
+            return fromVault
+        }
+        #expect(result == .init(found: true, added: 1, removed: 0))
+        #expect(Set(store.document.picks.map(\.id)) == ["mine", "from-vault"])
+        var written: String?
+        try await ScheduleVaultSync.push(from: store) { _, text in written = text }
+        #expect(ScheduleDocument.decode(try #require(written))?.picks.count == 2)
+        // control: an empty vault changes nothing
+        let none = try await ScheduleVaultSync.pull(into: store) { _ in nil }
+        #expect(!none.found)
+    }
+}
