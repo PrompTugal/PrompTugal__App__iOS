@@ -24,6 +24,7 @@ struct AppShell: View {
         }
         .environment(data)
         .environment(vaultLog)
+        .identitySync()
         .teamFeatures()
         .tint(Palette.red)
         .onChange(of: scenePhase, initial: true) { _, phase in
