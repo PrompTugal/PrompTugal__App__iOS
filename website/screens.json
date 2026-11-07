@@ -1,0 +1,4 @@
+{
+  "_about": "Which devices' screenshots the site publishes. iPad screenshots from screens.yml run 4 (10156e3) are rotated 90 degrees; platform is fixing that at the source. Add \"ipad\" back once a fixed run exists, and check one image first.",
+  "devices": ["iphone"]
+}

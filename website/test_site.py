@@ -292,17 +292,23 @@ class SiteTest(unittest.TestCase):
         self._png(shots / 'ipad-today.png', 40, 30)
         (shots / 'notes.txt').write_text('ignored')
         self._png(shots / 'watch-debug.png', 10, 10)   # unknown device: ignored
+        self._png(shots / 'iphone-news.png', 30, 65)   # not a screen id (a cut-off 'news.home'): left out
         self.assertEqual(admin.png_size(shots / 'iphone-debug.png'), (30, 65))
         self.assertIsNone(admin.png_size(shots / 'notes.txt'))
-        found = admin.screenshots(shots.parent)
+        found = admin.screenshots(shots.parent, devices={'iphone', 'ipad'})
         self.assertEqual(sorted(found['debug']), ['ipad', 'iphone'])
+        self.assertEqual(sorted(admin.screenshots(shots.parent, devices={'iphone'})['debug']), ['iphone'])
         out = self.tmp / 'with-shots'
         os.environ['SCREENS_DIR'] = str(shots.parent)
+        real_devices = admin.screen_devices
+        admin.screen_devices = lambda root=None: {'iphone', 'ipad'}   # as when iPad shots are published
         try:
             build.build(out)
         finally:
             del os.environ['SCREENS_DIR']
+            admin.screen_devices = real_devices
         self.assertTrue((out / 'screens' / 'iphone-debug.png').exists())
+        self.assertFalse((out / 'screens' / 'iphone-news.png').exists())
         page = (out / 'admin' / 'screens.html').read_text()
         self.assertIn('src="../screens/iphone-debug.png"', page)
         self.assertEqual(validate.validate(out), [])

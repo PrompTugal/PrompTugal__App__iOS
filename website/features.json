@@ -183,6 +183,16 @@
       ]
     },
     {
+      "id": "wall",
+      "platform": "teams",
+      "name": "The wall",
+      "kind": "native",
+      "what": "For an iPad on a stand: the team, the agents and the newsroom on one screen, refreshing by itself.",
+      "evidence": [
+        "screen:wall"
+      ]
+    },
+    {
       "id": "debug",
       "platform": "teams",
       "name": "Debug panels",
