@@ -2,7 +2,7 @@
 
 > The shell is the app's root on dev: every section is reachable on iPhone and iPad. Team and vault screens are wired in; collab's land with night/collab. Now polishing every screen on both devices.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 05:30 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 06:30 UTC
 
 ## Done
 
@@ -51,9 +51,14 @@ Branch: `night/design` (rebased on `night/platform`) · Last update: 05:30 UTC
 - **Launch arguments** for screenshots and UI tests: `-PTDestination <id> -PTSampleData -PTMe <id>` (platform's screens.yml uses them).
 - **CI:** dev run 104 is the first fully green integrated run (build, SGitVault, iPhone and iPad tests), with design's code in it.
 
+- **Ask beside any screen on iPad** (collab's `askAnywhere`, ⌘K), merged into dev.
+- **First screenshots reviewed** (platform's screens.yml, run 4): every screen renders on iPhone and iPad with sample data. Fixed from them: "in in 1 day" on the stand-up card, "Updated tomorrow" for future time stamps, the web twin's title leaking into the iPhone navigation bar (now a sheet on iPhone, a column on iPad), and long iPhone tab titles (now Today, Team, Agents, News).
+- **`pt.destination.<id>`** accessibility identifier on every screen the shell opens, so the screenshot test fails when a screen did not open.
+
 ## In progress
 
-- CI on the newest head (runners are queued across six sessions; a run waits 10–20 minutes).
+- CI on a80653e (identifier and screenshot fixes).
+- Team's `NextHoursCard` on My day and the Wall, once it is on dev.
 
 ## Next
 
