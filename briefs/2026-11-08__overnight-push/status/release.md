@@ -2,7 +2,7 @@
 
 > Merged into dev. `iOS release` is green on dev (run 11): unsigned .ipa, simulator app and archive for every dev push, with the platform project (iOS 18, widgets, intents). TestFlight waits only for Dinis's secrets ([release-setup](../release-setup.md)). Priority: internal TestFlight.
 
-Branch: `night/release` · Last update: 04:55 UTC
+Branch: `night/release` · Last update: 05:10 UTC
 
 ## Done
 
@@ -41,9 +41,11 @@ Branch: `night/release` · Last update: 04:55 UTC
 - **04:50** Run 20 (manual, privacy-manifest warning) green. Platform added `PrompTugal/App/Resources/PrivacyInfo.xcprivacy`, identical to the draft. A UI-test target appeared (`news.promptugal.reader.uitests`); it is not archived or signed, so the checklist is unchanged.
 - **Dry run for signing:** manual input `dry_run` signs and exports the App Store .ipa without uploading. Before archiving, `check-profiles.sh` checks each signed target's entitlements against its profile and names any missing capability (tested locally with good and bad profiles).
 
+- **05:08** Run 24 on dev (editor merge) green. Merged dev (`b00dc15`); targets, entitlements and privacy manifest unchanged.
+
 ## In progress
 
-- Manual run to check the new workflow input.
+- Run 25 (manual, `dry_run`) queued 20 min for a macOS runner; dev run 26 also queued.
 
 ## Next
 
