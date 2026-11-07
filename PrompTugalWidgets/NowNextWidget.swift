@@ -45,10 +45,14 @@ struct NowNextProvider: TimelineProvider {
 }
 
 struct NowNextWidget: Widget {
+    /// Opens the schedule in the app shell (promptugal://open/<destination id>).
+    static let scheduleURL = URL(string: "promptugal://open/team.schedule")!
+
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: SharedContainer.nowNextKind, provider: NowNextProvider()) { entry in
             NowNextView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
+                .widgetURL(NowNextWidget.scheduleURL)
         }
         .configurationDisplayName("Now and next")
         .description("The session happening now and what comes next, in Lisbon time.")
