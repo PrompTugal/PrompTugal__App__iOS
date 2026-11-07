@@ -1,102 +1,71 @@
 # Status · iOS platform
 
-> CI and the project are done and on dev; the app builds with every session's code. Since 06:00: screenshots on dev (screens.yml, one UI test per screen), per-job CI concurrency, and night/** pushes run the build only (unit tests on dev, PRs, by hand).
+> Done. CI builds and tests the integrated app on an iPhone and an iPad simulator (124 of 124 unit tests pass on both) and screenshots all 13 screens on both devices; the project, targets, entitlements, privacy manifest and widget/Siri extensions are in place. Dinis must set the signing team and register the App ID capabilities before a device build or TestFlight.
 
-Branch: `night/platform` · Last update: 08:52 UTC
+Branch: `night/platform` (equal to `dev` at `44fbe3f`) · Last update: 09:15 UTC · Final for the overnight push
 
-## Ready for other sessions
+## What's on dev
 
-- **02:42 CI works.** `.github/workflows/ios.yml` builds the app on a `macos-26` runner, Xcode 26.6 (17F113), Swift 6.3.3.
-- **02:48 The layout is ready.** The project uses folder-synchronized groups. Put new `.swift` files in your folder under `PrompTugal/` and they compile, with no project file edit. Your folder exists with a `.gitkeep`; leave it or delete it.
-- **02:48 Minimum iOS is 18.0.**
+**Project** (`PrompTugal.xcodeproj`, objectVersion 77)
 
-## Rules for files in `PrompTugal/`
+- Folder-synchronized groups: any `.swift` file under `PrompTugal/` compiles, no project-file edit. Same for `Shared/`, `PrompTugalWidgets/`, `PrompTugalIntents/`, `PrompTugalTests/`, `PrompTugalUITests/`.
+- iOS 18.0 minimum, iPhone and iPad. Version and build number set once at project level.
+- Targets and bundle IDs: app `news.promptugal.reader`; widget `.widgets` (Now and next: small, medium, lock screen, reads the App Group); App Intents extension `.intents` ("Next session", Siri phrase "What's next in PrompTugal"); unit tests `.tests`; UI tests (screens).
+- `Packages/SGitVault`: the vault session's package, linked into the app as a local package.
+- Build settings live in `Config/PrompTugal.xcconfig` and `Config/PrompTugalWidgets.xcconfig`, with an optional, git-ignored `Config/Local.xcconfig` for signing.
 
-1. Every file under `PrompTugal/` is in the app target. Swift files compile. **Any other file is copied into the app bundle, flat.** Two files with the same name in different folders (two `README.md`, two `data.json`) break the build with "Multiple commands produce". Keep notes and docs outside `PrompTugal/`, and give resources a unique name, e.g. `Team-sample-me.json`.
-2. Don't declare top-level types with common names. A module-level type shadows SDK types everywhere in the app. **Design: please nest the section type as `Destination.Section`**, not a top-level `Section`, or every SwiftUI `Section { }` in the app breaks. The same goes for `Label`, `Link`, `Text`, `Image`, `Color`, `Button`, `List`, `Group`, `Task`, `Error`.
-3. Language mode is Swift 5 with complete concurrency checking (warnings). I plan to move to Swift 6 mode once the first features land; write code that has no concurrency warnings and the switch costs nothing.
-4. Unit tests go in `PrompTugalTests/` (Swift Testing, `@testable import PrompTugal`). Any file there is picked up.
+**App code I own** (`PrompTugal/App/`)
 
-## How to read a CI failure
+- `PrompTugalApp.swift`: root is `AppShell()` with the reader store and team features; registers and schedules the background tasks (`VaultBackground`, `TeamBackground`).
+- `HTTPClient.swift`: one client for every request; each lands in `HTTPLog.shared` (Debug → Network), URLs redacted.
+- `BuildInfo.swift`: commit, branch, build time, CI run for Debug → Build (written by `Scripts/build-info.sh`).
+- `ReaderStore.swift`, `Content.swift`, `NowNextPublisher.swift`, `TeamBackground.swift`, `Web/` (website browser through the team bridge, default shortcuts: promptugal.news, then web-summit.sgit.ai).
+- `Resources/PrivacyInfo.xcprivacy`: UserDefaults (CA92.1), file timestamps (C617.1, DDA9.1), no tracking.
 
-1. `actions_list` → `list_workflow_runs`, `resource_id: ios.yml`, branch `night/<you>`, `perPage: 1`.
-2. `actions_list` → `list_workflow_jobs` with the run id.
-3. `get_job_logs` with the failed job's id, `return_content: true`, `tail_lines: 80`. A failed step ends with `===== … failed. Errors: =====` and the `error:` lines, above about 40 lines of post-job noise.
+**Info and entitlements**
 
-Jobs: `App build and SGitVault tests` (the build, then `swift test` for the package) on every push. `App unit tests (iPhone simulator)` and `App unit tests (iPad simulator)` run on `dev`, pull requests and by hand (Actions → iOS → Run workflow, pick your branch); since 07:15 not on night/** pushes, for runner capacity. Every feature must work on both. Artifacts belong to the release engineer's `ios-release.yml`.
+- `Config/PrompTugal-Info.plist`: URL scheme `promptugal`, background modes fetch and processing, BG task ids `news.promptugal.reader.refresh` and `.vault-refresh`, `WKAppBoundDomains` promptugal.news and web-summit.sgit.ai, `ITSAppUsesNonExemptEncryption = NO`, usage strings (Face ID, camera, microphone, speech, NFC, calendar write-only).
+- `Config/PrompTugal.entitlements`: App Group `group.news.promptugal.reader`; associated domains `webcredentials:` and `applinks:promptugal.news`; time-sensitive notifications. `Config/PrompTugal-Basic.entitlements` has none of these, for a free personal team.
+- `PrompTugal/Store/PrompTugal.storekit`: consumables `news.promptugal.reader.credit.5` (0.99) and `.credit.20` (2.99), on the scheme's Run action.
 
-## Done
+## CI facts
 
-- **CI** (above).
-- **iOS 18.0** deployment target, project and targets.
-- **Folder-synchronized groups**, `objectVersion 77`. Existing files moved, no code changes: `App/PrompTugalApp.swift`, `App/Content.swift`, `App/ReaderStore.swift`, `App/Web/WebsiteView.swift`, `App/Web/WebsiteShortcuts.swift`, `App/Resources/Websites.json`, `App/Resources/Assets.xcassets`.
-- **`PrompTugalTests`** target, run by the shared scheme: Lisbon time (winter, summer, bad input), event ranges past midnight, detail URLs, `Websites.json`, build info, HTTP client redaction and log cap.
-- **`PrompTugal/App/HTTPClient.swift`** (contracts §8): `HTTPClient.shared.get(url, label:)`, `decode(_:from:label:)` and `data(for:label:)`. Every request lands in `HTTPLog.shared` (`@MainActor @Observable`): method, redacted URL (no user, password or fragment; query values shown as `…`), host, label, status, bytes, ms, error. Newest first, 1,000 kept, with running totals. `FeedClient` uses it. **Everyone: make HTTP requests through `HTTPClient.shared`, not `URLSession.shared`,** so they show in Debug → Network.
-- **Build info** for Debug → Build: `BuildInfo.current` has `commit`, `shortCommit`, `branch`, `dirty`, `commitDate`, `siteRelease` (from `/VERSION`), `builtAt`, `builder` (`ci` or `local`), `ciRun`, `appVersion`, `appBuild`, and `rows` for a list. Written at build time by `Scripts/build-info.sh` into `BuildInfo.json` in the bundle.
-- **`Packages/SGitVault`**: no `night/vault` branch existed at 02:47, so I pushed a compiling skeleton of contracts §5 (stubs throw `.notImplemented`) and linked it into the app. **Vault: start from `origin/night/platform` (or `dev` once merged) and replace the files freely.**
-- **Capabilities groundwork:** `Config/PrompTugal.entitlements` (App Group `group.news.promptugal.reader`; `webcredentials:promptugal.news`, `applinks:promptugal.news`), wired through `Config/PrompTugal.xcconfig`. `PrompTugal/Store/PrompTugal.storekit` with consumables `news.promptugal.reader.credit.5` (0.99) and `.credit.20` (2.99), on the scheme's Run action. Usage strings for Face ID, camera, microphone, speech recognition and NFC.
-- File-private reader types renamed with a `Reader` prefix (`ReaderDestination`, `ReaderSectionView`, …) so they can't clash with design's `Destination`.
+**`ios.yml`** (push to `dev` and `night/**`, pull requests, by hand)
 
-## Since 02:55
+| Job | Runs on | When |
+|---|---|---|
+| `Already on dev?` | Ubuntu, ~5 s | every run; on a `night/**` push whose commit is already on `dev`, it skips every macOS job |
+| `App build and SGitVault tests` | `macos-26`, ~4 min | every run: `xcodebuild build` (simulator, unsigned), then `swift test` in `Packages/SGitVault` |
+| `App unit tests (iPhone / iPad simulator)` | `macos-26`, ~9 min each | `dev`, pull requests, by hand only (not `night/**` pushes, for runner capacity) |
 
-- **Widget** `PrompTugalWidgets` (Now and next: small, medium, lock screen), reading `now-next.json` from the App Group. `Shared/` is compiled into the app and every extension.
-- **App Intents extension** `PrompTugalIntents`: "Next session".
-- **SGitVault**: the vault session's package, as is, linked into the app.
-- **CI**: unit tests on an iPhone **and** an iPad simulator. A push no longer cancels a running run. The artifact job moved to release's `ios-release.yml`.
-- **Default shortcuts**: promptugal.news, then web-summit.sgit.ai. Nothing else (conductor ruling).
-- **Info and entitlements**: `ITSAppUsesNonExemptEncryption = NO`; `WKAppBoundDomains` = promptugal.news, web-summit.sgit.ai (in `Config/PrompTugal-Info.plist`); Time Sensitive Notifications; calendar write-only usage string.
-- **Bundle IDs**: app `news.promptugal.reader`, widget `.widgets`, intents `.intents`, tests `.tests`. Version and build number are set once at project level.
+- Pushes that change only `briefs/`, `website/`, root Markdown or `VERSION` don't run it.
+- Concurrency is per job: a started job always finishes; a queued one is replaced by the newer push's.
+- Last result on `dev` (`8a060e8`, run 173): all green, **124 tests in 33 suites on iPhone and on iPad**.
+- A failed step writes its `error:` lines to the job summary and repeats them at the end of the log, so `get_job_logs` with `tail_lines: 80` shows them.
 
-**Design, note:** with `WKAppBoundDomains` set, WebKit allows script injection, user scripts and message handlers only on promptugal.news and web-summit.sgit.ai. Pages on other hosts still load, but script injection on them stops working.
+**`screens.yml`** (push to `dev`, by hand)
 
-**Team, note:** your code hooks in `App/` (WebsiteBrowser bridge, ReaderStore → `TeamFeatures`) go in as soon as `night/team` is on `dev`.
+- `ScreensTests` (scheme `PrompTugalScreens`): one test per destination, 13 ids, launched with `-PTDestination <id> -PTSampleData -PTMe ana`. iPad in landscape.
+- Artifact `screens-<sha>` with `iphone-<id>.png` (736×1600) and `ipad-<id>.png` (1600×1103), longest side 1600 px, no EXIF/XMP. Exactly 13 per device or the job fails.
+- iPad screenshots are the whole screen (`XCUIScreen.main.screenshot()`), turned upright from their own EXIF orientation, then stripped. Fixed at 08:35 (`0616379`); run 14 checked by me and by the editor in Chromium. The site publishes iPad from `dev` screens run 15 on.
 
-## In progress
+**`ios-release.yml`** belongs to the release engineer (archives and TestFlight).
 
-- **08:52** `dev` `8a060e8` fully green: build, SGitVault, **unit tests 124 of 124 (33 suites) on iPhone and on iPad**, screens 13 + 13. The `Already on dev?` gate works: a `night/platform` push already on `dev` (run 175) took 5 s on Ubuntu and skipped every macOS job.
-- **08:52** iPad screenshots fixed on `night/platform` (`0616379`, held for the editor's OK): run 13's iPad PNGs held only a square of the landscape UI, sideways, with a black band, because `app.screenshot()` in landscape crops the portrait framebuffer. Now `XCUIScreen.main.screenshot()` (whole screen), and the export turns each PNG by its own EXIF orientation (captured 1668×2420, tag 8 → stored 1600×1103) and then strips the tag. Screens run 14 (dispatched): green, and I checked the images (upright, full frame, no black rows or columns).
-- **08:15** On `dev` (`8a060e8`, conductor's 08:10 batch): screenshot PNGs are cleaned by `.github/scripts/png-normalize.py` (removes the EXIF orientation tag and XMP; the iPad check now reads the real stored width and height), and the `Already on dev?` gate job skips the macOS jobs when a night/** push is already on `dev`. Watching dev's screens run 13 and iOS run 173; `night/platform` fast-forwarded to `dev` `6c7fdf7` to test the gate.
-- **07:15** For runner capacity, `night/**` pushes run only `App build and SGitVault tests` (1 runner). The unit tests run on `dev`, pull requests and by hand (Actions → iOS → Run workflow).
-- **06:45** `screens.yml` (`dev` only): `ScreensTests` has one test per destination (13, design's ids). Each screenshot is kept before the `pt.destination.<id>` check, and only `.png` attachments are exported. Fixed on the way: dotted ids lost their tail in file names (run 4), the export picked up failure `.txt`/`.mp4` attachments (run 8), and iPad PNGs are rotated upright. Each device must produce exactly 13 PNGs.
-- **06:00** Per-job concurrency in `ios.yml` and `screens.yml`: a job that has started always finishes; a job still waiting for a runner is replaced by the newer push's.
-- **05:40** Integrated app (`c53c2c0`): iPad unit tests, 64 of 66 passed. The 2 failures were team's key-order tests, fixed in `500b5ad`.
-- **07:36** Running on `dev`: iPhone unit tests (`991cbfa`) and iPhone screens (`d33acfe`, design's agenda fix). Results to the conductor when done.
-- **05:40 Integration result** (`c53c2c0` on `night/platform`, which already held design, team and vault): app build and SGitVault tests green. Unit tests on iPad: **64 of 66 passed**. The 2 failures are team's key-order tests (`ScheduleTests.swift:34`, `:298`), fixed by team in `500b5ad` on `dev`. The conductor cancelled `dev` run 88 on purpose for the same reason. Per-job concurrency (`ios.yml` and `screens.yml`) is on `dev`, so started jobs now always finish.
-- **04:25** The conductor merged the wiring with design and vault into `dev` (`3b77e1c`). `AppShell` is the root on `dev`. The first full integration run (88) is queued for runners.
-- **04:28** **Screens** (design's request): `PrompTugalUITests/ScreensTests` opens the 12 main destinations with `-PTDestination <id> -PTSampleData -PTMe ana` and keeps a screenshot of each. It has its own scheme, `PrompTugalScreens`, so ⌘U and `ios.yml` still run only unit tests. `.github/workflows/screens.yml` runs on `dev` and by hand, on one iPhone and one iPad. It uploads `screens-<sha>` with `iphone-<id>.png` and `ipad-<id>.png`, longest side 1600 px (the editor's contract).
-- **04:31** **Privacy manifest** (release's TestFlight blocker, ITMS-91053): `App/Resources/PrivacyInfo.xcprivacy` declares UserDefaults (CA92.1) and file timestamps (C617.1, DDA9.1), no tracking. A unit test checks it ships. The extensions call no required-reason APIs.
-- **04:24** CI uses 3 macOS runners per push instead of 4: SGitVault's `swift test` runs inside the build job.
-- **04:09** The conductor merged design, team and vault into `dev`. I merged `dev` into `night/platform` and pushed the wiring in one commit (`5365593`):
-  - `AppShell()` is the root view, with `.environment(store)` and `.teamFeatures()`.
-  - `WebsiteBrowser` goes through the team bridge: `configure`, `attach`, `pageDidFinish`, and `handlesNavigation` (in-page and new-window links).
-  - `ReaderStore`: saved sessions are the schedule's picks. Each agenda refresh, and the cached agenda at launch, go to `TeamFeatures.agendaDidLoad`, which also feeds the widget.
-  - Background tasks: `VaultBackground` and `TeamBackground` (`news.promptugal.reader.refresh` → `TeamFeatures.refreshTeam()`), registered in `PrompTugalApp.init` and scheduled when the app goes to the background.
-- Before that, from 03:45: the vault's background-refresh wiring (merged earlier, now on `dev`). Not yet through CI: the `promptugal://` URL scheme (the shell's deep links reach the app), the widget opening `promptugal://open/team.schedule`, and Siri phrases ("What's next in PrompTugal").
-- Before the merge I trial-merged design, team and vault locally: no conflicts, no duplicate type names, no clashing extension members, no resource name collisions.
-- Watching dev's integration run (79) and mine.
+## What Dinis (or Silvio) must do
 
-**Design, please:** `Shell/WebPage.swift` has none of the bridge hooks, so its pages get no `pt` bridge or schedule sync, and the Stripe top-up isn't intercepted. Same changes as in `WebsiteBrowser`: `bridge.configure(configuration, for: url)` instead of `.default()`, `bridge.attach(webView)`, `bridge.pageDidFinish(webView)` in `didFinish`, `bridge.handlesNavigation(to:)` in `decidePolicyFor`.
+1. **Signing:** copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and set `DEVELOPMENT_TEAM`, or pick the team in Xcode → Signing & Capabilities.
+2. **App ID capabilities** for `news.promptugal.reader`, `.widgets` and `.intents` at developer.apple.com: App Groups (register `group.news.promptugal.reader`), Associated Domains, In-App Purchase, Time Sensitive Notifications. Xcode's automatic signing does this for an Admin.
+3. **AASA on promptugal.news:** `/.well-known/apple-app-site-association` listing `<TeamID>.news.promptugal.reader` under `webcredentials.apps` and `applinks`. A change to the website, not this repo.
+4. **App Store Connect:** create the two consumables with the IDs above before any TestFlight top-up test.
+5. A free personal team can't sign App Groups or associated domains: set `PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements` in `Config/Local.xcconfig` to build anyway.
 
 ## Next
 
-1. Swift 6 language mode.
-2. Widget extension (Now and next) reading the App Group.
-3. App Intents skeleton.
-4. Fold in other sessions' folders as they land; rebase on `origin/dev` hourly.
-
-## Needs from Dinis or Silvio (Apple team)
-
-- **Signing:** copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and set `DEVELOPMENT_TEAM`, or pick the team in Xcode.
-- **App ID capabilities** for `news.promptugal.reader` at developer.apple.com: App Groups, Associated Domains, In-App Purchase. Register the group `group.news.promptugal.reader`. Xcode's automatic signing can do this for an admin.
-- **AASA on promptugal.news:** `/.well-known/apple-app-site-association` listing `<TeamID>.news.promptugal.reader` under `webcredentials.apps` (passkeys, D3) and `applinks`. That is a change to the promptugal.news site, not this repo.
-- **App Store Connect:** create the two consumable products with the same IDs before any TestFlight top-up test.
-- A free personal team cannot sign App Groups or associated domains. To build anyway, set `PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements` in `Config/Local.xcconfig`.
+1. **Swift 6 language mode.** The app is Swift 5 mode with complete concurrency checking (warnings). Clear the warnings, then switch; not started tonight.
+2. **iPad unit tests on `night/**`** if runners allow: today they run only on `dev`, PRs and by hand.
+3. **Screens:** add a destination → add a test method and update the count (13) in `ScreensTests.swift` and `screens.yml` together.
+4. **Rules that still hold for everyone:** non-Swift files under `PrompTugal/` are copied into the bundle flat, so give them unique names; don't declare top-level types named like SDK types (`Section`, `Label`, …); make HTTP requests through `HTTPClient.shared`.
 
 ## Blocked
 
 Nothing.
-
-## Needs from others
-
-- **Design:** nest `Section` inside `Destination` (rule 2 above).
-- **Everyone:** use `HTTPClient.shared` for HTTP; unique names for non-Swift files.
