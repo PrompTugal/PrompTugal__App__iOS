@@ -1,8 +1,8 @@
 # Status · Swift vault
 
-> The Swift sgit reader works and is tested on macOS CI: 29+ tests over throwaway vaults written by sgit 0.27, including tamper and wrong-key negatives. Next: the app's Keychain, Face ID and passkey unlock code.
+> The Swift sgit reader and writer work and are tested on macOS CI over throwaway vaults written by sgit 0.27; what Swift writes, sgit reads back on Linux. App code for Face ID, the Secure Enclave and passkey unlock is in PrompTugal/Vault and type-checks; it is not in the app target yet.
 
-Branch `night/vault`. Updated about 03:15 Lisbon time.
+Branch `night/vault`. Updated about 03:10 Lisbon time.
 
 ## Done
 
@@ -20,13 +20,24 @@ Branch `night/vault`. Updated about 03:15 Lisbon time.
 - **Tests (macOS CI, green)**: file ids, PBKDF2 keys, all key forms, decrypt, tree walk, unicode names, deflate, multi-branch index, history, signatures, cache, incremental pull, door vectors, account unlock. Negative controls: wrong key, another passkey, flipped byte in a blob, a commit and a ref, a re-hashed forged object, a damaged cache file, a pack vault, invalid key text, changed signed bytes.
 - **CI**: `.github/workflows/ios-vault.yml` runs `swift test` on macOS 15 for pushes to `night/vault`, plus the Python reference reader on Linux.
 
+- **Writes**: `VaultCommitBuilder` makes sgit's blobs, trees, signed commits and refs. Rebuilding a commit's tree from its own files gives sgit's tree id byte for byte (tested on all four fixture branches). `SGitVault.commit(...)` pushes to a named branch through `POST /api/vault/batch/<id>`: objects first, then the ref with compare-and-swap, or a new branch entry in the index with compare-and-swap. A lost race is `VaultError.pushConflict` and overwrites nothing (tested).
+- **sgit reads what Swift wrote**: CI exports the vaults the Swift tests wrote; a Linux job loads them into sgit-ai 0.27's in-memory server, clones, switches to the Swift branch, verifies every signature and compares every file.
+- **`PrompTugal/Vault/`** (type-checked in CI against the package for the iOS 18 simulator, Swift 5 and 6):
+  - `VaultConfig`: server, relying party `promptugal.news`, PRF input, flag `vault.passkeyPRF` (off), background task id.
+  - `VaultKeychain`: keys as Keychain items with `.biometryCurrentSet`, this device only (falls back to user presence, then device-unlocked where there is no biometry, and records which). One `LAContext` reused for 60 seconds. `inventory()` lists keys without secrets or a prompt.
+  - `VaultKeyWrap`: a Secure Enclave P-256 key wraps each stored key (ECDH + HKDF + AES-GCM), so the Keychain bytes are useless off this device.
+  - `VaultUnlock` / `PasskeyPRF`: paste or QR text (also `#key=` links); passkey assertion with the PRF extension behind the flag; recovery code.
+  - `VaultSession` (`@Observable`): open vaults, pull on foreground, background refresh hook, lock, inspector, cache stats, key inventory, and `commit(...)` to this device's branch `device-<8 chars>`.
+  - `VaultDeviceSigner`: this device's commit key in the Secure Enclave (Face ID to sign), software key on the simulator.
+
 ## In progress
 
-- `PrompTugal/Vault/`: `VaultKeychain` (Face ID, `.biometryCurrentSet`, this device only), `VaultUnlock` (paste, QR text, passkey PRF behind a flag), `VaultSession`, Secure Enclave wrapping of the cached key, key inventory for the debug panel.
+- Waiting for CI on the writer and the device signer.
 
 ## Next
 
-- Writes (stretch): commit builder in Swift, signed with a Secure Enclave key, checked by sgit on Linux.
+- A debug-panel data adapter if design wants one (tell me the shape).
+- Large blobs (over 4 MB encrypted) need presigned uploads; not done.
 
 ## Passkey facts, read from the website (7 Nov 2026)
 
@@ -36,11 +47,12 @@ Branch `night/vault`. Updated about 03:15 Lisbon time.
 
 ## Blocked
 
-- Nothing.
+- **No live write test.** Pushing to dev.send.sgraph.ai needs an access token (`sgit push`: "no access token configured"). Writes are tested against folders and sgit's in-memory server only. Live reads were checked only for the 404 shape (`{"detail":"Vault file not found"}`); I have no throwaway vault on the server to read, and I did not touch i9mbeqwb.
 
 ## Needs from others
 
 - **Platform**: add `Packages/SGitVault` as a local package dependency of the app target, and fold `PrompTugal/Vault/` into the app. My interim `ios-vault.yml` can be deleted once your `ios.yml` is on `dev` (it runs the same `swift test`).
-- **Platform**: entitlement `webcredentials:promptugal.news` (associated domains) for the passkey, and `NSFaceIDUsageDescription` in Info.
+- **Platform**: entitlement `webcredentials:promptugal.news` (associated domains) for the passkey, `NSFaceIDUsageDescription` in Info, and `news.promptugal.reader.vault-refresh` in `BGTaskSchedulerPermittedIdentifiers` (call `VaultSession.shared.backgroundRefresh()` from it). On scene phase changes call `VaultSession.shared.sceneBecameActive()` / `sceneMovedToBackground()`.
+- **Conductor / anyone with a token**: a vault access token (for a throwaway vault only) would let me test one live push.
 - **Website (editor / promptugal.news owners)**: add the app to `https://promptugal.news/.well-known/apple-app-site-association` under `webcredentials.apps` (`<TeamID>.<bundle id>`). Without it iOS refuses the passkey request from the app. The PRF constant above must never change.
 - **Design**: the Debug panel can read `VaultTrafficLog.events` and `.totals`, `SGitVault.inspect()` (a `VaultInspection`), and the key inventory from `VaultSession` (coming next).
