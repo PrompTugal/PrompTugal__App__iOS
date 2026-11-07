@@ -2,7 +2,7 @@
 
 > Done for tonight and on dev: Ask (OpenRouter chat with tools, dictation, key check, opt-in history), Where is everyone, Messages (lanes, inbox, newsroom notes) and team notes through vaults, on iPhone and iPad. The table below says what works without keys and what needs which key.
 
-Branch: `night/collab` · Last update: 09:05 UTC
+Branch: `night/collab` · Last update: 09:55 UTC (final)
 
 ## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
@@ -82,7 +82,7 @@ Notes:
 
 ## In progress
 
-- Nothing. All of collab is on dev; dev run 180 (fadf27e) is green on iPhone and iPad unit tests, including the Ask, lanes, coordination, team-notes and conversation suites.
+- Nothing. All of collab is on dev; dev run 194 (6ea854f) is green: build, SGitVault tests, iPhone and iPad unit tests.
 
 ## Next
 
