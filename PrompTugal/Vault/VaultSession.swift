@@ -47,6 +47,9 @@ final class VaultSession {
     private(set) var readerVaultId: String?
 
     private let keychain = VaultKeychain.shared
+    /// Access token for writes (from the master vault's `.vault/access-token.json`, or entered). Memory only.
+    private var accessToken: String?
+    var canPush: Bool { accessToken != nil }
 
     var isLocked: Bool { vaults.isEmpty }
     var hasStoredKeys: Bool { !keychain.inventory().isEmpty }
@@ -113,6 +116,7 @@ final class VaultSession {
         let keys = try await VaultAccount.unlock(secret: secret, log: log) { key in
             SGitVault(key: key, server: VaultConfig.server, cache: VaultConfig.cacheDirectory, log: log)
         }
+        accessToken = keys.accessToken ?? accessToken
         try keychain.save(keys.master, label: "Master vault", role: "master")
         try await open(keys.master, label: "Master vault", role: "master")
         if let reader = keys.reader {
@@ -176,6 +180,7 @@ final class VaultSession {
     }
 
     func lock() {
+        accessToken = nil
         vaults.removeAll()
         readerVaultId = nil
         keychain.invalidate()
@@ -185,6 +190,7 @@ final class VaultSession {
     func forgetAllKeys() {
         lock()
         keychain.deleteAll()
+        VaultDeviceSigner.delete()
     }
 
     // MARK: Reading
@@ -194,6 +200,39 @@ final class VaultSession {
             throw VaultError.vaultNotFoundOrWrongKey(vaultId: vaultId ?? "")
         }
         return try await entry.vault.readText(path)
+    }
+
+    // MARK: Writing
+
+    /// Set the access token writes need (x-sgraph-access-token). Kept in memory only.
+    func setAccessToken(_ token: String?) { accessToken = token?.isEmpty == false ? token : nil }
+
+    /// This device's branch: `device-` and 8 characters that stay the same for this app on this device.
+    var deviceBranch: String {
+        let key = "vault.deviceBranch"
+        if let saved = UserDefaults.standard.string(forKey: key) { return saved }
+        let made = "device-" + UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "").prefix(8)
+        UserDefaults.standard.set(made, forKey: key)
+        return made
+    }
+
+    /// Commit `changes` to this device's branch of a vault opened with a vault key, signed in the Secure Enclave.
+    /// Face ID once: it unlocks the write key and signs.
+    @discardableResult
+    func commit(_ changes: [String: Data?], message: String, vaultId: String? = nil) async throws -> VaultPushResult {
+        guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else {
+            throw VaultError.vaultNotFoundOrWrongKey(vaultId: vaultId ?? "")
+        }
+        guard entry.canWrite else { throw VaultError.invalidKey("this vault was opened with a read key; writing needs its vault key") }
+        let context = try await keychain.unlock(reason: "Sign and save to your vault")
+        let key = try keychain.load(vaultId: entry.vaultId, context: context)
+        guard let writeKey = key.writeKey else { throw VaultError.invalidKey("no write key stored") }
+        let signer = try VaultDeviceSigner.load(context: context)
+        let result = try await entry.vault.commit(changes, message: message, branch: deviceBranch, signer: signer,
+                                                  writeKey: writeKey, accessToken: accessToken,
+                                                  writer: HTTPVaultTransport(server: VaultConfig.server))
+        await pull(entry.vaultId)
+        return result
     }
 
     // MARK: Debug panel feeds
@@ -212,6 +251,16 @@ final class VaultSession {
             KeyInventoryItem(name: "\(meta.label) · vault \(meta.vaultId)", store: "Keychain",
                              protection: meta.protection.rawValue,
                              detail: "\(meta.kind.rawValue) key, \(meta.role), stored \(meta.createdAt.formatted(date: .abbreviated, time: .shortened))\(meta.wrapped ? ", wrapped by the Secure Enclave key" : "")")
+        }
+        if let signer = VaultDeviceSigner.inventory() {
+            items.append(KeyInventoryItem(name: "Commit signing key (P-256) · \(signer.keyId)",
+                                          store: signer.secureEnclave ? "Secure Enclave" : "Keychain (software key)",
+                                          protection: signer.secureEnclave ? "Face ID, this device only" : "this device only",
+                                          detail: "signs commits on \(deviceBranch)"))
+        }
+        if accessToken != nil {
+            items.append(KeyInventoryItem(name: "Vault access token", store: "memory",
+                                          protection: "dropped on lock", detail: "allows pushes"))
         }
         if VaultKeyWrap.isAvailable {
             items.append(KeyInventoryItem(name: "Vault wrapping key (P-256)", store: "Secure Enclave",
