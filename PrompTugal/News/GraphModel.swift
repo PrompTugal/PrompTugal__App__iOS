@@ -90,9 +90,15 @@ struct GraphIndex: Sendable {
         for world in graph.worlds ?? [] { for type in world.types ?? [] { worlds[type] = world.id } }
         for type in graph.types ?? [] where worlds[type.id] == nil { worlds[type.id] = type.world }
         worldOfType = worlds
-        let xs = graph.nodes.compactMap(\.x), ys = graph.nodes.compactMap(\.y)
-        bounds = CGRect(x: xs.min() ?? 0, y: ys.min() ?? 0,
-                        width: max((xs.max() ?? 1) - (xs.min() ?? 0), 1), height: max((ys.max() ?? 1) - (ys.min() ?? 0), 1))
+        // Fit to the 2nd–98th percentile, so a few far-out nodes do not shrink the main graph to a dot.
+        // They stay reachable by zooming out.
+        let xs = graph.nodes.compactMap(\.x).sorted(), ys = graph.nodes.compactMap(\.y).sorted()
+        func percentile(_ values: [Double], _ p: Double) -> Double {
+            values.isEmpty ? 0 : values[min(values.count - 1, max(0, Int(Double(values.count - 1) * p)))]
+        }
+        let minX = percentile(xs, 0.02), maxX = percentile(xs, 0.98)
+        let minY = percentile(ys, 0.02), maxY = percentile(ys, 0.98)
+        bounds = CGRect(x: minX, y: minY, width: max(maxX - minX, 1), height: max(maxY - minY, 1))
         maxRank = graph.nodes.compactMap(\.pr).max() ?? 1
         byID = Dictionary(graph.nodes.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
     }
