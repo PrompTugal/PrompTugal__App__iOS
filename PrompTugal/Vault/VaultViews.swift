@@ -13,9 +13,11 @@ struct VaultHomeView: View {
     @State private var session = VaultSession.shared
     @State private var selectedVault: String?
     @State private var selectedFile: String?
+    @State private var columns: NavigationSplitViewVisibility = .all
+    @State private var triedFaceID = false
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columns) {
             VaultSidebar(session: session, selection: $selectedVault)
         } content: {
             if let id = selectedVault, let entry = session.vaults.first(where: { $0.vaultId == id }) {
@@ -33,6 +35,18 @@ struct VaultHomeView: View {
             }
         }
         .onChange(of: selectedVault) { selectedFile = nil }
+        // A vault that opens is selected at once (the reader vault first), so the files show without a tap.
+        .onChange(of: session.vaults.map(\.vaultId)) {
+            if selectedVault == nil || !session.vaults.contains(where: { $0.vaultId == selectedVault }) {
+                selectedVault = session.reader?.vaultId ?? session.vaults.first?.vaultId
+            }
+        }
+        // Keys already on this device: one Face ID prompt when the screen opens, no tap needed.
+        .task {
+            guard !triedFaceID, session.isLocked, session.hasStoredKeys else { return }
+            triedFaceID = true
+            try? await session.unlockStoredKeys()
+        }
     }
 }
 
