@@ -39,4 +39,30 @@ struct StoreKitEnvironmentTests {
         print("STOREKIT-PROBE host=\(Bundle.main.bundleIdentifier ?? "?") signed=\(FileManager.default.fileExists(atPath: signed))")
         withExtendedLifetime(session) {}
     }
+
+    @Test("Products with an SKTestSession from the copy in the test bundle")
+    func bundledSession() async throws {
+        let inBundle = Bundle(for: BundleToken.self).url(forResource: "PrompTugalTests", withExtension: "storekit")
+        print("STOREKIT-PROBE bundled file=\(inBundle?.lastPathComponent ?? "missing")")
+        let session = try SKTestSession(configurationFileNamed: "PrompTugalTests")
+        session.disableDialogs = true
+        do {
+            let products = try await Product.products(for: Self.ids)
+            print("STOREKIT-PROBE bundled products=\(products.count) prices=\(products.map(\.displayPrice).sorted())")
+        } catch {
+            print("STOREKIT-PROBE bundled error=\(error)")
+        }
+        withExtendedLifetime(session) {}
+    }
+
+    @Test("The test bundle's copy is identical to the app's StoreKit configuration")
+    func copyMatches() throws {
+        let tests = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+        let copy = try Data(contentsOf: tests.appendingPathComponent("Resources/PrompTugalTests.storekit"))
+        let original = try Data(contentsOf: tests.deletingLastPathComponent()
+            .appendingPathComponent("PrompTugal/Store/PrompTugal.storekit"))
+        #expect(copy == original, "Copy PrompTugal/Store/PrompTugal.storekit to PrompTugalTests/Resources/PrompTugalTests.storekit")
+    }
 }
+
+private final class BundleToken {}

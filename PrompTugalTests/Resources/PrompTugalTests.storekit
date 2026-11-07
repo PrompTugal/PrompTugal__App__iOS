@@ -1,0 +1,47 @@
+{
+  "identifier" : "5C0F7E21",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "6755000001",
+      "localizations" : [
+        {
+          "description" : "Adds £5.00 of reading credit to the PrompTugal.news meter in this app.",
+          "displayName" : "£5 of reading credit",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "news.promptugal.reader.credit.5",
+      "referenceName" : "Credits 5",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "19.99",
+      "familyShareable" : false,
+      "internalID" : "6755000002",
+      "localizations" : [
+        {
+          "description" : "Adds £20.00 of reading credit to the PrompTugal.news meter in this app.",
+          "displayName" : "£20 of reading credit",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "news.promptugal.reader.credit.20",
+      "referenceName" : "Credits 20",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "PRT",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
