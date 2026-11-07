@@ -49,7 +49,7 @@ struct TeamHomeView: View {
                     Button {
                         openURL(standup.briefingURL(for: id))
                     } label: {
-                        Label("\(Lisbon.dayLabel(DayPlanner.lisbonDay(standup.at))) · \(Lisbon.timeLabel(standup.at)) Lisbon · my briefing",
+                        Label("\(Lisbon.dayLabel(Lisbon.day(standup.at))) · \(Lisbon.timeLabel(standup.at)) Lisbon · my briefing",
                               systemImage: "person.3")
                     }
                 }

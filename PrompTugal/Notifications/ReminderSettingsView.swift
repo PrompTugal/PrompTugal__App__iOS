@@ -49,7 +49,7 @@ struct ReminderSettingsView: View {
                 }
                 ForEach(reminders.planned) { item in
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("\(Lisbon.dayLabel(DayPlanner.lisbonDay(item.fire))) · \(Lisbon.timeLabel(item.fire))")
+                        Text("\(Lisbon.dayLabel(Lisbon.day(item.fire))) · \(Lisbon.timeLabel(item.fire))")
                             .font(.caption.monospacedDigit()).foregroundStyle(Color.accentColor)
                         Text(item.title)
                     }

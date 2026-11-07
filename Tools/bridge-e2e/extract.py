@@ -16,7 +16,9 @@ def block(name):
     start = s.index(f"static let {name} = \"\"\"\n") + len(f"static let {name} = \"\"\"\n")
     return done(s[start:s.index('\n    """', start)])
 
-out = {n: block(n) for n in ["writeSchedule", "creditMeter", "readMeter", "hideWebTopUp", "bridgeWorld"]}
+out = {n: block(n) for n in ["writeSchedule", "creditMeter", "readMeter", "bridgeWorld", "meterHasReference"]}
+out["hideWebTopUp"] = block("hideWebTopUpSource").replace("__OFFER__", "true")
+out["hideWebTopUpNoOffer"] = block("hideWebTopUpSource").replace("__OFFER__", "false")
 out["readSchedule"] = done(re.search(r'static let readSchedule = "(.*)"\n', s).group(1))
 start = s.index('return """\n', s.index("static func pageAPI")) + len('return """\n')
 out["pageAPI"] = done(s[start:s.index('"""', start)])

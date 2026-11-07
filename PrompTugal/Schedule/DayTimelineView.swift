@@ -89,7 +89,7 @@ struct DayTimelineView: View {
 
     @ViewBuilder private func nowLine(_ now: Date) -> some View {
         let top = y(now)
-        if DayPlanner.lisbonDay(now) == day, top >= 0, top <= CGFloat(endHour - startHour) * hourHeight {
+        if Lisbon.day(now) == day, top >= 0, top <= CGFloat(endHour - startHour) * hourHeight {
             HStack(spacing: 0) {
                 Circle().fill(.red).frame(width: 8, height: 8)
                 Rectangle().fill(.red).frame(height: 1.5)

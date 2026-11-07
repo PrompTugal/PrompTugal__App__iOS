@@ -84,7 +84,7 @@ enum DayPlanner {
             return Item(id: "pick.\(pick.id)", kind: .pick, title: event.title, start: start,
                         end: event.end ?? start.addingTimeInterval(30 * 60), place: event.place, eventID: pick.id)
         }
-        fixed += standups.filter { lisbonDay($0.at) == day }.map {
+        fixed += standups.filter { Lisbon.day($0.at) == day }.map {
             Item(id: "standup.\($0.slot)", kind: .standup, title: "Team stand-up", start: $0.at, end: $0.end,
                  place: "", eventID: nil)
         }
@@ -207,8 +207,6 @@ enum DayPlanner {
         return index
     }
 
-    static func lisbonDay(_ date: Date) -> String {
-        let parts = Lisbon.calendar.dateComponents([.year, .month, .day], from: date)
-        return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
-    }
+    /// Forwarder kept so collab's call sites compile until they move to `Lisbon.day` (Q8). Remove after that.
+    static func lisbonDay(_ date: Date) -> String { Lisbon.day(date) }
 }
