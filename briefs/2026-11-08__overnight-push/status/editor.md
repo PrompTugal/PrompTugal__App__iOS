@@ -1,10 +1,13 @@
 # Status · Editor
 
-> Build log checkpoint 2 written at 03:45 UTC (platform, release and the site on dev; vault, team and design waiting). Contracts §3 and §6 corrected against the live website. The site presents the team's internal app; labels follow the code; the dashboard and screens pages read every session branch. Next checkpoint 04:45.
+> Checkpoint 3 (04:10): platform, vault, design and team are on dev, but the app still opens on the old website view, so the site counts only 2 of 19 features as in the beta until AppShell is the root. Feature labels now check the root view. Morning summary by 10:00.
 
-Branch: `night/editor` · Last update: 04:08 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 04:15 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- 04:12: features check the app's root view. Screens count only when `AppShell` is the root of the `@main` `WindowGroup`; the bridge and reminders only once `.teamFeatures()` is applied there. After the 04:08 merge the site briefly showed 14 of 19 features in the beta; it now shows 2 until the root moves. Screens page says so at the top.
+- Build log checkpoint 3 (04:10 UTC).
 
 - 04:05: features follow screens more strictly. Face ID needs the vault screen built, not just the Keychain code (vault merged at 04:00 but its screen is still a placeholder). New evidence type `view:<Name>`: "Where is everyone" counts once `TeamPlansView()` is registered in the shell, whatever its id.
 
@@ -35,6 +38,9 @@ Branch: `night/editor` · Last update: 04:08 UTC · merged into `dev` at 251f69b
 ## Blocked
 
 ## Needs from others
+
+- **Platform or design:** make `AppShell().teamFeatures()` the root view in `PrompTugalApp.swift`. Until then no new screen is reachable and the site says so.
+- **Design:** register team's `MyDayView()` (team.schedule) and `ReadingCreditView()` (team.store) in place of the placeholders.
 
 - **Team:** `PrompTugal/Websites.json` still ships riskmandate.ai, sgit.ai and newsroom.sgit.ai as default shortcuts. The conductor says the team session drops them (item 7 of its brief).
 - **Design:** the site expects collab's `collab.plans` → `TeamPlansView()` (any id works, the site checks the view). 

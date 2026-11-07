@@ -241,6 +241,22 @@ class SiteTest(unittest.TestCase):
         self.assertIn('the doc', out)
         self.assertNotIn('](', out)
 
+    def test_screens_count_only_when_the_shell_is_the_root(self):
+        root = self.tmp / 'root-scene'
+        (root / 'website').mkdir(parents=True)
+        (root / 'PrompTugal' / 'Shell').mkdir(parents=True)
+        (root / 'website' / 'features.json').write_text(json.dumps({'features': [
+            {'id': 'n', 'platform': 'readers', 'name': 'N', 'kind': 'native', 'what': 'x', 'evidence': ['screen:news.home']},
+            {'id': 'b', 'platform': 'readers', 'name': 'B', 'kind': 'hybrid', 'what': 'x', 'evidence': ['root:.teamFeatures()']}]}))
+        (root / 'PrompTugal' / 'Shell' / 'Destinations.swift').write_text(
+            'AppDestination(id: "news.home", kind: .native) { AnyView(NewsHomeView()) }\n')
+        app = root / 'PrompTugal' / 'App.swift'
+        app.write_text('@main struct A: App {\n  var body: some Scene {\n    WindowGroup {\n      WebsiteView()\n'
+                       '    }\n  }\n}\n// WindowGroup { AppShell().teamFeatures() }\n')
+        self.assertEqual([f['shipped'] for f in admin.features(root)], [False, False])
+        app.write_text('@main struct A: App { var body: some Scene { WindowGroup { AppShell().teamFeatures() } } }\n')
+        self.assertEqual([f['shipped'] for f in admin.features(root)], [True, True])
+
     def test_status_page_counts(self):
         info = admin.parse_status('# Status · X\n\n> Going well.\n\n## Done\n\n- a\n- b\n  more\n\n## Blocked\n\n## Next\n* c\n')
         self.assertEqual(info['summary'], 'Going well.')
@@ -276,6 +292,7 @@ class SiteTest(unittest.TestCase):
         root = self.tmp / 'dest-root-2'
         (root / 'website').mkdir(parents=True)
         (root / 'PrompTugal' / 'Shell').mkdir(parents=True)
+        (root / 'PrompTugal' / 'App.swift').write_text('@main struct A: App { var body: some Scene { WindowGroup { AppShell() } } }\n')
         (root / 'website' / 'features.json').write_text(json.dumps({'features': [
             {'id': 'v', 'platform': 'readers', 'name': 'V', 'kind': 'native', 'what': 'x', 'evidence': ['screen:vault']}]}))
         swift = root / 'PrompTugal' / 'Shell' / 'Destinations.swift'

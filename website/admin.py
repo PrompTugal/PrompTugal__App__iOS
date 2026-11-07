@@ -27,16 +27,32 @@ def plain(text):
 
 # --- features --------------------------------------------------------------
 
+def root_scene(root=ROOT):
+    """The WindowGroup of the app's @main type: what the app actually shows at launch."""
+    for path in sorted(root.glob('PrompTugal/**/*.swift')):
+        text = re.sub(r'(?m)^\s*//.*$', '', path.read_text(errors='replace'))
+        if '@main' not in text:
+            continue
+        m = re.search(r'WindowGroup\s*(\([^)]*\))?\s*\{', text)
+        if m:
+            return text[m.end() - 1:_balanced(text, m.end() - 1, '{}')]
+    return ''
+
+
 def features(root=ROOT):
     """features.json with each feature's status worked out from the files on disk."""
     data = json.loads((root / 'website' / 'features.json').read_text())['features']
-    built = [d for d in destinations(root) if not d['pending']]
+    scene = root_scene(root)
+    # Screens are reachable only when the shell is the app's root view.
+    built = [d for d in destinations(root) if not d['pending']] if 'AppShell(' in scene else []
     screens = {d['id'] for d in built}
     views = set().union(*(d['views'] for d in built)) if built else set()
 
     def present(evidence):
         if evidence.startswith('screen:'):
             return evidence[len('screen:'):] in screens
+        if evidence.startswith('root:'):
+            return evidence[len('root:'):] in scene
         if evidence.startswith('view:'):
             return evidence[len('view:'):] in views
         return any(p.is_file() for p in root.glob(evidence))
