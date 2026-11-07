@@ -55,8 +55,10 @@ class SiteTest(unittest.TestCase):
         pbxproj = build.PROJECT.read_text()
         self.assertIn(f"MARKETING_VERSION = {self.facts['version']};", pbxproj)
         self.assertEqual(int(self.facts['site_count']), len(self.facts['websites']))
-        files = [f for f in list(build.APP.rglob('*.swift')) + list((build.ROOT / 'Packages').rglob('*.swift'))
-                 if '.build' not in f.parts]
+        import subprocess
+        tracked = subprocess.run(['git', 'ls-files', '*.swift'], cwd=build.ROOT, capture_output=True, text=True).stdout.split()
+        files = [build.ROOT / f for f in tracked if not f.startswith(('website/', 'scripts/', 'briefs/'))]
+        self.assertEqual(sorted(files), sorted(build.swift_sources()))
         lines = sum(len(f.read_text().splitlines()) for f in files)
         self.assertEqual(self.facts['swift_lines'], f'{lines:,}')
         self.assertIn(f">{self.facts['swift_lines']}<", (self.clean / 'index.html').read_text())

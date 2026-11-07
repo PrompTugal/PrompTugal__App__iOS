@@ -2,9 +2,12 @@
 
 > Checkpoint 4 (04:35): the app opens on the native shell, and the site's feature check moved by itself from 2 to 16 of 19 in the beta. Screenshots are wired: when platform's screens.yml runs on dev, the site shows real iPhone and iPad screens. Morning summary by 10:00.
 
-Branch: `night/editor` · Last update: 04:35 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 04:48 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Build log checkpoint 5 (04:45) and a Progress section in the overnight README.
+- Swift is counted across every target (app, package, widget, intents, shared, unit and UI tests): 113 files at 04:45, up from 99 counted in the app folders only.
 
 - 04:30: real screenshots. `website.yml` downloads the newest `screens-*` artifact; the site publishes `/screens/<device>-<id>.png` with sizes read from the PNG, a gallery on the screens page, a screenshot on each in-the-beta feature card, and a real iPad shot on the home page (drawn mock-up as fallback). Validator: declared size must be the file's, shown size must keep its shape.
 - Build log checkpoint 4 (04:35 UTC).
