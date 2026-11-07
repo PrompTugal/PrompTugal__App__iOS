@@ -8,7 +8,7 @@ Owner: release engineering (`night/release`) · Workflow: `.github/workflows/ios
 
 ## What CI does today, with no keys
 
-Every push to `dev` or `night/release` that changes more than docs or the site (pushes touching only `briefs/`, `website/`, `*.md` or `VERSION` are skipped to save macOS runner time), and every manual run, runs the **package** job of `iOS release` on a macOS runner with the newest stable Xcode. It produces four artifacts, named `PrompTugal-<version>-<build>-<sha>-…`:
+Every push to `dev` that changes more than docs or the site (pushes touching only `briefs/`, `website/`, `*.md` or `VERSION` are skipped to save macOS runner time), and every manual run, runs the **package** job of `iOS release` on a macOS runner with the newest stable Xcode. It produces four artifacts, named `PrompTugal-<version>-<build>-<sha>-…`:
 
 | Artifact | What it is | Use |
 | --- | --- | --- |
