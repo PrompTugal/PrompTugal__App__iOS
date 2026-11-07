@@ -311,7 +311,34 @@ def destinations(root=ROOT):
     any. A screen whose view is a PendingFeatureView is registered but not built yet."""
     out = []
     for path in sorted(root.glob('PrompTugal/**/Destinations.swift')):
-        text = re.sub(r'/\*.*?\*/', '', path.read_text(), flags=re.S)
+        out += parse_destinations(path.read_text(), path.relative_to(root).as_posix())
+    return out
+
+
+def branch_destinations(root=ROOT, remote='origin'):
+    """Screens registered on night/* branches that dev does not have yet, or has differently."""
+    on_dev = {d['id']: d for d in destinations(root)}
+    out = []
+    for ref in git('branch', '-r', '--format=%(refname:short)', root=root).split():
+        if not ref.startswith(f'{remote}/night/'):
+            continue
+        files = [f for f in git('ls-tree', '-r', '--name-only', ref, 'PrompTugal', root=root).splitlines()
+                 if f.endswith('/Destinations.swift')]
+        for f in files:
+            for d in parse_destinations(git('show', f'{ref}:{f}', root=root), f):
+                old = on_dev.get(d['id'])
+                if old is None or (old['pending'] and not d['pending']) or old['kind'] != d['kind']:
+                    d['branch'] = ref[len(remote) + 1:]
+                    d['change'] = 'new' if old is None else ('built' if old['pending'] and not d['pending'] else 'changed')
+                    out.append(d)
+    return out
+
+
+def parse_destinations(source, file=''):
+    """The registrations in one Destinations.swift source text."""
+    out = []
+    if True:
+        text = re.sub(r'/\*.*?\*/', '', source, flags=re.S)
         text = re.sub(r'(?m)^\s*//.*$', '', text)
         for m in re.finditer(r'\b(?:App)?Destination\((?=\s*id:\s*")', text):
             end = _balanced(text, m.end() - 1)
@@ -330,8 +357,21 @@ def destinations(root=ROOT):
                         'section': section.group(1) if section else '', 'kind': kind.group(1) if kind else '',
                         'url': url.group(1) if url else re.sub(r'\s+', ' ', target).strip(),
                         'pending': 'PendingFeatureView' in body,
-                        'file': path.relative_to(root).as_posix()})
+                        'file': file})
     return out
+
+
+def branch_screens_html(items):
+    if not items:
+        return '<p>No session branch registers a screen that <code>dev</code> does not already have.</p>'
+    rows = ''.join(f'<tr><td>{esc(d["title"])}</td><td><code>{esc(d["id"])}</code></td>'
+                   f'<td><span class="kind">{esc(KIND_LABEL.get(d["kind"], d["kind"] or "?"))}</span></td>'
+                   f'<td>{"placeholder" if d["pending"] else "built"}</td><td>{esc(d["change"])}</td>'
+                   f'<td><code>{esc(d["branch"])}</code></td></tr>' for d in items)
+    return (f'<p>{len(items)} screens are new or changed on session branches and reach the app when the conductor '
+            'merges them.</p><div class="table-wrap"><table><thead><tr><th scope="col">Screen</th><th scope="col">id</th>'
+            '<th scope="col">Built as</th><th scope="col">State</th><th scope="col">Compared with dev</th>'
+            '<th scope="col">Branch</th></tr></thead><tbody>' + rows + '</tbody></table></div>')
 
 
 def screens_html(items, websites):

@@ -115,6 +115,10 @@ class SiteTest(unittest.TestCase):
         self.assertIn('href="04-vaults-on-ios.html"', text)
         self.assertIn(f'{build.REPO_URL}/blob/dev/briefs/', text)
 
+    def test_braces_in_briefs_are_not_tokens(self):
+        self.assertEqual(build.no_tokens('<code>${{ github.token }}</code>'),
+                         '<code>$&#123;&#123; github.token &#125;&#125;</code>')
+
     def test_markdown_escapes_html(self):
         import markdown
         out = markdown.render('<script>x</script> and `<b>`')
