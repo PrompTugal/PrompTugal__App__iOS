@@ -4,6 +4,12 @@
 
 **Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed)
 
+## Rulings from the conductor (7 Nov, 23:47 UTC)
+1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
+2. `AskContextProvider`, `PublicAskProvider`, `TeamAskProvider` approved. Consent and context switches behave as today in the Team app.
+3. The 4 team AITests may move to the Team test target.
+4. Order: PTLanes once PTVaultUI is on dev; PTAsk last, after PTAgenda, PTNews and PTVaultUI. The conductor pings at each step.
+
 ## Done
 - Read the three-apps README, contracts and the overnight rules.
 - Mapped what `AI/` (9 files) and `Lanes/` (9 files) use from outside. About 4,000 lines.
