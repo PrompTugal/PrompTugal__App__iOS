@@ -24,8 +24,8 @@ struct AppShell: View {
         }
         .environment(data)
         .environment(vaultLog)
+        // .teamFeatures() is applied once, by the app root (PrompTugalApp), outside the shell.
         .identitySync()
-        .teamFeatures()
         .tint(Palette.red)
         .onChange(of: scenePhase, initial: true) { _, phase in
             if phase == .active { Task { await data.refreshAll() } }
@@ -263,9 +263,9 @@ private struct ShellKeyboardShortcuts: View {
 }
 
 #Preview("Shell · iPhone") {
-    AppShell().environment(ReaderStore()).phonePreview()
+    AppShell().environment(ReaderStore()).teamFeatures().phonePreview()
 }
 
 #Preview("Shell · iPad") {
-    AppShell().environment(ReaderStore()).padPreview()
+    AppShell().environment(ReaderStore()).teamFeatures().padPreview()
 }
