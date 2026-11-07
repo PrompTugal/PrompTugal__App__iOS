@@ -1,8 +1,8 @@
 # Status · Collaboration and AI
 
-> Ask (streamed OpenRouter chat with read-only tools over the app's data), "Where is everyone" and Messages (append lanes, inbox, newsroom notes) are merged with dev (4c78207) and wired to VaultSession and the team stores; the entry views are registered. First CI run on the merged branch is queued.
+> Ask (streamed OpenRouter chat with read-only tools), "Where is everyone", Messages (append lanes, inbox, newsroom notes) and team notes through vaults are merged with dev (2b00b3a) and wired to VaultSession and the team stores. First CI run is compiling now (run 91); run 101 covers the latest.
 
-Branch: `night/collab` · Last update: 04:15 UTC
+Branch: `night/collab` · Last update: 05:00 UTC
 
 ## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
@@ -35,6 +35,8 @@ Branch: `night/collab` · Last update: 04:15 UTC
   - Hold-to-talk dictation (Speech, on device when the language supports it).
   - `LanesLog`: every encrypt, write, list, fetch, decrypt, with sizes, timings and a shortened token. Never a key or the message text.
 
+- **Team notes** (Messages → Team notes, `PrompTugal/Lanes/TeamNotes.swift`): a note is a new file in `lanes/team/` of my own vault, written with the vault session's `append` (unique name, signed by this device, so devices never conflict). The section reads my folder and the same folder in every teammate vault linked in "Where is everyone". Schema `promptugal-team-note/v1`; other files are ignored.
+
 ## What needs keys (also said in the UI)
 
 - The team site's public data has **one shortlist for everyone** (each person's `data.json` lists the same 80 sessions), so it cannot show who goes where. Personal picks need each teammate's vault read key.
@@ -46,6 +48,8 @@ Branch: `night/collab` · Last update: 04:15 UTC
 
 ## In progress
 
+- CI: run 91 (dev 3b77e1c merge) is compiling on the iPad runner; run 101 (team notes, dev 2b00b3a) waits behind it.
+
 - CI on the merged branch (7e097f2). Earlier queued runs that never started were cancelled so one run covers the lot.
 
 ## Next
@@ -53,7 +57,7 @@ Branch: `night/collab` · Last update: 04:15 UTC
 1. Fix whatever CI finds.
 2. Ask: show the tool results' sources as links; a "send this answer to a lane" action.
 3. Coordination: offer "share my plan" right after picks change; read teammates' plans in the background.
-4. Team notes in a vault folder (`lanes/<name>`) with vault's new `append(_:to:)` / `files(in:)` once it is on dev: one signed file per message, no conflicts between devices. Server append lanes stay for write-only inboxes.
+
 
 ## Blocked
 
