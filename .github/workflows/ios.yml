@@ -119,8 +119,8 @@ jobs:
               -maximum-test-execution-time-allowance 180 \
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
-      - name: Upload log and results
-        if: always()
+      - name: Upload log and results (failures only; the bundle is about 60 MB)
+        if: failure()
         uses: actions/upload-artifact@v5
         with:
           name: test-log-${{ matrix.device }}

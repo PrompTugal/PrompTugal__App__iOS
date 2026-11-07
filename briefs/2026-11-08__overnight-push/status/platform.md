@@ -2,7 +2,7 @@
 
 > Design, team and vault are on dev. Platform wired them together at 04:15: AppShell is the root, the team bridge runs in the website view, saved sessions are schedule picks, and both background refreshes are registered. Waiting for CI on the combined app.
 
-Branch: `night/platform` · Last update: 04:42 UTC
+Branch: `night/platform` · Last update: 05:40 UTC
 
 ## Ready for other sessions
 
@@ -53,6 +53,7 @@ Jobs: `App build and SGitVault tests` (the build, then `swift test` for the pack
 
 ## In progress
 
+- **05:40 Integration result** (`c53c2c0` on `night/platform`, which already held design, team and vault): app build and SGitVault tests green. Unit tests on iPad: **64 of 66 passed**. The 2 failures are team's key-order tests (`ScheduleTests.swift:34`, `:298`), fixed by team in `500b5ad` on `dev`. The conductor cancelled `dev` run 88 on purpose for the same reason. Per-job concurrency (`ios.yml` and `screens.yml`) is on `dev`, so started jobs now always finish.
 - **04:25** The conductor merged the wiring with design and vault into `dev` (`3b77e1c`). `AppShell` is the root on `dev`. The first full integration run (88) is queued for runners.
 - **04:28** **Screens** (design's request): `PrompTugalUITests/ScreensTests` opens the 12 main destinations with `-PTDestination <id> -PTSampleData -PTMe ana` and keeps a screenshot of each. It has its own scheme, `PrompTugalScreens`, so ⌘U and `ios.yml` still run only unit tests. `.github/workflows/screens.yml` runs on `dev` and by hand, on one iPhone and one iPad. It uploads `screens-<sha>` with `iphone-<id>.png` and `ipad-<id>.png`, longest side 1600 px (the editor's contract).
 - **04:31** **Privacy manifest** (release's TestFlight blocker, ITMS-91053): `App/Resources/PrivacyInfo.xcprivacy` declares UserDefaults (CA92.1) and file timestamps (C617.1, DDA9.1), no tracking. A unit test checks it ships. The extensions call no required-reason APIs.
