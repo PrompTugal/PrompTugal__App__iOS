@@ -42,7 +42,7 @@ xcodebuild test -project PrompTugal.xcodeproj -scheme PrompTugal \
 (cd Packages/SGitVault && swift test)
 ```
 
-**CI.** `.github/workflows/ios.yml` runs on every push to `dev` and `night/**`, and on pull requests, on a macOS runner with the newest stable Xcode. Its jobs are `SGitVault swift test`, `App build (simulator)`, `App unit tests (iPhone simulator)`, and `Simulator .app artifact`, which uploads an unsigned Release simulator app (`PrompTugal-simulator-app`). A failed step writes its `error:` lines to the job summary and repeats them as the last lines of the step’s log, so they can be read with a short log tail.
+**CI.** `.github/workflows/ios.yml` runs on every push to `dev` and `night/**`, and on pull requests, on a macOS runner with the newest stable Xcode. Its jobs are `SGitVault swift test`, `App build (simulator)`, and `App unit tests`, which runs on an iPhone and an iPad simulator. Release artifacts (archives, `.ipa`, simulator app) come from `.github/workflows/ios-release.yml`. A failed step writes its `error:` lines to the job summary and repeats them as the last lines of the step’s log, so they can be read with a short log tail.
 
 ## Distribute a private beta
 

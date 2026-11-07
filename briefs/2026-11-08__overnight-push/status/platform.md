@@ -23,7 +23,7 @@ Branch: `night/platform` · Last update: 02:52 UTC
 2. `actions_list` → `list_workflow_jobs` with the run id.
 3. `get_job_logs` with the failed job's id, `return_content: true`, `tail_lines: 80`. A failed step ends with `===== … failed. Errors: =====` and the `error:` lines, above about 40 lines of post-job noise.
 
-Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App build (simulator)`, `App unit tests (iPhone simulator)`. The `Simulator .app artifact` job runs on `dev` and by hand only, to save macOS runners for everyone.
+Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App build (simulator)`, `App unit tests (iPhone simulator)` and `App unit tests (iPad simulator)`. Every feature must work on both. Artifacts belong to the release engineer's `ios-release.yml`.
 
 ## Done
 

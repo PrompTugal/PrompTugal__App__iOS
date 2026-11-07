@@ -7,7 +7,6 @@ name: iOS
 #   package  swift test in Packages/SGitVault (skipped cleanly if the folder is missing)
 #   build    xcodebuild build for the iOS Simulator, unsigned
 #   test     xcodebuild test on an iPhone simulator
-#   archive  an unsigned simulator .app, uploaded as an artifact
 
 on:
   push:
@@ -119,37 +118,3 @@ jobs:
           path: ${{ runner.temp }}/logs/
           if-no-files-found: ignore
 
-  archive:
-    name: Simulator .app artifact
-    needs: build
-    # Only on dev and by hand: macOS runners are shared by every session.
-    if: github.ref == 'refs/heads/dev' || github.event_name == 'workflow_dispatch'
-    runs-on: macos-26
-    timeout-minutes: 40
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Select Xcode
-        run: .github/scripts/select-xcode.sh
-
-      - name: Build a Release simulator app
-        run: |
-          .github/scripts/run-and-summarize.sh "Release simulator build" "$RUNNER_TEMP/logs/archive.log" -- \
-            xcodebuild build \
-              -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
-              -destination 'generic/platform=iOS Simulator' \
-              -derivedDataPath "$RUNNER_TEMP/dd" \
-              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
-          app=$(find "$RUNNER_TEMP/dd/Build/Products/Release-iphonesimulator" -maxdepth 1 -name '*.app' | head -1)
-          mkdir -p "$RUNNER_TEMP/out"
-          ditto -c -k --keepParent "$app" "$RUNNER_TEMP/out/PrompTugal-simulator.app.zip"
-          ls -la "$RUNNER_TEMP/out"
-          echo "Simulator app: \`PrompTugal-simulator.app.zip\` ($(du -h "$RUNNER_TEMP/out/PrompTugal-simulator.app.zip" | cut -f1)). Install with \`xcrun simctl install booted PrompTugal.app\`." >> "$GITHUB_STEP_SUMMARY"
-
-      - uses: actions/upload-artifact@v5
-        with:
-          name: PrompTugal-simulator-app
-          path: ${{ runner.temp }}/out/PrompTugal-simulator.app.zip
-          retention-days: 14
