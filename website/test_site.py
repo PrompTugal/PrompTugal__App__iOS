@@ -5,6 +5,7 @@ passes a broken site has proven nothing.
 
 Usage: python3 -m unittest website/test_site.py
 """
+import json
 import re
 import shutil
 import sys
@@ -14,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build      # noqa: E402
+import version    # noqa: E402
 import validate   # noqa: E402
 
 
@@ -74,6 +76,24 @@ class SiteTest(unittest.TestCase):
     def test_unknown_token_stops_the_build(self):
         with self.assertRaises(SystemExit):
             build.fill('{{no_such_token}}', {})
+
+    def test_bump_increments_only_the_last_number(self):
+        path = self.tmp / 'VERSION'
+        path.write_text('v0.1.9\n')
+        self.assertEqual(version.bump(path), 'v0.1.10')
+        self.assertEqual(version.read(path), 'v0.1.10')
+
+    def test_release_is_stamped_from_version_file(self):
+        stamp = json.loads((self.clean / 'version.json').read_text())
+        self.assertEqual(stamp['release'], version.read())
+        self.assertEqual(stamp['version'], self.facts['version'])
+
+    def test_refuses_malformed_version(self):
+        path = self.tmp / 'VERSION-bad'
+        for bad in ('0.1.3', 'v0.1', 'v0.1.3-beta', ''):
+            path.write_text(bad)
+            with self.assertRaises(SystemExit, msg=bad):
+                version.read(path)
 
     # --- negative controls --------------------------------------------------
 

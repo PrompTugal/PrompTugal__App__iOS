@@ -80,11 +80,17 @@ python3 -m unittest website/test_site.py      # validator rules with negative co
 
 ### Deployment and versioning
 
-`.github/workflows/website.yml` runs the tests, build and validator on every push and pull request. A push to `dev` also deploys to GitHub Pages and then polls `https://ios.app.promptugal.news/version.json` until the live site serves the deployed commit. The deploy isn't done until that check passes.
+`.github/workflows/website.yml` runs on every push to `dev`:
+
+1. **Release.** It bumps `VERSION` (`v0.1.n` → `v0.1.n+1`), commits `release: v0.1.n+1`, tags it and pushes both to `dev`.
+2. **Build.** It tests, builds and validates the site from that release commit.
+3. **Deploy.** It publishes to GitHub Pages and polls `https://ios.app.promptugal.news/version.json` until it serves the new release. The deploy isn't done until that check passes.
+
+Pull requests run only the build step, with no release and no deploy. After a push, run `git pull` to pick up the release commit CI added.
 
 | Version | Set by | Shown as |
 | --- | --- | --- |
+| Release, `v0.1.n` in `VERSION` | CI, once per push to `dev` | Footer, git tag, `version.json` |
 | App version (`MARKETING_VERSION`) and build (`CURRENT_PROJECT_VERSION`) | You, in Xcode, before each TestFlight upload | Version badge, page text, JSON-LD, `version.json` |
-| Site build | CI: `github.run_number`, plus the commit SHA | Footer and `version.json` |
 
-One-time GitHub setup: under **Settings → Pages**, set **Source** to **GitHub Actions** and the custom domain to `ios.app.promptugal.news`. Under **Settings → Environments → github-pages**, allow deployments from the `dev` branch.
+One-time GitHub setup: under **Settings → Pages**, set **Source** to **GitHub Actions** and the custom domain to `ios.app.promptugal.news`. Under **Settings → Environments → github-pages**, allow deployments from the `dev` branch. If `dev` is protected, let GitHub Actions push to it so the release commit and tag can land.

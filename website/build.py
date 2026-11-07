@@ -8,16 +8,18 @@ a Markdown twin at the same path for agents, and llms.txt and sitemap.xml list
 every page.
 
 Standard library only. Usage: python3 website/build.py [--out DIR]
-CI sets SITE_BUILD and SITE_COMMIT; a local build is stamped 'local'.
+The release version comes from /VERSION; CI sets SITE_COMMIT to stamp the commit.
 """
 import argparse
-import os
 import html
 import json
+import os
 import re
 import shutil
 from html.parser import HTMLParser
 from pathlib import Path
+
+import version
 
 SITE_URL = 'https://ios.app.promptugal.news/'
 REPO_URL = 'https://github.com/PrompTugal/PrompTugal__App__iOS'
@@ -61,9 +63,8 @@ def app_facts():
         'swift_lines': f'{sum(len(f.read_text().splitlines()) for f in swift):,}',
         'site_count': str(len(websites)),
         'websites': websites,
-        # Stamped by CI (.github/workflows/website.yml): one number per deploy, plus the commit.
-        'site_build': os.environ.get('SITE_BUILD', 'local'),
-        'site_commit': os.environ.get('SITE_COMMIT', 'uncommitted')[:7],
+        'release': version.read(),
+        'site_commit': os.environ.get('SITE_COMMIT', '')[:7],
     }
 
 
@@ -97,10 +98,10 @@ def websites_list(facts):
 
 
 def site_stamp(facts):
-    if facts['site_build'] == 'local':
-        return 'Local build.'
     commit = facts['site_commit']
-    return f'Site build {facts["site_build"]}, commit <a href="{REPO_URL}/commit/{commit}">{commit}</a>.'
+    if not commit:
+        return f"Release {facts['release']} (local build)."
+    return f'Release <a href="{REPO_URL}/tree/{facts["release"]}">{facts["release"]}</a>, commit <a href="{REPO_URL}/commit/{commit}">{commit}</a>.'
 
 
 def read_page(path):
@@ -267,7 +268,7 @@ def build(out):
         + '\n'.join(sitemap) + '\n</urlset>\n')
     (out / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n')
     (out / 'version.json').write_text(json.dumps(
-        {key: facts[key] for key in ('version', 'build', 'site_build', 'site_commit')}, indent=2) + '\n')
+        {key: facts[key] for key in ('release', 'version', 'build', 'site_commit')}, indent=2) + '\n')
     return facts, pages
 
 

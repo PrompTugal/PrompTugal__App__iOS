@@ -1,8 +1,14 @@
-name: Website
+name: Release and deploy
 
-# Builds, validates and tests the product site on every push and pull request.
-# A push to dev also deploys it to GitHub Pages (ios.app.promptugal.news) and
-# then confirms the live site serves the commit that was just deployed.
+# On every push to dev:
+#   1. release  bump /VERSION (v0.1.n -> v0.1.n+1), commit it, tag it, push both to dev
+#   2. build    test, build and validate the site from that release commit
+#   3. deploy   publish to GitHub Pages (ios.app.promptugal.news) and confirm the
+#               live site serves the release; the deploy is not done until it does
+# On pull requests, only the build job runs, with no release and no deploy.
+#
+# The release commit is pushed with GITHUB_TOKEN, which does not start another
+# workflow run, so there is no loop.
 
 on:
   push:
@@ -15,13 +21,48 @@ permissions:
 
 concurrency:
   group: website-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  release:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      sha: ${{ steps.push.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Bump the release version
+        id: bump
+        run: echo "version=$(python3 website/version.py bump)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit, tag and push
+        id: push
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "release: $VERSION" -- VERSION
+          git tag -a "$VERSION" -m "Release $VERSION"
+          git push origin HEAD:dev "refs/tags/$VERSION"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "### Released $VERSION" >> "$GITHUB_STEP_SUMMARY"
+
   build:
+    needs: release
+    if: always() && (needs.release.result == 'success' || needs.release.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release.outputs.sha || github.sha }}
 
       - uses: actions/setup-python@v5
         with:
@@ -32,8 +73,7 @@ jobs:
 
       - name: Build
         env:
-          SITE_BUILD: ${{ github.run_number }}
-          SITE_COMMIT: ${{ github.sha }}
+          SITE_COMMIT: ${{ needs.release.outputs.sha || github.sha }}
         run: python3 website/build.py
 
       - name: Validate
@@ -43,14 +83,14 @@ jobs:
         run: cat website/public/version.json
 
       - name: Upload the Pages artifact
-        if: github.event_name != 'pull_request'
+        if: needs.release.result == 'success'
         uses: actions/upload-pages-artifact@v3
         with:
           path: website/public
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
-    needs: build
+    needs: [release, build]
+    if: needs.release.result == 'success' && needs.build.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -66,14 +106,13 @@ jobs:
       - name: Verify live
         env:
           SITE: https://ios.app.promptugal.news
-          SHA: ${{ github.sha }}
+          WANT: ${{ needs.release.outputs.version }}
         run: |
-          want="${SHA:0:7}"
           for attempt in $(seq 1 20); do
-            live=$(curl -fsS "$SITE/version.json?nocache=$attempt" | python3 -c 'import json,sys; print(json.load(sys.stdin)["site_commit"])' || true)
-            echo "attempt $attempt: live commit '${live}', want '${want}'"
-            [ "$live" = "$want" ] && exit 0
+            live=$(curl -fsS "$SITE/version.json?nocache=$attempt" | python3 -c 'import json,sys; print(json.load(sys.stdin)["release"])' || true)
+            echo "attempt $attempt: live '${live}', want '${WANT}'"
+            [ "$live" = "$WANT" ] && exit 0
             sleep 15
           done
-          echo "::error::$SITE does not serve commit $want after 5 minutes"
+          echo "::error::$SITE does not serve $WANT after 5 minutes"
           exit 1
