@@ -23,11 +23,10 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: ios-${{ github.ref }}
-  # A new push waits for the running run to finish instead of cancelling it,
-  # so test runs complete; GitHub keeps only the newest pending run.
-  cancel-in-progress: false
+# Concurrency is per job, not per run. A job that has started always finishes;
+# a job still waiting for a runner is replaced by the same job of a newer push.
+# (With a run-level group, GitHub cancelled whole runs whose test jobs had
+# started but whose other jobs were still queued.)
 
 env:
   PROJECT: PrompTugal.xcodeproj
@@ -37,6 +36,9 @@ jobs:
   build:
     name: App build and SGitVault tests
     runs-on: macos-26
+    concurrency:
+      group: ios-build-${{ github.ref }}
+      cancel-in-progress: false
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
@@ -77,6 +79,9 @@ jobs:
         device: [iPhone, iPad]
     runs-on: macos-26
     timeout-minutes: 45
+    concurrency:
+      group: ios-test-${{ matrix.device }}-${{ github.ref }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v5
         with:
