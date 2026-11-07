@@ -71,8 +71,9 @@ jobs:
           .github/scripts/export-screens.py --self-test
           .github/scripts/export-screens.py "$RUNNER_TEMP/Screens.xcresult" "$RUNNER_TEMP/screens" "$label"
           for f in "$RUNNER_TEMP"/screens/*.png; do
-            # The iPad shots are taken in landscape-left but captured in portrait pixels:
-            # turn them upright, so the site can publish them as they are.
+            # iPad shots are taken in landscape-left. sips reads them as portrait; rotating gives
+            # upright landscape stored pixels (confirmed by the editor on run 12). The EXIF tag
+            # that would turn them back in a browser is removed by png-normalize.py below.
             if [ "$label" = ipad ]; then
               w=$(sips -g pixelWidth "$f" | awk '/pixelWidth/{print $2}')
               h=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
@@ -80,14 +81,12 @@ jobs:
             fi
             sips -Z 1600 "$f" >/dev/null
           done
-          # Check: every iPad PNG is now landscape.
+          # Drop EXIF orientation (XCTest tags iPad landscape shots Orientation=8, so browsers turn
+          # them sideways) and check the stored pixel size from IHDR: iPad must be landscape.
           bad=0
-          for f in "$RUNNER_TEMP"/screens/*.png; do
-            w=$(sips -g pixelWidth "$f" | awk '/pixelWidth/{print $2}')
-            h=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
-            echo "$(basename "$f") ${w}x${h}"
-            if [ "$label" = ipad ] && [ "$w" -le "$h" ]; then echo "::error::$(basename "$f") is not landscape"; bad=1; fi
-          done
+          if [ "$label" = ipad ]; then landscape=--landscape; else landscape=; fi
+          python3 .github/scripts/png-normalize.py --self-test
+          python3 .github/scripts/png-normalize.py $landscape "$RUNNER_TEMP"/screens/*.png || bad=1
           count=$(ls "$RUNNER_TEMP"/screens/*.png | wc -l | tr -d ' ')
           echo "$count screenshots for ${{ matrix.device }}" >> "$GITHUB_STEP_SUMMARY"
           # One per id in PrompTugalUITests/ScreensTests.swift (13); update both together.
