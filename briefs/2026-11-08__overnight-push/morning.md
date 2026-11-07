@@ -2,7 +2,7 @@
 
 > For Dinis and Silvio. What the seven sessions shipped overnight, what is still open, the decisions and Apple set-up only you can do, and what to test first on a phone and an iPad. Draft, updated through the night; final by 10:00 UTC.
 
-**Last updated:** 07:55 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
+**Last updated:** 08:15 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
 
 ## In one paragraph
 
@@ -18,7 +18,7 @@ To be completed at the end of the night. As of 05:40 UTC, on `dev`:
 | Team and agents | My day, The team, Agents (the wake grid redrawn natively), Briefed, Newsroom | design, team |
 | News | Feed, newsletter editions, story board, graph explorer (all nodes and edges, native) | design |
 | Schedule | One list with the website (`nr.schedule.v1`), reminders, a day planner, Add to Calendar | team |
-| Bridge | The website and the app talk through a fixed list of messages, on promptugal.news and the team site only | team |
+| Bridge | The website and the app talk through a fixed list of messages, on promptugal.news and the team site only; tested against the live site in Chromium (`Tools/bridge-e2e`) | team |
 | Vault | Swift reader and writer, tested against vaults written by sgit 0.27, keys behind Face ID and the Secure Enclave | vault |
 | Ask, messages, where is everyone | OpenRouter chat with the key in the Keychain; append lanes in vaults; teammates' shared picks | collab |
 | Top-up | The website's meter, topped up with StoreKit (two consumables); the Stripe link is hidden in the app | team |
@@ -85,7 +85,7 @@ Known limits: passkey unlock needs the `apple-app-site-association` file on prom
 
 Draft at 07:40; final by 10:00.
 
-- **CI capacity.** The macOS runners were the bottleneck of the night; `dev` was frozen at 07:15 so queued runs could finish. They did: the unit tests on the integrated app passed on iPhone (121 tests in 31 suites, the iPhone job of run 150) and on iPad (the iPad job of run 154). The other jobs of those runs were cancelled to make room for newer commits. Session branches now run only the build; the unit tests and screenshots run on `dev`.
+- **CI capacity.** The macOS runners were the bottleneck of the night; `dev` was frozen at 07:15 so queued runs could finish. They did: the unit tests on the integrated app passed on iPhone (121 tests in 31 suites, run 150) and iPad (run 154), and **run 160 (07:12 commit) is fully green**: build, vault package tests, iPhone and iPad unit tests. Session branches now run only the build; the unit tests and screenshots run on `dev`.
 - **Screenshots.** The first runs had cut screen ids and rotated iPad images, and one failed on a slow screen; all three are fixed. Run 10 took all 13 iPhone screens with exact ids, and the site shows them. iPad is added once an upright image from a fixed run has been checked.
 - **Vault writes on the live server.** Reading and writing are tested against vaults written by sgit 0.27 and sgit's in-memory server, and sgit reads back what the app writes. A live push to `dev.send.sgraph.ai` needs an access token nobody had tonight.
 - **Passkey unlock.** Written and behind a flag; it needs the `apple-app-site-association` file on promptugal.news (above). Team keys and Face ID work without it.
