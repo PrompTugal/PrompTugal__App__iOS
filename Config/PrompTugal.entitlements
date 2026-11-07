@@ -5,7 +5,6 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>webcredentials:promptugal.news</string>
-		<string>applinks:promptugal.news</string>
 	</array>
 	<key>com.apple.developer.usernotifications.time-sensitive</key>
 	<true/>
