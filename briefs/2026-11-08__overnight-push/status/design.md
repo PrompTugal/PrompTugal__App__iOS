@@ -2,7 +2,7 @@
 
 > The shell is the app's root on dev: every section is reachable on iPhone and iPad. Team and vault screens are wired in; collab's land with night/collab. Now polishing every screen on both devices.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 07:30 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 08:20 UTC
 
 ## Done
 
@@ -58,6 +58,8 @@ Branch: `night/design` (rebased on `night/platform`) · Last update: 07:30 UTC
 - **Agenda made fast** for 200+ sessions and VoiceOver (the screenshot test's accessibility query had timed out after 90 s): filtering, grouping and labels worked out once per change, small rows, one accessibility element per row with "open" and "add to my schedule" actions.
 - **Team's `NextHoursCard`** on My day (for me) and on the Wall.
 - **CI:** a80653e passed the iPhone unit tests (identifiers, screenshot fixes, native Agenda); b3142ce (Agenda speed, NextHoursCard) waiting for its build job.
+
+- **Second screenshot review** (screens run 12, 13 screens × iPhone and iPad): found that **News → Graph failed with real data** (edge rows in `explorer.json` mix numbers and a date string). Fixed with a lenient cell decode, checked against the live file (all 2,864 edges load). Wall header smaller on iPhone. Build green at ea0d411.
 
 ## What native taught us, for the website
 
