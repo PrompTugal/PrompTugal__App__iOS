@@ -6,6 +6,7 @@
 	     Only keys the INFOPLIST_KEY_ build settings cannot express live here. -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
+		<string>news.promptugal.reader.refresh</string>
 		<string>news.promptugal.reader.vault-refresh</string>
 	</array>
 	<key>CFBundleURLTypes</key>
