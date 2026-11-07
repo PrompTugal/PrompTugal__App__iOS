@@ -133,7 +133,13 @@ struct PersonBriefView: View {
             }
 
             Card {
-                WebLinkRow(title: "Open the command centre", url: person.commandCentreURL, symbol: "rectangle.3.group")
+                NavigationLink {
+                    CommandCentreView(personID: person.id, name: person.first ?? person.displayName)
+                } label: {
+                    Label("All \(person.open ?? 0) open issues, by workstream", systemImage: "rectangle.3.group")
+                        .font(.subheadline)
+                }
+                WebLinkRow(title: "The command centre on the web", url: person.commandCentreURL, symbol: "globe")
             }
         }
         .navigationTitle(isMe ? "My day" : person.displayName)
