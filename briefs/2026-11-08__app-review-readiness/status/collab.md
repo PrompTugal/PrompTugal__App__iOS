@@ -1,8 +1,8 @@
 # Status · Collaboration and AI (App Review readiness)
 
-> Done and CI green: all seven items, with tests. Run 233 (7ca0a00) passed the build, SGitVault tests and the iPhone and iPad unit tests. Ready to merge. One follow-up after team lands: switch to Lisbon.day(_:).
+> Done and CI green: all seven items, with tests, on dev since 7d135e0. Follow-up done: Lisbon.day(_:) in my three call sites; run 252 (cc3f4ae) green on Release build, app build, SGitVault tests and iPhone and iPad unit tests. Ready to merge.
 
-Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last update: 15:55 UTC
+Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last update: 17:08 UTC
 
 ## Done (pushed, with tests)
 
@@ -40,12 +40,13 @@ Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last upd
 
 ## CI
 
+- Run 252 (workflow_dispatch, cc3f4ae, after team landed and the switch to `Lisbon.day(_:)`): **green**. Release build (device, unsigned), app build and SGitVault tests, iPhone and iPad unit tests.
 - Run 233 (workflow_dispatch, 7ca0a00): **green**. App build and SGitVault tests, App unit tests on the iPhone and the iPad simulator (all suites, including AIConsentTests, AIKeyVaultOwnershipTests, AILinkTests, LanesReviewTests).
 - Earlier build-only runs: 203, 209, 214 green. Run 226 failed to compile one test helper (a raw-string fixture at AITests.swift:183); fixed in 7ca0a00.
 
 ## In progress
 
-- After team is on dev: merge origin/dev and switch my three `DayPlanner.lisbonDay` calls to `Lisbon.day(_:)` (agreed with the conductor), then re-run the build.
+- Nothing. `Lisbon.day(_:)` switch done (AIContext, AITools, CoordinationStore).
 
 ## Blocked
 
@@ -53,7 +54,7 @@ Nothing.
 
 ## Needs from others
 
-- **Team:** please keep `DayPlanner.lisbonDay(_:)` (I now use it), or move it to `Lisbon` in `App/Content.swift` with platform and tell me. `TeamStore` still fetches with `URLSession.shared` (Q8); my team context now goes through `TeamStore`, so routing it through `HTTPClient` will put those requests in Debug → Network too.
+- **Team:** done; I use `Lisbon.day(_:)`. `TeamStore` still fetches with `URLSession.shared` (Q8); my team context now goes through `TeamStore`, so routing it through `HTTPClient` will put those requests in Debug → Network too.
 - **Vault:** my `ownVaultId` treats the reader vault (by `readerVaultId` or role "reader") as mine and "imported" as never mine. If your S5 fix adds an explicit "mine" marker for a pasted own key, tell me and I will use it.
 - **Design:** `DebugMode.defaultOn` false in Release is yours; my views follow it.
 

@@ -132,7 +132,7 @@ enum AIContextAssembler {
 
     /// Today's sessions; before or between summit days, the next day that has any (and says so).
     static func agendaPart(_ events: [Event], now: Date, picked: Set<String> = []) -> AIContextPart {
-        let today = DayPlanner.lisbonDay(now)
+        let today = Lisbon.day(now)
         let days = Set(events.map(\.date)).sorted()
         guard let day = days.contains(today) ? today : days.first(where: { $0 > today }) else {
             return AIContextPart(kind: .agenda, summary: "No sessions ahead", body: "", source: "promptugal.news agenda")
@@ -286,7 +286,7 @@ enum AIContextGatherer {
             case .teammates:
                 let store = CoordinationStore.shared
                 if store.plans.isEmpty { await store.load() }
-                let day = DayPlanner.lisbonDay(now)
+                let day = Lisbon.day(now)
                 parts.append(AIContextPart(kind: .teammates, summary: "\(max(store.plans.count - 1, 0)) teammates' plans",
                                            body: store.plans.count > 1 ? store.summary(for: day) : "",
                                            source: "plans shared through vaults"))
