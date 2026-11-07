@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://ios.promptugal.news/sitemap.xml

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the ios.promptugal.news product site into website/public/.
+"""Build the ios.app.promptugal.news product site into website/public/.
 
 One template, one source file per page. Every fact about the app (version,
 build, minimum iOS, the bundled websites, the size of the code base) is read
@@ -8,8 +8,10 @@ a Markdown twin at the same path for agents, and llms.txt and sitemap.xml list
 every page.
 
 Standard library only. Usage: python3 website/build.py [--out DIR]
+CI sets SITE_BUILD and SITE_COMMIT; a local build is stamped 'local'.
 """
 import argparse
+import os
 import html
 import json
 import re
@@ -17,7 +19,7 @@ import shutil
 from html.parser import HTMLParser
 from pathlib import Path
 
-SITE_URL = 'https://ios.promptugal.news/'
+SITE_URL = 'https://ios.app.promptugal.news/'
 REPO_URL = 'https://github.com/PrompTugal/PrompTugal__App__iOS'
 
 WEBSITE = Path(__file__).resolve().parent
@@ -59,6 +61,9 @@ def app_facts():
         'swift_lines': f'{sum(len(f.read_text().splitlines()) for f in swift):,}',
         'site_count': str(len(websites)),
         'websites': websites,
+        # Stamped by CI (.github/workflows/website.yml): one number per deploy, plus the commit.
+        'site_build': os.environ.get('SITE_BUILD', 'local'),
+        'site_commit': os.environ.get('SITE_COMMIT', 'uncommitted')[:7],
     }
 
 
@@ -89,6 +94,13 @@ def websites_list(facts):
         host = html.escape(site['url'].split('://', 1)[-1].rstrip('/'))
         rows.append(f'<li>{badge(site)}<a href="{url}">{host}</a></li>')
     return '<ul class="site-list">' + ''.join(rows) + '</ul>'
+
+
+def site_stamp(facts):
+    if facts['site_build'] == 'local':
+        return 'Local build.'
+    commit = facts['site_commit']
+    return f'Site build {facts["site_build"]}, commit <a href="{REPO_URL}/commit/{commit}">{commit}</a>.'
 
 
 def read_page(path):
@@ -216,7 +228,7 @@ def build(out):
     template = (WEBSITE / 'template.html').read_text()
     tokens = {k: v for k, v in facts.items() if isinstance(v, str)}
     tokens.update(websites_sidebar=websites_sidebar(facts), websites_list=websites_list(facts),
-                  repo_url=REPO_URL, site_url=SITE_URL)
+                  repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts))
 
     if out.exists():
         shutil.rmtree(out)
@@ -254,7 +266,8 @@ def build(out):
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + '\n'.join(sitemap) + '\n</urlset>\n')
     (out / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n')
-    (out / 'CNAME').write_text(SITE_URL.split('://')[1].rstrip('/') + '\n')
+    (out / 'version.json').write_text(json.dumps(
+        {key: facts[key] for key in ('version', 'build', 'site_build', 'site_commit')}, indent=2) + '\n')
     return facts, pages
 
 

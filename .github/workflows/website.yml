@@ -1,0 +1,79 @@
+name: Website
+
+# Builds, validates and tests the product site on every push and pull request.
+# A push to dev also deploys it to GitHub Pages (ios.app.promptugal.news) and
+# then confirms the live site serves the commit that was just deployed.
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test the builder and the validator
+        run: python3 -m unittest website/test_site.py -v
+
+      - name: Build
+        env:
+          SITE_BUILD: ${{ github.run_number }}
+          SITE_COMMIT: ${{ github.sha }}
+        run: python3 website/build.py
+
+      - name: Validate
+        run: python3 website/validate.py
+
+      - name: Show the version stamp
+        run: cat website/public/version.json
+
+      - name: Upload the Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/public
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Verify live
+        env:
+          SITE: https://ios.app.promptugal.news
+          SHA: ${{ github.sha }}
+        run: |
+          want="${SHA:0:7}"
+          for attempt in $(seq 1 20); do
+            live=$(curl -fsS "$SITE/version.json?nocache=$attempt" | python3 -c 'import json,sys; print(json.load(sys.stdin)["site_commit"])' || true)
+            echo "attempt $attempt: live commit '${live}', want '${want}'"
+            [ "$live" = "$want" ] && exit 0
+            sleep 15
+          done
+          echo "::error::$SITE does not serve commit $want after 5 minutes"
+          exit 1

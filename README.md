@@ -65,7 +65,7 @@ Bookmarks and the last successful feed responses are stored on each device. Cont
 
 ## Product website
 
-`website/` builds the static product site for [ios.promptugal.news](https://ios.promptugal.news/) into `website/public/`. It uses Python's standard library only, ships no JavaScript and loads no third-party assets.
+`website/` builds the static product site for [ios.app.promptugal.news](https://ios.app.promptugal.news/) into `website/public/`. It uses Python's standard library only, ships no JavaScript and loads no third-party assets.
 
 ```sh
 python3 website/build.py                      # regenerate website/public/
@@ -76,4 +76,15 @@ python3 -m unittest website/test_site.py      # validator rules with negative co
 - Edit pages in `website/pages/` (each is the `<main>` body plus a front-matter comment). The shared shell is `website/template.html` and the styles are in `website/site.css`.
 - App facts are read from the Xcode project on every build and never typed by hand. These are the version, build, minimum iOS, bundle ID, Swift line count and the `Websites.json` list. Artwork is copied from the asset catalog. Bump `MARKETING_VERSION` and rebuild, and the site follows.
 - Every page gets a Markdown twin at the same path, listed in `llms.txt` and `sitemap.xml`.
-- Rebuild and validate before committing. `website/public/` is committed so any static host can serve it as is. Its `CNAME` targets GitHub Pages.
+- `website/public/` is generated and not committed.
+
+### Deployment and versioning
+
+`.github/workflows/website.yml` runs the tests, build and validator on every push and pull request. A push to `dev` also deploys to GitHub Pages and then polls `https://ios.app.promptugal.news/version.json` until the live site serves the deployed commit. The deploy isn't done until that check passes.
+
+| Version | Set by | Shown as |
+| --- | --- | --- |
+| App version (`MARKETING_VERSION`) and build (`CURRENT_PROJECT_VERSION`) | You, in Xcode, before each TestFlight upload | Version badge, page text, JSON-LD, `version.json` |
+| Site build | CI: `github.run_number`, plus the commit SHA | Footer and `version.json` |
+
+One-time GitHub setup: under **Settings → Pages**, set **Source** to **GitHub Actions** and the custom domain to `ios.app.promptugal.news`. Under **Settings → Environments → github-pages**, allow deployments from the `dev` branch.
