@@ -4,8 +4,8 @@ name: iOS
 # Every job copies compiler and test errors into its job summary, so a session
 # can read a failure through the GitHub tools (actions_list, get_job_logs).
 #
-#   package  swift test in Packages/SGitVault (skipped cleanly if the folder is missing)
-#   build    xcodebuild build for the iOS Simulator, unsigned
+#   build    xcodebuild build for the iOS Simulator, unsigned, then swift test in
+#            Packages/SGitVault on the same runner (skipped if the folder is missing)
 #   test     xcodebuild test on an iPhone and an iPad simulator
 #
 # Pushes that change only briefs/, website/, root Markdown or VERSION don't run
@@ -34,30 +34,8 @@ env:
   SCHEME: PrompTugal
 
 jobs:
-  package:
-    name: SGitVault swift test
-    runs-on: macos-26
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Select Xcode
-        run: .github/scripts/select-xcode.sh
-
-      - name: swift test
-        run: |
-          if [ ! -f Packages/SGitVault/Package.swift ]; then
-            echo "Packages/SGitVault does not exist on this branch; nothing to test."
-            echo "### ⏭️ SGitVault: no package on this branch, skipped" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          cd Packages/SGitVault
-          "$GITHUB_WORKSPACE/.github/scripts/run-and-summarize.sh" "SGitVault swift test" \
-            "$RUNNER_TEMP/logs/swift-test.log" -- swift test
-
-
   build:
-    name: App build (simulator)
+    name: App build and SGitVault tests
     runs-on: macos-26
     timeout-minutes: 40
     steps:
@@ -77,6 +55,18 @@ jobs:
               -derivedDataPath "$RUNNER_TEMP/dd" \
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
+      - name: SGitVault swift test
+        # Runs after the app build on the same runner: one runner fewer per push.
+        if: always()
+        run: |
+          if [ ! -f Packages/SGitVault/Package.swift ]; then
+            echo "Packages/SGitVault does not exist on this branch; nothing to test."
+            echo "### ⏭️ SGitVault: no package on this branch, skipped" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          cd Packages/SGitVault
+          "$GITHUB_WORKSPACE/.github/scripts/run-and-summarize.sh" "SGitVault swift test" \
+            "$RUNNER_TEMP/logs/swift-test.log" -- swift test
 
   test:
     name: App unit tests (${{ matrix.device }} simulator)
