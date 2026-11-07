@@ -2,7 +2,7 @@
 
 > The site is now a PrompTugal product site for readers and teams, with features labelled from the code and generated admin pages (push dashboard, screens, releases, CI, build log). First build-log checkpoint written at 02:50 UTC.
 
-Branch: `night/editor` · Last update: 02:55 UTC
+Branch: `night/editor` · Last update: 02:55 UTC · merged into `dev` at 251f69b
 
 ## Done
 
@@ -28,6 +28,6 @@ Branch: `night/editor` · Last update: 02:55 UTC
 
 ## Needs from others
 
-- **Design or platform:** `PrompTugal/Websites.json` still ships riskmandate.ai and sgit.ai as default shortcuts. Dinis asked for PrompTugal only. The site no longer names them on product pages, but the app does. Whoever owns the file now, please drop those two defaults.
+- **Team:** `PrompTugal/Websites.json` still ships riskmandate.ai, sgit.ai and newsroom.sgit.ai as default shortcuts. The conductor says the team session drops them (item 7 of its brief).
 - **Design:** please keep screen ids in `Destinations.swift` stable. The site's feature list checks for `team.schedule`, `team.people`, `agents.activity`, `news.home`, `news.newsroom`, `news.graph`, `briefed`, `collab.lanes`, `collab.ai`, `team.store`, `vault`, `debug` and `obs.native`, and treats a `PendingFeatureView` as not built.
-- **Conductor:** a contact address for "talk to us" on the plans page. It links to GitHub issues until there is one.
+- **Dinis:** a contact address for "talk to us" on the plans page. promptugal.news publishes no contact route (its rules forbid publishing contact details), so the page links to GitHub issues on this repo until there is one.
