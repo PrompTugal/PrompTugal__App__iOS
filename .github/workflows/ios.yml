@@ -91,11 +91,17 @@ jobs:
 
       - name: Pick and boot an ${{ matrix.device }} simulator
         id: sim
+        timeout-minutes: 8
         run: |
           udid=$(.github/scripts/pick-simulator.py "${{ matrix.device }}")
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
           xcrun simctl boot "$udid" || true
-          xcrun simctl bootstatus "$udid" -b
+          # Wait up to 5 minutes for "Booted"; if it is slower, xcodebuild finishes the boot.
+          for i in $(seq 1 60); do
+            xcrun simctl list devices | grep "$udid" | grep -q "(Booted)" && { echo "Booted after $((i * 5)) s"; break; }
+            sleep 5
+          done
+          xcrun simctl list devices | grep "$udid" || true
 
       - name: xcodebuild test
         timeout-minutes: 20
