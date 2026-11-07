@@ -22,6 +22,10 @@ protocol CollabVaultAccess: AnyObject {
     /// Commit one note file to my newsroom notes lane: the vault of my own whose read key the newsroom holds
     /// (newsroom.sgit.ai "the feedback loop"; its vault key is in my master vault's `lane.json`).
     func writeNewsroomNote(_ path: String, _ data: Data) async throws
+    /// Paths of the files under `folder` in a vault (mine when `vaultId` is nil).
+    func files(in folder: String, vaultId: String?) async throws -> [String]
+    /// A new file in `folder` of my vault, never overwriting (vault session's `append`). Returns its path.
+    func append(_ data: Data, to folder: String, message: String) async throws -> String
     /// A file of my master vault (e.g. `inbox.json`, the inbox record the website made), or nil.
     func readMaster(_ path: String) async throws -> Data?
 }

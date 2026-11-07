@@ -35,6 +35,8 @@ struct LanesView: View {
                      : "Notes go to your newsroom notes lane: a vault of your own that the newsroom reads with its read key. Nothing comes back through it.")
             }
 
+            TeamNotesSection()
+
             Section {
                 if store.lanes.isEmpty {
                     Text("No lanes yet. Add a teammate's or the newsroom's lane description (JSON, or a link to it).")

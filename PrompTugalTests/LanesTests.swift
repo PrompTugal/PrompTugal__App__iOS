@@ -240,3 +240,36 @@ struct NewsroomInboxTests {
         #expect(throws: (any Error).self) { try LanesStore.inboxRecord(JSONSerialization.data(withJSONObject: broken)) }
     }
 }
+
+@Suite("Team notes through vaults")
+struct TeamNoteTests {
+    @Test("A note round-trips; source is not stored")
+    func roundTrip() throws {
+        var note = TeamNote.make(kind: "note", text: "Lunch at the FIL food court, 13:30", from: CollabIdentity(id: "dinis", name: "Dinis"), about: "ai-doom-or-boom")
+        note.source = "me"
+        let data = try note.encoded()
+        #expect(!String(decoding: data, as: UTF8.self).contains("\"source\""))
+        let back = try #require(TeamNote.decode(data, source: "abcd1234"))
+        #expect(back.text == note.text && back.from == "dinis" && back.about == "ai-doom-or-boom")
+        #expect(back.source == "abcd1234")
+        #expect(back.date != nil)
+    }
+
+    @Test("Negative controls: other schemas, empty text and bad JSON are ignored")
+    func rejects() {
+        #expect(TeamNote.decode(Data(#"{"schema":"other/v1","id":"1","at":"x","kind":"n","text":"t","from":"a","from_name":"A"}"#.utf8), source: "x") == nil)
+        #expect(TeamNote.decode(Data(#"{"schema":"promptugal-team-note/v1","id":"1","at":"x","kind":"n","text":"","from":"a","from_name":"A"}"#.utf8), source: "x") == nil)
+        #expect(TeamNote.decode(Data("nope".utf8), source: "x") == nil)
+    }
+
+    @Test("Merge: newest first, one per id, capped")
+    func merge() {
+        func note(_ id: String, _ at: String) -> TeamNote {
+            TeamNote(id: id, at: at, kind: "note", text: id, from: "a", fromName: "A")
+        }
+        let merged = TeamNote.merge([note("a", "2026-11-10T09:00:00.000Z"), note("b", "2026-11-10T10:00:00.000Z"),
+                                     note("a", "2026-11-10T09:00:00.000Z")], limit: 5)
+        #expect(merged.map(\.id) == ["b", "a"])
+        #expect(TeamNote.merge((0..<10).map { note("\($0)", "2026-11-10T09:0\($0):00.000Z") }, limit: 3).count == 3)
+    }
+}

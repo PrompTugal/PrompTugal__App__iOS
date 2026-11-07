@@ -25,6 +25,14 @@ final class VaultCollabAccess: CollabVaultAccess {
 
     func savePicks(_ document: Data) async throws -> Data { try await session.savePicks(document) }
 
+    func files(in folder: String, vaultId: String?) async throws -> [String] {
+        try await session.files(in: folder, vaultId: vaultId).map(\.path)
+    }
+
+    func append(_ data: Data, to folder: String, message: String) async throws -> String {
+        try await session.append(data, to: folder, message: message)
+    }
+
     private var master: VaultSession.OpenVault? { session.vaults.first { $0.role == "master" } }
 
     func readMaster(_ path: String) async throws -> Data? {
