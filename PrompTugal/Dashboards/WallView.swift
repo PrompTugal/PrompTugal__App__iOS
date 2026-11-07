@@ -45,7 +45,7 @@ struct WallView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Kicker("PrompTugal · the team and its agents")
                 Text(now, format: .dateTime.weekday(.wide).day().month(.wide).hour().minute())
-                    .font(Typo.display)
+                    .font(width == .regular ? Typo.display : Typo.title)
             }
             Spacer()
             FreshnessLabel(updated: data.dashboard.updated, staleAfter: 900, failed: data.dashboard.failed)

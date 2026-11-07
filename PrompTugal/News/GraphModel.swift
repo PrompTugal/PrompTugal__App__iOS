@@ -10,7 +10,17 @@ struct GraphExplorer: Decodable, Sendable {
     let types: [NodeType]?
     let verbs: [Verb]?
     let nodes: [Node]
-    let edges: [[Double]]
+    /// Each cell is a number, except the read date, which is a string ("2026-11-05") or 0.
+    let edges: [[Cell]]
+
+    /// One cell of an edge row: a number, or text (kept only so the row decodes).
+    struct Cell: Decodable, Sendable {
+        let number: Double?
+        init(from decoder: Decoder) throws {
+            let single = try decoder.singleValueContainer()
+            number = try? single.decode(Double.self)
+        }
+    }
 
     struct World: Decodable, Identifiable, Hashable, Sendable {
         let id: String
@@ -64,10 +74,10 @@ struct GraphIndex: Sendable {
         self.graph = graph
         let count = graph.nodes.count
         let edges = graph.edges.compactMap { row -> Edge? in
-            guard row.count >= 3 else { return nil }
-            let from = Int(row[0]), to = Int(row[1])
+            guard row.count >= 3, let a = row[0].number, let b = row[1].number else { return nil }
+            let from = Int(a), to = Int(b)
             guard from >= 0, from < count, to >= 0, to < count else { return nil }
-            return Edge(from: from, to: to, verb: Int(row[2]))
+            return Edge(from: from, to: to, verb: Int(row[2].number ?? -1))
         }
         self.edges = edges
         var neighbours = Array(repeating: [Int](), count: count)
