@@ -425,6 +425,15 @@ def _size(n):
     return f'{n / 1_048_576:.1f} MB' if n >= 1_048_576 else f'{round(n / 1024):,} KB'
 
 
+def _xcode(value):
+    """DTXcode as Apple writes it ("2660") to a version ("26.6")."""
+    text = str(value or '?')
+    if re.fullmatch(r'\d{4}', text):
+        major, minor, patch = int(text[:2]), int(text[2]), int(text[3])
+        return f'{major}.{minor}' + (f'.{patch}' if patch else '')
+    return text
+
+
 def latest_build_html(data, repo_url):
     if not data:
         return ('<p class="notice">No CI build information in this site build. The site build asks for the latest '
@@ -439,7 +448,7 @@ def latest_build_html(data, repo_url):
             ('Built', f'{esc(built)} UTC' if built else '?'),
             ('Devices', esc(family)),
             ('Minimum iOS', esc(str(data.get('minimumOS', '?')))),
-            ('Xcode and SDK', f'{esc(str(data.get("xcode", "?")))}, {esc(str(data.get("sdk", "?")))}'),
+            ('Xcode and SDK', f'{esc(_xcode(data.get("xcode")))}, {esc(str(data.get("sdk", "?")))}'),
             ('Sizes', f'app {_size(data.get("appBytes"))}, unsigned .ipa {_size(data.get("ipaBytes"))}'),
             ('Run', f'<a href="{esc(run)}">{esc(run.rsplit("/", 1)[-1])}</a>' if run.startswith('https://') else '?')]
     arts = ''.join(f'<li><code>{esc(str(a.get("name", "")))}</code> ({_size(a.get("size"))})</li>'

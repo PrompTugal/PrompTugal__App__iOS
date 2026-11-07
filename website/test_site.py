@@ -298,6 +298,8 @@ class SiteTest(unittest.TestCase):
                                     'appBytes': 1048576 * 2, 'ipaBytes': 657000,
                                     'runUrl': 'https://github.com/x/y/actions/runs/42', 'artifacts': [{'name': 'a', 'size': 10}]}))
         out = admin.latest_build_html(admin.latest_build(good), build.REPO_URL)
+        self.assertEqual(admin._xcode('2660'), '26.6')
+        self.assertEqual(admin._xcode('2651'), '26.5.1')
         for want in ('0.4.0 (build 103)', 'iPhone and iPad', '2.0 MB', '642 KB', '>42<', 'abcdef1'):
             self.assertIn(want, out)
         self.assertEqual(json.loads((self.clean / 'ios-build.json').read_text()), {'available': False})
