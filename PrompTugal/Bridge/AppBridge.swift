@@ -160,11 +160,11 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
     /// hosts (the schedule and the meter belong to promptugal.news only).
     nonisolated static func gate(scheme: String, host: String, port: Int, isMainFrame: Bool, op: String) -> Gate {
         let host = host.lowercased()
-        let refusedOrigin = Gate.refused(reason: "origin not allowed", message: "This page may not use the app bridge.")
-        guard isMainFrame else { return .refused(reason: "not the main frame", message: refusedOrigin.message) }
-        guard scheme == "https" else { return .refused(reason: "not https", message: refusedOrigin.message) }
-        guard port == 0 || port == 443 else { return .refused(reason: "port \(port)", message: refusedOrigin.message) }
-        guard allowedHosts.contains(host) else { return refusedOrigin }
+        let notAllowed = "This page may not use the app bridge."
+        guard isMainFrame else { return .refused(reason: "not the main frame", message: notAllowed) }
+        guard scheme == "https" else { return .refused(reason: "not https", message: notAllowed) }
+        guard port == 0 || port == 443 else { return .refused(reason: "port \(port)", message: notAllowed) }
+        guard allowedHosts.contains(host) else { return .refused(reason: "origin not allowed", message: notAllowed) }
         guard ops.contains(op) || internalOps.contains(op) else {
             return .refused(reason: "unknown op", message: "Unknown op \(op).")
         }
