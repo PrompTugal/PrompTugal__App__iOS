@@ -69,7 +69,27 @@ jobs:
           # Names are the site's contract: <iphone|ipad>-<destination id>.png, longest side 1600 px.
           label=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
           .github/scripts/export-screens.py "$RUNNER_TEMP/Screens.xcresult" "$RUNNER_TEMP/screens" "$label"
-          for f in "$RUNNER_TEMP"/screens/*.png; do sips -Z 1600 "$f" >/dev/null; done
+          for f in "$RUNNER_TEMP"/screens/*.png; do
+            # The iPad shots are taken in landscape-left but captured in portrait pixels:
+            # turn them upright, so the site can publish them as they are.
+            if [ "$label" = ipad ]; then
+              w=$(sips -g pixelWidth "$f" | awk '/pixelWidth/{print $2}')
+              h=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+              [ "$w" -lt "$h" ] && sips -r 270 "$f" >/dev/null
+            fi
+            sips -Z 1600 "$f" >/dev/null
+          done
+          # Check: every iPad PNG is now landscape.
+          bad=0
+          for f in "$RUNNER_TEMP"/screens/*.png; do
+            w=$(sips -g pixelWidth "$f" | awk '/pixelWidth/{print $2}')
+            h=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+            echo "$(basename "$f") ${w}x${h}"
+            if [ "$label" = ipad ] && [ "$w" -le "$h" ]; then echo "::error::$(basename "$f") is not landscape"; bad=1; fi
+          done
+          count=$(ls "$RUNNER_TEMP"/screens/*.png | wc -l | tr -d ' ')
+          echo "$count screenshots for ${{ matrix.device }}" >> "$GITHUB_STEP_SUMMARY"
+          [ "$bad" = 0 ]
           ls -la "$RUNNER_TEMP/screens"
           ls "$RUNNER_TEMP/screens" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
 
