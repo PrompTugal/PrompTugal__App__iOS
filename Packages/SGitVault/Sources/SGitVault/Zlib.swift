@@ -1,3 +1,4 @@
+import Compression
 import Foundation
 
 /// zlib (RFC 1950) on top of Apple's Compression framework.
@@ -6,8 +7,12 @@ import Foundation
 /// 4-byte Adler-32 trailer. Python's `zlib.compress` writes both, so we strip
 /// them on the way in (checking the Adler-32) and add them on the way out.
 public enum Zlib {
-    /// Inflate a zlib stream. Nil when the header, the deflate data or the checksum is bad.
-    public static func decompress(_ data: Data) -> Data? {
+    /// The most a blob may inflate to (64 MB). A deflate bomb stops here instead of filling memory.
+    public static let maxInflatedBytes = 64 * 1024 * 1024
+
+    /// Inflate a zlib stream. Nil when the header, the deflate data or the checksum is bad,
+    /// or when the output would pass `limit` bytes.
+    public static func decompress(_ data: Data, limit: Int = maxInflatedBytes) -> Data? {
         let bytes = [UInt8](data)
         guard bytes.count >= 6 else { return nil }
         let cmf = bytes[0], flg = bytes[1]
@@ -18,9 +23,39 @@ public enum Zlib {
         let raw = Data(bytes[2..<(bytes.count - 4)])
         let trailer = bytes[(bytes.count - 4)...]
         let expected = trailer.reduce(UInt32(0)) { $0 << 8 | UInt32($1) }
-        guard let inflated = try? (raw as NSData).decompressed(using: .zlib) as Data else { return nil }
+        guard let inflated = inflateRaw(raw, limit: limit) else { return nil }
         guard adler32(inflated) == expected else { return nil }
         return inflated
+    }
+
+    /// Raw deflate → bytes, through a streaming decoder that stops as soon as the output passes `limit`.
+    static func inflateRaw(_ input: Data, limit: Int) -> Data? {
+        guard !input.isEmpty else { return nil }
+        let stream = UnsafeMutablePointer<compression_stream>.allocate(capacity: 1)
+        defer { stream.deallocate() }
+        guard compression_stream_init(stream, COMPRESSION_STREAM_DECODE, COMPRESSION_ZLIB) == COMPRESSION_STATUS_OK else {
+            return nil
+        }
+        defer { compression_stream_destroy(stream) }
+        let chunk = 64 * 1024
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: chunk)
+        defer { buffer.deallocate() }
+        var output = Data()
+        return input.withUnsafeBytes { (source: UnsafeRawBufferPointer) -> Data? in
+            guard let base = source.bindMemory(to: UInt8.self).baseAddress else { return nil }
+            stream.pointee.src_ptr = base
+            stream.pointee.src_size = source.count
+            while true {
+                stream.pointee.dst_ptr = buffer
+                stream.pointee.dst_size = chunk
+                let status = compression_stream_process(stream, Int32(COMPRESSION_STREAM_FINALIZE.rawValue))
+                guard status == COMPRESSION_STATUS_OK || status == COMPRESSION_STATUS_END else { return nil }
+                output.append(buffer, count: chunk - stream.pointee.dst_size)
+                if output.count > limit { return nil }
+                if status == COMPRESSION_STATUS_END { return output }
+                if stream.pointee.src_size == 0 && stream.pointee.dst_size == chunk { return nil }   // no progress: truncated
+            }
+        }
     }
 
     /// Deflate into a zlib stream (header 0x78 0x9C, Adler-32 trailer).

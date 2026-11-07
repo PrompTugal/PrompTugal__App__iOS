@@ -29,8 +29,12 @@ public actor SGitVault {
 
     /// The named branch this instance reads. sgit's default is "current".
     public private(set) var branchName: String
-    /// Throw `VaultError.signatureInvalid` instead of reporting the status. Off by default.
-    public var requireSignatures = false
+    /// Require the head commit to carry a verified signature from a trusted key (see `trust`).
+    /// An invalid signature is refused in every mode; this adds refusing unsigned, legacy and
+    /// key-missing heads. Older history is still read, so vaults with unsigned legacy commits open.
+    public private(set) var requireSignatures = false
+    /// The author keys this reader accepts for the head commit. Nil: any key that verifies.
+    public private(set) var trust: VaultTrust?
 
     // State of the last pull.
     public private(set) var head: VaultCommit?
@@ -57,7 +61,10 @@ public actor SGitVault {
 
     /// Any transport (a local folder in tests), any named branch.
     public init(address: VaultAddress, readKey: SymmetricKey, cache: URL, log: VaultTrafficLog,
-                transport: any VaultTransport, branch: String = "current") {
+                transport: any VaultTransport, branch: String = "current",
+                requireSignatures: Bool = false, trust: VaultTrust? = nil) {
+        self.requireSignatures = requireSignatures
+        self.trust = trust
         self.address = address
         self.log = log
         self.readKey = readKey
@@ -72,9 +79,32 @@ public actor SGitVault {
 
     /// Open a vault from a parsed key.
     public init(key: VaultKey, server: URL = VaultAddress.defaultServer, cache: URL, log: VaultTrafficLog,
-                branch: String = "current") {
+                branch: String = "current", requireSignatures: Bool = false, trust: VaultTrust? = nil) {
         self.init(address: VaultAddress(vaultId: key.vaultId, server: server), readKey: key.readKey,
-                  cache: cache, log: log, transport: HTTPVaultTransport(server: server), branch: branch)
+                  cache: cache, log: log, transport: HTTPVaultTransport(server: server), branch: branch,
+                  requireSignatures: requireSignatures, trust: trust)
+    }
+
+    // MARK: Signature policy
+
+    /// Turn signature enforcement on or off. The next pull re-checks the head.
+    public func setRequireSignatures(_ on: Bool) {
+        requireSignatures = on
+        head = nil
+    }
+
+    /// Replace the trusted keys. The next pull re-checks the head.
+    public func setTrust(_ newTrust: VaultTrust?) {
+        trust = newTrust
+        head = nil
+    }
+
+    /// Trust one more author key (this device's signer, or a signer the user approved).
+    public func pin(_ keyId: String) {
+        var current = trust ?? VaultTrust()
+        current.pinnedKeyIds.insert(keyId)
+        trust = current
+        head = nil
     }
 
     /// Parse a pasted key off the main actor, logging the derivation (never the key).
@@ -222,6 +252,7 @@ public actor SGitVault {
             return head
         }
         let commit = try await commit(commitId)
+        try await enforceHeadPolicy(commit)
         let root = try await walkTree(commit.treeId, name: "", prefix: "")
         var map: [String: VaultFile] = [:]
         for file in treeFilesMemo[commit.treeId] ?? [] { map[file.path] = file }
@@ -297,6 +328,78 @@ public actor SGitVault {
         }
     }
 
+    // MARK: Head policy (signatures and trusted keys)
+
+    /// Refuse a head that is not signed by a trusted key. Called on every new head.
+    private func enforceHeadPolicy(_ head: VaultCommit) async throws {
+        let path = "bare/data/\(head.commitId)"
+        guard requireSignatures else { return }
+        guard case .verified(let keyId) = head.signature else {
+            try await fail(path, .signatureRequired(commitId: head.commitId, status: head.signature.label))
+        }
+        guard var current = trust else { return }
+        if current.pinnedKeyIds.isEmpty {
+            guard current.trustOnFirstUse else {
+                try await fail(path, .untrustedSigner(commitId: head.commitId, keyId: keyId))
+            }
+            // First open of this vault on this device: trust the keys that signed its history so far.
+            current.pinnedKeyIds = try await verifiedAuthors(from: head, limit: VaultTrust.firstUseDepth)
+            trust = current
+            await emit(.verify, path, detail: "trust on first use: pinned \(current.pinnedKeyIds.count) signer key(s)")
+            return
+        }
+        if current.pinnedKeyIds.contains(keyId) {
+            await emit(.verify, path, detail: "signer \(keyId) is pinned")
+            return
+        }
+        if let lister = try await trustFileListing(keyId, below: head, pinned: current.pinnedKeyIds) {
+            await emit(.verify, path, detail: "signer \(keyId) is listed in \(VaultTrust.trustFile) by \(lister)")
+            return
+        }
+        try await fail(path, .untrustedSigner(commitId: head.commitId, keyId: keyId))
+    }
+
+    /// The keys that signed the first-parent history from `head` (verified signatures only).
+    private func verifiedAuthors(from head: VaultCommit, limit: Int) async throws -> Set<String> {
+        var keys: Set<String> = []
+        var next: VaultCommit? = head
+        var seen = 0
+        while let commit = next, seen < limit {
+            if case .verified(let keyId) = commit.signature { keys.insert(keyId) }
+            seen += 1
+            next = try await firstParent(of: commit)
+        }
+        return keys
+    }
+
+    /// The newest commit below `head` (first parent) signed by a pinned key: does its
+    /// `.vault/trusted-keys.json` list `keyId`? Returns the key that signed the listing.
+    private func trustFileListing(_ keyId: String, below head: VaultCommit, pinned: Set<String>) async throws -> String? {
+        var next = try await firstParent(of: head)
+        var seen = 0
+        while let commit = next, seen < VaultTrust.listingSearchDepth {
+            if case .verified(let signer) = commit.signature, pinned.contains(signer) {
+                guard let data = try await file(VaultTrust.trustFile, inTree: commit.treeId) else { return nil }
+                return VaultTrust.listedKeys(in: data).contains(keyId) ? signer : nil
+            }
+            seen += 1
+            next = try await firstParent(of: commit)
+        }
+        return nil
+    }
+
+    private func firstParent(of commit: VaultCommit) async throws -> VaultCommit? {
+        guard let parent = commit.parents.first else { return nil }
+        return try await self.commit(parent)
+    }
+
+    /// One file of a given tree (not necessarily the head's), or nil.
+    private func file(_ path: String, inTree treeId: String) async throws -> Data? {
+        _ = try await walkTree(treeId, name: "", prefix: "")
+        guard let entry = (treeFilesMemo[treeId] ?? []).first(where: { $0.path == path }) else { return nil }
+        return try await object(entry.blobId, what: "blob \(path)")
+    }
+
     // MARK: Objects
 
     private func commit(_ id: String) async throws -> VaultCommit {
@@ -305,7 +408,7 @@ public actor SGitVault {
         let wire: WireCommit = try await decode(plain, path: "bare/data/\(id)", what: "commit", alreadyPlain: true)
         let message = try optionalMetadata(wire.message_enc) ?? ""
         let signature = await verifySignature(commitId: id, plaintext: plain, wire: wire)
-        if requireSignatures, !signature.isVerified {
+        if case .invalid = signature {                       // never used, whatever the mode
             try await fail("bare/data/\(id)", .signatureInvalid(commitId: id))
         }
         let commit = VaultCommit(commitId: id, treeId: wire.tree_id, parents: wire.parents ?? [],
@@ -317,9 +420,15 @@ public actor SGitVault {
         return commit
     }
 
-    private func walkTree(_ id: String, name: String, prefix: String) async throws -> VaultTreeNode {
+    /// Folders nested deeper than this are refused (a hostile tree cannot recurse without end).
+    public static let maxTreeDepth = 64
+
+    private func walkTree(_ id: String, name: String, prefix: String, depth: Int = 0) async throws -> VaultTreeNode {
         if let memo = treeMemo[id], memo.path == prefix + name { return memo }
         let path = "bare/data/\(id)"
+        guard depth <= Self.maxTreeDepth else {
+            try await fail(path, .malformed(path: path, detail: "folders nested deeper than \(Self.maxTreeDepth)"))
+        }
         let plain = try await object(id, what: "tree")
         let tree: WireTree = try await decode(plain, path: path, what: "tree", alreadyPlain: true)
         var children: [VaultTreeNode] = []
@@ -332,7 +441,7 @@ public actor SGitVault {
             }
             let entryPath = here.isEmpty ? entryName : here + "/" + entryName
             if let subtree = entry.tree_id {
-                let child = try await walkTree(subtree, name: entryName, prefix: here.isEmpty ? "" : here + "/")
+                let child = try await walkTree(subtree, name: entryName, prefix: here.isEmpty ? "" : here + "/", depth: depth + 1)
                 children.append(child)
                 files += treeFilesMemo[subtree] ?? []
             } else if let blob = entry.blob_id {

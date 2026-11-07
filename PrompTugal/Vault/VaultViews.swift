@@ -128,6 +128,10 @@ struct VaultUnlockPanel: View {
     @State private var showRecovery = false
     @State private var working = false
     @State private var message: String?
+    @State private var isMine = false
+    /// The key came from the clipboard: after a successful import, offer to clear it (S7).
+    @State private var pastedFromClipboard = false
+    @State private var offerClearClipboard = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -141,22 +145,30 @@ struct VaultUnlockPanel: View {
             }
 
             Text("Team or read key").font(.subheadline.weight(.semibold))
-            TextField("sgit_private_vault_…:<vault id>", text: $keyText, axis: .vertical)
-                .lineLimit(1...3)
+            // S6: the key is never shown on screen or in the app switcher.
+            SecureField("sgit_private_vault_…:<vault id>", text: $keyText)
                 .font(.callout.monospaced())
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
+                .textContentType(.password)
                 .privacySensitive()
             TextField("Name (optional), e.g. Team keyring", text: $label)
+                .font(.callout)
+            Toggle("This is my own vault", isOn: $isMine)
                 .font(.callout)
             HStack {
                 Button {
                     let text = keyText
-                    let name = label.isEmpty ? "Team vault" : label
+                    let mine = isMine
+                    let name = label.isEmpty ? (mine ? "My vault" : "Teammate vault") : label
+                    let fromClipboard = pastedFromClipboard
                     run {
-                        try await session.importKey(text, label: name)
+                        try await session.importKey(text, label: name, mine: mine)
                         keyText = ""
                         label = ""
+                        isMine = false
+                        pastedFromClipboard = false
+                        if fromClipboard { offerClearClipboard = true }
                     }
                 } label: {
                     Label("Import", systemImage: "key")
@@ -166,7 +178,10 @@ struct VaultUnlockPanel: View {
 
                 #if canImport(UIKit)
                 Button {
-                    if let pasted = UIPasteboard.general.string { keyText = VaultUnlock.keyText(fromScanned: pasted) }
+                    if let pasted = UIPasteboard.general.string {
+                        keyText = VaultUnlock.keyText(fromScanned: pasted)
+                        pastedFromClipboard = true
+                    }
                 } label: {
                     Label("Paste", systemImage: "doc.on.clipboard")
                 }
@@ -210,10 +225,18 @@ struct VaultUnlockPanel: View {
             if let message {
                 Text(message).font(.caption).foregroundStyle(.orange)
             }
-            Text("Keys stay on this device, in the Keychain behind Face ID. They are never shown or logged.")
+            Text(session.protectionSummary)
                 .font(.caption2).foregroundStyle(.secondary)
         }
         .padding(.vertical, 4)
+        #if canImport(UIKit)
+        .alert("Clear the key from the clipboard?", isPresented: $offerClearClipboard) {
+            Button("Clear", role: .destructive) { UIPasteboard.general.items = [] }
+            Button("Keep", role: .cancel) {}
+        } message: {
+            Text("The vault is open. Other apps can read the clipboard, so clearing it is safer.")
+        }
+        #endif
         .sheet(isPresented: $showScanner) {
             VaultQRScanner { text in
                 keyText = VaultUnlock.keyText(fromScanned: text)
@@ -228,7 +251,7 @@ struct VaultUnlockPanel: View {
         message = nil
         Task { @MainActor in
             defer { working = false }
-            do { try await work() } catch { message = String(describing: error) }
+            do { try await work() } catch { message = session.userMessage(for: error, context: "unlock panel") }
         }
     }
 }
@@ -247,6 +270,27 @@ struct VaultFilesView: View {
 
     var body: some View {
         List(selection: $selection) {
+            if case .failed(let text) = entry.state {
+                Section {
+                    Label(text, systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
+                    if let keyId = entry.untrustedSigner {
+                        // S1: a new signer is never trusted silently. The person decides.
+                        Text("Signed by \(keyId). Trust it only if you know this key belongs to someone who should write to this vault.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Button("Trust this signer") {
+                            Task { await VaultSession.shared.trustSigner(keyId, in: entry.vaultId) }
+                        }
+                    }
+                }
+            }
+            Section {
+                if VaultSession.shared.reader?.vaultId == entry.vaultId {
+                    Label("My vault", systemImage: "person.crop.circle.badge.checkmark")
+                } else {
+                    // S5: a vault becomes "mine" only by this explicit choice (or the passkey account).
+                    Button("Make this my vault") { VaultSession.shared.chooseMyVault(entry.vaultId) }
+                }
+            }
             if let head = entry.head {
                 Section("Head") {
                     VStack(alignment: .leading, spacing: 2) {
@@ -279,7 +323,9 @@ struct VaultFilesView: View {
         }
         .navigationTitle(entry.label)
         .task(id: entry.head?.commitId) {
-            do { root = try await entry.vault.tree() } catch { self.error = String(describing: error) }
+            do { root = try await entry.vault.tree() } catch {
+                self.error = VaultSession.shared.userMessage(for: error, context: "tree \(entry.vaultId)")
+            }
         }
         .refreshable { await VaultSession.shared.pull(entry.vaultId) }
     }
@@ -316,7 +362,7 @@ struct VaultFileView: View {
                 size = data.count
                 text = String(data: data, encoding: .utf8) ?? "Binary file, \(data.count.vaultByteString)"
             } catch {
-                self.error = String(describing: error)
+                self.error = VaultSession.shared.userMessage(for: error, context: "read")
             }
         }
     }
