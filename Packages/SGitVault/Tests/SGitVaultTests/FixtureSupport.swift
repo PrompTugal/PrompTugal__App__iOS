@@ -74,9 +74,11 @@ func temporaryCache() -> URL {
 
 @MainActor
 func openVault(_ fixture: Fixture, branch: String = "current", server: URL? = nil, cache: URL? = nil,
-               readKey: SymmetricKey? = nil, log: VaultTrafficLog = VaultTrafficLog()) -> SGitVault {
+               readKey: SymmetricKey? = nil, log: VaultTrafficLog = VaultTrafficLog(),
+               requireSignatures: Bool = false, trust: VaultTrust? = nil) -> SGitVault {
     SGitVault(address: fixture.address, readKey: readKey ?? fixture.readKey, cache: cache ?? temporaryCache(),
-              log: log, transport: FolderVaultTransport(root: server ?? fixture.server), branch: branch)
+              log: log, transport: FolderVaultTransport(root: server ?? fixture.server), branch: branch,
+              requireSignatures: requireSignatures, trust: trust)
 }
 
 func sha256Hex(_ data: Data) -> String { Data(SHA256.hash(data: data)).hexString }
