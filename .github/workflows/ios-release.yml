@@ -60,9 +60,12 @@ permissions:
 
 concurrency:
   group: ios-release-${{ github.ref }}-${{ github.event_name }}
-  # Pushes cancel older pushes on the same branch. Manual runs and tags have
-  # their own group (event name), so a push never cancels a TestFlight upload.
-  cancel-in-progress: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') }}
+  # Never cancel a started run: dev gets merges every 15-30 min and an archive
+  # takes ~8 min plus queue time, so cancel-in-progress left dev with no
+  # finished build. With false, GitHub keeps one running and one waiting run
+  # per group; a newer push replaces only the waiting one. Manual runs and
+  # tags have their own group (event name), so pushes never touch them.
+  cancel-in-progress: false
 
 env:
   PROJECT: PrompTugal.xcodeproj

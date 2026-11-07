@@ -2,7 +2,7 @@
 
 > Merged into dev. `iOS release` is green on dev (run 11): unsigned .ipa, simulator app and archive for every dev push, with the platform project (iOS 18, widgets, intents). TestFlight waits only for Dinis's secrets ([release-setup](../release-setup.md)). Priority: internal TestFlight.
 
-Branch: `night/release` · Last update: 05:10 UTC
+Branch: `night/release` · Last update: 05:18 UTC
 
 ## Done
 
@@ -42,6 +42,8 @@ Branch: `night/release` · Last update: 05:10 UTC
 - **Dry run for signing:** manual input `dry_run` signs and exports the App Store .ipa without uploading. Before archiving, `check-profiles.sh` checks each signed target's entitlements against its profile and names any missing capability (tested locally with good and bad profiles).
 
 - **05:08** Run 24 on dev (editor merge) green. Merged dev (`b00dc15`); targets, entitlements and privacy manifest unchanged.
+
+- **05:17** `ios-release.yml` no longer cancels a started run (`cancel-in-progress: false`): dev runs 21-23 had been cancelled mid-archive by the next merge. A newer push now replaces only a run still waiting for a runner. Same fix as platform's.
 
 ## In progress
 
