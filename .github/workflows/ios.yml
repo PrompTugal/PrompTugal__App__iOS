@@ -83,13 +83,16 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: Pick an iPhone simulator
+      - name: Pick and boot an iPhone simulator
         id: sim
         run: |
           udid=$(.github/scripts/pick-simulator.py)
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
 
       - name: xcodebuild test
+        timeout-minutes: 20
         run: |
           .github/scripts/run-and-summarize.sh "App unit tests" "$RUNNER_TEMP/logs/test.log" -- \
             xcodebuild test \
@@ -97,6 +100,10 @@ jobs:
               -destination "id=${{ steps.sim.outputs.udid }}" \
               -derivedDataPath "$RUNNER_TEMP/dd" \
               -resultBundlePath "$RUNNER_TEMP/logs/Tests.xcresult" \
+              -parallel-testing-enabled NO \
+              -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 \
+              -maximum-test-execution-time-allowance 180 \
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Upload log and results
