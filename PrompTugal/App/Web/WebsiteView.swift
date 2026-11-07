@@ -12,12 +12,22 @@ struct WebsiteView: View {
     @State private var sidebarVisible = true
     @State private var showsShortcuts = false
     @State private var showsReader = false
+    @State private var availableWidth: CGFloat = 0
+
+    /// The shortcuts column's width for the space the view has, or nil when there is no room for it
+    /// (iPad Split View or Slide Over below 600 pt): then the toolbar button opens the shortcuts as a sheet.
+    nonisolated static func sidebarWidth(for available: CGFloat) -> CGFloat? {
+        available >= 600 ? min(250, (available * 0.32).rounded()) : nil
+    }
+
+    /// Whether the shortcuts can be a column here (regular width with room), rather than a sheet.
+    private var sidebarFits: Bool { width == .regular && Self.sidebarWidth(for: availableWidth) != nil }
 
     var body: some View {
         HStack(spacing: 0) {
-            if width == .regular, sidebarVisible, let directory {
+            if sidebarFits, sidebarVisible, let directory, let column = Self.sidebarWidth(for: availableWidth) {
                 WebsiteSidebar(directory: directory, selectedID: selectedID, select: select)
-                    .frame(width: 250)
+                    .frame(width: column)
                 Divider()
             }
             if let selectedID, let browser = browsers[selectedID] {
@@ -26,6 +36,7 @@ struct WebsiteView: View {
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { availableWidth = $0 }
         .task {
             guard directory == nil else { return }
             let loaded = WebsiteDirectory.load()
@@ -91,7 +102,7 @@ struct WebsiteView: View {
                     }
                     HStack(spacing: 4) {
                         Button {
-                            if width == .regular { sidebarVisible.toggle() }
+                            if sidebarFits { sidebarVisible.toggle() }
                             else { showsShortcuts = true }
                         } label: {
                             Label("Websites", systemImage: "sidebar.left").labelStyle(.iconOnly)

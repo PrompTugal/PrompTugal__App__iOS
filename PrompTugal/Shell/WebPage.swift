@@ -89,9 +89,7 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
         TeamFeatures.shared.bridge.attach(webView)
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = true
-        #if DEBUG
-        webView.isInspectable = true  // Safari's Web Inspector, for development only (S4)
-        #endif
+        webView.isInspectable = true
         observations = [
             webView.observe(\.isLoading, options: [.new]) { [weak self] view, _ in
                 let value = view.isLoading
