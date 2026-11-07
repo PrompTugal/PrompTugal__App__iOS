@@ -15,6 +15,8 @@ final class RemoteFeed<Value: Decodable & Sendable> {
     private(set) var phase: LoadPhase = .idle
     private(set) var bytes = 0
     private var cacheLoaded = false
+    /// Set by `preview(_:)`: sample data stays as it is and is never replaced from the network.
+    private(set) var pinned = false
 
     init(name: String, url: URL) {
         self.name = name
@@ -25,6 +27,7 @@ final class RemoteFeed<Value: Decodable & Sendable> {
 
     /// Loads the cached copy (once), then the network copy if the cache is older than `freshFor`.
     func load(force: Bool = false) async {
+        if pinned { return }
         if !cacheLoaded { await loadCache() }
         if phase == .loading { return }
         if !force, let updated, Date.now.timeIntervalSince(updated) < freshFor, value != nil { return }
@@ -50,6 +53,7 @@ final class RemoteFeed<Value: Decodable & Sendable> {
         self.value = value
         self.updated = updated
         cacheLoaded = true
+        pinned = true
         phase = .loaded
     }
 

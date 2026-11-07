@@ -57,6 +57,13 @@ enum Destinations {
         return all.first { $0.id == id }
     }
 
+    /// A destination that may be opened now: debug-only screens only while debug mode is on.
+    /// Used for links (promptugal://open/<id>), launch arguments and restored selections.
+    static func openable(_ id: String?, debug: Bool) -> AppDestination? {
+        guard let destination = destination(id) else { return nil }
+        return destination.debugOnly && !debug ? nil : destination
+    }
+
     static func section(_ section: ShellSection) -> [AppDestination] {
         all.filter { $0.section == section }
     }
@@ -82,7 +89,7 @@ enum Destinations {
         AppDestination(id: "team.people", title: "The team", symbol: "person.3", section: .team, kind: .native,
                        summary: "Everyone's load: only you, decide, overdue", phoneTab: 1, tabTitle: "Team") { AnyView(TeamDashboardView()) },
         AppDestination(id: "team.commandcentre", title: "My command centre", symbol: "rectangle.3.group",
-                       section: .team, kind: .web(TeamSite.base), summary: "The team site's command centre") {
+                       section: .team, kind: .web(TeamEndpoints.base), summary: "The team site's command centre") {
             AnyView(MyCommandCentreWeb())
         },
         AppDestination(id: "collab.lanes", title: "Messages", symbol: "bubble.left.and.bubble.right",
@@ -95,9 +102,12 @@ enum Destinations {
         },
         AppDestination(id: "team.home", title: "Team home", symbol: "person.crop.circle", section: .team,
                        kind: .native, summary: "Who I am, and where everyone is") { AnyView(TeamHomeView()) },
-        AppDestination(id: "team.store", title: "Reading credit", symbol: "creditcard", section: .team,
-                       kind: .native, summary: "The meter and native top-ups") { AnyView(ReadingCreditView()) },
-    ]
+    ] + (ReadingCredit.isAvailable ? [store] : [])
+
+    /// Reading credit: debug builds only until Dinis decides what credit does (R5).
+    private static let store = AppDestination(id: "team.store", title: "Reading credit", symbol: "creditcard",
+                                              section: .team, kind: .native,
+                                              summary: "The meter and native top-ups") { AnyView(ReadingCreditView()) }
 
     // MARK: Agents
 
@@ -105,12 +115,12 @@ enum Destinations {
         AppDestination(id: "agents.activity", title: "What my agents do", symbol: "cpu", section: .agents,
                        kind: .native, summary: "Wakes, runs and reports", phoneTab: 2, tabTitle: "Agents") { AnyView(AgentsDashboardView()) },
         AppDestination(id: "agents.wakes.web", title: "Wakes (web)", symbol: "globe", section: .agents,
-                       kind: .web(TeamSite.base.appendingPathComponent("wakes/")), summary: "The web original") {
-            AnyView(WebPage(url: TeamSite.base.appendingPathComponent("wakes/"), title: "Wakes"))
+                       kind: .web(TeamEndpoints.base.appendingPathComponent("wakes/")), summary: "The web original") {
+            AnyView(WebPage(url: TeamEndpoints.base.appendingPathComponent("wakes/"), title: "Wakes"))
         },
         AppDestination(id: "agents.reports.web", title: "Reports (web)", symbol: "doc.text", section: .agents,
-                       kind: .web(TeamSite.base.appendingPathComponent("reports/")), summary: "Every two hours") {
-            AnyView(WebPage(url: TeamSite.base.appendingPathComponent("reports/"), title: "Reports"))
+                       kind: .web(TeamEndpoints.base.appendingPathComponent("reports/")), summary: "Every two hours") {
+            AnyView(WebPage(url: TeamEndpoints.base.appendingPathComponent("reports/"), title: "Reports"))
         },
         AppDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", section: .agents, kind: .native,
                        summary: "OpenRouter chat over the app's own data") {
@@ -124,14 +134,14 @@ enum Destinations {
         AppDestination(id: "briefed", title: "Briefed", symbol: "text.badge.checkmark", section: .briefings,
                        kind: .hybrid, summary: "My stand-up briefing, decisions waiting") { AnyView(BriefedView()) },
         AppDestination(id: "briefings.pulse.web", title: "Pulse (web)", symbol: "waveform.path.ecg",
-                       section: .briefings, kind: .web(TeamSite.base.appendingPathComponent("pulse-summary/")),
+                       section: .briefings, kind: .web(TeamEndpoints.base.appendingPathComponent("pulse-summary/")),
                        summary: "The team's check-ins, summarised") {
-            AnyView(WebPage(url: TeamSite.base.appendingPathComponent("pulse-summary/"), title: "Pulse"))
+            AnyView(WebPage(url: TeamEndpoints.base.appendingPathComponent("pulse-summary/"), title: "Pulse"))
         },
         AppDestination(id: "briefings.board.web", title: "Board health (web)", symbol: "heart.text.square",
-                       section: .briefings, kind: .web(TeamSite.base.appendingPathComponent("board-health/")),
+                       section: .briefings, kind: .web(TeamEndpoints.base.appendingPathComponent("board-health/")),
                        summary: "Deadlines at risk") {
-            AnyView(WebPage(url: TeamSite.base.appendingPathComponent("board-health/"), title: "Board health"))
+            AnyView(WebPage(url: TeamEndpoints.base.appendingPathComponent("board-health/"), title: "Board health"))
         },
     ]
 

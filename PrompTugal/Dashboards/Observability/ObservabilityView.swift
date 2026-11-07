@@ -208,9 +208,9 @@ struct EndpointHealth: View {
 }
 
 #Preview("Observability · iPhone") {
-    NavigationStack { ObservabilityView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { ObservabilityView() }.environment(PreviewSamples.previewData()).phonePreview()
 }
 
 #Preview("Observability · iPad") {
-    NavigationStack { ObservabilityView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { ObservabilityView() }.environment(PreviewSamples.previewData()).padPreview()
 }
