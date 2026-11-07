@@ -1,8 +1,8 @@
 # Status · Release engineering
 
-> Unsigned packaging is green on `night/release` and on `night/platform`'s project (iOS 18, widgets and intents extensions: build 108, .ipa 892 KB). The TestFlight job skips cleanly with `skipped: secret … missing` until Dinis adds the secrets in [release-setup](../release-setup.md). Priority is internal TestFlight.
+> Merged into dev. `iOS release` is green on dev (run 11): unsigned .ipa, simulator app and archive for every dev push, with the platform project (iOS 18, widgets, intents). TestFlight waits only for Dinis's secrets ([release-setup](../release-setup.md)). Priority: internal TestFlight.
 
-Branch: `night/release` · Last update: 03:25 UTC
+Branch: `night/release` · Last update: 03:35 UTC
 
 ## Done
 
@@ -25,9 +25,13 @@ Branch: `night/release` · Last update: 03:25 UTC
 - **03:24** Push trigger narrowed for the macOS queue (conductor): `dev` and `night/release` only, docs/site-only pushes skipped (`paths-ignore` like `ios.yml`). Tags and manual runs unfiltered.
 - Rebased on dev `cbbbb89`, which has the platform project (iOS 18, SGitVault, widgets, intents).
 
+- **03:32** Conductor merged `night/release` into dev (`d6b9cd2`). Run 11 on dev green. From now on I merge dev into `night/release` (no rebase).
+- Editor wired `latest-build.sh` into `website.yml`; the site shows the latest dev build.
+- Checklist: Time Sensitive Notifications capability (new app entitlement on dev). Each package run now lists every target's entitlements next to its profile secret, so the portal setup can be checked against the build.
+
 ## In progress
 
-- Run 10: first push run on the rebased branch (dev's merged project).
+- Run 12 on `night/release` (entitlements table).
 
 ## Next
 

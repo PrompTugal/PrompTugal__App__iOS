@@ -36,6 +36,7 @@ The **testflight** job runs only when someone starts it by hand with **upload** 
    - **Associated Domains** (the app uses `webcredentials:promptugal.news` and `applinks:promptugal.news`). The website must also serve `/.well-known/apple-app-site-association` with the team ID and bundle id, or passkeys and links will not work.
    - **In-App Purchase** is on for every explicit App ID. It has no entitlement key. The products themselves are created in App Store Connect.
    - **NFC Tag Reading**: not used today. Enable it only if a session adds Core NFC.
+   - **Time Sensitive Notifications** (the app has `com.apple.developer.usernotifications.time-sensitive`, for session reminders). Without it on the App ID and in the profile, the signed archive fails.
    - Push Notifications: not needed for local reminders. Enable it only if remote push is added.
 2. **Extensions.** The platform branch has two, each needing its own explicit App ID with **App Groups** on and the group `group.news.promptugal.reader` assigned, and its own App Store profile:
    - `news.promptugal.reader.widgets`: the widget extension (target `PrompTugalWidgets`), profile secret `IOS_PROFILE_WIDGETS_BASE64`.

@@ -6,12 +6,18 @@ name: iOS
 #
 #   package  swift test in Packages/SGitVault (skipped cleanly if the folder is missing)
 #   build    xcodebuild build for the iOS Simulator, unsigned
-#   test     xcodebuild test on an iPhone simulator
+#   test     xcodebuild test on an iPhone and an iPad simulator
+#
+# Pushes that change only briefs/, website/, root Markdown or VERSION don't run
+# it: macOS runners are shared by every session, and those files can't break
+# the app. (A .md file inside PrompTugal/ can, so those still run.)
 
 on:
   push:
     branches: [dev, 'night/**']
+    paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
   pull_request:
+    paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
   workflow_dispatch:
 
 permissions:
@@ -91,11 +97,17 @@ jobs:
 
       - name: Pick and boot an ${{ matrix.device }} simulator
         id: sim
+        timeout-minutes: 8
         run: |
           udid=$(.github/scripts/pick-simulator.py "${{ matrix.device }}")
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
           xcrun simctl boot "$udid" || true
-          xcrun simctl bootstatus "$udid" -b
+          # Wait up to 5 minutes for "Booted"; if it is slower, xcodebuild finishes the boot.
+          for i in $(seq 1 60); do
+            xcrun simctl list devices | grep "$udid" | grep -q "(Booted)" && { echo "Booted after $((i * 5)) s"; break; }
+            sleep 5
+          done
+          xcrun simctl list devices | grep "$udid" || true
 
       - name: xcodebuild test
         timeout-minutes: 20
