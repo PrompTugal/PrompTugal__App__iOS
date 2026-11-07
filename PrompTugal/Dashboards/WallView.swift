@@ -7,16 +7,20 @@ import UIKit
 struct WallView: View {
     @Environment(DashboardData.self) private var data
     @Environment(\.horizontalSizeClass) private var width
+    /// The width the wall actually has: in iPad Split View or Slide Over it can be much narrower
+    /// than the screen, so the layout follows this, not the device.
+    @State private var available: CGFloat = 0
+    @ScaledMetric(relativeTo: .largeTitle) private var standupSize: CGFloat = 54
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 300)) { context in
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.l) {
                     header(context.date)
-                    if width == .regular {
+                    if WallLayout.twoColumns(width: available) {
                         HStack(alignment: .top, spacing: Space.l) {
                             VStack(spacing: Space.l) { teamTile; standupTile; NextHoursCard() }
-                                .frame(width: 360)
+                                .frame(width: WallLayout.sideColumn(width: available))
                             VStack(spacing: Space.l) { agentsTile; pipelineTile; runsTile }
                         }
                     } else {
@@ -31,6 +35,7 @@ struct WallView: View {
                 .padding(Space.l)
             }
             .background(Palette.paper.ignoresSafeArea())
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { available = $0 }
             .task(id: context.date) { await data.refreshAll(force: true) }
         }
         .navigationTitle("Wall")
@@ -76,7 +81,7 @@ struct WallView: View {
         return Card {
             Kicker("Next stand-up", color: Palette.green)
             if let next {
-                Text(next, format: .dateTime.hour().minute()).font(.system(size: 54, weight: .bold, design: .serif))
+                Text(next, format: .dateTime.hour().minute()).font(.system(size: standupSize, weight: .bold, design: .serif))
                     .monospacedDigit()
                 Text(next, style: .relative).font(.title3).foregroundStyle(Palette.muted)
             } else {
@@ -109,6 +114,15 @@ struct WallView: View {
             }
         }
     }
+}
+
+/// The wall's columns, from the width it really has.
+enum WallLayout {
+    /// Two columns from 760 pt (a full iPad, or a wide Split View pane); one below.
+    static func twoColumns(width: CGFloat) -> Bool { width >= 760 }
+
+    /// The left column: about a third of the width, between 280 and 380 pt.
+    static func sideColumn(width: CGFloat) -> CGFloat { min(max(width * 0.36, 280), 380) }
 }
 
 #Preview("Wall · iPad") {

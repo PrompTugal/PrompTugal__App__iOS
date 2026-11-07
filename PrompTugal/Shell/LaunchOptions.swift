@@ -7,8 +7,16 @@ import Foundation
 ///     -PTMe ana                      act as this team member
 ///
 /// A UI test can loop over `Destinations.all` ids, launch with each, and take a screenshot.
+/// Debug builds only: in a release build every option reads as absent. A reviewer turns on sample
+/// data from the app itself ("Try with sample data" on Who are you?), see `SampleMode`.
 enum LaunchOptions {
-    static var arguments: [String] { ProcessInfo.processInfo.arguments }
+    static var arguments: [String] {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments
+        #else
+        []
+        #endif
+    }
 
     static func value(_ name: String) -> String? {
         guard let index = arguments.firstIndex(of: name), index + 1 < arguments.count else { return nil }

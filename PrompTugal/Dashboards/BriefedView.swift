@@ -5,10 +5,12 @@ import SwiftUI
 struct BriefedView: View {
     @Environment(DashboardData.self) private var data
     @AppStorage(DashboardData.meKey) private var me = ""
+    @AppStorage(SampleMode.key) private var sampleMode = false
 
     var body: some View {
         let person = data.person(me)
-        let centre = me.isEmpty ? nil : data.commandCentre(me)
+        // Sample people have no command centre on the team site.
+        let centre = me.isEmpty || sampleMode ? nil : data.commandCentre(me)
         Page {
             ScreenHeader(kicker: "Briefed", title: person.map { "\($0.first ?? $0.displayName)'s briefing" } ?? "Briefings",
                          summary: "The stand-up briefing, the decisions that wait on you, and what the agents ask.")
@@ -66,7 +68,7 @@ struct BriefedView: View {
 
     private func reload(force: Bool) async {
         async let all: Void = data.refreshAll(force: force)
-        if !me.isEmpty { await data.commandCentre(me).load(force: force) }
+        if !me.isEmpty, !sampleMode { await data.commandCentre(me).load(force: force) }
         await all
     }
 

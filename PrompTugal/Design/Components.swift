@@ -248,8 +248,13 @@ private struct KindBadgeModifier: ViewModifier {
 /// The one switch for debug mode, shared by Settings, the shell and the badges.
 enum DebugMode {
     static let key = "debug.enabled"
-    /// On by default: the first users are the team, and the app should show its working.
+    /// On in debug builds, where the team wants to see the app's working. Off in release builds:
+    /// App Review and attendees see no debug panels unless they turn them on in Settings.
+    #if DEBUG
     static let defaultOn = true
+    #else
+    static let defaultOn = false
+    #endif
 }
 
 // MARK: - Previews on both devices

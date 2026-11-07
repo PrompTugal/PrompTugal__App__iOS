@@ -8,7 +8,10 @@ struct TodayView: View {
 
     var body: some View {
         Group {
-            if let person = data.person(me) {
+            if me == SampleMode.readerID {
+                // Not on the team: the reader's day is the agenda (and News is one tab away).
+                AgendaView()
+            } else if let person = data.person(me) {
                 PersonBriefView(person: person, isMe: true)
             } else if me.isEmpty {
                 ChooseIdentityView()
@@ -16,7 +19,7 @@ struct TodayView: View {
                 Page { StateView(phase: data.team.phase, hasData: false, title: "team") { reload() } }
             }
         }
-        .navigationTitle("My day")
+        .navigationTitle(me == SampleMode.readerID ? "Today" : "My day")
         .refreshable { await data.refreshAll(force: true) }
         .task { await data.refreshTeam() }
     }
@@ -28,6 +31,7 @@ struct TodayView: View {
 struct ChooseIdentityView: View {
     @Environment(DashboardData.self) private var data
     @AppStorage(DashboardData.meKey) private var me = ""
+    @AppStorage(SampleMode.key) private var sampleMode = false
 
     var body: some View {
         Page(maxWidth: 760) {
@@ -50,13 +54,28 @@ struct ChooseIdentityView: View {
                         .buttonStyle(.plain)
                     }
                 }
-                Button("I am not on the team") { me = "reader" }
-                    .font(.footnote)
             } else {
                 StateView(phase: data.team.phase, hasData: false, title: "team") {
                     Task { await data.refreshTeam(force: true) }
                 }
             }
+            // Two ways in for anyone without a team identity, both always shown (also offline).
+            VStack(alignment: .leading, spacing: Space.m) {
+                Button {
+                    sampleMode = true
+                    me = SampleMode.samplePersonID
+                } label: {
+                    Label("Try with sample data", systemImage: "theatermasks")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .accessibilityHint("Fills the app with made-up people and agents, so you can see every screen")
+                .accessibilityIdentifier("pt.trySampleData")
+                Button("I am not on the team") { me = SampleMode.readerID }
+                    .accessibilityHint("Opens the summit agenda and the news")
+                    .accessibilityIdentifier("pt.notOnTeam")
+            }
+            .padding(.top, Space.s)
         }
     }
 }
@@ -66,6 +85,7 @@ struct PersonBriefView: View {
     @Environment(DashboardData.self) private var data
     let person: Wire.Person
     var isMe = false
+    @AppStorage(SampleMode.key) private var sampleMode = false
 
     var body: some View {
         Page {
@@ -136,6 +156,7 @@ struct PersonBriefView: View {
                 }
             }
 
+            if !sampleMode {
             Card {
                 NavigationLink {
                     CommandCentreView(personID: person.id, name: person.first ?? person.displayName)
@@ -144,6 +165,7 @@ struct PersonBriefView: View {
                         .font(.subheadline)
                 }
                 WebLinkRow(title: "The command centre on the web", url: person.commandCentreURL, symbol: "globe")
+            }
             }
         }
         .navigationTitle(isMe ? "My day" : person.displayName)

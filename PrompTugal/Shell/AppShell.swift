@@ -6,7 +6,9 @@ import SwiftUI
 struct AppShell: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
-    @State private var data = LaunchOptions.sampleData ? PreviewSamples.data() : DashboardData()
+    @AppStorage(SampleMode.key) private var sampleMode = false
+    @State private var data = (LaunchOptions.sampleData || UserDefaults.standard.bool(forKey: SampleMode.key))
+        ? PreviewSamples.data() : DashboardData()
     /// The vault session's reader logs here; Debug → Vault traffic reads it.
     private var vaultLog: VaultTrafficLog { VaultSession.shared.log }
     @SceneStorage("shell.selection") private var selection: String = "today"
@@ -22,18 +24,29 @@ struct AppShell: View {
                 splitView
             }
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if sampleMode { SampleBanner { leaveSampleMode() } }
+        }
         .environment(data)
         .environment(vaultLog)
         // .teamFeatures() is applied once, by the app root (PrompTugalApp), outside the shell.
         .identitySync()
         .tint(Palette.red)
         .onChange(of: scenePhase, initial: true) { _, phase in
-            if phase == .active, !LaunchOptions.sampleData { Task { await data.refreshAll() } }
+            if phase == .active, !LaunchOptions.sampleData, !sampleMode { Task { await data.refreshAll() } }
+        }
+        .onChange(of: sampleMode) { _, on in
+            data = on ? PreviewSamples.data() : DashboardData()
+            if !on { Task { await data.refreshAll(force: true) } }
+        }
+        // The app-switcher snapshot is taken while the scene is inactive: cover keys, messages and Ask.
+        .overlay {
+            if scenePhase != .active { PrivacyCover() }
         }
         .onOpenURL { url in route(url) }
         .onAppear {
             if let me = LaunchOptions.me { UserDefaults.standard.set(me, forKey: DashboardData.meKey) }
-            if let id = LaunchOptions.destination, let destination = Destinations.destination(id) {
+            if let id = LaunchOptions.destination, let destination = Destinations.openable(id, debug: debug) {
                 selection = id
                 tab = destination.phoneTab != nil ? id : "more"
             }
@@ -45,13 +58,13 @@ struct AppShell: View {
             ShellSidebar(selection: $selection, debug: debug)
                 .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
         } detail: {
-            if let destination = Destinations.destination(selection), destination.ownsNavigation {
+            if let destination = Destinations.openable(selection, debug: debug), destination.ownsNavigation {
                 // The screen brings its own columns; the shell's sidebar steps aside (the system
                 // sidebar button brings it back).
                 destination.view().destinationID(destination.id).id(destination.id)
             } else {
                 NavigationStack {
-                    if let destination = Destinations.destination(selection) {
+                    if let destination = Destinations.openable(selection, debug: debug) {
                         destination.view().destinationID(destination.id)
                             .id(destination.id)
                             .surfaceKind(destination.kind)
@@ -74,9 +87,60 @@ struct AppShell: View {
     private func route(_ url: URL) {
         guard url.scheme == "promptugal", url.host == "open" else { return }
         let id = url.pathComponents.dropFirst().joined(separator: "/")
-        guard Destinations.destination(id) != nil else { return }
+        // Debug-only screens (Debug) open from a link only while debug mode is on.
+        guard let destination = Destinations.openable(id, debug: debug) else { return }
         selection = id
-        tab = Destinations.destination(id)?.phoneTab != nil ? id : "more"
+        tab = destination.phoneTab != nil ? id : "more"
+    }
+}
+
+extension AppShell {
+    private func leaveSampleMode() {
+        sampleMode = false
+        UserDefaults.standard.set("", forKey: DashboardData.meKey)
+    }
+}
+
+/// The banner shown on every screen while sample data is on.
+private struct SampleBanner: View {
+    let leave: () -> Void
+
+    var body: some View {
+        HStack(spacing: Space.s) {
+            Image(systemName: "theatermasks").foregroundStyle(Palette.amber).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Sample data").font(.subheadline.weight(.semibold))
+                Text("Made-up people and agents, so you can see every screen.").font(.caption)
+                    .foregroundStyle(Palette.muted)
+            }
+            Spacer(minLength: Space.s)
+            Button("Leave", action: leave)
+                .buttonStyle(.bordered)
+                .accessibilityLabel("Leave sample data")
+        }
+        .padding(.horizontal, Space.l)
+        .padding(.vertical, Space.s)
+        .background(Palette.amber.opacity(0.15))
+        .background(.bar)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("pt.sampleBanner")
+    }
+}
+
+/// Covers the app while it is not active, so the app-switcher snapshot shows no keys, messages or chats.
+struct PrivacyCover: View {
+    var body: some View {
+        ZStack {
+            Palette.paper.ignoresSafeArea()
+            VStack(spacing: Space.m) {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Palette.ink)
+                    .frame(width: 64, height: 64)
+                    .overlay(Text("PT").font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.paper))
+                Text("PrompTugal").font(Typo.title)
+            }
+        }
+        .accessibilityHidden(true)
     }
 }
 
@@ -149,8 +213,14 @@ private struct SidebarRow: View {
             HStack {
                 Text(destination.title)
                 Spacer(minLength: 4)
-                if debug { Circle().fill(destination.kind.color).frame(width: 6, height: 6)
-                    .accessibilityLabel(destination.kind.label) }
+                if debug {
+                    // Shape and colour, plus text for VoiceOver: not colour alone.
+                    Image(systemName: destination.kind.symbol)
+                        .font(.caption2)
+                        .foregroundStyle(destination.kind.color)
+                        .accessibilityLabel(destination.kind.label)
+                        .help(destination.kind.label)
+                }
             }
         } icon: {
             Image(systemName: destination.symbol)

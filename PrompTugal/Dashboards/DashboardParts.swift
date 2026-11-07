@@ -7,12 +7,14 @@ struct Avatar: View {
     let initials: String
     let colour: Color
     var size: CGFloat = 40
+    /// Grows with Dynamic Type, so the initials stay readable at large text sizes.
+    @ScaledMetric(relativeTo: .body) private var scale: CGFloat = 1
 
     var body: some View {
         Circle()
             .fill(colour)
-            .frame(width: size, height: size)
-            .overlay(Text(initials).font(.system(size: size * 0.38, weight: .semibold, design: .rounded))
+            .frame(width: size * scale, height: size * scale)
+            .overlay(Text(initials).font(.system(size: size * scale * 0.38, weight: .semibold, design: .rounded))
                 .foregroundStyle(.white))
             .accessibilityHidden(true)
     }
@@ -63,8 +65,9 @@ struct WakeGrid: View {
                 }
                 .contentShape(Rectangle())
                 .gesture(SpatialTapGesture().onEnded { tap in
-                    let row = Int((tap.location.y - 18) / rowHeight)
-                    if agents.indices.contains(row) { selected = agents[row].id == selected ? nil : agents[row].id }
+                    guard let row = Self.row(at: tap.location.y, header: 18, rowHeight: rowHeight, count: agents.count)
+                    else { return }
+                    selected = agents[row].id == selected ? nil : agents[row].id
                 })
             }
             .frame(height: 18 + CGFloat(agents.count) * rowHeight)
@@ -98,6 +101,13 @@ struct WakeGrid: View {
         let partial = agents.reduce(0) { $0 + $1.cells.filter { $0 == .partial }.count }
         let failed = agents.reduce(0) { $0 + $1.cells.filter { $0 == .failed }.count }
         return "Wake grid for \(agents.count) agents over 24 hours: \(ok) good wakes, \(partial) partial, \(failed) failed."
+    }
+
+    /// The agent row under a tap, or nil for the hour header above the rows and the space below them.
+    static func row(at y: CGFloat, header: CGFloat, rowHeight: CGFloat, count: Int) -> Int? {
+        guard y >= header, rowHeight > 0 else { return nil }
+        let row = Int((y - header) / rowHeight)
+        return row < count ? row : nil
     }
 
     static func draw(_ state: WakeCell, at center: CGPoint, radius: CGFloat, in context: inout GraphicsContext) {
