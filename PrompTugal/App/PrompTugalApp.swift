@@ -9,6 +9,8 @@ struct PrompTugalApp: App {
         // Background tasks must be registered before the app finishes launching.
         VaultBackground.register()
         TeamBackground.register()
+        // Before launch finishes, so a reminder tapped while the app was not running is delivered (Q6).
+        ReminderScheduler.installNotificationDelegate()
     }
 
     var body: some Scene {
@@ -297,7 +299,7 @@ private struct ReaderSectionView: View {
     @ViewBuilder private func feedStatus(updated: Date?, failed: Bool, title: String) -> some View {
         if let updated {
             Label(
-                "\(failed ? "Refresh failed · last synced" : "Last synced") \(Lisbon.dayLabel(lisbonDay(updated))) · \(Lisbon.timeLabel(updated)) Lisbon",
+                "\(failed ? "Refresh failed · last synced" : "Last synced") \(Lisbon.dayLabel(Lisbon.day(updated))) · \(Lisbon.timeLabel(updated)) Lisbon",
                 systemImage: failed ? "wifi.slash" : "clock"
             )
             .font(.footnote)
@@ -308,15 +310,6 @@ private struct ReaderSectionView: View {
         } else {
             ProgressView("Loading \(title.lowercased())…")
         }
-    }
-
-    private func lisbonDay(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.calendar = Lisbon.calendar
-        formatter.timeZone = Lisbon.zone
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: date)
     }
 
     private func eventRow(_ event: Event) -> some View {

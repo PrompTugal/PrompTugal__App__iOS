@@ -50,3 +50,18 @@ struct LisbonTimeTests {
         #expect(event.end == nil)
     }
 }
+
+@Suite("Lisbon day (shared helper, Q8)")
+struct LisbonDayHelperTests {
+    @Test("Late evening UTC in summer is already the next Lisbon day")
+    func summerMidnight() throws {
+        let date = try #require(ISO8601DateFormatter().date(from: "2026-07-01T23:30:00Z"))
+        #expect(Lisbon.day(date) == "2026-07-02")
+    }
+
+    @Test("In winter Lisbon is on UTC")
+    func winter() throws {
+        let date = try #require(ISO8601DateFormatter().date(from: "2026-11-09T23:30:00Z"))
+        #expect(Lisbon.day(date) == "2026-11-09")
+    }
+}
