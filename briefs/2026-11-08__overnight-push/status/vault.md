@@ -2,7 +2,7 @@
 
 > The Swift vault reader and writer are on dev. At 05:05 the latest vault code passed the app build and all package tests; sgit reads back what Swift writes. The vault screen, Face ID, Secure Enclave keys, passkey door, picks mirror and collab's append lanes run on the vault API.
 
-Branch `night/vault`. Updated about 05:05 Lisbon time; in sync with dev.
+Branch `night/vault`. Updated about 05:50 Lisbon time; in sync with dev. ios.yml fully green at 92f948d (build, package tests, iPhone and iPad unit tests).
 
 ## Done
 
@@ -38,6 +38,24 @@ Branch `night/vault`. Updated about 05:05 Lisbon time; in sync with dev.
 - **Unlock polish**: one Face ID prompt when the vault screen opens with stored keys; the opened vault is selected; three columns on iPad. Pull on foreground and the end of the Face ID reuse window are driven from `VaultSession` itself (app notifications), so the app needs no extra code.
 
 - **Append lanes for collab**: `VaultSession.files(in:)` and `append(_:to:)` (a new uniquely named file per append, so devices never conflict), used by collab's team notes.
+
+## How a teammate opens a team vault
+
+1. Open **Vault** in the app (sidebar on iPad, More on iPhone).
+2. Paste the team key (`sgit_private_vault_<passphrase>:<vault id>`, or a read key `sgit_private_read_<64 hex>:<vault id>`), or tap **Scan** for a QR code, then **Import**. A vault key takes about a second: PBKDF2, 600,000 rounds, twice.
+3. The vault pulls and opens on its files. On iPad the three columns (vaults, files, file) show side by side; on iPhone they stack.
+4. Next time, the vault screen asks for Face ID once and opens every stored key. There is no passkey prompt and no typing.
+
+**What is stored where**
+- The derived read and write keys go in the Keychain on this device only, behind Face ID (`.biometryCurrentSet`). Where a Secure Enclave exists, they are also wrapped by a Secure Enclave key. They never sync to iCloud and are never shown or logged.
+- Each device has a commit-signing key in the Secure Enclave. Writes are signed with it.
+- Downloaded objects are cached on disk as ciphertext, kept forever. Refs and the branch index are never cached.
+
+**What the debug panel shows** (Debug → Vault traffic)
+- Every request, cache hit, hash check, key step, decryption, inflate and JSON parse, with sizes and times.
+- Tap an object to see its decrypt pipeline. The key inventory lists which keys exist and where, never their values.
+
+**Writing** (picks, team notes) needs the vault key and an access token from the master vault, so a read key alone gives read access only.
 
 ## In progress
 
