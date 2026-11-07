@@ -77,7 +77,7 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
     private(set) var failure: String?
     @ObservationIgnored private var observations: [NSKeyValueObservation] = []
     @ObservationIgnored private var started = false
-    @ObservationIgnored private var navigationStart = Date.now
+    @ObservationIgnored fileprivate var navigationStart = Date.now
 
     init(url: URL) {
         homeURL = url
@@ -127,9 +127,7 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         guard let url = webView.url else { return }
-        RequestLog.shared.record(.init(at: navigationStart, method: "WEB", url: url, status: 200, bytes: 0,
-                                       durationMs: Date.now.timeIntervalSince(navigationStart) * 1000,
-                                       outcome: .ok, source: "web view"))
+        log(url, error: nil)
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
@@ -144,9 +142,18 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
         let error = error as NSError
         guard !(error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled) else { return }
         failure = "Check your connection and try again."
-        RequestLog.shared.record(.init(at: navigationStart, method: "WEB", url: webView.url ?? homeURL, status: nil,
-                                       bytes: 0, durationMs: Date.now.timeIntervalSince(navigationStart) * 1000,
-                                       outcome: .failed(error.localizedDescription), source: "web view"))
+        log(webView.url ?? homeURL, error: "Navigation failed (\(error.code))")
+    }
+}
+
+extension WebPageModel {
+    /// Web view page loads go in the same Network log as the app's own requests, marked "web view".
+    /// WebKit does not report the bytes of a page, so they show as 0.
+    fileprivate func log(_ url: URL, error: String?) {
+        HTTPLog.shared.append(HTTPRequestRecord(
+            id: UUID(), startedAt: navigationStart, method: "PAGE", url: HTTPClient.redact(url), host: url.host() ?? "",
+            label: "web view", status: error == nil ? 200 : nil, bytes: 0,
+            durationMs: Date.now.timeIntervalSince(navigationStart) * 1000, error: error))
     }
 }
 

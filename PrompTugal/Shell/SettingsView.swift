@@ -34,7 +34,7 @@ struct SettingsView: View {
 
             Section("About") {
                 LabeledContent("Version") {
-                    Text(BuildInfo.versionLine)
+                    Text("\(BuildInfo.current.appVersion) (\(BuildInfo.current.appBuild)) · \(BuildInfo.current.shortCommit)")
                         .monospacedDigit()
                         .onTapGesture(count: 3) { debug.toggle() }
                         .accessibilityHint("Triple tap to toggle debug mode")
@@ -65,11 +65,3 @@ struct MyCommandCentreWeb: View {
     }
 }
 
-/// App version, build and the git commit if the build stamps one (platform owns the stamp).
-enum BuildInfo {
-    static var version: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?" }
-    static var build: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?" }
-    /// Set by the platform session's build step as `PTGitCommit` in Info.plist, when it exists.
-    static var commit: String? { Bundle.main.object(forInfoDictionaryKey: "PTGitCommit") as? String }
-    static var versionLine: String { "\(version) (\(build))" + (commit.map { " · \($0.prefix(7))" } ?? "") }
-}

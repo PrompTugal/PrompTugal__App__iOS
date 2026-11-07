@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 /// One public JSON file: fetched, decoded off the main actor, cached on disk for
-/// offline use, and logged for the Network debug panel.
+/// offline use. Requests go through the shared `HTTPClient`, so Debug → Network shows them.
 @MainActor @Observable
 final class RemoteFeed<Value: Decodable & Sendable> {
     let name: String
@@ -29,35 +29,18 @@ final class RemoteFeed<Value: Decodable & Sendable> {
         if phase == .loading { return }
         if !force, let updated, Date.now.timeIntervalSince(updated) < freshFor, value != nil { return }
         phase = .loading
-        let started = Date.now
-        var logged = false
         do {
             var request = URLRequest(url: url, timeoutInterval: 20)
             request.cachePolicy = .reloadIgnoringLocalCacheData
-            let (data, response) = try await URLSession.shared.data(for: request)
-            let status = (response as? HTTPURLResponse)?.statusCode
-            let ms = Date.now.timeIntervalSince(started) * 1000
-            guard let status, (200..<300).contains(status) else {
-                RequestLog.shared.record(.init(at: started, method: "GET", url: url, status: status,
-                                               bytes: data.count, durationMs: ms,
-                                               outcome: .failed("HTTP \(status ?? 0)"), source: name))
-                logged = true
-                throw URLError(.badServerResponse)
-            }
+            let (data, response) = try await HTTPClient.shared.data(for: request, label: "feed.\(name)")
+            guard (200..<300).contains(response.statusCode) else { throw URLError(.badServerResponse) }
             let decoded = try await Self.decode(data)
-            RequestLog.shared.record(.init(at: started, method: "GET", url: url, status: status,
-                                           bytes: data.count, durationMs: ms, outcome: .ok, source: name))
             value = decoded
             bytes = data.count
             updated = .now
             phase = .loaded
             FeedCache.write(data, name: name)
         } catch {
-            if !logged {
-                RequestLog.shared.record(.init(at: started, method: "GET", url: url, status: nil, bytes: 0,
-                                               durationMs: Date.now.timeIntervalSince(started) * 1000,
-                                               outcome: .failed(error.localizedDescription), source: name))
-            }
             phase = .failed(Self.message(for: error))
         }
     }
@@ -69,8 +52,6 @@ final class RemoteFeed<Value: Decodable & Sendable> {
             value = decoded
             updated = cached.date
             bytes = cached.data.count
-            RequestLog.shared.record(.init(at: .now, method: "CACHE", url: url, status: nil, bytes: cached.data.count,
-                                           durationMs: 0, outcome: .cached, source: name))
         }
     }
 
