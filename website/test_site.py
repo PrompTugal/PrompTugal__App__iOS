@@ -115,6 +115,10 @@ class SiteTest(unittest.TestCase):
         self.assertIn('href="04-vaults-on-ios.html"', text)
         self.assertIn(f'{build.REPO_URL}/blob/dev/briefs/', text)
 
+    def test_braces_in_briefs_are_not_tokens(self):
+        self.assertEqual(build.no_tokens('<code>${{ github.token }}</code>'),
+                         '<code>$&#123;&#123; github.token &#125;&#125;</code>')
+
     def test_markdown_escapes_html(self):
         import markdown
         out = markdown.render('<script>x</script> and `<b>`')
@@ -202,7 +206,7 @@ class SiteTest(unittest.TestCase):
                            f"feature {first['id']} from features.json is missing")
 
     def test_refuses_push_dashboard_without_a_session(self):
-        self.assertRefused(self.broken('admin/push.html', lambda t: t.replace('/status/vault.html"', '/status/x.html"')),
+        self.assertRefused(self.broken('admin/push.html', lambda t: re.sub(r'/status/vault\.(html|md)"', '/status/x.html"', t)),
                            'status page vault is missing')
 
     def test_feature_status_follows_the_files(self):
@@ -229,6 +233,13 @@ class SiteTest(unittest.TestCase):
         with self.assertRaises(SystemExit):
             build.project_setting('MARKETING_VERSION', text + config(
                 {'PRODUCT_BUNDLE_IDENTIFIER': 'news.promptugal.reader', 'MARKETING_VERSION': '0.5.0'}))
+
+    def test_status_text_cannot_inject_markup_or_tokens(self):
+        out = admin.plain('Run `x={{ github.token }}` <script> and [the doc](../x.md)')
+        self.assertNotIn('{{', out)
+        self.assertNotIn('<script>', out)
+        self.assertIn('the doc', out)
+        self.assertNotIn('](', out)
 
     def test_status_page_counts(self):
         info = admin.parse_status('# Status · X\n\n> Going well.\n\n## Done\n\n- a\n- b\n  more\n\n## Blocked\n\n## Next\n* c\n')
@@ -272,6 +283,24 @@ class SiteTest(unittest.TestCase):
         self.assertFalse(admin.features(root)[0]['shipped'])
         swift.write_text('AppDestination(id: "vault", kind: .native) { AnyView(VaultView()) }\n')
         self.assertTrue(admin.features(root)[0]['shipped'])
+
+    def test_latest_build_panel(self):
+        self.assertIsNone(admin.latest_build(None))
+        bad = self.tmp / 'bad.json'
+        bad.write_text('{"available": false}')
+        self.assertIsNone(admin.latest_build(bad))
+        bad.write_text('not json')
+        self.assertIsNone(admin.latest_build(bad))
+        self.assertIn('No CI build information', admin.latest_build_html(None, build.REPO_URL))
+        good = self.tmp / 'good.json'
+        good.write_text(json.dumps({'available': True, 'version': '0.4.0', 'build': '103', 'commit': 'abcdef123',
+                                    'builtAt': '2026-11-07T03:00:00Z', 'deviceFamily': [1, 2], 'minimumOS': '18.0',
+                                    'appBytes': 1048576 * 2, 'ipaBytes': 657000,
+                                    'runUrl': 'https://github.com/x/y/actions/runs/42', 'artifacts': [{'name': 'a', 'size': 10}]}))
+        out = admin.latest_build_html(admin.latest_build(good), build.REPO_URL)
+        for want in ('0.4.0 (build 103)', 'iPhone and iPad', '2.0 MB', '642 KB', '>42<', 'abcdef1'):
+            self.assertIn(want, out)
+        self.assertEqual(json.loads((self.clean / 'ios-build.json').read_text()), {'available': False})
 
     def test_build_log_checkpoints_are_published(self):
         for source in sorted((build.WEBSITE / 'build-log').glob('*.md')):

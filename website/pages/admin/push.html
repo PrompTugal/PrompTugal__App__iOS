@@ -8,7 +8,7 @@ order: 11
   <div class="wrap">
     <p class="kicker">Developer area · overnight push</p>
     <h1>Push dashboard</h1>
-    <p class="lede">{{push_sessions}} sessions build PrompTugal in parallel overnight. Each one keeps a status page; this table is generated from those pages as they are on <code>dev</code> at release {{release}}. A session’s branch can be ahead of what is shown here until the conductor merges it.</p>
+    <p class="lede">{{push_sessions}} sessions build PrompTugal in parallel overnight. Each one keeps a status page; this table is generated from those pages when the site is built (release {{release}}). Between merges, a session’s own branch is newer than <code>dev</code>, so where the branch has a newer copy of its status page, that copy is read; “Read from” says which.</p>
   </div>
 </section>
 
@@ -17,7 +17,7 @@ order: 11
     <p class="kicker">Sessions</p>
     <h2>Counts per status page</h2>
     {{push_dashboard}}
-    <p class="muted">Counts are the bullet points under each heading of the status page. “Last change” is the time of the last commit that touched it.</p>
+    <p class="muted">Counts are the bullet points under each heading of the status page. “Last change” is the time of the last commit that touched it. “Commits not on dev” counts the commits on the session’s branch that this release does not have yet.</p>
   </div>
 </section>
 
