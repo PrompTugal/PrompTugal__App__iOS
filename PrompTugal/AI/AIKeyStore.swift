@@ -169,6 +169,45 @@ final class AIKeyStore {
         defaults.removeObject(forKey: "ai.keyHint")
     }
 
+    // MARK: Checking the key
+
+    /// What OpenRouter says about the key (`GET /api/v1/key`): usage and limit in dollars. Never the key itself.
+    struct KeyInfo: Equatable, Sendable {
+        let label: String?
+        let usage: Double?
+        let limit: Double?
+        let freeTier: Bool?
+
+        var summary: String {
+            var parts: [String] = ["The key works"]
+            if let usage { parts.append(String(format: "used $%.2f", usage)) }
+            parts.append(limit.map { String(format: "limit $%.2f", $0) } ?? "no limit set")
+            if freeTier == true { parts.append("free tier") }
+            return parts.joined(separator: ", ") + "."
+        }
+
+        static func parse(_ data: Data) -> KeyInfo? {
+            guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let info = object["data"] as? [String: Any] else { return nil }
+            return KeyInfo(label: info["label"] as? String, usage: (info["usage"] as? NSNumber)?.doubleValue,
+                           limit: (info["limit"] as? NSNumber)?.doubleValue, freeTier: info["is_free_tier"] as? Bool)
+        }
+    }
+
+    static let keyInfoURL = URL(string: "https://openrouter.ai/api/v1/key")!
+
+    func check(http: HTTPClient = .shared) async throws -> KeyInfo {
+        let token = try key()
+        var request = URLRequest(url: Self.keyInfoURL, timeoutInterval: 20)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (data, response) = try await http.data(for: request, label: "ai.key.check")
+        guard (200..<300).contains(response.statusCode) else {
+            throw OpenRouter.ServerError(status: response.statusCode, detail: OpenRouter.errorMessage(in: data))
+        }
+        guard let info = KeyInfo.parse(data) else { throw URLError(.cannotParseResponse) }
+        return info
+    }
+
     // MARK: Vault copy (apps/ai/openrouter.json)
 
     struct VaultFile: Codable, Equatable {
