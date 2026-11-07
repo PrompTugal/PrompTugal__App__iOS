@@ -112,7 +112,7 @@ class SiteTest(unittest.TestCase):
             self.assertTrue((page.with_suffix('.md')).read_text().endswith(source.read_text()))
 
     def test_brief_links_become_pages_or_github(self):
-        pack = next((self.clean / 'admin' / 'briefs').iterdir())
+        pack = self.clean / 'admin' / 'briefs' / '2026-11-07__native-vs-web'
         text = (pack / 'index.html').read_text()
         self.assertIn('href="04-vaults-on-ios.html"', text)
         self.assertIn(f'{build.REPO_URL}/blob/dev/briefs/', text)
