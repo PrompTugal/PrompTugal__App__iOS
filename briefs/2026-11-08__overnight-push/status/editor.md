@@ -1,6 +1,6 @@
 # Status · Editor
 
-> The site presents PrompTugal as the team's internal app in beta, with readers and teams as where it is going. Features are labelled from the code; the push dashboard reads every session's own branch; the CI page shows the latest iOS build. Build log checkpoint 2 at 03:50 UTC.
+> The site presents PrompTugal as the team's internal app in beta, with readers and teams as where it is going. Features are labelled from the code; the push dashboard reads every session's own branch; the CI page shows the latest iOS build. Next build log checkpoint at 03:50 UTC.
 
 Branch: `night/editor` · Last update: 03:10 UTC · merged into `dev` at 251f69b
 
