@@ -2,7 +2,7 @@
 
 > One schedule on the website's format, synced with the web view and the vault; reminders; team data; the day planner; the native top-up. All on dev and wired into the app; dev is green with every test on iPhone and iPad (run 104).
 
-Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 06:45 UTC
+Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 07:20 UTC
 
 ## Done
 
@@ -21,6 +21,8 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 06:45 
 
 - **Green on dev**: run 104 (dev 27881b0, which contains all of night/team up to 500b5ad): app build, SGitVault tests, and the unit tests on iPhone and on iPad all pass.
 - Fixed tonight: one test expression the type checker timed out on (396968c); the schedule's JSON key order, which was not stable across devices and broke two exact-text tests on dev (500b5ad, now written by hand as the website's `JSON.stringify` writes it). Before that fix, 63 of 65 tests passed.
+- Dev run 128 (0b0fe88, with the reminders change 17efc3d): app build and iPhone unit tests green; its iPad job was replaced by a newer run.
+- **Bridge checked against the live website** (`Tools/bridge-e2e/`, Chromium): the app's schedule write repaints the website's own "Add to my day" button and appears on /my-day/; a toggle on the website is read back; the meter credit goes £4.99 → £9.99 once and the same reference is refused; the Stripe top-up is hidden and "Top up in the app" shows; `window.ptApp.call` round-trips and refusals reject.
 - Since run 104, not yet run by CI (runners saturated): reminders ask once at the first pick or identity and refill on foreground; reading credit's Done only in the sheet and an "Open PrompTugal.news" button (b5955d2, on dev); the planner caches and `NextHoursCard` (e97868a, night/team).
 - Platform's wiring is on dev: the bridge on `WebsiteBrowser` and design's `WebPage`, `ReaderStore` → schedule, the widget, and the team refresh in the background. `.teamFeatures()` is applied once (the modifier now ignores a second copy).
 
