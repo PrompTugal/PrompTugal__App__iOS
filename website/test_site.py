@@ -179,6 +179,12 @@ class SiteTest(unittest.TestCase):
         finally:
             validate.OTHER_BRANDS = saved
 
+    def test_teams_page_credits_agent_behaviour_policies(self):
+        text = (self.clean / 'teams.html').read_text()
+        self.assertIn('id="abp"', text)
+        self.assertIn('Agent Behaviour Policy', text)
+        self.assertIn('href="https://riskmandate.ai/abp.html"', text)
+
     def test_powered_by_riskmandate_in_every_footer(self):
         for page in ('index.html', 'overnight.html', 'readers.html'):
             text = (self.clean / page).read_text()
