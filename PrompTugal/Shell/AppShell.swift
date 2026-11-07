@@ -55,6 +55,8 @@ struct AppShell: View {
                         destination.view()
                             .id(destination.id)
                             .surfaceKind(destination.kind)
+                            // Collab's Ask beside any screen: a toolbar button, ⌘K and a side panel.
+                            .askAnywhere(enabled: destination.id != "collab.ai")
                     } else {
                         ContentUnavailableView("Choose a screen", systemImage: "sidebar.left")
                     }
