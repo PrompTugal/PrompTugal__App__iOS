@@ -1,0 +1,7 @@
+{
+  "_comment": "Upper limits for the unsigned build, in bytes. Raise them on purpose, in a commit that says why. warnPercent: growth against the latest dev build that adds a warning.",
+  "ipaBytes": 60000000,
+  "appBytes": 150000000,
+  "executableBytes": 80000000,
+  "warnPercent": 10
+}

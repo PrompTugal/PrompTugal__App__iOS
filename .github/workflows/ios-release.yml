@@ -55,6 +55,9 @@ jobs:
     name: Unsigned archive, .ipa and simulator app
     runs-on: macos-26
     timeout-minutes: 45
+    permissions:
+      contents: read
+      actions: read   # size check reads the latest dev build-info artifact
     outputs:
       version: ${{ steps.version.outputs.MARKETING_VERSION }}
       build: ${{ steps.version.outputs.BUILD_NUMBER }}
@@ -73,6 +76,17 @@ jobs:
 
       - name: Archive and package (unsigned)
         run: scripts/release/package-unsigned.sh
+
+      - name: Size check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/release/size-check.sh "$RUNNER_TEMP/release/dist/build-info.json"
+
+      - name: Release notes
+        if: always()
+        run: |
+          scripts/release/release-notes.sh > "$RUNNER_TEMP/release/dist/release-notes.txt"
+          { echo; echo "### Release notes (from git log)"; echo; echo '```'; cat "$RUNNER_TEMP/release/dist/release-notes.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload unsigned .ipa
         uses: actions/upload-artifact@v5
@@ -102,7 +116,9 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: build-info
-          path: ${{ runner.temp }}/release/dist/build-info.json
+          path: |
+            ${{ runner.temp }}/release/dist/build-info.json
+            ${{ runner.temp }}/release/dist/release-notes.txt
           retention-days: 90
 
       - name: Upload logs
