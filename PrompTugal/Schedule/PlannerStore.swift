@@ -14,6 +14,10 @@ final class PlannerStore {
     @ObservationIgnored private let schedule: ScheduleStore
     @ObservationIgnored private let team: TeamStore
     @ObservationIgnored private let identity: TeamIdentityStore
+    // Caches, so a redraw does not redo the work (195 agenda items, nine command centres).
+    @ObservationIgnored private var titleKeywords: [String: Set<String>] = [:]
+    @ObservationIgnored private var coordinationCache: (key: String, value: ([String: String], [String: [String]]))?
+    @ObservationIgnored private var planCache: (key: String, value: DayPlanner.Plan)?
 
     /// The summit days, Lisbon time.
     static let summitDays = ["2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12"]
@@ -26,7 +30,12 @@ final class PlannerStore {
         day = Self.summitDays.contains(today) ? today : Self.summitDays[1]
     }
 
-    func updateAgenda(_ events: [Event]) { agenda = events }
+    func updateAgenda(_ events: [Event]) {
+        agenda = events
+        titleKeywords = DayPlanner.keywordIndex(events)
+        coordinationCache = nil
+        planCache = nil
+    }
 
     var days: [String] {
         let fromAgenda = Set(agenda.map(\.date))
@@ -34,12 +43,21 @@ final class PlannerStore {
     }
 
     var plan: DayPlanner.Plan {
+        let picks = schedule.picks
+        let standups = identity.current == nil ? [] : team.standups
+        let key = [day, preferences.dayStart, preferences.dayEnd, "\(preferences.officialOnly)",
+                   "\(preferences.minimumGapMinutes)", coordinationKey,
+                   picks.map { "\($0.id)@\($0.event?.time ?? "")" }.joined(separator: ","),
+                   standups.map(\.slot).joined(separator: ",")].joined(separator: "|")
+        if let cached = planCache, cached.key == key { return cached.value }
         var prefs = preferences
         let (suggested, teammates) = coordination()
         prefs.suggested.merge(suggested) { a, _ in a }
         prefs.teammates.merge(teammates) { a, _ in a }
-        return DayPlanner.plan(day: day, agenda: agenda, picks: schedule.picks,
-                               standups: identity.current == nil ? [] : team.standups, preferences: prefs)
+        let plan = DayPlanner.plan(day: day, agenda: agenda, picks: picks, standups: standups, preferences: prefs,
+                                   titleKeywords: titleKeywords)
+        planCache = (key, plan)
+        return plan
     }
 
     /// Every agenda session on a day that teammates have, with who: "where is everyone".
@@ -77,8 +95,22 @@ final class PlannerStore {
         for id in ids { await team.refreshCentre(for: id) }
     }
 
-    /// (sessions suggested for me → reason, sessions teammates have → their first names)
+    /// What the coordination depends on: the agenda, each loaded command centre's build, and who I am.
+    private var coordinationKey: String {
+        let centres = team.centres.map { "\($0.key):\($0.value.builtAt)" }.sorted().joined(separator: ",")
+        return "\(agenda.count)|\(identity.current?.id ?? "")|\(team.me?.builtAt ?? "")|\(centres)"
+    }
+
+    /// (sessions suggested for me → reason, sessions teammates have → their first names), cached.
     private func coordination() -> ([String: String], [String: [String]]) {
+        let key = coordinationKey
+        if let cached = coordinationCache, cached.key == key { return cached.value }
+        let value = buildCoordination()
+        coordinationCache = (key, value)
+        return value
+    }
+
+    private func buildCoordination() -> ([String: String], [String: [String]]) {
         let byTitle = Dictionary(agenda.compactMap { event -> (String, String)? in
             guard let id = ScheduleID.fromPage(event.page) else { return nil }
             return (Self.normalize(event.title), id)

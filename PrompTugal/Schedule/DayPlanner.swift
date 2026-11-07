@@ -73,8 +73,11 @@ enum DayPlanner {
 
     // MARK: Planning
 
+    /// - Parameter titleKeywords: each event's title keywords by schedule id, worked out once per agenda load
+    ///   (`keywordIndex(_:)`); without it they are worked out here, which is slower on a 195-item agenda.
     static func plan(day: String, agenda: [Event], picks: [SchedulePick], standups: [TeamStandup],
-                     preferences: Preferences = Preferences()) -> Plan {
+                     preferences: Preferences = Preferences(),
+                     titleKeywords: [String: Set<String>]? = nil) -> Plan {
         let pickedIDs = Set(picks.map(\.id))
         var fixed: [Item] = picks.compactMap { pick in
             guard let event = pick.event, event.date == day, let start = event.start else { return nil }
@@ -131,7 +134,8 @@ enum DayPlanner {
                 let walkOut = TimeInterval(travelMinutes(from: event.place, to: after?.place ?? "") * 60)
                 guard start >= gap.start.addingTimeInterval(before == nil ? 0 : walkIn),
                       end <= gap.end.addingTimeInterval(after == nil ? 0 : -walkOut) else { continue }
-                let (score, reasons) = rank(event, id: id, interests: interests, preferences: preferences)
+                let (score, reasons) = rank(event, id: id, interests: interests, preferences: preferences,
+                                            keywords: titleKeywords?[id])
                 options.append(Proposal(item: Item(id: "proposal.\(id)", kind: .proposal, title: event.title,
                                                    start: start, end: end, place: event.place, eventID: id),
                                         score: score, reasons: reasons))
@@ -161,7 +165,7 @@ enum DayPlanner {
     }
 
     static func rank(_ event: Event, id: String, interests: Set<String>,
-                     preferences: Preferences) -> (Double, [String]) {
+                     preferences: Preferences, keywords known: Set<String>? = nil) -> (Double, [String]) {
         var score = 1.0
         var reasons: [String] = []
         if let why = preferences.suggested[id] { score += 5; reasons.append(why) }
@@ -169,7 +173,7 @@ enum DayPlanner {
             score += 2 + Double(names.count) * 0.5
             reasons.append("Also going: \(names.joined(separator: ", "))")
         }
-        let overlap = keywords([event.title]).intersection(interests)
+        let overlap = (known ?? keywords([event.title])).intersection(interests)
         if !overlap.isEmpty {
             score += Double(min(overlap.count, 3))
             reasons.append("Like your picks: \(overlap.sorted().prefix(3).joined(separator: ", "))")
@@ -192,6 +196,15 @@ enum DayPlanner {
             }
         }
         return words
+    }
+
+    /// Title keywords for every agenda event, by schedule id.
+    static func keywordIndex(_ agenda: [Event]) -> [String: Set<String>] {
+        var index: [String: Set<String>] = [:]
+        for event in agenda {
+            if let id = ScheduleID.fromPage(event.page) { index[id] = keywords([event.title]) }
+        }
+        return index
     }
 
     static func lisbonDay(_ date: Date) -> String {
