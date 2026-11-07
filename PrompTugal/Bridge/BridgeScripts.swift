@@ -17,9 +17,17 @@ enum BridgeScripts {
           if (window.ptApp) return
           const pending = new Map()
           let seq = 0
+          // The payload rides in event.detail and, in case another content world cannot read it, in a DOM attribute
+          // set just before the (synchronous) dispatch.
+          const root = () => document.documentElement
+          const send = (name, json) => {
+            if (root()) root().setAttribute('data-' + name.replace(':', '-'), json)
+            document.dispatchEvent(new CustomEvent(name, { detail: json }))
+          }
+          const take = (name, e) => typeof e.detail === 'string' ? e.detail : (root() && root().getAttribute('data-' + name.replace(':', '-')))
           document.addEventListener('pt:reply', e => {
             let m
-            try { m = JSON.parse(e.detail) } catch (x) { return }
+            try { m = JSON.parse(take('pt:reply', e)) } catch (x) { return }
             const p = m && pending.get(m.id)
             if (!p) return
             pending.delete(m.id)
@@ -28,7 +36,7 @@ enum BridgeScripts {
           const call = (op, args) => new Promise((resolve, reject) => {
             const id = 'pt' + (++seq) + '.' + Date.now()
             pending.set(id, { resolve, reject })
-            document.dispatchEvent(new CustomEvent('pt:request', { detail: JSON.stringify({ id, op: String(op), args: args || {} }) }))
+            send('pt:request', JSON.stringify({ id, op: String(op), args: args || {} }))
             setTimeout(() => { if (pending.delete(id)) reject(new Error('The app did not answer.')) }, 120000)
           })
           Object.defineProperty(window, 'ptApp', {
@@ -50,10 +58,15 @@ enum BridgeScripts {
       const h = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.pt
       if (!h || window.__ptBridge) return
       window.__ptBridge = true
-      const reply = m => document.dispatchEvent(new CustomEvent('pt:reply', { detail: JSON.stringify(m) }))
+      const root = () => document.documentElement
+      const reply = m => {
+        const json = JSON.stringify(m)
+        if (root()) root().setAttribute('data-pt-reply', json)
+        document.dispatchEvent(new CustomEvent('pt:reply', { detail: json }))
+      }
       document.addEventListener('pt:request', async e => {
         let m
-        try { m = JSON.parse(e.detail) } catch (x) { return }
+        try { m = JSON.parse(typeof e.detail === 'string' ? e.detail : (root() && root().getAttribute('data-pt-request'))) } catch (x) { return }
         if (!m || typeof m.id !== 'string' || typeof m.op !== 'string') return
         try { reply({ id: m.id, ok: true, result: await h.postMessage({ op: m.op, args: m.args || {} }) }) }
         catch (err) { reply({ id: m.id, ok: false, error: String((err && err.message) || err) }) }

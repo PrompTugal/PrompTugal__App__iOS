@@ -1,8 +1,8 @@
 # Status · Team features
 
-> One schedule on the website's format, the bridge, team data models, reminders, the day planner and the native top-up are written and on CI. Next: green CI, wiring into the web view and the shell.
+> One schedule on the website's format, the bridge, team data models, reminders, the day planner, the native top-up, Add to Calendar and two App Intents are written; the app build is green with them. Next: wiring into the web view and the shell.
 
-Branch: `night/team` (rebased on `night/platform`) · Last update: 03:20 UTC
+Branch: `night/team` (rebased on `night/platform`) · Last update: 03:10 UTC (container clock)
 
 ## Done
 
@@ -37,16 +37,22 @@ Each needs the stores in the environment: put `.teamFeatures()` on the root view
 
 Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson` (`badge` = only you + decide + overdue), `CommandCentre` (`Issue`, `Decision`, `Agent`, `Activity`, `Session`, `Workstream`, `Member`), `TeamStandup`, `AgentWakes`, `TeamReport`, `PulseEntry`, `SessionLogEntry`; `TeamStore` holds them (`me`, `centres`, `standups`, `wakes`, `reports`, `pulse`, `log`, `status`). Schedule: `ScheduleStore`, `SchedulePick`, `ScheduleDocument`. URLs: `TeamEndpoints` (named so to not clash with design's `TeamSite`; design can drop its copy and use these models when ready).
 
+- **CI:** the app build with all of the above is green (run 14, one concurrency warning, fixed). Unit tests are running.
+- **Add to Calendar** (`CalendarExport`, a button in My day): write-only EventKit access, only when asked.
+- **App Intents** in the app target: "Save a session to my day" (`SaveSessionIntent`, with a `SessionEntity` search over the agenda) and "What's next in my day" (`WhatsNextIntent`).
+- **Widget feed:** the schedule's picks go to platform's `NowNextPublisher` as `saved` on every change and agenda load.
+- **Tests** (`PrompTugalTests/TeamFeaturesTests.swift`): markdown twins, lenient JSON, the reminder plan, the planner. The injected JavaScript is syntax-checked with node before each push.
+
 ## In progress
 
-- First CI run of the branch.
+- Unit test results on iPhone and iPad.
 
 ## Next
 
 1. Green CI.
 2. Hook the bridge into the web views (needs the lines below in platform's `WebsiteView.swift`).
 3. Feed the agenda to the schedule and the widget from the schedule.
-4. Default shortcuts: PrompTugal only (item 7).
+4. Default shortcuts (item 7): platform already dropped riskmandate.ai and sgit.ai; its test pins newsroom.sgit.ai as a default, which my brief says to drop. Left to platform and the conductor. Also: an install that already has `Documents/Websites.json` (copied from the old defaults) keeps showing the old sites; `WebsiteDirectory.load` should drop riskmandate.ai and sgit.ai entries whose URL is unchanged from the old default.
 5. Backlog: EventKit "add to calendar", App Intents ("What's next", "Save this session").
 
 ## Blocked
@@ -60,7 +66,7 @@ Nothing.
   2. `webView(_:didFinish:)` (add it): `TeamFeatures.shared.bridge.pageDidFinish(webView)`. In `decidePolicyFor`, before allowing: `if let url = action.request.url, TeamFeatures.shared.bridge.handlesNavigation(to: url) { decisionHandler(.cancel); return }`. Design's `WebPage` needs the same three lines.
   3. After each agenda refresh in `ReaderStore`: `TeamFeatures.shared.agendaDidLoad(events)`; and route `toggleSaved`/`isSaved` to `TeamFeatures.shared.schedule.toggle(event)` / `.isPicked(event)`, `saved` to `schedule.picks.compactMap(\.event)`. `NowNextPublisher.publish(saved:)` can take the same.
   4. Info.plist: `WKAppBoundDomains` = promptugal.news, web-summit.sgit.ai (stops WebKit purging the schedule after 7 days). Time Sensitive Notifications capability (reminders ask for `.timeSensitive`).
-- **Design:** `.teamFeatures()` on `AppShell()`, and the destinations above.
+- **Design:** `.teamFeatures()` on `AppShell()`, and the destinations above. `CalendarExport` needs `NSCalendarsWriteOnlyAccessUsageDescription` (platform, Info).
 - **Vault session:** when a team vault opens, call `TeamFeatures.shared.identity.verify(by: vaultID, person:)`; picks from the vault's `agenda/picks` go to `TeamFeatures.shared.schedule.merge(document)`, and `schedule.document` is what to write back.
 
 ## Apple setup for the native top-up
