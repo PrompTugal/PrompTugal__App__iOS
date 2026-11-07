@@ -16,6 +16,8 @@ final class ChatStore {
         var usage: StreamUsage?
         var debug: RequestDebug?
         var streaming = false
+        /// Agenda sessions the answer names, for pick and open buttons under it.
+        var mentions: [Event] = []
     }
 
     /// What went to OpenRouter for one answer, shown in the turn's debug disclosure. Never the key.
@@ -169,6 +171,9 @@ final class ChatStore {
             debug.toolCalls = calls.map(\.function.name)
             turns[index].debug = debug
             turns[index].streaming = false
+            if !failed, calls.isEmpty, !turns[index].text.isEmpty {
+                turns[index].mentions = AITools.mentioned(in: turns[index].text, events: await CollabHooks.agenda())
+            }
             guard !failed, !calls.isEmpty, !Task.isCancelled else { return }
 
             // The model asked for data: run each tool, show it, send the results back.
