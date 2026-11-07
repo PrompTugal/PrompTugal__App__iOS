@@ -364,6 +364,12 @@ struct AskSettingsView: View {
             }
 
             Section {
+                Toggle("Keep this conversation on this device", isOn: $store.keepConversation)
+            } footer: {
+                Text("Off by default. Keeps only the words of the conversation, in a file locked with the device; never the key or the data sent as context. Turning it off deletes the file.")
+            }
+
+            Section {
                 Toggle("Let Ask read the app's data with tools", isOn: $store.useTools)
             } footer: {
                 Text("Read-only: search the agenda, my picks, team status, my agents, teammates' plans. Each call shows in the conversation.")
