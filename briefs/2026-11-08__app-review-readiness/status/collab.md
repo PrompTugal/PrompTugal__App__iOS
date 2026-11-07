@@ -1,8 +1,8 @@
 # Status · Collaboration and AI (App Review readiness)
 
-> All seven items are coded with tests. Build job green for consent and S5 (run 203); the rest is building. Unit tests run by hand on night/collab once the build is green. Nothing decided for Dinis.
+> All seven items are coded with tests. Build job green for all of them (runs 203, 209, 214); the iPhone and iPad unit tests are running by hand on night/collab. Nothing decided for Dinis.
 
-Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last update: 14:40 UTC
+Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last update: 14:55 UTC
 
 ## Done (pushed, with tests)
 
@@ -40,7 +40,8 @@ Branch: `night/collab` (merged from `origin/dev` 2bc718a, no rebase) · Last upd
 
 ## In progress
 
-- CI build job on night/collab for the latest commits (runs 209, 212 and the team-models commit), then a hand-run of the unit tests on night/collab.
+- Unit tests (iPhone and iPad) dispatched by hand on night/collab at 14:54 for 5afdf59. Build runs: 203 (consent, S5) green, 209 (report/block, hosts, tokens, Q4, Q7, Split View) green, 214 (one set of team models) green.
+- After team is on dev: merge origin/dev and switch my three `DayPlanner.lisbonDay` calls to `Lisbon.day(_:)` (agreed with the conductor).
 
 ## Blocked
 
