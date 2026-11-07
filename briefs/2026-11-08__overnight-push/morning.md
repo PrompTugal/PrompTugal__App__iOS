@@ -2,19 +2,19 @@
 
 > For Dinis and Silvio. What the seven sessions shipped overnight, what is still open, the decisions and Apple set-up only you can do, and what to test first on a phone and an iPad. Draft, updated through the night; final by 10:00 UTC.
 
-**Last updated:** 05:15 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
+**Last updated:** 05:45 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
 
 ## In one paragraph
 
-PrompTugal now opens on a native shell: a sidebar on iPad, four tabs on iPhone. Behind it are native dashboards for the team, the agents, the newsroom and your day, the news and its graph drawn natively, one schedule shared with the website, reminders, a Swift vault reader and writer with Face ID, a native top-up, and debug panels that show every request and decryption step. It targets iOS 18 and builds for iPhone and iPad on every push to `dev`. It is not signed yet: TestFlight is wired and waits only for your App Store Connect keys. As of 05:15, all 19 planned features are in the beta, including Ask (OpenRouter chat with your own key), Messages through vaults and Where is everyone.
+PrompTugal now opens on a native shell: a sidebar on iPad, four tabs on iPhone. Behind it are native dashboards for the team, the agents, the newsroom and your day, the news and its graph drawn natively, one schedule shared with the website, reminders, a Swift vault reader and writer with Face ID, a native top-up, and debug panels that show every request and decryption step. It targets iOS 18 and builds for iPhone and iPad on every push to `dev`. It is not signed yet: TestFlight is wired and waits only for your App Store Connect keys. As of 05:40, all 20 features on the site are in the beta, including Ask (OpenRouter chat with your own key), Messages through vaults and Where is everyone.
 
 ## What shipped
 
-To be completed at the end of the night. As of 05:15 UTC, on `dev`:
+To be completed at the end of the night. As of 05:40 UTC, on `dev`:
 
 | Area | What is in the app | Session |
 | --- | --- | --- |
-| Shell | iPad sidebar with ten sections, iPhone tabs and More; 28 screens registered, no placeholders | design |
+| Shell | iPad sidebar with ten sections, iPhone tabs and More; 29 screens registered, no placeholders, and a Wall screen for an iPad on a stand | design |
 | Team and agents | My day, The team, Agents (the wake grid redrawn natively), Briefed, Newsroom | design, team |
 | News | Feed, newsletter editions, story board, graph explorer (all nodes and edges, native) | design |
 | Schedule | One list with the website (`nr.schedule.v1`), reminders, a day planner, Add to Calendar | team |
