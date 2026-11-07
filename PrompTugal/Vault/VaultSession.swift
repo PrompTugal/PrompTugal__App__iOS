@@ -235,6 +235,84 @@ final class VaultSession {
         return result
     }
 
+    // MARK: Files other features keep in the vault
+
+    /// A file of the reader vault (or `vaultId`), or nil when the vault has no such file.
+    func readFile(_ path: String, vaultId: String? = nil) async throws -> Data? {
+        guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else { return nil }
+        do { return try await entry.vault.read(path) } catch VaultError.fileNotFound { return nil }
+    }
+
+    /// Read-modify-write one file on a branch (default "current", which the website reads), retrying
+    /// when another device moved the branch first. `transform` gets the latest content (nil if none)
+    /// and returns the new content (nil = no change). Returns nil when nothing needed writing.
+    @discardableResult
+    func update(_ path: String, vaultId: String? = nil, branch: String = "current", message: String,
+                transform: @escaping (Data?) throws -> Data?) async throws -> VaultPushResult? {
+        guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else {
+            throw VaultError.vaultNotFoundOrWrongKey(vaultId: vaultId ?? "")
+        }
+        guard entry.canWrite else { throw VaultError.invalidKey("this vault was opened with a read key; writing needs its vault key") }
+        let context = try await keychain.unlock(reason: "Save to your vault")
+        let key = try keychain.load(vaultId: entry.vaultId, context: context)
+        guard let writeKey = key.writeKey else { throw VaultError.invalidKey("no write key stored") }
+        let signer = try VaultDeviceSigner.load(context: context)
+        for attempt in 1...3 {
+            await entry.vault.switchBranch(branch)
+            try await entry.vault.pull()
+            let current: Data?
+            do { current = try await entry.vault.read(path) } catch VaultError.fileNotFound { current = nil }
+            guard let next = try transform(current), next != current else { return nil }
+            do {
+                let result = try await entry.vault.commit([path: next], message: message, branch: branch, signer: signer,
+                                                          writeKey: writeKey, accessToken: accessToken,
+                                                          writer: HTTPVaultTransport(server: VaultConfig.server))
+                await pull(entry.vaultId)
+                return result
+            } catch VaultError.pushConflict where attempt < 3 {
+                continue                                   // someone else moved the branch: read again, merge again
+            }
+        }
+        return nil
+    }
+
+    // MARK: Schedule picks (the website's `agenda/picks`, nr.schedule.v1)
+
+    /// Where the website keeps picks in the reader vault: `__vault.save('agenda/picks', …)` writes
+    /// `apps/agenda/picks.json` (promptugal.news assets/schedule/schedule.js and assets/vault/boot.js).
+    static let picksPath = "apps/agenda/picks.json"
+
+    /// The vault's picks document (nr.schedule.v1 JSON), or nil. Team's ScheduleStore decodes and merges it.
+    func loadPicks() async throws -> Data? { try await readFile(Self.picksPath) }
+
+    /// Merge local picks into the vault's copy (the website's rule: union by `id`, the vault's entry kept when
+    /// both have it) and save. Returns the merged document, for `ScheduleStore.merge`.
+    @discardableResult
+    func savePicks(_ local: Data) async throws -> Data {
+        var merged = local
+        try await update(Self.picksPath, message: "Picks from the app") { current in
+            merged = try Self.unionPicks(vault: current, local: local)
+            return merged
+        }
+        return merged
+    }
+
+    /// `{"v":1,"picks":[{"id":…,"at":…}]}` union by id. `at` is kept as given (the website writes an ISO string).
+    nonisolated static func unionPicks(vault: Data?, local: Data) throws -> Data {
+        func picks(_ data: Data?) throws -> [[String: Any]] {
+            guard let data, let doc = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return [] }
+            return doc["picks"] as? [[String: Any]] ?? []
+        }
+        var out = try picks(vault)
+        var seen = Set(out.compactMap { $0["id"] as? String })
+        for pick in try picks(local) {
+            guard let id = pick["id"] as? String, !seen.contains(id) else { continue }
+            seen.insert(id)
+            out.append(pick)
+        }
+        return try JSONSerialization.data(withJSONObject: ["v": 1, "picks": out], options: [.sortedKeys])
+    }
+
     // MARK: Debug panel feeds
 
     /// The vault inspector for one open vault: branches, head, history with messages, tree with sizes, cache stats.
