@@ -6,6 +6,7 @@ struct ReadingCreditView: View {
     @Environment(MeterStore.self) private var meter
     @Environment(CreditStore.self) private var credits
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     /// True when shown as the top-up sheet a page asked for; then it has a Done button.
     var showsDone = false
 
@@ -31,6 +32,14 @@ struct ReadingCreditView: View {
                     Label("\(MeterStore.money(Double(meter.pendingCredits.reduce(0) { $0 + $1.pence }))) paid, added when promptugal.news next opens in the app",
                           systemImage: "clock.arrow.circlepath")
                         .font(.footnote)
+                }
+                if meter.snapshot == nil || !meter.pendingCredits.isEmpty {
+                    Button {
+                        if showsDone { dismiss() }
+                        if let url = URL(string: "promptugal://open/web.promptugal") { openURL(url) }
+                    } label: {
+                        Label("Open PrompTugal.news", systemImage: "newspaper")
+                    }
                 }
             }
 
