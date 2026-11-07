@@ -386,6 +386,15 @@ struct AnyKey: CodingKey, Hashable {
     init?(intValue: Int) { nil }
 }
 
+/// Counts from JSON as Int without trapping: not finite → 0; beyond ±1,000,000,000 → clamped.
+enum TeamNumbers {
+    static let limit = 1_000_000_000.0
+    static func int(_ value: Double) -> Int {
+        guard value.isFinite else { return 0 }
+        return Int(min(max(value, -limit), limit).rounded(.towardZero))
+    }
+}
+
 /// One element that may fail to decode without failing its array.
 struct Lossy<T: Decodable>: Decodable {
     let value: T?
@@ -403,7 +412,9 @@ extension KeyedDecodingContainer {
 extension KeyedDecodingContainer where Key == AnyKey {
     func string(_ key: String, default fallback: String = "") -> String { string(AnyKey(key), default: fallback) }
     func int(_ key: String) -> Int {
-        (try? decodeIfPresent(Int.self, forKey: AnyKey(key))) ?? (try? decodeIfPresent(Double.self, forKey: AnyKey(key))).map { Int($0) } ?? 0
+        if let value = try? decodeIfPresent(Int.self, forKey: AnyKey(key)) { return value }
+        guard let value = try? decodeIfPresent(Double.self, forKey: AnyKey(key)) else { return 0 }
+        return TeamNumbers.int(value)
     }
     func bool(_ key: String) -> Bool { ((try? decodeIfPresent(Bool.self, forKey: AnyKey(key))) ?? nil) ?? false }
     func date(_ key: String) -> Date? {

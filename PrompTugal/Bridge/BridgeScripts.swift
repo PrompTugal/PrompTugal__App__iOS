@@ -90,8 +90,13 @@ enum BridgeScripts {
     """
 
     /// Page world, document start, promptugal.news only: hides the website's Stripe top-up inside the app (App Store
-    /// rule 3.1.1, brief 06) and adds a "Top up in the app" button to the account page that opens the native purchase.
-    static let hideWebTopUp = """
+    /// rule 3.1.1, brief 06). With `offerAppTopUp` (Debug builds, see `ReadingCredit`), adds a "Top up in the app"
+    /// button that opens the native purchase; without it, the top-up page says top-ups are not available in the app.
+    static func hideWebTopUp(offerAppTopUp: Bool) -> String {
+        hideWebTopUpSource.replacingOccurrences(of: "__OFFER__", with: offerAppTopUp ? "true" : "false")
+    }
+
+    static let hideWebTopUpSource = """
     (() => {
       'use strict'
       const css = `
@@ -104,9 +109,10 @@ enum BridgeScripts {
         const s = document.createElement('style'); s.id = 'pt-app-style'; s.textContent = css
         document.head.append(s); return true
       }
+      const offer = __OFFER__
       const button = () => {
         const box = document.querySelector('#nr-account .balance-card .actions')
-        if (!box || box.querySelector('.pt-app-topup') || !window.ptApp) return
+        if (!offer || !box || box.querySelector('.pt-app-topup') || !window.ptApp) return
         const b = document.createElement('button')
         b.type = 'button'; b.className = 'btn primary pt-app-topup'; b.textContent = 'Top up in the app'
         b.addEventListener('click', () => window.ptApp.call('meter.topup', {}).catch(() => {}))
@@ -116,7 +122,9 @@ enum BridgeScripts {
         const t = document.getElementById('nr-topup')
         if (!t || t.querySelector('.pt-app-note')) return
         const p = document.createElement('p'); p.className = 'notice pt-app-note'
-        p.textContent = 'In the PrompTugal app, reading credit is topped up in the app.'
+        p.textContent = offer ? 'In the PrompTugal app, reading credit is topped up in the app.'
+                              : 'Top-ups are not available in the PrompTugal app. Every page still opens at any balance.'
+        if (!offer) { t.replaceChildren(p); return }
         const b = document.createElement('button'); b.type = 'button'; b.className = 'btn primary'; b.textContent = 'Top up in the app'
         b.addEventListener('click', () => window.ptApp && window.ptApp.call('meter.topup', {}).catch(() => {}))
         t.replaceChildren(p, b)
@@ -192,6 +200,14 @@ enum BridgeScripts {
     s.topups.unshift({ ref: String(ref).slice(0, 40), at: now, credit: amount, source: 'link' })
     try { localStorage.setItem(KEY, JSON.stringify(s)) } catch (e) { return 'failed' }
     return 'credited'
+    """
+
+    /// Bridge world (not the page's), with argument `ref`: whether the page's meter in localStorage records this
+    /// credit reference. Run in the app's own content world so page scripts cannot patch Storage or JSON to lie.
+    static let meterHasReference = """
+    let s = null
+    try { s = JSON.parse(localStorage.getItem('\(meterKey)')) } catch (e) { return false }
+    return !!(s && Array.isArray(s.sessions) && s.sessions.includes(ref))
     """
 
     /// Page world, web-summit.sgit.ai: sets the site's own "Who are you?" choice (`ws.me`) from the app's identity.

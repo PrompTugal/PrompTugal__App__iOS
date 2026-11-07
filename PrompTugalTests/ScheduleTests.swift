@@ -46,8 +46,8 @@ struct ScheduleWireTests {
     @Test func dropsBadAndDuplicatePicks() throws {
         let text = #"{"v":1,"picks":[{"id":"a","at":"2026-11-08T00:00:00.000Z"},{"id":"a","at":"2026-11-09T00:00:00.000Z"},{"id":"x/y","at":"2026-11-08T00:00:00Z"},{"at":"2026-11-08T00:00:00Z"},{"id":"b"}]}"#
         let document = try #require(ScheduleDocument.decode(text))
-        #expect(document.picks.map(\.id) == ["a", "b"])
-        #expect(document.picks[1].at == .distantPast)
+        // "b" has no time: since the Q1 fix, a pick without a time between 2000 and 2100 is dropped
+        #expect(document.picks.map(\.id) == ["a"])
     }
 
     @Test func idIsTheSlugAsTheWebsiteMakesIt() {
@@ -337,5 +337,56 @@ struct ScheduleJSONTests {
         let parsed = try JSONSerialization.jsonObject(with: document.encoded()) as? [String: Any]
         let picks = try #require(parsed?["picks"] as? [[String: Any]])
         #expect(picks.first?["id"] as? String == odd)
+    }
+}
+
+
+@Suite("Hostile pick times (Q1)")
+struct SchedulePickTimeTests {
+    private func ids(_ json: String) -> [String] {
+        ScheduleDocument.decode(json)?.picks.map(\.id) ?? ["<not a document>"]
+    }
+
+    @Test func hugeAndOddNumbersAreDroppedNotCrashing() {
+        let json = #"{"v":1,"picks":[{"id":"huge","at":1e300},{"id":"tiny","at":-1e300},{"id":"negative","at":-1},{"id":"zero","at":0},{"id":"far","at":4102444800001},{"id":"ok","at":1762650000000}]}"#
+        #expect(ids(json) == ["ok"])
+    }
+
+    @Test func oddStringsAreDropped() {
+        let json = #"{"v":1,"picks":[{"id":"nan","at":"NaN"},{"id":"inf","at":"Infinity"},{"id":"num","at":"1e300"},{"id":"word","at":"tomorrow"},{"id":"old","at":"1999-12-31T23:59:59.999Z"},{"id":"late","at":"2100-01-01T00:00:00.001Z"},{"id":"ok","at":"2026-11-10T14:20:00.000Z"}]}"#
+        #expect(ids(json) == ["ok"])
+    }
+
+    @Test func boundariesAreInclusive() {
+        let json = #"{"v":1,"picks":[{"id":"first","at":"2000-01-01T00:00:00.000Z"},{"id":"last","at":"2100-01-01T00:00:00.000Z"}]}"#
+        #expect(Set(ids(json)) == ["first", "last"])
+    }
+
+    @Test func formatNeverTraps() {
+        // each of these used to reach Int64(...) unchecked
+        for value in [1e300, -1e300, Double.greatestFiniteMagnitude, -Double.greatestFiniteMagnitude, .nan, .infinity, -.infinity] {
+            let text = ScheduleTime.format(Date(timeIntervalSince1970: value))
+            #expect(text.hasSuffix("Z"))
+        }
+        // control: a normal time is still written exactly
+        #expect(ScheduleTime.format(Date(timeIntervalSince1970: 1_762_650_000.123)) == "2025-11-09T01:00:00.123Z")
+    }
+
+    @Test @MainActor func aBadTimeSavedByAnOlderBuildIsDroppedAtLaunch() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("q1-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        // schedule.json as JSONEncoder writes Dates (seconds since 2001), one pick far out of range
+        let saved = #"{"state":{"picks":{"bad":1e300,"good":815000000},"removed":{"gone":-1e300}},"events":{},"baselines":{}}"#
+        try Data(saved.utf8).write(to: dir.appendingPathComponent("schedule.json"))
+        let store = ScheduleStore(directory: dir, clock: { Date(timeIntervalSince1970: 1_762_650_000) })
+        #expect(store.document.picks.map(\.id) == ["good"])
+        #expect(store.document.json.contains("\"good\""))
+    }
+
+    @Test func teamCountsDoNotTrapEither() {
+        #expect(TeamNumbers.int(1e300) == 1_000_000_000)
+        #expect(TeamNumbers.int(-1e300) == -1_000_000_000)
+        #expect(TeamNumbers.int(.nan) == 0)
+        #expect(TeamNumbers.int(42.9) == 42)
     }
 }

@@ -11,6 +11,22 @@ struct ReminderItem: Identifiable, Hashable, Sendable {
     let fire: Date
     let start: Date
     let url: URL?
+
+    /// The link a tap opens inside the app, through the shell's `promptugal://open/<destination>` route. It lands on
+    /// My day today; the query names the session or briefing so the shell can open it directly.
+    var appLink: URL {
+        var parts = URLComponents()
+        parts.scheme = "promptugal"
+        parts.host = "open"
+        parts.path = "/team.schedule"
+        switch kind {
+        case .pick:
+            parts.queryItems = [URLQueryItem(name: "session", value: String(id.dropFirst("\(ReminderPlan.prefix)pick.".count)))]
+        case .standup:
+            parts.queryItems = url.map { [URLQueryItem(name: "url", value: $0.absoluteString)] }
+        }
+        return parts.url ?? URL(string: "promptugal://open/team.schedule")!
+    }
 }
 
 /// Which reminders to schedule, worked out without touching the notification centre, so it can be tested.

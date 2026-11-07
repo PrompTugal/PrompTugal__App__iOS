@@ -67,24 +67,39 @@ final class MeterStore {
                             topups: (summary["topups"] as? NSNumber)?.intValue ?? 0,
                             lastTopupReference: last?["ref"] as? String,
                             readAt: .now)
-        save()
+        try? save()      // only the app's copy of the balance; the page keeps the real one
     }
 
-    /// Records a verified App Store purchase. Returns false for a transaction already recorded.
+    enum CreditResult: Equatable, Sendable {
+        case added          // recorded and saved on the device
+        case alreadyKnown   // this transaction was recorded before (pending or credited)
+    }
+
+    /// Records a verified App Store purchase and saves it before returning.
+    /// Throws when it cannot be saved: the caller must then NOT finish the transaction, so StoreKit delivers it
+    /// again on the next launch instead of the credit being lost (Q3).
     @discardableResult
-    func addCredit(reference: String, pence: Int, productID: String) -> Bool {
+    func addCredit(reference: String, pence: Int, productID: String) throws -> CreditResult {
         guard !pendingCredits.contains(where: { $0.reference == reference }),
-              !credited.contains(where: { $0.reference == reference }) else { return false }
-        pendingCredits.append(PendingCredit(reference: reference, pence: pence, productID: productID, purchasedAt: .now))
-        save()
+              !credited.contains(where: { $0.reference == reference }) else { return .alreadyKnown }
+        let credit = PendingCredit(reference: reference, pence: pence, productID: productID, purchasedAt: .now)
+        pendingCredits.append(credit)
+        do {
+            try save()
+        } catch {
+            pendingCredits.removeAll { $0.reference == reference }
+            throw error
+        }
         NotificationCenter.default.post(name: .meterHasPendingCredit, object: self)
-        return true
+        return .added
     }
 
+    /// The page confirmed the credit. If this save fails the credit stays pending and is offered to the page again,
+    /// which refuses a reference it has seen, so nothing is credited twice.
     func markCredited(_ credit: PendingCredit) {
         pendingCredits.removeAll { $0.reference == credit.reference }
         if !credited.contains(credit) { credited.insert(credit, at: 0) }
-        save()
+        try? save()
     }
 
     static func money(_ pence: Double) -> String {
@@ -98,13 +113,9 @@ final class MeterStore {
         return snapshot.balance + Double(pendingCredits.reduce(0) { $0 + $1.pence })
     }
 
-    private func save() {
-        do {
-            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-            let data = try JSONEncoder().encode(Persisted(snapshot: snapshot, pending: pendingCredits, credited: credited))
-            try data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
-        } catch {
-            // The page keeps the balance; only the app's copy of it is lost.
-        }
+    func save() throws {
+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        let data = try JSONEncoder().encode(Persisted(snapshot: snapshot, pending: pendingCredits, credited: credited))
+        try data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
     }
 }

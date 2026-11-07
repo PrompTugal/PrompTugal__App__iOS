@@ -43,6 +43,8 @@ const call = (page, body, args) => page.evaluate(({ body, args }) => {
   log('credit 1:', await call(page, S.creditMeter, { amount: 500, ref: 'appstore-test-1' }));
   log('credit again:', await call(page, S.creditMeter, { amount: 500, ref: 'appstore-test-1' }));
   log('meter after:', await call(page, S.readMeter, {}));
+  log('holds appstore-test-1:', await call(page, S.meterHasReference, { ref: 'appstore-test-1' }),
+      '| holds appstore-never:', await call(page, S.meterHasReference, { ref: 'appstore-never' }));
   log('balance shown:', await page.locator('#nr-balance').textContent().catch(() => 'n/a'));
 
   // 5. The top-up hiding script (page world, document start in the app): Stripe link hidden, app button added.
@@ -58,5 +60,14 @@ const call = (page, body, args) => page.evaluate(({ body, args }) => {
       ? await page.locator('a[href*="buy.stripe.com"]').first().isVisible() : 'absent',
       '| note:', await page.locator('.pt-app-note').count());
 
+  // 6. Release builds: no app purchase offered; the Stripe top-up stays hidden.
+  const p2 = await browser.newPage();
+  await p2.addInitScript({ content: 'window.ptApp = { call: async () => ({}) };\n' + S.hideWebTopUpNoOffer });
+  await p2.goto('https://promptugal.news/account/top-up.html', { waitUntil: 'networkidle' });
+  await p2.waitForTimeout(1500);
+  log('release: stripe visible:', await p2.locator('a[href*="buy.stripe.com"]').count()
+      ? await p2.locator('a[href*="buy.stripe.com"]').first().isVisible() : 'absent',
+      '| app buttons:', await p2.locator('.pt-app-topup, .pt-app-note + button').count(),
+      '| note:', await p2.locator('.pt-app-note').textContent().catch(() => 'none'));
   await browser.close();
 })().catch(e => { console.error('FAILED', e); process.exit(1); });
