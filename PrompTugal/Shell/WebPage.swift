@@ -181,9 +181,10 @@ private struct WebTwinModifier: ViewModifier {
     let url: URL
     let title: String
     @State private var shown = false
+    @Environment(\.horizontalSizeClass) private var width
 
     func body(content: Content) -> some View {
-        content
+        let toolbarContent = content
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { shown.toggle() } label: {
@@ -192,19 +193,34 @@ private struct WebTwinModifier: ViewModifier {
                     .help("Compare with the web page this screen is built from")
                 }
             }
-            .inspector(isPresented: $shown) {
-                NavigationStack {
-                    WebPage(url: url, title: title, showsToolbar: false)
-                        .toolbar {
-                            ToolbarItem(placement: .principal) {
-                                HStack(spacing: Space.s) {
-                                    KindBadge(kind: .web(url))
-                                    Text(title).font(.subheadline.weight(.semibold))
-                                }
-                            }
-                        }
-                }
-                .inspectorColumnWidth(min: 320, ideal: 520, max: 900)
+        if width == .regular {
+            // iPad: the web page in a column beside the native screen.
+            toolbarContent.inspector(isPresented: $shown) {
+                twin.inspectorColumnWidth(min: 320, ideal: 520, max: 900)
             }
+        } else {
+            // iPhone: a sheet, so the twin's own title never reaches the screen's navigation bar.
+            toolbarContent.sheet(isPresented: $shown) {
+                twin.presentationDetents([.large, .medium])
+            }
+        }
+    }
+
+    private var twin: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                HStack(spacing: Space.s) {
+                    KindBadge(kind: .web(url))
+                    Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                    Spacer()
+                    Button("Done") { shown = false }
+                }
+                .padding(.horizontal, Space.l)
+                .padding(.vertical, Space.s)
+                .background(.bar)
+                WebPage(url: url, title: title, showsToolbar: false)
+                    .toolbar(.hidden, for: .navigationBar)
+            }
+        }
     }
 }

@@ -374,3 +374,15 @@ struct AIToolTests {
         }
     }
 }
+
+@Suite("Ask: key check")
+struct AIKeyCheckTests {
+    @Test("OpenRouter's key info reads into a summary; other shapes are nil")
+    @MainActor func parse() throws {
+        let info = try #require(AIKeyStore.KeyInfo.parse(Data(#"{"data":{"label":"Summit key","usage":1.25,"limit":null,"is_free_tier":false}}"#.utf8)))
+        #expect(info.usage == 1.25 && info.limit == nil)
+        #expect(info.summary == "The key works, used $1.25, no limit set.")
+        #expect(AIKeyStore.KeyInfo.parse(Data(#"{"error":{"message":"No auth"}}"#.utf8)) == nil)
+        #expect(AIKeyStore.KeyInfo.parse(Data("x".utf8)) == nil)
+    }
+}

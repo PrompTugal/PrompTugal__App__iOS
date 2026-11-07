@@ -170,8 +170,8 @@ struct StandupCard: View {
                         Text(date, format: .dateTime.weekday(.wide).hour().minute())
                             .font(Typo.title)
                         TimelineView(.periodic(from: .now, by: 60)) { context in
-                            Text(date > context.date ? "in " : "started ")
-                                + Text(date, format: .relative(presentation: .numeric, unitsStyle: .wide))
+                            // The relative format already says "in 1 day" or "2 hours ago".
+                            Text(date, format: .relative(presentation: .numeric, unitsStyle: .wide))
                         }
                         .font(.subheadline)
                         .foregroundStyle(Palette.muted)

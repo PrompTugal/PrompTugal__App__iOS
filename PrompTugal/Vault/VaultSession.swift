@@ -308,11 +308,9 @@ final class VaultSession {
     @discardableResult
     func append(_ data: Data, to folder: String, name: String? = nil, vaultId: String? = nil,
                 branch: String = "current", message: String? = nil) async throws -> String {
-        let stamp = ISO8601DateFormatter().string(from: Date())
-            .replacingOccurrences(of: ":", with: "").replacingOccurrences(of: "-", with: "")
-        let unique = name ?? "\(stamp)-\(deviceBranch)-\(String(UUID().uuidString.prefix(4)).lowercased()).json"
+        let unique = name ?? VaultLanes.fileName(device: deviceBranch)
         let trimmed = folder.hasSuffix("/") ? String(folder.dropLast()) : folder
-        let path = trimmed.isEmpty ? unique : trimmed + "/" + unique
+        let path = VaultLanes.path(folder: trimmed, name: unique)
         try await update(path, vaultId: vaultId, branch: branch, message: message ?? "Append to \(trimmed)") { current in
             current == nil ? data : nil                    // never overwrite: an existing name is left alone
         }
@@ -323,7 +321,7 @@ final class VaultSession {
 
     /// Where the website keeps picks in the reader vault: `__vault.save('agenda/picks', …)` writes
     /// `apps/agenda/picks.json` (promptugal.news assets/schedule/schedule.js and assets/vault/boot.js).
-    static let picksPath = "apps/agenda/picks.json"
+    static let picksPath = VaultPicks.path
 
     /// The vault's picks document (nr.schedule.v1 JSON), or nil. Team's ScheduleStore decodes and merges it.
     func loadPicks() async throws -> Data? { try await readFile(Self.picksPath) }
@@ -340,20 +338,9 @@ final class VaultSession {
         return merged
     }
 
-    /// `{"v":1,"picks":[{"id":…,"at":…}]}` union by id. `at` is kept as given (the website writes an ISO string).
+    /// Union by id, the vault's entry kept (`VaultPicks.union`, tested in the SGitVault package).
     nonisolated static func unionPicks(vault: Data?, local: Data) throws -> Data {
-        func picks(_ data: Data?) throws -> [[String: Any]] {
-            guard let data, let doc = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return [] }
-            return doc["picks"] as? [[String: Any]] ?? []
-        }
-        var out = try picks(vault)
-        var seen = Set(out.compactMap { $0["id"] as? String })
-        for pick in try picks(local) {
-            guard let id = pick["id"] as? String, !seen.contains(id) else { continue }
-            seen.insert(id)
-            out.append(pick)
-        }
-        return try JSONSerialization.data(withJSONObject: ["v": 1, "picks": out], options: [.sortedKeys])
+        try VaultPicks.union(vault: vault, local: local)
     }
 
     // MARK: Debug panel feeds

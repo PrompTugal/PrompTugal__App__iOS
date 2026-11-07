@@ -30,6 +30,8 @@ struct AppDestination: Identifiable {
     var summary: String = ""
     /// Shown on iPhone as one of the four tabs, in this order.
     var phoneTab: Int?
+    /// A short label for the iPhone tab bar, when the title is long.
+    var tabTitle: String?
     /// Only shown when debug mode is on.
     var debugOnly = false
     /// The screen has its own NavigationSplitView or NavigationStack. The shell then does not wrap it
@@ -63,7 +65,7 @@ enum Destinations {
 
     static let today: [AppDestination] = [
         AppDestination(id: "today", title: "My day", symbol: "sun.max", section: .today, kind: .native,
-                       summary: "Stand-up, what waits on me, my agents", phoneTab: 0) { AnyView(TodayView()) },
+                       summary: "Stand-up, what waits on me, my agents", phoneTab: 0, tabTitle: "Today") { AnyView(TodayView()) },
         AppDestination(id: "team.schedule", title: "My schedule", symbol: "calendar", section: .today,
                        kind: .hybrid, summary: "Picks from the website and the app, one list") { AnyView(MyDayView()) },
         AppDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", section: .today,
@@ -78,7 +80,7 @@ enum Destinations {
 
     static let team: [AppDestination] = [
         AppDestination(id: "team.people", title: "The team", symbol: "person.3", section: .team, kind: .native,
-                       summary: "Everyone's load: only you, decide, overdue", phoneTab: 1) { AnyView(TeamDashboardView()) },
+                       summary: "Everyone's load: only you, decide, overdue", phoneTab: 1, tabTitle: "Team") { AnyView(TeamDashboardView()) },
         AppDestination(id: "team.commandcentre", title: "My command centre", symbol: "rectangle.3.group",
                        section: .team, kind: .web(TeamSite.base), summary: "The team site's command centre") {
             AnyView(MyCommandCentreWeb())
@@ -101,7 +103,7 @@ enum Destinations {
 
     static let agents: [AppDestination] = [
         AppDestination(id: "agents.activity", title: "What my agents do", symbol: "cpu", section: .agents,
-                       kind: .native, summary: "Wakes, runs and reports", phoneTab: 2) { AnyView(AgentsDashboardView()) },
+                       kind: .native, summary: "Wakes, runs and reports", phoneTab: 2, tabTitle: "Agents") { AnyView(AgentsDashboardView()) },
         AppDestination(id: "agents.wakes.web", title: "Wakes (web)", symbol: "globe", section: .agents,
                        kind: .web(TeamSite.base.appendingPathComponent("wakes/")), summary: "The web original") {
             AnyView(WebPage(url: TeamSite.base.appendingPathComponent("wakes/"), title: "Wakes"))

@@ -290,7 +290,9 @@ struct FreshnessLabel: View {
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 30)) { context in
-            if let updated {
+            if let raw = updated {
+                // A time stamp in the future (a clock ahead, or sample data) reads as now.
+                let updated = min(raw, context.date)
                 let stale = context.date.timeIntervalSince(updated) > staleAfter
                 Label {
                     Text(failed ? "Offline · updated " : "Updated ")
