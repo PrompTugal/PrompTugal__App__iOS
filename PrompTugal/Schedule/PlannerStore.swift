@@ -42,6 +42,16 @@ final class PlannerStore {
                                standups: identity.current == nil ? [] : team.standups, preferences: prefs)
     }
 
+    /// Every agenda session on a day that teammates have, with who: "where is everyone".
+    func teamSessions(on day: String) -> [(event: Event, people: [String])] {
+        let going = coordination().1
+        return agenda.filter { $0.date == day }.compactMap { event in
+            guard let id = ScheduleID.fromPage(event.page), let people = going[id], !people.isEmpty else { return nil }
+            return (event, people)
+        }
+        .sorted { Event.earlier($0.event, $1.event) }
+    }
+
     /// Teammates who have a given event in their command centre, by name.
     func teammates(for eventID: String) -> [String] { coordination().1[eventID] ?? [] }
 

@@ -57,6 +57,8 @@ struct TeamHomeView: View {
 
             Section {
                 NavigationLink { MyDayView() } label: { Label("My day", systemImage: "star") }
+                NavigationLink { WhereIsEveryoneView() } label: { Label("Where is everyone", systemImage: "person.3.sequence") }
+                NavigationLink { PlannerView() } label: { Label("Plan my day", systemImage: "wand.and.stars") }
                 if let url = person?.centreURL {
                     Button { openURL(url) } label: { Label("My command centre (web)", systemImage: "rectangle.grid.2x2") }
                 }
