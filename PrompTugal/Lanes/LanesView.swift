@@ -7,6 +7,7 @@ struct LanesView: View {
     @State private var addingLane = false
     @State private var showInboxSetup = false
     @AppStorage("debug.enabled") private var debug = true
+    @Environment(\.horizontalSizeClass) private var width
 
     enum Compose: Identifiable {
         case newsroom
@@ -20,110 +21,25 @@ struct LanesView: View {
     }
 
     var body: some View {
-        List {
-            Section {
-                Button {
-                    composing = .newsroom
-                } label: {
-                    Label("Note to the newsroom", systemImage: "newspaper")
+        Group {
+            if width == .regular {
+                // iPad: what I send on the left, what I read on the right.
+                HStack(spacing: 0) {
+                    List { sendSections }
+                        .listStyle(.insetGrouped)
+                        .frame(width: 400)
+                    Divider()
+                    List { readSections }
+                        .listStyle(.insetGrouped)
                 }
-            } header: {
-                Text("Newsroom")
-            } footer: {
-                Text(CollabHooks.vault == nil
-                     ? "Notes go to your newsroom notes lane, a vault of your own the newsroom reads with its read key. This needs the vault on this build; until then, add the newsroom's append lane below if it gives you one."
-                     : "Notes go to your newsroom notes lane: a vault of your own that the newsroom reads with its read key. Nothing comes back through it.")
-            }
-
-            TeamNotesSection()
-
-            Section {
-                if store.lanes.isEmpty {
-                    Text("No lanes yet. Add a teammate's or the newsroom's lane description (JSON, or a link to it).")
-                        .foregroundStyle(.secondary)
+            } else {
+                List {
+                    sendSections
+                    readSections
                 }
-                ForEach(store.lanes) { lane in
-                    Button {
-                        composing = .lane(lane)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(lane.name).foregroundStyle(.primary)
-                            Text("vault \(lane.vault) · key \(lane.fingerprint)").font(.caption.monospaced()).foregroundStyle(.secondary)
-                        }
-                    }
-                    .swipeActions { Button("Remove", role: .destructive) { store.remove(lane) } }
-                }
-                Button("Add a lane", systemImage: "plus") { addingLane = true }
-            } header: {
-                Text("Send to a lane")
-            } footer: {
-                Text("A lane is write-only: what you send is encrypted on this phone to the recipient's key (RSA-OAEP and AES-256-GCM, as sgit), and the server answers only \"ok\".")
-            }
-
-            Section {
-                if let lane = store.myLane {
-                    LabeledContent("Vault", value: lane.vault)
-                    LabeledContent("Key", value: lane.fingerprint).font(.caption.monospaced())
-                    ShareLink(item: (try? lane.descriptor()).map { String(decoding: $0, as: UTF8.self) } ?? "",
-                              subject: Text("My PrompTugal lane"), message: Text("Paste this in PrompTugal → Messages → Add a lane.")) {
-                        Label("Share my lane description", systemImage: "square.and.arrow.up")
-                    }
-                }
-                if let site = store.websiteInbox {
-                    LabeledContent("Account inbox", value: "vault \(site.vault)")
-                } else if CollabHooks.vault?.isOpen ?? false {
-                    Button("Open my account's inbox", systemImage: "tray") { Task { await store.openWebsiteInbox() } }
-                }
-                if store.myLane != nil || store.websiteInbox != nil {
-                    Button(store.working ? "Reading…" : "Check inbox", systemImage: "tray.and.arrow.down") {
-                        Task { await store.refreshInbox() }
-                    }
-                    .disabled(store.working)
-                }
-                if let error = store.inboxError { Text(error).font(.footnote).foregroundStyle(.orange) }
-                ForEach(store.inbox) { item in
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(item.subject).font(.headline)
-                        Text(item.from).font(.caption).foregroundStyle(.secondary)
-                        Text(item.body).font(.subheadline).lineLimit(6).textSelection(.enabled)
-                        if let at = item.sentAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.caption2).foregroundStyle(.secondary) }
-                    }
-                    .accessibilityElement(children: .combine)
-                }
-                if !store.inbox.isEmpty {
-                    Button("Mark all as read") { Task { await store.markRead(store.inbox.map(\.id)) } }
-                }
-                Button(store.myLane == nil ? "Set up an inbox on this device" : "Inbox settings", systemImage: "gearshape") { showInboxSetup = true }
-            } header: {
-                Text("My inbox")
-            }
-
-            if !store.sent.isEmpty {
-                Section("Sent from this device") {
-                    ForEach(store.sent.prefix(20)) { item in
-                        VStack(alignment: .leading) {
-                            Text(item.subject).lineLimit(1)
-                            Text("\(item.lane) · \(item.at.formatted(date: .omitted, time: .shortened)) · \(item.bytes) B")
-                                .font(.caption).foregroundStyle(.secondary)
-                        }
-                    }
-                }
-            }
-
-            if debug {
-                Section("Lanes log") {
-                    if store.log.events.isEmpty { Text("Nothing yet.").foregroundStyle(.secondary) }
-                    ForEach(store.log.events.prefix(30)) { event in
-                        LaneEventRow(event: event)
-                    }
-                }
-            }
-
-            if let message = store.message {
-                Section { Text(message).font(.footnote) }
+                .listStyle(.insetGrouped)
             }
         }
-        .listStyle(.insetGrouped)
         .navigationTitle("Messages")
         .sheet(item: $composing) { target in
             NavigationStack { LaneComposeView(store: store, target: target) }
@@ -135,6 +51,111 @@ struct LanesView: View {
         .sheet(isPresented: $showInboxSetup) {
             NavigationStack { InboxSetupView(store: store) }.presentationDetents([.medium, .large]).presentationSizing(.form)
         }
+    }
+
+    @ViewBuilder private var sendSections: some View {
+        Section {
+            Button {
+                composing = .newsroom
+            } label: {
+                Label("Note to the newsroom", systemImage: "newspaper")
+            }
+        } header: {
+            Text("Newsroom")
+        } footer: {
+            Text(CollabHooks.vault == nil
+                 ? "Notes go to your newsroom notes lane, a vault of your own the newsroom reads with its read key. This needs the vault on this build; until then, add the newsroom's append lane below if it gives you one."
+                 : "Notes go to your newsroom notes lane: a vault of your own that the newsroom reads with its read key. Nothing comes back through it.")
+        }
+        Section {
+            if store.lanes.isEmpty {
+                Text("No lanes yet. Add a teammate's or the newsroom's lane description (JSON, or a link to it).")
+                    .foregroundStyle(.secondary)
+            }
+            ForEach(store.lanes) { lane in
+                Button {
+                    composing = .lane(lane)
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(lane.name).foregroundStyle(.primary)
+                        Text("vault \(lane.vault) · key \(lane.fingerprint)").font(.caption.monospaced()).foregroundStyle(.secondary)
+                    }
+                }
+                .swipeActions { Button("Remove", role: .destructive) { store.remove(lane) } }
+            }
+            Button("Add a lane", systemImage: "plus") { addingLane = true }
+        } header: {
+            Text("Send to a lane")
+        } footer: {
+            Text("A lane is write-only: what you send is encrypted on this phone to the recipient's key (RSA-OAEP and AES-256-GCM, as sgit), and the server answers only \"ok\".")
+        }
+
+        if let message = store.message {
+            Section { Text(message).font(.footnote) }
+        }
+    }
+
+    @ViewBuilder private var readSections: some View {
+        TeamNotesSection()
+        Section {
+            if let lane = store.myLane {
+                LabeledContent("Vault", value: lane.vault)
+                LabeledContent("Key", value: lane.fingerprint).font(.caption.monospaced())
+                ShareLink(item: (try? lane.descriptor()).map { String(decoding: $0, as: UTF8.self) } ?? "",
+                          subject: Text("My PrompTugal lane"), message: Text("Paste this in PrompTugal → Messages → Add a lane.")) {
+                    Label("Share my lane description", systemImage: "square.and.arrow.up")
+                }
+            }
+            if let site = store.websiteInbox {
+                LabeledContent("Account inbox", value: "vault \(site.vault)")
+            } else if CollabHooks.vault?.isOpen ?? false {
+                Button("Open my account's inbox", systemImage: "tray") { Task { await store.openWebsiteInbox() } }
+            }
+            if store.myLane != nil || store.websiteInbox != nil {
+                Button(store.working ? "Reading…" : "Check inbox", systemImage: "tray.and.arrow.down") {
+                    Task { await store.refreshInbox() }
+                }
+                .disabled(store.working)
+            }
+            if let error = store.inboxError { Text(error).font(.footnote).foregroundStyle(.orange) }
+            ForEach(store.inbox) { item in
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.subject).font(.headline)
+                    Text(item.from).font(.caption).foregroundStyle(.secondary)
+                    Text(item.body).font(.subheadline).lineLimit(6).textSelection(.enabled)
+                    if let at = item.sentAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.caption2).foregroundStyle(.secondary) }
+                }
+                .accessibilityElement(children: .combine)
+            }
+            if !store.inbox.isEmpty {
+                Button("Mark all as read") { Task { await store.markRead(store.inbox.map(\.id)) } }
+            }
+            Button(store.myLane == nil ? "Set up an inbox on this device" : "Inbox settings", systemImage: "gearshape") { showInboxSetup = true }
+        } header: {
+            Text("My inbox")
+        }
+
+        if !store.sent.isEmpty {
+            Section("Sent from this device") {
+                ForEach(store.sent.prefix(20)) { item in
+                    VStack(alignment: .leading) {
+                        Text(item.subject).lineLimit(1)
+                        Text("\(item.lane) · \(item.at.formatted(date: .omitted, time: .shortened)) · \(item.bytes) B")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+
+        if debug {
+            Section("Lanes log") {
+                if store.log.events.isEmpty { Text("Nothing yet.").foregroundStyle(.secondary) }
+                ForEach(store.log.events.prefix(30)) { event in
+                    LaneEventRow(event: event)
+                }
+            }
+        }
+
     }
 }
 
