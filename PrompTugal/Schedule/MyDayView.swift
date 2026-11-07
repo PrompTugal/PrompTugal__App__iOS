@@ -8,6 +8,7 @@ struct MyDayView: View {
     @Environment(ReminderScheduler.self) private var reminders
     @Environment(PlannerStore.self) private var planner
     @Environment(AppBridge.self) private var bridge
+    @Environment(ScheduleVaultLink.self) private var vaultLink
     @Environment(\.openURL) private var openURL
     @State private var calendarMessage: String?
     @State private var timelineDay = DayPlanner.lisbonDay(.now)
@@ -103,6 +104,28 @@ struct MyDayView: View {
                 ForEach(days, id: \.0) { day, rows in
                     Section(day == "" ? "No time yet" : Lisbon.dayLabel(day)) {
                         ForEach(rows) { row in rowView(row, now: context.date) }
+                    }
+                }
+                if vaultLink.hasVault {
+                    Section {
+                        Button {
+                            Task { await vaultLink.save() }
+                        } label: {
+                            Label("Save my day to the vault", systemImage: "lock.doc")
+                        }
+                        .disabled(vaultLink.state == .working || !vaultLink.canSave)
+                        switch vaultLink.state {
+                        case .done(let message): Text(message).font(.footnote).foregroundStyle(.secondary)
+                        case .failed(let message): Text(message).font(.footnote).foregroundStyle(.orange)
+                        case .working: ProgressView()
+                        default: EmptyView()
+                        }
+                    } header: {
+                        Text("Your vault")
+                    } footer: {
+                        Text(vaultLink.canSave
+                             ? "Picks are read from your vault when it opens. Saving asks for Face ID and puts them where the website reads them."
+                             : "Picks are read from your vault. To save, open it with its vault key and set an access token.")
                     }
                 }
                 Section {

@@ -20,6 +20,7 @@ final class TeamFeatures {
     let bridgeLog: BridgeLog
     let bridge: AppBridge
     let planner: PlannerStore
+    let vaultLink: ScheduleVaultLink
 
     private var started = false
     private var agenda: [Event] = []
@@ -35,6 +36,7 @@ final class TeamFeatures {
         bridgeLog = BridgeLog()
         bridge = AppBridge(log: bridgeLog, schedule: schedule, meter: meter, identity: identity, reminders: reminders)
         planner = PlannerStore(schedule: schedule, team: team, identity: identity)
+        vaultLink = ScheduleVaultLink(schedule: schedule, log: bridgeLog)
     }
 
     /// Starts the StoreKit listener and the reminders, and refreshes the team data in the background.
@@ -43,6 +45,7 @@ final class TeamFeatures {
         started = true
         credits.start()
         reminders.start()
+        vaultLink.start()
         observers.append(NotificationCenter.default.addObserver(forName: .scheduleDidChange, object: schedule,
                                                                 queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.publishNowNext() }
@@ -59,6 +62,7 @@ final class TeamFeatures {
     /// identifier `news.promptugal.reader.refresh`, and calls this).
     func refreshTeam() async {
         await team.refresh(person: identity.current?.id)
+        await vaultLink.pull()
         updateBadge()
         await reminders.reschedule()
     }
@@ -111,6 +115,7 @@ private struct TeamFeaturesModifier: ViewModifier {
             .environment(features.bridgeLog)
             .environment(features.bridge)
             .environment(features.planner)
+            .environment(features.vaultLink)
             .sheet(isPresented: $bridge.topUpRequested) {
                 NavigationStack { ReadingCreditView() }
                     .environment(features.meter)
