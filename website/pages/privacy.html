@@ -26,7 +26,7 @@ order: 7
       <dt>Public feeds</dt>
       <dd>The agenda, the news and the newsroom’s status come from <code>promptugal.news</code>; the team’s dashboards come from the team’s site, <code>web-summit.sgit.ai</code>. These are reads of public files. The app sends nothing about you with them.</dd>
       <dt>Ask (AI chat)</dt>
-      <dd>When you use Ask, your question and the context you choose (for example today’s agenda, your picks or your team’s status) are sent with your own key to <code>openrouter.ai</code>, which passes them to the AI model provider you picked. The app asks for your consent before the first message is sent, and you can switch each kind of context off. Nothing is sent to OpenRouter until you send a message.</dd>
+      <dd>When you use Ask, your question, the conversation so far and the kinds of context you switch on are sent with your own key to <code>openrouter.ai</code>, which passes them to the maker of the AI model you chose. Before the first message, Ask shows what it sends and to whom, and sends nothing until you tap <strong>Allow</strong>. Each kind of context (the public agenda, your picks, your team’s status, the current page, your day plan, your agents) has its own switch; only the public agenda is on by default. You can withdraw permission in Ask → Key and settings.</dd>
       <dt>Messages and notes</dt>
       <dd>Messages to teammates and notes to the newsroom are encrypted on your device and sent to an append-only lane on <code>dev.send.sgraph.ai</code> (or the server named in the lane’s address). The server stores only ciphertext. Only the holder of the lane’s private key can read them.</dd>
       <dt>Your vault</dt>
