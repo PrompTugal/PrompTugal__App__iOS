@@ -168,3 +168,38 @@ struct SplitViewLayoutTests {
         #expect(GraphLayout.panelWidth(width: 700) == 266)
     }
 }
+
+@MainActor
+@Suite("Team notes: reading credit, checkout, reminder links")
+struct TeamNotesTests {
+    @Test("Reading credit is in the shell only when it is available (R5)")
+    func readingCredit() {
+        #expect((Destinations.destination("team.store") != nil) == ReadingCredit.isAvailable)
+    }
+
+    @Test("WebPage refuses checkout pages, including new Stripe subdomains (3.1.1)")
+    func checkout() throws {
+        #expect(WebPageModel.refuses(try #require(URL(string: "https://buy.stripe.com/abc"))))
+        #expect(WebPageModel.refuses(try #require(URL(string: "https://checkout.stripe.com/pay"))))
+        #expect(!WebPageModel.refuses(try #require(URL(string: "https://promptugal.news/agenda/"))))
+    }
+
+    @Test("A reminder's session link opens that session; briefing links only on our own sites (Q6)")
+    func links() throws {
+        let session = try #require(URL(string: "promptugal://open/team.schedule?session=ai-your-new-news-editor"))
+        #expect(ShellLink.page(in: session)?.url.absoluteString
+                == "https://promptugal.news/events/ai-your-new-news-editor/index.html")
+
+        let briefing = try #require(URL(string: "promptugal://open/team.schedule?url=https://web-summit.sgit.ai/meetings/x/"))
+        #expect(ShellLink.page(in: briefing)?.url.host() == "web-summit.sgit.ai")
+
+        let elsewhere = try #require(URL(string: "promptugal://open/team.schedule?url=https://example.com/"))
+        #expect(ShellLink.page(in: elsewhere) == nil)
+
+        let odd = try #require(URL(string: "promptugal://open/team.schedule?session=../../x"))
+        #expect(ShellLink.page(in: odd) == nil)
+
+        let plain = try #require(URL(string: "promptugal://open/team.schedule"))
+        #expect(ShellLink.page(in: plain) == nil)
+    }
+}

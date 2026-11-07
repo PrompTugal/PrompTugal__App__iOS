@@ -67,7 +67,7 @@ private struct WebViewSurface: UIViewRepresentable {
 }
 
 @MainActor @Observable
-final class WebPageModel: NSObject, WKNavigationDelegate {
+final class WebPageModel: NSObject, WKNavigationDelegate, WKUIDelegate {
     let webView: WKWebView
     let homeURL: URL
     private(set) var isLoading = false
@@ -88,6 +88,7 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
         super.init()
         TeamFeatures.shared.bridge.attach(webView)
         webView.navigationDelegate = self
+        webView.uiDelegate = self
         webView.allowsBackForwardNavigationGestures = true
         #if DEBUG
         webView.isInspectable = true   // Safari Web Inspector, for development builds only
@@ -130,11 +131,26 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction,
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        if let url = action.request.url, TeamFeatures.shared.bridge.handlesNavigation(to: url) {
+        // Every navigation, in every frame: the bridge's own routes and checkout pages (3.1.1) never load here.
+        if let url = action.request.url, Self.refuses(url) {
             decisionHandler(.cancel)
             return
         }
         decisionHandler(.allow)
+    }
+
+    /// Links that ask for a new window (target=_blank, window.open) load in this page, with the same checks.
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
+                 for action: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let url = action.request.url, !Self.refuses(url) {
+            webView.load(action.request)
+        }
+        return nil
+    }
+
+    /// True for a URL this page must not load: a checkout (CheckoutPolicy) or a page the bridge handles natively.
+    static func refuses(_ url: URL) -> Bool {
+        CheckoutPolicy.isBlocked(url) || TeamFeatures.shared.bridge.handlesNavigation(to: url)
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {

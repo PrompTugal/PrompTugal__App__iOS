@@ -68,7 +68,7 @@ struct MyCommandCentreWeb: View {
                 Text("Choose yourself in Settings to open your command centre.")
             }
         } else {
-            WebPage(url: TeamSite.base.appendingPathComponent("people/\(me)/app/"), title: "My command centre")
+            WebPage(url: TeamEndpoints.base.appendingPathComponent("people/\(me)/app/"), title: "My command centre")
         }
     }
 }

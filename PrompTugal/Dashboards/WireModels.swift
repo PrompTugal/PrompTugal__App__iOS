@@ -123,8 +123,8 @@ extension Wire {
             return parts.compactMap(\.first).map(String.init).joined().uppercased()
         }
         var standupDate: Date? { WireDate.parse(standupAt) }
-        var briefingURL: URL? { briefing.flatMap { URL(string: $0, relativeTo: TeamSite.base)?.absoluteURL } }
-        var commandCentreURL: URL { TeamSite.base.appendingPathComponent("people/\(id)/app/") }
+        var briefingURL: URL? { briefing.flatMap { URL(string: $0, relativeTo: TeamEndpoints.base)?.absoluteURL } }
+        var commandCentreURL: URL { TeamEndpoints.base.appendingPathComponent("people/\(id)/app/") }
         /// The badge the brief proposes: only you + decide + overdue.
         var attention: Int { (onlyYou ?? 0) + (decide ?? 0) + (overdue ?? 0) }
         var activeAgents: Int { (agents ?? []).filter { $0.status == "active" }.count }
@@ -144,7 +144,7 @@ extension Wire {
         let what: String?
         let issue: String?
         let source: String?
-        var sourceURL: URL? { source.flatMap { URL(string: $0, relativeTo: TeamSite.base)?.absoluteURL } }
+        var sourceURL: URL? { source.flatMap { URL(string: $0, relativeTo: TeamEndpoints.base)?.absoluteURL } }
     }
 
     struct PersonAgent: Decodable, Hashable, Sendable {
@@ -526,7 +526,3 @@ extension Wire {
     }
 }
 
-/// The team site's base address. Data only; product copy says PrompTugal.
-enum TeamSite {
-    static let base = URL(string: "https://web-summit.sgit.ai/")!
-}

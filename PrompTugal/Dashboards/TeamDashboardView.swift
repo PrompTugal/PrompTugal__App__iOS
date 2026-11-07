@@ -59,7 +59,7 @@ struct TeamDashboardView: View {
         .navigationTitle("Team")
         .refreshable { await data.refreshTeam(force: true) }
         .task { await data.refreshTeam() }
-        .webTwin(TeamSite.base.appendingPathComponent("team/"), title: "Team")
+        .webTwin(TeamEndpoints.base.appendingPathComponent("team/"), title: "Team")
     }
 
     private var sortPicker: some View {

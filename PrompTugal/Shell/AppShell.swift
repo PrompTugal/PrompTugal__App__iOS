@@ -15,6 +15,8 @@ struct AppShell: View {
     @SceneStorage("shell.tab") private var tab: String = "today"
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     @State private var columns: NavigationSplitViewVisibility = .all
+    /// A page opened by a link (a reminder's session or briefing), shown over the shell.
+    @State private var linkedPage: LinkedPage?
 
     var body: some View {
         Group {
@@ -44,6 +46,14 @@ struct AppShell: View {
             if scenePhase != .active { PrivacyCover() }
         }
         .onOpenURL { url in route(url) }
+        .sheet(item: $linkedPage) { page in
+            NavigationStack {
+                WebPage(url: page.url, title: page.title)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) { Button("Done") { linkedPage = nil } }
+                    }
+            }
+        }
         .onAppear {
             if let id = LaunchOptions.destination, let destination = Destinations.openable(id, debug: debug) {
                 selection = id
@@ -90,12 +100,41 @@ struct AppShell: View {
         guard let destination = Destinations.openable(id, debug: debug) else { return }
         selection = id
         tab = destination.phoneTab != nil ? id : "more"
+        // A reminder names the session (?session=<slug>) or the stand-up briefing (?url=<page>): open it.
+        linkedPage = ShellLink.page(in: url)
     }
 }
 
 extension AppShell {
     private func leaveSampleMode() {
         SampleMode.leave()
+    }
+}
+
+/// A page a link asks to open over the shell.
+struct LinkedPage: Identifiable, Equatable {
+    let url: URL
+    let title: String
+    var id: URL { url }
+}
+
+/// Reads the page out of a promptugal://open/<id> link: `session=<event slug>` becomes that event's
+/// page on promptugal.news; `url=<https page>` is opened only on our own two sites.
+enum ShellLink {
+    static let allowedHosts: Set<String> = ["promptugal.news", "web-summit.sgit.ai"]
+
+    static func page(in link: URL) -> LinkedPage? {
+        let items = URLComponents(url: link, resolvingAgainstBaseURL: false)?.queryItems ?? []
+        if let slug = items.first(where: { $0.name == "session" })?.value,
+           !slug.isEmpty, slug.range(of: #"^[a-z0-9][a-z0-9-]*$"#, options: .regularExpression) != nil {
+            return LinkedPage(url: FeedClient.site.appendingPathComponent("events/\(slug)/index.html"), title: "Session")
+        }
+        if let text = items.first(where: { $0.name == "url" })?.value, let url = URL(string: text),
+           url.scheme == "https", let host = url.host()?.lowercased(), allowedHosts.contains(host),
+           !CheckoutPolicy.isBlocked(url) {
+            return LinkedPage(url: url, title: "Briefing")
+        }
+        return nil
     }
 }
 

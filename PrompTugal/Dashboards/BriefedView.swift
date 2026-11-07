@@ -53,9 +53,9 @@ struct BriefedView: View {
                     }
                 }
                 TitledCard("Briefs on the web", kicker: "Web twins") {
-                    WebLinkRow(title: "The pulse, summarised", url: TeamSite.base.appendingPathComponent("pulse-summary/"))
-                    WebLinkRow(title: "The board's health", url: TeamSite.base.appendingPathComponent("board-health/"))
-                    WebLinkRow(title: "Reports every two hours", url: TeamSite.base.appendingPathComponent("reports/"))
+                    WebLinkRow(title: "The pulse, summarised", url: TeamEndpoints.base.appendingPathComponent("pulse-summary/"))
+                    WebLinkRow(title: "The board's health", url: TeamEndpoints.base.appendingPathComponent("board-health/"))
+                    WebLinkRow(title: "Reports every two hours", url: TeamEndpoints.base.appendingPathComponent("reports/"))
                     WebLinkRow(title: "Newsroom decisions", url: FeedClient.site.appendingPathComponent("newsroom/decisions/"))
                 }
             }
@@ -63,7 +63,7 @@ struct BriefedView: View {
         .navigationTitle("Briefed")
         .refreshable { await reload(force: true) }
         .task { await reload(force: false) }
-        .webTwin(person?.briefingURL ?? TeamSite.base.appendingPathComponent("meetings/"), title: "Briefing")
+        .webTwin(person?.briefingURL ?? TeamEndpoints.base.appendingPathComponent("meetings/"), title: "Briefing")
     }
 
     private func reload(force: Bool) async {

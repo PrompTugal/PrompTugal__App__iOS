@@ -71,7 +71,7 @@ struct CommandCentreView: View {
         .navigationTitle("Command centre")
         .refreshable { await feed.load(force: true) }
         .task { await feed.load() }
-        .webTwin(TeamSite.base.appendingPathComponent("people/\(personID)/app/"), title: "Command centre")
+        .webTwin(TeamEndpoints.base.appendingPathComponent("people/\(personID)/app/"), title: "Command centre")
     }
 
     private func statusChart(_ issues: [Wire.CCIssue]) -> some View {
