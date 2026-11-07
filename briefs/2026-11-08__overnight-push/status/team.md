@@ -1,8 +1,8 @@
 # Status · Team features
 
-> One schedule on the website's format, synced with the web view and the vault; reminders; team data; the day planner; the native top-up. Merged into dev at 4c78207. Waiting on the web-view and shell hooks; unit tests not yet green on CI.
+> One schedule on the website's format, synced with the web view and the vault; reminders; team data; the day planner; the native top-up. All on dev and wired into the app; dev is green with every test on iPhone and iPad (run 104).
 
-Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 04:15 UTC
+Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 05:20 UTC
 
 ## Done
 
@@ -19,8 +19,9 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 04:15 
 
 ## CI
 
-- App build: green (run 14 and later).
-- Unit tests: run 39 did not compile one test expression (the type checker timed out). Fixed in 396968c, then superseded by later pushes. The current run has not reported yet.
+- **Green on dev**: run 104 (dev 27881b0, which contains all of night/team up to 500b5ad): app build, SGitVault tests, and the unit tests on iPhone and on iPad all pass.
+- Fixed tonight: one test expression the type checker timed out on (396968c); the schedule's JSON key order, which was not stable across devices and broke two exact-text tests on dev (500b5ad, now written by hand as the website's `JSON.stringify` writes it). Before that fix, 63 of 65 tests passed.
+- Platform's wiring is on dev: the bridge on `WebsiteBrowser` and design's `WebPage`, `ReaderStore` → schedule, the widget, and the team refresh in the background. `.teamFeatures()` is applied once (the modifier now ignores a second copy).
 
 ## What I learned from the websites
 
@@ -49,9 +50,8 @@ Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson`, `CommandCent
 
 ## Next
 
-1. Green unit tests on CI.
-2. Check the platform and design hooks once they are on dev, and test the bridge end to end.
-3. Then: Live Activity data for the next item, and a Settings row for reminders.
+1. Register the entry views that design has not yet (Plan my day, Where is everyone, Reminders in Settings, Bridge in Debug).
+2. Live Activity data for the next item (platform owns the target).
 
 ## Blocked
 
@@ -59,12 +59,12 @@ Nothing in my folders.
 
 ## Needs from others
 
-- **Platform** (in progress, per the conductor):
+- **Platform** (done on dev, kept here for the record):
   1. `WebsiteBrowser.init`: replace `configuration.websiteDataStore = .default()` with `TeamFeatures.shared.bridge.configure(configuration, for: homeURL)`, and after creating the web view call `TeamFeatures.shared.bridge.attach(webView)`.
   2. Add `webView(_:didFinish:)` calling `TeamFeatures.shared.bridge.pageDidFinish(webView)`. In `decidePolicyFor`, before allowing: `if let url = action.request.url, TeamFeatures.shared.bridge.handlesNavigation(to: url) { decisionHandler(.cancel); return }`. Design's `WebPage` needs the same three lines.
   3. After each agenda refresh in `ReaderStore`: `TeamFeatures.shared.agendaDidLoad(events)`. Route `toggleSaved`, `isSaved` and `saved` to `TeamFeatures.shared.schedule` (`toggle(event)`, `isPicked(event)`, `picks.compactMap(\.event)`).
   4. Info: `NSCalendarsWriteOnlyAccessUsageDescription`; Time Sensitive Notifications capability; register a `BGAppRefreshTask` that calls `TeamFeatures.shared.refreshTeam()`.
-- **Design**: `.teamFeatures()` on `AppShell()` (not on dev yet: the root is still `WebsiteView`), and the destinations above.
+- **Design**: the destinations above that are still placeholders.
 
 ## Apple setup for the native top-up
 
