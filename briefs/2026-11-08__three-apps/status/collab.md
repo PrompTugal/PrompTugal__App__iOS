@@ -13,6 +13,9 @@
 ## Design's map (7 Nov, 23:48 UTC)
 Two `TeamFeatures.shared` uses must be covered: `AIContext.swift:320` (`teamData`, now `TeamAskProvider.part(for:)`) and `AskView.swift:196` (`AskMentions` schedule, now `isPicked` / `togglePick` on the provider). Added to the protocol above.
 
+## Correction (7 Nov, 23:48 UTC)
+PublicAskProvider uses `ScheduleStore` for `myPickIds`, `isPicked` and `togglePick`, not the reader's old saved sessions. Both providers share the same pick list. They differ only in the team parts.
+
 ## Done
 - Read the three-apps README, contracts and the overnight rules.
 - Mapped what `AI/` (9 files) and `Lanes/` (9 files) use from outside. About 4,000 lines.
@@ -59,14 +62,14 @@ Principle: PTAsk and PTLanes never name `TeamFeatures`, `CoordinationStore`, `Te
     func agenda() async -> [Event]
     func myPickIds() -> [String]
     func isPicked(_ event: Event) -> Bool                 // AskMentions (AskView.swift:196) used TeamFeatures.shared.schedule
-    func togglePick(_ event: Event)                       // PublicAskProvider uses the reader's saved sessions; TeamAskProvider uses ScheduleStore
+    func togglePick(_ event: Event)                       // both providers use ScheduleStore (PTAgenda), one pick list synced with promptugal.news
     func part(for kind: AIContextKind, now: Date) async -> AIContextPart?   // .team .agents .teammates .plan; public app returns nil
     func runTool(_ name: String, args: [String: String], now: Date) async -> (text: String, summary: String)?  // team_status, my_agents, where_is_everyone
     var extraStarters: [AIStarter] { get }                // "My agents" only in Team
 }
 public enum AskEnvironment { @MainActor public static var provider: any AskContextProvider = PublicAskProvider() }
 ```
-- `PublicAskProvider` (in PTAsk): agenda from the reader cache then `FeedClient`, picks from the reader's saved sessions, no team, no person name. It is the default, so the public app works with no wiring.
+- `PublicAskProvider` (in PTAsk): agenda from the reader cache then `FeedClient`, picks through `ScheduleStore` (PTAgenda, the one synced schedule), no team, no person name. It is the default, so the public app works with no wiring.
 - `AIContextKind` enum is unchanged (move, don't rewrite). The consent sheet, toggles, tool list and gatherer filter by `supportedKinds`. A kind the app does not support is not shown, not gathered, and its tools are not offered.
 - `AITools.definitions(for:)` keeps the 6 definitions; `team_status`, `my_agents`, `where_is_everyone` are dropped when their kind is unsupported (same filter that exists today).
 - Consent flow, `AIKeyStore`, OpenRouter client and the Keychain code move untouched. Consent tests stay as they are.
