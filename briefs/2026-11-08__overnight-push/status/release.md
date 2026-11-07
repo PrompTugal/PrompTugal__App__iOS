@@ -2,7 +2,7 @@
 
 > Merged into dev. `iOS release` is green on dev (run 11): unsigned .ipa, simulator app and archive for every dev push, with the platform project (iOS 18, widgets, intents). TestFlight waits only for Dinis's secrets ([release-setup](../release-setup.md)). Priority: internal TestFlight.
 
-Branch: `night/release` · Last update: 03:52 UTC
+Branch: `night/release` · Last update: 04:10 UTC
 
 ## Done
 
@@ -33,9 +33,11 @@ Branch: `night/release` · Last update: 03:52 UTC
 - Push trigger is now `dev` only. Night branches are built by `ios.yml`; release workflow changes are tested by a manual run. Saves one macOS run per merge.
 - Checked dev's targets and entitlements against the checklist: app (Associated Domains, Time Sensitive Notifications, App Groups), widgets and intents (App Groups). No drift.
 
+- **04:08** Run 15 (manual, `night/release` at `93339e6`, trigger change) green; no push run started for `night/release`. Run 16 on dev (`96012e5`, after the vault merge) green. Merged dev again; targets and entitlements unchanged (app, widgets, intents).
+
 ## In progress
 
-- Manual run on `night/release` to test the trigger change.
+- Nothing running. Waiting for the trigger change to be merged to dev; then watching dev runs and the checklist as targets change.
 
 ## Next
 
