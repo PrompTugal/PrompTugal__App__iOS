@@ -1,8 +1,8 @@
 # Status · Team features
 
-> One schedule on the website's format, synced with the web view and the vault; reminders; team data; the day planner; the native top-up. All on dev and wired into the app; dev is green with every test on iPhone and iPad (run 104).
+> Done and on dev, with unit tests green on iPhone and iPad: one schedule on the website's format, synced with the web view and the vault; reminders before picks and stand-ups; team data and identity; the day planner and "next 3 hours"; the meter with a native StoreKit top-up. The bridge is checked against the live website.
 
-Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 07:20 UTC
+Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 07:50 UTC
 
 ## Done
 
@@ -19,12 +19,12 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 07:20 
 
 ## CI
 
-- **Green on dev**: run 104 (dev 27881b0, which contains all of night/team up to 500b5ad): app build, SGitVault tests, and the unit tests on iPhone and on iPad all pass.
-- Fixed tonight: one test expression the type checker timed out on (396968c); the schedule's JSON key order, which was not stable across devices and broke two exact-text tests on dev (500b5ad, now written by hand as the website's `JSON.stringify` writes it). Before that fix, 63 of 65 tests passed.
-- Dev run 128 (0b0fe88, with the reminders change 17efc3d): app build and iPhone unit tests green; its iPad job was replaced by a newer run.
-- **Bridge checked against the live website** (`Tools/bridge-e2e/`, Chromium): the app's schedule write repaints the website's own "Add to my day" button and appears on /my-day/; a toggle on the website is read back; the meter credit goes £4.99 → £9.99 once and the same reference is refused; the Stripe top-up is hidden and "Top up in the app" shows; `window.ptApp.call` round-trips and refusals reject.
-- Since run 104, not yet run by CI (runners saturated): reminders ask once at the first pick or identity and refill on foreground; reading credit's Done only in the sheet and an "Open PrompTugal.news" button (b5955d2, on dev); the planner caches and `NextHoursCard` (e97868a, night/team).
-- Platform's wiring is on dev: the bridge on `WebsiteBrowser` and design's `WebPage`, `ReaderStore` → schedule, the widget, and the team refresh in the background. `.teamFeatures()` is applied once (the modifier now ignores a second copy).
+- **Green on dev, everything of mine included** (b5955d2 and e97868a are the last code commits):
+  - iPhone unit tests: run 150 (dev 991cbfa), passed.
+  - iPad unit tests: run 154 (dev d33acfe), passed.
+  - App build and SGitVault tests: run 104 and run 128, passed; the test jobs above also compile the app.
+- Earlier failures, fixed: one test expression the type checker timed out on (396968c); the schedule's JSON key order, not stable across devices (500b5ad, now written by hand as the website's `JSON.stringify` writes it).
+- **Bridge against the live website** (`Tools/bridge-e2e/`, Chromium, rerun 07:47 UTC): the app's schedule write repaints the website's own "Add to my day" button and appears on /my-day/; a toggle on the website is read back; the meter credit goes £4.99 → £9.99 once and the same reference is refused; the Stripe top-up is hidden and "Top up in the app" shows; `window.ptApp.call` round-trips and refusals reject. Not covered there: WebKit's content worlds and the native origin check (read in code, not run).
 
 ## What I learned from the websites
 
@@ -51,11 +51,12 @@ All need `.teamFeatures()` once on the root view: it injects every store, starts
 
 Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson`, `CommandCentre` (`Issue`, `Decision`, `Agent`, `Activity`, `Session`, `Workstream`, `Member`), `TeamStandup`, `AgentWakes`, `TeamReport`, `PulseEntry`, `SessionLogEntry`, held by `TeamStore`. Schedule: `ScheduleStore`, `SchedulePick`, `ScheduleDocument`. URLs: `TeamEndpoints`.
 
-## Next
+## Next (after the push)
 
-1. CI green on the commits above.
-2. Summit polish: reminder text, planner on iPhone, top-up states.
-3. Live Activity data for the next item (platform owns the target).
+1. A test on a real iPhone at the summit: pick on promptugal.news in the app, see it in My day, get the 10-minute reminder.
+2. Removals across devices and the website (a "removed" list in `agenda/picks`): needs the website to agree; on the conductor's list for Dinis.
+3. Live Activity for the next item (platform owns the target; `NextHoursCard` has the data shape).
+4. Verify a team identity from the team vault (`TeamIdentityStore.verify(by:person:)` is ready; the vault session calls it when a team vault names its person).
 
 ## Recently
 
@@ -66,16 +67,15 @@ Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson`, `CommandCent
 
 ## Blocked
 
-Nothing in my folders.
+Nothing.
 
 ## Needs from others
 
-- **Platform** (done on dev, kept here for the record):
-  1. `WebsiteBrowser.init`: replace `configuration.websiteDataStore = .default()` with `TeamFeatures.shared.bridge.configure(configuration, for: homeURL)`, and after creating the web view call `TeamFeatures.shared.bridge.attach(webView)`.
-  2. Add `webView(_:didFinish:)` calling `TeamFeatures.shared.bridge.pageDidFinish(webView)`. In `decidePolicyFor`, before allowing: `if let url = action.request.url, TeamFeatures.shared.bridge.handlesNavigation(to: url) { decisionHandler(.cancel); return }`. Design's `WebPage` needs the same three lines.
-  3. After each agenda refresh in `ReaderStore`: `TeamFeatures.shared.agendaDidLoad(events)`. Route `toggleSaved`, `isSaved` and `saved` to `TeamFeatures.shared.schedule` (`toggle(event)`, `isPicked(event)`, `picks.compactMap(\.event)`).
-  4. Info: `NSCalendarsWriteOnlyAccessUsageDescription`; Time Sensitive Notifications capability; register a `BGAppRefreshTask` that calls `TeamFeatures.shared.refreshTeam()`.
-- **Design**: the destinations above that are still placeholders.
+Nothing open. Done by others tonight, for the record:
+
+- **Platform**: the bridge on `WebsiteBrowser` (configure, attach, `pageDidFinish`, `handlesNavigation`); `ReaderStore` → the schedule and `agendaDidLoad`; the widget from the schedule; the `news.promptugal.reader.refresh` background task calling `TeamFeatures.shared.refreshTeam()`; `NSCalendarsWriteOnlyAccessUsageDescription`; the Time Sensitive Notifications entitlement; App-Bound Domains.
+- **Design**: `.teamFeatures()` at the root, my entry views in `Destinations`, the bridge on `WebPage`, `NextHoursCard` on My day and the Wall.
+- **Vault**: `loadPicks()` / `savePicks(_:)`, used by `ScheduleVaultLink`.
 
 ## Apple setup for the native top-up
 
