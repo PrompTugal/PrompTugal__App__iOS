@@ -2,7 +2,7 @@
 
 > CI and the project are done and on dev; the app builds with every session's code. Since 06:00: screenshots on dev (screens.yml, one UI test per screen), per-job CI concurrency, and night/** pushes run the build only (unit tests on dev, PRs, by hand).
 
-Branch: `night/platform` · Last update: 07:36 UTC
+Branch: `night/platform` · Last update: 08:52 UTC
 
 ## Ready for other sessions
 
@@ -53,6 +53,9 @@ Jobs: `App build and SGitVault tests` (the build, then `swift test` for the pack
 
 ## In progress
 
+- **08:52** `dev` `8a060e8` fully green: build, SGitVault, **unit tests 124 of 124 (33 suites) on iPhone and on iPad**, screens 13 + 13. The `Already on dev?` gate works: a `night/platform` push already on `dev` (run 175) took 5 s on Ubuntu and skipped every macOS job.
+- **08:52** iPad screenshots fixed on `night/platform` (`0616379`, held for the editor's OK): run 13's iPad PNGs held only a square of the landscape UI, sideways, with a black band, because `app.screenshot()` in landscape crops the portrait framebuffer. Now `XCUIScreen.main.screenshot()` (whole screen), and the export turns each PNG by its own EXIF orientation (captured 1668×2420, tag 8 → stored 1600×1103) and then strips the tag. Screens run 14 (dispatched): green, and I checked the images (upright, full frame, no black rows or columns).
+- **08:15** On `dev` (`8a060e8`, conductor's 08:10 batch): screenshot PNGs are cleaned by `.github/scripts/png-normalize.py` (removes the EXIF orientation tag and XMP; the iPad check now reads the real stored width and height), and the `Already on dev?` gate job skips the macOS jobs when a night/** push is already on `dev`. Watching dev's screens run 13 and iOS run 173; `night/platform` fast-forwarded to `dev` `6c7fdf7` to test the gate.
 - **07:15** For runner capacity, `night/**` pushes run only `App build and SGitVault tests` (1 runner). The unit tests run on `dev`, pull requests and by hand (Actions → iOS → Run workflow).
 - **06:45** `screens.yml` (`dev` only): `ScreensTests` has one test per destination (13, design's ids). Each screenshot is kept before the `pt.destination.<id>` check, and only `.png` attachments are exported. Fixed on the way: dotted ids lost their tail in file names (run 4), the export picked up failure `.txt`/`.mp4` attachments (run 8), and iPad PNGs are rotated upright. Each device must produce exactly 13 PNGs.
 - **06:00** Per-job concurrency in `ios.yml` and `screens.yml`: a job that has started always finishes; a job still waiting for a runner is replaced by the newer push's.
