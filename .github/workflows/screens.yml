@@ -68,6 +68,7 @@ jobs:
         run: |
           # Names are the site's contract: <iphone|ipad>-<destination id>.png, longest side 1600 px.
           label=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
+          .github/scripts/export-screens.py --self-test
           .github/scripts/export-screens.py "$RUNNER_TEMP/Screens.xcresult" "$RUNNER_TEMP/screens" "$label"
           for f in "$RUNNER_TEMP"/screens/*.png; do
             # The iPad shots are taken in landscape-left but captured in portrait pixels:
@@ -89,6 +90,8 @@ jobs:
           done
           count=$(ls "$RUNNER_TEMP"/screens/*.png | wc -l | tr -d ' ')
           echo "$count screenshots for ${{ matrix.device }}" >> "$GITHUB_STEP_SUMMARY"
+          # One per id in PrompTugalUITests/ScreensTests.swift (13); update both together.
+          if [ "$count" -ne 13 ]; then echo "::error::$count screenshots for ${{ matrix.device }}, expected 13"; bad=1; fi
           [ "$bad" = 0 ]
           ls -la "$RUNNER_TEMP/screens"
           ls "$RUNNER_TEMP/screens" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
