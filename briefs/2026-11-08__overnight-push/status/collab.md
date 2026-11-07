@@ -1,8 +1,8 @@
 # Status · Collaboration and AI
 
-> On dev and green (dev run 160): Ask, Where is everyone, Messages, team notes and the iPhone/iPad polish. night/collab 0965bfc (build green) adds opt-in "keep this conversation on this device" for Ask; ready to merge.
+> Done for tonight and on dev: Ask (OpenRouter chat with tools, dictation, key check, opt-in history), Where is everyone, Messages (lanes, inbox, newsroom notes) and team notes through vaults, on iPhone and iPad. The table below says what works without keys and what needs which key.
 
-Branch: `night/collab` · Last update: 08:32 UTC
+Branch: `night/collab` · Last update: 09:05 UTC
 
 ## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
@@ -46,13 +46,26 @@ Branch: `night/collab` · Last update: 08:32 UTC
 
 - **Team notes** (Messages → Team notes, `PrompTugal/Lanes/TeamNotes.swift`): a note is a new file in `lanes/team/` of my own vault, written with the vault session's `append` (unique name, signed by this device, so devices never conflict). The section reads my folder and the same folder in every teammate vault linked in "Where is everyone". Schema `promptugal-team-note/v1`; other files are ignored.
 
-## What needs keys (also said in the UI)
+## What works without keys, and what needs which
 
-- The team site's public data has **one shortlist for everyone** (each person's `data.json` lists the same 80 sessions), so it cannot show who goes where. Personal picks need each teammate's vault read key.
-- Sharing my plan needs my vault opened with its vault key or passkey (write access).
+| Feature | Without any key | Needs |
+| --- | --- | --- |
+| Ask: chat, prepared prompts, tools, dictation | Screen opens, shows how to add a key; nothing is sent | **OpenRouter key** (yours, in the Keychain). Sent only to openrouter.ai |
+| Ask: context (agenda, picks, team status, agents) | Gathered from public data and this device; shown in the debug disclosure | "Who are you" chosen in Settings for team status and agents |
+| Ask: copy key to / from the vault | n/a | OpenRouter key, plus the vault opened with its vault key or passkey |
+| Where is everyone: my own picks, days, free windows | Works | Nothing |
+| Where is everyone: teammates' picks, Together, Clashes, Meet here | Shows what is missing | Each teammate's **vault read key** (they share it once; it can only read) |
+| Share my plan | Button disabled, reason shown | Vault opened with its **vault key or passkey**; pushing also needs the vault's **access token** (vault session's `canPush`) |
+| Team notes: read | Mine and linked teammates' | Vault open; teammates' read keys for theirs |
+| Team notes: post | Disabled | Vault with write access and access token |
+| Note to the newsroom | Explains | Vault open, and the **notes lane** the website made (`lane.json` in the master vault) |
+| Send to a lane | "Add a lane" | A **lane description** (sgit-subscribe/v1, promptugal-lane/v1, or an `sgi1.` inbox link). None is published for PrompTugal yet; Messages → Share my lane description makes one |
+| My inbox (this device) | Key pair is made on the device | The lane registered on the vault once (`configure`: vault write key and access token, from a computer with sgit), then the **enumeration key** entered in the app |
+| My account inbox (website-made) | Button appears when the vault is open | Vault opened with the passkey (reads `inbox.json` from the master vault) |
+| Debug: Collaboration and AI panel, lanes log | Works | Nothing. Keys are listed by presence only |
 
-- Sending to a teammate needs their lane description. None is published yet; the share button on Messages makes one.
-- Registering my own inbox lane on my vault (`configure`) needs the vault's write key and an access token; this build does not do that step.
+Notes:
+- The team site's public data has one shortlist for everyone (each person's `data.json` lists the same 80 sessions), so it cannot show who goes where. Personal picks come only from vaults.
 - No PrompTugal newsroom append lane is published (promptugal.news has no `/.well-known/sgit-subscribe.json`), so newsroom notes go through the vault notes lane.
 
 ## Since 05:15 (iPhone and iPad)
@@ -69,7 +82,7 @@ Branch: `night/collab` · Last update: 08:32 UTC
 
 ## In progress
 
-- Nothing running. 0965bfc build green; waiting for the merge to dev, whose unit tests run AIConversationTests.
+- Nothing. All of collab is on dev; dev run 180 (fadf27e) is green on iPhone and iPad unit tests, including the Ask, lanes, coordination, team-notes and conversation suites.
 
 ## Next
 
