@@ -64,12 +64,17 @@ def features(root=ROOT):
     return data
 
 
-def features_cards(items, platform):
+def features_cards(items, platform, shots=None):
     rows = []
     for f in (x for x in items if x['platform'] == platform):
+        pic = ''
+        if f['shipped'] and shots:
+            ids = [e[len('screen:'):] for e in f['evidence'] if e.startswith('screen:')]
+            pic = next((shot_img(shots, i, f['name'], device='iphone', width=200) for i in ids
+                        if 'iphone' in shots.get(i, {})), '')
         status = 'In the beta' if f['shipped'] else 'Coming'
         cls = 'on' if f['shipped'] else 'soon'
-        rows.append(f'<li class="feature" id="f-{esc(f["id"])}"><h3>{esc(f["name"])}</h3>'
+        rows.append(f'<li class="feature" id="f-{esc(f["id"])}">{pic}<h3>{esc(f["name"])}</h3>'
                     f'<p>{esc(f["what"])}</p>'
                     f'<p class="tags"><span class="status {cls}">{status}</span> <span class="sep">·</span> '
                     f'<span class="kind">{KIND_LABEL[f["kind"]]}</span></p></li>')
@@ -89,12 +94,12 @@ def features_table(items, repo_url):
             '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>')
 
 
-def feature_tokens(repo_url, root=ROOT):
+def feature_tokens(repo_url, root=ROOT, shots=None):
     items = features(root)
     count = lambda platform, shipped: str(sum(1 for f in items if f['platform'] == platform and f['shipped'] == shipped))
     return {
-        'features_readers': features_cards(items, 'readers'),
-        'features_teams': features_cards(items, 'teams'),
+        'features_readers': features_cards(items, 'readers', shots),
+        'features_teams': features_cards(items, 'teams', shots),
         'features_table': features_table(items, repo_url),
         'features_total': str(len(items)),
         'features_shipped': str(sum(f['shipped'] for f in items)),
@@ -477,3 +482,68 @@ def latest_build_html(data, repo_url):
     table = ''.join(f'<div><dt>{k}</dt><dd>{v}</dd></div>' for k, v in rows)
     return (f'<dl class="kv">{table}</dl>'
             + (f'<p>Artifacts of that run (GitHub keeps them for a limited time):</p><ul>{arts}</ul>' if arts else ''))
+
+
+# --- screenshots (from the screens workflow's artifact) ---------------------
+
+DEVICES = {'iphone': 'iPhone', 'ipad': 'iPad'}
+
+
+def png_size(path):
+    """Width and height from a PNG's IHDR chunk, or None if it is not a PNG."""
+    try:
+        with open(path, 'rb') as f:
+            head = f.read(24)
+    except OSError:
+        return None
+    if len(head) < 24 or head[:8] != b'\x89PNG\r\n\x1a\n' or head[12:16] != b'IHDR':
+        return None
+    return int.from_bytes(head[16:20], 'big'), int.from_bytes(head[20:24], 'big')
+
+
+def screenshots(folder):
+    """{screen id: {device: (source path, width, height)}} from files named <device>-<id>.png."""
+    out = {}
+    if not folder or not Path(folder).is_dir():
+        return out
+    for path in sorted(Path(folder).rglob('*.png')):
+        device, _, ident = path.stem.partition('-')
+        device = device.lower()
+        size = png_size(path)
+        if device in DEVICES and ident and size:
+            out.setdefault(ident, {})[device] = (path, *size)
+    return out
+
+
+def shot_name(device, ident):
+    return f'screens/{device}-{re.sub(r"[^A-Za-z0-9._-]", "_", ident)}.png'
+
+
+def shot_img(shots, ident, title, root='', device=None, width=None):
+    """One <img> for a screen (iPhone first, else iPad), at its true size scaled to width."""
+    entry = shots.get(ident, {})
+    for d in ([device] if device else ['iphone', 'ipad']):
+        if d in entry:
+            _, w, h = entry[d]
+            shown_w = width or w
+            shown_h = round(h * shown_w / w)
+            return (f'<img class="shot shot-{d}" src="{root}{shot_name(d, ident)}" '
+                    f'alt="{esc(title)} on {DEVICES[d]}, a screenshot of the app" width="{shown_w}" height="{shown_h}" '
+                    f'loading="lazy" data-png-width="{w}" data-png-height="{h}">')
+    return ''
+
+
+def screens_gallery(items, shots, root='../'):
+    if not shots:
+        return ('<p class="notice">No screenshots in this site build. When the app’s screens workflow has run on '
+                '<code>dev</code>, the site shows every screen on iPhone and iPad here.</p>')
+    cards = []
+    for d in items:
+        pics = ''.join(shot_img(shots, d['id'], d['title'], root=root, device=dev, width=240 if dev == 'iphone' else 360)
+                       for dev in DEVICES if dev in shots.get(d['id'], {}))
+        body = pics or '<p class="muted">No screenshot of this screen yet.</p>'
+        cards.append(f'<figure class="card shot-card" id="shot-{esc(d["id"])}"><div class="shots">{body}</div>'
+                     f'<figcaption><strong>{esc(d["title"])}</strong> <code>{esc(d["id"])}</code></figcaption></figure>')
+    have = sum(1 for d in items if d['id'] in shots)
+    return (f'<p>{have} of {len(items)} screens have a screenshot, taken by CI on a simulator from the code on '
+            '<code>dev</code>.</p><div class="gallery">' + ''.join(cards) + '</div>')

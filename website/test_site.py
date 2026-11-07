@@ -257,6 +257,57 @@ class SiteTest(unittest.TestCase):
         app.write_text('@main struct A: App { var body: some Scene { WindowGroup { AppShell().teamFeatures() } } }\n')
         self.assertEqual([f['shipped'] for f in admin.features(root)], [True, True])
 
+    def _png(self, path, w, h):
+        import struct, zlib
+        def chunk(kind, data):
+            return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xffffffff)
+        raw = b''.join(b'\x00' + b'\xff\xff\xff' * w for _ in range(h))
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0))
+                         + chunk(b'IDAT', zlib.compress(raw)) + chunk(b'IEND', b''))
+
+    def test_screenshots_are_published_at_their_real_size(self):
+        import os
+        shots = self.tmp / 'shots-in' / 'screens-abc'
+        self._png(shots / 'iphone-debug.png', 30, 65)
+        self._png(shots / 'ipad-debug.png', 41, 31)
+        self._png(shots / 'ipad-today.png', 40, 30)
+        (shots / 'notes.txt').write_text('ignored')
+        self._png(shots / 'watch-debug.png', 10, 10)   # unknown device: ignored
+        self.assertEqual(admin.png_size(shots / 'iphone-debug.png'), (30, 65))
+        self.assertIsNone(admin.png_size(shots / 'notes.txt'))
+        found = admin.screenshots(shots.parent)
+        self.assertEqual(sorted(found['debug']), ['ipad', 'iphone'])
+        out = self.tmp / 'with-shots'
+        os.environ['SCREENS_DIR'] = str(shots.parent)
+        try:
+            build.build(out)
+        finally:
+            del os.environ['SCREENS_DIR']
+        self.assertTrue((out / 'screens' / 'iphone-debug.png').exists())
+        page = (out / 'admin' / 'screens.html').read_text()
+        self.assertIn('src="../screens/iphone-debug.png"', page)
+        self.assertEqual(validate.validate(out), [])
+        home = (out / 'index.html').read_text()
+        self.assertIn('src="screens/ipad-today.png"', home)
+        self.assertNotIn('page-mock', home)
+        self.assertIn('page-mock', (self.clean / 'index.html').read_text())
+        # negative controls: a size that is not the file's, a distorted size, a missing file
+        broken = self.tmp / 'with-shots-broken'
+        shutil.copytree(out, broken)
+        screens_page = broken / 'admin' / 'screens.html'
+        screens_page.write_text(screens_page.read_text().replace('data-png-width="30"', 'data-png-width="31"', 1))
+        self.assertTrue(any('the file is 30x65' in p for p in validate.validate(broken)))
+        screens_page.write_text(screens_page.read_text().replace('data-png-width="31"', 'data-png-width="30"', 1)
+                                .replace('width="240" height="520"', 'width="240" height="300"', 1))
+        self.assertTrue(any('distorts it' in p for p in validate.validate(broken)), validate.validate(broken))
+        (broken / 'screens' / 'ipad-debug.png').unlink()
+        self.assertTrue(any('broken link' in p and 'ipad-debug.png' in p for p in validate.validate(broken)))
+
+    def test_no_screenshots_means_a_notice_not_a_broken_image(self):
+        self.assertIn('No screenshots in this site build', (self.clean / 'admin' / 'screens.html').read_text())
+        self.assertFalse((self.clean / 'screens').exists())
+
     def test_status_page_counts(self):
         info = admin.parse_status('# Status · X\n\n> Going well.\n\n## Done\n\n- a\n- b\n  more\n\n## Blocked\n\n## Next\n* c\n')
         self.assertEqual(info['summary'], 'Going well.')

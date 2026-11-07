@@ -261,3 +261,16 @@ a.card:hover { border-color: var(--red); }
 .kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px 24px; margin: 0 0 1em; }
 .kv dt { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
 .kv dd { margin: 2px 0 0; font-weight: 600; }
+
+/* Screenshots from CI */
+.shot { display: block; max-width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--rule); background: var(--paper-2); }
+.feature .shot { margin: 0 auto 12px; max-height: 360px; width: auto; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; margin-top: 16px; }
+.shot-card { margin: 0; }
+.shot-card .shots { display: flex; gap: 10px; align-items: flex-start; overflow-x: auto; }
+.shot-card .shot-iphone { width: 120px; }
+.shot-card .shot-ipad { width: 180px; }
+.shot-card figcaption { margin-top: 10px; font-size: 0.92rem; }
+.device-shot { margin: 0; }
+.device-shot .shot { width: 100%; border-radius: 18px; box-shadow: var(--shadow); }
+.device-shot figcaption { margin-top: 8px; font-size: 0.85rem; }
