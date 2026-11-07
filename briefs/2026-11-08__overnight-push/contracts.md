@@ -23,10 +23,10 @@
 The wire format is the website’s, unchanged:
 
 ```json
-{ "v": 1, "picks": [ { "id": "events/<slug>", "at": "2026-11-08T02:45:00.000Z" } ] }
+{ "v": 1, "picks": [ { "id": "ai-doom-or-boom", "at": "2026-11-08T02:45:00.000Z" } ] }
 ```
 
-- `id` is the event’s `page` path without `/index.html` (the website uses the event slug, so check its JavaScript and match it exactly). `at` is the time the pick was made, as an **ISO 8601 string** (the website writes `new Date().toISOString()` in `assets/schedule/schedule.js`). The app writes ISO 8601 and reads both ISO 8601 and Unix milliseconds.
+- `id` is the **bare event slug**, for example `ai-doom-or-boom`: the website takes it from `events/<slug>/index.html` with the pattern `(?:^|/)events/([^/]+)/index\.html$` in `assets/schedule/schedule.js`. `at` is the time the pick was made, as an **ISO 8601 string** (the website writes `new Date().toISOString()` in `assets/schedule/schedule.js`). The app writes ISO 8601 and reads both ISO 8601 and Unix milliseconds.
 - The website mirrors picks to the reader vault when it is open: `window.__vault` path `agenda/picks`, stored as **`apps/agenda/picks.json`** in the vault, merged as a union by `id`.
 - Merge rule (the website’s): union by `id`. A removal wins only if it is later than the pick.
 - The Swift API in `PrompTugal/Schedule/`:
@@ -88,7 +88,7 @@ Public JSON, read without keys and cached for offline use:
 | Agents | `https://web-summit.sgit.ai/wakes/`, `/reports/`, `/pulse/`, `/log/` (find their JSON via `llms.txt`) | what the agents are doing |
 | Newsroom | `https://promptugal.news/api/v1/newsroom/{desks,stories,dashboard,decisions,status}.json` | newsroom status |
 | News | `/feed.xml`, `/api/v1/newsletter.json`, `/api/v1/story.json`, `/api/v1/search/docs.json` | the news in every form |
-| Agenda | `/api/v1/live/agenda.json`, `/api/v1/place.json` | schedule and planning |
+| Agenda | `/api/v1/live/agenda.json`, `/api/v1/places.json` | schedule and planning |
 
 These are data sources only. Product copy says PrompTugal.
 
@@ -117,3 +117,4 @@ struct Destination: Identifiable { let id: String; let title: String; let symbol
 ## Changes
 
 - **03:15 UTC, §3 Schedule:** a pick’s `at` is an ISO 8601 string, not Unix milliseconds (checked against the website’s `assets/schedule/schedule.js`). The app writes ISO and reads both. Added the vault mirror path `apps/agenda/picks.json`. Requested by the conductor.
+- **03:45 UTC, §3 and §6:** a pick’s `id` is the bare slug, not `events/<slug>`; the places file is `/api/v1/places.json` (83 places, no coordinates), not `place.json`. Both found by the team session and checked against the live site.

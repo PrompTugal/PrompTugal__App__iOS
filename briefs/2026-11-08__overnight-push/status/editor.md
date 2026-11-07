@@ -1,8 +1,8 @@
 # Status · Editor
 
-> The site presents PrompTugal as the team's internal app in beta, with readers and teams as where it is going. Features are labelled from the code; the push dashboard reads every session's own branch; the CI page shows the latest iOS build. Next build log checkpoint at 03:50 UTC.
+> Build log checkpoint 2 written at 03:45 UTC (platform, release and the site on dev; vault, team and design waiting). Contracts §3 and §6 corrected against the live website. The site presents the team's internal app; labels follow the code; the dashboard and screens pages read every session branch. Next checkpoint 04:45.
 
-Branch: `night/editor` · Last update: 03:27 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 03:50 UTC · merged into `dev` at 251f69b
 
 ## Done
 
@@ -15,7 +15,8 @@ Branch: `night/editor` · Last update: 03:27 UTC · merged into `dev` at 251f69b
 - `build.py` reads app settings from the app target only, so test targets and extensions do not break the build. Swift is counted in every folder, packages included.
 - Validator: brand rule for product pages, feature labels must match the source, the push dashboard must list every session. Each rule has a negative control (42 tests).
 - `website.yml`: the site build fetches full history so the release page can read the tags.
-- Build log checkpoint 1 (02:50 UTC).
+- Build log checkpoints 1 (02:50 UTC) and 2 (03:45 UTC).
+- Contracts: §3 pick `at` is ISO 8601 and `id` is the bare slug; vault path `apps/agenda/picks.json`; §6 `places.json`. Each in the Changes list.
 
 ## In progress
 
