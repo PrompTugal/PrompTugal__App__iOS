@@ -39,8 +39,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: ios-release-${{ github.ref }}
-  # Never cancel a tag or a TestFlight upload half way.
+  group: ios-release-${{ github.ref }}-${{ github.event_name }}
+  # Pushes cancel older pushes on the same branch. Manual runs and tags have
+  # their own group (event name), so a push never cancels a TestFlight upload.
   cancel-in-progress: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') }}
 
 env:
