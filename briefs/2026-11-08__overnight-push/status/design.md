@@ -1,8 +1,8 @@
 # Status · Design and native UI
 
-> The shell is the app's root on dev: every section is reachable on iPhone and iPad. Team and vault screens are wired in; collab's land with night/collab. Now polishing every screen on both devices.
+> Done for the night. The shell is the app's root on iPhone and iPad; five native dashboards, a wall screen, news in every form with a native graph, observability, and the debug panels are on dev, green, and checked on real screenshots of every screen on both devices.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 08:20 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 08:45 UTC (wrap-up)
 
 ## Done
 
@@ -74,15 +74,15 @@ From building these screens over the website's own JSON, ideas worth taking back
 
 ## In progress
 
-- CI on a80653e (identifier and screenshot fixes).
-- Team's `NextHoursCard` on My day and the Wall, once it is on dev.
+Nothing. Everything above is on dev (fadf27e) with a green build.
 
-## Next
+## Next (for whoever picks this up)
 
-1. Apply the team wiring when `night/team` merges.
-2. iPhone pass on every screen at the largest Dynamic Type sizes.
-3. Switch Today and Team to the team session's `TeamStore` models (drop my `Wire` copies of me.json and data.json).
-4. Vault traffic against the real reader when `night/vault` lands.
+1. Look at the next screens.yml run: the Graph should now draw on iPhone and iPad (fixed at ea0d411), and the Agenda test (`test11_reader_agenda`) should pass with the faster list.
+2. iPhone pass at the largest Dynamic Type sizes (the stand-up card already stacks; the wake grid's labels are fixed-size).
+3. Switch My day and Team to the team session's `TeamStore` models and drop the `Wire` copies of me.json and data.json, so there is one model per file.
+4. The Ask side panel and the web twin are both trailing columns on iPad. If both are opened on one screen, check which wins; if it looks wrong, open the twin as a sheet while Ask is open.
+5. A `/wall/` page and the other ideas in "What native taught us" for the website.
 
 ## Blocked
 
@@ -90,5 +90,5 @@ Nothing.
 
 ## Needs from others
 
-- **Collab:** none; your Destinations entries come in with night/collab, and I will only move them if needed.
-- **Editor:** the build log can link the design system section above.
+- **Platform:** keep `-PTDestination`, `-PTSampleData` and `-PTMe` in the screenshot job; every screen carries `pt.destination.<id>`.
+- **Editor:** the design system and "What native taught us, for the website" above are ready to publish.
