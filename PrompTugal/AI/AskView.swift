@@ -152,11 +152,48 @@ struct AskTurnView: View {
                     if let cost = turn.usage?.cost { Text(String(format: "$%.4f", cost)) }
                 }
                 .font(.caption2).foregroundStyle(.secondary)
+                if !turn.mentions.isEmpty {
+                    AskMentions(events: turn.mentions)
+                }
                 if debug, let request = turn.debug, !turn.streaming {
                     AskDebugDisclosure(request: request)
                 }
             }
         }
+    }
+}
+
+/// Sessions named in an answer: pick (star) and open the event page.
+struct AskMentions: View {
+    let events: [Event]
+    private var schedule: ScheduleStore { TeamFeatures.shared.schedule }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(events) { event in
+                let picked = schedule.isPicked(event)
+                HStack(spacing: 8) {
+                    Button {
+                        schedule.toggle(event)
+                    } label: {
+                        Image(systemName: picked ? "star.fill" : "star")
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel(picked ? "Remove \(event.title) from my picks" : "Pick \(event.title)")
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(event.title).font(.caption.bold()).lineLimit(1)
+                        Text("\(Lisbon.dayLabel(event.date)) \(event.time) · \(event.place)").font(.caption2).foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 0)
+                    if let url = event.url {
+                        Link(destination: url) { Image(systemName: "arrow.up.right.square") }
+                            .accessibilityLabel("Open \(event.title)")
+                    }
+                }
+            }
+        }
+        .padding(8)
+        .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 10))
     }
 }
 

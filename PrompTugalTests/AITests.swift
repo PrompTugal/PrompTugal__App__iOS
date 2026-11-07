@@ -386,3 +386,20 @@ struct AIKeyCheckTests {
         #expect(AIKeyStore.KeyInfo.parse(Data("x".utf8)) == nil)
     }
 }
+
+@Suite("Ask: sessions named in answers")
+struct AIMentionTests {
+    private func event(_ title: String, _ slug: String) -> Event {
+        Event(date: "2026-11-10", time: "11:00-11:30", title: title, place: "Stage 1", kind: "talk", official: true,
+              page: "events/\(slug)/index.html")
+    }
+
+    @Test("Full titles found in order, ignoring case and accents; short titles skipped")
+    func mentions() {
+        let events = [event("The agentic internet: Who controls the web?", "a"), event("Segurança na era da IA", "b"),
+                      event("AI", "c")]
+        let answer = "Go to SEGURANCA NA ERA DA IA at 11:00, then the agentic internet: who controls the web? AI is everywhere."
+        #expect(AITools.mentioned(in: answer, events: events).map(\.page) == ["events/b/index.html", "events/a/index.html"])
+        #expect(AITools.mentioned(in: "Nothing relevant here.", events: events).isEmpty, "negative control")
+    }
+}
