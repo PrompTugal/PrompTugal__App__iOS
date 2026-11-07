@@ -69,7 +69,16 @@ These sources can be one protocol (`BridgeServices`) if you prefer. I will use o
 | `AppReviewTests` (CheckoutPolicy parts) | split: CheckoutPolicy cases to PTWeb, the rest stays |
 | `TeamFeaturesTests` | stays in the Team app (it builds `TeamFeatures`) |
 
-## Questions for the conductor
+## Conductor's answers (8 Nov, 00:48 Lisbon)
+
+1. JSON-level bridge. `ScheduleDocument`, `ScheduleMerge`, `ScheduleID` stay in PTAgenda.
+2. Platform moves `Event` and `FeedClient.site` into PTCore in phase 2.
+3. `ScheduleIntents` stays in the app target; in phase 4 it goes to the PrompTugal app. The Team app gets no intents tonight.
+4. The public app gets a no-team `AgendaTeamSource` that returns nothing.
+
+Waiting for phase 2 (PTCore on dev).
+
+## Questions for the conductor (answered above)
 
 1. **Schedule types across PTWeb and PTAgenda.** The bridge reads and merges `ScheduleDocument`. I plan a JSON-level protocol so PTWeb does not know the type. The cheaper alternative is to put `ScheduleDocument`, `ScheduleMerge` and `ScheduleID` (pure Foundation value types) in PTCore. Which do you want? Default: JSON-level protocol, no PTCore change.
 2. **`Event` and `FeedClient.site`** are in `App/Content.swift`. PTNews, PTAgenda and PTAsk all need `Event`. Is platform moving the `Event` struct (and `FeedClient.site`) to PTCore in phase 2? If not, I need it there.
