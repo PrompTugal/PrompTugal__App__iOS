@@ -2,7 +2,7 @@
 
 > For Dinis and Silvio. What the seven sessions shipped overnight, what is still open, the decisions and Apple set-up only you can do, and what to test first on a phone and an iPad. Draft, updated through the night; final by 10:00 UTC.
 
-**Last updated:** 06:45 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
+**Last updated:** 07:40 UTC (draft) · **Build log:** [one page per checkpoint](https://ios.app.promptugal.news/admin/build-log/index.html) · **Live status:** [push dashboard](https://ios.app.promptugal.news/admin/push.html)
 
 ## In one paragraph
 
@@ -83,4 +83,10 @@ Known limits: passkey unlock needs the `apple-app-site-association` file on prom
 
 ## What is still in progress
 
-To be completed at the end of the night.
+Draft at 07:40; final by 10:00.
+
+- **CI capacity.** The macOS runners were the bottleneck of the night. The last fully green iOS run on `dev` (build, vault package, iPhone and iPad unit tests) is run 104, on the 04:41 merge. Later runs waited in the queue; `dev` was frozen at 07:15 so they could finish. Session branches now run only the build, and the unit tests and screenshots run on `dev`.
+- **Screenshots.** The first runs had cut screen ids and rotated iPad images, and one failed on a slow screen; all three are fixed. The site shows the iPhone screenshots it can trust and adds iPad once one image from a fixed run has been checked.
+- **Vault writes on the live server.** Reading and writing are tested against vaults written by sgit 0.27 and sgit's in-memory server, and sgit reads back what the app writes. A live push to `dev.send.sgraph.ai` needs an access token nobody had tonight.
+- **Passkey unlock.** Written and behind a flag; it needs the `apple-app-site-association` file on promptugal.news (above). Team keys and Face ID work without it.
+- **Polish.** Design is going through every screen on iPhone at the largest text sizes; collab plans to let Ask remember the last conversation on the device (opt-in, never the key).
