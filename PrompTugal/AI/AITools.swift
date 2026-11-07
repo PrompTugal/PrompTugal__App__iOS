@@ -28,6 +28,22 @@ enum AITools {
              schema(["day": .object(["type": .string("string"), "description": .string("YYYY-MM-DD")])], required: ["day"])),
     ]
 
+    /// Which context toggle each tool reads under. A tool is offered only when its toggle is on.
+    static func kind(of tool: String) -> AIContextKind? {
+        switch tool {
+        case "now", "search_agenda": .agenda
+        case "my_picks": .picks
+        case "team_status", "my_agents": .team
+        case "where_is_everyone": .teammates
+        default: nil
+        }
+    }
+
+    /// The tools allowed by these toggles.
+    static func definitions(for kinds: Set<AIContextKind>) -> [OpenRouter.Tool] {
+        definitions.filter { kind(of: $0.function.name).map(kinds.contains) ?? false }
+    }
+
     // MARK: Pure parts
 
     static func fold(_ text: String) -> String {
@@ -87,7 +103,10 @@ enum AITools {
 
     /// Runs one call. Returns the text the model gets and a one-line summary for the conversation.
     @MainActor
-    static func run(_ call: OpenRouter.ToolCall, now: Date = .now) async -> (result: String, summary: String) {
+    static func run(_ call: OpenRouter.ToolCall, allowed: Set<AIContextKind>, now: Date = .now) async -> (result: String, summary: String) {
+        guard let kind = kind(of: call.function.name), allowed.contains(kind) else {
+            return ("error: the user has not shared this data with Ask", "not shared")
+        }
         let args = arguments(call.function.arguments)
         switch call.function.name {
         case "now":
@@ -111,7 +130,7 @@ enum AITools {
         case "where_is_everyone":
             let store = CoordinationStore.shared
             if store.plans.isEmpty { await store.load() }
-            let day = args["day"] ?? AIContextAssembler.lisbonDay(now)
+            let day = args["day"] ?? DayPlanner.lisbonDay(now)
             return (cap(store.summary(for: day)), "\(store.plans.count) plans")
         default:
             return ("error: no tool called \(call.function.name)", "unknown tool")

@@ -10,7 +10,7 @@ struct AskView: View {
 
     @State private var showSettings = false
     @FocusState private var composerFocused: Bool
-    @AppStorage("debug.enabled") private var debug = true
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
     var body: some View {
         @Bindable var store = store
@@ -19,6 +19,10 @@ struct AskView: View {
                 LazyVStack(alignment: .leading, spacing: 14) {
                     if !store.keys.hasKey {
                         AskKeyCallout { showSettings = true }
+                    }
+                    if store.consent == .declined {
+                        Label("Ask is off: you chose not to send questions to OpenRouter. Change it in Key and settings.", systemImage: "hand.raised")
+                            .font(.subheadline).foregroundStyle(.secondary)
                     }
                     if store.turns.isEmpty {
                         AskStarters(store: store)
@@ -60,6 +64,11 @@ struct AskView: View {
                     Label("Ask settings", systemImage: "ellipsis.circle")
                 }
             }
+        }
+        .sheet(isPresented: $store.consentRequested) {
+            NavigationStack { AskConsentSheet(store: store) }
+                .presentationSizing(.form)
+                .interactiveDismissDisabled()
         }
         .sheet(isPresented: $showSettings) {
             NavigationStack { AskSettingsView(store: store) }
@@ -194,6 +203,42 @@ struct AskMentions: View {
         }
         .padding(8)
         .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+/// Asked once, before the first question goes out (App Review 5.1.2(i)).
+struct AskConsentSheet: View {
+    @Bindable var store: ChatStore
+
+    var body: some View {
+        Form {
+            Section {
+                Text("To answer, Ask sends your question and this conversation to **OpenRouter** (openrouter.ai), a service that passes them to **\(OpenRouter.provider(of: store.model))**, the maker of the model you chose (\(OpenRouter.label(for: store.model))). They are sent with your own OpenRouter key; OpenRouter's and the provider's terms apply.")
+                Text("Nothing is sent until you allow it. You can change this at any time in Ask → Key and settings.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section {
+                ForEach(AIContextKind.toggleable) { kind in
+                    Toggle(isOn: Binding(get: { store.isOn(kind) }, set: { on in if on != store.isOn(kind) { store.toggle(kind) } })) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(kind.title)
+                            Text(kind.detail).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            } header: {
+                Text("Also send, with each question")
+            } footer: {
+                Text("Only what is switched on is sent. The public agenda is on by default; everything else is off.")
+            }
+            Section {
+                Button("Allow") { store.grantConsent() }
+                    .bold()
+                Button("Don't allow", role: .cancel) { store.declineConsent() }
+            }
+        }
+        .navigationTitle("Send to OpenRouter?")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -373,6 +418,38 @@ struct AskSettingsView: View {
                 Toggle("Let Ask read the app's data with tools", isOn: $store.useTools)
             } footer: {
                 Text("Read-only: search the agenda, my picks, team status, my agents, teammates' plans. Each call shows in the conversation.")
+            }
+
+            Section {
+                switch store.consent {
+                case .granted:
+                    LabeledContent("Sending to OpenRouter", value: "Allowed")
+                    Button("Withdraw permission", role: .destructive) { store.revokeConsent() }
+                case .declined:
+                    LabeledContent("Sending to OpenRouter", value: "Not allowed")
+                    Button("Ask me again") { store.revokeConsent() }
+                case .unknown:
+                    LabeledContent("Sending to OpenRouter", value: "Not asked yet")
+                }
+            } header: {
+                Text("Permission")
+            } footer: {
+                Text("Ask sends your question, the conversation and the data you share below to OpenRouter (openrouter.ai), which passes them to \(OpenRouter.provider(of: store.model)) to answer.")
+            }
+
+            Section {
+                ForEach(AIContextKind.toggleable) { kind in
+                    Toggle(isOn: Binding(get: { store.isOn(kind) }, set: { on in if on != store.isOn(kind) { store.toggle(kind) } })) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(kind.title)
+                            Text(kind.detail).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            } header: {
+                Text("What Ask may send")
+            } footer: {
+                Text("Off unless you switch it on, except the public agenda. Teammates' plans and the current page each need their own switch.")
             }
 
             Section("Model") {

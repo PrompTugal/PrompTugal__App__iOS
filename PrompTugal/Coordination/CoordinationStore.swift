@@ -49,7 +49,7 @@ final class CoordinationStore {
 
     var days: [String] {
         let all = Set(events.map(\.date)).sorted()
-        return all.isEmpty ? [AIContextAssembler.lisbonDay(.now)] : all
+        return all.isEmpty ? [DayPlanner.lisbonDay(.now)] : all
     }
 
     func name(_ person: String) -> String {
@@ -63,7 +63,7 @@ final class CoordinationStore {
         defer { loading = false }
         events = await CollabHooks.agenda()
         if day.isEmpty || !days.contains(day) {
-            let today = AIContextAssembler.lisbonDay(.now)
+            let today = DayPlanner.lisbonDay(.now)
             day = days.first { $0 >= today } ?? days.first ?? today
         }
         await loadPeople()

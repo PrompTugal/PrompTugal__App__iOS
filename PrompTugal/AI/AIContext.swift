@@ -3,19 +3,49 @@ import Foundation
 /// What the user lets Ask see, chosen with toggles. Each part is gathered fresh for a question, shown in the
 /// debug disclosure exactly as sent, and capped so one part cannot crowd out the question.
 enum AIContextKind: String, CaseIterable, Identifiable, Codable, Sendable {
-    case agenda, picks, team, page
-    /// Added by a prepared prompt, not a toggle.
+    case agenda, picks, team, teammates, page
+    /// Added by a prepared prompt, and only when the toggle it belongs to is on: plan with picks, agents with team.
     case plan, agents
 
     var id: String { rawValue }
-    /// The kinds the user switches on and off.
-    static let toggleable: [AIContextKind] = [.agenda, .picks, .team, .page]
+    /// The kinds the user switches on and off. Each one is its own explicit choice (App Review 5.1.2(i)).
+    static let toggleable: [AIContextKind] = [.agenda, .picks, .team, .teammates, .page]
+    /// What is shared until the user changes it: the public agenda only.
+    static let defaults: Set<AIContextKind> = [.agenda]
+
+    /// The kinds a question may use, given the toggles that are on. A prepared prompt cannot widen this.
+    static func allowed(_ requested: Set<AIContextKind>, toggles: Set<AIContextKind>) -> Set<AIContextKind> {
+        let on = toggles.intersection(toggleable)
+        var out = on
+        for kind in requested {
+            switch kind {
+            case .plan where on.contains(.picks): out.insert(.plan)
+            case .agents where on.contains(.team): out.insert(.agents)
+            default: break
+            }
+        }
+        return out
+    }
+
+    /// What each kind sends, for the consent sheet.
+    var detail: String {
+        switch self {
+        case .agenda: "the public summit agenda for the day"
+        case .picks: "the sessions you picked"
+        case .team: "your team status: counts, urgent items, decisions waiting on you, your agents' recent work"
+        case .teammates: "teammates' plans that they shared with you through their vaults"
+        case .page: "the title, address and text of the page on screen"
+        case .plan: "your day plan from the planner"
+        case .agents: "your agents' recent commits and reports"
+        }
+    }
 
     var title: String {
         switch self {
         case .agenda: "Today's agenda"
         case .picks: "My picks"
         case .team: "My team status"
+        case .teammates: "Teammates' plans"
         case .page: "Current page"
         case .plan: "Day plan"
         case .agents: "My agents"
@@ -27,6 +57,7 @@ enum AIContextKind: String, CaseIterable, Identifiable, Codable, Sendable {
         case .agenda: "calendar"
         case .picks: "star"
         case .team: "person.3"
+        case .teammates: "person.2.wave.2"
         case .page: "doc.text"
         case .plan: "list.bullet.clipboard"
         case .agents: "cpu"
@@ -39,6 +70,7 @@ enum AIContextKind: String, CaseIterable, Identifiable, Codable, Sendable {
         case .agenda: 9_000
         case .picks: 5_000
         case .team: 7_000
+        case .teammates: 6_000
         case .page: 6_000
         case .plan: 6_000
         case .agents: 9_000
@@ -97,14 +129,10 @@ enum AIContextAssembler {
 
     // MARK: Parts from data (pure)
 
-    static func lisbonDay(_ date: Date) -> String {
-        let parts = Lisbon.calendar.dateComponents([.year, .month, .day], from: date)
-        return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
-    }
 
     /// Today's sessions; before or between summit days, the next day that has any (and says so).
     static func agendaPart(_ events: [Event], now: Date, picked: Set<String> = []) -> AIContextPart {
-        let today = lisbonDay(now)
+        let today = DayPlanner.lisbonDay(now)
         let days = Set(events.map(\.date)).sorted()
         guard let day = days.contains(today) ? today : days.first(where: { $0 > today }) else {
             return AIContextPart(kind: .agenda, summary: "No sessions ahead", body: "", source: "promptugal.news agenda")
@@ -276,6 +304,13 @@ enum AIContextGatherer {
                 parts.append(await teamPart())
             case .agents:
                 parts.append(await agentsPart())
+            case .teammates:
+                let store = CoordinationStore.shared
+                if store.plans.isEmpty { await store.load() }
+                let day = DayPlanner.lisbonDay(now)
+                parts.append(AIContextPart(kind: .teammates, summary: "\(max(store.plans.count - 1, 0)) teammates' plans",
+                                           body: store.plans.count > 1 ? store.summary(for: day) : "",
+                                           source: "plans shared through vaults"))
             case .plan:
                 if let plan = await CollabHooks.dayPlan?() {
                     parts.append(AIContextPart(kind: .plan, summary: "Planner", body: plan, source: "the app's day planner"))

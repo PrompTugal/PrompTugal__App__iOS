@@ -28,6 +28,14 @@ enum OpenRouter {
         Model(id: "anthropic/claude-fable-5.1", label: "Claude Fable 5.1"),
     ]
 
+    /// Who answers behind OpenRouter, from the model id's prefix ("anthropic/…" → Anthropic).
+    static func provider(of model: String) -> String {
+        let prefix = model.split(separator: "/").first.map(String.init) ?? model
+        let known = ["anthropic": "Anthropic", "openai": "OpenAI", "google": "Google", "meta-llama": "Meta",
+                     "mistralai": "Mistral AI", "x-ai": "xAI", "deepseek": "DeepSeek", "qwen": "Alibaba (Qwen)"]
+        return known[prefix] ?? (prefix.isEmpty ? "the model's provider" : prefix)
+    }
+
     static func label(for model: String) -> String {
         models.first { $0.id == model }?.label ?? model
     }

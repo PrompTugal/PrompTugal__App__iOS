@@ -294,6 +294,7 @@ struct AIKeyStoreTests {
     func noKeyNoRequest() async {
         let store = ChatStore(keys: AIKeyStore(store: MemorySecretStore(), defaults: defaults()),
                               defaults: defaults(), gather: { _ in [] })
+        store.grantConsent()
         store.send("Hello")
         for _ in 0..<200 where store.turns.count < 2 { try? await Task.sleep(for: .milliseconds(10)) }
         #expect(store.turns.map(\.role) == [.user, .error])
@@ -439,5 +440,87 @@ struct AIConversationTests {
         store.keepConversation = false
         #expect(!FileManager.default.fileExists(atPath: file.path))
         defaults.removePersistentDomain(forName: name)
+    }
+}
+
+
+@Suite("Ask: consent before anything is sent (App Review 5.1.2(i))")
+@MainActor
+struct AIConsentTests {
+    private func fresh() -> (ChatStore, HTTPLog, UserDefaults, String) {
+        let name = "ask-consent-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        let secrets = MemorySecretStore()
+        let keys = AIKeyStore(store: secrets, defaults: defaults)
+        try? keys.save(["sk", "or", "v1", String(repeating: "1", count: 64)].joined(separator: "-"))
+        let log = HTTPLog()
+        let client = OpenRouterClient(http: HTTPClient(session: HTTPClient.makeSession(), log: log))
+        let store = ChatStore(keys: keys, client: client, defaults: defaults, gather: { _ in [] },
+                              conversationFile: FileManager.default.temporaryDirectory.appendingPathComponent("\(name).json"))
+        return (store, log, defaults, name)
+    }
+
+    @Test("Without consent, a question sends nothing and asks for consent")
+    func noConsentNoRequest() async throws {
+        let (store, log, defaults, name) = fresh()
+        #expect(store.consent == .unknown)
+        store.send("Where is the keynote?")
+        store.ask("Brief me", include: [.team])
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(store.consentRequested)
+        #expect(store.turns.isEmpty)
+        #expect(log.records.isEmpty && log.totalRequests == 0)
+        #expect(!store.isSending)
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Don't allow: nothing sent, not asked again; withdraw goes back to asking")
+    func declined() async throws {
+        let (store, log, defaults, name) = fresh()
+        store.send("Hi")
+        store.declineConsent()
+        #expect(store.consent == .declined && !store.consentRequested)
+        store.send("Hi again")
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!store.consentRequested, "a declined choice is not asked again on every question")
+        #expect(store.turns.isEmpty && log.records.isEmpty)
+        store.revokeConsent()
+        #expect(store.consent == .unknown)
+        // The choice is stored.
+        store.grantConsent()
+        #expect(defaults.string(forKey: ChatStore.consentKey) == "granted")
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Default context is the agenda only; teammates and page are separate switches")
+    func minimalDefault() {
+        let (store, _, defaults, name) = fresh()
+        #expect(store.contextKinds == [.agenda])
+        #expect(AIContextKind.toggleable.contains(.teammates) && AIContextKind.toggleable.contains(.page))
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Prepared prompts cannot widen what is shared")
+    func allowedKinds() {
+        #expect(AIContextKind.allowed([.team, .agents, .plan], toggles: [.agenda]) == [.agenda])
+        #expect(AIContextKind.allowed([.agents], toggles: [.agenda, .team]) == [.agenda, .team, .agents])
+        #expect(AIContextKind.allowed([.plan], toggles: [.picks]) == [.picks, .plan])
+    }
+
+    @Test("Tools are offered only for switched-on data, and refuse otherwise")
+    func toolsGated() async {
+        #expect(AITools.definitions(for: [.agenda]).map(\.function.name).sorted() == ["now", "search_agenda"])
+        #expect(!AITools.definitions(for: [.agenda, .team]).map(\.function.name).contains("where_is_everyone"))
+        #expect(AITools.definitions(for: [.teammates]).map(\.function.name) == ["where_is_everyone"])
+        let call = OpenRouter.ToolCall(id: "c", function: .init(name: "where_is_everyone", arguments: "{}"))
+        let (result, _) = await AITools.run(call, allowed: [.agenda])
+        #expect(result.contains("not shared"))
+    }
+
+    @Test("The consent text names the provider behind OpenRouter")
+    func provider() {
+        #expect(OpenRouter.provider(of: "anthropic/claude-sonnet-5") == "Anthropic")
+        #expect(OpenRouter.provider(of: "openai/gpt-x") == "OpenAI")
+        #expect(OpenRouter.provider(of: "acme/model") == "acme")
     }
 }

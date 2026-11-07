@@ -6,7 +6,7 @@ struct LanesView: View {
     @State private var composing: Compose?
     @State private var addingLane = false
     @State private var showInboxSetup = false
-    @AppStorage("debug.enabled") private var debug = true
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     @Environment(\.horizontalSizeClass) private var width
 
     enum Compose: Identifiable {
