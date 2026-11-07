@@ -1,6 +1,6 @@
 # Status · Design (App Review readiness)
 
-> Done. All design items are fixed, built green (run 224) and their unit tests pass on iPhone and iPad (run 237: all 7 design suites green). The only failures in that run are team's 3 StoreKit tests, which team owns.
+> Done. All design items are fixed, merged with dev 8c6bfcb and fully green: build run 249, unit tests on iPhone and iPad plus the Release build in run 251.
 
 Branch: `night/design` (merged from `origin/dev`, no rebase) · Last update: 16:00 UTC
 
@@ -39,10 +39,12 @@ Also done after team's and platform's notes:
 | 224 | a0b940c (night/team a39b136 merged) | build green |
 | 229 | a0b940c, unit tests by hand | test target did not compile (team's `AppReviewTests.swift`, fixed by team in de93864) |
 | 237 | a3ee648, unit tests by hand (iPhone and iPad) | **167 tests pass; all 7 design suites green.** 3 failures, all team's StoreKit tests (`AppReviewTests.swift:184, 194, 209`: products do not load in CI); team told |
+| 249 | 842e7f7 (origin/dev 8c6bfcb merged) | build green |
+| 251 | 842e7f7, unit tests by hand | **all green**: iPhone and iPad unit tests, Release device build, SGitVault tests |
 
 ## In progress
 
-Nothing. The design list is done; the conductor can merge night/design once team's StoreKit tests are green (or judged separately).
+Nothing. The design list is done and night/design 842e7f7 (dev 8c6bfcb merged) is green on runs 249 and 251; ready for the conductor to merge.
 
 ## Blocked / needs from others
 
