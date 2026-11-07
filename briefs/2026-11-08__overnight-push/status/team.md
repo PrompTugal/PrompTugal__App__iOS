@@ -1,87 +1,80 @@
 # Status · Team features
 
-> One schedule on the website's format, the bridge, team data models, reminders, the day planner, the native top-up, Add to Calendar and two App Intents are written; the app build is green with them. Next: wiring into the web view and the shell.
+> One schedule on the website's format, synced with the web view and the vault; reminders; team data; the day planner; the native top-up. Merged into dev at 4c78207. Waiting on the web-view and shell hooks; unit tests not yet green on CI.
 
-Branch: `night/team` (rebased on `night/platform`) · Last update: 03:10 UTC (container clock)
+Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 04:15 UTC
 
 ## Done
 
-- **One schedule** (`PrompTugal/Schedule/`): `ScheduleStore` on `nr.schedule.v1`, saved on the device (`Application Support/PrompTugal/schedule.json`). Every old Saved session (`saved.json`) is imported, keeps its offline copy, and saved.json is left in place. Tests: wire format, merge rule with negative controls, Lisbon time, migration (`PrompTugalTests/ScheduleTests.swift`, 25 tests).
-- **Bridge** (`PrompTugal/Bridge/`): `AppBridge` (handler `pt` in its own `WKContentWorld`, main frame only, https, allow-list `promptugal.news`, `web-summit.sgit.ai`), `window.ptApp = { version, ops, call }`, phase-1 ops `schedule.get`, `schedule.set`, `identity.get`, `notify.plan`, `meter.topup`. Two-way schedule sync with promptugal.news through `localStorage['nr.schedule.v1']` and the page's own `nr:schedule` event; no website change. `BridgeLog` and `BridgeLogView` for Debug. `SiteDataStores`: one `WKWebsiteDataStore` per site.
-- **Reminders** (`PrompTugal/Notifications/`): before each pick and stand-up, default 10 minutes (0, 5, 10, 15, 30), Lisbon time, at most 60 pending (iOS allows 64), rescheduled on every change.
-- **Team data** (`PrompTugal/Team/`): models and offline cache for `me.json`, command centre `data.json`, stand-ups, wakes, reports, pulse and log. "Who are you?" identity.
-- **Planner** (`DayPlanner`, `PlannerStore`, `PlannerView`): a proposed day from the agenda, my picks and stand-ups, with clashes (overlap, or too little time to walk), gaps and walking time. Sessions the team picked for me rank first, then sessions teammates have (from their command centres). Accept → picks.
-- **Meter and native top-up** (`PrompTugal/Store/`): `MeterStore` shows the website's balance; `CreditStore` sells the two consumables with StoreKit 2 and credits the page's meter through the bridge, once per transaction. The Stripe top-up is hidden in the app and replaced by "Top up in the app".
+- **One schedule** (`Schedule/`): `ScheduleStore` on `nr.schedule.v1`, kept on the device (`Application Support/PrompTugal/schedule.json`). Every old Saved session (`saved.json`) is imported with its offline copy; saved.json stays as a backup.
+- **Bridge** (`Bridge/`): `AppBridge`. Handler `pt` in its own `WKContentWorld`, main frame only, https only, allow-list `promptugal.news` and `web-summit.sgit.ai`. `window.ptApp = { version, ops, call }`. Ops `schedule.get`, `schedule.set`, `identity.get`, `notify.plan`, `meter.topup`. Two-way schedule sync with promptugal.news through `localStorage['nr.schedule.v1']` and the page's own `nr:schedule` event, with no website change. `BridgeLog` and `BridgeLogView` for Debug. `SiteDataStores` gives each site its own `WKWebsiteDataStore`.
+- **Vault** (`ScheduleVaultLink`): when a reader vault opens, picks are read from `apps/agenda/picks.json` (`loadPicks`) and merged; no Face ID. Saving (`savePicks`) is a button in My day, because it asks for Face ID and needs the vault key and an access token.
+- **Reminders** (`Notifications/`): before each pick and each stand-up, default 10 minutes (choices 0, 5, 10, 15, 30), Lisbon time, at most 60 pending (iOS allows 64).
+- **Team data** (`Team/`): models and offline cache for `me.json`, the command centre `data.json`, stand-ups, wakes, reports, pulse and log. "Who are you?" identity, and the app icon badge (only you + decide + overdue).
+- **Planner**: a proposed day from the agenda, my picks and the stand-ups, with clashes (overlap, or too little time to walk) and gaps. Sessions the team picked for me rank first, then sessions teammates have. Accept → picks. "Where is everyone" lists teammates' sessions per day.
+- **iPhone and iPad**: every screen is a list on iPhone. On iPad, My day and the planner add the day as a time line beside the list.
+- **Meter and native top-up** (`Store/`): `MeterStore` shows the website's balance; `CreditStore` sells the two consumables with StoreKit 2 and credits the page's meter through the bridge, once per transaction. The Stripe top-up is hidden in the app and replaced by "Top up in the app".
+- **Backlog done**: Add to Calendar (write-only EventKit, only when asked); App Intents "Save a session to my day" and "What's next in my day"; the schedule feeds platform's widget (`NowNextPublisher`).
+- **Tests** (`PrompTugalTests/ScheduleTests.swift`, `TeamFeaturesTests.swift`): wire format and an exact round trip of a website-shaped document, merge rule with negative controls, Lisbon time, migration, vault sync, markdown and JSON parsing, reminder plan, planner. The injected JavaScript is syntax-checked with node before each push.
 
-## What I learned from the websites (and where it differs from contracts §3)
+## CI
 
-- **Pick id is the bare slug** (`ai-doom-or-boom`), not `events/<slug>`: schedule.js captures `events/([^/]+)/index.html`.
-- **`at` is an ISO string** (`new Date().toISOString()`), not Unix milliseconds. The app reads both and writes the ISO form.
-- **The website's merge is a plain union** that keeps its own copy and never removes. The app keeps that union and adds: a removal later than the pick wins (remembered 30 days), and a pick the page held at the last sync and has since dropped counts as removed on the page. If the page has no schedule at all (new, or cleared by WebKit), nothing is removed.
-- **Meter**: `localStorage['web-summit.newsroom.meter.v1']`, sg-meter v1.5 state v3: `{ balance (pence), spent, reads, declined, log[], topups[{ref, at, credit, source}], sessions[ref] }`. App credit uses the core's own `credit(amount, 'link', 'appstore-<transaction id>')`, which refuses a reference twice.
-- **Team site JSON**: `me.json` and `people/<id>/app/data.json` only. Wakes, reports, pulse, log and the meetings list have **no JSON**; each has a markdown twin (`/wakes/index.md` etc.) that the app parses. Stand-up folder names do not always match the time (`2026-11-05-1300` was at 12:00); the list's label is used.
-- `/api/v1/place.json` does not exist; it is `/api/v1/places.json` (83 places, no coordinates), so walking times are estimates: 5 minutes between rooms at the venue, 25 to anywhere else.
+- App build: green (run 14 and later).
+- Unit tests: run 39 did not compile one test expression (the type checker timed out). Fixed in 396968c, then superseded by later pushes. The current run has not reported yet.
 
-## Entry views and models for the design session
+## What I learned from the websites
 
-| Feature | Entry view | Destination to replace |
+- **Pick id is the bare slug** (`ai-doom-or-boom`), not `events/<slug>`.
+- **`at` is an ISO string** (`toISOString()`). The app writes exactly that and reads numbers too.
+- **The website's merge is union only**, and so is the vault's `savePicks`. The app adds, on this device: a removal later than the pick wins (remembered 30 days), and a pick the page dropped since the last sync counts as removed. A removal does not reach other devices or the website; that is in the conductor's list for Dinis.
+- **Meter**: `localStorage['web-summit.newsroom.meter.v1']`, sg-meter state v3, amounts in pence. App credit uses the site's own `credit(amount, 'link', 'appstore-<transaction id>')`, which refuses a reference twice.
+- **Team site**: only `me.json` and `people/<id>/app/data.json` are JSON. Wakes, reports, pulse, log and the meetings list are read from their markdown twins (`index.md`). Stand-up folder names do not always match the time (`2026-11-05-1300` was at 12:00), so the list's label is used.
+- **Places**: `/api/v1/places.json` (83, no coordinates). Walking times are estimates: 5 minutes between rooms at the venue, 25 to anywhere else.
+
+## Entry views (for the shell)
+
+| Feature | Entry view | Destination |
 | --- | --- | --- |
-| Schedule | `MyDayView()` | `team.schedule` |
-| Planner | `PlannerView()` | new, Today section, "Plan my day" |
-| Team identity and home | `TeamHomeView()` (shows `WhoAreYouView` until chosen) | optional |
-| Reading credit | `ReadingCreditView()` | `team.store` |
+| Schedule | `MyDayView()` | replaces `team.schedule` |
+| Planner | `PlannerView()` | new, Today: "Plan my day" |
+| Where is everyone | `WhereIsEveryoneView()` | new, Team |
+| Team home and identity | `TeamHomeView()` | optional |
+| Reading credit | `ReadingCreditView()` | replaces `team.store` |
 | Reminders | `ReminderSettingsView()` | Settings |
 | Bridge panel | `BridgeLogView()` | Debug → Bridge |
 
-Each needs the stores in the environment: put `.teamFeatures()` on the root view once (it injects every store, starts StoreKit and reminders, and presents the native top-up when a page asks).
+All need `.teamFeatures()` once on the root view: it injects every store, starts StoreKit, reminders and the vault link, and presents the native top-up when a page asks.
 
-Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson` (`badge` = only you + decide + overdue), `CommandCentre` (`Issue`, `Decision`, `Agent`, `Activity`, `Session`, `Workstream`, `Member`), `TeamStandup`, `AgentWakes`, `TeamReport`, `PulseEntry`, `SessionLogEntry`; `TeamStore` holds them (`me`, `centres`, `standups`, `wakes`, `reports`, `pulse`, `log`, `status`). Schedule: `ScheduleStore`, `SchedulePick`, `ScheduleDocument`. URLs: `TeamEndpoints` (named so to not clash with design's `TeamSite`; design can drop its copy and use these models when ready).
-
-- **CI:** the app build with all of the above is green (run 14, one concurrency warning, fixed). Unit tests are running.
-- **Add to Calendar** (`CalendarExport`, a button in My day): write-only EventKit access, only when asked.
-- **App Intents** in the app target: "Save a session to my day" (`SaveSessionIntent`, with a `SessionEntity` search over the agenda) and "What's next in my day" (`WhatsNextIntent`).
-- **Widget feed:** the schedule's picks go to platform's `NowNextPublisher` as `saved` on every change and agenda load.
-- **iPad layout:** My day and the planner show the day as a native time line beside the list (overlaps side by side, a "now" line); on iPhone they are lists.
-- **Vault mirror** (`ScheduleVaultSync`): reads and writes `agenda/picks` through closures, ready for `VaultSession.readText`.
-- **Where is everyone** (`WhereIsEveryoneView`): teammates' sessions per day.
-- **App icon badge** from `me.json`, and `TeamFeatures.shared.refreshTeam()` for platform's `BGAppRefreshTask`.
-- **Tests** (`PrompTugalTests/TeamFeaturesTests.swift`): markdown twins, lenient JSON, the reminder plan, the planner. The injected JavaScript is syntax-checked with node before each push.
-
-## In progress
-
-- Unit test results on iPhone and iPad.
+Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson`, `CommandCentre` (`Issue`, `Decision`, `Agent`, `Activity`, `Session`, `Workstream`, `Member`), `TeamStandup`, `AgentWakes`, `TeamReport`, `PulseEntry`, `SessionLogEntry`, held by `TeamStore`. Schedule: `ScheduleStore`, `SchedulePick`, `ScheduleDocument`. URLs: `TeamEndpoints`.
 
 ## Next
 
-1. Green CI.
-2. Hook the bridge into the web views (needs the lines below in platform's `WebsiteView.swift`).
-3. Feed the agenda to the schedule and the widget from the schedule.
-4. Default shortcuts (item 7): conductor's ruling, PrompTugal only: newsroom.sgit.ai is dropped too (with riskmandate.ai and sgit.ai), and platform changes `Websites.json` and `PositioningTests` together so no branch goes red. Also: an install that already has `Documents/Websites.json` (copied from the old defaults) keeps showing the old sites; `WebsiteDirectory.load` should drop riskmandate.ai and sgit.ai entries whose URL is unchanged from the old default.
-5. Backlog: EventKit "add to calendar", App Intents ("What's next", "Save this session").
+1. Green unit tests on CI.
+2. Check the platform and design hooks once they are on dev, and test the bridge end to end.
+3. Then: Live Activity data for the next item, and a Settings row for reminders.
 
 ## Blocked
 
-Nothing.
+Nothing in my folders.
 
 ## Needs from others
 
-- **Platform** (`App/`), three small hooks, or let me make them:
-  1. `WebsiteBrowser.init`: after `let configuration = WKWebViewConfiguration()`, replace `configuration.websiteDataStore = .default()` with `TeamFeatures.shared.bridge.configure(configuration, for: homeURL)`, and after creating the web view `TeamFeatures.shared.bridge.attach(webView)`.
-  2. `webView(_:didFinish:)` (add it): `TeamFeatures.shared.bridge.pageDidFinish(webView)`. In `decidePolicyFor`, before allowing: `if let url = action.request.url, TeamFeatures.shared.bridge.handlesNavigation(to: url) { decisionHandler(.cancel); return }`. Design's `WebPage` needs the same three lines.
-  3. After each agenda refresh in `ReaderStore`: `TeamFeatures.shared.agendaDidLoad(events)`; and route `toggleSaved`/`isSaved` to `TeamFeatures.shared.schedule.toggle(event)` / `.isPicked(event)`, `saved` to `schedule.picks.compactMap(\.event)`. `NowNextPublisher.publish(saved:)` can take the same.
-  4. Info.plist: `WKAppBoundDomains` = promptugal.news, web-summit.sgit.ai (stops WebKit purging the schedule after 7 days). Time Sensitive Notifications capability (reminders ask for `.timeSensitive`).
-- **Design:** `.teamFeatures()` on `AppShell()`, and the destinations above. `CalendarExport` needs `NSCalendarsWriteOnlyAccessUsageDescription` (platform, Info).
-- **Vault session:** when a team vault opens, call `TeamFeatures.shared.identity.verify(by: vaultID, person:)`; picks from the vault's `agenda/picks` go to `TeamFeatures.shared.schedule.merge(document)`, and `schedule.document` is what to write back.
+- **Platform** (in progress, per the conductor):
+  1. `WebsiteBrowser.init`: replace `configuration.websiteDataStore = .default()` with `TeamFeatures.shared.bridge.configure(configuration, for: homeURL)`, and after creating the web view call `TeamFeatures.shared.bridge.attach(webView)`.
+  2. Add `webView(_:didFinish:)` calling `TeamFeatures.shared.bridge.pageDidFinish(webView)`. In `decidePolicyFor`, before allowing: `if let url = action.request.url, TeamFeatures.shared.bridge.handlesNavigation(to: url) { decisionHandler(.cancel); return }`. Design's `WebPage` needs the same three lines.
+  3. After each agenda refresh in `ReaderStore`: `TeamFeatures.shared.agendaDidLoad(events)`. Route `toggleSaved`, `isSaved` and `saved` to `TeamFeatures.shared.schedule` (`toggle(event)`, `isPicked(event)`, `picks.compactMap(\.event)`).
+  4. Info: `NSCalendarsWriteOnlyAccessUsageDescription`; Time Sensitive Notifications capability; register a `BGAppRefreshTask` that calls `TeamFeatures.shared.refreshTeam()`.
+- **Design**: `.teamFeatures()` on `AppShell()` (not on dev yet: the root is still `WebsiteView`), and the destinations above.
 
 ## Apple setup for the native top-up
 
-1. App Store Connect: two consumables, `news.promptugal.reader.credit.5` (£5 of credit) and `news.promptugal.reader.credit.20` (£20), with a price tier, display name and review screenshot each.
-2. The Paid Apps agreement signed, with banking and tax.
+1. App Store Connect: two consumables, `news.promptugal.reader.credit.5` (£5 of credit) and `news.promptugal.reader.credit.20` (£20), each with a price, a display name and a review screenshot.
+2. The Paid Apps agreement signed, with banking and tax details.
 3. The In-App Purchase capability on the app id.
-4. Local testing works now with platform's `PrompTugal/Store/PrompTugal.storekit` on the scheme.
-5. Review note: credit is for the reading meter on promptugal.news; the web Stripe link is hidden in the app (rule 3.1.1).
+4. Local testing already works with `PrompTugal/Store/PrompTugal.storekit` on the scheme.
+5. Review note: the credit is for the reading meter on promptugal.news; the website's Stripe link is hidden in the app (rule 3.1.1).
 
 ## Trade-offs
 
-- **Data stores:** promptugal.news stays on the default store, because every earlier build kept its schedule, meter and vault session there. web-summit.sgit.ai moves to its own store, so its earlier `ws.me` and any `ws-keyring` keys stay behind: the app writes `ws.me` from the native identity, and each person re-opens their `#key=` link once.
-- **Bridge in its own world:** page scripts cannot see a handler in another content world, so `window.ptApp.call()` relays through a DOM event to the app's bridge-world script. The origin check is native, on the real frame.
+- **Data stores:** promptugal.news stays on the default store, where earlier builds kept its schedule, meter and vault session. web-summit.sgit.ai moves to its own store, so its earlier `ws.me` choice and `ws-keyring` keys stay behind. The app writes `ws.me` from the native identity; each person opens their `#key=` link once more.
+- **Bridge in its own world:** page scripts cannot see a handler in another content world, so `window.ptApp.call()` relays through a DOM event (and a DOM attribute) to the app's bridge-world script. The origin check is native, on the real frame.
