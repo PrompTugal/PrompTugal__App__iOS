@@ -93,8 +93,8 @@ final class TeamNotesStore {
                 errors[source.label] = nil
                 log.add(.list, lane: "Team notes · \(source.label)", detail: "\(paths.count) files in \(TeamNote.folder), \(read) notes")
             } catch {
-                errors[source.label] = error.localizedDescription
-                log.add(.error, lane: "Team notes · \(source.label)", detail: error.localizedDescription)
+                errors[source.label] = CollabErrorText.short(error)
+                log.add(.error, lane: "Team notes · \(source.label)", detail: CollabErrorText.short(error))
             }
         }
         notes = TeamNote.merge(collected)
@@ -117,8 +117,8 @@ final class TeamNotesStore {
             message = "Posted to your vault. Teammates with your read key see it."
             return true
         } catch {
-            message = error.localizedDescription
-            log.add(.error, lane: "Team notes · me", detail: error.localizedDescription)
+            message = CollabErrorText.short(error)
+            log.add(.error, lane: "Team notes · me", detail: CollabErrorText.short(error))
             return false
         }
     }
@@ -127,6 +127,7 @@ final class TeamNotesStore {
 /// The team notes section, for `LanesView`.
 struct TeamNotesSection: View {
     var store: TeamNotesStore = .shared
+    var lanes: LanesStore = .shared
     @State private var draft = ""
     @State private var posting = false
 
@@ -148,7 +149,7 @@ struct TeamNotesSection: View {
             if store.notes.isEmpty {
                 Text(store.loading ? "Reading vaults…" : "No team notes yet.").foregroundStyle(.secondary)
             }
-            ForEach(store.notes.prefix(30)) { note in
+            ForEach(store.notes.filter { !lanes.isBlocked(sender: $0.from) }.prefix(30)) { note in
                 VStack(alignment: .leading, spacing: 2) {
                     HStack {
                         Text(note.fromName).font(.subheadline.bold())
@@ -160,6 +161,11 @@ struct TeamNotesSection: View {
                     Text(note.text).font(.subheadline).textSelection(.enabled)
                 }
                 .accessibilityElement(children: .combine)
+                .contextMenu {
+                    if note.source != "me" {
+                        ReportBlockMenu(kind: "team note", sender: note.from, text: note.text, date: note.date)
+                    }
+                }
             }
             ForEach(store.errors.sorted { $0.key < $1.key }, id: \.key) { entry in
                 Text("\(entry.key): \(entry.value)").font(.caption).foregroundStyle(.orange)
