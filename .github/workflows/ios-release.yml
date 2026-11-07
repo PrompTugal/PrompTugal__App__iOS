@@ -1,0 +1,290 @@
+name: iOS release
+
+# Packaging and distribution for the PrompTugal app (news.promptugal.reader).
+#
+#   package   pushes to dev and night/release (not docs/site-only), tags ios-v*, by hand.
+#             Unsigned: .xcarchive, .ipa (Payload/PrompTugal.app zipped) and a
+#             simulator .app, uploaded as artifacts. Needs no Apple account.
+#   testflight  only by hand (workflow_dispatch with upload) or on a tag ios-v*.
+#             Signs, exports and uploads to App Store Connect / TestFlight.
+#             Skips cleanly, with "skipped: secret X missing" in the summary,
+#             until the signing secrets exist.
+#
+# Build number: CFBundleVersion = run number of THIS workflow + IOS_BUILD_OFFSET
+# (repo variable, default 100), passed as CURRENT_PROJECT_VERSION. Both jobs of
+# one run use the same number. MARKETING_VERSION comes from the project.
+# Setup and secrets: briefs/2026-11-08__overnight-push/release-setup.md
+
+on:
+  push:
+    # dev, and this workflow's own branch. Other night/** branches are built by
+    # ios.yml; package one by hand with workflow_dispatch + source_ref.
+    branches: [dev, night/release]
+    tags: ['ios-v*']        # path filters do not apply to tag pushes
+    paths-ignore:           # same as ios.yml: docs and site-only pushes skip the macOS runner
+      - 'briefs/**'
+      - 'website/**'
+      - '*.md'
+      - 'VERSION'
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'Sign and upload to TestFlight (needs the signing secrets)'
+        type: boolean
+        default: false
+      signing:
+        description: 'Signing: auto picks manual if the certificate secrets exist, else automatic'
+        type: choice
+        options: [auto, manual, automatic]
+        default: auto
+      build_number:
+        description: 'Override CFBundleVersion (leave empty for run number + offset)'
+        type: string
+        default: ''
+      internal_only:
+        description: 'TestFlight internal testing only (build can never go to external testers or the App Store)'
+        type: boolean
+        default: false
+      source_ref:
+        description: 'Build another branch (e.g. night/platform) with these release scripts'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-release-${{ github.ref }}-${{ github.event_name }}
+  # Pushes cancel older pushes on the same branch. Manual runs and tags have
+  # their own group (event name), so a push never cancels a TestFlight upload.
+  cancel-in-progress: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') }}
+
+env:
+  PROJECT: PrompTugal.xcodeproj
+  SCHEME: PrompTugal
+  APP_NAME: PrompTugal
+  IOS_BUILD_OFFSET: ${{ vars.IOS_BUILD_OFFSET || '100' }}
+  BUILD_NUMBER_OVERRIDE: ${{ inputs.build_number }}
+
+jobs:
+  package:
+    name: Unsigned archive, .ipa and simulator app
+    runs-on: macos-26
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      actions: read   # size check reads the latest dev build-info artifact
+    outputs:
+      version: ${{ steps.version.outputs.MARKETING_VERSION }}
+      build: ${{ steps.version.outputs.BUILD_NUMBER }}
+      base: ${{ steps.version.outputs.ARTIFACT_BASE }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # the app's build-info phase reads the commit count and tags
+
+      - name: Use another branch's project (source_ref)
+        if: inputs.source_ref != ''
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          git fetch --no-tags origin "$SOURCE_REF"
+          git checkout --detach FETCH_HEAD
+          git checkout "$GITHUB_SHA" -- scripts/release
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "SOURCE_REF=$SOURCE_REF" >> "$GITHUB_ENV"
+          echo "**Source:** \`$SOURCE_REF\` at \`$(git rev-parse --short HEAD)\`, release scripts from \`${GITHUB_SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Select Xcode
+        run: scripts/release/select-xcode.sh
+
+      - name: Version and build number
+        id: version
+        run: scripts/release/version.sh
+
+      - name: Archive and package (unsigned)
+        run: scripts/release/package-unsigned.sh
+
+      - name: Size check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/release/size-check.sh "$RUNNER_TEMP/release/dist/build-info.json"
+
+      - name: Release notes
+        if: always()
+        run: |
+          scripts/release/release-notes.sh > "$RUNNER_TEMP/release/dist/release-notes.txt"
+          { echo; echo "### Release notes (from git log)"; echo; echo '```'; cat "$RUNNER_TEMP/release/dist/release-notes.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unsigned .ipa
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ env.ARTIFACT_BASE }}-unsigned-ipa
+          path: ${{ runner.temp }}/release/dist/${{ env.ARTIFACT_BASE }}-unsigned.ipa
+          retention-days: 30
+          compression-level: 0
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ env.ARTIFACT_BASE }}-simulator-app
+          path: ${{ runner.temp }}/release/dist/${{ env.ARTIFACT_BASE }}-simulator.app.zip
+          retention-days: 30
+          compression-level: 0
+
+      - name: Upload .xcarchive
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ env.ARTIFACT_BASE }}-xcarchive
+          path: ${{ runner.temp }}/release/dist/${{ env.ARTIFACT_BASE }}.xcarchive.zip
+          retention-days: 14
+          compression-level: 0
+
+      - name: Upload build-info.json
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-info
+          path: |
+            ${{ runner.temp }}/release/dist/build-info.json
+            ${{ runner.temp }}/release/dist/release-notes.txt
+          retention-days: 90
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: release-logs-unsigned
+          path: ${{ runner.temp }}/release/logs/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  testflight:
+    name: Sign and upload to TestFlight
+    needs: package
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.upload) ||
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ios-v'))
+    runs-on: macos-26
+    timeout-minutes: 60
+    environment: testflight   # optional protection rules; secrets may live here or at repo level
+    env:
+      # Only the presence of these is checked in the gate step; values never print.
+      IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
+      IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+      IOS_PROFILE_APP_BASE64: ${{ secrets.IOS_PROFILE_APP_BASE64 }}
+      IOS_PROFILE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_WIDGETS_BASE64 }}
+      IOS_PROFILE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_INTENTS_BASE64 }}
+      IOS_PROFILE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_SHARE_BASE64 }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+      APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+      SIGNING: ${{ inputs.signing || 'auto' }}
+      INTERNAL_ONLY: ${{ inputs.internal_only && 'true' || 'false' }}
+      BUILD_NUMBER: ${{ needs.package.outputs.build }}
+      MARKETING_VERSION: ${{ needs.package.outputs.version }}
+      ARTIFACT_BASE: ${{ needs.package.outputs.base }}
+    steps:
+      - name: Check signing secrets
+        id: gate
+        run: |
+          # The script lives in the repo, but this step must work before checkout
+          # is useful, so it only reads which variables are non-empty.
+          missing=()
+          [ -n "$ASC_KEY_ID" ]        || missing+=(ASC_KEY_ID)
+          [ -n "$ASC_ISSUER_ID" ]     || missing+=(ASC_ISSUER_ID)
+          [ -n "$ASC_KEY_P8_BASE64" ] || missing+=(ASC_KEY_P8_BASE64)
+          cert_missing=()
+          [ -n "$IOS_DIST_CERT_P12_BASE64" ] || cert_missing+=(IOS_DIST_CERT_P12_BASE64)
+          [ -n "$IOS_DIST_CERT_PASSWORD" ]   || cert_missing+=(IOS_DIST_CERT_PASSWORD)
+          [ -n "$IOS_PROFILE_APP_BASE64" ]   || cert_missing+=(IOS_PROFILE_APP_BASE64)
+          mode=$SIGNING
+          if [ "$mode" = auto ]; then
+            if [ ${#cert_missing[@]} -eq 0 ]; then mode=manual; else mode=automatic; fi
+          fi
+          [ "$mode" = manual ] && missing+=("${cert_missing[@]}")
+          [ "$mode" = automatic ] && [ -z "$APPLE_TEAM_ID" ] && missing+=(APPLE_TEAM_ID)
+          echo "## TestFlight" >> "$GITHUB_STEP_SUMMARY"
+          if [ ${#missing[@]} -gt 0 ]; then
+            for s in "${missing[@]}"; do
+              echo "skipped: secret $s missing"
+              echo "- ⏭️ skipped: secret \`$s\` missing" >> "$GITHUB_STEP_SUMMARY"
+            done
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$mode" = automatic ] && [ ${#cert_missing[@]} -gt 0 ]; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "For manual signing (the default once present) add instead of \`APPLE_TEAM_ID\`: $(printf '\`%s\` ' "${cert_missing[@]}")and the extension profiles \`IOS_PROFILE_WIDGETS_BASE64\`, \`IOS_PROFILE_INTENTS_BASE64\`." >> "$GITHUB_STEP_SUMMARY"
+            fi
+            echo "Nothing was signed or uploaded (signing mode \`$mode\`). Add the secrets listed in \`briefs/2026-11-08__overnight-push/release-setup.md\`, then run this workflow again with **upload** ticked." >> "$GITHUB_STEP_SUMMARY"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Signing mode: $mode. All secrets for it are present."
+            echo "Signing mode: \`$mode\`. All secrets for it are present." >> "$GITHUB_STEP_SUMMARY"
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v5
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          fetch-depth: 0
+
+      - name: Use another branch's project (source_ref)
+        if: steps.gate.outputs.ready == 'true' && inputs.source_ref != ''
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          git fetch --no-tags origin "$SOURCE_REF"
+          git checkout --detach FETCH_HEAD
+          git checkout "$GITHUB_SHA" -- scripts/release
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "SOURCE_REF=$SOURCE_REF" >> "$GITHUB_ENV"
+          echo "**Source:** \`$SOURCE_REF\` at \`$(git rev-parse --short HEAD)\`, release scripts from \`${GITHUB_SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Select Xcode
+        if: steps.gate.outputs.ready == 'true'
+        run: scripts/release/select-xcode.sh
+
+      - name: Install certificate, profiles and API key
+        if: steps.gate.outputs.ready == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: scripts/release/signing-setup.sh
+
+      - name: Archive, sign, export and upload
+        if: steps.gate.outputs.ready == 'true'
+        env:
+          MODE: ${{ steps.gate.outputs.mode }}
+        run: scripts/release/testflight.sh
+
+      - name: Wait for processing, answer export compliance, set What to Test
+        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true'
+        continue-on-error: true   # the upload is done; these are conveniences
+        run: |
+          scripts/release/release-notes.sh > "$RUNNER_TEMP/release/notes.txt"
+          python3 scripts/release/asc.py wait-build --version "$MARKETING_VERSION" --build "$BUILD_NUMBER" --timeout 1200
+          python3 scripts/release/asc.py compliance --version "$MARKETING_VERSION" --build "$BUILD_NUMBER"
+          python3 scripts/release/asc.py whats-new  --version "$MARKETING_VERSION" --build "$BUILD_NUMBER" --file "$RUNNER_TEMP/release/notes.txt"
+
+      - name: Upload signed .ipa
+        if: steps.gate.outputs.ready == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ env.ARTIFACT_BASE }}-appstore-ipa
+          path: ${{ runner.temp }}/release/export/*.ipa
+          if-no-files-found: ignore
+          retention-days: 30
+          compression-level: 0
+
+      - name: Upload logs
+        if: always() && steps.gate.outputs.ready == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: release-logs-testflight
+          path: ${{ runner.temp }}/release/logs/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Remove keychain, profiles and key
+        if: always() && steps.gate.outputs.ready == 'true'
+        run: scripts/release/signing-cleanup.sh

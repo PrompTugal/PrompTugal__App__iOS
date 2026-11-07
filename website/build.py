@@ -302,6 +302,12 @@ def json_ld(page, facts, url):
     return json.dumps(data, indent=2, ensure_ascii=False)
 
 
+def no_tokens(rendered):
+    """Briefs are never token-filled, so braces they quote (e.g. GitHub's ${{ github.token }})
+    are shown as entities: they display the same and never read as an unfilled build token."""
+    return rendered.replace('{{', '&#123;&#123;').replace('}}', '&#125;&#125;')
+
+
 def brief_link(source, briefs):
     """Rewrite a link inside a brief: other briefs -> their page, repo files -> GitHub."""
     def link(href):
@@ -331,7 +337,7 @@ def read_briefs():
         path = (Path('admin/briefs') / rel.parent / f'{name}.html').as_posix()
         pages.append({'path': path, 'title': title, 'description': summary, 'noindex': True, 'kind': 'brief',
                       'body': '<article class="band"><div class="wrap prose brief">\n'
-                              + markdown.render(text, brief_link(source, briefs)) + '\n</div></article>',
+                              + no_tokens(markdown.render(text, brief_link(source, briefs))) + '\n</div></article>',
                       'twin_text': text, 'source': rel.as_posix()})
     return pages
 
@@ -345,7 +351,7 @@ def read_build_log():
         pages.append({'path': f'admin/build-log/{source.stem}.html', 'title': title, 'description': summary,
                       'noindex': True, 'kind': 'brief',
                       'body': '<article class="band"><div class="wrap prose brief">\n'
-                              + markdown.render(text, brief_link(source, ROOT / 'briefs'))
+                              + no_tokens(markdown.render(text, brief_link(source, ROOT / 'briefs')))
                               + '\n<p class="muted"><a href="index.html">All checkpoints</a></p></div></article>',
                       'twin_text': text, 'source': source.relative_to(ROOT).as_posix()})
     return pages
@@ -395,6 +401,7 @@ def build(out):
                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
                   workflow_count=str(len(admin.workflows())),
                   screens=admin.screens_html(admin.destinations(), facts['websites']),
+                  branch_screens=admin.branch_screens_html(admin.branch_destinations()),
                   code_areas=admin.areas_html(facts['areas']),
                   latest_build=admin.latest_build_html(admin.latest_build(os.environ.get('IOS_BUILD_JSON')), REPO_URL))
 
