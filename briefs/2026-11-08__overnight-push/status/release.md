@@ -2,7 +2,7 @@
 
 > CI packages every dev build unsigned (.ipa, simulator app, archive) and is ready to sign and upload to internal TestFlight as soon as Dinis adds 8 secrets. His 8-step morning checklist is at the top of release-setup.md.
 
-Branch: `night/release` · Last update: 06:05 UTC
+Branch: `night/release` · Last update: 06:15 UTC
 
 ## Done
 
@@ -52,7 +52,7 @@ Branch: `night/release` · Last update: 06:05 UTC
 
 ## In progress
 
-- Watching dev runs 28 and 29 to finish.
+- Dev run 28 waiting for a macOS runner since 05:16 (runner shortage across all workflows), run 29 waiting behind it; neither cancelled, as intended. Targets, entitlements and manifest unchanged at 06:15.
 
 ## Next
 
