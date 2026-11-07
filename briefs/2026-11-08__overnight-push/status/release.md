@@ -2,7 +2,7 @@
 
 > CI packages every dev build unsigned (.ipa, simulator app, archive) and is ready to sign and upload to internal TestFlight as soon as Dinis adds 8 secrets. His 8-step morning checklist is at the top of release-setup.md.
 
-Branch: `night/release` · Last update: 06:15 UTC
+Branch: `night/release` · Last update: 06:40 UTC
 
 ## Done
 
@@ -52,7 +52,7 @@ Branch: `night/release` · Last update: 06:15 UTC
 
 ## In progress
 
-- Dev run 28 waiting for a macOS runner since 05:16 (runner shortage across all workflows), run 29 waiting behind it; neither cancelled, as intended. Targets, entitlements and manifest unchanged at 06:15.
+- Dev run 28 green at 06:20 after an hour in the runner queue; it was not cancelled by later merges (runs 29 and 30 were replaced while still waiting, as designed). Run 31 (platform merge) building. With no-cancel concurrency, iOS release holds at most one running and one waiting run on dev, so it cannot pile up in the queue. Targets, entitlements and manifest unchanged at 06:40.
 
 ## Next
 
