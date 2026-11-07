@@ -2,7 +2,7 @@ name: iOS release
 
 # Packaging and distribution for the PrompTugal app (news.promptugal.reader).
 #
-#   package   pushes to dev and night/release (not docs/site-only), tags ios-v*, by hand.
+#   package   pushes to dev (not docs/site-only), tags ios-v*, and by hand.
 #             Unsigned: .xcarchive, .ipa (Payload/PrompTugal.app zipped) and a
 #             simulator .app, uploaded as artifacts. Needs no Apple account.
 #   testflight  only by hand (workflow_dispatch with upload) or on a tag ios-v*.
@@ -17,9 +17,10 @@ name: iOS release
 
 on:
   push:
-    # dev, and this workflow's own branch. Other night/** branches are built by
-    # ios.yml; package one by hand with workflow_dispatch + source_ref.
-    branches: [dev, night/release]
+    # dev only. Night branches are built by ios.yml; package one by hand with
+    # workflow_dispatch (+ source_ref). Changes to this workflow are tested the
+    # same way, so merges of dev into a night branch do not rebuild dev twice.
+    branches: [dev]
     tags: ['ios-v*']        # path filters do not apply to tag pushes
     paths-ignore:           # same as ios.yml: docs and site-only pushes skip the macOS runner
       - 'briefs/**'

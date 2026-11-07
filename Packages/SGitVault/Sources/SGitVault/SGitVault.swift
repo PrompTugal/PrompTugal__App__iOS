@@ -21,11 +21,11 @@ public actor SGitVault {
     public nonisolated let log: VaultTrafficLog
     public nonisolated let transportLabel: String
 
-    private let readKey: SymmetricKey
+    let readKey: SymmetricKey
     private let structureKey: SymmetricKey
     private let structureKeyMs: Double
-    private let transport: any VaultTransport
-    private let cache: VaultObjectCache
+    let transport: any VaultTransport
+    let cache: VaultObjectCache
 
     /// The named branch this instance reads. sgit's default is "current".
     public private(set) var branchName: String
@@ -38,14 +38,14 @@ public actor SGitVault {
     public private(set) var format: VaultFormat?
     public private(set) var lastPull: Date?
     public private(set) var lastPullMs: Double = 0
-    private var fileMap: [String: VaultFile] = [:]
+    var fileMap: [String: VaultFile] = [:]
     private var treeRoot: VaultTreeNode?
     private var announcedKeys = false
     private var pullTask: Task<VaultCommit, Error>?
 
     // Immutable objects decrypted this session, kept in memory (they never change).
     private var commitMemo: [String: VaultCommit] = [:]
-    private var treeMemo: [String: VaultTreeNode] = [:]
+    var treeMemo: [String: VaultTreeNode] = [:]
     private var treeFilesMemo: [String: [VaultFile]] = [:]
     private var publicKeyMemo: [String: P256.Signing.PublicKey] = [:]
 
@@ -347,6 +347,9 @@ public actor SGitVault {
                                               isFolder: false, size: size, children: []))
             }
         }
+        let folderCount = children.filter(\.isFolder).count
+        await emit(.decrypt, path, bytes: plain.count,
+                   detail: "JSON, tree of \(tree.entries.count) entries (\(tree.entries.count - folderCount) files, \(folderCount) folders): names, sizes, hashes and types decrypted (AES-256-GCM, deterministic iv)")
         children.sort { ($0.isFolder ? 0 : 1, $0.name) < ($1.isFolder ? 0 : 1, $1.name) }
         let node = VaultTreeNode(name: name, path: here, objectId: id, isFolder: true,
                                  size: children.reduce(0) { $0 + $1.size }, children: children)
@@ -379,25 +382,43 @@ public actor SGitVault {
         return try await decrypt(data, path: path, what: what)
     }
 
-    private func decrypt(_ data: Data, path: String, what: String) async throws -> Data {
-        let start = ContinuousClock.now
-        do {
-            let opened = try VaultCrypto.open(data, readKey: readKey, structureKey: structureKey)
-            let keyName = opened.usedStructureKey ? "structure key" : "read key"
-            await emit(.decrypt, path, bytes: opened.plaintext.count, ms: start.elapsedMs,
-                       detail: "\(what): \(opened.envelope.rawValue), \(keyName), \(data.count.vaultByteString) → \(opened.plaintext.count.vaultByteString)")
-            return opened.plaintext
-        } catch VaultError.inflateFailed {
-            try await fail(path, .inflateFailed(path: path), bytes: data.count)
-        } catch {
-            try await fail(path, .decryptFailed(path: path), bytes: data.count)
+    /// Decrypt one object, logging each step of the pipeline on the object's path:
+    /// key → AES-256-GCM → inflate (deflated blobs) → JSON (in `decode`).
+    func decrypt(_ data: Data, path: String, what: String) async throws -> Data {
+        await emit(.keyDerivation, path, bytes: 32,
+                   detail: "\(what): the vault read key (sgit has no per-object key); structure key (HKDF-SHA256 of it) as fallback")
+        let magic = VaultCrypto.deflateMagic
+        let deflated = data.count > magic.count + VaultCrypto.ivBytes + VaultCrypto.tagBytes && data.prefix(magic.count) == magic
+        for (key, keyName) in [(readKey, "read key"), (structureKey, "structure key")] {
+            let start = ContinuousClock.now
+            if deflated, let packed = try? VaultCrypto.gcmOpen(data.dropFirst(magic.count), key: key) {
+                await emit(.decrypt, path, bytes: packed.count, ms: start.elapsedMs,
+                           detail: "\(what): AES-256-GCM, \(keyName), deflated envelope \\0sgz1, \(data.count.vaultByteString) → \(packed.count.vaultByteString)")
+                let inflateStart = ContinuousClock.now
+                guard let plain = Zlib.decompress(packed) else {
+                    try await fail(path, .inflateFailed(path: path), bytes: packed.count)
+                }
+                await emit(.decrypt, path, bytes: plain.count, ms: inflateStart.elapsedMs,
+                           detail: "\(what): inflate (zlib, Adler-32 checked), \(packed.count.vaultByteString) → \(plain.count.vaultByteString)")
+                return plain
+            }
+            if let plain = try? VaultCrypto.gcmOpen(data, key: key) {
+                await emit(.decrypt, path, bytes: plain.count, ms: start.elapsedMs,
+                           detail: "\(what): AES-256-GCM, \(keyName), iv 12 B + tag 16 B, \(data.count.vaultByteString) → \(plain.count.vaultByteString)")
+                return plain
+            }
         }
+        try await fail(path, .decryptFailed(path: path), bytes: data.count)
     }
 
-    private func decode<T: Decodable>(_ data: Data, path: String, what: String, alreadyPlain: Bool = false) async throws -> T {
+    func decode<T: Decodable>(_ data: Data, path: String, what: String, alreadyPlain: Bool = false) async throws -> T {
         let plain = alreadyPlain ? data : try await decrypt(data, path: path, what: what)
+        let start = ContinuousClock.now
         do {
-            return try JSONDecoder().decode(T.self, from: plain)
+            let value = try JSONDecoder().decode(T.self, from: plain)
+            await emit(.decrypt, path, bytes: plain.count, ms: start.elapsedMs,
+                       detail: "JSON, \(what) parsed, \(plain.count.vaultByteString)")
+            return value
         } catch {
             try await fail(path, .malformed(path: path, detail: "\(what) JSON has an unexpected shape"))
         }
@@ -448,7 +469,7 @@ public actor SGitVault {
 
     // MARK: Transport and logging
 
-    private func fetch(_ path: String, cacheable: Bool) async throws -> Data {
+    func fetch(_ path: String, cacheable: Bool) async throws -> Data {
         try await fetchWithSource(path, cacheable: cacheable).0
     }
 
@@ -474,7 +495,7 @@ public actor SGitVault {
         }
     }
 
-    private func emit(_ kind: VaultTrafficEvent.Kind, _ path: String, bytes: Int = 0, ms: Double = 0,
+    func emit(_ kind: VaultTrafficEvent.Kind, _ path: String, bytes: Int = 0, ms: Double = 0,
                       status: Int? = nil, detail: String = "") async {
         let event = VaultTrafficEvent(kind: kind, path: path, bytes: bytes, durationMs: ms, status: status,
                                       detail: detail, vaultId: address.vaultId)
@@ -482,7 +503,7 @@ public actor SGitVault {
     }
 
     /// Log the error, then throw it.
-    private func fail(_ path: String, _ error: VaultError, bytes: Int = 0) async throws -> Never {
+    func fail(_ path: String, _ error: VaultError, bytes: Int = 0) async throws -> Never {
         await emit(.error, path, bytes: bytes, detail: error.description)
         throw error
     }
