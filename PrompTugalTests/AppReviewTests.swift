@@ -25,7 +25,7 @@ private func event(_ slug: String, _ time: String, day: String = "2026-11-10", p
 
 @Suite("Bridge gate")
 struct BridgeGateTests {
-    private func gate(_ scheme: String = "https", _ host: String = "promptugal.news", port: Int = 0,
+    private func gate(_ scheme: String = "https", host: String = "promptugal.news", port: Int = 0,
                       main: Bool = true, op: String = "schedule.get") -> AppBridge.Gate {
         AppBridge.gate(scheme: scheme, host: host, port: port, isMainFrame: main, op: op)
     }
@@ -48,7 +48,7 @@ struct BridgeGateTests {
 
     @Test func plainHTTPIsRefused() {
         #expect(gate("http") != .allowed)
-        #expect(gate("file", "") != .allowed)
+        #expect(gate("file", host: "") != .allowed)
     }
 
     @Test func aPortOtherThan443IsRefused() {
