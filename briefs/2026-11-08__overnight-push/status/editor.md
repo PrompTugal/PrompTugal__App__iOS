@@ -64,6 +64,8 @@ Branch: `night/editor` · Last update: 08:15 UTC · merged into `dev` at 251f69b
 
 ## Collected for the morning summary
 
+- **08:31** Run 173 on `8a060e8`: iPhone unit tests 124 tests in 33 suites passed. Screens run 13: iPad PNGs have no orientation tag now but are rotated 90° clockwise with a black band in Chromium; reported to platform. iPhone 13 of 13 live.
+
 - **Decision for Dinis: removing a pick.** Schedule sync with the vault is union-only, the same as the website. A pick removed in the app stays in the vault, on the website and on other devices; only this device remembers the removal. Fine for the summit. The proper fix is a "removed" list (tombstones) in `agenda/picks`, which the website must honour too. (From the conductor, 03:31 UTC.)
 - **For Dinis:** a contact address for "talk to us" on the plans page.
 - **Link:** release's TestFlight setup checklist, `release-setup.md` in this pack.
