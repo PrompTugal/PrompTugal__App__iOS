@@ -85,10 +85,27 @@ jobs:
             echo '{"available": false}' > "$RUNNER_TEMP/ios-build.json"
           fi
 
+      - name: Latest app screenshots
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # The newest successful screens.yml run on dev, if any; its artifact screens-<sha> holds <device>-<id>.png.
+        # Never fails the site: without screenshots the pages say so.
+        run: |
+          mkdir -p "$RUNNER_TEMP/screens"
+          run=$(gh run list --workflow screens.yml --branch dev --status success --limit 1 \
+                  --json databaseId -q '.[0].databaseId' 2>/dev/null || true)
+          if [ -n "$run" ]; then
+            gh run download "$run" --pattern 'screens-*' -D "$RUNNER_TEMP/screens" || echo "No screens artifact in run $run."
+          else
+            echo "No successful screens.yml run on dev yet."
+          fi
+          find "$RUNNER_TEMP/screens" -name '*.png' | wc -l
+
       - name: Build
         env:
           SITE_COMMIT: ${{ needs.release.outputs.sha || github.sha }}
           IOS_BUILD_JSON: ${{ runner.temp }}/ios-build.json
+          SCREENS_DIR: ${{ runner.temp }}/screens
         run: python3 website/build.py
 
       - name: Validate

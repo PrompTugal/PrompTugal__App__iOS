@@ -11,6 +11,7 @@ Checks every page in the output directory:
   * no scripts other than JSON-LD, no external stylesheets, no inline event handlers
   * one <h1>, a lang, a title and a description; every <img> has alt, width and height
   * no build tokens left behind and no banned words
+  * every screenshot's declared size is the PNG's real size, shown without distortion
 
 Standard library only. Usage: python3 website/validate.py [DIR]
 """
@@ -37,6 +38,7 @@ class Page(HTMLParser):
     def __init__(self):
         super().__init__()
         self.links, self.images, self.ids, self.scripts, self.problems = [], [], set(), [], []
+        self.img_attrs = []
         self.h1 = 0
         self.noindex = False
         self.lang = self.title = self.description = None
@@ -68,6 +70,7 @@ class Page(HTMLParser):
             self.links.append(a.get('href', ''))
         elif tag == 'img':
             self.images.append(a.get('src', ''))
+            self.img_attrs.append(a)
             for need in ('alt', 'width', 'height'):
                 if a.get(need) is None:
                     self.problems.append(f"<img src={a.get('src')}> has no {need}")
@@ -182,6 +185,22 @@ def validate(out):
     app = next((json.loads(s) for s in home.scripts if '"softwareVersion"' in s), {})
     if {app.get('softwareVersion')} != versions:
         problems.append(f"index.html: softwareVersion {app.get('softwareVersion')} != project {sorted(versions)}")
+    # Screenshots are real: the declared pixel size is the file's, and the shown size keeps its shape
+    for name, page in parsed.items():
+        for a in page.img_attrs:
+            if 'data-png-width' not in a:
+                continue
+            target = resolve(name, a.get('src', ''))
+            real = admin.png_size(out / target) if target else None
+            if not real:
+                continue  # a missing file is already reported as a broken link
+            declared = (int(a['data-png-width']), int(a['data-png-height']))
+            if declared != real:
+                problems.append(f"{name}: screenshot {a['src']} says {declared[0]}x{declared[1]}, the file is {real[0]}x{real[1]}")
+            w, h = int(a.get('width', 0)), int(a.get('height', 0))
+            if not w or abs(h - real[1] * w / real[0]) > 1:
+                problems.append(f"{name}: screenshot {a['src']} is shown at {w}x{h}, which distorts it")
+
     # PrompTugal only on product pages
     for name, path in pages.items():
         if name.startswith('admin/'):

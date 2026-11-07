@@ -393,7 +393,14 @@ def build(out):
     tokens.update(websites_sidebar=websites_sidebar(facts), websites_list=websites_list(facts),
                   repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages),
                   build_log_list=build_log_list(pages))
-    tokens.update(admin.feature_tokens(REPO_URL))
+    shots = admin.screenshots(os.environ.get('SCREENS_DIR'))
+    tokens.update(admin.feature_tokens(REPO_URL, shots=shots))
+    tokens.update(screens_gallery=admin.screens_gallery(admin.destinations(), shots))
+    # The home page shows a real iPad screenshot when CI took one; otherwise the drawn mock-up.
+    hero = next((i for i in ('today', 'team.people', 'news.home') if 'ipad' in shots.get(i, {})), None)
+    tokens['hero_device'] = (f'<figure class="device-shot">{admin.shot_img(shots, hero, {"today": "My day", "team.people": "The team", "news.home": "News"}[hero], device="ipad", width=640)}'
+                             '<figcaption class="muted">The app on iPad, from the latest CI screenshots.</figcaption></figure>'
+                             if hero else fill((WEBSITE / 'hero_mock.html').read_text(), tokens))
     status = admin.push_status()
     tokens.update(push_dashboard=admin.push_dashboard(status, REPO_URL), push_blockers=admin.push_blockers(status),
                   push_sessions=str(len(status)),
@@ -412,6 +419,11 @@ def build(out):
         shutil.rmtree(out)
     (out / 'assets').mkdir(parents=True)
     shutil.copy(WEBSITE / 'site.css', out / 'assets' / 'site.css')
+    for ident, devices in admin.screenshots(os.environ.get('SCREENS_DIR')).items():
+        for device, (source, _, _) in devices.items():
+            target = out / admin.shot_name(device, ident)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(source, target)
     for published, source in IMAGES.items():
         shutil.copy(source, out / published)
 
