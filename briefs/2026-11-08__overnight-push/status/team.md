@@ -2,7 +2,7 @@
 
 > One schedule on the website's format, synced with the web view and the vault; reminders; team data; the day planner; the native top-up. All on dev and wired into the app; dev is green with every test on iPhone and iPad (run 104).
 
-Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 05:20 UTC
+Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 06:45 UTC
 
 ## Done
 
@@ -21,6 +21,7 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 05:20 
 
 - **Green on dev**: run 104 (dev 27881b0, which contains all of night/team up to 500b5ad): app build, SGitVault tests, and the unit tests on iPhone and on iPad all pass.
 - Fixed tonight: one test expression the type checker timed out on (396968c); the schedule's JSON key order, which was not stable across devices and broke two exact-text tests on dev (500b5ad, now written by hand as the website's `JSON.stringify` writes it). Before that fix, 63 of 65 tests passed.
+- Since run 104, not yet run by CI (runners saturated): reminders ask once at the first pick or identity and refill on foreground; reading credit's Done only in the sheet and an "Open PrompTugal.news" button (b5955d2, on dev); the planner caches and `NextHoursCard` (e97868a, night/team).
 - Platform's wiring is on dev: the bridge on `WebsiteBrowser` and design's `WebPage`, `ReaderStore` → schedule, the widget, and the team refresh in the background. `.teamFeatures()` is applied once (the modifier now ignores a second copy).
 
 ## What I learned from the websites
@@ -50,8 +51,16 @@ Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson`, `CommandCent
 
 ## Next
 
-1. Register the entry views that design has not yet (Plan my day, Where is everyone, Reminders in Settings, Bridge in Debug).
-2. Live Activity data for the next item (platform owns the target).
+1. CI green on the commits above.
+2. Summit polish: reminder text, planner on iPhone, top-up states.
+3. Live Activity data for the next item (platform owns the target).
+
+## Recently
+
+- All my entry views are registered by design on dev (planner, reminders in Settings, Bridge in Debug, reading credit, team home). "Where is everyone" has one shell entry, collab's.
+- `NextHoursCard()` for Today ("my next 3 hours", or three sessions starting soon); design places it at the top of My day and on the Wall.
+- Planner: the plan, the teammate index and title keywords are cached, so redraws do not rescan the 195 agenda items.
+- Reminders: permission asked once at the right moment; topped up on every foreground (iOS keeps 64).
 
 ## Blocked
 
