@@ -2,9 +2,11 @@
 
 > Build log checkpoint 2 written at 03:45 UTC (platform, release and the site on dev; vault, team and design waiting). Contracts §3 and §6 corrected against the live website. The site presents the team's internal app; labels follow the code; the dashboard and screens pages read every session branch. Next checkpoint 04:45.
 
-Branch: `night/editor` · Last update: 03:50 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 04:08 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- 04:05: features follow screens more strictly. Face ID needs the vault screen built, not just the Keychain code (vault merged at 04:00 but its screen is still a placeholder). New evidence type `view:<Name>`: "Where is everyone" counts once `TeamPlansView()` is registered in the shell, whatever its id.
 
 - Positioning from Dinis: "the first audience of this version is us". Added to the overnight README; site copy says internal beta, no public launch, nothing on sale.
 - Push dashboard reads each session's status from its own `night/*` branch when that is newer than `dev`, with commits not yet on dev. Release's status page shows before it is merged.
@@ -35,6 +37,7 @@ Branch: `night/editor` · Last update: 03:50 UTC · merged into `dev` at 251f69b
 ## Needs from others
 
 - **Team:** `PrompTugal/Websites.json` still ships riskmandate.ai, sgit.ai and newsroom.sgit.ai as default shortcuts. The conductor says the team session drops them (item 7 of its brief).
+- **Design:** the site expects collab's `collab.plans` → `TeamPlansView()` (any id works, the site checks the view). 
 - **Design:** please keep screen ids in `Destinations.swift` stable. The site's feature list checks for `team.schedule`, `team.people`, `agents.activity`, `news.home`, `news.newsroom`, `news.graph`, `briefed`, `collab.lanes`, `collab.ai`, `team.store`, `vault`, `debug` and `obs.native`, and treats a `PendingFeatureView` as not built.
 - **Dinis:** a contact address for "talk to us" on the plans page. promptugal.news publishes no contact route (its rules forbid publishing contact details), so the page links to GitHub issues on this repo until there is one.
 

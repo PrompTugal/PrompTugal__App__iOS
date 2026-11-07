@@ -1,5 +1,5 @@
 {
-  "_about": "The feature list on the product site. A feature is shown as 'In the beta' only when every entry in 'evidence' is present at build time: a file glob must match at least one file, and 'screen:<id>' must be a screen registered in Shell/Destinations.swift with a real view, not a PendingFeatureView. Otherwise it is shown as 'Coming'. Write 'what' so it is true once the code is merged.",
+  "_about": "The feature list on the product site. A feature is shown as 'In the beta' only when every entry in 'evidence' is present at build time: a file glob must match at least one file, and 'screen:<id>' must be a screen registered in Shell/Destinations.swift with a real view, not a PendingFeatureView; 'view:<Name>' must be a view used by such a registration, whatever its id. Otherwise it is shown as 'Coming'. Write 'what' so it is true once the code is merged.",
   "features": [
     {
       "id": "websites",
@@ -176,7 +176,8 @@
       "kind": "native",
       "what": "Teammates' picks, read from the vaults they choose to share, next to your own schedule.",
       "evidence": [
-        "PrompTugal/Coordination/*.swift"
+        "PrompTugal/Coordination/*.swift",
+        "view:TeamPlansView"
       ]
     },
     {

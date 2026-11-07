@@ -30,11 +30,15 @@ def plain(text):
 def features(root=ROOT):
     """features.json with each feature's status worked out from the files on disk."""
     data = json.loads((root / 'website' / 'features.json').read_text())['features']
-    screens = {d['id'] for d in destinations(root) if not d['pending']}
+    built = [d for d in destinations(root) if not d['pending']]
+    screens = {d['id'] for d in built}
+    views = set().union(*(d['views'] for d in built)) if built else set()
 
     def present(evidence):
         if evidence.startswith('screen:'):
             return evidence[len('screen:'):] in screens
+        if evidence.startswith('view:'):
+            return evidence[len('view:'):] in views
         return any(p.is_file() for p in root.glob(evidence))
 
     for f in data:
@@ -357,6 +361,7 @@ def parse_destinations(source, file=''):
                         'section': section.group(1) if section else '', 'kind': kind.group(1) if kind else '',
                         'url': url.group(1) if url else re.sub(r'\s+', ' ', target).strip(),
                         'pending': 'PendingFeatureView' in body,
+                        'views': set(re.findall(r'\b([A-Z]\w*View)\(', body)) - {'AnyView', 'PendingFeatureView'},
                         'file': file})
     return out
 

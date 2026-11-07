@@ -283,6 +283,13 @@ class SiteTest(unittest.TestCase):
         self.assertFalse(admin.features(root)[0]['shipped'])
         swift.write_text('AppDestination(id: "vault", kind: .native) { AnyView(VaultView()) }\n')
         self.assertTrue(admin.features(root)[0]['shipped'])
+        (root / 'website' / 'features.json').write_text(json.dumps({'features': [
+            {'id': 'p', 'platform': 'teams', 'name': 'P', 'kind': 'native', 'what': 'x', 'evidence': ['view:TeamPlansView']}]}))
+        self.assertFalse(admin.features(root)[0]['shipped'])
+        swift.write_text('AppDestination(id: "x", kind: .native) { AnyView(PendingFeatureView(title: "TeamPlansView()")) }\n')
+        self.assertFalse(admin.features(root)[0]['shipped'])
+        swift.write_text('AppDestination(id: "team.plans", kind: .native) { AnyView(TeamPlansView()) }\n')
+        self.assertTrue(admin.features(root)[0]['shipped'])
 
     def test_latest_build_panel(self):
         self.assertIsNone(admin.latest_build(None))
