@@ -40,6 +40,9 @@ struct AgentsDashboardView: View {
                 }
             } else {
                 counts
+                if let person = data.person(me), let mine = person.agents, !mine.isEmpty {
+                    MyAgentsTimeline(agents: mine, name: person.first ?? person.displayName)
+                }
                 TitledCard("Where they fire", kicker: "Last 24 hours, UTC") {
                     WakeGrid(agents: agents, hours: dashboard?.gridHours ?? [], highlight: isMine)
                 }
@@ -83,6 +86,48 @@ struct AgentsDashboardView: View {
                      tone: cells.contains(.failed) ? .bad : .good)
             StatTile(label: "Stale agents", value: "\(all.filter { $0.stale == true }.count)", tone: .warn)
             StatTile(label: "Asks for a person", value: "\(dashboard?.asks?.count ?? 0)", tone: .warn)
+        }
+    }
+}
+
+/// When each of my agents last did something, on one time line, from the team site's me.json.
+struct MyAgentsTimeline: View {
+    let agents: [Wire.PersonAgent]
+    let name: String
+
+    private struct Dot: Identifiable {
+        let id: String
+        let agent: String
+        let date: Date
+        let active: Bool
+        let line: String
+    }
+
+    var body: some View {
+        let dots = agents.compactMap { agent in
+            agent.lastDate.map { Dot(id: agent.name ?? UUID().uuidString,
+                                     agent: (agent.name ?? "agent").components(separatedBy: "@").first ?? "agent",
+                                     date: $0, active: agent.status == "active", line: agent.last ?? "") }
+        }
+        .sorted { $0.date > $1.date }
+        TitledCard("\(name)'s agents", kicker: "\(dots.filter(\.active).count) of \(agents.count) active · last action") {
+            if dots.isEmpty {
+                Text("No dated activity.").font(.footnote).foregroundStyle(Palette.muted)
+            } else {
+                Chart(dots) { dot in
+                    PointMark(x: .value("Last action", dot.date), y: .value("Agent", dot.agent))
+                        .foregroundStyle(dot.active ? Palette.green : Palette.muted)
+                        .symbolSize(70)
+                    RuleMark(xStart: .value("Last action", dot.date), xEnd: .value("Now", Date.now),
+                             y: .value("Agent", dot.agent))
+                        .foregroundStyle(Palette.rule)
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+                }
+                .frame(height: CGFloat(min(dots.count, 24)) * 22 + 30)
+                if let latest = dots.first {
+                    Text("Latest: \(latest.agent): \(latest.line)").font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                }
+            }
         }
     }
 }
