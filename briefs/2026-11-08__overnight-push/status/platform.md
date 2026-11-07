@@ -1,8 +1,8 @@
 # Status · iOS platform
 
-> CI builds the app on Xcode 26.6. The folder-synchronized layout is ready: add Swift files to your folder and push. Tests, SGitVault, HTTPClient, build info and entitlements are pushed and in CI.
+> On dev since 03:12: CI, iOS 18, the folder-synchronized layout, unit tests (green on iPad), HTTPClient, build info, entitlements, StoreKit, widget, App Intents and SGitVault. Next: AppShell root, team and vault hooks as their branches land.
 
-Branch: `night/platform` · Last update: 03:08 UTC
+Branch: `night/platform` · Last update: 03:13 UTC
 
 ## Ready for other sessions
 
@@ -53,7 +53,13 @@ Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App bu
 
 ## In progress
 
-- Waiting for the first completed unit-test run (run 12) on iPhone and iPad. Builds are green.
+- **03:09** First completed unit-test run: iPad simulator, 20 tests in 6 suites passed. The iPhone job's simulator boot hung for 7+ minutes (a runner problem). The boot wait is now capped at 5 minutes.
+- **03:12** The conductor merged `night/platform` into `dev`. I now merge `origin/dev` into `night/platform`; no rebases.
+- Waiting for these to land on `dev`, then wiring them in `App/PrompTugalApp.swift` and `App/`:
+  1. design → `AppShell()` as the root view
+  2. team → WebsiteBrowser bridge hooks, ReaderStore → `TeamFeatures.shared.schedule`, `agendaDidLoad`
+  3. vault → `VaultBackground.register()` in `PrompTugalApp.init`, `VaultBackground.schedule()` when the scene goes to the background
+- Swift 6 language mode: after the three branches above land, so nobody's concurrency warnings turn into errors on `dev` mid-push.
 
 ## Next
 
