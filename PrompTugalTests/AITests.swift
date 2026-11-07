@@ -594,3 +594,25 @@ struct AIKeyVaultOwnershipTests {
         UserDefaults().removePersistentDomain(forName: name)
     }
 }
+
+@Suite("Ask: links and copy (S7)")
+struct AILinkTests {
+    @Test("Only https and mailto links can be opened, after confirmation")
+    func links() throws {
+        #expect(AskLinks.canOpen(try #require(URL(string: "https://promptugal.news/events/x/"))))
+        #expect(AskLinks.canOpen(try #require(URL(string: "mailto:someone@example.com"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "http://example.com"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "promptugal://open/debug"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "tel:+351000000"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "https://user:pw@example.com"))))
+    }
+
+    @Test("Copy is local only and expires")
+    @MainActor func copy() throws {
+        let board = UIPasteboard.withUniqueName()
+        AskClipboard.copy("hello", pasteboard: board)
+        #expect(board.string == "hello")
+        #expect(AskClipboard.lifetime <= 300)
+        UIPasteboard.remove(withName: board.name)
+    }
+}

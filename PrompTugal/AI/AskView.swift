@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 /// Ask: the native AI chat (entry view for `collab.ai`). On iPhone it is a screen or a sheet; on iPad it also
 /// opens as a side panel next to any screen with `.askPanel(isPresented:)`.
@@ -118,6 +119,9 @@ private struct AskStarters: View {
 struct AskTurnView: View {
     let turn: ChatStore.Turn
     let debug: Bool
+    /// A link the model wrote, waiting for the person to confirm (S7: links in model output are not opened on one tap).
+    @State private var pendingLink: URL?
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         switch turn.role {
@@ -149,9 +153,23 @@ struct AskTurnView: View {
                     }
                 } else {
                     Text(AIMarkdown.render(turn.text))
+                        .environment(\.openURL, OpenURLAction { url in
+                            pendingLink = url
+                            return .handled
+                        })
+                        .confirmationDialog("Open this link?", isPresented: Binding(get: { pendingLink != nil },
+                                                                                 set: { if !$0 { pendingLink = nil } }),
+                                            titleVisibility: .visible, presenting: pendingLink) { url in
+                            if AskLinks.canOpen(url) {
+                                Button("Open") { openURL(url) }
+                            }
+                            Button("Copy link") { AskClipboard.copy(url.absoluteString) }
+                        } message: { url in
+                            Text("The answer links to:\n\(url.absoluteString)\n\nIt was written by the AI model; check it before you open it.")
+                        }
                         .textSelection(.enabled)
                         .contextMenu {
-                            Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = turn.text }
+                            Button("Copy", systemImage: "doc.on.doc") { AskClipboard.copy(turn.text) }
                             ShareLink(item: turn.text) { Label("Share", systemImage: "square.and.arrow.up") }
                         }
                 }
@@ -539,6 +557,25 @@ struct AskPanelButton: View {
             Label("Ask", systemImage: "sparkles")
         }
         .keyboardShortcut("k", modifiers: [.command])
+    }
+}
+
+/// Copies text to this device only (not Handoff's universal clipboard), cleared after two minutes (S7).
+enum AskClipboard {
+    static let lifetime: TimeInterval = 120
+
+    static func copy(_ text: String, pasteboard: UIPasteboard = .general) {
+        pasteboard.setItems([[UTType.plainText.identifier: text]],
+                            options: [.localOnly: true, .expirationDate: Date().addingTimeInterval(lifetime)])
+    }
+}
+
+/// Which links from model output may be opened at all (after confirmation): web pages and mail only.
+enum AskLinks {
+    static func canOpen(_ url: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased() else { return false }
+        if scheme == "mailto" { return true }
+        return scheme == "https" && url.host() != nil && url.user == nil && url.password == nil
     }
 }
 

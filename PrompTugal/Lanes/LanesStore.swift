@@ -243,7 +243,7 @@ final class LanesStore {
     func refreshInbox() async {
         let lane: LaneAddress
         let enumKey: String
-        let source: DecryptKey
+        let source: LaneDecryptKey
         if let mine = myLane, let key = (try? secrets.read(Self.enumKeyAccount)) ?? nil, LaneIdentity.exists {
             lane = mine
             enumKey = key
@@ -291,39 +291,24 @@ final class LanesStore {
         }
     }
 
-    enum DecryptKey: Sendable {
-        /// This device's RSA key in the Keychain.
-        case deviceIdentity
-        /// The website's inbox record (its PKCS#8 key is imported inside the background task).
-        case inboxRecord(Data)
-    }
-
-    struct Opened: Sendable {
-        let id: String
-        let text: String?
-        let error: String?
-        let encBytes: Int
-        let plainBytes: Int
-    }
-
     /// Opens every message on a background task: key import, RSA-OAEP unwrap and AES-GCM never block the UI.
-    nonisolated static func decryptAll(_ items: [(id: String, content: String)], key: DecryptKey) async -> [Opened] {
-        await Task.detached(priority: .userInitiated) {
+    nonisolated static func decryptAll(_ items: [(id: String, content: String)], key: LaneDecryptKey) async -> [LaneOpened] {
+        await Task.detached(priority: .userInitiated) { () -> [LaneOpened] in
             let privateKey: SecKey?
             switch key {
             case .deviceIdentity: privateKey = LaneIdentity.privateKey()
             case .inboxRecord(let record): privateKey = try? LanesStore.inboxRecord(record).key
             }
             guard let privateKey else {
-                return items.map { Opened(id: $0.id, text: nil, error: "No key to open it on this device.", encBytes: 0, plainBytes: 0) }
+                return items.map { LaneOpened(id: $0.id, text: nil, error: "No key to open it on this device.", encBytes: 0, plainBytes: 0) }
             }
-            return items.map { item in
+            return items.map { item -> LaneOpened in
                 do {
                     let enc = try LaneCrypto.encText(fromLaneContent: item.content)
                     let plain = try LaneCrypto.decrypt(enc, with: privateKey)
-                    return Opened(id: item.id, text: LanesStore.readable(plain), error: nil, encBytes: enc.utf8.count, plainBytes: plain.count)
+                    return LaneOpened(id: item.id, text: LanesStore.readable(plain), error: nil, encBytes: enc.utf8.count, plainBytes: plain.count)
                 } catch {
-                    return Opened(id: item.id, text: nil, error: CollabErrorText.short(error), encBytes: 0, plainBytes: 0)
+                    return LaneOpened(id: item.id, text: nil, error: CollabErrorText.short(error), encBytes: 0, plainBytes: 0)
                 }
             }
         }.value
@@ -412,4 +397,19 @@ enum UIDeviceName {
         UserDefaults.standard.set(made, forKey: key)
         return made
     }
+}
+
+enum LaneDecryptKey: Sendable {
+    /// This device's RSA key in the Keychain.
+    case deviceIdentity
+    /// The website's inbox record (its PKCS#8 key is imported inside the background task).
+    case inboxRecord(Data)
+}
+
+struct LaneOpened: Sendable {
+    let id: String
+    let text: String?
+    let error: String?
+    let encBytes: Int
+    let plainBytes: Int
 }
