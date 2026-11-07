@@ -95,6 +95,39 @@ class SiteTest(unittest.TestCase):
             with self.assertRaises(SystemExit, msg=bad):
                 version.read(path)
 
+    def test_briefs_are_published_with_their_source_as_twin(self):
+        briefs = sorted((build.ROOT / 'briefs').rglob('*.md'))
+        self.assertTrue(briefs, 'no briefs to publish')
+        for source in briefs:
+            rel = source.relative_to(build.ROOT / 'briefs')
+            name = 'index' if source.name == 'README.md' else source.stem
+            page = self.clean / 'admin' / 'briefs' / rel.parent / f'{name}.html'
+            self.assertTrue(page.exists(), f'{rel} was not published')
+            self.assertIn('noindex', page.read_text())
+            self.assertTrue((page.with_suffix('.md')).read_text().endswith(source.read_text()))
+
+    def test_brief_links_become_pages_or_github(self):
+        pack = next((self.clean / 'admin' / 'briefs').iterdir())
+        text = (pack / 'index.html').read_text()
+        self.assertIn('href="04-vaults-on-ios.html"', text)
+        self.assertIn(f'{build.REPO_URL}/blob/dev/briefs/', text)
+
+    def test_markdown_escapes_html(self):
+        import markdown
+        out = markdown.render('<script>x</script> and `<b>`')
+        self.assertNotIn('<script>', out)
+        self.assertIn('&lt;b&gt;', out)
+
+    def test_refuses_noindex_page_in_sitemap(self):
+        page = next(self.clean.rglob('admin/index.html')).relative_to(self.clean).as_posix()
+        self.assertRefused(self.broken('sitemap.xml', lambda t: t.replace(
+            '</urlset>', f'  <url><loc>{build.SITE_URL}{page}</loc></url>\n</urlset>')), 'noindex page is in sitemap.xml')
+
+    def test_refuses_broken_link_in_nested_page(self):
+        self.assertRefused(self.broken('admin/index.html', lambda t: t.replace('href="../version.json"',
+                                                                                'href="version.json"')),
+                           'broken link version.json')
+
     # --- negative controls --------------------------------------------------
 
     def test_refuses_broken_link(self):
@@ -117,10 +150,10 @@ class SiteTest(unittest.TestCase):
 
     def test_refuses_orphan_page(self):
         def drop_links(text):
-            return re.sub(r'<a href="privacy\.html"[^>]*>.*?</a>', '', text)
+            return re.sub(r'<a href="(\.\./)*privacy\.html"[^>]*>.*?</a>', '', text)
         out = self.tmp / 'orphan'
         shutil.copytree(self.clean, out)
-        for page in out.glob('*.html'):
+        for page in out.rglob('*.html'):
             page.write_text(drop_links(page.read_text()))
         self.assertRefused(validate.validate(out), 'privacy.html: not reachable')
 

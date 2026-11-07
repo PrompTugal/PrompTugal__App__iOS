@@ -13,6 +13,7 @@ Checks every page in the output directory:
 Standard library only. Usage: python3 website/validate.py [DIR]
 """
 import json
+import posixpath
 import re
 import sys
 from html.parser import HTMLParser
@@ -30,6 +31,7 @@ class Page(HTMLParser):
         super().__init__()
         self.links, self.images, self.ids, self.scripts, self.problems = [], [], set(), [], []
         self.h1 = 0
+        self.noindex = False
         self.lang = self.title = self.description = None
         self._script = None
         self._title = False
@@ -47,6 +49,8 @@ class Page(HTMLParser):
             self._title = True
         elif tag == 'meta' and a.get('name') == 'description':
             self.description = a.get('content')
+        elif tag == 'meta' and a.get('name') == 'robots':
+            self.noindex = 'noindex' in (a.get('content') or '')
         elif tag == 'h1':
             self.h1 += 1
         elif tag == 'a' and 'href' in a:
@@ -86,7 +90,7 @@ def project_version():
 
 def validate(out):
     problems = []
-    pages = {p.name: p for p in sorted(out.glob('*.html'))}
+    pages = {p.relative_to(out).as_posix(): p for p in sorted(out.rglob('*.html'))}
     if 'index.html' not in pages:
         return ['no index.html']
     parsed = {}
@@ -115,6 +119,14 @@ def validate(out):
         if not page.scripts:
             problems.append(f'{name}: no JSON-LD')
 
+    def resolve(name, href):
+        """The page-relative href as a path relative to the site root ('' when it leaves the site)."""
+        target = urldefrag(href)[0]
+        if not target:
+            return name
+        joined = posixpath.normpath(posixpath.join(posixpath.dirname(name), target))
+        return '' if joined.startswith('..') else joined
+
     # Links, anchors and images
     for name, page in parsed.items():
         for href in page.links + page.images:
@@ -123,9 +135,8 @@ def validate(out):
                 if url.scheme == 'http':
                     problems.append(f'{name}: insecure link {href}')
                 continue
-            target, fragment = urldefrag(href)
-            target = target or name
-            if not (out / target).exists():
+            target, fragment = resolve(name, href), urldefrag(href)[1]
+            if not target or not (out / target).exists():
                 problems.append(f'{name}: broken link {href}')
             elif fragment and target.endswith('.html') and fragment not in parsed.get(target, Page()).ids:
                 problems.append(f'{name}: no #{fragment} in {target}')
@@ -137,21 +148,25 @@ def validate(out):
         if current in seen or current not in parsed:
             continue
         seen.add(current)
-        queue += [urldefrag(h)[0] for h in parsed[current].links if h.endswith('.html') or '.html#' in h]
+        queue += [resolve(current, h) for h in parsed[current].links
+                  if not urlparse(h).scheme and urldefrag(h)[0].endswith('.html')]
     for name in sorted(set(parsed) - seen):
         problems.append(f'{name}: not reachable from index.html')
 
-    # Agent surface
+    # Agent surface: every page has a twin in llms.txt; indexable pages, and only those, are in the sitemap
     llms = (out / 'llms.txt').read_text() if (out / 'llms.txt').exists() else ''
     sitemap = (out / 'sitemap.xml').read_text() if (out / 'sitemap.xml').exists() else ''
-    for name in parsed:
+    for name, page in parsed.items():
         twin = name[:-5] + '.md'
         if not (out / twin).exists():
             problems.append(f'{name}: no Markdown twin {twin}')
-        elif twin not in llms:
+        elif f'/{twin})' not in llms:
             problems.append(f'{name}: {twin} is not listed in llms.txt')
         loc = '' if name == 'index.html' else name
-        if f'/{loc}</loc>' not in sitemap:
+        listed = f'/{loc}</loc>' in sitemap
+        if page.noindex and listed:
+            problems.append(f'{name}: noindex page is in sitemap.xml')
+        elif not page.noindex and not listed:
             problems.append(f'{name}: not in sitemap.xml')
 
     # Facts must match the app
@@ -175,7 +190,7 @@ def main():
     if problems:
         print(f'validate: {len(problems)} problem(s) in {out}')
         sys.exit(1)
-    print(f'validate: {len(list(out.glob("*.html")))} pages OK in {out}')
+    print(f'validate: {len(list(out.rglob("*.html")))} pages OK in {out}')
 
 
 if __name__ == '__main__':

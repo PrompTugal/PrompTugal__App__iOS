@@ -1,0 +1,44 @@
+<!--
+title: Developer area · PrompTugal for iOS
+description: For the PrompTugal team: brief packs on where the iOS app is going, how this site and the app are released, and where the source lives.
+robots: noindex
+order: 10
+-->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">Developer area</p>
+    <h1>Briefs, releases and source</h1>
+    <p class="lede">Working material for the PrompTugal team and the agents that build with us. Everything here is public and readable. It is kept out of search engines, but anyone with the link can read it.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="briefs">
+  <div class="wrap">
+    <p class="kicker">Brief packs</p>
+    <h2>Where the app is going</h2>
+    <p class="prose">A brief pack is a set of short documents on one question. Each one is kept as Markdown in <a href="{{repo_url}}/tree/dev/briefs"><code>briefs/</code></a> in the repo and published here when <code>dev</code> is released. Agents can read the same text through each page’s Markdown twin.</p>
+    <div class="packs">
+{{brief_packs}}
+    </div>
+  </div>
+</section>
+
+<section class="band" id="release">
+  <div class="wrap prose">
+    <p class="kicker">Releases</p>
+    <h2>What is live right now</h2>
+    <dl class="qa">
+      <dt>Site release</dt>
+      <dd>{{release}}, from the <code>VERSION</code> file. CI bumps it, tags it and pushes it on every push to <code>dev</code>, then deploys and checks the live <a href="../version.json"><code>version.json</code></a>.</dd>
+      <dt>App version</dt>
+      <dd>{{version}} (build {{build}}), from <code>MARKETING_VERSION</code> and <code>CURRENT_PROJECT_VERSION</code> in the Xcode project. Bumped by hand before each TestFlight upload.</dd>
+      <dt>The app’s code</dt>
+      <dd>{{swift_lines}} lines of Swift in {{swift_files}} files, with no third-party packages. It is kept in the sgit vault and on <a href="{{repo_url}}">GitHub</a>.</dd>
+    </dl>
+    <h2>Working on this site</h2>
+    <pre><code>python3 website/build.py
+python3 website/validate.py
+python3 -m unittest website/test_site.py</code></pre>
+    <p>To add a brief, add a Markdown file to a pack in <code>briefs/</code>. It needs a <code># Title</code> line and a <code>&gt; summary</code> line. The build publishes it here and the validator checks its links.</p>
+  </div>
+</section>

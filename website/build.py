@@ -19,6 +19,7 @@ import shutil
 from html.parser import HTMLParser
 from pathlib import Path
 
+import markdown
 import version
 
 SITE_URL = 'https://ios.app.promptugal.news/'
@@ -111,7 +112,9 @@ def read_page(path):
         raise SystemExit(f'build: {path.name} has no front-matter comment')
     meta = dict(line.split(': ', 1) for line in match.group(1).splitlines())
     meta['body'] = path.read_text()[match.end():]
-    meta['slug'] = path.stem
+    meta['path'] = path.relative_to(WEBSITE / 'pages').as_posix()
+    meta['slug'] = meta['path'][:-5]
+    meta['noindex'] = meta.get('robots') == 'noindex'
     return meta
 
 
@@ -206,7 +209,7 @@ def to_markdown(body):
 
 
 def json_ld(page, facts, url):
-    if page['slug'] == 'index':
+    if page['path'] == 'index.html':
         data = {
             '@context': 'https://schema.org', '@type': 'MobileApplication',
             'name': 'PrompTugal', 'operatingSystem': f"iOS {facts['min_ios']}, iPadOS {facts['min_ios']}",
@@ -217,19 +220,73 @@ def json_ld(page, facts, url):
             'codeRepository': REPO_URL,
         }
     else:
-        data = {'@context': 'https://schema.org', '@type': 'WebPage', 'name': page['title'],
+        kind = 'TechArticle' if page.get('kind') == 'brief' else 'WebPage'
+        data = {'@context': 'https://schema.org', '@type': kind, 'name': page['title'],
                 'url': url, 'description': page['description'],
                 'isPartOf': {'@type': 'WebSite', 'name': 'PrompTugal for iOS', 'url': SITE_URL}}
     return json.dumps(data, indent=2, ensure_ascii=False)
 
 
+def brief_link(source, briefs):
+    """Rewrite a link inside a brief: other briefs -> their page, repo files -> GitHub."""
+    def link(href):
+        if '://' in href or href.startswith(('#', 'mailto:')):
+            return href
+        target, _, fragment = href.partition('#')
+        resolved = (source.parent / target).resolve()
+        suffix = f'#{fragment}' if fragment else ''
+        if resolved.suffix == '.md' and resolved.is_relative_to(briefs) and resolved.exists():
+            out = resolved.with_name('index.html' if resolved.name == 'README.md' else resolved.stem + '.html')
+            here = source.with_name('index.html' if source.name == 'README.md' else source.stem + '.html')
+            return os.path.relpath(out, here.parent) + suffix
+        if resolved.is_relative_to(ROOT) and resolved.exists():
+            return f'{REPO_URL}/blob/dev/{resolved.relative_to(ROOT).as_posix()}{suffix}'
+        return href
+    return link
+
+
+def read_briefs():
+    """Every brief pack under /briefs becomes pages under admin/briefs/."""
+    briefs, pages = ROOT / 'briefs', []
+    for source in sorted(briefs.rglob('*.md')):
+        text = source.read_text()
+        title, summary = markdown.title_and_summary(text)
+        rel = source.relative_to(briefs)
+        name = 'index' if source.name == 'README.md' else source.stem
+        path = (Path('admin/briefs') / rel.parent / f'{name}.html').as_posix()
+        pages.append({'path': path, 'title': title, 'description': summary, 'noindex': True, 'kind': 'brief',
+                      'body': '<article class="band"><div class="wrap prose brief">\n'
+                              + markdown.render(text, brief_link(source, briefs)) + '\n</div></article>',
+                      'twin_text': text, 'source': rel.as_posix()})
+    return pages
+
+
+def brief_packs(pages):
+    """The admin index's list of packs and the briefs in each."""
+    packs = {}
+    for page in pages:
+        if page.get('kind') == 'brief':
+            packs.setdefault(page['path'].split('/')[2], []).append(page)
+    blocks = []
+    for pack, items in sorted(packs.items(), reverse=True):
+        items.sort(key=lambda p: (not p['path'].endswith('/index.html'), p['path']))
+        head, rest = items[0], items[1:]
+        rel = lambda p: p['path'][len('admin/'):]
+        rows = ''.join(f'<li><a href="{rel(p)}">{html.escape(p["title"])}</a><span>{html.escape(p["description"])}</span></li>'
+                       for p in rest)
+        blocks.append(f'<article class="card pack"><h3><a href="{rel(head)}">{html.escape(head["title"])}</a></h3>'
+                      f'<p>{html.escape(head["description"])}</p><ol class="brief-list">{rows}</ol></article>')
+    return '\n'.join(blocks) or '<p>No briefs yet.</p>'
+
+
 def build(out):
     facts = app_facts()
-    pages = sorted((read_page(p) for p in (WEBSITE / 'pages').glob('*.html')), key=lambda p: int(p['order']))
+    sources = sorted((WEBSITE / 'pages').rglob('*.html'))
+    pages = sorted((read_page(p) for p in sources), key=lambda p: int(p['order'])) + read_briefs()
     template = (WEBSITE / 'template.html').read_text()
     tokens = {k: v for k, v in facts.items() if isinstance(v, str)}
     tokens.update(websites_sidebar=websites_sidebar(facts), websites_list=websites_list(facts),
-                  repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts))
+                  repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages))
 
     if out.exists():
         shutil.rmtree(out)
@@ -242,26 +299,33 @@ def build(out):
             f"> PrompTugal {facts['version']} for iPhone and iPad: the PrompTugal.news newsroom and "
             f"the sites around it ({facts['site_count']} websites) in one app, with an offline reader for the "
             'Web Summit Lisbon agenda. Independent of Web Summit.', '', '## Pages', '']
+    llms_team = ['', '## For the team: developer area and briefs', '']
     sitemap = []
     for page in pages:
-        filename = f"{page['slug']}.html"
-        url = SITE_URL if page['slug'] == 'index' else SITE_URL + filename
-        body = fill(page['body'], tokens)
+        path = page['path']
+        root = '../' * path.count('/')
+        url = SITE_URL + ('' if path == 'index.html' else path)
+        twin = Path(path).with_suffix('.md').name
+        body = fill(page['body'], tokens) if page.get('kind') != 'brief' else page['body']
         nav = ''.join(
-            f'<a href="{p["slug"]}.html"{" aria-current=\"page\"" if p is page else ""}>{p["nav"]}</a>'
+            f'<a href="{root}{p["path"]}"{" aria-current=\"page\"" if p is page else ""}>{p["nav"]}</a>'
             for p in pages if p.get('nav'))
+        robots = '<meta name="robots" content="noindex">' if page.get('noindex') else ''
         page_tokens = dict(tokens, title=html.escape(page['title']), description=html.escape(page['description']),
-                           canonical=url, nav=nav, body=body, jsonld=json_ld(page, facts, url), slug=page['slug'],
-                           twin=f"{page['slug']}.md")
-        (out / filename).write_text(fill(template, page_tokens))
-        if page.get('twin', 'yes') == 'yes':
-            (out / f"{page['slug']}.md").write_text(
-                f"<!-- {url} · PrompTugal for iOS {facts['version']} -->\n\n" + to_markdown(body))
-            llms.append(f"- [{page['title']}]({SITE_URL}{page['slug']}.md): {page['description']}")
+                           canonical=url, nav=nav, body=body, jsonld=json_ld(page, facts, url),
+                           twin=twin, root=root, robots=robots)
+        target = out / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(fill(template, page_tokens))
+        twin_text = page.get('twin_text') or to_markdown(body)
+        target.with_suffix('.md').write_text(f"<!-- {url} · PrompTugal for iOS {facts['version']} -->\n\n" + twin_text)
+        entry = f"- [{page['title']}]({SITE_URL}{Path(path).with_suffix('.md').as_posix()}): {page['description']}"
+        (llms_team if path.startswith('admin/') else llms).append(entry)
+        if not page.get('noindex'):
             sitemap.append(f'  <url><loc>{url}</loc></url>')
 
-    llms += ['', '## Source', '', f'- [Source code (Apache-2.0)]({REPO_URL})',
-             '- [PrompTugal.news](https://promptugal.news/llms.txt): the newsroom the app reads', '']
+    llms += llms_team + ['', '## Source', '', f'- [Source code (Apache-2.0)]({REPO_URL})',
+                         '- [PrompTugal.news](https://promptugal.news/llms.txt): the newsroom the app reads', '']
     (out / 'llms.txt').write_text('\n'.join(llms))
     (out / 'sitemap.xml').write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
