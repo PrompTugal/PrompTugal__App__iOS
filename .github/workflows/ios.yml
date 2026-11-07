@@ -19,7 +19,9 @@ permissions:
 
 concurrency:
   group: ios-${{ github.ref }}
-  cancel-in-progress: true
+  # A new push waits for the running run to finish instead of cancelling it,
+  # so test runs complete; GitHub keeps only the newest pending run.
+  cancel-in-progress: false
 
 env:
   PROJECT: PrompTugal.xcodeproj
