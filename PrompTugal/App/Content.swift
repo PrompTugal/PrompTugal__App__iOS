@@ -110,27 +110,22 @@ enum FeedClient {
     private struct EventEnvelope: Decodable { let data: EventDetail }
 
     static func agenda() async throws -> [Event] {
-        let data = try await get(site.appendingPathComponent("api/v1/live/agenda.json"))
+        let data = try await get(site.appendingPathComponent("api/v1/live/agenda.json"), label: "feed.agenda")
         return try JSONDecoder().decode(AgendaFeed.self, from: data).items.sorted(by: Event.earlier)
     }
 
     static func news() async throws -> [Story] {
-        let data = try await get(site.appendingPathComponent("feed.xml"))
+        let data = try await get(site.appendingPathComponent("feed.xml"), label: "feed.news")
         return try RSSReader().read(data)
     }
 
     static func detail(for event: Event) async throws -> EventDetail {
         guard let url = event.detailURL else { throw URLError(.badURL) }
-        return try JSONDecoder().decode(EventEnvelope.self, from: await get(url)).data
+        return try JSONDecoder().decode(EventEnvelope.self, from: await get(url, label: "feed.event")).data
     }
 
-    private static func get(_ url: URL) async throws -> Data {
-        let request = URLRequest(url: url, timeoutInterval: 15)
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let response = response as? HTTPURLResponse, (200..<300).contains(response.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
-        return data
+    private static func get(_ url: URL, label: String) async throws -> Data {
+        try await HTTPClient.shared.get(url, timeout: 15, label: label)
     }
 }
 
