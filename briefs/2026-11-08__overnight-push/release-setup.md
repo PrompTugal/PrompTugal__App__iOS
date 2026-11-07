@@ -82,6 +82,23 @@ Either:
 
 Pushes to branches never upload. After the job is green, App Store Connect processes the build in 5–30 minutes. You get an email, and with automatic distribution the internal group sees it in the TestFlight app.
 
+After the upload, the job waits up to 20 minutes for processing, then uses the API key (`scripts/release/asc.py`, Python standard library and `openssl`) to:
+
+- answer export compliance for the build (`usesNonExemptEncryption = false`) if Info.plist does not already;
+- set TestFlight's **What to Test** to release notes made from `git log` since the previous `ios-v*` tag (`scripts/release/release-notes.sh`).
+
+If processing takes longer, these steps give up without failing the job. The build still arrives.
+
+## Step 4b. Submit to the App Store (later)
+
+Workflow **iOS App Store submit** (`.github/workflows/ios-submit.yml`), by hand only, on a Linux runner:
+
+1. In App Store Connect, create the version (for example 0.4.0) and fill in the metadata, screenshots for iPhone and iPad, privacy answers and review notes. The workflow does not touch these.
+2. Actions → **iOS App Store submit** → version and build number → Run. Without **confirm** it is a dry run that prints the plan.
+3. Run again with **confirm** ticked. It waits for processing, answers export compliance, attaches the build to the version, and creates and submits a review submission.
+
+It uses the same three `ASC_*` secrets. It runs in an environment called `app-store`, where you can add a required reviewer.
+
 ### Two signing modes
 
 | | Manual (default when the .p12 secrets exist) | Automatic (`signing: automatic`, or only the API key set) |
