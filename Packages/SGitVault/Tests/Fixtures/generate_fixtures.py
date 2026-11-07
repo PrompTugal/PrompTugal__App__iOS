@@ -118,10 +118,59 @@ def make(name: str, passphrase: str, vault_id: str, out_root: Path, deflate: boo
     print(name, vault_id, n, 'server files')
 
 
+def simple_vault(vault_key: str, files: dict, out: Path):
+    """One throwaway vault with the given files at its root, as the server would hold it."""
+    api = Vault__API__In_Memory().setup()
+    sync = Vault__Sync(crypto=Vault__Crypto(), api=api)
+    vault_id = vault_key.rsplit(':', 1)[1]
+    with tempfile.TemporaryDirectory() as tmp:
+        work = Path(tmp) / 'work'
+        sync.init(str(work), vault_key=vault_key)
+        for rel, text in files.items():
+            write(work, rel, text)
+        sync.commit(str(work), message='account fixture')
+        sync.push(str(work))
+        return dump_server(api, vault_id, out / vault_id)
+
+
+def make_account(out_root: Path):
+    """The website's passkey account shape (assets/vault/vault-core.js): a door vault at the address
+    derived from the PRF bytes holds master-key.json; the master holds reader.json and doors.json.
+    The PRF bytes are made up (32 x 0x01), so the door is door_vectors.py's first vector."""
+    sys.path.insert(0, str(Path(__file__).parent / 'door'))
+    from door_vectors import door
+    d = door(bytes([1] * 32))
+    out = out_root / 'account'
+    shutil.rmtree(out, ignore_errors=True)
+    master_key = 'sgit_private_vault_throwaway-fixture-master:fixtmaster1'
+    reader_key = 'sgit_private_vault_throwaway-fixture-reader:fixtreader1'
+    door_key = f'sgit_private_vault_{d["passphrase"]}:{d["vault_id"]}'
+    simple_vault(door_key.removeprefix('sgit_private_vault_'),
+                 {'master-key.json': json.dumps({'v': 1, 'master': master_key}, indent=1),
+                  'door.json': json.dumps({'v': 1, 'kind': 'passkey', 'path': 'platform'}, indent=1)}, out)
+    simple_vault(master_key.removeprefix('sgit_private_vault_'),
+                 {'reader.json': json.dumps({'v': 1, 'reader': reader_key}, indent=1),
+                  'doors.json': json.dumps({'v': 1, 'doors': [{'kind': 'passkey', 'vault_id': d['vault_id']}]}, indent=1)},
+                 out)
+    simple_vault(reader_key.removeprefix('sgit_private_vault_'),
+                 {'README.md': '# A reader vault\n', 'apps/schedule.json': '{"v":1,"picks":[]}'}, out)
+    (out / 'expected.json').write_text(json.dumps({
+        'WARNING': 'THROWAWAY test keys for test fixtures only. These vaults exist on no server.',
+        'prf_bytes_hex': '01' * 32, 'door_vault_id': d['vault_id'], 'master_vault_id': 'fixtmaster1',
+        'reader_vault_id': 'fixtreader1', 'reader_files': ['README.md', 'apps/schedule.json'],
+    }, indent=1) + '\n')
+    print('account', d['vault_id'], 'fixtmaster1', 'fixtreader1')
+
+
 def main():
     out_root = Path(sys.argv[1])
-    make('plain', 'throwaway-fixture-plain', 'fixtplain1', out_root, deflate=False)
-    make('deflate', 'throwaway-fixture-deflate', 'fixtdefl1', out_root, deflate=True)
+    only = sys.argv[2:] or ['plain', 'deflate', 'account']
+    if 'plain' in only:
+        make('plain', 'throwaway-fixture-plain', 'fixtplain1', out_root, deflate=False)
+    if 'deflate' in only:
+        make('deflate', 'throwaway-fixture-deflate', 'fixtdefl1', out_root, deflate=True)
+    if 'account' in only:
+        make_account(out_root)
 
 
 if __name__ == '__main__':

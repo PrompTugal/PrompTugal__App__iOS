@@ -57,12 +57,22 @@ public struct HTTPVaultTransport: VaultTransport {
 /// or a clone's `.sg_vault` folder. Used by the tests and for local clones.
 public struct FolderVaultTransport: VaultTransport {
     public let root: URL
+    /// When set, each vault lives in `<root>/<vault id>/<perVaultSubfolder>/`.
+    public let perVaultSubfolder: String?
     public var label: String { "folder" }
 
-    public init(root: URL) { self.root = root }
+    public init(root: URL, perVaultSubfolder: String? = nil) {
+        self.root = root
+        self.perVaultSubfolder = perVaultSubfolder
+    }
 
     public func get(vaultId: String, path: String) async throws -> VaultResponse {
-        let url = root.appending(path: path)
+        var base = root
+        if let sub = perVaultSubfolder {
+            base = root.appending(path: vaultId, directoryHint: .isDirectory)
+            if !sub.isEmpty { base = base.appending(path: sub, directoryHint: .isDirectory) }
+        }
+        let url = base.appending(path: path)
         guard let data = try? Data(contentsOf: url) else { return VaultResponse(data: Data(), status: 404) }
         return VaultResponse(data: data, status: 200)
     }
