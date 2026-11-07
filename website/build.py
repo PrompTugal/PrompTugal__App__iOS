@@ -397,7 +397,7 @@ def build(out):
 
     llms = ['# PrompTugal for iOS', '',
             f"> PrompTugal {facts['version']} for iPhone and iPad, in beta. Today it is the PrompTugal team's internal "
-            'app for Web Summit Lisbon 2026: the news, the agenda and each person\'s day offline, and what the team '
+            'app for Web Summit Lisbon 2026, being built to hold the news, the agenda and each person\'s day offline, and what the team '
             'and its AI agents are doing. Where it is going: a platform for readers and for teams. '
             'Independent of Web Summit.', '', '## Pages', '']
     llms_team = ['', '## For the team: developer area and briefs', '']
