@@ -15,6 +15,8 @@ Branch: `split/design` (from `origin/dev`) · Last update: 8 Nov, planning · La
 - Shell option C: shared parts in `Packages/PTCore/Sources/PTCore/Shell/` (mine); each app keeps its own root and Destinations.
 - Team app scheme is `ptteam://`; PrompTugal keeps `promptugal://`. Reminders and links take the scheme as a parameter, not hard-coded.
 
+- Editor needs code markers for site labels: PrompTugal root struct `PublicShell` (search `PublicShell(`); Team keeps `AppShell(` and `.teamFeatures()`. Sent the id list to the conductor.
+
 ## In progress
 - Waiting for phase 2.
 
