@@ -173,7 +173,7 @@ private struct PhoneShell: View {
     var body: some View {
         TabView(selection: $tab) {
             ForEach(tabs) { destination in
-                Tab(destination.title, systemImage: destination.symbol, value: destination.id) {
+                Tab(destination.tabTitle ?? destination.title, systemImage: destination.symbol, value: destination.id) {
                     NavigationStack {
                         destination.view().surfaceKind(destination.kind)
                     }
