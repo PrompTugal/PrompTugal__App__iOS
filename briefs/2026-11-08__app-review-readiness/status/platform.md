@@ -1,8 +1,8 @@
 # Status · platform · App Review readiness
 
-> Done: items 1–8, design's Q9 and team's Q6/Q8. Last full CI run 260 (`60b4070`): green, 200 tests in 55 suites on iPhone, Release build green. StoreKit products cannot be loaded on the CI simulator by any setup tried (details below), so team's purchase tests stay a known issue. Ready for the conductor to merge.
+> Done: items 1–8, design's Q9 and team's Q6/Q8. Final CI run 263 (`aa64031`, head of `night/platform`): all green, Release build green, 212 tests in 61 suites on iPhone and on iPad (3 known issues: team's StoreKit tests, no products on the CI simulator). Ready for the conductor to merge.
 
-Branch: `night/platform` · Last update: 17:45 UTC
+Branch: `night/platform` · Last update: 18:07 UTC
 
 ## Done · CI run 210 (`2b0644e`, workflow_dispatch): all jobs green
 
