@@ -40,7 +40,8 @@ final class ScreensTests: XCTestCase {
     @MainActor
     private func shoot(_ id: String) {
         // Landscape on iPad shows the sidebar and the detail side by side, as the team uses it.
-        // screens.yml turns the iPad PNGs upright (the raw capture is in portrait pixels).
+        // screens.yml turns the iPad PNGs upright from their EXIF orientation (the raw capture is
+        // the portrait framebuffer).
         if UIDevice.current.userInterfaceIdiom == .pad {
             XCUIDevice.shared.orientation = .landscapeLeft
         }
@@ -50,7 +51,10 @@ final class ScreensTests: XCTestCase {
         sleep(3)
         // Keep the screenshot first: the check below can time out on a screen with a very large
         // accessibility tree (the full agenda), and a query timeout ends the test.
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+        // The whole screen, not app.screenshot(): in landscape on iPad, the app element's capture
+        // crops the portrait framebuffer to the landscape frame, which kept only a square of the UI
+        // and filled the rest with black (screens run 13).
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = id
         attachment.lifetime = .keepAlways
         add(attachment)

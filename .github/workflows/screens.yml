@@ -70,19 +70,26 @@ jobs:
           label=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
           .github/scripts/export-screens.py --self-test
           .github/scripts/export-screens.py "$RUNNER_TEMP/Screens.xcresult" "$RUNNER_TEMP/screens" "$label"
+          # XCTest stores the framebuffer and an EXIF Orientation tag saying how to turn it (iPad
+          # landscape: the portrait buffer). Read the tag, strip it (and XMP) so no viewer turns
+          # the picture again, then turn the stored pixels the way the tag said, with sips
+          # (-r is clockwise): 6 -> 90, 3 -> 180, 8 -> 270. Then longest side 1600 px.
           for f in "$RUNNER_TEMP"/screens/*.png; do
-            # iPad shots are taken in landscape-left. sips reads them as portrait; rotating gives
-            # upright landscape stored pixels (confirmed by the editor on run 12). The EXIF tag
-            # that would turn them back in a browser is removed by png-normalize.py below.
-            if [ "$label" = ipad ]; then
-              w=$(sips -g pixelWidth "$f" | awk '/pixelWidth/{print $2}')
-              h=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
-              [ "$w" -lt "$h" ] && sips -r 270 "$f" >/dev/null
-            fi
+            o=$(python3 .github/scripts/png-normalize.py --orientation "$f")
+            python3 .github/scripts/png-normalize.py "$f" >/dev/null
+            w=$(sips -g pixelWidth "$f" | awk '/pixelWidth/{print $2}')
+            h=$(sips -g pixelHeight "$f" | awk '/pixelHeight/{print $2}')
+            echo "$(basename "$f"): captured ${w}x${h}, EXIF orientation $o"
+            case "$o" in
+              1) ;;
+              3) sips -r 180 "$f" >/dev/null ;;
+              6) sips -r 90 "$f" >/dev/null ;;
+              8) sips -r 270 "$f" >/dev/null ;;
+              *) echo "::warning::$(basename "$f"): mirrored EXIF orientation $o, left as captured" ;;
+            esac
             sips -Z 1600 "$f" >/dev/null
           done
-          # Drop EXIF orientation (XCTest tags iPad landscape shots Orientation=8, so browsers turn
-          # them sideways) and check the stored pixel size from IHDR: iPad must be landscape.
+          # Check: no eXIf left, and the stored size (IHDR) of every iPad PNG is landscape.
           bad=0
           if [ "$label" = ipad ]; then landscape=--landscape; else landscape=; fi
           python3 .github/scripts/png-normalize.py --self-test
