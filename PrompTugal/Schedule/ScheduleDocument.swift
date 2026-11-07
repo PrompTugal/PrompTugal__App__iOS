@@ -34,13 +34,13 @@ struct ScheduleDocument: Codable, Equatable, Sendable {
             id = try container.decode(String.self, forKey: .id)
             // `at` comes from web pages and other devices: anything outside 2000–2100, not finite, or unreadable
             // drops the pick (a time such as 1e300 used to trap when it was written back as milliseconds).
-            var date: Date?
+            var parsed: Date?
             if let millis = try? container.decode(Double.self, forKey: .at), millis.isFinite {
-                date = Date(timeIntervalSince1970: millis / 1000)
+                parsed = Date(timeIntervalSince1970: millis / 1000)
             } else if let text = try? container.decode(String.self, forKey: .at) {
-                date = ScheduleTime.parse(text)
+                parsed = ScheduleTime.parse(text)
             }
-            guard let date, ScheduleTime.isValid(date) else {
+            guard let date = parsed, ScheduleTime.isValid(date) else {
                 throw DecodingError.dataCorruptedError(forKey: .at, in: container,
                                                        debugDescription: "pick time missing or outside 2000–2100")
             }

@@ -218,7 +218,8 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
             // asked, the app shows its own alert, and the prompt follows only a tap on it (S7).
             let status = await reminders.currentAuthorization()
             if status == .unknown { remindersRequested = true }
-            let count = status == .allowed ? await reminders.reschedule() : 0
+            var count = 0
+            if status == .allowed { count = await reminders.reschedule() }
             return (["authorized": status == .allowed, "asked": status == .unknown, "scheduled": count] as [String: Any],
                     status == .unknown ? "native alert" : "\(count) reminders")
         case "meter.topup":
@@ -327,7 +328,8 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
                     contentWorld: .page) as? String ?? "failed"
                 // "credited" or "already" is the page's answer; it counts only if the page's storage, read from the
                 // bridge's own content world (which page scripts cannot patch), now holds this transaction (S7).
-                let confirmed = result != "failed" ? await meterHolds(credit.reference, in: webView) : false
+                var confirmed = false
+                if result != "failed" { confirmed = await meterHolds(credit.reference, in: webView) }
                 log.record(host: hostOf(webView), .appToPage, op: "meter.credit",
                            detail: "\(credit.pence)p, \(credit.reference): \(result)\(confirmed ? ", confirmed" : ", not confirmed")",
                            outcome: confirmed ? .ok : .failed)

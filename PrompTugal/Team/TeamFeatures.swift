@@ -147,7 +147,7 @@ private struct TeamFeaturesModifier: ViewModifier {
             .environment(features.planner)
             .environment(features.vaultLink)
             .sheet(isPresented: Binding(get: { bridge.topUpRequested && ReadingCredit.isAvailable },
-                                        set: { bridge.topUpRequested = $0 })) {
+                                        set: { features.bridge.topUpRequested = $0 })) {
                 NavigationStack { ReadingCreditView(showsDone: true) }
                     .environment(features.meter)
                     .environment(features.credits)
