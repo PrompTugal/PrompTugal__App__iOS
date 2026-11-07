@@ -5,24 +5,9 @@ import WebKit
 
 // MARK: - Bridge
 
-/// Debug → Bridge. The team session's `BridgeLog` is not on its branch yet; this panel
-/// says so plainly and switches to the live log when it lands.
+/// Debug → Bridge: every message between a web page and the app, from the team session's BridgeLog.
 struct BridgePanel: View {
-    var body: some View {
-        List {
-            Section {
-                GapNote(title: "The bridge log is not wired yet",
-                        text: "Every message between a web page and the app (schedule.get, schedule.set, identity.get, notify.plan, meter.topup) will show here, with its origin and timing, once night/team publishes its BridgeLog.")
-                    .listRowInsets(EdgeInsets())
-            }
-            Section("What the bridge will carry (contract §4)") {
-                ForEach(["schedule.get", "schedule.set", "identity.get", "notify.plan", "meter.topup"], id: \.self) { op in
-                    Text(op).font(Typo.data)
-                }
-            }
-        }
-        .navigationTitle("Bridge")
-    }
+    var body: some View { BridgeLogView() }
 }
 
 // MARK: - Storage
@@ -144,7 +129,22 @@ struct KeysPanel: View {
                 Text("Names and protection only. The app never reads a key's value for this screen.")
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
-            if items.isEmpty {
+            let vaultKeys = VaultSession.shared.keyInventory
+            if !vaultKeys.isEmpty {
+                Section("Vault keys (from the vault session)") {
+                    ForEach(vaultKeys) { item in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.name).font(Typo.data)
+                            Text(item.detail).font(.caption).foregroundStyle(Palette.muted)
+                            HStack {
+                                Label(item.store, systemImage: "internaldrive").font(.caption2).foregroundStyle(Palette.blue)
+                                Label(item.protection, systemImage: "lock").font(.caption2).foregroundStyle(Palette.green)
+                            }
+                        }
+                    }
+                }
+            }
+            if items.isEmpty && vaultKeys.isEmpty {
                 Section { Text(error ?? "No keys stored on this device yet.").foregroundStyle(Palette.muted) }
             }
             ForEach(Dictionary(grouping: items, by: \.kind).sorted { $0.key < $1.key }, id: \.key) { kind, rows in

@@ -1,8 +1,8 @@
 # Status · Swift vault
 
-> The Swift sgit reader and writer work and are tested on macOS CI over throwaway vaults written by sgit 0.27; what Swift writes, sgit reads back on Linux. App code for Face ID, the Secure Enclave and passkey unlock is in PrompTugal/Vault and type-checks; it is not in the app target yet.
+> The Swift vault reader and writer are on dev: 40 package tests, the app builds with the vault inside, and sgit reads back what Swift writes (all green at 309e02a; CI for the 471916c pipeline-logging change was still pending at 04:10). Platform, design and team have wired the vault screen, Face ID, Secure Enclave keys, passkey door and picks mirror into the app.
 
-Branch `night/vault`. Updated about 03:20 Lisbon time. Merged `origin/night/platform` and `origin/dev` (my `Packages/SGitVault` kept).
+Branch `night/vault`. Updated about 04:10 Lisbon time. On dev: 309e02a, then 471916c (merged into dev 4c78207).
 
 ## Done
 
@@ -33,6 +33,9 @@ Branch `night/vault`. Updated about 03:20 Lisbon time. Merged `origin/night/plat
 - **Native views**: `VaultHomeView` — a three-column `NavigationSplitView` (vaults, files, file) that collapses to a stack on iPhone. Team key import first (paste, QR scan with VisionKit, `#key=` links), then Face ID for stored keys, passkey (flagged) and recovery code. File tree with sizes, head commit with signature status, text preview.
 - **Background**: `VaultBackground.register()` / `.schedule()` for `BGAppRefreshTask`.
 - **Picks in the vault**: `VaultSession.loadPicks() -> Data?` and `savePicks(_:) -> Data` at `apps/agenda/picks.json` (the website's `__vault.save('agenda/picks')`), union by id, committed to `current` with retry on conflict. Team's `ScheduleVaultSync` calls these; the signatures are frozen.
+
+- **Debug pipeline data**: each object's events on one path, in order: fetch or cache hit, verify (sha256), key, AES-256-GCM, inflate (deflated blobs), JSON (with a tree summary). This fills every step of design's decrypt-pipeline panel.
+- **Unlock polish**: one Face ID prompt when the vault screen opens with stored keys; the opened vault is selected; three columns on iPad. Pull on foreground and the end of the Face ID reuse window are driven from `VaultSession` itself (app notifications), so the app needs no extra code.
 
 ## In progress
 

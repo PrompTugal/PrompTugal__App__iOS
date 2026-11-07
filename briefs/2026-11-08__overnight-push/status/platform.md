@@ -1,8 +1,8 @@
 # Status · iOS platform
 
-> On dev since 03:12: CI, iOS 18, the folder-synchronized layout, unit tests (green on iPad), HTTPClient, build info, entitlements, StoreKit, widget, App Intents and SGitVault. Next: AppShell root, team and vault hooks as their branches land.
+> Design, team and vault are on dev. Platform wired them together at 04:15: AppShell is the root, the team bridge runs in the website view, saved sessions are schedule picks, and both background refreshes are registered. Waiting for CI on the combined app.
 
-Branch: `night/platform` · Last update: 03:13 UTC
+Branch: `night/platform` · Last update: 04:16 UTC
 
 ## Ready for other sessions
 
@@ -23,7 +23,7 @@ Branch: `night/platform` · Last update: 03:13 UTC
 2. `actions_list` → `list_workflow_jobs` with the run id.
 3. `get_job_logs` with the failed job's id, `return_content: true`, `tail_lines: 80`. A failed step ends with `===== … failed. Errors: =====` and the `error:` lines, above about 40 lines of post-job noise.
 
-Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App build (simulator)`, `App unit tests (iPhone simulator)` and `App unit tests (iPad simulator)`. Every feature must work on both. Artifacts belong to the release engineer's `ios-release.yml`.
+Jobs: `App build and SGitVault tests` (the build, then `swift test` for the package), `App unit tests (iPhone simulator)` and `App unit tests (iPad simulator)`. Three runners per push. Every feature must work on both. Artifacts belong to the release engineer's `ios-release.yml`.
 
 ## Done
 
@@ -53,13 +53,16 @@ Jobs: `SGitVault swift test` (skips if `Packages/SGitVault` is missing), `App bu
 
 ## In progress
 
-- **03:09** First completed unit-test run: iPad simulator, 20 tests in 6 suites passed. The iPhone job's simulator boot hung for 7+ minutes (a runner problem). The boot wait is now capped at 5 minutes.
-- **03:12** The conductor merged `night/platform` into `dev`. I now merge `origin/dev` into `night/platform`; no rebases.
-- Waiting for these to land on `dev`, then wiring them in `App/PrompTugalApp.swift` and `App/`:
-  1. design → `AppShell()` as the root view
-  2. team → WebsiteBrowser bridge hooks, ReaderStore → `TeamFeatures.shared.schedule`, `agendaDidLoad`
-  3. vault → `VaultBackground.register()` in `PrompTugalApp.init`, `VaultBackground.schedule()` when the scene goes to the background
-- Swift 6 language mode: after the three branches above land, so nobody's concurrency warnings turn into errors on `dev` mid-push.
+- **04:09** The conductor merged design, team and vault into `dev`. I merged `dev` into `night/platform` and pushed the wiring in one commit (`5365593`):
+  - `AppShell()` is the root view, with `.environment(store)` and `.teamFeatures()`.
+  - `WebsiteBrowser` goes through the team bridge: `configure`, `attach`, `pageDidFinish`, and `handlesNavigation` (in-page and new-window links).
+  - `ReaderStore`: saved sessions are the schedule's picks. Each agenda refresh, and the cached agenda at launch, go to `TeamFeatures.agendaDidLoad`, which also feeds the widget.
+  - Background tasks: `VaultBackground` and `TeamBackground` (`news.promptugal.reader.refresh` → `TeamFeatures.refreshTeam()`), registered in `PrompTugalApp.init` and scheduled when the app goes to the background.
+- Before that, from 03:45: the vault's background-refresh wiring (merged earlier, now on `dev`). Not yet through CI: the `promptugal://` URL scheme (the shell's deep links reach the app), the widget opening `promptugal://open/team.schedule`, and Siri phrases ("What's next in PrompTugal").
+- Before the merge I trial-merged design, team and vault locally: no conflicts, no duplicate type names, no clashing extension members, no resource name collisions.
+- Watching dev's integration run (79) and mine.
+
+**Design, please:** `Shell/WebPage.swift` has none of the bridge hooks, so its pages get no `pt` bridge or schedule sync, and the Stripe top-up isn't intercepted. Same changes as in `WebsiteBrowser`: `bridge.configure(configuration, for: url)` instead of `.default()`, `bridge.attach(webView)`, `bridge.pageDidFinish(webView)` in `didFinish`, `bridge.handlesNavigation(to:)` in `decidePolicyFor`.
 
 ## Next
 

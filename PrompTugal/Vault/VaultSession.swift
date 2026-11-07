@@ -1,6 +1,9 @@
 import Foundation
 import Observation
 import SGitVault
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// The vaults open on this device, for the UI and the debug panel.
 ///
@@ -50,6 +53,20 @@ final class VaultSession {
     /// Access token for writes (from the master vault's `.vault/access-token.json`, or entered). Memory only.
     private var accessToken: String?
     var canPush: Bool { accessToken != nil }
+
+    init() {
+        #if canImport(UIKit)
+        // Pull when the app comes to the foreground; end the Face ID reuse window when it leaves.
+        // Observed here so the app needs no scene-phase code for the vault.
+        let center = NotificationCenter.default
+        center.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.sceneBecameActive() }
+        }
+        center.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.sceneMovedToBackground() }
+        }
+        #endif
+    }
 
     var isLocked: Bool { vaults.isEmpty }
     var hasStoredKeys: Bool { !keychain.inventory().isEmpty }
@@ -274,6 +291,32 @@ final class VaultSession {
             }
         }
         return nil
+    }
+
+    // MARK: Append lanes (for collab)
+
+    /// The files under `folder` (e.g. "lanes/to-newsroom") in a vault, newest name last.
+    func files(in folder: String, vaultId: String? = nil) async throws -> [VaultFile] {
+        guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else { return [] }
+        let prefix = folder.hasSuffix("/") ? folder : folder + "/"
+        return try await entry.vault.files().filter { $0.path.hasPrefix(prefix) }
+    }
+
+    /// Add one new file to `folder` and push it to `branch`. The name is unique
+    /// (`<UTC time>-<device branch>-<4 hex>.json` unless given), so appends from several
+    /// devices never conflict; a lost race on the ref only retries. Returns the path written.
+    @discardableResult
+    func append(_ data: Data, to folder: String, name: String? = nil, vaultId: String? = nil,
+                branch: String = "current", message: String? = nil) async throws -> String {
+        let stamp = ISO8601DateFormatter().string(from: Date())
+            .replacingOccurrences(of: ":", with: "").replacingOccurrences(of: "-", with: "")
+        let unique = name ?? "\(stamp)-\(deviceBranch)-\(String(UUID().uuidString.prefix(4)).lowercased()).json"
+        let trimmed = folder.hasSuffix("/") ? String(folder.dropLast()) : folder
+        let path = trimmed.isEmpty ? unique : trimmed + "/" + unique
+        try await update(path, vaultId: vaultId, branch: branch, message: message ?? "Append to \(trimmed)") { current in
+            current == nil ? data : nil                    // never overwrite: an existing name is left alone
+        }
+        return path
     }
 
     // MARK: Schedule picks (the website's `agenda/picks`, nr.schedule.v1)
