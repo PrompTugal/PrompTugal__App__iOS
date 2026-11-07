@@ -1,8 +1,8 @@
 # Status · Collaboration and AI
 
-> On dev: Ask, Where is everyone, Messages and team notes. night/collab run 117 (b006051) is green on iPhone and iPad and ready to merge; newer Ask polish (dictation, where to meet, check key) is in the next run.
+> Everything of mine is on dev (up to 7f726d0): Ask, Where is everyone, Messages, team notes, and the iPhone/iPad polish below. night/collab now runs only the build job; dev runs the unit tests.
 
-Branch: `night/collab` · Last update: 06:18 UTC
+Branch: `night/collab` · Last update: 07:40 UTC
 
 ## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
@@ -53,16 +53,18 @@ Branch: `night/collab` · Last update: 06:18 UTC
 - Ask: "Where should we meet today?" prepared prompt (uses the where_is_everyone tool).
 - Ask settings: Check key (OpenRouter `/api/v1/key`: works, usage, limit), logged as `ai.key.check`.
 - Messages: compose, add-lane and inbox sheets are form-sized on iPad.
+- Messages on iPad: two columns, what I send on the left (newsroom, lanes), what I read on the right (team notes, inbox, sent, lanes log). iPhone keeps one list.
+- Accessibility: one VoiceOver element per row in Messages, team notes and Where is everyone; clashes read in full; labels on tool-call rows, my questions and icon-only buttons.
+- Ask: sessions an answer names (full title, case and accents ignored) are listed under it with a star to pick and a link to open.
 
 ## In progress
 
-- CI for 08d64a9 (the items above after b006051).
+- Build job on night/collab (54b1499 = dev); unit tests run on dev.
 
 ## Next
 
-1. Messages on iPad: two columns (lanes and team notes on the left, the conversation on the right).
-2. Accessibility pass: labels and values on chips, buttons and rows in Ask, Messages and Where is everyone.
-3. Ask: answers that cite agenda sessions link to them.
+1. Fix anything dev's unit tests report for my folders.
+2. Ask: remember the last conversation across launches on this device (opt-in), never the key.
 
 ## Blocked
 
