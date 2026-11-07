@@ -10,6 +10,8 @@ struct MyDayView: View {
     @Environment(AppBridge.self) private var bridge
     @Environment(\.openURL) private var openURL
     @State private var calendarMessage: String?
+    @State private var timelineDay = DayPlanner.lisbonDay(.now)
+    @Environment(\.horizontalSizeClass) private var width
 
     private struct Row: Identifiable {
         let id: String
@@ -21,6 +23,69 @@ struct MyDayView: View {
     }
 
     var body: some View {
+        HStack(spacing: 0) {
+            dayList
+                .frame(maxWidth: width == .regular ? 440 : .infinity)
+            if width == .regular {
+                Divider()
+                timeline
+            }
+        }
+        .navigationTitle("My day")
+        .refreshable { await team.refresh(person: identity.current?.id) }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    Task {
+                        let upcoming = schedule.picks.filter { ($0.start ?? .distantPast) > .now }
+                        switch await CalendarExport.add(upcoming) {
+                        case .added(let count): calendarMessage = "\(count) sessions added to your calendar."
+                        case .denied: calendarMessage = "Calendar access was not given. You can allow it in Settings."
+                        case .failed(let message): calendarMessage = message
+                        }
+                    }
+                } label: {
+                    Label("Add to Calendar", systemImage: "calendar.badge.plus")
+                }
+                .disabled(schedule.picks.isEmpty)
+            }
+        }
+        .alert("Calendar", isPresented: Binding(get: { calendarMessage != nil },
+                                                set: { if !$0 { calendarMessage = nil } })) {
+            Button("OK") { calendarMessage = nil }
+        } message: {
+            Text(calendarMessage ?? "")
+        }
+    }
+
+    /// iPad: the chosen day as a time line, picks and stand-ups as blocks.
+    private var timeline: some View {
+        let now = Date.now
+        let days = Array(Set(rowsByDay(now: now).map(\.0).filter { !$0.isEmpty } + [DayPlanner.lisbonDay(now)])).sorted()
+        let day = days.contains(timelineDay) ? timelineDay : (days.first ?? timelineDay)
+        let items: [DayPlanner.Item] = rowsByDay(now: now).first { $0.0 == day }?.1.compactMap { row in
+            guard let start = row.start else { return nil }
+            let end = row.pick?.end ?? start.addingTimeInterval(30 * 60)
+            return DayPlanner.Item(id: row.id, kind: row.pick == nil ? .standup : .pick, title: row.title,
+                                   start: start, end: end, place: row.pick?.event?.place ?? "", eventID: row.pick?.id)
+        } ?? []
+        return VStack(spacing: 0) {
+            Picker("Day", selection: $timelineDay) {
+                ForEach(days, id: \.self) { Text(Lisbon.dayLabel($0)).tag($0) }
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            DayTimelineView(day: day, items: items) { item in
+                if let row = rowsByDay(now: .now).flatMap(\.1).first(where: { $0.id == item.id }), let url = row.url {
+                    openURL(url)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .background(Color(.systemGroupedBackground))
+    }
+
+    private var dayList: some View {
         TimelineView(.everyMinute) { context in
             List {
                 header(now: context.date)
@@ -53,31 +118,6 @@ struct MyDayView: View {
                 }
             }
             .listStyle(.insetGrouped)
-        }
-        .navigationTitle("My day")
-        .refreshable { await team.refresh(person: identity.current?.id) }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    Task {
-                        let upcoming = schedule.picks.filter { ($0.start ?? .distantPast) > .now }
-                        switch await CalendarExport.add(upcoming) {
-                        case .added(let count): calendarMessage = "\(count) sessions added to your calendar."
-                        case .denied: calendarMessage = "Calendar access was not given. You can allow it in Settings."
-                        case .failed(let message): calendarMessage = message
-                        }
-                    }
-                } label: {
-                    Label("Add to Calendar", systemImage: "calendar.badge.plus")
-                }
-                .disabled(schedule.picks.isEmpty)
-            }
-        }
-        .alert("Calendar", isPresented: Binding(get: { calendarMessage != nil },
-                                                set: { if !$0 { calendarMessage = nil } })) {
-            Button("OK") { calendarMessage = nil }
-        } message: {
-            Text(calendarMessage ?? "")
         }
     }
 

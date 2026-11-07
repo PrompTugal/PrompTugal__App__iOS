@@ -4,6 +4,7 @@ import SwiftUI
 struct PlannerView: View {
     @Environment(PlannerStore.self) private var planner
     @Environment(TeamIdentityStore.self) private var identity
+    @Environment(\.horizontalSizeClass) private var width
     @State private var rejected: Set<String> = []
     @State private var swapped: [String: DayPlanner.Proposal] = [:]
     @State private var accepted = 0
@@ -13,6 +14,7 @@ struct PlannerView: View {
         let plan = planner.plan
         let bases = plan.proposals.filter { !rejected.contains($0.id) }
         let proposals = bases.map { swapped[$0.id] ?? $0 }
+        HStack(spacing: 0) {
         List {
             Section {
                 Picker("Day", selection: $planner.day) {
@@ -91,6 +93,15 @@ struct PlannerView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .frame(maxWidth: width == .regular ? 440 : .infinity)
+        if width == .regular {
+            Divider()
+            // iPad: the proposed day drawn as a time line beside the list
+            DayTimelineView(day: planner.day, items: plan.fixed + proposals.map(\.item))
+                .frame(maxWidth: .infinity)
+                .background(Color(.systemGroupedBackground))
+        }
+        }
         .navigationTitle("Plan my day")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
