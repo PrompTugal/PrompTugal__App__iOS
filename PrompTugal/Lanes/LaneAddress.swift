@@ -85,10 +85,10 @@ struct LaneAddress: Codable, Identifiable, Hashable, Sendable {
 
     /// This app's descriptor, to hand to a sender.
     func descriptor() throws -> Data {
-        let object: [String: Any] = ["schema": "promptugal-lane/v1", "name": name, "vault": vault,
+        var object: [String: Any] = ["schema": "promptugal-lane/v1", "name": name, "vault": vault,
                                      "endpoint": endpoint.absoluteString, "append_token": token,
-                                     "public_key": publicKeyPEM, "fingerprint": fingerprint, "use": use ?? "notes from the PrompTugal app",
-                                     "format": format ?? "eml"]
+                                     "public_key": publicKeyPEM, "fingerprint": fingerprint, "use": use ?? "notes from the PrompTugal app"]
+        if let format { object["format"] = format }
         return try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes])
     }
 
@@ -122,7 +122,8 @@ struct LaneMessage: Equatable, Sendable {
 
     /// Strips line breaks so a field cannot add headers.
     static func header(_ value: String) -> String {
-        value.components(separatedBy: .newlines).joined(separator: " ").trimmingCharacters(in: .whitespaces)
+        value.components(separatedBy: .newlines).map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }.joined(separator: " ")
     }
 
     func eml() -> String {
