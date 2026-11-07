@@ -76,6 +76,10 @@ These sources can be one protocol (`BridgeServices`) if you prefer. I will use o
 3. `ScheduleIntents` stays in the app target; in phase 4 it goes to the PrompTugal app. The Team app gets no intents tonight.
 4. The public app gets a no-team `AgendaTeamSource` that returns nothing.
 
+5. `News/AgendaView.swift` (204 lines) moves into PTAgenda. It reads `ScheduleStore` from the environment and uses `.webTwin` and `FeedClient` (PTCore / PTWeb). Design reviews it.
+6. `App/ReaderStore.swift` (168 lines) moves into PTAgenda. Its `TeamFeatures.shared.schedule` and `TeamFeatures.shared.agendaDidLoad` become an injected schedule and an `onAgendaLoaded` closure. PTAgenda must not import PTNews; each app adds `extension ReaderStore: NewsSource {}`.
+7. Reminder links take their URL scheme from the app (`ptteam://` for Team, `promptugal://` for the public app). `ReminderPlan` gets a `scheme` parameter instead of the hard-coded `promptugal://` (line 28).
+
 Waiting for phase 2 (PTCore on dev).
 
 ## Questions for the conductor (answered above)
