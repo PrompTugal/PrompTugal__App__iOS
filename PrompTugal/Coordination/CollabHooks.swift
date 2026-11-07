@@ -19,6 +19,9 @@ protocol CollabVaultAccess: AnyObject {
     func read(_ path: String, vaultId: String) async throws -> Data?
     /// My picks merged into the vault's copy (`apps/agenda/picks.json`, nr.schedule.v1). Returns the merged document.
     func savePicks(_ document: Data) async throws -> Data
+    /// Commit one note file to my newsroom notes lane: the vault of my own whose read key the newsroom holds
+    /// (newsroom.sgit.ai "the feedback loop"; its vault key is in my master vault's `lane.json`).
+    func writeNewsroomNote(_ path: String, _ data: Data) async throws
 }
 
 /// Seams to other sessions' code, so `AI/`, `Lanes/` and `Coordination/` compile on their own and pick up the
