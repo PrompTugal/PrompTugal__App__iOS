@@ -92,9 +92,9 @@ jobs:
           echo "$count screenshots for ${{ matrix.device }}" >> "$GITHUB_STEP_SUMMARY"
           # One per id in PrompTugalUITests/ScreensTests.swift (13); update both together.
           if [ "$count" -ne 13 ]; then echo "::error::$count screenshots for ${{ matrix.device }}, expected 13"; bad=1; fi
-          [ "$bad" = 0 ]
           ls -la "$RUNNER_TEMP/screens"
           ls "$RUNNER_TEMP/screens" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
+          [ "$bad" = 0 ]
 
       - uses: actions/upload-artifact@v5
         if: always()
