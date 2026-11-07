@@ -1,87 +1,51 @@
 # Status · Swift vault
 
-> The Swift vault reader and writer are on dev. At 05:05 the latest vault code passed the app build and all package tests; sgit reads back what Swift writes. The vault screen, Face ID, Secure Enclave keys, passkey door, picks mirror and collab's append lanes run on the vault API.
+> Done for the night: a native Swift sgit vault client is on dev and green on iPhone and iPad. It reads and writes vaults, and sgit reads back what it writes. Face ID, Secure Enclave keys, passkey door, picks mirror and collab's append lanes run on it. Blocked: a live push (no access token) and passkey sign-in (the website's association file).
 
-Branch `night/vault`. Updated about 05:50 Lisbon time; in sync with dev. ios.yml fully green at 92f948d (build, package tests, iPhone and iPad unit tests).
+Branch `night/vault`. Wrap-up written about 07:40 Lisbon time. Last vault code: 3874921, merged into dev. Every job of ios.yml run 139 is green: app build, `swift test`, iPhone and iPad unit tests.
 
 ## Done
 
-- **`Packages/SGitVault`**, a local Swift package (tools 6.0, iOS 18, macOS 15), Apple SDK only. It reads a vault the way sgit does: branch index → named branch → ref → commit → trees → blobs.
-  - Every object's id is checked against sha256 of its ciphertext (12 and 32 hex) before it is decrypted or cached.
-  - Both envelopes: AES-256-GCM, and `\0sgz1` deflate (Apple's raw deflate, with the zlib header and Adler-32 checked by hand).
-  - Commit signatures (ECDSA P-256) are checked against sgit's canonical signing bytes, with the author's public key from `bare/keys/`.
-  - On-disk object cache: ciphertext only, kept forever. Refs and the branch index are never cached.
-  - Pull is incremental: unchanged subtrees are not fetched or decrypted again.
-  - Key parsing: `sgit_private_read_…:<id>`, `sgit_public_read_…`, bare `<64 hex>:<id>`, and vault keys `sgit_private_vault_<passphrase>:<id>` (PBKDF2, 600,000 rounds, for the read and write keys).
-  - `VaultTrafficLog` records each request, cache hit, decryption, verification, key derivation and error, with sizes and timings. A test checks that no key, write key or passphrase appears in it.
-  - `inspect()` returns one snapshot for the debug panel: branches, head, history with messages, tree with sizes, cache stats.
-- **Passkey door**, ported from promptugal.news `assets/vault/door.js`: PRF bytes (or a recovery code) → door vault → `master-key.json` → master vault → `reader.json` (and `.vault/access-token.json` when present).
-- **Fixtures**: throwaway vaults made by sgit-ai 0.27.0 itself, pushing to its in-memory server. `plain` (format 1, two named branches), `deflate` (format 2, 32-hex ids, a deflated blob) and `account` (door, master, reader). A Python reference reader checks them on Linux CI.
-- **Tests (macOS CI, green)**: file ids, PBKDF2 keys, all key forms, decrypt, tree walk, unicode names, deflate, multi-branch index, history, signatures, cache, incremental pull, door vectors, account unlock. Negative controls: wrong key, another passkey, flipped byte in a blob, a commit and a ref, a re-hashed forged object, a damaged cache file, a pack vault, invalid key text, changed signed bytes.
-- **CI**: `.github/workflows/ios-vault.yml` runs `swift test` on macOS 15 for pushes to `night/vault`, plus the Python reference reader on Linux.
+**`Packages/SGitVault`**: a Swift package (tools 6.0, iOS 18, macOS 15), Apple SDK only.
+- **Read path, as sgit does it**: branch index → named branch → ref → commit → trees → blobs. Each object's id is checked against sha256 of its ciphertext (12 and 32 hex) before it is decrypted or cached. Both envelopes: AES-256-GCM, and `\0sgz1` deflate (Apple's raw deflate, with the zlib header and Adler-32 checked by hand). Commit signatures are checked with ECDSA P-256 against sgit's canonical signing bytes.
+- **Cache and sync**: ciphertext only, cached on disk forever. Refs and the index are never cached. Pull is incremental: unchanged subtrees are not fetched or decrypted again.
+- **Keys**: `sgit_private_read_…`, `sgit_public_read_…`, bare `<64 hex>:<id>`, and vault keys `sgit_private_vault_…` (PBKDF2, 600,000 rounds, read and write keys).
+- **Writer**: `VaultCommitBuilder` makes sgit's blobs, trees, signed commits and refs. Rebuilding a commit's tree from its own files gives sgit's tree id byte for byte. `SGitVault.commit(…)` pushes through the batch API with compare-and-swap on the ref (or on the index for a new branch); a lost race overwrites nothing.
+- **Round trip**: CI exports the vaults Swift wrote, and sgit-ai 0.27 on Linux clones them, switches branch, verifies every signature and compares every file. It is green (ios-vault.yml run 12).
+- **Passkey door**: a port of promptugal.news `door.js`: PRF bytes or a recovery code → door vault → `master-key.json` → master → `reader.json` (and the access token when the master holds one).
+- **Picks and lanes**: `VaultPicks.union` (union by id, the vault's entry kept, the website's member order; a malformed copy is refused, never overwritten) and `VaultLanes.fileName` (time-sorted, path-safe).
+- **Traffic log**: each request, cache hit, hash check, key step, AES-GCM, inflate and JSON parse is logged on the object's path, with sizes and times. That fills every step of design's decrypt-pipeline panel. A test checks that no key, write key or passphrase ever appears in it.
+- **Tests**: 46 package tests over throwaway fixtures written by sgit-ai itself (format 1 and format 2, deflate, two named branches, a passkey account). They include negative controls: wrong key, another passkey, a flipped byte in a blob, a commit and a ref, a forged re-hashed object, a damaged cache file, a pack vault, invalid key text, changed signed bytes, a lost push race, and malformed picks.
 
-- **Writes**: `VaultCommitBuilder` makes sgit's blobs, trees, signed commits and refs. Rebuilding a commit's tree from its own files gives sgit's tree id byte for byte (tested on all four fixture branches). `SGitVault.commit(...)` pushes to a named branch through `POST /api/vault/batch/<id>`: objects first, then the ref with compare-and-swap, or a new branch entry in the index with compare-and-swap. A lost race is `VaultError.pushConflict` and overwrites nothing (tested).
-- **sgit reads what Swift wrote**: CI exports the vaults the Swift tests wrote; a Linux job loads them into sgit-ai 0.27's in-memory server, clones, switches to the Swift branch, verifies every signature and compares every file.
-- **`PrompTugal/Vault/`** (type-checked in CI against the package for the iOS 18 simulator, Swift 5 and 6):
-  - `VaultConfig`: server, relying party `promptugal.news`, PRF input, flag `vault.passkeyPRF` (off), background task id.
-  - `VaultKeychain`: keys as Keychain items with `.biometryCurrentSet`, this device only (falls back to user presence, then device-unlocked where there is no biometry, and records which). One `LAContext` reused for 60 seconds. `inventory()` lists keys without secrets or a prompt.
-  - `VaultKeyWrap`: a Secure Enclave P-256 key wraps each stored key (ECDH + HKDF + AES-GCM), so the Keychain bytes are useless off this device.
-  - `VaultUnlock` / `PasskeyPRF`: paste or QR text (also `#key=` links); passkey assertion with the PRF extension behind the flag; recovery code.
-  - `VaultSession` (`@Observable`): open vaults, pull on foreground, background refresh hook, lock, inspector, cache stats, key inventory, and `commit(...)` to this device's branch `device-<8 chars>`.
-  - `VaultDeviceSigner`: this device's commit key in the Secure Enclave (Face ID to sign), software key on the simulator.
-
-- **Native views**: `VaultHomeView` — a three-column `NavigationSplitView` (vaults, files, file) that collapses to a stack on iPhone. Team key import first (paste, QR scan with VisionKit, `#key=` links), then Face ID for stored keys, passkey (flagged) and recovery code. File tree with sizes, head commit with signature status, text preview.
-- **Background**: `VaultBackground.register()` / `.schedule()` for `BGAppRefreshTask`.
-- **Picks in the vault**: `VaultSession.loadPicks() -> Data?` and `savePicks(_:) -> Data` at `apps/agenda/picks.json` (the website's `__vault.save('agenda/picks')`), union by id, committed to `current` with retry on conflict. Team's `ScheduleVaultSync` calls these; the signatures are frozen.
-
-- **Debug pipeline data**: each object's events on one path, in order: fetch or cache hit, verify (sha256), key, AES-256-GCM, inflate (deflated blobs), JSON (with a tree summary). This fills every step of design's decrypt-pipeline panel.
-- **Unlock polish**: one Face ID prompt when the vault screen opens with stored keys; the opened vault is selected; three columns on iPad. Pull on foreground and the end of the Face ID reuse window are driven from `VaultSession` itself (app notifications), so the app needs no extra code.
-
-- **Picks and lanes logic in the package, tested**: `VaultPicks.union` (website member order, vault entry kept, malformed copies refused instead of overwritten) and `VaultLanes.fileName` (time-sorted, path-safe). `VaultSession`'s `loadPicks`/`savePicks`/`append` signatures are unchanged.
-- **Append lanes for collab**: `VaultSession.files(in:)` and `append(_:to:)` (a new uniquely named file per append, so devices never conflict), used by collab's team notes.
+**`PrompTugal/Vault`** (in the app, built in CI):
+- `VaultHomeView`: native on iPhone and iPad. It is a three-column split view (vaults, files, file) that stacks on iPhone. Team-key import comes first (paste, QR scan, `#key=` links), then one Face ID prompt opens stored keys. Passkey (behind a flag) and recovery code are also there.
+- `VaultKeychain` (`.biometryCurrentSet`, this device only, 60-second Face ID reuse) and `VaultKeyWrap` (a Secure Enclave key wraps each stored key).
+- `VaultDeviceSigner`: this device's commit key, in the Secure Enclave.
+- `VaultSession`: the open vaults. It pulls on foreground and drops the Face ID reuse window in the background. It also offers the key inventory, inspector, `loadPicks`/`savePicks` (team), and `files(in:)`/`append(_:to:)` (collab).
+- `VaultBackground`: `BGAppRefreshTask` `news.promptugal.reader.vault-refresh`, wired by platform.
 
 ## How a teammate opens a team vault
 
 1. Open **Vault** in the app (sidebar on iPad, More on iPhone).
 2. Paste the team key (`sgit_private_vault_<passphrase>:<vault id>`, or a read key `sgit_private_read_<64 hex>:<vault id>`), or tap **Scan** for a QR code, then **Import**. A vault key takes about a second: PBKDF2, 600,000 rounds, twice.
-3. The vault pulls and opens on its files. On iPad the three columns (vaults, files, file) show side by side; on iPhone they stack.
+3. The vault pulls and opens on its files.
 4. Next time, the vault screen asks for Face ID once and opens every stored key. There is no passkey prompt and no typing.
 
-**What is stored where**
-- The derived read and write keys go in the Keychain on this device only, behind Face ID (`.biometryCurrentSet`). Where a Secure Enclave exists, they are also wrapped by a Secure Enclave key. They never sync to iCloud and are never shown or logged.
-- Each device has a commit-signing key in the Secure Enclave. Writes are signed with it.
-- Downloaded objects are cached on disk as ciphertext, kept forever. Refs and the branch index are never cached.
-
-**What the debug panel shows** (Debug → Vault traffic)
-- Every request, cache hit, hash check, key step, decryption, inflate and JSON parse, with sizes and times.
-- Tap an object to see its decrypt pipeline. The key inventory lists which keys exist and where, never their values.
-
-**Writing** (picks, team notes) needs the vault key and an access token from the master vault, so a read key alone gives read access only.
-
-## In progress
-
-- Nothing blocking. App unit tests on night/vault were red only from team's ScheduleTests key order (reported 04:39, fixed on dev in 500b5ad).
-
-## Next
-
-- A debug-panel data adapter if design wants one (tell me the shape).
-- Large blobs (over 4 MB encrypted) need presigned uploads; not done.
+Keys stay in the Keychain on this device, behind Face ID, wrapped by the Secure Enclave where there is one. They are never shown, logged or synced. Writing (picks, team notes) needs the vault key plus an access token; a read key gives read access only. Debug → Vault traffic shows every step; the key inventory lists which keys exist and where, never their values.
 
 ## Passkey facts, read from the website (7 Nov 2026)
 
-- Relying party id: `promptugal.news` (the page uses `location.hostname`; source `https://promptugal.news/assets/vault/door.js`, `prfBytes`).
-- PRF input (`prf.eval.first`): SHA-256 of `web-summit.newsroom.sgit.ai/door/v1` = `ab9b47d5…f39f5ade`. The site constant is `web-summit.newsroom.sgit.ai`, not the host name.
-- The door test vectors come from my Python port of `door.js`, not from running the site's JavaScript (running downloaded code was blocked here). A check against the real site needs one run of `door.js` in a browser with the vectors' inputs.
+- Relying party id: `promptugal.news` (`rpId: location.hostname` in `https://promptugal.news/assets/vault/door.js`).
+- PRF input (`prf.eval.first`): SHA-256 of `web-summit.newsroom.sgit.ai/door/v1` = `ab9b47d5…f39f5ade`. The site constant is `web-summit.newsroom.sgit.ai`, not the host name. It must never change.
 
-## Blocked
+## Not done, or not proven
 
-- **No live write test.** Pushing to dev.send.sgraph.ai needs an access token (`sgit push`: "no access token configured"). Writes are tested against folders and sgit's in-memory server only. Live reads were checked only for the 404 shape (`{"detail":"Vault file not found"}`); I have no throwaway vault on the server to read, and I did not touch i9mbeqwb.
+- **Live push.** Pushing to dev.send.sgraph.ai needs an access token, and I had none. Writes are proven against folders and sgit's own in-memory server, and by sgit reading them back, but never against the live server. Live reads were checked only for the 404 shape.
+- **Passkey sign-in on a device.** It is behind the `vault.passkeyPRF` flag (off). It needs the website change below. The door test vectors come from my Python port of `door.js`. Running the site's JavaScript was blocked here, so one browser run of `door.js` with the vectors' inputs would cross-check them.
+- **Large files** (over 4 MB encrypted) need sgit's presigned uploads. They are refused with a clear error.
+- **Pack vaults** (`packs` feature) are refused with a clear error.
 
 ## Needs from others
 
-- **Platform**: add `Packages/SGitVault` as a local package dependency of the app target, and fold `PrompTugal/Vault/` into the app. My interim `ios-vault.yml` can be deleted once your `ios.yml` is on `dev` (it runs the same `swift test`).
-- **Platform**: background refresh entry points are `VaultBackground.register()` (call once in `PrompTugalApp.init`, before launch finishes; it also schedules the first refresh) and `VaultBackground.schedule()` (call when the scene goes to the background). The vault screen is `VaultHomeView()` (for `Shell/Destinations.swift`, design). When dev has your vendored copy of `Packages/SGitVault`, my branch's version is the one to keep.
-- **Platform**: entitlement `webcredentials:promptugal.news` (associated domains) for the passkey, `NSFaceIDUsageDescription` in Info, and `news.promptugal.reader.vault-refresh` in `BGTaskSchedulerPermittedIdentifiers` (call `VaultSession.shared.backgroundRefresh()` from it). On scene phase changes call `VaultSession.shared.sceneBecameActive()` / `sceneMovedToBackground()`.
-- **Conductor / anyone with a token**: a vault access token (for a throwaway vault only) would let me test one live push.
-- **Website (editor / promptugal.news owners)**: add the app to `https://promptugal.news/.well-known/apple-app-site-association` under `webcredentials.apps` (`<TeamID>.<bundle id>`). Without it iOS refuses the passkey request from the app. The PRF constant above must never change.
-- **Design**: the Debug panel can read `VaultTrafficLog.events` and `.totals`, `SGitVault.inspect()` (a `VaultInspection`), and the key inventory from `VaultSession` (coming next).
+- **Website (promptugal.news)**: list the app under `webcredentials.apps` in `https://promptugal.news/.well-known/apple-app-site-association` (`<TeamID>.news.promptugal.reader`). Then the passkey flag can be turned on.
+- **Anyone with a token**: an access token for a throwaway vault, to prove one live push.
