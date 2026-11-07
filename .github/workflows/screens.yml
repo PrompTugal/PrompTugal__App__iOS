@@ -3,7 +3,8 @@ name: Screens
 # Screenshots of every main screen on an iPhone and an iPad simulator, so the
 # team can see the app without a Mac. Only on dev and by hand: macOS runners
 # are shared, and branch CI (ios.yml) stays at three jobs.
-# Artifact: screens-<sha>, files <device>-<destination id>.png.
+# Artifact: screens-<sha>, files <iphone|ipad>-<destination id>.png, longest side
+# 1600 px. The editor publishes them on the site from successful dev runs.
 
 on:
   push:
@@ -62,7 +63,11 @@ jobs:
       - name: Export PNGs
         if: always()
         run: |
-          .github/scripts/export-screens.py "$RUNNER_TEMP/Screens.xcresult" "$RUNNER_TEMP/screens" "${{ matrix.device }}"
+          # Names are the site's contract: <iphone|ipad>-<destination id>.png, longest side 1600 px.
+          label=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
+          .github/scripts/export-screens.py "$RUNNER_TEMP/Screens.xcresult" "$RUNNER_TEMP/screens" "$label"
+          for f in "$RUNNER_TEMP"/screens/*.png; do sips -Z 1600 "$f" >/dev/null; done
+          ls -la "$RUNNER_TEMP/screens"
           ls "$RUNNER_TEMP/screens" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v5
