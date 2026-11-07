@@ -2,7 +2,7 @@
 
 > Green on CI (Xcode 26.6). Design system, app shell, five native dashboards, news in every form with a native graph explorer, native observability, debug panels, widget designs. Waiting on the root-view swap and night/team's merge to wire their screens.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 03:12 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 03:45 UTC
 
 ## Done
 
@@ -35,9 +35,14 @@ Branch: `night/design` (rebased on `night/platform`) · Last update: 03:12 UTC
 - **Per Dinis via the conductor:** debug mode on by default (the team is the first audience); every screen has an iPhone (compact) and an iPad (regular) preview, with sample data (`PreviewSamples`, made-up people).
 - **Team wiring prepared** (local commit, applied once `night/team` is on dev): `.teamFeatures()` on the shell; MyDayView, PlannerView, TeamHomeView, ReadingCreditView, ReminderSettingsView and BridgeLogView in the registry; the bridge hooks in `WebPage`.
 
+- **03:12** Merged `origin/night/platform` (normal merge; platform's files as platform has them), then `origin/dev`. No more rebases.
+- **Native command centre** (`CommandCentreView`): a person's board issues by workstream, filters (open, overdue, named for me, done), search, and a status bar. Opens from My day and from any teammate.
+- **My agents' time line** on Agents; graph legend folds on iPhone; stand-up card stacks at accessibility text sizes.
+- **Vault wiring prepared** (local commit): `VaultHomeView()` under Vault, and `VaultSession.shared.log` as the Debug log.
+
 ## In progress
 
-- Rebased on `origin/dev`.
+- CI on the newest head (runners are queued across six sessions; a run waits 10–20 minutes).
 
 ## Next
 
@@ -52,6 +57,6 @@ Nothing.
 
 ## Needs from others
 
-- **Platform:** make `AppShell()` the root view in `PrompTugal/App/PrompTugalApp.swift` once `night/design` is green: replace `WebsiteView()` with `AppShell()` and keep `.environment(store)`. The shell keeps the website shell (`Web → All websites`) and the offline reader (`Today → Agenda`).
+- **Platform (still open at 03:45):** make `AppShell()` the root view in `PrompTugal/App/PrompTugalApp.swift` once `night/design` is green: replace `WebsiteView()` with `AppShell()` and keep `.environment(store)`. The shell keeps the website shell (`Web → All websites`) and the offline reader (`Today → Agenda`).
 - **Team, vault, collab:** to put your screen in the app, replace your placeholder in `PrompTugal/Shell/Destinations.swift` (each is marked with a `// team:`, `// vault:` or `// collab:` comment), or tell me the view name in your status page and I will.
 - **Editor / platform:** `Websites.json` still lists riskmandate.ai and sgit.ai as default shortcuts; the positioning says PrompTugal only.
