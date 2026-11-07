@@ -130,7 +130,7 @@ final class AIKeyStore {
             hasKey = try store.read(Self.account) != nil
         } catch {
             hasKey = false
-            lastError = error.localizedDescription
+            lastError = CollabErrorText.short(error)
         }
     }
 
@@ -162,7 +162,7 @@ final class AIKeyStore {
             try store.delete(Self.account)
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = CollabErrorText.short(error)
         }
         hasKey = false
         hint = nil

@@ -23,14 +23,24 @@ struct LanesView: View {
     var body: some View {
         Group {
             if width == .regular {
-                // iPad: what I send on the left, what I read on the right.
-                HStack(spacing: 0) {
-                    List { sendSections }
+                // iPad: two columns when there is room (full screen, wide Split View), one list otherwise.
+                GeometryReader { geometry in
+                    if geometry.size.width >= 700 {
+                        HStack(spacing: 0) {
+                            List { sendSections }
+                                .listStyle(.insetGrouped)
+                                .frame(width: min(420, geometry.size.width * 0.42))
+                            Divider()
+                            List { readSections }
+                                .listStyle(.insetGrouped)
+                        }
+                    } else {
+                        List {
+                            sendSections
+                            readSections
+                        }
                         .listStyle(.insetGrouped)
-                        .frame(width: 400)
-                    Divider()
-                    List { readSections }
-                        .listStyle(.insetGrouped)
+                    }
                 }
             } else {
                 List {
@@ -68,11 +78,11 @@ struct LanesView: View {
                  : "Notes go to your newsroom notes lane: a vault of your own that the newsroom reads with its read key. Nothing comes back through it.")
         }
         Section {
-            if store.lanes.isEmpty {
+            if store.visibleLanes.isEmpty {
                 Text("No lanes yet. Add a teammate's or the newsroom's lane description (JSON, or a link to it).")
                     .foregroundStyle(.secondary)
             }
-            ForEach(store.lanes) { lane in
+            ForEach(store.visibleLanes) { lane in
                 Button {
                     composing = .lane(lane)
                 } label: {
@@ -81,7 +91,14 @@ struct LanesView: View {
                         Text("vault \(lane.vault) · key \(lane.fingerprint)").font(.caption.monospaced()).foregroundStyle(.secondary)
                     }
                 }
-                .swipeActions { Button("Remove", role: .destructive) { store.remove(lane) } }
+                .swipeActions {
+                    Button("Remove", role: .destructive) { store.remove(lane) }
+                    Button("Block") { store.block(LanesStore.laneKey(lane)) }.tint(.orange)
+                }
+                .contextMenu {
+                    Button("Block this lane", systemImage: "hand.raised") { store.block(LanesStore.laneKey(lane)) }
+                    Button("Remove", systemImage: "trash", role: .destructive) { store.remove(lane) }
+                }
             }
             Button("Add a lane", systemImage: "plus") { addingLane = true }
         } header: {
@@ -93,6 +110,20 @@ struct LanesView: View {
         if let message = store.message {
             Section { Text(message).font(.footnote) }
         }
+    }
+
+    @Environment(\.openURL) private var openURL
+
+    private func report(kind: String, sender: String, text: String, date: Date?) {
+        if let url = LaneReport.mailURL(kind: kind, from: sender, text: text, at: date) { openURL(url) }
+    }
+
+    private func blockedLabel(_ key: String) -> String {
+        if key.hasPrefix("lane:") {
+            let id = String(key.dropFirst(5))
+            return "Lane " + (store.lanes.first { $0.id == id }?.name ?? id)
+        }
+        return "Sender " + key.replacingOccurrences(of: "sender:", with: "")
     }
 
     @ViewBuilder private var readSections: some View {
@@ -118,7 +149,7 @@ struct LanesView: View {
                 .disabled(store.working)
             }
             if let error = store.inboxError { Text(error).font(.footnote).foregroundStyle(.orange) }
-            ForEach(store.inbox) { item in
+            ForEach(store.visibleInbox) { item in
                 VStack(alignment: .leading, spacing: 3) {
                     Text(item.subject).font(.headline)
                     Text(item.from).font(.caption).foregroundStyle(.secondary)
@@ -126,6 +157,9 @@ struct LanesView: View {
                     if let at = item.sentAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.caption2).foregroundStyle(.secondary) }
                 }
                 .accessibilityElement(children: .combine)
+                .contextMenu { ReportBlockMenu(kind: "message", sender: item.from, text: item.text, date: item.sentAt) }
+                .accessibilityAction(named: "Report") { report(kind: "message", sender: item.from, text: item.text, date: item.sentAt) }
+                .accessibilityAction(named: "Block sender") { store.block(LanesStore.senderKey(item.from)) }
             }
             if !store.inbox.isEmpty {
                 Button("Mark all as read") { Task { await store.markRead(store.inbox.map(\.id)) } }
@@ -133,6 +167,22 @@ struct LanesView: View {
             Button(store.myLane == nil ? "Set up an inbox on this device" : "Inbox settings", systemImage: "gearshape") { showInboxSetup = true }
         } header: {
             Text("My inbox")
+        }
+
+        if !store.blocked.isEmpty {
+            Section {
+                ForEach(store.blocked.sorted(), id: \.self) { key in
+                    HStack {
+                        Text(blockedLabel(key)).lineLimit(1)
+                        Spacer()
+                        Button("Unblock") { store.unblock(key) }.buttonStyle(.borderless)
+                    }
+                }
+            } header: {
+                Text("Blocked")
+            } footer: {
+                Text("Blocked lanes and senders are hidden on this device. Unblock to see them again.")
+            }
         }
 
         if !store.sent.isEmpty {
@@ -156,6 +206,25 @@ struct LanesView: View {
             }
         }
 
+    }
+}
+
+/// Report (prefilled mail) and Block, for a message or note someone else wrote (App Review 1.2).
+struct ReportBlockMenu: View {
+    let kind: String
+    let sender: String
+    let text: String
+    var date: Date?
+    var lanes: LanesStore = .shared
+    @Environment(\.openURL) private var openURL
+
+    var body: some View {
+        Button("Report…", systemImage: "exclamationmark.bubble") {
+            if let url = LaneReport.mailURL(kind: kind, from: sender, text: text, at: date) { openURL(url) }
+        }
+        Button("Block \(sender.isEmpty ? "sender" : sender)", systemImage: "hand.raised", role: .destructive) {
+            lanes.block(LanesStore.senderKey(sender))
+        }
     }
 }
 
@@ -322,7 +391,7 @@ private struct InboxSetupView: View {
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                 Button(store.myLane == nil ? "Make my inbox key" : "Update") {
-                    store.makeMyLane(vaultId: vaultId.trimmingCharacters(in: .whitespaces))
+                    Task { await store.makeMyLane(vaultId: vaultId.trimmingCharacters(in: .whitespaces)) }
                 }
                 .disabled(!LaneAddress.isValidVaultId(vaultId.trimmingCharacters(in: .whitespaces)))
             } header: {

@@ -99,7 +99,7 @@ final class CoordinationStore {
                     errors[person] = "No picks in their vault yet."
                 }
             } catch {
-                errors[person] = error.localizedDescription
+                errors[person] = CollabErrorText.short(error)
             }
         }
     }
@@ -119,7 +119,7 @@ final class CoordinationStore {
             message = "Linked \(name(person))'s vault."
             await loadTeammates()
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 
@@ -142,7 +142,7 @@ final class CoordinationStore {
             lastShare = .now
             message = "Shared \(PickId.ids(inScheduleDocument: merged).count) picks to your vault."
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 

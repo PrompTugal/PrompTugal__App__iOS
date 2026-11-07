@@ -250,7 +250,7 @@ final class ChatStore {
         do {
             key = try keys.key()
         } catch {
-            turns.append(Turn(role: .error, text: error.localizedDescription))
+            turns.append(Turn(role: .error, text: CollabErrorText.short(error)))
             return
         }
         let kinds = AIContextKind.allowed(include, toggles: contextKinds)
@@ -287,7 +287,7 @@ final class ChatStore {
             } catch {
                 failed = true
                 if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
-                    turns.append(Turn(role: .error, text: error.localizedDescription))
+                    turns.append(Turn(role: .error, text: CollabErrorText.short(error)))
                 } else {
                     turns[index].text += turns[index].text.isEmpty ? "(stopped)" : " (stopped)"
                 }

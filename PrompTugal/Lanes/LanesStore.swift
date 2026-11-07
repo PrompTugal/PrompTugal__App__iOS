@@ -49,6 +49,10 @@ final class LanesStore {
     @ObservationIgnored private let secrets: SecretStore
     static let enumKeyAccount = "lanes.enumKey"
 
+    /// Keychain accounts for the lane addresses: they carry append tokens, so they are not kept in UserDefaults (S7).
+    static let lanesAccount = "lanes.addresses.v2"
+    static let myLaneAccount = "lanes.mine.v2"
+
     init(log: LanesLog = .shared, client: LaneClient = LaneClient(), defaults: UserDefaults = .standard,
          secrets: SecretStore = KeychainSecretStore(service: "news.promptugal.reader.lanes")) {
         self.log = log
@@ -56,17 +60,54 @@ final class LanesStore {
         self.defaults = defaults
         self.secrets = secrets
         let decoder = JSONDecoder()
-        lanes = defaults.data(forKey: "lanes.addresses.v1").flatMap { try? decoder.decode([LaneAddress].self, from: $0) } ?? []
+        func stored<T: Decodable>(_ type: T.Type, account: String, legacyKey: String) -> T? {
+            if let text = (try? secrets.read(account)) ?? nil, let value = try? decoder.decode(type, from: Data(text.utf8)) {
+                return value
+            }
+            // Before v2 these lived in UserDefaults: move them to the Keychain once, then delete the old copy.
+            guard let data = defaults.data(forKey: legacyKey), let value = try? decoder.decode(type, from: data) else { return nil }
+            try? secrets.write(String(decoding: data, as: UTF8.self), account: account)
+            defaults.removeObject(forKey: legacyKey)
+            return value
+        }
+        lanes = (stored([LaneAddress].self, account: Self.lanesAccount, legacyKey: "lanes.addresses.v1") ?? [])
+            .filter { LaneAddress.isAllowedEndpoint($0.endpoint) }
+        myLane = stored(LaneAddress.self, account: Self.myLaneAccount, legacyKey: "lanes.mine.v1")
         sent = defaults.data(forKey: "lanes.sent.v1").flatMap { try? decoder.decode([Sent].self, from: $0) } ?? []
-        myLane = defaults.data(forKey: "lanes.mine.v1").flatMap { try? decoder.decode(LaneAddress.self, from: $0) }
+        blocked = Set(defaults.stringArray(forKey: Self.blockedKey) ?? [])
     }
 
     private func persist() {
         let encoder = JSONEncoder()
-        defaults.set(try? encoder.encode(lanes), forKey: "lanes.addresses.v1")
+        if let data = try? encoder.encode(lanes) { try? secrets.write(String(decoding: data, as: UTF8.self), account: Self.lanesAccount) }
+        if let myLane, let data = try? encoder.encode(myLane) {
+            try? secrets.write(String(decoding: data, as: UTF8.self), account: Self.myLaneAccount)
+        } else {
+            try? secrets.delete(Self.myLaneAccount)
+        }
         defaults.set(try? encoder.encode(Array(sent.prefix(100))), forKey: "lanes.sent.v1")
-        defaults.set(myLane.flatMap { try? encoder.encode($0) }, forKey: "lanes.mine.v1")
     }
+
+    // MARK: Block and report (App Review 1.2)
+
+    static let blockedKey = "lanes.blocked.v1"
+    /// Blocked lanes (`lane:<id>`) and senders (`sender:<name or id>`). Hidden everywhere until unblocked.
+    private(set) var blocked: Set<String> = [] {
+        didSet { defaults.set(blocked.sorted(), forKey: Self.blockedKey) }
+    }
+
+    nonisolated static func laneKey(_ address: LaneAddress) -> String { "lane:\(address.id)" }
+    nonisolated static func senderKey(_ sender: String) -> String {
+        "sender:" + sender.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    }
+
+    func block(_ key: String) { blocked.insert(key); message = "Blocked. Undo it under Blocked." }
+    func unblock(_ key: String) { blocked.remove(key) }
+    func isBlocked(lane address: LaneAddress) -> Bool { blocked.contains(Self.laneKey(address)) }
+    func isBlocked(sender: String) -> Bool { blocked.contains(Self.senderKey(sender)) }
+
+    var visibleLanes: [LaneAddress] { lanes.filter { !isBlocked(lane: $0) } }
+    var visibleInbox: [InboxMessage] { inbox.filter { !isBlocked(sender: $0.from) } }
 
     // MARK: Lanes I write to
 
@@ -84,7 +125,7 @@ final class LanesStore {
             lanes.append(address)
             message = "Added \(address.name). Key \(address.fingerprint) checked against its PEM."
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 
@@ -114,7 +155,7 @@ final class LanesStore {
             message = "Sent to \(address.name). The lane answers only \"ok\": it cannot say who else wrote."
             return true
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
             return false
         }
     }
@@ -131,24 +172,28 @@ final class LanesStore {
             if trimmed.isEmpty { try secrets.delete(Self.enumKeyAccount) } else { try secrets.write(trimmed, account: Self.enumKeyAccount) }
             message = trimmed.isEmpty ? "Enumeration key removed." : "Enumeration key saved in the Keychain."
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 
     /// Makes my key pair (once) and a descriptor for my vault's lane, with a fresh append token. The lane still
     /// has to be registered on the vault (`configure`: the vault's write key and an access token), which this
     /// build does not do; the descriptor says what to register.
-    func makeMyLane(vaultId: String) {
+    func makeMyLane(vaultId: String) async {
+        working = true
+        defer { working = false }
         do {
-            let key = try LaneIdentity.create()
-            let (pem, fingerprint) = try LaneIdentity.publicPEM(of: key)
+            // RSA-4096 generation takes seconds: off the main actor (Q4).
+            let (pem, fingerprint) = try await Task.detached(priority: .userInitiated) {
+                try LaneIdentity.publicPEM(of: LaneIdentity.create())
+            }.value
             let name = CollabHooks.me()?.name ?? "PrompTugal app"
             myLane = LaneAddress(name: name, vault: vaultId, endpoint: LaneAddress.defaultEndpoint,
                                  token: myLane?.vault == vaultId ? myLane!.token : LaneIdentity.newToken(),
                                  publicKeyPEM: pem, fingerprint: fingerprint, use: "messages to \(name), from teammates")
             log.add(.encrypt, lane: LanesLog.describe(myLane!), detail: "inbox key pair ready (RSA-4096, Keychain, this device); fingerprint \(fingerprint)")
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 
@@ -162,7 +207,7 @@ final class LanesStore {
     /// The inbox the website made for my account (`inbox.json` in my master vault: vault, token, enum key and
     /// the PKCS#8 private key). Held in memory only, dropped when the app quits.
     private(set) var websiteInbox: LaneAddress?
-    @ObservationIgnored private var websiteInboxSecrets: (enumKey: String, key: SecKey)?
+    @ObservationIgnored private var websiteInboxSecrets: (enumKey: String, record: Data)?
 
     func openWebsiteInbox() async {
         guard let vault = CollabHooks.vault, vault.isOpen else { message = CollabHooks.HookError.noVault.localizedDescription; return }
@@ -170,11 +215,11 @@ final class LanesStore {
             guard let data = try await vault.readMaster("inbox.json") else { message = "Your account has no inbox yet (the website makes one)."; return }
             let record = try Self.inboxRecord(data)
             websiteInbox = record.address
-            websiteInboxSecrets = (record.enumKey, record.key)
+            websiteInboxSecrets = (record.enumKey, data)
             log.add(.decrypt, lane: LanesLog.describe(record.address), detail: "inbox record read from the master vault; key \(record.address.fingerprint)")
             await refreshInbox()
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 
@@ -188,6 +233,7 @@ final class LanesStore {
             throw LaneAddress.Failure.missing("inbox record fields")
         }
         let endpoint = (object["endpoint"] as? String).flatMap(URL.init(string:)) ?? LaneAddress.defaultEndpoint
+        guard LaneAddress.isAllowedEndpoint(endpoint) else { throw LaneAddress.Failure.hostNotAllowed(endpoint.host() ?? "") }
         let address = LaneAddress(name: "My account inbox", vault: vault, endpoint: endpoint, token: token,
                                   publicKeyPEM: LaneCrypto.pem(spki: spki), fingerprint: LaneCrypto.fingerprint(spki: spki),
                                   use: "my account's inbox", format: LaneAddress.newsroomInboxFormat)
@@ -197,15 +243,15 @@ final class LanesStore {
     func refreshInbox() async {
         let lane: LaneAddress
         let enumKey: String
-        let privateKey: SecKey
-        if let mine = myLane, let key = (try? secrets.read(Self.enumKeyAccount)) ?? nil, let identity = LaneIdentity.privateKey() {
+        let source: DecryptKey
+        if let mine = myLane, let key = (try? secrets.read(Self.enumKeyAccount)) ?? nil, LaneIdentity.exists {
             lane = mine
             enumKey = key
-            privateKey = identity
+            source = .deviceIdentity
         } else if let site = websiteInbox, let secrets = websiteInboxSecrets {
             lane = site
             enumKey = secrets.enumKey
-            privateKey = secrets.key
+            source = .inboxRecord(secrets.record)
         } else {
             inboxError = myLane == nil ? "Set up an inbox, or open your account's inbox from your vault."
                                        : "Add the lane's enumeration key to read it."
@@ -226,22 +272,61 @@ final class LanesStore {
                 contents.merge(try await client.fetch(lane, enumKey: enumKey, fileIds: batch)) { $1 }
             }
             log.add(.fetch, lane: name, bytes: contents.values.reduce(0) { $0 + $1.utf8.count }, detail: "\(contents.count) files")
-            for entry in entries where contents[entry.fileId] != nil {
-                do {
-                    let enc = try LaneCrypto.encText(fromLaneContent: contents[entry.fileId]!)
-                    let plain = try LaneCrypto.decrypt(enc, with: privateKey)
-                    inbox.append(InboxMessage(id: entry.fileId, sentAt: entry.sentAt, text: Self.readable(plain)))
-                    log.add(.decrypt, lane: name, bytes: plain.count, detail: "\(entry.fileId): RSA-OAEP + AES-256-GCM, \(enc.utf8.count) B → \(plain.count) B")
-                } catch {
-                    log.add(.error, lane: name, detail: "\(entry.fileId): \(error.localizedDescription)")
+            let items = entries.compactMap { entry in contents[entry.fileId].map { (id: entry.fileId, content: $0) } }
+            let opened = await Self.decryptAll(items, key: source)     // RSA and AES off the main actor (Q4)
+            let sentAt = Dictionary(entries.map { ($0.fileId, $0.sentAt) }, uniquingKeysWith: { first, _ in first })
+            for result in opened {
+                if let text = result.text {
+                    inbox.append(InboxMessage(id: result.id, sentAt: sentAt[result.id] ?? nil, text: text))
+                    log.add(.decrypt, lane: name, bytes: result.plainBytes, detail: "\(result.id): RSA-OAEP + AES-256-GCM, \(result.encBytes) B → \(result.plainBytes) B")
+                } else {
+                    log.add(.error, lane: name, detail: "\(result.id): \(result.error ?? "could not open")")
                 }
             }
             inbox.sort { $0.id > $1.id }
             inboxError = nil
         } catch {
-            inboxError = error.localizedDescription
-            log.add(.error, lane: name, detail: "inbox: \(error.localizedDescription)")
+            inboxError = CollabErrorText.short(error)
+            log.add(.error, lane: name, detail: "inbox: \(CollabErrorText.short(error))")
         }
+    }
+
+    enum DecryptKey: Sendable {
+        /// This device's RSA key in the Keychain.
+        case deviceIdentity
+        /// The website's inbox record (its PKCS#8 key is imported inside the background task).
+        case inboxRecord(Data)
+    }
+
+    struct Opened: Sendable {
+        let id: String
+        let text: String?
+        let error: String?
+        let encBytes: Int
+        let plainBytes: Int
+    }
+
+    /// Opens every message on a background task: key import, RSA-OAEP unwrap and AES-GCM never block the UI.
+    nonisolated static func decryptAll(_ items: [(id: String, content: String)], key: DecryptKey) async -> [Opened] {
+        await Task.detached(priority: .userInitiated) {
+            let privateKey: SecKey?
+            switch key {
+            case .deviceIdentity: privateKey = LaneIdentity.privateKey()
+            case .inboxRecord(let record): privateKey = try? LanesStore.inboxRecord(record).key
+            }
+            guard let privateKey else {
+                return items.map { Opened(id: $0.id, text: nil, error: "No key to open it on this device.", encBytes: 0, plainBytes: 0) }
+            }
+            return items.map { item in
+                do {
+                    let enc = try LaneCrypto.encText(fromLaneContent: item.content)
+                    let plain = try LaneCrypto.decrypt(enc, with: privateKey)
+                    return Opened(id: item.id, text: LanesStore.readable(plain), error: nil, encBytes: enc.utf8.count, plainBytes: plain.count)
+                } catch {
+                    return Opened(id: item.id, text: nil, error: CollabErrorText.short(error), encBytes: 0, plainBytes: 0)
+                }
+            }
+        }.value
     }
 
     /// An .eml as is; a newsroom inbox message as headers and its notes, so both read the same in the list.
@@ -268,7 +353,7 @@ final class LanesStore {
             try await client.markProcessed(lane, enumKey: enumKey, fileIds: ids)
             log.add(.markProcessed, lane: LanesLog.describe(lane), detail: "\(ids.count) files")
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 
@@ -311,8 +396,8 @@ final class LanesStore {
             message = "Saved to your newsroom notes lane. The newsroom reads it with the lane's read key."
             return true
         } catch {
-            log.add(.error, lane: "Newsroom notes lane", detail: error.localizedDescription)
-            message = error.localizedDescription
+            log.add(.error, lane: "Newsroom notes lane", detail: CollabErrorText.short(error))
+            message = CollabErrorText.short(error)
             return false
         }
     }

@@ -365,7 +365,7 @@ struct AskSettingsView: View {
                     Button(working ? "Checking…" : "Check key") {
                         working = true
                         Task {
-                            do { message = try await keys.check().summary } catch { message = error.localizedDescription }
+                            do { message = try await keys.check().summary } catch { message = CollabErrorText.short(error) }
                             working = false
                         }
                     }
@@ -381,7 +381,7 @@ struct AskSettingsView: View {
                     }
                     Button("Save key") {
                         do { try keys.save(entry); entry = ""; message = "Saved in the Keychain on this device." }
-                        catch { message = error.localizedDescription }
+                        catch { message = CollabErrorText.short(error) }
                     }
                     .disabled(entry.isEmpty)
                     Link("Get a key at openrouter.ai/keys", destination: URL(string: "https://openrouter.ai/keys")!)
@@ -483,7 +483,7 @@ struct AskSettingsView: View {
                 message = store.keys.hasKey ? "Key taken from your vault." : "Your vault has no saved key."
             }
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 }

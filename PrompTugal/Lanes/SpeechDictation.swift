@@ -52,7 +52,7 @@ final class SpeechDictation {
                 if done { self.finish() }
             }
         } catch {
-            self.error = "Recording could not start (\(error.localizedDescription))."
+            self.error = "Recording could not start (\(CollabErrorText.short(error)))."
             finish()
         }
     }
