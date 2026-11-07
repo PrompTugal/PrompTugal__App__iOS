@@ -53,6 +53,7 @@ Branch: `night/collab` · Last update: 04:15 UTC
 1. Fix whatever CI finds.
 2. Ask: show the tool results' sources as links; a "send this answer to a lane" action.
 3. Coordination: offer "share my plan" right after picks change; read teammates' plans in the background.
+4. Team notes in a vault folder (`lanes/<name>`) with vault's new `append(_:to:)` / `files(in:)` once it is on dev: one signed file per message, no conflicts between devices. Server append lanes stay for write-only inboxes.
 
 ## Blocked
 
