@@ -179,7 +179,7 @@ final class LanesStore {
     }
 
     /// `{ v, vault, endpoint, token, enum_key, public, private, fingerprint }` (newsroom.sgit.ai inbox.js `create`).
-    static func inboxRecord(_ data: Data) throws -> (address: LaneAddress, enumKey: String, key: SecKey) {
+    nonisolated static func inboxRecord(_ data: Data) throws -> (address: LaneAddress, enumKey: String, key: SecKey) {
         guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let vault = object["vault"] as? String, let token = object["token"] as? String,
               let enumKey = object["enum_key"] as? String, let publicB64 = object["public"] as? String,
@@ -245,7 +245,7 @@ final class LanesStore {
     }
 
     /// An .eml as is; a newsroom inbox message as headers and its notes, so both read the same in the list.
-    static func readable(_ plain: Data) -> String {
+    nonisolated static func readable(_ plain: Data) -> String {
         guard let object = try? JSONSerialization.jsonObject(with: plain) as? [String: Any],
               object["kind"] as? String == LaneAddress.newsroomInboxFormat,
               let file = object["file"] as? [String: Any] else { return String(decoding: plain, as: UTF8.self) }
@@ -276,14 +276,14 @@ final class LanesStore {
 
     /// One note in the newsroom's notes format (`sgit.notes.v1`, newsroom.sgit.ai assets/vault-pane/notes.js):
     /// `{ id, at, kind, path, title, n, story, text, quote, persona, device, sent_at }`.
-    static func newsroomNote(kind: String, text: String, title: String?, path: String?, device: String,
+    nonisolated static func newsroomNote(kind: String, text: String, title: String?, path: String?, device: String,
                              at date: Date = .now, id: String = UUID().uuidString.lowercased()) throws -> (path: String, data: Data) {
         let object = newsroomNoteObject(kind: kind, text: text, title: title, path: path, device: device, at: date, id: id)
         let data = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes])
         return ("notes/\(id).json", data)
     }
 
-    static func newsroomNoteObject(kind: String, text: String, title: String?, path: String?, device: String,
+    nonisolated static func newsroomNoteObject(kind: String, text: String, title: String?, path: String?, device: String,
                                    at date: Date = .now, id: String = UUID().uuidString.lowercased()) -> [String: Any] {
         let iso = ISO8601DateFormatter.collabJS.string(from: date)
         let object: [String: Any] = ["id": id, "at": iso, "kind": kind, "path": path.map { $0 as Any } ?? NSNull(), "title": title.map { $0 as Any } ?? NSNull(),
