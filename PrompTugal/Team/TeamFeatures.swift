@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 /// The team session's stores and services, created once and shared. The shell injects them with
 /// `.teamFeatures()` and calls `TeamFeatures.shared.start()` once at launch.
@@ -47,7 +48,30 @@ final class TeamFeatures {
             MainActor.assumeIsolated { self?.publishNowNext() }
         })
         publishNowNext()
-        Task { await team.refresh(person: identity.current?.id) }
+        observers.append(NotificationCenter.default.addObserver(forName: .teamIdentityDidChange, object: identity,
+                                                                queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.updateBadge() }
+        })
+        Task { await refreshTeam() }
+    }
+
+    /// Team data, then the badge and reminders. Also the work for a `BGAppRefreshTask` (platform registers it,
+    /// identifier `news.promptugal.reader.refresh`, and calls this).
+    func refreshTeam() async {
+        await team.refresh(person: identity.current?.id)
+        updateBadge()
+        await reminders.reschedule()
+    }
+
+    /// The app icon badge (brief 03): only you + decide + overdue for the chosen person, from me.json.
+    /// Shown only when notifications are allowed (iOS needs the badge permission), cleared with no identity.
+    func updateBadge() {
+        let count = identity.current.flatMap { team.me?.person($0.id)?.badge } ?? 0
+        Task {
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            guard settings.badgeSetting == .enabled || count == 0 else { return }
+            try? await UNUserNotificationCenter.current().setBadgeCount(count)
+        }
     }
 
     /// Gives the schedule the current agenda (call after each agenda refresh), so picks sort and remind by start time.
