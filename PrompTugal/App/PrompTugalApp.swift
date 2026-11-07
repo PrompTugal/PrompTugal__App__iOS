@@ -8,16 +8,21 @@ struct PrompTugalApp: App {
     init() {
         // Background tasks must be registered before the app finishes launching.
         VaultBackground.register()
+        TeamBackground.register()
     }
 
     var body: some Scene {
         WindowGroup {
-            WebsiteView()
+            // The shell (design) is the root; the team's stores and the native top-up come from .teamFeatures().
+            AppShell()
                 .environment(store)
-                .tint(Color("AccentColor"))
+                .teamFeatures()
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .background { VaultBackground.schedule() }
+            if phase == .background {
+                VaultBackground.schedule()
+                TeamBackground.schedule()
+            }
         }
     }
 }

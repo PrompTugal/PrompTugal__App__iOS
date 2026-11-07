@@ -12,8 +12,9 @@ final class ReaderStore {
     }
 
     private var cache = Cache()
-    private var bookmarks: [String: Event] = [:]
     private let directory: URL
+    /// Saved sessions are the schedule's picks (contracts §3); the schedule imported the old saved.json.
+    private var schedule: ScheduleStore { TeamFeatures.shared.schedule }
     private(set) var agendaUnavailable = false
     private(set) var newsUnavailable = false
     private(set) var refreshing = false
@@ -23,39 +24,32 @@ final class ReaderStore {
     var news: [Story] { cache.news }
     var agendaUpdated: Date? { cache.agendaUpdated }
     var newsUpdated: Date? { cache.newsUpdated }
-    var saved: [Event] { bookmarks.values.sorted(by: Event.earlier) }
+    var saved: [Event] { schedule.picks.compactMap(\.event).sorted(by: Event.earlier) }
 
     init() {
         directory = URL.applicationSupportDirectory.appendingPathComponent("PrompTugal", isDirectory: true)
         if let decoded: Cache = read("content.json") { cache = decoded }
-        if let decoded: [String: Event] = read("saved.json") { bookmarks = decoded }
         publishNowNext()
     }
 
-    /// Keeps the widgets' "Now and next" in step with the agenda and saved sessions.
+    /// Gives the schedule the cached agenda (offline start) and keeps the widgets' "Now and next" current.
     func publishNowNext() {
-        NowNextPublisher.publish(agenda: cache.agenda, saved: saved)
+        if cache.agenda.isEmpty {
+            NowNextPublisher.publish(agenda: [], saved: saved)
+        } else {
+            TeamFeatures.shared.agendaDidLoad(cache.agenda)
+        }
     }
 
     func event(id: String) -> Event? {
-        agenda.first { $0.id == id } ?? bookmarks[id]
+        agenda.first { $0.id == id } ?? schedule.picks.lazy.compactMap(\.event).first { $0.id == id }
     }
 
-    func isSaved(_ event: Event) -> Bool { bookmarks[event.id] != nil }
+    func isSaved(_ event: Event) -> Bool { schedule.isPicked(event) }
     func detail(for event: Event) -> EventDetail? { cache.details[event.id] }
 
     func toggleSaved(_ event: Event) {
-        var updated = bookmarks
-        if updated.removeValue(forKey: event.id) == nil {
-            updated[event.id] = self.event(id: event.id) ?? event
-        }
-        do {
-            try write(updated, to: "saved.json")
-            bookmarks = updated
-            publishNowNext()
-        } catch {
-            storageMessage = "The change couldn’t be saved on this device. Please try again."
-        }
+        schedule.toggle(self.event(id: event.id) ?? event)
     }
 
     func refresh() async {
@@ -71,17 +65,6 @@ final class ReaderStore {
         do {
             let events = try await FeedClient.agenda()
             try Task.checkCancellation()
-            let updatedBookmarks = events.reduce(into: bookmarks) { saved, event in
-                if saved[event.id] != nil { saved[event.id] = event }
-            }
-            if updatedBookmarks != bookmarks {
-                do {
-                    try write(updatedBookmarks, to: "saved.json")
-                    bookmarks = updatedBookmarks
-                } catch {
-                    storageMessage = "Saved sessions couldn’t be updated on this device."
-                }
-            }
             cache.agenda = events
             cache.agendaUpdated = .now
             agendaUnavailable = false

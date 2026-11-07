@@ -159,9 +159,11 @@ private final class WebsiteBrowser: NSObject, WKNavigationDelegate, WKUIDelegate
         self.homeURL = homeURL
         requestedURL = homeURL
         let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .default()
+        // The team bridge picks the site's data store and adds the `pt` handler (contracts §4).
+        TeamFeatures.shared.bridge.configure(configuration, for: homeURL)
         webView = WKWebView(frame: .zero, configuration: configuration)
         super.init()
+        TeamFeatures.shared.bridge.attach(webView)
         webView.navigationDelegate = self
         webView.uiDelegate = self
         webView.allowsBackForwardNavigationGestures = true
@@ -216,6 +218,10 @@ private final class WebsiteBrowser: NSObject, WKNavigationDelegate, WKUIDelegate
             decisionHandler(.cancel)
             return
         }
+        if TeamFeatures.shared.bridge.handlesNavigation(to: url) {
+            decisionHandler(.cancel)
+            return
+        }
         if isWebsite(url) {
             if action.request.httpMethod == "GET" { requestedURL = url }
             decisionHandler(.allow)
@@ -228,12 +234,17 @@ private final class WebsiteBrowser: NSObject, WKNavigationDelegate, WKUIDelegate
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
                  for action: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         guard action.targetFrame == nil, let url = action.request.url else { return nil }
+        if TeamFeatures.shared.bridge.handlesNavigation(to: url) { return nil }
         if isWebsite(url) {
             webView.load(action.request)
         } else if action.navigationType == .linkActivated {
             openExternally(url)
         }
         return nil
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        TeamFeatures.shared.bridge.pageDidFinish(webView)
     }
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {

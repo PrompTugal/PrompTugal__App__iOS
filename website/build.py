@@ -402,6 +402,9 @@ def build(out):
                   workflow_count=str(len(admin.workflows())),
                   screens=admin.screens_html(admin.destinations(), facts['websites']),
                   branch_screens=admin.branch_screens_html(admin.branch_destinations()),
+                  shell_root_note=('<p class="notice">The app shows the shell at launch (<code>AppShell</code> is the root view), so these screens are reachable.</p>'
+                                   if 'AppShell(' in admin.root_scene() else
+                                   '<p class="notice"><strong>Not reachable yet.</strong> The app still opens on the old website view at launch; <code>AppShell</code> is not the root view in <code>PrompTugalApp.swift</code>. Until it is, the screens below are compiled into the app but nobody can open them, and the product pages count none of their features as in the beta.</p>'),
                   code_areas=admin.areas_html(facts['areas']),
                   latest_build=admin.latest_build_html(admin.latest_build(os.environ.get('IOS_BUILD_JSON')), REPO_URL))
 
