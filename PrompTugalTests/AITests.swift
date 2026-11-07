@@ -524,3 +524,73 @@ struct AIConsentTests {
         #expect(OpenRouter.provider(of: "acme/model") == "acme")
     }
 }
+
+/// A vault seam for tests: files by vault id, and which one is "mine".
+@MainActor
+final class FakeCollabVault: CollabVaultAccess {
+    var files: [String: [String: Data]] = [:]       // vault id → path → data
+    var ownVaultId: String?
+    var reads: [(String, String)] = []
+    var isOpen: Bool { !files.isEmpty }
+    var canWrite: Bool { ownVaultId != nil }
+
+    init(own: String?, files: [String: [String: Data]]) {
+        ownVaultId = own
+        self.files = files
+    }
+
+    func read(_ path: String) async throws -> Data? {
+        guard let own = ownVaultId else { throw CollabHooks.HookError.noOwnVault }
+        return try await read(path, vaultId: own)
+    }
+    func read(_ path: String, vaultId: String) async throws -> Data? {
+        reads.append((vaultId, path))
+        return files[vaultId]?[path]
+    }
+    func write(_ path: String, _ data: Data, _ message: String) async throws {
+        guard let own = ownVaultId else { throw CollabHooks.HookError.noOwnVault }
+        files[own, default: [:]][path] = data
+    }
+    func openShared(readKey: String, label: String) async throws -> String { "teammate1" }
+    func savePicks(_ document: Data) async throws -> Data { document }
+    func writeNewsroomNote(_ path: String, _ data: Data) async throws {}
+    func readMaster(_ path: String) async throws -> Data? { nil }
+    func files(in folder: String, vaultId: String?) async throws -> [String] { [] }
+    func append(_ data: Data, to folder: String, message: String) async throws -> String { folder + "/x.json" }
+}
+
+@Suite("Ask key: only from my own vault (S5)")
+@MainActor
+struct AIKeyVaultOwnershipTests {
+    private let teammateKey = ["sk", "or", "v1", String(repeating: "7", count: 64)].joined(separator: "-")
+
+    @Test("A teammate's imported vault is never read for my key")
+    func neverFromTeammate() async throws {
+        let saved = CollabHooks.vault
+        defer { CollabHooks.vault = saved }
+        let doc = try AIKeyStore.vaultDocument(key: teammateKey, model: nil)
+        let fake = FakeCollabVault(own: nil, files: ["teammate1": [AIKeyStore.vaultPath: doc]])
+        CollabHooks.vault = fake
+        let name = "ask-own-\(UUID().uuidString)"
+        let store = AIKeyStore(store: MemorySecretStore(), defaults: UserDefaults(suiteName: name)!)
+        await #expect(throws: CollabHooks.HookError.self) { try await store.loadFromVault() }
+        #expect(fake.reads.isEmpty, "nothing read from any vault")
+        #expect(!store.hasKey)
+        UserDefaults().removePersistentDomain(forName: name)
+    }
+
+    @Test("My own vault is read, and only it")
+    func fromMine() async throws {
+        let saved = CollabHooks.vault
+        defer { CollabHooks.vault = saved }
+        let doc = try AIKeyStore.vaultDocument(key: teammateKey, model: "anthropic/claude-sonnet-5")
+        let fake = FakeCollabVault(own: "mine1", files: ["mine1": [AIKeyStore.vaultPath: doc], "teammate1": [:]])
+        CollabHooks.vault = fake
+        let name = "ask-own-\(UUID().uuidString)"
+        let store = AIKeyStore(store: MemorySecretStore(), defaults: UserDefaults(suiteName: name)!)
+        let model = try await store.loadFromVault()
+        #expect(model == "anthropic/claude-sonnet-5" && store.hasKey)
+        #expect(fake.reads.map(\.0) == ["mine1"])
+        UserDefaults().removePersistentDomain(forName: name)
+    }
+}
