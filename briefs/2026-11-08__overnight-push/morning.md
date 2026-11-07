@@ -85,7 +85,7 @@ Known limits: passkey unlock needs the `apple-app-site-association` file on prom
 
 Draft at 07:40; final by 10:00.
 
-- **CI capacity.** The macOS runners were the bottleneck of the night; `dev` was frozen at 07:15 so queued runs could finish. They did: the unit tests on the integrated app passed on iPhone (121 tests in 31 suites, run 150) and, by team's report, on iPad (run 154). Session branches now run only the build; the unit tests and screenshots run on `dev`.
+- **CI capacity.** The macOS runners were the bottleneck of the night; `dev` was frozen at 07:15 so queued runs could finish. They did: the unit tests on the integrated app passed on iPhone (121 tests in 31 suites, the iPhone job of run 150) and on iPad (the iPad job of run 154). The other jobs of those runs were cancelled to make room for newer commits. Session branches now run only the build; the unit tests and screenshots run on `dev`.
 - **Screenshots.** The first runs had cut screen ids and rotated iPad images, and one failed on a slow screen; all three are fixed. Run 10 took all 13 iPhone screens with exact ids, and the site shows them. iPad is added once an upright image from a fixed run has been checked.
 - **Vault writes on the live server.** Reading and writing are tested against vaults written by sgit 0.27 and sgit's in-memory server, and sgit reads back what the app writes. A live push to `dev.send.sgraph.ai` needs an access token nobody had tonight.
 - **Passkey unlock.** Written and behind a flag; it needs the `apple-app-site-association` file on promptugal.news (above). Team keys and Face ID work without it.
