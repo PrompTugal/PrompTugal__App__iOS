@@ -71,14 +71,12 @@ final class CoordinationStore {
         await loadTeammates()
     }
 
+    /// The team list from the team session's store (me.json), so there is one set of team models.
     func loadPeople() async {
-        guard let data = try? await HTTPClient.shared.get(AIContextGatherer.teamSite.appendingPathComponent("me.json"),
-                                                          label: "collab.people"),
-              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let entries = object["people"] as? [String: [String: Any]] else { return }
-        people = entries.map { id, entry in
-            Person(id: id, name: entry["name"] as? String ?? id, colour: entry["colour"] as? String)
-        }.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        let team = TeamFeatures.shared.team
+        if team.me == nil { await team.refresh(person: me?.id) }
+        guard let everyone = team.me?.people else { return }
+        people = everyone.map { Person(id: $0.id, name: $0.name, colour: $0.colour) }
     }
 
     func loadMine() {
