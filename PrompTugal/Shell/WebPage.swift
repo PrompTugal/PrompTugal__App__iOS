@@ -83,9 +83,10 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
         homeURL = url
         currentURL = url
         let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .default()
+        TeamFeatures.shared.bridge.configure(configuration, for: url)
         webView = WKWebView(frame: .zero, configuration: configuration)
         super.init()
+        TeamFeatures.shared.bridge.attach(webView)
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = true
         webView.isInspectable = true
@@ -125,7 +126,17 @@ final class WebPageModel: NSObject, WKNavigationDelegate {
         navigationStart = .now
     }
 
+    func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = action.request.url, TeamFeatures.shared.bridge.handlesNavigation(to: url) {
+            decisionHandler(.cancel)
+            return
+        }
+        decisionHandler(.allow)
+    }
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        TeamFeatures.shared.bridge.pageDidFinish(webView)
         guard let url = webView.url else { return }
         log(url, error: nil)
     }
