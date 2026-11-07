@@ -1,10 +1,10 @@
 # Status · vault · App Review readiness
 
-> In progress. All seven items are coded and pushed on night/vault. CI run 206 (package: signatures, error text, caps) is running; the app half is in the next run. Not yet ready to merge.
+> Done and green, ready to merge: all seven vault items (S1 signatures enforced and signers pinned, S3, S5, S6, Q7, S7, the reviewer demo vault script). CI: runs 206 and 213 (build + package tests), 221 (iPhone and iPad unit tests incl. VaultAppTests), round trip 14.
 
 Branch `night/vault`, merged with `origin/dev` (8c7fad1 and later). Line numbers in the findings are from d4f4292.
 
-## Done (pushed; CI noted per item)
+## Done (CI green: 206, 213, 221, round trip 14)
 
 1. **S1 Signatures enforced, signers pinned.**
    - An invalid signature is refused in every mode (`SGitVault.commit`).
@@ -53,7 +53,16 @@ Branch `night/vault`, merged with `origin/dev` (8c7fad1 and later). Line numbers
 
 ## In progress
 
-- CI: run 206 for the package commit 93de6d4; the next run covers the app half. I will mark this page green with the run numbers.
+- Nothing. night/vault at da2344c (+ this page) is green and ready for the conductor to merge.
+
+## CI
+
+| Run | Commit | What | Result |
+| --- | --- | --- | --- |
+| 206 | 93de6d4 | app build + SGitVault swift test (signature policy, errors, caps) | green |
+| 213 | da2344c | app build + SGitVault swift test (app half) | green |
+| 221 (by hand) | da2344c | iPhone and iPad unit tests, incl. PrompTugalTests/VaultAppTests.swift | green |
+| round trip 14 | 93de6d4 | Swift writes, sgit-ai 0.27 clones and verifies | green |
 
 ## Blocked / needs from others
 
