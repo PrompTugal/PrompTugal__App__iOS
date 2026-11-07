@@ -1,0 +1,60 @@
+<!--
+title: Support · PrompTugal for iOS
+description: How to join the PrompTugal beta, edit the website shortcuts, use the offline reader and build the app from source.
+nav: Support
+order: 2
+-->
+<section class="band">
+  <div class="wrap prose">
+    <p class="kicker">Support</p>
+    <h1>Using PrompTugal {{version}}</h1>
+    <p class="lede">Help for testers of the iPhone and iPad beta. The app needs iOS or iPadOS {{min_ios}} or later.</p>
+
+    <h2 id="beta">Join the beta</h2>
+    <p>PrompTugal is in a private TestFlight beta. Testers are invited by email by the PrompTugal team. There is no public TestFlight link yet. When one exists, it will be posted here.</p>
+    <ol class="steps">
+      <li>Install <a href="https://apps.apple.com/app/testflight/id899247664">TestFlight</a> from the App Store.</li>
+      <li>Open the invitation email on your iPhone or iPad and tap <strong>View in TestFlight</strong>.</li>
+      <li>Tap <strong>Install</strong>. Updates arrive in TestFlight as new builds are approved.</li>
+    </ol>
+    <p>Installing a new build over an older one keeps your saved sessions and your edited website list.</p>
+
+    <h2 id="websites">Edit the website shortcuts</h2>
+    <p>On iPad the sidebar sits beside the page, and the sidebar button hides or shows it. On iPhone, or in a narrow window, the same button opens the list in a sheet.</p>
+    <ol class="steps">
+      <li>Open PrompTugal once so it copies its default list into Files.</li>
+      <li>In the Files app, open <strong>On My iPhone</strong> (or <strong>On My iPad</strong>) → <strong>PrompTugal</strong> → <code>Websites.json</code>.</li>
+      <li>Edit or replace the file, then quit and reopen PrompTugal.</li>
+    </ol>
+    <p>The first entry opens at launch and the order of the list is the order of the sidebar. Each entry needs a unique <code>id</code>, a <code>name</code>, an HTTPS <code>url</code>, an SF Symbols <code>icon</code> and a <code>color</code> (red, orange, green, teal, blue, indigo or purple). For example:</p>
+    <pre><code>{
+  "id": "my-site",
+  "name": "example.com",
+  "url": "https://example.com/",
+  "icon": "globe",
+  "color": "green"
+}</code></pre>
+    <p>If the file cannot be read, the app shows the default list with a notice. Delete the file and reopen the app to get the defaults back.</p>
+
+    <h2 id="offline">Read offline</h2>
+    <p>Tap the book icon in the bottom bar to open the offline reader. Open it once while you are online so it can fill its cache. After that, Now, Agenda, Saved and News work without a connection. Full articles and the complete web agenda still need a connection. If a refresh fails, the cached content stays on screen with the time of the last good sync.</p>
+
+    <h2 id="faq">Questions</h2>
+    <dl class="qa">
+      <dt>Why are agenda times not in my time zone?</dt>
+      <dd>Web Summit runs in Lisbon, so the app shows every session in Lisbon time. A session that ends after midnight ends on the next day.</dd>
+      <dt>A link opened in Safari instead of the app. Is that right?</dt>
+      <dd>Yes. Pages on the same website stay in the app. Links to other sites, such as an article’s original source, open in Safari.</dd>
+      <dt>Is the app affiliated with Web Summit?</dt>
+      <dd>No. PrompTugal.news is an independent newsroom. <a href="https://promptugal.news/about/participant.html">About this coverage</a>.</dd>
+      <dt>Where do I report a problem?</dt>
+      <dd>Use <strong>Send Beta Feedback</strong> in TestFlight, or take a screenshot while the app is open. Both reach the team with your build number. You can also open an issue on <a href="{{repo_url}}/issues">GitHub</a>.</dd>
+    </dl>
+
+    <h2 id="source">Build from source</h2>
+    <p>Open <code>PrompTugal.xcodeproj</code> in Xcode 26 or later, choose the <strong>PrompTugal</strong> scheme and a simulator, then <strong>Product → Run</strong>. For a device, pick your team under <strong>Signing &amp; Capabilities</strong> and change the bundle identifier <code>{{bundle_id}}</code> if needed. To build for the simulator from the command line:</p>
+    <pre><code>xcodebuild -project PrompTugal.xcodeproj -scheme PrompTugal \
+  -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build</code></pre>
+    <p>The code is on <a href="{{repo_url}}">GitHub</a> under the Apache-2.0 licence.</p>
+  </div>
+</section>

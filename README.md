@@ -62,3 +62,18 @@ The live website needs a connection. The native reader keeps its previous bookma
 The offline reader reads the [live agenda](https://promptugal.news/api/v1/live/agenda.json), individual [event records](https://promptugal.news/api/v1/events/registration-2026-11-09.json), and [news RSS](https://promptugal.news/feed.xml). The live agenda is the 9–12 November 2026 summit feed and carries a subset of the [website’s side events](https://promptugal.news/events/index.html). The app links directly to the full agenda. Now shows upcoming sessions when the feed has them and directs users to past sessions in Agenda after the summit.
 
 Bookmarks and the last successful feed responses are stored on each device. Content and app icon come from PrompTugal.news. PrompTugal’s coverage is independent of Web Summit.
+
+## Product website
+
+`website/` builds the static product site for [ios.promptugal.news](https://ios.promptugal.news/) into `website/public/`. It uses Python's standard library only, ships no JavaScript and loads no third-party assets.
+
+```sh
+python3 website/build.py                      # regenerate website/public/
+python3 website/validate.py                   # refuse broken links, missing twins, drift
+python3 -m unittest website/test_site.py      # validator rules with negative controls
+```
+
+- Edit pages in `website/pages/` (each is the `<main>` body plus a front-matter comment). The shared shell is `website/template.html` and the styles are in `website/site.css`.
+- App facts are read from the Xcode project on every build and never typed by hand. These are the version, build, minimum iOS, bundle ID, Swift line count and the `Websites.json` list. Artwork is copied from the asset catalog. Bump `MARKETING_VERSION` and rebuild, and the site follows.
+- Every page gets a Markdown twin at the same path, listed in `llms.txt` and `sitemap.xml`.
+- Rebuild and validate before committing. `website/public/` is committed so any static host can serve it as is. Its `CNAME` targets GitHub Pages.

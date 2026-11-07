@@ -1,0 +1,14 @@
+# PrompTugal for iOS
+
+> PrompTugal 0.3.1 for iPhone and iPad: the PrompTugal.news newsroom and the sites around it (5 websites) in one app, with an offline reader for the Web Summit Lisbon agenda. Independent of Web Summit.
+
+## Pages
+
+- [PrompTugal for iPhone and iPad](https://ios.promptugal.news/index.md): The PrompTugal.news AI newsroom and its sister sites in one iPhone and iPad app, with an offline reader for the Web Summit Lisbon 2026 agenda.
+- [Support · PrompTugal for iOS](https://ios.promptugal.news/support.md): How to join the PrompTugal beta, edit the website shortcuts, use the offline reader and build the app from source.
+- [Privacy · PrompTugal for iOS](https://ios.promptugal.news/privacy.md): PrompTugal for iOS has no account, analytics or server of its own. This page lists what the app stores on your device and what it requests from the network.
+
+## Source
+
+- [Source code (Apache-2.0)](https://github.com/PrompTugal/PrompTugal__App__iOS)
+- [PrompTugal.news](https://promptugal.news/llms.txt): the newsroom the app reads

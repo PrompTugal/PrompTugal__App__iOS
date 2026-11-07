@@ -1,0 +1,34 @@
+<!--
+title: Privacy · PrompTugal for iOS
+description: PrompTugal for iOS has no account, analytics or server of its own. This page lists what the app stores on your device and what it requests from the network.
+nav: Privacy
+order: 3
+-->
+<section class="band">
+  <div class="wrap prose">
+    <p class="kicker">Privacy</p>
+    <h1>What the app keeps, and where</h1>
+    <p class="lede">PrompTugal {{version}} has no account, no analytics, no advertising and no server of its own. It collects nothing about you.</p>
+
+    <h2>What the app requests</h2>
+    <ul>
+      <li>The offline reader downloads three public feeds from <a href="https://promptugal.news/">promptugal.news</a>: the live agenda, individual event records and the news RSS feed. They are the same files anyone can open in a browser.</li>
+      <li>The website tabs load the websites in your sidebar, like any browser would. Each website’s own privacy policy covers what it does.</li>
+      <li>Links that leave a website open in Safari, not in the app.</li>
+    </ul>
+
+    <h2>What stays on your device</h2>
+    <ul>
+      <li><strong>Saved sessions and cached feeds.</strong> Stored in the app’s private storage so the reader works offline. They are never uploaded.</li>
+      <li><strong>Website data.</strong> Cookies and local storage used by the websites you open, such as your theme and schedule picks on PrompTugal.news. This is kept apart from Safari.</li>
+      <li><strong>Your website list.</strong> The <code>Websites.json</code> file you can see and edit in the Files app.</li>
+    </ul>
+    <p>Deleting the app removes all of it.</p>
+
+    <h2>TestFlight</h2>
+    <p>While PrompTugal is in beta, Apple’s TestFlight shares your email address, device model, OS version and any feedback or crash reports you send with the team. <a href="https://www.apple.com/legal/privacy/data/en/testflight/">Apple’s TestFlight privacy notice</a> has the details.</p>
+
+    <h2>Checking this</h2>
+    <p>The whole app is open source. The network requests are in <code>Content.swift</code> and the website tabs are in <code>WebsiteView.swift</code>, both on <a href="{{repo_url}}">GitHub</a>.</p>
+  </div>
+</section>
