@@ -171,8 +171,20 @@ class SiteTest(unittest.TestCase):
             f'"softwareVersion": "{self.facts["version"]}"', '"softwareVersion": "9.9.9"')), 'softwareVersion')
 
     def test_refuses_other_brand_on_product_page(self):
-        self.assertRefused(self.broken('readers.html', lambda t: t.replace('</main>', '<p>Powered by RiskMandate.</p></main>')),
-                           'names another brand ("riskmandate")')
+        saved = validate.OTHER_BRANDS
+        validate.OTHER_BRANDS = ('acmecorp',)          # the mechanism still works for a brand we list
+        try:
+            self.assertRefused(self.broken('readers.html', lambda t: t.replace('</main>', '<p>Built with AcmeCorp.</p></main>')),
+                               'names another brand ("acmecorp")')
+        finally:
+            validate.OTHER_BRANDS = saved
+
+    def test_powered_by_riskmandate_in_every_footer(self):
+        for page in ('index.html', 'overnight.html', 'readers.html'):
+            text = (self.clean / page).read_text()
+            self.assertIn('href="https://riskmandate.ai/">RiskMandate</a>', text, page)
+            self.assertIn('href="https://sgit.ai/">sgit</a>', text, page)
+        self.assertEqual(validate.validate(self.clean), [])
 
     def test_allows_sgit_on_product_pages(self):
         out = self.tmp / 'sgit-ok'
