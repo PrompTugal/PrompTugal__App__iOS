@@ -1,0 +1,118 @@
+import Foundation
+import Observation
+
+/// One public JSON file: fetched, decoded off the main actor, cached on disk for
+/// offline use, and logged for the Network debug panel.
+@MainActor @Observable
+final class RemoteFeed<Value: Decodable & Sendable> {
+    let name: String
+    let url: URL
+    /// How long a load is skipped after a good one, unless forced.
+    var freshFor: TimeInterval = 120
+
+    private(set) var value: Value?
+    private(set) var updated: Date?
+    private(set) var phase: LoadPhase = .idle
+    private(set) var bytes = 0
+    private var cacheLoaded = false
+
+    init(name: String, url: URL) {
+        self.name = name
+        self.url = url
+    }
+
+    var failed: Bool { if case .failed = phase { true } else { false } }
+
+    /// Loads the cached copy (once), then the network copy if the cache is older than `freshFor`.
+    func load(force: Bool = false) async {
+        if !cacheLoaded { await loadCache() }
+        if phase == .loading { return }
+        if !force, let updated, Date.now.timeIntervalSince(updated) < freshFor, value != nil { return }
+        phase = .loading
+        let started = Date.now
+        var logged = false
+        do {
+            var request = URLRequest(url: url, timeoutInterval: 20)
+            request.cachePolicy = .reloadIgnoringLocalCacheData
+            let (data, response) = try await URLSession.shared.data(for: request)
+            let status = (response as? HTTPURLResponse)?.statusCode
+            let ms = Date.now.timeIntervalSince(started) * 1000
+            guard let status, (200..<300).contains(status) else {
+                RequestLog.shared.record(.init(at: started, method: "GET", url: url, status: status,
+                                               bytes: data.count, durationMs: ms,
+                                               outcome: .failed("HTTP \(status ?? 0)"), source: name))
+                logged = true
+                throw URLError(.badServerResponse)
+            }
+            let decoded = try await Self.decode(data)
+            RequestLog.shared.record(.init(at: started, method: "GET", url: url, status: status,
+                                           bytes: data.count, durationMs: ms, outcome: .ok, source: name))
+            value = decoded
+            bytes = data.count
+            updated = .now
+            phase = .loaded
+            FeedCache.write(data, name: name)
+        } catch {
+            if !logged {
+                RequestLog.shared.record(.init(at: started, method: "GET", url: url, status: nil, bytes: 0,
+                                               durationMs: Date.now.timeIntervalSince(started) * 1000,
+                                               outcome: .failed(error.localizedDescription), source: name))
+            }
+            phase = .failed(Self.message(for: error))
+        }
+    }
+
+    private func loadCache() async {
+        cacheLoaded = true
+        guard value == nil, let cached = FeedCache.read(name: name) else { return }
+        if let decoded = try? await Self.decode(cached.data) {
+            value = decoded
+            updated = cached.date
+            bytes = cached.data.count
+            RequestLog.shared.record(.init(at: .now, method: "CACHE", url: url, status: nil, bytes: cached.data.count,
+                                           durationMs: 0, outcome: .cached, source: name))
+        }
+    }
+
+    nonisolated private static func decode(_ data: Data) async throws -> Value {
+        try await Task.detached(priority: .userInitiated) {
+            try JSONDecoder().decode(Value.self, from: data)
+        }.value
+    }
+
+    nonisolated private static func message(for error: Error) -> String {
+        if let error = error as? URLError {
+            switch error.code {
+            case .notConnectedToInternet, .networkConnectionLost: return "You are offline."
+            case .timedOut: return "The server took too long to answer."
+            case .badServerResponse: return "The server answered with an error."
+            default: return "The request failed (\(error.code.rawValue))."
+            }
+        }
+        if error is DecodingError { return "The data changed shape and could not be read." }
+        return error.localizedDescription
+    }
+}
+
+/// Raw bytes of each feed, kept in Caches so the dashboards open offline.
+enum FeedCache {
+    static var directory: URL {
+        URL.cachesDirectory.appendingPathComponent("PrompTugal/feeds", isDirectory: true)
+    }
+
+    static func write(_ data: Data, name: String) {
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try? data.write(to: file(name), options: .atomic)
+    }
+
+    static func read(name: String) -> (data: Data, date: Date)? {
+        let url = file(name)
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        let date = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
+        return (data, date)
+    }
+
+    static func file(_ name: String) -> URL {
+        directory.appendingPathComponent(name.replacingOccurrences(of: "/", with: "_") + ".json")
+    }
+}
