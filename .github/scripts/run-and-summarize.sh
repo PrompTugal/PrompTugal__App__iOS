@@ -46,4 +46,10 @@ grep -E "^[^ ].*:[0-9]+:[0-9]+: error:" "$log" | awk '!seen[$0]++' | head -30 | 
   msg=${line#*error: }
   echo "::error file=${file#${GITHUB_WORKSPACE:-$PWD}/},line=$lineno::$msg"
 done
+# Repeat the errors as the last lines of the step, so `get_job_logs` with a
+# short tail_lines (about 80) shows them above the post-job noise.
+echo "===== $title failed (exit $status). Errors: ====="
+grep -E "error:|\*\* (BUILD|TEST) FAILED|Test Case .* failed|✘|Expectation failed" "$log" \
+  | sed -E "s#${GITHUB_WORKSPACE:-$PWD}/##g" | awk '!seen[$0]++' | head -40
+echo "===== end of errors ====="
 exit "$status"
