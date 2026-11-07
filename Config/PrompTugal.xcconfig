@@ -9,3 +9,7 @@ PT_ENTITLEMENTS = Config/PrompTugal.entitlements
 
 // Your own team and overrides, never committed. Copy Local.xcconfig.example.
 #include? "Local.xcconfig"
+
+// Export compliance: the app uses only encryption built into iOS (CryptoKit,
+// CommonCrypto, HTTPS), which needs no export documentation.
+INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO
