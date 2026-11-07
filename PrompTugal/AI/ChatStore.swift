@@ -47,6 +47,14 @@ final class ChatStore {
     var contextKinds: Set<AIContextKind> {
         didSet { defaults.set(contextKinds.map(\.rawValue), forKey: "ai.context") }
     }
+    /// Keep the conversation on this device between launches (off by default). Only the words of each turn are
+    /// kept, in a file protected while the device is locked; never the key, the context or the system prompt.
+    var keepConversation: Bool {
+        didSet {
+            defaults.set(keepConversation, forKey: "ai.keepConversation")
+            if keepConversation { saveConversation() } else { try? FileManager.default.removeItem(at: conversationFile) }
+        }
+    }
     /// The parts as last gathered, for the toggles' summaries.
     private(set) var preview: [AIContextPart] = []
 
@@ -55,10 +63,13 @@ final class ChatStore {
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let gather: @MainActor (Set<AIContextKind>) async -> [AIContextPart]
     @ObservationIgnored private var task: Task<Void, Never>?
+    @ObservationIgnored let conversationFile: URL
 
     init(keys: AIKeyStore = .shared, client: OpenRouterClient = OpenRouterClient(), defaults: UserDefaults = .standard,
-         gather: @escaping @MainActor (Set<AIContextKind>) async -> [AIContextPart] = { await AIContextGatherer.gather($0) }) {
+         gather: @escaping @MainActor (Set<AIContextKind>) async -> [AIContextPart] = { await AIContextGatherer.gather($0) },
+         conversationFile: URL = ChatStore.defaultConversationFile) {
         self.keys = keys
+        self.conversationFile = conversationFile
         self.client = client
         self.defaults = defaults
         self.gather = gather
@@ -66,6 +77,51 @@ final class ChatStore {
         useTools = defaults.object(forKey: "ai.tools") as? Bool ?? true
         let saved = (defaults.array(forKey: "ai.context") as? [String])?.compactMap(AIContextKind.init(rawValue:))
         contextKinds = Set(saved ?? [.agenda, .picks, .team])
+        keepConversation = defaults.bool(forKey: "ai.keepConversation")
+        if keepConversation, let data = try? Data(contentsOf: conversationFile) {
+            turns = Self.restore(data)
+        }
+    }
+
+    // MARK: Keeping the conversation
+
+    nonisolated static var defaultConversationFile: URL {
+        URL.applicationSupportDirectory.appendingPathComponent("PrompTugal", isDirectory: true)
+            .appendingPathComponent("ask-conversation.json")
+    }
+
+    private struct SavedTurn: Codable {
+        let role: String
+        let text: String
+        let model: String?
+    }
+
+    /// The words of each finished user, assistant and tool turn (errors and debug details are left out).
+    static func snapshot(_ turns: [Turn]) throws -> Data {
+        let saved = turns.filter { !$0.streaming && $0.role != .error }.suffix(200).map { turn in
+            SavedTurn(role: { switch turn.role { case .user: "user"; case .assistant: "assistant"; case .tool: "tool"; case .error: "error" } }(),
+                      text: turn.text, model: turn.model)
+        }
+        return try JSONEncoder().encode(Array(saved))
+    }
+
+    static func restore(_ data: Data) -> [Turn] {
+        guard let saved = try? JSONDecoder().decode([SavedTurn].self, from: data) else { return [] }
+        return saved.compactMap { item in
+            let role: Turn.Role? = switch item.role {
+            case "user": .user
+            case "assistant": .assistant
+            case "tool": .tool
+            default: nil
+            }
+            return role.map { Turn(role: $0, text: item.text, model: item.model) }
+        }
+    }
+
+    private func saveConversation() {
+        guard keepConversation, let data = try? Self.snapshot(turns) else { return }
+        try? FileManager.default.createDirectory(at: conversationFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try? data.write(to: conversationFile, options: [.atomic, .completeFileProtection])
     }
 
     func isOn(_ kind: AIContextKind) -> Bool { contextKinds.contains(kind) }
@@ -114,12 +170,13 @@ final class ChatStore {
     func clear() {
         stop()
         turns.removeAll()
+        saveConversation()
     }
 
     private func run(_ question: String, label: String? = nil, include: Set<AIContextKind> = [],
                      extra: @MainActor () async -> [AIContextPart] = { [] }) async {
         isSending = true
-        defer { isSending = false; task = nil }
+        defer { isSending = false; task = nil; saveConversation() }
         let history = turns
         turns.append(Turn(role: .user, text: label ?? question))
 

@@ -403,3 +403,41 @@ struct AIMentionTests {
         #expect(AITools.mentioned(in: "Nothing relevant here.", events: events).isEmpty, "negative control")
     }
 }
+
+@Suite("Ask: keeping the conversation")
+@MainActor
+struct AIConversationTests {
+    @Test("Snapshot keeps words only: no errors, no debug, no streaming turn")
+    func snapshot() throws {
+        var answer = ChatStore.Turn(role: .assistant, text: "Centre Stage at 11:50.", model: "anthropic/claude-sonnet-5")
+        answer.debug = ChatStore.RequestDebug(model: "m", systemPrompt: "SECRET-CONTEXT", parts: [], messageCount: 2,
+                                              requestBytes: 10, sentAt: .now)
+        var partial = ChatStore.Turn(role: .assistant, text: "half")
+        partial.streaming = true
+        let turns = [ChatStore.Turn(role: .user, text: "Where is the keynote?"), ChatStore.Turn(role: .tool, text: "now() → 3 on now"),
+                     answer, ChatStore.Turn(role: .error, text: "boom"), partial]
+        let data = try ChatStore.snapshot(turns)
+        let text = String(decoding: data, as: UTF8.self)
+        #expect(!text.contains("SECRET-CONTEXT") && !text.contains("boom") && !text.contains("half"))
+        let back = ChatStore.restore(data)
+        #expect(back.map(\.text) == ["Where is the keynote?", "now() → 3 on now", "Centre Stage at 11:50."])
+        #expect(back.map(\.role) == [.user, .tool, .assistant])
+        #expect(back.last?.model == "anthropic/claude-sonnet-5")
+        #expect(ChatStore.restore(Data("not json".utf8)).isEmpty, "negative control")
+    }
+
+    @Test("Off by default; turning it on writes the file, off deletes it")
+    func toggle() throws {
+        let name = "ask-keep-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).json")
+        let store = ChatStore(keys: AIKeyStore(store: MemorySecretStore(), defaults: defaults), defaults: defaults,
+                              gather: { _ in [] }, conversationFile: file)
+        #expect(!store.keepConversation)
+        store.keepConversation = true
+        #expect(FileManager.default.fileExists(atPath: file.path))
+        store.keepConversation = false
+        #expect(!FileManager.default.fileExists(atPath: file.path))
+        defaults.removePersistentDomain(forName: name)
+    }
+}
