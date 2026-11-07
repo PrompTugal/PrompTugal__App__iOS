@@ -51,6 +51,29 @@ jobs:
             exit 1
           fi
 
+      - name: Type-check PrompTugal/Vault against SGitVault (iOS Simulator SDK)
+        run: |
+          set -o pipefail
+          SDK=$(xcrun --sdk iphonesimulator --show-sdk-path)
+          T="$RUNNER_TEMP/vaultcheck"; mkdir -p "$T" "$RUNNER_TEMP/logs"
+          TARGET=arm64-apple-ios18.0-simulator
+          ok=1
+          xcrun swiftc -emit-module -module-name SGitVault -parse-as-library -swift-version 6 \
+            -sdk "$SDK" -target "$TARGET" -emit-module-path "$T/SGitVault.swiftmodule" \
+            Packages/SGitVault/Sources/SGitVault/*.swift 2>&1 | tee "$RUNNER_TEMP/logs/vault-module.log" || ok=0
+          for mode in 5 6; do
+            xcrun swiftc -typecheck -parse-as-library -swift-version $mode -sdk "$SDK" -target "$TARGET" -I "$T" \
+              PrompTugal/Vault/*.swift 2>&1 | tee "$RUNNER_TEMP/logs/app-vault-swift$mode.log" || ok=0
+          done
+          if [ $ok = 1 ]; then
+            echo "### ✅ PrompTugal/Vault type-checks (iOS 18 simulator, Swift 5 and 6)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            { echo "### ❌ PrompTugal/Vault type-check failed"; echo '```'
+              cat "$RUNNER_TEMP"/logs/vault-module.log "$RUNNER_TEMP"/logs/app-vault-swift*.log | grep -E "error:" | head -60
+              echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
       - name: Upload log
         if: always()
         uses: actions/upload-artifact@v4
