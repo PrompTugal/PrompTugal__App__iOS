@@ -155,11 +155,16 @@ struct PersonBriefView: View {
 /// When the next stand-up is, counting down, with the briefing one tap away.
 struct StandupCard: View {
     let person: Wire.Person
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         if let date = person.standupDate {
             Card {
-                HStack(alignment: .center, spacing: Space.l) {
+                // Side by side normally; stacked at accessibility text sizes or on a narrow screen.
+                let layout = typeSize.isAccessibilitySize
+                    ? AnyLayout(VStackLayout(alignment: .leading, spacing: Space.m))
+                    : AnyLayout(HStackLayout(alignment: .center, spacing: Space.l))
+                layout {
                     VStack(alignment: .leading, spacing: Space.xs) {
                         Kicker("Next stand-up", color: Palette.green)
                         Text(date, format: .dateTime.weekday(.wide).hour().minute())
@@ -171,7 +176,7 @@ struct StandupCard: View {
                         .font(.subheadline)
                         .foregroundStyle(Palette.muted)
                     }
-                    Spacer()
+                    if !typeSize.isAccessibilitySize { Spacer() }
                     if let briefing = person.briefingURL {
                         NavigationLink {
                             WebPage(url: briefing, title: "Briefing")
