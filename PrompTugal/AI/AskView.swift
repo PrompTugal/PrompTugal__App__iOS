@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Ask: the native AI chat (entry view for `collab.ai`). On iPhone it is a screen or a sheet; on iPad it also
 /// opens as a side panel next to any screen with `.askPanel(isPresented:)`.
@@ -30,6 +31,8 @@ struct AskView: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
+                .frame(maxWidth: 760)                      // a readable line on iPad and in landscape
+                .frame(maxWidth: .infinity)
             }
             .scrollDismissesKeyboard(.interactively)
             .onChange(of: store.turns.last?.text) { _, _ in
@@ -129,10 +132,17 @@ struct AskTurnView: View {
         case .assistant:
             VStack(alignment: .leading, spacing: 6) {
                 if turn.text.isEmpty && turn.streaming {
-                    ProgressView().controlSize(.small)
+                    HStack(spacing: 6) {
+                        ProgressView().controlSize(.small)
+                        Text("Thinking…").font(.subheadline).foregroundStyle(.secondary)
+                    }
                 } else {
                     Text(AIMarkdown.render(turn.text))
                         .textSelection(.enabled)
+                        .contextMenu {
+                            Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = turn.text }
+                            ShareLink(item: turn.text) { Label("Share", systemImage: "square.and.arrow.up") }
+                        }
                 }
                 HStack(spacing: 8) {
                     Text(OpenRouter.label(for: turn.model ?? ""))
@@ -224,6 +234,7 @@ private struct AskComposer: View {
                     }
                     .disabled(store.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !store.keys.hasKey)
                     .accessibilityLabel("Send")
+                    .keyboardShortcut(.return, modifiers: [.command])
                 }
             }
             .padding(.horizontal)
@@ -346,6 +357,30 @@ extension View {
             }
             .inspectorColumnWidth(min: 320, ideal: 400, max: 560)
             .presentationDetents([.medium, .large])
+        }
+    }
+}
+
+extension View {
+    /// Ask next to any screen, in one line: a toolbar button and ⌘K open it as a side panel on iPad (regular
+    /// width) and as a sheet on iPhone. For the shell's detail view, e.g.
+    /// `destination.view().askAnywhere(enabled: destination.id != "collab.ai")`.
+    func askAnywhere(enabled: Bool = true) -> some View {
+        modifier(AskAnywhere(enabled: enabled))
+    }
+}
+
+private struct AskAnywhere: ViewModifier {
+    let enabled: Bool
+    @State private var open = false
+
+    func body(content: Content) -> some View {
+        if enabled {
+            content
+                .toolbar { ToolbarItem(placement: .primaryAction) { AskPanelButton(isPresented: $open) } }
+                .askPanel(isPresented: $open)
+        } else {
+            content
         }
     }
 }
