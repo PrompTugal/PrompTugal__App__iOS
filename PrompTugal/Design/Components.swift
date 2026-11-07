@@ -25,7 +25,7 @@ struct TitledCard<Content: View, Accessory: View>: View {
     @ViewBuilder var content: Content
 
     init(_ title: String, kicker: String? = nil,
-         @ViewBuilder accessory: () -> Accessory = { EmptyView() },
+         @ViewBuilder accessory: () -> Accessory,
          @ViewBuilder content: () -> Content) {
         self.title = title
         self.kicker = kicker
@@ -46,6 +46,12 @@ struct TitledCard<Content: View, Accessory: View>: View {
             }
             content
         }
+    }
+}
+
+extension TitledCard where Accessory == EmptyView {
+    init(_ title: String, kicker: String? = nil, @ViewBuilder content: () -> Content) {
+        self.init(title, kicker: kicker, accessory: { EmptyView() }, content: content)
     }
 }
 

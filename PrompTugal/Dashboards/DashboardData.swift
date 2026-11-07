@@ -16,7 +16,7 @@ final class DashboardData {
     let desks = RemoteFeed<Wire.Desks>(name: "newsroom/desks", url: NewsroomAPI.url("newsroom/desks.json"))
     let newsletter = RemoteFeed<Wire.Newsletter>(name: "news/newsletter", url: NewsroomAPI.url("newsletter.json"))
 
-    private var centres: [String: RemoteFeed<Wire.CommandCentre>] = [:]
+    @ObservationIgnored private var centres: [String: RemoteFeed<Wire.CommandCentre>] = [:]
 
     /// The command centre feed for one person, created on first use.
     func commandCentre(_ id: String) -> RemoteFeed<Wire.CommandCentre> {
