@@ -82,22 +82,35 @@ final class CreditStore {
         }
     }
 
-    private func handle(_ result: VerificationResult<Transaction>) async {
+    /// Refunds and revocations (policy, Q3/S7): reading credit unlocks nothing (every page opens at any balance), so
+    /// a refund is not taken back from the website's meter. A transaction that arrives already revoked is not
+    /// credited, and is finished. Apple's refund handles the money; the app keeps no record beyond the transaction id.
+    func handle(_ result: VerificationResult<Transaction>) async {
         guard case .verified(let transaction) = result else {
             status = .failed("The App Store could not verify this purchase.")
-            return
+            return                                  // not finished: an unverified transaction is left to StoreKit
         }
         guard transaction.productType == .consumable,
               let pack = Self.packs.first(where: { $0.id == transaction.productID }) else {
-            await transaction.finish()
+            await transaction.finish()              // not ours to credit
             return
         }
-        if transaction.revocationDate == nil {
-            meter.addCredit(reference: "appstore-\(transaction.id)", pence: pack.pence * transaction.purchasedQuantity,
-                            productID: pack.id)
-            status = .purchased(pack.pence * transaction.purchasedQuantity)
+        guard transaction.revocationDate == nil else {
+            await transaction.finish()              // refunded or revoked before it was credited: nothing to add
+            return
         }
-        // Finished only after the credit is saved on the device, so a crash here repeats the transaction instead of losing it.
-        await transaction.finish()
+        let pence = pack.pence * max(1, transaction.purchasedQuantity)
+        do {
+            try meter.addCredit(reference: Self.reference(for: transaction.id), pence: pence, productID: pack.id)
+        } catch {
+            // Not finished: StoreKit offers the transaction again (Transaction.unfinished at the next launch).
+            status = .failed("Your credit could not be saved on this device. It will be added the next time the app opens.")
+            return
+        }
+        status = .purchased(pence)
+        await transaction.finish()                  // only now that the credit is saved on the device
     }
+
+    /// The reference the website's meter keeps for one App Store transaction.
+    nonisolated static func reference(for transactionID: UInt64) -> String { "appstore-\(transactionID)" }
 }

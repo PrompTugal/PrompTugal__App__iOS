@@ -17,16 +17,19 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
     static let handlerName = "pt"
     static let world = WKContentWorld.world(name: "PrompTugalBridge")
     /// Phase-1 ops (contracts §4). Both sides ignore unknown ops.
-    static let ops = ["schedule.get", "schedule.set", "identity.get", "notify.plan", "meter.topup"]
+    nonisolated static let ops = ["schedule.get", "schedule.set", "identity.get", "notify.plan", "meter.topup"]
     /// Ops the app's own bridge-world script sends; never listed to pages.
-    static let internalOps: Set<String> = ["schedule.pageChanged", "meter.pageChanged"]
+    nonisolated static let internalOps: Set<String> = ["schedule.pageChanged", "meter.pageChanged"]
 
-    static let scheduleHosts: Set<String> = ["promptugal.news"]
-    static let teamHosts: Set<String> = ["web-summit.sgit.ai"]
-    static var allowedHosts: Set<String> { scheduleHosts.union(teamHosts) }
+    nonisolated static let scheduleHosts: Set<String> = ["promptugal.news"]
+    nonisolated static let teamHosts: Set<String> = ["web-summit.sgit.ai"]
+    nonisolated static var allowedHosts: Set<String> { scheduleHosts.union(teamHosts) }
 
     /// Set when a page asks for a top-up; the UI presents the native purchase sheet and clears it.
     var topUpRequested = false
+    /// Set when a page asks for reminders (notify.plan) and permission was never asked: the UI shows a native alert,
+    /// and only a tap on it shows the system prompt (S7).
+    var remindersRequested = false
     private(set) var lastScheduleSync: Date?
 
     @ObservationIgnored let log: BridgeLog
@@ -78,7 +81,8 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
         controller.addUserScript(WKUserScript(source: BridgeScripts.bridgeWorld, injectionTime: .atDocumentStart,
                                               forMainFrameOnly: true, in: Self.world))
         if Self.scheduleHosts.contains(host) {
-            controller.addUserScript(WKUserScript(source: BridgeScripts.hideWebTopUp, injectionTime: .atDocumentStart,
+            controller.addUserScript(WKUserScript(source: BridgeScripts.hideWebTopUp(offerAppTopUp: ReadingCredit.isAvailable),
+                                                  injectionTime: .atDocumentStart,
                                                   forMainFrameOnly: true, in: .page))
         }
         controller.addScriptMessageHandler(self, contentWorld: Self.world, name: Self.handlerName)
@@ -102,14 +106,17 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
     }
 
     /// Asks a navigation the app should handle itself. Returns true when the app took it (the caller cancels).
+    /// Every web view asks this before a navigation (guideline 3.1.1): checkouts are never opened in the app.
     func handlesNavigation(to url: URL) -> Bool {
-        guard let host = url.host?.lowercased() else { return false }
-        if host == "buy.stripe.com" || (Self.scheduleHosts.contains(host) && url.path.hasSuffix("/account/top-up.html")) {
-            log.record(host: host, .app, op: "meter.topup", detail: "web top-up replaced by the native one")
+        guard CheckoutPolicy.isBlocked(url) else { return false }
+        let host = url.host?.lowercased() ?? "?"
+        if ReadingCredit.isAvailable {
+            log.record(host: host, .app, op: "checkout.blocked", detail: "web checkout replaced by the native top-up")
             topUpRequested = true
-            return true
+        } else {
+            log.record(host: host, .app, op: "checkout.blocked", detail: "web checkout blocked in the app")
         }
-        return false
+        return true
     }
 
     // MARK: Messages from pages
@@ -121,10 +128,11 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
         let host = origin.host.lowercased()
         let body = message.body as? [String: Any]
         let op = body?["op"] as? String ?? "?"
-        guard message.frameInfo.isMainFrame, origin.protocol == "https", origin.port == 0 || origin.port == 443,
-              Self.allowedHosts.contains(host) else {
-            log.record(host: host, .pageToApp, op: op, detail: "origin not allowed", outcome: .refused)
-            return (nil, "This page may not use the app bridge.")
+        let gate = Self.gate(scheme: origin.protocol, host: host, port: origin.port,
+                             isMainFrame: message.frameInfo.isMainFrame, op: op)
+        if case .refused(let reason, let text) = gate {
+            log.record(host: host, .pageToApp, op: op, detail: reason, outcome: .refused)
+            return (nil, text)
         }
         let args = body?["args"] as? [String: Any] ?? [:]
         do {
@@ -142,6 +150,34 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
         }
     }
 
+    enum Gate: Equatable, Sendable {
+        case allowed
+        case refused(reason: String, message: String)
+    }
+
+    /// Who may call which op, decided before anything runs. Pure, so the rules are unit-tested (Q10):
+    /// the main frame only, https only, the default port (0 or 443), an allowed host, a known op, and the op's own
+    /// hosts (the schedule and the meter belong to promptugal.news only).
+    nonisolated static func gate(scheme: String, host: String, port: Int, isMainFrame: Bool, op: String) -> Gate {
+        let host = host.lowercased()
+        let refusedOrigin = Gate.refused(reason: "origin not allowed", message: "This page may not use the app bridge.")
+        guard isMainFrame else { return .refused(reason: "not the main frame", message: refusedOrigin.message) }
+        guard scheme == "https" else { return .refused(reason: "not https", message: refusedOrigin.message) }
+        guard port == 0 || port == 443 else { return .refused(reason: "port \(port)", message: refusedOrigin.message) }
+        guard allowedHosts.contains(host) else { return refusedOrigin }
+        guard ops.contains(op) || internalOps.contains(op) else {
+            return .refused(reason: "unknown op", message: "Unknown op \(op).")
+        }
+        if scheduleOnlyOps.contains(op), !scheduleHosts.contains(host) {
+            return .refused(reason: "op not for this site", message: "Not on this site.")
+        }
+        return .allowed
+    }
+
+    /// Ops that read or change the schedule or the meter: promptugal.news only.
+    nonisolated static let scheduleOnlyOps: Set<String> = ["schedule.get", "schedule.set", "schedule.pageChanged",
+                                                           "meter.topup", "meter.pageChanged"]
+
     struct BridgeError: Error {
         let message: String
         var refused = false
@@ -152,6 +188,7 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
         let scheduleSite = Self.scheduleHosts.contains(host)
         switch op {
         case "schedule.get":
+            guard scheduleSite else { throw BridgeError(message: "Not on this site.", refused: true) }
             return (jsonObject(schedule.document.encoded()), "\(schedule.document.picks.count) picks")
         case "schedule.set":
             guard scheduleSite else { throw BridgeError(message: "Not on this site.", refused: true) }
@@ -177,11 +214,16 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
             return (["id": person.id, "name": person.name, "verified": identity.verified] as [String: Any],
                     identity.verified ? "verified" : "chosen")
         case "notify.plan":
-            let granted = await reminders.requestAuthorization()
-            let count = await reminders.reschedule()
-            return (["authorized": granted, "scheduled": count] as [String: Any], "\(count) reminders")
+            // A page call is not a user gesture: never show the system prompt from here. If permission was never
+            // asked, the app shows its own alert, and the prompt follows only a tap on it (S7).
+            let status = await reminders.currentAuthorization()
+            if status == .unknown { remindersRequested = true }
+            let count = status == .allowed ? await reminders.reschedule() : 0
+            return (["authorized": status == .allowed, "asked": status == .unknown, "scheduled": count] as [String: Any],
+                    status == .unknown ? "native alert" : "\(count) reminders")
         case "meter.topup":
             guard scheduleSite else { throw BridgeError(message: "Not on this site.", refused: true) }
+            guard ReadingCredit.isAvailable else { throw BridgeError(message: "Top-ups are not available in the app.") }
             topUpRequested = true
             return (["presented": true] as [String: Any], "native sheet")
         case "meter.pageChanged":
@@ -283,16 +325,25 @@ final class AppBridge: NSObject, WKScriptMessageHandlerWithReply {
                 let result = try await webView.callAsyncJavaScript(
                     BridgeScripts.creditMeter, arguments: ["amount": credit.pence, "ref": credit.reference], in: nil,
                     contentWorld: .page) as? String ?? "failed"
+                // "credited" or "already" is the page's answer; it counts only if the page's storage, read from the
+                // bridge's own content world (which page scripts cannot patch), now holds this transaction (S7).
+                let confirmed = result != "failed" ? await meterHolds(credit.reference, in: webView) : false
                 log.record(host: hostOf(webView), .appToPage, op: "meter.credit",
-                           detail: "\(credit.pence)p, \(credit.reference): \(result)",
-                           outcome: result == "failed" ? .failed : .ok)
-                if result != "failed" { meter.markCredited(credit) }
+                           detail: "\(credit.pence)p, \(credit.reference): \(result)\(confirmed ? ", confirmed" : ", not confirmed")",
+                           outcome: confirmed ? .ok : .failed)
+                if confirmed { meter.markCredited(credit) }
             } catch {
                 log.record(host: hostOf(webView), .appToPage, op: "meter.credit", detail: error.localizedDescription,
                            outcome: .failed)
             }
         }
         await readMeter(from: webView)
+    }
+
+    /// Whether the page's meter (localStorage) records this App Store transaction among its credited references.
+    func meterHolds(_ reference: String, in webView: WKWebView) async -> Bool {
+        (try? await webView.callAsyncJavaScript(BridgeScripts.meterHasReference, arguments: ["ref": reference],
+                                                in: nil, contentWorld: Self.world) as? Bool) ?? false
     }
 
     // MARK: Team identity

@@ -32,14 +32,19 @@ struct ScheduleDocument: Codable, Equatable, Sendable {
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             id = try container.decode(String.self, forKey: .id)
-            if let millis = try? container.decode(Double.self, forKey: .at) {
-                at = Date(timeIntervalSince1970: millis / 1000)
-            } else if let text = try? container.decode(String.self, forKey: .at), let date = ScheduleTime.parse(text) {
-                at = date
-            } else {
-                // A pick with no readable time still counts; it is treated as the oldest possible pick.
-                at = .distantPast
+            // `at` comes from web pages and other devices: anything outside 2000–2100, not finite, or unreadable
+            // drops the pick (a time such as 1e300 used to trap when it was written back as milliseconds).
+            var date: Date?
+            if let millis = try? container.decode(Double.self, forKey: .at), millis.isFinite {
+                date = Date(timeIntervalSince1970: millis / 1000)
+            } else if let text = try? container.decode(String.self, forKey: .at) {
+                date = ScheduleTime.parse(text)
             }
+            guard let date, ScheduleTime.isValid(date) else {
+                throw DecodingError.dataCorruptedError(forKey: .at, in: container,
+                                                       debugDescription: "pick time missing or outside 2000–2100")
+            }
+            at = date
         }
 
         func encode(to encoder: Encoder) throws {
@@ -130,9 +135,23 @@ enum ScheduleID {
 enum ScheduleTime {
     /// Exactly `toISOString()`'s form. Built from whole milliseconds (rounded), so a time read from the website is
     /// written back character for character, whatever binary rounding the `Date` picked up on the way.
+    /// The times a pick may have: 1 January 2000 to 1 January 2100, UTC. Anything else is refused on the way in.
+    static let validRange: ClosedRange<Date> =
+        Date(timeIntervalSince1970: 946_684_800)...Date(timeIntervalSince1970: 4_102_444_800)
+
+    static func isValid(_ date: Date) -> Bool {
+        date.timeIntervalSince1970.isFinite && validRange.contains(date)
+    }
+
+    /// Years 1 to 9999: every value inside fits Int64 milliseconds with room to spare.
+    private static let formattable: ClosedRange<Double> = -62_135_596_800 ... 253_402_300_799
+
     static func format(_ date: Date) -> String {
-        guard date != .distantPast else { return "1970-01-01T00:00:00.000Z" }
-        let millis = Int64((date.timeIntervalSince1970 * 1000).rounded())
+        let interval = date.timeIntervalSince1970
+        guard interval.isFinite, date != .distantPast else { return "1970-01-01T00:00:00.000Z" }
+        // Clamped before any Int64 conversion, so no input can trap here.
+        let clamped = min(max(interval, formattable.lowerBound), formattable.upperBound)
+        let millis = Int64((clamped * 1000).rounded())
         let seconds = millis >= 0 ? millis / 1000 : (millis - 999) / 1000
         let fraction = Int(millis - seconds * 1000)
         let parts = utc.dateComponents([.year, .month, .day, .hour, .minute, .second],

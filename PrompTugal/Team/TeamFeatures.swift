@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import UserNotifications
 
 /// The team session's stores and services, created once and shared. The shell injects them with
@@ -145,14 +146,33 @@ private struct TeamFeaturesModifier: ViewModifier {
             .environment(features.bridge)
             .environment(features.planner)
             .environment(features.vaultLink)
-            .sheet(isPresented: $bridge.topUpRequested) {
+            .sheet(isPresented: Binding(get: { bridge.topUpRequested && ReadingCredit.isAvailable },
+                                        set: { bridge.topUpRequested = $0 })) {
                 NavigationStack { ReadingCreditView(showsDone: true) }
                     .environment(features.meter)
                     .environment(features.credits)
             }
+            // notify.plan from a page: the permission prompt only follows a tap on this native alert (S7).
+            .alert("Turn on reminders?", isPresented: $bridge.remindersRequested) {
+                Button("Turn On") {
+                    Task {
+                        if await features.reminders.requestAuthorization() { await features.reminders.reschedule() }
+                    }
+                }
+                Button("Not Now", role: .cancel) {}
+            } message: {
+                Text("PrompTugal reminds you before the sessions you pick and your team stand-ups.")
+            }
             .task { features.start() }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active { features.didBecomeActive() }
+            }
+            // A tapped reminder (Q6): its promptugal://open/… link goes through the system, so it reaches the
+            // shell's onOpenURL → AppShell.route, as any other deep link.
+            .onChange(of: features.reminders.openedURL, initial: true) { _, url in
+                guard let url else { return }
+                features.reminders.openedURL = nil
+                UIApplication.shared.open(url)
             }
     }
 }
