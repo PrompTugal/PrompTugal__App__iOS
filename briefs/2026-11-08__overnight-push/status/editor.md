@@ -16,7 +16,7 @@ Branch: `night/editor` · Last update: 02:55 UTC
 
 ## In progress
 
-- Updating brief 08 with Dinis's decisions D1–D7.
+- Brief 08 records decisions D1–D7 (done). Adding the release engineer (night/release) to the plan, dashboard and build log.
 
 ## Next
 

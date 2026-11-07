@@ -1,6 +1,6 @@
 # Overnight push: the team’s PrompTugal app
 
-> From 02:45 to 10:30 Lisbon time on 8 November, six sessions build the native PrompTugal app for the team: vaults on the phone, one schedule, agents and team visibility, observability, debug panels, AI and the product site. This page is the shared plan, and every session reads it first.
+> From 02:45 to 10:30 Lisbon time on 8 November, seven sessions build the native PrompTugal app for the team: vaults on the phone, one schedule, agents and team visibility, observability, debug panels, AI and the product site. This page is the shared plan, and every session reads it first.
 
 **Lead:** Dinis Cruz · **Conductor:** the coordinating Claude session · **Wrap-up:** about 10:30 Lisbon time (UTC), with a report on this page
 
@@ -48,6 +48,7 @@
 | Design and native UI | `night/design` | `PrompTugal/Shell/`, `PrompTugal/Design/`, `PrompTugal/Dashboards/`, `PrompTugal/Debug/`, `PrompTugal/News/` | [status](status/design.md) |
 | Collaboration and AI | `night/collab` | `PrompTugal/AI/`, `PrompTugal/Lanes/`, `PrompTugal/Coordination/` | [status](status/collab.md) |
 | Editor | `night/editor` | `website/`, `briefs/` (except other sessions’ status pages) | [status](status/editor.md) |
+| Release engineer | `night/release` | `.github/workflows/ios-release.yml`, `scripts/release/`; writes `release-setup.md` | `status/release.md` |
 
 The conductor merges green branches into `dev` about once an hour. Each merge releases and deploys the site.
 
