@@ -1,0 +1,126 @@
+import SwiftUI
+import UserNotifications
+
+/// The team session's stores and services, created once and shared. The shell injects them with
+/// `.teamFeatures()` and calls `TeamFeatures.shared.start()` once at launch.
+///
+///     WindowGroup { AppShell().teamFeatures() }
+///
+/// Every view in Schedule/, Team/, Notifications/ and Store/ reads its store from the environment.
+@MainActor
+final class TeamFeatures {
+    static let shared = TeamFeatures()
+
+    let schedule: ScheduleStore
+    let team: TeamStore
+    let identity: TeamIdentityStore
+    let reminders: ReminderScheduler
+    let meter: MeterStore
+    let credits: CreditStore
+    let bridgeLog: BridgeLog
+    let bridge: AppBridge
+    let planner: PlannerStore
+    let vaultLink: ScheduleVaultLink
+
+    private var started = false
+    private var agenda: [Event] = []
+    private var observers: [NSObjectProtocol] = []
+
+    init(directory: URL? = nil) {
+        schedule = ScheduleStore(directory: directory)
+        team = TeamStore(directory: directory?.appendingPathComponent("team", isDirectory: true))
+        identity = TeamIdentityStore()
+        reminders = ReminderScheduler(schedule: schedule, team: team, identity: identity)
+        meter = MeterStore(directory: directory)
+        credits = CreditStore(meter: meter)
+        bridgeLog = BridgeLog()
+        bridge = AppBridge(log: bridgeLog, schedule: schedule, meter: meter, identity: identity, reminders: reminders)
+        planner = PlannerStore(schedule: schedule, team: team, identity: identity)
+        vaultLink = ScheduleVaultLink(schedule: schedule, log: bridgeLog)
+    }
+
+    /// Starts the StoreKit listener and the reminders, and refreshes the team data in the background.
+    func start() {
+        guard !started else { return }
+        started = true
+        credits.start()
+        reminders.start()
+        vaultLink.start()
+        observers.append(NotificationCenter.default.addObserver(forName: .scheduleDidChange, object: schedule,
+                                                                queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.publishNowNext() }
+        })
+        publishNowNext()
+        observers.append(NotificationCenter.default.addObserver(forName: .teamIdentityDidChange, object: identity,
+                                                                queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.updateBadge() }
+        })
+        Task { await refreshTeam() }
+    }
+
+    /// Team data, then the badge and reminders. Also the work for a `BGAppRefreshTask` (platform registers it,
+    /// identifier `news.promptugal.reader.refresh`, and calls this).
+    func refreshTeam() async {
+        await team.refresh(person: identity.current?.id)
+        await vaultLink.pull()
+        updateBadge()
+        await reminders.reschedule()
+    }
+
+    /// The app icon badge (brief 03): only you + decide + overdue for the chosen person, from me.json.
+    /// Shown only when notifications are allowed (iOS needs the badge permission), cleared with no identity.
+    func updateBadge() {
+        let count = identity.current.flatMap { team.me?.person($0.id)?.badge } ?? 0
+        Task {
+            let settings = await UNUserNotificationCenter.current().notificationSettings()
+            guard settings.badgeSetting == .enabled || count == 0 else { return }
+            try? await UNUserNotificationCenter.current().setBadgeCount(count)
+        }
+    }
+
+    /// Gives the schedule the current agenda (call after each agenda refresh), so picks sort and remind by start time.
+    func agendaDidLoad(_ events: [Event]) {
+        agenda = events
+        schedule.updateEvents(events)
+        planner.updateAgenda(events)
+        publishNowNext()
+    }
+
+    /// The widgets' "Now and next" (platform's `NowNextPublisher`), with the schedule's picks as mine.
+    func publishNowNext() {
+        guard !agenda.isEmpty else { return }       // until the agenda arrives, the reader's snapshot stands
+        NowNextPublisher.publish(agenda: agenda, saved: schedule.picks.compactMap(\.event))
+    }
+}
+
+extension View {
+    /// Puts the team session's stores in the environment and presents the native top-up when a page asks for it.
+    func teamFeatures(_ features: TeamFeatures = .shared) -> some View {
+        modifier(TeamFeaturesModifier(features: features))
+    }
+}
+
+private struct TeamFeaturesModifier: ViewModifier {
+    let features: TeamFeatures
+
+    func body(content: Content) -> some View {
+        @Bindable var bridge = features.bridge
+        content
+            .environment(features.schedule)
+            .environment(features.team)
+            .environment(features.identity)
+            .environment(features.reminders)
+            .environment(features.meter)
+            .environment(features.credits)
+            .environment(features.bridgeLog)
+            .environment(features.bridge)
+            .environment(features.planner)
+            .environment(features.vaultLink)
+            .sheet(isPresented: $bridge.topUpRequested) {
+                NavigationStack { ReadingCreditView() }
+                    .environment(features.meter)
+                    .environment(features.credits)
+            }
+            .task { features.start() }
+    }
+}
