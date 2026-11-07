@@ -62,13 +62,23 @@ def features(root=ROOT):
             return evidence[len('root:'):] in scene
         if evidence.startswith('view:'):
             return evidence[len('view:'):] in views
+        if evidence.startswith('text:'):
+            # text:<file glob>::<exact text> — the text appears in a matching file (a button title, a type name)
+            pattern, _, needle = evidence[len('text:'):].partition('::')
+            return any(needle in p.read_text(errors='replace') for p in root.glob(pattern) if p.is_file())
         return any(p.is_file() for p in root.glob(evidence))
 
     for f in data:
         missing = [g for g in f['evidence'] if not present(g)]
-        f['shipped'] = not missing
+        # A feature the code switches off in Release builds is not "in the beta" for TestFlight testers.
+        f['debug_only'] = not missing and bool(f.get('hidden_in_release')) and all(present(g) for g in f['hidden_in_release'])
+        f['shipped'] = not missing and not f['debug_only']
         f['missing'] = missing
     return data
+
+
+def status_label(f):
+    return 'In the beta' if f['shipped'] else ('Debug builds only' if f.get('debug_only') else 'Coming')
 
 
 def features_cards(items, platform, shots=None):
@@ -79,7 +89,7 @@ def features_cards(items, platform, shots=None):
             ids = [e[len('screen:'):] for e in f['evidence'] if e.startswith('screen:')]
             pic = next((shot_img(shots, i, f['name'], device='iphone', width=200) for i in ids
                         if 'iphone' in shots.get(i, {})), '')
-        status = 'In the beta' if f['shipped'] else 'Coming'
+        status = status_label(f)
         cls = 'on' if f['shipped'] else 'soon'
         rows.append(f'<li class="feature" id="f-{esc(f["id"])}">{pic}<h3>{esc(f["name"])}</h3>'
                     f'<p>{esc(f["what"])}</p>'
@@ -91,7 +101,7 @@ def features_cards(items, platform, shots=None):
 def features_table(items, repo_url):
     rows = []
     for f in items:
-        status = 'In the beta' if f['shipped'] else 'Coming'
+        status = status_label(f)
         evidence = ', '.join(f'<code>{esc(g)}</code>' for g in f['evidence'])
         rows.append(f'<tr><td>{esc(f["name"])}</td><td>{"Readers" if f["platform"] == "readers" else "Teams"}</td>'
                     f'<td>{KIND_LABEL[f["kind"]]}</td><td><span class="status {"on" if f["shipped"] else "soon"}">'
@@ -115,7 +125,7 @@ def feature_tokens(repo_url, root=ROOT, shots=None):
         'features_teams_shipped': count('teams', True),
         'features_teams_total': str(sum(1 for f in items if f['platform'] == 'teams')),
         'mock_sidebar': mock_sidebar(items),
-        **{f'status_{f["id"].replace("-", "_")}': 'in the beta' if f['shipped'] else 'coming' for f in items},
+        **{f'status_{f["id"].replace("-", "_")}': status_label(f).lower() for f in items},
     }
 
 

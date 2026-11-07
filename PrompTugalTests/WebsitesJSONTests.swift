@@ -51,3 +51,22 @@ struct PositioningTests {
         }
     }
 }
+
+@Suite("Websites: shortcuts column width (iPad Split View)")
+struct WebsiteSidebarWidthTests {
+    @Test("Full-screen iPad: at most 250 pt")
+    func fullScreen() {
+        #expect(WebsiteView.sidebarWidth(for: 1194) == 250)
+    }
+
+    @Test("Half of a split screen: about a third of the width")
+    func halfSplit() {
+        #expect(WebsiteView.sidebarWidth(for: 694) == 222)
+    }
+
+    @Test("Narrow Split View or Slide Over: no column, the sheet instead")
+    func narrow() {
+        #expect(WebsiteView.sidebarWidth(for: 507) == nil)
+        #expect(WebsiteView.sidebarWidth(for: 320) == nil)
+    }
+}

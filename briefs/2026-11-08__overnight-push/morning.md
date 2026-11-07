@@ -54,7 +54,7 @@ Known limits: passkey unlock needs the `apple-app-site-association` file on prom
 ## 4. Decisions and set-up for Dinis
 
 - **Removing a pick.** Sync with the vault is union-only, like the website: a pick removed in the app comes back from the vault and stays on other devices; only that device remembers the removal. Fine for the summit. The fix is a list of removals ("tombstones") in `agenda/picks`, which the website must also honour. Decide whether to do it before or after the summit.
-- **`apple-app-site-association` on promptugal.news.** Serve `/.well-known/apple-app-site-association` listing `<TEAMID>.news.promptugal.reader` for `webcredentials` and `applinks`. It returns 404 today, so passkey unlock and universal links cannot work. This is a change in the website's repo.
+- **`apple-app-site-association` on promptugal.news.** Serve `/.well-known/apple-app-site-association` listing `<TEAMID>.news.promptugal.reader` under `webcredentials`. It returns 404 today, so passkey unlock cannot work. (The app no longer declares `applinks`, so universal links are not needed.) This is a change in the website's repo.
 - **Vault access tokens.** Writing to the live vault server needs an access token. Nobody had one tonight, so live writes are not proven (below). Decide who issues tokens to the team, and how.
 - **Apple set-up beyond the checklist.** Create the two in-app purchase products for the reading meter, `news.promptugal.reader.credit.5` and `news.promptugal.reader.credit.20`. The local StoreKit file only covers testing; TestFlight purchases run in the sandbox and are not charged.
 - **A contact address** for "talk to us" on the product site's plans page. It links to GitHub issues for now.
@@ -62,7 +62,7 @@ Known limits: passkey unlock needs the `apple-app-site-association` file on prom
 
 ## 5. What is green in CI
 
-- **Every job on dev passed** in iOS run 188 (on `bf704b5`, the 08:50 merge): app build, vault package tests, iPhone unit tests and iPad unit tests. Earlier, the iPhone unit tests passed 124 tests in 33 suites on `8a060e8` (run 173).
+- **Every job on dev passed** in iOS run 188 (on `bf704b5`, the 08:50 merge): app build, vault package tests, iPhone unit tests and iPad unit tests. Earlier, the iPhone unit tests passed 124 tests in 33 suites on `8a060e8` (run 173). *Update, 15:15 UTC:* after the App Review fixes, platform reports **141 tests in 38 suites**.
 - **The vault package:** reads and writes vaults made by sgit 0.27, and sgit reads back what it writes; tampered objects and wrong keys are refused.
 - **The bridge against the live website:** [`Tools/bridge-e2e`](https://github.com/PrompTugal/PrompTugal__App__iOS/tree/dev/Tools/bridge-e2e) runs the app's injected JavaScript in Chromium against promptugal.news: a pick made in the app shows on the site, the meter is credited once per purchase, and the Stripe top-up is hidden.
 - **Screenshots:** screens run 16 took all **13 main screens on iPhone and iPad**. The iPad images were checked in a browser (upright, whole screen); the site's [screens page](https://ios.app.promptugal.news/admin/screens.html) shows them from the next release.

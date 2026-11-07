@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 /// Ask: the native AI chat (entry view for `collab.ai`). On iPhone it is a screen or a sheet; on iPad it also
 /// opens as a side panel next to any screen with `.askPanel(isPresented:)`.
@@ -10,7 +11,7 @@ struct AskView: View {
 
     @State private var showSettings = false
     @FocusState private var composerFocused: Bool
-    @AppStorage("debug.enabled") private var debug = true
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
     var body: some View {
         @Bindable var store = store
@@ -19,6 +20,10 @@ struct AskView: View {
                 LazyVStack(alignment: .leading, spacing: 14) {
                     if !store.keys.hasKey {
                         AskKeyCallout { showSettings = true }
+                    }
+                    if store.consent == .declined {
+                        Label("Ask is off: you chose not to send questions to OpenRouter. Change it in Key and settings.", systemImage: "hand.raised")
+                            .font(.subheadline).foregroundStyle(.secondary)
                     }
                     if store.turns.isEmpty {
                         AskStarters(store: store)
@@ -60,6 +65,11 @@ struct AskView: View {
                     Label("Ask settings", systemImage: "ellipsis.circle")
                 }
             }
+        }
+        .sheet(isPresented: $store.consentRequested) {
+            NavigationStack { AskConsentSheet(store: store) }
+                .presentationSizing(.form)
+                .interactiveDismissDisabled()
         }
         .sheet(isPresented: $showSettings) {
             NavigationStack { AskSettingsView(store: store) }
@@ -109,6 +119,9 @@ private struct AskStarters: View {
 struct AskTurnView: View {
     let turn: ChatStore.Turn
     let debug: Bool
+    /// A link the model wrote, waiting for the person to confirm (S7: links in model output are not opened on one tap).
+    @State private var pendingLink: URL?
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         switch turn.role {
@@ -140,9 +153,23 @@ struct AskTurnView: View {
                     }
                 } else {
                     Text(AIMarkdown.render(turn.text))
+                        .environment(\.openURL, OpenURLAction { url in
+                            pendingLink = url
+                            return .handled
+                        })
+                        .confirmationDialog("Open this link?", isPresented: Binding(get: { pendingLink != nil },
+                                                                                 set: { if !$0 { pendingLink = nil } }),
+                                            titleVisibility: .visible, presenting: pendingLink) { url in
+                            if AskLinks.canOpen(url) {
+                                Button("Open") { openURL(url) }
+                            }
+                            Button("Copy link") { AskClipboard.copy(url.absoluteString) }
+                        } message: { url in
+                            Text("The answer links to:\n\(url.absoluteString)\n\nIt was written by the AI model; check it before you open it.")
+                        }
                         .textSelection(.enabled)
                         .contextMenu {
-                            Button("Copy", systemImage: "doc.on.doc") { UIPasteboard.general.string = turn.text }
+                            Button("Copy", systemImage: "doc.on.doc") { AskClipboard.copy(turn.text) }
                             ShareLink(item: turn.text) { Label("Share", systemImage: "square.and.arrow.up") }
                         }
                 }
@@ -194,6 +221,42 @@ struct AskMentions: View {
         }
         .padding(8)
         .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+/// Asked once, before the first question goes out (App Review 5.1.2(i)).
+struct AskConsentSheet: View {
+    @Bindable var store: ChatStore
+
+    var body: some View {
+        Form {
+            Section {
+                Text("To answer, Ask sends your question and this conversation to **OpenRouter** (openrouter.ai), a service that passes them to **\(OpenRouter.provider(of: store.model))**, the maker of the model you chose (\(OpenRouter.label(for: store.model))). They are sent with your own OpenRouter key; OpenRouter's and the provider's terms apply.")
+                Text("Nothing is sent until you allow it. You can change this at any time in Ask → Key and settings.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            Section {
+                ForEach(AIContextKind.toggleable) { kind in
+                    Toggle(isOn: Binding(get: { store.isOn(kind) }, set: { on in if on != store.isOn(kind) { store.toggle(kind) } })) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(kind.title)
+                            Text(kind.detail).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            } header: {
+                Text("Also send, with each question")
+            } footer: {
+                Text("Only what is switched on is sent. The public agenda is on by default; everything else is off.")
+            }
+            Section {
+                Button("Allow") { store.grantConsent() }
+                    .bold()
+                Button("Don't allow", role: .cancel) { store.declineConsent() }
+            }
+        }
+        .navigationTitle("Send to OpenRouter?")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -320,7 +383,7 @@ struct AskSettingsView: View {
                     Button(working ? "Checking…" : "Check key") {
                         working = true
                         Task {
-                            do { message = try await keys.check().summary } catch { message = error.localizedDescription }
+                            do { message = try await keys.check().summary } catch { message = CollabErrorText.short(error) }
                             working = false
                         }
                     }
@@ -336,7 +399,7 @@ struct AskSettingsView: View {
                     }
                     Button("Save key") {
                         do { try keys.save(entry); entry = ""; message = "Saved in the Keychain on this device." }
-                        catch { message = error.localizedDescription }
+                        catch { message = CollabErrorText.short(error) }
                     }
                     .disabled(entry.isEmpty)
                     Link("Get a key at openrouter.ai/keys", destination: URL(string: "https://openrouter.ai/keys")!)
@@ -375,6 +438,38 @@ struct AskSettingsView: View {
                 Text("Read-only: search the agenda, my picks, team status, my agents, teammates' plans. Each call shows in the conversation.")
             }
 
+            Section {
+                switch store.consent {
+                case .granted:
+                    LabeledContent("Sending to OpenRouter", value: "Allowed")
+                    Button("Withdraw permission", role: .destructive) { store.revokeConsent() }
+                case .declined:
+                    LabeledContent("Sending to OpenRouter", value: "Not allowed")
+                    Button("Ask me again") { store.revokeConsent() }
+                case .unknown:
+                    LabeledContent("Sending to OpenRouter", value: "Not asked yet")
+                }
+            } header: {
+                Text("Permission")
+            } footer: {
+                Text("Ask sends your question, the conversation and the data you share below to OpenRouter (openrouter.ai), which passes them to \(OpenRouter.provider(of: store.model)) to answer.")
+            }
+
+            Section {
+                ForEach(AIContextKind.toggleable) { kind in
+                    Toggle(isOn: Binding(get: { store.isOn(kind) }, set: { on in if on != store.isOn(kind) { store.toggle(kind) } })) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(kind.title)
+                            Text(kind.detail).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            } header: {
+                Text("What Ask may send")
+            } footer: {
+                Text("Off unless you switch it on, except the public agenda. Teammates' plans and the current page each need their own switch.")
+            }
+
             Section("Model") {
                 Picker("Model", selection: $store.model) {
                     ForEach(OpenRouter.models) { Text($0.label).tag($0.id) }
@@ -406,7 +501,7 @@ struct AskSettingsView: View {
                 message = store.keys.hasKey ? "Key taken from your vault." : "Your vault has no saved key."
             }
         } catch {
-            message = error.localizedDescription
+            message = CollabErrorText.short(error)
         }
     }
 }
@@ -462,6 +557,25 @@ struct AskPanelButton: View {
             Label("Ask", systemImage: "sparkles")
         }
         .keyboardShortcut("k", modifiers: [.command])
+    }
+}
+
+/// Copies text to this device only (not Handoff's universal clipboard), cleared after two minutes (S7).
+enum AskClipboard {
+    static let lifetime: TimeInterval = 120
+
+    static func copy(_ text: String, pasteboard: UIPasteboard = .general) {
+        pasteboard.setItems([[UTType.plainText.identifier: text]],
+                            options: [.localOnly: true, .expirationDate: Date().addingTimeInterval(lifetime)])
+    }
+}
+
+/// Which links from model output may be opened at all (after confirmation): web pages and mail only.
+enum AskLinks {
+    static func canOpen(_ url: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased() else { return false }
+        if scheme == "mailto" { return true }
+        return scheme == "https" && url.host() != nil && url.user == nil && url.password == nil
     }
 }
 

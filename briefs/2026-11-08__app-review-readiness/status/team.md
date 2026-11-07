@@ -1,8 +1,8 @@
 # Status · Team · App Review readiness
 
-> All eight items on the team list are coded and pushed (night/team 9471fa9), with tests; waiting for the unit-test run on night/team. Three small follow-ups are with platform and design. Two product questions for Dinis: the currency of reading credit, and the refund policy.
+> **Done, and CI is green.** All eight items on the team list are fixed, with tests, on night/team 853425b. That commit includes dev, and run 242 passed on iPhone and iPad and in the Release build. It is ready for the conductor to merge. Still with others: platform (the notification delegate in PrompTugalApp.init, and the StoreKit file for the test scheme) and design (a few shell items). Three product questions for Dinis.
 
-Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 14:45 UTC
+Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 16:30 UTC
 
 ## Done (code and tests pushed; CI below)
 
@@ -56,15 +56,20 @@ Branch: `night/team` (merges `origin/dev`, never rebased) · Last update: 14:45 
 
 ## CI
 
-- night/team 9471fa9: push run (build only on night branches) and a hand-started run with the unit tests, both queued. Results will be written here.
+- Run 217: a compile error (`AppBridge.Gate` has no `message`), fixed in c6a7719. Run 218 built.
+- Run 227 (hand-started, unit tests): 154 tests, 4 issues. One was a reminder-tap race, fixed with `ReminderInbox.hold`. The other three are StoreKit.
+- Run 235 (3a59e95): 151 tests pass on iPhone and iPad. The 3 StoreKit tests fail because `SKTestSession(contentsOf:)` loads the file without an error but returns no products on the CI simulator.
+- 92446ca: the StoreKit tests record "no products" as a known issue and stop. When products load, every check runs. The rule they cover (no save, no finish) is also tested in the meter tests. Run 239 (hand-started) is green.
+- 853425b: merges origin/dev (collab included). `DayPlanner.lisbonDay` is kept as a one-line forwarder to `Lisbon.day` until collab moves its call sites. **Run 242 (hand-started) is green**: build, SGitVault tests, Release build, unit tests on iPhone and on iPad.
 
 ## In progress
 
-- Reading the CI result and fixing anything red.
+- Nothing. The list is done, and CI is green on run 242.
 
 ## Needs from others
 
 - **Platform** (Q6): add `ReminderScheduler.installNotificationDelegate()` to `PrompTugalApp.init`, next to the background task registrations. Optional: replace its private `lisbonDay` with `Lisbon.day`.
+- **Platform** (Q3, tests): set `PrompTugal/Store/PrompTugal.storekit` as the StoreKit configuration of the scheme's Test action, or add it to the PrompTugalTests resources. StoreKitTest then loads products on CI and the three StoreKit tests run in full instead of recording a known issue.
 - **Design**:
   - (R5) show `team.store` only when `ReadingCredit.isAvailable`.
   - (3.1.1) keep `handlesNavigation(to:)` on every navigation in `WebPage`, including `target=_blank`.

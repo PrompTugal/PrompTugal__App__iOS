@@ -207,5 +207,6 @@ enum DayPlanner {
         return index
     }
 
-
+    /// Forwarder kept so collab's call sites compile until they move to `Lisbon.day` (Q8). Remove after that.
+    static func lisbonDay(_ date: Date) -> String { Lisbon.day(date) }
 }

@@ -1,8 +1,8 @@
 # Status · Editor
 
-> All four items are done and green: the privacy page matches the code, the support page has a Contact section, the App Review notes and the privacy-label sheet are in this pack, and the push dashboard shows this pack's status pages.
+> Done and green. Round 1: privacy page, support contact, review notes, privacy labels, pack status on the dashboard. Round 2 (15:20): product pages follow the App Review fixes as they merge (markers in the code), Reading credit labelled 'Debug builds only' once hidden in Release, release-setup and the overnight summary corrected, build-log entry.
 
-Branch: `night/editor` · Last update: 14:55 UTC
+Branch: `night/editor` · Last update: 15:58 UTC
 
 ## Done
 
@@ -12,6 +12,21 @@ Branch: `night/editor` · Last update: 14:55 UTC
 - **`privacy-labels.md`**: the App Store Connect answers, data type by data type, each with file and line evidence. No tracking; recommended "No data collected", with one judgement call on Ask.
 - **Status pages of this pack on the site.** The push dashboard now has one table per brief pack, newest first, and the validator checks that every status page of every pack is listed. The developer area links this pack.
 
+## Done, round 2 (15:20)
+
+- **Features follow the review fixes.** New features, each with a marker in the code (`text:<file>::<exact text>` evidence): Try with sample data (`Try with sample data`), Ask asks first (`AskConsentSheet`), Report and block (`ReportBlockMenu`), Trusted signers and your own vault (`Trust this signer`, `Make this my vault`), Private in the app switcher (`struct PrivacyCover`). Face ID unlock now also requires the Keychain loop with no unprotected fallback. On dev at 15:20: 21 of 25 in the beta; the four "Coming" flip as design and collab merge.
+- **Reading credit:** a feature whose `hidden_in_release` marker is present (`static let isAvailable = false` in `Store/ReadingCredit.swift`) is labelled "Debug builds only", not "In the beta", with a test. plans.html says it is hidden in release builds.
+- **Teams page:** debug mode is described as turned on in Settings.
+- **release-setup.md:** Associated Domains is `webcredentials:` only (applinks removed); the AASA gotcha updated; Dinis's paid account means Xcode automatic signing works with full entitlements.
+- **Overnight morning summary:** test count updated (141 tests in 38 suites, platform's report); the AASA item now names `webcredentials` only.
+- **Build log:** "App Review readiness" entry.
+
+## Done, round 3 (15:58, after collab merged at 7d135e0)
+
+- Labels on dev: 23 of 25 in the beta. Ask asks first (`AskConsentSheet`) and Report and block (`ReportBlockMenu`) flipped by themselves. Still Coming: Try with sample data and the app-switcher cover (design, not merged).
+- Privacy page, Ask paragraph, checked against `AI/AskView.swift` and `AI/AIContext.swift`: it sends the question, the conversation so far and the switched-on context; nothing until **Allow**; one switch per kind of context; only the public agenda on by default (`AIContextKind.defaults = [.agenda]`); withdraw in Ask → Key and settings ("Withdraw permission").
+- Support page, checked against `Lanes/LanesView.swift` and `Lanes/LaneReport.swift`: press and hold a message for **Report…** or **Block**; Report opens a pre-filled email with no recipient until the support address is set (`LaneReport.contactAddress` is empty); Block hides the sender or lane on this device, listed and reversible with Unblock.
+
 ## Next
 
 - Re-read the privacy page when collab's consent sheet and report/block land, and correct any wording that differs from the app.
@@ -20,6 +35,5 @@ Branch: `night/editor` · Last update: 14:55 UTC
 
 ## Needs from others
 
-- **Dinis:** a support email address (support page, review notes) and the response time for reports; the call on Ask in the privacy labels (see `privacy-labels.md`).
-- **Collab:** the privacy page and the support page say the app asks for consent before the first Ask message, and that Messages has Report and Block. Both are true once your R2 and R4 changes are merged; tell me the exact button names if they differ from "Report" and "Block".
+- **Dinis:** a support email address (support page, review notes, and `LaneReport.contactAddress` in the app, where Report… sends) and the response time for reports; the call on Ask in the privacy labels (see `privacy-labels.md`).
 - **Platform:** if Dinis declares Ask's data as collected, the privacy manifest's `NSPrivacyCollectedDataTypes` (empty today) must list the same type.

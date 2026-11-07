@@ -273,3 +273,110 @@ struct TeamNoteTests {
         #expect(TeamNote.merge((0..<10).map { note("\($0)", "2026-11-10T09:0\($0):00.000Z") }, limit: 3).count == 3)
     }
 }
+
+@Suite("Lanes: App Review fixes (S7, R4, Q4, Q7)")
+struct LanesReviewTests {
+    private func subscribe(endpoint: String) -> Data {
+        let object: [String: Any] = [
+            "recipient": ["address": "x", "fingerprint": "sha256:d85b358000612e4e", "encrypt": sgitSubscribePEM],
+            "inbox": ["vault": "y9j3nc60", "endpoint": endpoint, "lane": ["append_token": dummyToken]],
+        ]
+        return try! JSONSerialization.data(withJSONObject: object)
+    }
+
+    @Test("Only dev.send.sgraph.ai over https is accepted for lanes")
+    func hosts() throws {
+        _ = try LaneAddress.parse(subscribe(endpoint: "https://dev.send.sgraph.ai"))
+        #expect(throws: LaneAddress.Failure.hostNotAllowed("evil.example.com")) {
+            try LaneAddress.parse(subscribe(endpoint: "https://evil.example.com"))
+        }
+        #expect(throws: LaneAddress.Failure.self) { try LaneAddress.parse(subscribe(endpoint: "http://dev.send.sgraph.ai")) }
+        #expect(!LaneAddress.isAllowedEndpoint(URL(string: "https://dev.send.sgraph.ai:8443")!))
+        #expect(!LaneAddress.isAllowedEndpoint(URL(string: "https://me:pw@dev.send.sgraph.ai")!))
+        var address = try LaneAddress.parse(subscribe(endpoint: "https://dev.send.sgraph.ai"))
+        address.endpoint = URL(string: "https://evil.example.com")!
+        #expect(throws: LaneAddress.Failure.self) { try LaneClient.writeRequest(to: address, payload: "x") }
+    }
+
+    @Test("Append tokens live in the Keychain store, not UserDefaults; the old copy is moved and deleted")
+    @MainActor func tokensInKeychain() async throws {
+        let name = "lanes-store-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        let secrets = MemorySecretStore()
+        let legacy = try JSONEncoder().encode([try LaneAddress.parse(subscribe(endpoint: "https://dev.send.sgraph.ai"))])
+        defaults.set(legacy, forKey: "lanes.addresses.v1")
+        let store = LanesStore(log: LanesLog(), defaults: defaults, secrets: secrets)
+        #expect(store.lanes.count == 1)
+        #expect(defaults.data(forKey: "lanes.addresses.v1") == nil, "legacy copy removed")
+        let kept = try #require(try secrets.read(LanesStore.lanesAccount))
+        #expect(kept.contains(dummyToken))
+        for key in defaults.dictionaryRepresentation().keys where key.hasPrefix("lanes.") {
+            let value = "\(defaults.object(forKey: key) ?? "")"
+            #expect(!value.contains(dummyToken), "no token under \(key)")
+        }
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Block hides a lane or sender, persists, and can be undone")
+    @MainActor func block() throws {
+        let name = "lanes-block-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        let secrets = MemorySecretStore()
+        let lane = try LaneAddress.parse(subscribe(endpoint: "https://dev.send.sgraph.ai"))
+        try secrets.write(String(decoding: try JSONEncoder().encode([lane]), as: UTF8.self), account: LanesStore.lanesAccount)
+        let store = LanesStore(log: LanesLog(), defaults: defaults, secrets: secrets)
+        #expect(store.visibleLanes.count == 1)
+        store.block(LanesStore.laneKey(lane))
+        store.block(LanesStore.senderKey("Silvio <silvio@promptugal.news>"))
+        #expect(store.visibleLanes.isEmpty)
+        #expect(store.isBlocked(sender: " silvio <SILVIO@promptugal.news>"))
+        let again = LanesStore(log: LanesLog(), defaults: defaults, secrets: secrets)
+        #expect(again.visibleLanes.isEmpty && again.blocked.count == 2, "blocks persist")
+        again.unblock(LanesStore.laneKey(lane))
+        #expect(again.visibleLanes.count == 1)
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Report opens a prefilled mail; header fields cannot add headers")
+    func report() throws {
+        let url = try #require(LaneReport.mailURL(kind: "message", from: "Eve\r\nBcc: x@y", text: "spam text", to: "abuse@example.com"))
+        #expect(url.scheme == "mailto")
+        let parts = try #require(URLComponents(url: url, resolvingAgainstBaseURL: false))
+        #expect(parts.path == "abuse@example.com")
+        let subject = try #require(parts.queryItems?.first { $0.name == "subject" }?.value)
+        #expect(!subject.contains("\r") && !subject.contains("\n"))
+        #expect(parts.queryItems?.first { $0.name == "body" }?.value?.contains("spam text") == true)
+        #expect(LaneReport.mailURL(kind: "note", from: "a", text: "b", to: "") != nil, "works before the address is set")
+    }
+
+    @Test("Inbox messages open on a background task, with a readable error for a bad one")
+    func decryptOffMain() async throws {
+        let key = try makeKeyPair()
+        let publicKey = try #require(SecKeyCopyPublicKey(key))
+        let pkcs1Public = try #require(SecKeyCopyExternalRepresentation(publicKey, nil) as Data?)
+        let pkcs1Private = try #require(SecKeyCopyExternalRepresentation(key, nil) as Data?)
+        let algorithm: [UInt8] = [0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00]
+        let pkcs8 = Data(DERReader.encode(tag: 0x30, [0x02, 0x01, 0x00] + algorithm + DERReader.encode(tag: 0x04, Array(pkcs1Private))))
+        let record: [String: Any] = ["vault": "abcd1234", "token": dummyToken, "enum_key": "e",
+                                     "public": LaneCrypto.spki(fromPKCS1: pkcs1Public).base64EncodedString(),
+                                     "private": pkcs8.base64EncodedString()]
+        let recordData = try JSONSerialization.data(withJSONObject: record)
+        let enc = try LaneCrypto.encrypt(Data("From: A\nSubject: Hi\n\nBody".utf8), to: publicKey)
+        let opened = await LanesStore.decryptAll([(id: "1", content: LaneCrypto.lanePayload(encText: enc)),
+                                                  (id: "2", content: "bm90IGFuIGVudmVsb3Bl")],
+                                                 key: .inboxRecord(recordData))
+        #expect(opened.first { $0.id == "1" }?.text?.contains("Subject: Hi") == true)
+        let bad = try #require(opened.first { $0.id == "2" })
+        #expect(bad.text == nil && bad.error != nil && !(bad.error ?? "").contains("Error Domain"))
+    }
+
+    @Test("Error text is short and readable")
+    func errorText() {
+        #expect(CollabErrorText.short(URLError(.notConnectedToInternet)).hasPrefix("No internet"))
+        #expect(CollabErrorText.short(URLError(.timedOut)).contains("too long"))
+        #expect(CollabErrorText.short(OpenRouter.RequestError.noKey).contains("OpenRouter key"))
+        let raw = NSError(domain: "NSOSStatusErrorDomain", code: -25300,
+                          userInfo: [NSLocalizedDescriptionKey: "Error Domain=NSOSStatusErrorDomain Code=-25300 \"(null)\""])
+        #expect(CollabErrorText.short(raw) == "Something went wrong. Try again.")
+    }
+}
