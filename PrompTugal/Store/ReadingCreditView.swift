@@ -6,6 +6,8 @@ struct ReadingCreditView: View {
     @Environment(MeterStore.self) private var meter
     @Environment(CreditStore.self) private var credits
     @Environment(\.dismiss) private var dismiss
+    /// True when shown as the top-up sheet a page asked for; then it has a Done button.
+    var showsDone = false
 
     var body: some View {
         List {
@@ -70,7 +72,9 @@ struct ReadingCreditView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("Reading credit")
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
+            if showsDone {
+                ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
+            }
         }
         .task { await credits.loadProducts() }
     }

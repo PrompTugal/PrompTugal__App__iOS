@@ -78,6 +78,22 @@ final class TeamFeatures {
         }
     }
 
+    private var lastForeground: Date?
+
+    /// The app came to the foreground: top up reminders (iOS keeps at most 64, so later ones are added as earlier
+    /// ones pass), read the vault's picks and refresh team data, at most every 10 minutes.
+    func didBecomeActive() {
+        guard started else { return }
+        if let last = lastForeground, Date.now.timeIntervalSince(last) < 600 { return }
+        lastForeground = .now
+        Task {
+            await reminders.reschedule()
+            await vaultLink.pull()
+            await team.refresh(person: identity.current?.id)
+            updateBadge()
+        }
+    }
+
     /// Gives the schedule the current agenda (call after each agenda refresh), so picks sort and remind by start time.
     func agendaDidLoad(_ events: [Event]) {
         agenda = events
@@ -103,6 +119,7 @@ extension View {
 private struct TeamFeaturesModifier: ViewModifier {
     let features: TeamFeatures
     @Environment(\.teamFeaturesApplied) private var alreadyApplied
+    @Environment(\.scenePhase) private var scenePhase
 
     /// Applied more than once (the app root and the shell both do), only the outermost copy injects and presents,
     /// so there is one top-up sheet.
@@ -129,11 +146,14 @@ private struct TeamFeaturesModifier: ViewModifier {
             .environment(features.planner)
             .environment(features.vaultLink)
             .sheet(isPresented: $bridge.topUpRequested) {
-                NavigationStack { ReadingCreditView() }
+                NavigationStack { ReadingCreditView(showsDone: true) }
                     .environment(features.meter)
                     .environment(features.credits)
             }
             .task { features.start() }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { features.didBecomeActive() }
+            }
     }
 }
 
