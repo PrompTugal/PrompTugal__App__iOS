@@ -15,12 +15,13 @@ struct WallView: View {
                     header(context.date)
                     if width == .regular {
                         HStack(alignment: .top, spacing: Space.l) {
-                            VStack(spacing: Space.l) { teamTile; standupTile }
+                            VStack(spacing: Space.l) { teamTile; standupTile; NextHoursCard() }
                                 .frame(width: 360)
                             VStack(spacing: Space.l) { agentsTile; pipelineTile; runsTile }
                         }
                     } else {
                         standupTile
+                        NextHoursCard()
                         teamTile
                         agentsTile
                         pipelineTile
@@ -44,7 +45,7 @@ struct WallView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Kicker("PrompTugal · the team and its agents")
                 Text(now, format: .dateTime.weekday(.wide).day().month(.wide).hour().minute())
-                    .font(Typo.display)
+                    .font(width == .regular ? Typo.display : Typo.title)
             }
             Spacer()
             FreshnessLabel(updated: data.dashboard.updated, staleAfter: 900, failed: data.dashboard.failed)
@@ -111,9 +112,9 @@ struct WallView: View {
 }
 
 #Preview("Wall · iPad") {
-    NavigationStack { WallView() }.environment(PreviewSamples.data()).padPreview()
+    NavigationStack { WallView() }.environment(PreviewSamples.data()).teamFeatures().padPreview()
 }
 
 #Preview("Wall · iPhone") {
-    NavigationStack { WallView() }.environment(PreviewSamples.data()).phonePreview()
+    NavigationStack { WallView() }.environment(PreviewSamples.data()).teamFeatures().phonePreview()
 }
