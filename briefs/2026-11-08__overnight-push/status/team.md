@@ -41,6 +41,10 @@ Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson` (`badge` = on
 - **Add to Calendar** (`CalendarExport`, a button in My day): write-only EventKit access, only when asked.
 - **App Intents** in the app target: "Save a session to my day" (`SaveSessionIntent`, with a `SessionEntity` search over the agenda) and "What's next in my day" (`WhatsNextIntent`).
 - **Widget feed:** the schedule's picks go to platform's `NowNextPublisher` as `saved` on every change and agenda load.
+- **iPad layout:** My day and the planner show the day as a native time line beside the list (overlaps side by side, a "now" line); on iPhone they are lists.
+- **Vault mirror** (`ScheduleVaultSync`): reads and writes `agenda/picks` through closures, ready for `VaultSession.readText`.
+- **Where is everyone** (`WhereIsEveryoneView`): teammates' sessions per day.
+- **App icon badge** from `me.json`, and `TeamFeatures.shared.refreshTeam()` for platform's `BGAppRefreshTask`.
 - **Tests** (`PrompTugalTests/TeamFeaturesTests.swift`): markdown twins, lenient JSON, the reminder plan, the planner. The injected JavaScript is syntax-checked with node before each push.
 
 ## In progress
@@ -52,7 +56,7 @@ Models (all `Sendable`, decoded leniently): `TeamMe`, `TeamPerson` (`badge` = on
 1. Green CI.
 2. Hook the bridge into the web views (needs the lines below in platform's `WebsiteView.swift`).
 3. Feed the agenda to the schedule and the widget from the schedule.
-4. Default shortcuts (item 7): platform already dropped riskmandate.ai and sgit.ai; its test pins newsroom.sgit.ai as a default, which my brief says to drop. Left to platform and the conductor. Also: an install that already has `Documents/Websites.json` (copied from the old defaults) keeps showing the old sites; `WebsiteDirectory.load` should drop riskmandate.ai and sgit.ai entries whose URL is unchanged from the old default.
+4. Default shortcuts (item 7): conductor's ruling, PrompTugal only: newsroom.sgit.ai is dropped too (with riskmandate.ai and sgit.ai), and platform changes `Websites.json` and `PositioningTests` together so no branch goes red. Also: an install that already has `Documents/Websites.json` (copied from the old defaults) keeps showing the old sites; `WebsiteDirectory.load` should drop riskmandate.ai and sgit.ai entries whose URL is unchanged from the old default.
 5. Backlog: EventKit "add to calendar", App Intents ("What's next", "Save this session").
 
 ## Blocked
