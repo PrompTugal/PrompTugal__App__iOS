@@ -52,6 +52,7 @@ Branch `night/vault`. Updated about 03:10 Lisbon time.
 ## Needs from others
 
 - **Platform**: add `Packages/SGitVault` as a local package dependency of the app target, and fold `PrompTugal/Vault/` into the app. My interim `ios-vault.yml` can be deleted once your `ios.yml` is on `dev` (it runs the same `swift test`).
+- **Platform**: background refresh entry points are `VaultBackground.register()` (call once in `PrompTugalApp.init`, before launch finishes; it also schedules the first refresh) and `VaultBackground.schedule()` (call when the scene goes to the background). The vault screen is `VaultHomeView()` (for `Shell/Destinations.swift`, design). When dev has your vendored copy of `Packages/SGitVault`, my branch's version is the one to keep.
 - **Platform**: entitlement `webcredentials:promptugal.news` (associated domains) for the passkey, `NSFaceIDUsageDescription` in Info, and `news.promptugal.reader.vault-refresh` in `BGTaskSchedulerPermittedIdentifiers` (call `VaultSession.shared.backgroundRefresh()` from it). On scene phase changes call `VaultSession.shared.sceneBecameActive()` / `sceneMovedToBackground()`.
 - **Conductor / anyone with a token**: a vault access token (for a throwaway vault only) would let me test one live push.
 - **Website (editor / promptugal.news owners)**: add the app to `https://promptugal.news/.well-known/apple-app-site-association` under `webcredentials.apps` (`<TeamID>.<bundle id>`). Without it iOS refuses the passkey request from the app. The PRF constant above must never change.
