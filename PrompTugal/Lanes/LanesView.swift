@@ -88,6 +88,7 @@ struct LanesView: View {
                         Text(item.body).font(.subheadline).lineLimit(6).textSelection(.enabled)
                         if let at = item.sentAt { Text(at.formatted(date: .abbreviated, time: .shortened)).font(.caption2).foregroundStyle(.secondary) }
                     }
+                    .accessibilityElement(children: .combine)
                 }
                 if !store.inbox.isEmpty {
                     Button("Mark all as read") { Task { await store.markRead(store.inbox.map(\.id)) } }
@@ -153,6 +154,7 @@ struct LaneEventRow: View {
                 Text("\(event.bytes) B · \(Int(event.durationMs)) ms").font(.caption2).foregroundStyle(.secondary)
             }
         }
+        .accessibilityElement(children: .combine)
     }
 }
 

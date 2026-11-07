@@ -159,6 +159,7 @@ struct TeamNotesSection: View {
                     }
                     Text(note.text).font(.subheadline).textSelection(.enabled)
                 }
+                .accessibilityElement(children: .combine)
             }
             ForEach(store.errors.sorted { $0.key < $1.key }, id: \.key) { entry in
                 Text("\(entry.key): \(entry.value)").font(.caption).foregroundStyle(.orange)
