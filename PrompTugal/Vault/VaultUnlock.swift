@@ -35,7 +35,7 @@ enum VaultUnlock {
 /// Passkey assertion with the PRF extension (iOS 18).
 @MainActor
 final class PasskeyPRF: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-    enum PRFError: Error, CustomStringConvertible {
+    enum PRFError: Error, CustomStringConvertible, LocalizedError {
         case disabled, noPRF, cancelled, failed(String)
         var description: String {
             switch self {
@@ -43,6 +43,12 @@ final class PasskeyPRF: NSObject, ASAuthorizationControllerDelegate, ASAuthoriza
             case .noPRF: "The passkey signed but returned no PRF bytes. Use a recovery code or paste a key."
             case .cancelled: "The passkey request was cancelled."
             case .failed(let why): "The passkey request failed: \(why)"
+            }
+        }
+        var errorDescription: String? {
+            switch self {
+            case .failed: "The passkey request failed. Try again, or paste your key."
+            default: description
             }
         }
     }

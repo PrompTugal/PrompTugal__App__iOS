@@ -65,6 +65,9 @@ final class ScheduleStore {
         if let data = try? Data(contentsOf: fileURL),
            let decoded = try? JSONDecoder().decode(Persisted.self, from: data) {
             persisted = decoded
+            // A time saved by an older build before the range check could crash every launch: drop it here.
+            persisted.state.picks = persisted.state.picks.filter { ScheduleTime.isValid($0.value) }
+            persisted.state.removed = persisted.state.removed.filter { ScheduleTime.isValid($0.value) }
         }
         importLegacySaved()
         rebuild()

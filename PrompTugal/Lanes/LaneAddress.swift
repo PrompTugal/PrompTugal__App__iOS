@@ -23,15 +23,24 @@ struct LaneAddress: Codable, Identifiable, Hashable, Sendable {
     var isNewsroomInbox: Bool { format == Self.newsroomInboxFormat }
 
     static let defaultEndpoint = URL(string: "https://dev.send.sgraph.ai")!
+    /// The only vault servers lanes may talk to (S7). dev.send.sgraph.ai is the one host with the append routes
+    /// (sgit.ai /api/append-lanes, checked 26 September and 10 October 2026).
+    static let allowedHosts: Set<String> = ["dev.send.sgraph.ai"]
+
+    static func isAllowedEndpoint(_ url: URL) -> Bool {
+        url.scheme == "https" && allowedHosts.contains(url.host()?.lowercased() ?? "") && url.port == nil
+            && url.user == nil && url.password == nil
+    }
 
     enum Failure: Error, Equatable, LocalizedError {
-        case notJSON, missing(String), badToken, badVault
+        case notJSON, missing(String), badToken, badVault, hostNotAllowed(String)
         var errorDescription: String? {
             switch self {
             case .notJSON: "That is not a lane description (JSON)."
             case .missing(let field): "The lane description has no \(field)."
             case .badToken: "The append token must be 16 to 128 lowercase hex characters."
             case .badVault: "The vault id is not valid."
+            case .hostNotAllowed(let host): "Lanes can only use dev.send.sgraph.ai, not \(host.isEmpty ? "this address" : host)."
             }
         }
     }
@@ -77,7 +86,7 @@ struct LaneAddress: Codable, Identifiable, Hashable, Sendable {
         guard isValidVaultId(vault) else { throw Failure.badVault }
         let computed = LaneCrypto.fingerprint(spki: try LaneCrypto.der(fromPEM: pem))
         if let published, published != computed { throw LaneCrypto.Failure.fingerprintMismatch }
-        guard endpoint.scheme == "https" else { throw Failure.missing("https endpoint") }
+        guard isAllowedEndpoint(endpoint) else { throw Failure.hostNotAllowed(endpoint.host() ?? "") }
         return LaneAddress(name: name, vault: vault, endpoint: endpoint, token: token, publicKeyPEM: pem,
                            fingerprint: computed, use: lane?["use"] as? String ?? root["use"] as? String,
                            format: root["format"] as? String)

@@ -20,6 +20,9 @@ public protocol VaultTransport: Sendable {
 
 /// `GET <server>/api/vault/read/<vault id>/<url-encoded path>`, no auth header.
 public struct HTTPVaultTransport: VaultTransport {
+    /// The largest file the reader downloads (16 MB). sgit sends larger blobs through presigned uploads,
+    /// which this reader does not support; anything bigger is refused, never buffered.
+    public static let maxResponseBytes = 16 * 1024 * 1024
     public let server: URL
     public let session: URLSession
     public var label: String { server.host() ?? server.absoluteString }
@@ -47,8 +50,30 @@ public struct HTTPVaultTransport: VaultTransport {
         request.httpMethod = "GET"
         request.cachePolicy = .reloadIgnoringLocalCacheData     // refs must never come from a cache
         request.timeoutInterval = 30
-        let (data, response) = try await session.data(for: request)
+        let (bytes, response) = try await session.bytes(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        if response.expectedContentLength > Int64(Self.maxResponseBytes) {
+            bytes.task.cancel()
+            throw VaultError.tooLarge(path: path, bytes: Int(response.expectedContentLength))
+        }
+        // Read in chunks and stop at the cap, whatever the server claims.
+        var data = Data()
+        if response.expectedContentLength > 0 { data.reserveCapacity(Int(response.expectedContentLength)) }
+        var chunk = [UInt8]()
+        chunk.reserveCapacity(64 * 1024)
+        for try await byte in bytes {
+            chunk.append(byte)
+            if chunk.count == 64 * 1024 {
+                data.append(contentsOf: chunk)
+                chunk.removeAll(keepingCapacity: true)
+                if data.count > Self.maxResponseBytes {
+                    bytes.task.cancel()
+                    throw VaultError.tooLarge(path: path, bytes: data.count)
+                }
+            }
+        }
+        data.append(contentsOf: chunk)
+        guard data.count <= Self.maxResponseBytes else { throw VaultError.tooLarge(path: path, bytes: data.count) }
         return VaultResponse(data: data, status: status)
     }
 }

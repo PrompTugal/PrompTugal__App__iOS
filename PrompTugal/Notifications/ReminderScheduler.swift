@@ -31,7 +31,7 @@ final class ReminderScheduler {
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var pending: Task<Void, Never>?
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
-    @ObservationIgnored private var delegate: ReminderDelegate?
+    @ObservationIgnored private var started = false
 
     private enum Keys {
         static let lead = "reminders.leadMinutes"
@@ -50,24 +50,35 @@ final class ReminderScheduler {
         standupsOn = defaults.object(forKey: Keys.standups) as? Bool ?? true
         for name in [Notification.Name.scheduleDidChange, .teamStandupsDidChange, .teamIdentityDidChange] {
             observers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] note in
-                let personal = note.name != .teamStandupsDidChange
+                let name = note.name
+                let personal = name != .teamStandupsDidChange
                 MainActor.assumeIsolated {
-                    if personal { self?.askOnceWhenUseful() }
+                    // Only a native tap may lead to the permission prompt: a pick made in the app or choosing who
+                    // I am. A change a web page or the vault made is not a gesture (S7).
+                    if personal, self?.changeWasNative(name) == true { self?.askOnceWhenUseful() }
                     self?.scheduleSoon()
                 }
             })
         }
     }
 
-    /// Call once at launch: becomes the notification delegate (to show reminders in the foreground and open the
-    /// tapped one) and schedules with the current permission, without asking for it.
+    /// Sets the notification delegate. Call from `PrompTugalApp.init`: a reminder tapped while the app is not
+    /// running is delivered during launch, before any view exists (Q6). Safe to call more than once.
+    static func installNotificationDelegate() {
+        let center = UNUserNotificationCenter.current()
+        if center.delegate !== ReminderInbox.delegate { center.delegate = ReminderInbox.delegate }
+    }
+
+    /// Call once when the app is up: takes a reminder tapped at launch, and schedules with the current permission,
+    /// without asking for it.
     func start() {
-        guard delegate == nil else { return }
-        let delegate = ReminderDelegate { [weak self] url in
-            Task { @MainActor in self?.openedURL = url }
-        }
-        self.delegate = delegate
-        UNUserNotificationCenter.current().delegate = delegate
+        guard !started else { return }
+        started = true
+        Self.installNotificationDelegate()
+        observers.append(NotificationCenter.default.addObserver(forName: .reminderOpened, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.openedURL = ReminderInbox.take() }
+        })
+        if let pending = ReminderInbox.take() { openedURL = pending }
         scheduleSoon()
     }
 
@@ -82,6 +93,20 @@ final class ReminderScheduler {
             guard settings.authorizationStatus == .notDetermined else { return }
             if await requestAuthorization() { await reschedule() }
         }
+    }
+
+    private func changeWasNative(_ name: Notification.Name) -> Bool {
+        name == .teamIdentityDidChange || schedule.lastChange?.source == .app
+    }
+
+    /// The permission as it stands, without asking.
+    func currentAuthorization() async -> Authorization {
+        switch await UNUserNotificationCenter.current().notificationSettings().authorizationStatus {
+        case .authorized, .provisional, .ephemeral: authorization = .allowed
+        case .denied: authorization = .denied
+        default: authorization = .unknown
+        }
+        return authorization
     }
 
     /// Asks once; later calls return the answer given.
@@ -118,7 +143,7 @@ final class ReminderScheduler {
             content.sound = .default
             content.threadIdentifier = item.kind.rawValue
             content.interruptionLevel = .timeSensitive
-            if let url = item.url { content.userInfo = ["url": url.absoluteString] }
+            content.userInfo = ["open": item.appLink.absoluteString, "url": item.url?.absoluteString ?? ""]
             let trigger = UNCalendarNotificationTrigger(dateMatching: ReminderPlan.components(item.fire), repeats: false)
             do {
                 try await center.add(UNNotificationRequest(identifier: item.id, content: content, trigger: trigger))
@@ -142,22 +167,40 @@ final class ReminderScheduler {
     }
 }
 
-/// Shows reminders while the app is open, and reports the tapped one's link.
-private final class ReminderDelegate: NSObject, UNUserNotificationCenterDelegate, @unchecked Sendable {
-    private let onOpen: @Sendable (URL) -> Void
+extension Notification.Name {
+    static let reminderOpened = Notification.Name("PrompTugal.reminderOpened")
+}
 
-    init(onOpen: @escaping @Sendable (URL) -> Void) {
-        self.onOpen = onOpen
+/// Holds the link of a tapped reminder until the app can open it (a cold launch delivers it before any view).
+@MainActor
+enum ReminderInbox {
+    static let delegate = ReminderDelegate()
+    private static var pending: URL?
+
+    static func receive(_ url: URL) {
+        hold(url)
+        NotificationCenter.default.post(name: .reminderOpened, object: nil)
     }
 
+    /// Keeps the link until `take()`; `receive` also tells the running app.
+    static func hold(_ url: URL) { pending = url }
+
+    static func take() -> URL? {
+        defer { pending = nil }
+        return pending
+    }
+}
+
+/// Shows reminders while the app is open, and reports the tapped one's in-app link.
+final class ReminderDelegate: NSObject, UNUserNotificationCenterDelegate, Sendable {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
         [.banner, .list, .sound]
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-        if let text = response.notification.request.content.userInfo["url"] as? String, let url = URL(string: text) {
-            onOpen(url)
-        }
+        let info = response.notification.request.content.userInfo
+        guard let text = info["open"] as? String, let url = URL(string: text), url.scheme == "promptugal" else { return }
+        await MainActor.run { ReminderInbox.receive(url) }
     }
 }

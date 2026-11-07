@@ -9,12 +9,24 @@ final class VaultCollabAccess: CollabVaultAccess {
     init(session: VaultSession = .shared) { self.session = session }
 
     var isOpen: Bool { !session.isLocked }
-    var canWrite: Bool { session.reader?.canWrite ?? false }
 
-    func read(_ path: String) async throws -> Data? { try await session.readFile(path) }
+    /// The account's own vault: the reader vault opened by passkey, recovery code or stored as "reader".
+    /// An imported key (role "imported", e.g. a teammate's read key) is never mine.
+    private var own: VaultSession.OpenVault? {
+        session.vaults.first { $0.vaultId == session.readerVaultId } ?? session.vaults.first { $0.role == "reader" }
+    }
+    var ownVaultId: String? { own?.vaultId }
+    var canWrite: Bool { own?.canWrite ?? false }
+
+    private func ownId() throws -> String {
+        guard let id = ownVaultId else { throw CollabHooks.HookError.noOwnVault }
+        return id
+    }
+
+    func read(_ path: String) async throws -> Data? { try await session.readFile(path, vaultId: ownId()) }
 
     func write(_ path: String, _ data: Data, _ message: String) async throws {
-        try await session.update(path, message: message) { _ in data }
+        try await session.update(path, vaultId: ownId(), message: message) { _ in data }
     }
 
     func openShared(readKey: String, label: String) async throws -> String {
@@ -23,14 +35,17 @@ final class VaultCollabAccess: CollabVaultAccess {
 
     func read(_ path: String, vaultId: String) async throws -> Data? { try await session.readFile(path, vaultId: vaultId) }
 
-    func savePicks(_ document: Data) async throws -> Data { try await session.savePicks(document) }
+    func savePicks(_ document: Data) async throws -> Data {
+        _ = try ownId()                    // the vault session writes picks to its reader vault; refuse if that is not mine
+        return try await session.savePicks(document)
+    }
 
     func files(in folder: String, vaultId: String?) async throws -> [String] {
         try await session.files(in: folder, vaultId: vaultId).map(\.path)
     }
 
     func append(_ data: Data, to folder: String, message: String) async throws -> String {
-        try await session.append(data, to: folder, message: message)
+        try await session.append(data, to: folder, vaultId: ownId(), message: message)
     }
 
     private var master: VaultSession.OpenVault? { session.vaults.first { $0.role == "master" } }

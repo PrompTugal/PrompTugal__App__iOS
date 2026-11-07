@@ -155,15 +155,17 @@ final class TeamStore {
         try? data.write(to: fileURL(key), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
     }
 
-    /// Until the platform's shared `HTTPClient` lands (contracts §8), a plain URLSession GET with a 20-second timeout.
+    /// Through the app's shared `HTTPClient` (Q8), so every team request shows in Debug → Network with its size and
+    /// time. Labelled by file: "team.me", "team.meetings", "team.data.silvio", …
     static let urlSessionFetch: Fetch = { url in
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
-        request.setValue("PrompTugal-iOS", forHTTPHeaderField: "User-Agent")
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
-        return data
+        try await HTTPClient.shared.get(url, timeout: 20, label: TeamStore.label(for: url))
+    }
+
+    nonisolated static func label(for url: URL) -> String {
+        let parts = url.pathComponents.filter { $0 != "/" }
+        if parts.count >= 4, parts[0] == "people", parts.last == "data.json" { return "team.data.\(parts[1])" }
+        let name = parts.last.map { ($0 as NSString).deletingPathExtension } ?? "team"
+        return "team." + (name == "index" ? (parts.dropLast().last ?? "index") : name)
     }
 }
 

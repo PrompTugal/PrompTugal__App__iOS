@@ -130,7 +130,7 @@ final class AIKeyStore {
             hasKey = try store.read(Self.account) != nil
         } catch {
             hasKey = false
-            lastError = error.localizedDescription
+            lastError = CollabErrorText.short(error)
         }
     }
 
@@ -162,7 +162,7 @@ final class AIKeyStore {
             try store.delete(Self.account)
             lastError = nil
         } catch {
-            lastError = error.localizedDescription
+            lastError = CollabErrorText.short(error)
         }
         hasKey = false
         hint = nil
@@ -234,7 +234,7 @@ final class AIKeyStore {
 
     /// Copy the key into the open vault with write access, through the vault session (`CollabHooks.vault`).
     func saveToVault(model: String?) async throws {
-        guard let vault = CollabHooks.vault, vault.canWrite else { throw CollabHooks.HookError.noWritableVault }
+        guard let vault = CollabHooks.vault, vault.ownVaultId != nil, vault.canWrite else { throw CollabHooks.HookError.noWritableVault }
         let document = try Self.vaultDocument(key: key(), model: model)
         try await vault.write(Self.vaultPath, document, "OpenRouter key for Ask, from the app")
         savedToVaultAt = .now
@@ -245,7 +245,9 @@ final class AIKeyStore {
     @discardableResult
     func loadFromVault() async throws -> String? {
         guard let vault = CollabHooks.vault, vault.isOpen else { throw CollabHooks.HookError.noVault }
-        guard let data = try await vault.read(Self.vaultPath) else { return nil }
+        // Only my own vault: a teammate's imported vault could hand me a key they control (S5).
+        guard let own = vault.ownVaultId else { throw CollabHooks.HookError.noOwnVault }
+        guard let data = try await vault.read(Self.vaultPath, vaultId: own) else { return nil }
         let (key, model) = try Self.key(fromVaultDocument: data)
         try save(key)
         return model

@@ -11,7 +11,7 @@ struct MyDayView: View {
     @Environment(ScheduleVaultLink.self) private var vaultLink
     @Environment(\.openURL) private var openURL
     @State private var calendarMessage: String?
-    @State private var timelineDay = DayPlanner.lisbonDay(.now)
+    @State private var timelineDay = Lisbon.day(.now)
     @Environment(\.horizontalSizeClass) private var width
 
     private struct Row: Identifiable {
@@ -62,7 +62,7 @@ struct MyDayView: View {
     /// iPad: the chosen day as a time line, picks and stand-ups as blocks.
     private var timeline: some View {
         let now = Date.now
-        let days = Array(Set(rowsByDay(now: now).map(\.0).filter { !$0.isEmpty } + [DayPlanner.lisbonDay(now)])).sorted()
+        let days = Array(Set(rowsByDay(now: now).map(\.0).filter { !$0.isEmpty } + [Lisbon.day(now)])).sorted()
         let day = days.contains(timelineDay) ? timelineDay : (days.first ?? timelineDay)
         let items: [DayPlanner.Item] = rowsByDay(now: now).first { $0.0 == day }?.1.compactMap { row in
             guard let start = row.start else { return nil }
@@ -199,7 +199,7 @@ struct MyDayView: View {
                     url: $0.briefingURL(for: me), pick: nil)
             }
         }
-        let grouped = Dictionary(grouping: rows) { row in row.start.map(DayPlanner.lisbonDay) ?? "" }
+        let grouped = Dictionary(grouping: rows) { row in row.start.map(Lisbon.day) ?? "" }
         return grouped.keys.sorted { a, b in a.isEmpty ? false : b.isEmpty ? true : a < b }.map { day in
             (day, grouped[day]!.sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) })
         }

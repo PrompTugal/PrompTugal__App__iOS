@@ -40,15 +40,26 @@ final class VaultKeychain {
         var writeKey: String?
     }
 
-    enum KeychainError: Error, CustomStringConvertible {
+    enum KeychainError: Error, CustomStringConvertible, LocalizedError {
         case status(OSStatus, String)
         case notFound
         case cancelled
+        /// Neither Face ID nor a device passcode is available, so a key could not be protected (S3).
+        case noProtection
         var description: String {
             switch self {
             case .status(let s, let what): "Keychain \(what) failed (\(s))"
             case .notFound: "No stored vault key"
             case .cancelled: "Face ID was cancelled"
+            case .noProtection: "No Face ID and no device passcode: refusing to store a key without access control"
+            }
+        }
+        var errorDescription: String? {
+            switch self {
+            case .status: "The key could not be stored on this device. Try again."
+            case .notFound: "No vault key is stored on this device yet."
+            case .cancelled: "Face ID was cancelled."
+            case .noProtection: "Set a passcode on this device to keep vault keys on it. Keys are never stored without Face ID or a passcode."
             }
         }
     }
@@ -105,9 +116,11 @@ final class VaultKeychain {
             payload = sealed
             wrapped = true
         }
+        // S3: only Face ID or the device passcode. Check first, so a refused save never deletes the old key.
+        guard LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) else { throw KeychainError.noProtection }
         try? delete(vaultId: key.vaultId)
         var lastStatus: OSStatus = errSecSuccess
-        for protection in [Protection.faceID, .userPresence, .deviceUnlocked] {
+        for protection in [Protection.faceID, .userPresence] {
             var meta = Metadata(vaultId: key.vaultId, kind: key.kind, label: label, role: role,
                                 protection: protection, wrapped: wrapped, createdAt: Date())
             if wrapped && protection == .faceID { meta.protection = .secureEnclaveAndFaceID }
@@ -115,14 +128,12 @@ final class VaultKeychain {
             query[kSecValueData as String] = payload
             query[kSecAttrLabel as String] = "PrompTugal vault \(key.vaultId)"
             query[kSecAttrGeneric as String] = try JSONEncoder().encode(meta)
-            if let access = accessControl(for: protection) {
-                query[kSecAttrAccessControl as String] = access
-            } else {
-                query[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-            }
+            guard let access = accessControl(for: protection) else { continue }
+            query[kSecAttrAccessControl as String] = access
             lastStatus = SecItemAdd(query as CFDictionary, nil)
             if lastStatus == errSecSuccess { return }
         }
+        if lastStatus == errSecAuthFailed || lastStatus == errSecParam { throw KeychainError.noProtection }
         throw KeychainError.status(lastStatus, "save")
     }
 
@@ -177,6 +188,16 @@ final class VaultKeychain {
     }
 
     // MARK: Inventory
+
+    /// How the stored keys are actually protected, in words, for the Vault screen (S3).
+    func protectionSummary() -> String {
+        let levels = Set(inventory().map(\.protection))
+        if levels.isEmpty { return "Keys you import are kept on this device only, behind Face ID or your passcode, and never shown or logged." }
+        if levels == [.secureEnclaveAndFaceID] { return "Your keys are on this device only, behind Face ID and wrapped by the Secure Enclave. They are never shown or logged." }
+        if levels.isSubset(of: [.secureEnclaveAndFaceID, .faceID]) { return "Your keys are on this device only, behind Face ID. They are never shown or logged." }
+        if levels.contains(.deviceUnlocked) { return "Some keys were stored before Face ID or a passcode was required and are protected only by the device being unlocked. Import them again to protect them." }
+        return "Your keys are on this device only, behind Face ID or your passcode. They are never shown or logged."
+    }
 
     /// What is stored, without secrets and without a Face ID prompt.
     func inventory() -> [Metadata] {

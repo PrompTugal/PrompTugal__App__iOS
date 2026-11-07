@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Testing
 @testable import PrompTugal
 
@@ -177,33 +178,37 @@ struct AIContextTests {
         #expect(prompt.contains("Tuesday 10 November 2026, 08:00"))
     }
 
-    @Test("Team status reads me.json and the command centre loosely")
-    func team() {
-        let me: [String: Any] = ["name": "Dinis Cruz", "only_you": 4, "decide": 23, "overdue": 56,
-                                 "standup_at": "2026-11-07T12:00:00.000Z",
-                                 "urgent": [["id": "WS-63", "title": "Print files", "due": "Mon 2 Nov", "late": true]]]
-        let cc: [String: Any] = ["standups": ["times_utc": ["13:00", "18:00"]],
-                                 "decisions": [["what": "Protect main", "recommend": "Now"]],
-                                 "agents": [["short": "abp", "commits_24h": 8, "last_at": "2026-11-07T00:52:28Z", "last_subject": "WS-188"]],
-                                 "unknown_future_field": 1]
-        let part = AIContextAssembler.teamPart(person: "dinis", me: me, commandCentre: cc)
+    private func person(_ json: String) throws -> TeamPerson {
+        let text = "{\"built_at\":\"x\",\"version\":\"v\",\"people\":{\"dinis\":" + json + "}}"
+        let me = try JSONDecoder().decode(TeamMe.self, from: Data(text.utf8))
+        return try #require(me.person("dinis"))
+    }
+
+    private func centre(_ json: String) throws -> CommandCentre {
+        try JSONDecoder().decode(CommandCentre.self, from: Data(json.utf8))
+    }
+
+    @Test("Team status reads the team session's models")
+    func team() throws {
+        let me = try person(#"{"id":"dinis","name":"Dinis Cruz","only_you":4,"decide":23,"overdue":56,"standup_at":"2026-11-07T12:00:00.000Z","urgent":[{"id":"WS-63","title":"Print files","due":"Mon 2 Nov","late":true}]}"#)
+        let cc = try centre(#"{"person":{"id":"dinis","name":"Dinis"},"standups":{"times_utc":["13:00","18:00"]},"decisions":[{"what":"Protect main","recommend":"Now"}],"agents":[{"short":"abp","name":"abp@x","commits_24h":8,"last_at":"2026-11-07T00:52:28Z","last_subject":"WS-188"}],"unknown_future_field":1}"#)
+        let part = AIContextAssembler.teamPart(person: "dinis", me: me, centre: cc)
         #expect(part.summary == "4 only you · 23 to decide · 56 overdue")
         #expect(part.body.contains("WS-63 Print files (due Mon 2 Nov, late)"))
         #expect(part.body.contains("Protect main (recommended: Now)"))
         #expect(part.body.contains("Next stand-up: Sat 7 Nov 12:00"))
         #expect(part.body.contains("abp: 8 commits in 24 h"))
-        #expect(AIContextAssembler.teamPart(person: "x", me: nil, commandCentre: nil).body.isEmpty)
+        #expect(AIContextAssembler.teamPart(person: "x", me: nil, centre: nil).body.isEmpty)
     }
 
     @Test("Agents part marks my commits")
-    func agents() {
-        let cc: [String: Any] = ["agents": [["name": "a@x", "status": "active", "commits_24h": 0, "commits_7d": 3]],
-                                 "activity": [["at": "2026-11-07T03:22:02Z", "subject": "mine", "mine": true],
-                                              ["at": "2026-11-07T03:21:24Z", "subject": "theirs", "mine": false]]]
-        let part = AIContextAssembler.agentsPart(person: "dinis", commandCentre: cc)
+    func agents() throws {
+        let cc = try centre(#"{"person":{"id":"dinis"},"agents":[{"name":"a@x","status":"active","commits_24h":0,"commits_7d":3}],"activity":[{"at":"2026-11-07T03:22:02Z","subject":"mine","mine":true},{"at":"2026-11-07T03:21:24Z","subject":"theirs","mine":false}]}"#)
+        let part = AIContextAssembler.agentsPart(person: "dinis", centre: cc)
         #expect(part.summary == "1 agents, 0 active in 24 h")
         #expect(part.body.contains("* Sat 7 Nov 03:22 mine"))
         #expect(part.body.contains("- Sat 7 Nov 03:21 theirs"))
+        #expect(AIContextAssembler.agentsPart(person: "dinis", centre: nil).body.isEmpty)
     }
 
     @Test("Messages: system first, then the conversation without errors or the turn being streamed")
@@ -294,6 +299,7 @@ struct AIKeyStoreTests {
     func noKeyNoRequest() async {
         let store = ChatStore(keys: AIKeyStore(store: MemorySecretStore(), defaults: defaults()),
                               defaults: defaults(), gather: { _ in [] })
+        store.grantConsent()
         store.send("Hello")
         for _ in 0..<200 where store.turns.count < 2 { try? await Task.sleep(for: .milliseconds(10)) }
         #expect(store.turns.map(\.role) == [.user, .error])
@@ -439,5 +445,179 @@ struct AIConversationTests {
         store.keepConversation = false
         #expect(!FileManager.default.fileExists(atPath: file.path))
         defaults.removePersistentDomain(forName: name)
+    }
+}
+
+
+@Suite("Ask: consent before anything is sent (App Review 5.1.2(i))")
+@MainActor
+struct AIConsentTests {
+    private func fresh() -> (ChatStore, HTTPLog, UserDefaults, String) {
+        let name = "ask-consent-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        let secrets = MemorySecretStore()
+        let keys = AIKeyStore(store: secrets, defaults: defaults)
+        try? keys.save(["sk", "or", "v1", String(repeating: "1", count: 64)].joined(separator: "-"))
+        let log = HTTPLog()
+        let client = OpenRouterClient(http: HTTPClient(session: HTTPClient.makeSession(), log: log))
+        let store = ChatStore(keys: keys, client: client, defaults: defaults, gather: { _ in [] },
+                              conversationFile: FileManager.default.temporaryDirectory.appendingPathComponent("\(name).json"))
+        return (store, log, defaults, name)
+    }
+
+    @Test("Without consent, a question sends nothing and asks for consent")
+    func noConsentNoRequest() async throws {
+        let (store, log, defaults, name) = fresh()
+        #expect(store.consent == .unknown)
+        store.send("Where is the keynote?")
+        store.ask("Brief me", include: [.team])
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(store.consentRequested)
+        #expect(store.turns.isEmpty)
+        #expect(log.records.isEmpty && log.totalRequests == 0)
+        #expect(!store.isSending)
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Don't allow: nothing sent, not asked again; withdraw goes back to asking")
+    func declined() async throws {
+        let (store, log, defaults, name) = fresh()
+        store.send("Hi")
+        store.declineConsent()
+        #expect(store.consent == .declined && !store.consentRequested)
+        store.send("Hi again")
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(!store.consentRequested, "a declined choice is not asked again on every question")
+        #expect(store.turns.isEmpty && log.records.isEmpty)
+        store.revokeConsent()
+        #expect(store.consent == .unknown)
+        // The choice is stored.
+        store.grantConsent()
+        #expect(defaults.string(forKey: ChatStore.consentKey) == "granted")
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Default context is the agenda only; teammates and page are separate switches")
+    func minimalDefault() {
+        let (store, _, defaults, name) = fresh()
+        #expect(store.contextKinds == [.agenda])
+        #expect(AIContextKind.toggleable.contains(.teammates) && AIContextKind.toggleable.contains(.page))
+        defaults.removePersistentDomain(forName: name)
+    }
+
+    @Test("Prepared prompts cannot widen what is shared")
+    func allowedKinds() {
+        #expect(AIContextKind.allowed([.team, .agents, .plan], toggles: [.agenda]) == [.agenda])
+        #expect(AIContextKind.allowed([.agents], toggles: [.agenda, .team]) == [.agenda, .team, .agents])
+        #expect(AIContextKind.allowed([.plan], toggles: [.picks]) == [.picks, .plan])
+    }
+
+    @Test("Tools are offered only for switched-on data, and refuse otherwise")
+    func toolsGated() async {
+        #expect(AITools.definitions(for: [.agenda]).map(\.function.name).sorted() == ["now", "search_agenda"])
+        #expect(!AITools.definitions(for: [.agenda, .team]).map(\.function.name).contains("where_is_everyone"))
+        #expect(AITools.definitions(for: [.teammates]).map(\.function.name) == ["where_is_everyone"])
+        let call = OpenRouter.ToolCall(id: "c", function: .init(name: "where_is_everyone", arguments: "{}"))
+        let (result, _) = await AITools.run(call, allowed: [.agenda])
+        #expect(result.contains("not shared"))
+    }
+
+    @Test("The consent text names the provider behind OpenRouter")
+    func provider() {
+        #expect(OpenRouter.provider(of: "anthropic/claude-sonnet-5") == "Anthropic")
+        #expect(OpenRouter.provider(of: "openai/gpt-x") == "OpenAI")
+        #expect(OpenRouter.provider(of: "acme/model") == "acme")
+    }
+}
+
+/// A vault seam for tests: files by vault id, and which one is "mine".
+@MainActor
+final class FakeCollabVault: CollabVaultAccess {
+    var contents: [String: [String: Data]] = [:]       // vault id → path → data
+    var ownVaultId: String?
+    var reads: [(String, String)] = []
+    var isOpen: Bool { !contents.isEmpty }
+    var canWrite: Bool { ownVaultId != nil }
+
+    init(own: String?, files: [String: [String: Data]]) {
+        ownVaultId = own
+        self.contents = files
+    }
+
+    func read(_ path: String) async throws -> Data? {
+        guard let own = ownVaultId else { throw CollabHooks.HookError.noOwnVault }
+        return try await read(path, vaultId: own)
+    }
+    func read(_ path: String, vaultId: String) async throws -> Data? {
+        reads.append((vaultId, path))
+        return contents[vaultId]?[path]
+    }
+    func write(_ path: String, _ data: Data, _ message: String) async throws {
+        guard let own = ownVaultId else { throw CollabHooks.HookError.noOwnVault }
+        contents[own, default: [:]][path] = data
+    }
+    func openShared(readKey: String, label: String) async throws -> String { "teammate1" }
+    func savePicks(_ document: Data) async throws -> Data { document }
+    func writeNewsroomNote(_ path: String, _ data: Data) async throws {}
+    func readMaster(_ path: String) async throws -> Data? { nil }
+    func files(in folder: String, vaultId: String?) async throws -> [String] { [] }
+    func append(_ data: Data, to folder: String, message: String) async throws -> String { folder + "/x.json" }
+}
+
+@Suite("Ask key: only from my own vault (S5)")
+@MainActor
+struct AIKeyVaultOwnershipTests {
+    private let teammateKey = ["sk", "or", "v1", String(repeating: "7", count: 64)].joined(separator: "-")
+
+    @Test("A teammate's imported vault is never read for my key")
+    func neverFromTeammate() async throws {
+        let saved = CollabHooks.vault
+        defer { CollabHooks.vault = saved }
+        let doc = try AIKeyStore.vaultDocument(key: teammateKey, model: nil)
+        let fake = FakeCollabVault(own: nil, files: ["teammate1": [AIKeyStore.vaultPath: doc]])
+        CollabHooks.vault = fake
+        let name = "ask-own-\(UUID().uuidString)"
+        let store = AIKeyStore(store: MemorySecretStore(), defaults: UserDefaults(suiteName: name)!)
+        await #expect(throws: CollabHooks.HookError.self) { try await store.loadFromVault() }
+        #expect(fake.reads.isEmpty, "nothing read from any vault")
+        #expect(!store.hasKey)
+        UserDefaults().removePersistentDomain(forName: name)
+    }
+
+    @Test("My own vault is read, and only it")
+    func fromMine() async throws {
+        let saved = CollabHooks.vault
+        defer { CollabHooks.vault = saved }
+        let doc = try AIKeyStore.vaultDocument(key: teammateKey, model: "anthropic/claude-sonnet-5")
+        let fake = FakeCollabVault(own: "mine1", files: ["mine1": [AIKeyStore.vaultPath: doc], "teammate1": [:]])
+        CollabHooks.vault = fake
+        let name = "ask-own-\(UUID().uuidString)"
+        let store = AIKeyStore(store: MemorySecretStore(), defaults: UserDefaults(suiteName: name)!)
+        let model = try await store.loadFromVault()
+        #expect(model == "anthropic/claude-sonnet-5" && store.hasKey)
+        #expect(fake.reads.map(\.0) == ["mine1"])
+        UserDefaults().removePersistentDomain(forName: name)
+    }
+}
+
+@Suite("Ask: links and copy (S7)")
+struct AILinkTests {
+    @Test("Only https and mailto links can be opened, after confirmation")
+    func links() throws {
+        #expect(AskLinks.canOpen(try #require(URL(string: "https://promptugal.news/events/x/"))))
+        #expect(AskLinks.canOpen(try #require(URL(string: "mailto:someone@example.com"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "http://example.com"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "promptugal://open/debug"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "tel:+351000000"))))
+        #expect(!AskLinks.canOpen(try #require(URL(string: "https://user:pw@example.com"))))
+    }
+
+    @Test("Copy is local only and expires")
+    @MainActor func copy() throws {
+        let board = UIPasteboard.withUniqueName()
+        AskClipboard.copy("hello", pasteboard: board)
+        #expect(board.string == "hello")
+        #expect(AskClipboard.lifetime <= 300)
+        UIPasteboard.remove(withName: board.name)
     }
 }

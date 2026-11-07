@@ -422,6 +422,25 @@ class SiteTest(unittest.TestCase):
         self.assertIn('No screenshots in this site build', (self.clean / 'admin' / 'screens.html').read_text())
         self.assertFalse((self.clean / 'screens').exists())
 
+    def test_text_evidence_and_debug_only_features(self):
+        root = self.tmp / 'text-evidence'
+        (root / 'website').mkdir(parents=True)
+        (root / 'PrompTugal' / 'Store').mkdir(parents=True)
+        (root / 'website' / 'features.json').write_text(json.dumps({'features': [
+            {'id': 'c', 'platform': 'readers', 'name': 'C', 'kind': 'native', 'what': 'x',
+             'evidence': ['text:PrompTugal/Store/*.swift::struct ReadingCreditView'],
+             'hidden_in_release': ['text:PrompTugal/Store/*.swift::static let isAvailable = false']}]}))
+        swift = root / 'PrompTugal' / 'Store' / 'Credit.swift'
+        swift.write_text('struct Other {}\n')
+        f = admin.features(root)[0]
+        self.assertEqual((f['shipped'], f['debug_only'], admin.status_label(f)), (False, False, 'Coming'))
+        swift.write_text('struct ReadingCreditView {}\n')
+        f = admin.features(root)[0]
+        self.assertEqual((f['shipped'], admin.status_label(f)), (True, 'In the beta'))
+        swift.write_text('struct ReadingCreditView {}\n#if DEBUG\nstatic let isAvailable = true\n#else\nstatic let isAvailable = false\n#endif\n')
+        f = admin.features(root)[0]
+        self.assertEqual((f['shipped'], f['debug_only'], admin.status_label(f)), (False, True, 'Debug builds only'))
+
     def test_status_page_counts(self):
         info = admin.parse_status('# Status · X\n\n> Going well.\n\n## Done\n\n- a\n- b\n  more\n\n## Blocked\n\n## Next\n* c\n')
         self.assertEqual(info['summary'], 'Going well.')
