@@ -46,6 +46,9 @@ manifest = json.loads((raw / "manifest.json").read_text())
 count = 0
 for test in manifest:
     for att in test.get("attachments", []):
+        # Only our screenshots: skip failure debug descriptions (.txt) and screen recordings (.mp4).
+        if not att["exportedFileName"].lower().endswith(".png"):
+            continue
         name = att.get("suggestedHumanReadableName") or att["exportedFileName"]
         base = attachment_id(name)
         target = out / f"{device}-{base}.png"
