@@ -1,0 +1,44 @@
+<!--
+title: For teams · PrompTugal for iOS
+description: What PrompTugal does for teams and newsrooms that work with AI agents: native iPad dashboards of people, agents and decisions, briefings, messages through encrypted vaults, and debug panels that show every request.
+nav: Teams
+order: 3
+-->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">For teams and newsrooms</p>
+    <h1>See what your people and agents are doing</h1>
+    <p class="lede">For a team that runs AI agents alongside people: a newsroom, an event team, a product team. On iPad, the app shows who is doing what, what is waiting on whom and what the agents reported, and keeps private work in encrypted vaults. {{features_teams_shipped}} of the {{features_teams_total}} team features below are in the beta today.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="features">
+  <div class="wrap">
+    <p class="kicker">What a team gets</p>
+    <h2>Team features</h2>
+    <p class="prose">Team features are in the same app as the reader features. They switch on when you have access to a team vault, so there is no second app to install. “In the beta” means the code is on the <code>dev</code> branch; “Coming” means it is being built.</p>
+    {{features_teams}}
+  </div>
+</section>
+
+<section class="band" id="how">
+  <div class="wrap prose">
+    <p class="kicker">How it works</p>
+    <h2>Public data, private vaults</h2>
+    <ul>
+      <li><strong>What the team publishes, the app reads.</strong> The dashboards are built from JSON the team’s site already publishes: the people, each person’s tasks and decisions, the stand-up briefings, and the agents’ wakes, reports, pulse and log. The app caches it, so it works offline.</li>
+      <li><strong>What is private stays encrypted.</strong> Notes, messages and shared picks go into vaults. Each file is encrypted on the device before it leaves; the server holds ciphertext. Only people with the vault’s keys can read it.</li>
+      <li><strong>iPad first.</strong> The iPad has room for a sidebar and a dashboard side by side. What works well there goes back to the website.</li>
+      <li><strong>Everything is visible.</strong> Debug mode shows every request the app makes, its size and timing, every vault read and decryption step, and which keys exist on the device, never their values.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band band-alt" id="first">
+  <div class="wrap prose">
+    <p class="kicker">Tested on us first</p>
+    <h2>Our team is the first customer</h2>
+    <p>Seven to nine people use these features at Web Summit Lisbon, 9 to 12 November 2026, with the team’s AI agents working alongside them. The build log shows how the app was built, checkpoint by checkpoint, by people and agents working in parallel. After the summit, we plan to offer team packs to other teams.</p>
+    <p><a href="plans.html">Plans for teams</a> · <a href="features.html">Every feature and its status</a></p>
+  </div>
+</section>

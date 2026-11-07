@@ -63,6 +63,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ needs.release.outputs.sha || github.sha }}
+          fetch-depth: 0   # the release history and status pages are read from git tags and log
 
       - uses: actions/setup-python@v5
         with:

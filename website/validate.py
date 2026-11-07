@@ -5,7 +5,9 @@ Checks every page in the output directory:
   * internal links and images resolve, and every page is reachable from the home page
   * every page has a Markdown twin listed in llms.txt and sitemap.xml
   * JSON-LD parses, and the home page's softwareVersion matches the Xcode project
-  * every website in Websites.json is on the home page
+  * product pages (outside admin/) name no other brand: PrompTugal only
+  * every feature in features.json is on its platform page, labelled as the source says
+  * the push dashboard lists every status page of the overnight pack
   * no scripts other than JSON-LD, no external stylesheets, no inline event handlers
   * one <h1>, a lang, a title and a description; every <img> has alt, width and height
   * no build tokens left behind and no banned words
@@ -22,6 +24,11 @@ from urllib.parse import urldefrag, urlparse
 
 WEBSITE = Path(__file__).resolve().parent
 ROOT = WEBSITE.parent
+sys.path.insert(0, str(WEBSITE))
+import admin  # noqa: E402
+
+# Product pages are PrompTugal only. Host names inside <code> are data, not branding.
+OTHER_BRANDS = ('riskmandate', 'sgit')
 BANNED = ('seamless', 'revolutionary', 'cutting-edge', 'game-changing', 'game changer', 'effortless',
           'blazing', 'unleash', 'world-class', 'best-in-class', 'supercharge', 'lorem ipsum', 'todo')
 
@@ -175,10 +182,37 @@ def validate(out):
     app = next((json.loads(s) for s in home.scripts if '"softwareVersion"' in s), {})
     if {app.get('softwareVersion')} != versions:
         problems.append(f"index.html: softwareVersion {app.get('softwareVersion')} != project {sorted(versions)}")
-    home_text = pages['index.html'].read_text()
-    for site in json.loads((ROOT / 'PrompTugal' / 'Websites.json').read_text()):
-        if f'href="{site["url"]}"' not in home_text:
-            problems.append(f"index.html: website {site['url']} from Websites.json is missing")
+    # PrompTugal only on product pages
+    for name, path in pages.items():
+        if name.startswith('admin/'):
+            continue
+        text = re.sub(r'<code>.*?</code>|<head>.*?</head>', ' ', path.read_text(), flags=re.S)
+        visible = re.sub(r'<[^>]+>', ' ', text).lower()
+        for brand in OTHER_BRANDS:
+            if brand in visible:
+                problems.append(f'{name}: names another brand ("{brand}") on a product page')
+
+    # Feature labels follow the files in the repository
+    for feature in admin.features(ROOT):
+        page = f"{feature['platform']}.html"
+        if page not in pages:
+            problems.append(f"{page}: missing, but features.json lists {feature['id']} for it")
+            continue
+        block = re.search(rf'<li class="feature" id="f-{re.escape(feature["id"])}">(.*?)</li>', pages[page].read_text(), re.S)
+        if not block:
+            problems.append(f"{page}: feature {feature['id']} from features.json is missing")
+            continue
+        claims = 'status on' in block.group(1)
+        if claims != feature['shipped']:
+            want = 'in the beta' if feature['shipped'] else 'coming'
+            problems.append(f"{page}: feature {feature['id']} is labelled wrongly; the source says {want}")
+
+    # The push dashboard covers every status page
+    if 'admin/push.html' in pages:
+        dash = pages['admin/push.html'].read_text()
+        for path in sorted(ROOT.glob('briefs/*__overnight-push/status/*.md')):
+            if f'/status/{path.stem}.html"' not in dash:
+                problems.append(f'admin/push.html: status page {path.stem} is missing')
     return problems
 
 

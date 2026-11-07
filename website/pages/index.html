@@ -1,31 +1,31 @@
 <!--
 title: PrompTugal for iPhone and iPad
-description: The PrompTugal.news AI newsroom and its sister sites in one iPhone and iPad app, with an offline reader for the Web Summit Lisbon 2026 agenda.
-nav: App
+description: PrompTugal is one app with two parts: for readers and attendees, the news, the agenda and your day at Web Summit Lisbon, offline; for teams and newsrooms, what your people and agents are doing, from encrypted vaults.
+nav: Home
 order: 1
 -->
 <section class="band">
   <div class="wrap hero">
     <div>
-      <p class="kicker">Private beta · iOS and iPadOS {{min_ios}}+</p>
-      <h1>The newsroom, <em>in your pocket</em>, even offline.</h1>
-      <p class="lede">PrompTugal puts the live PrompTugal.news newsroom and the sites around it in one sidebar, {{site_count}} websites in all. A native reader keeps the Web Summit Lisbon agenda, your saved sessions and the latest stories on the device for when the venue Wi-Fi gives up.</p>
+      <p class="kicker">Beta · iPhone and iPad · iOS and iPadOS {{min_ios}}+</p>
+      <h1>PrompTugal, <em>for readers</em> and <em>for teams</em>.</h1>
+      <p class="lede">One native app for iPhone and iPad, built for both. Readers get the PrompTugal.news coverage of Web Summit Lisbon, the agenda and their own day, on the phone and offline. Teams get a view of what their people and AI agents are doing, read from encrypted vaults, best on iPad.</p>
       <p class="actions">
-        <a class="button" href="support.html#beta">Join the TestFlight beta</a>
-        <a class="button button-ghost" href="{{repo_url}}">Read the source</a>
+        <a class="button" href="readers.html">For readers</a>
+        <a class="button button-ghost" href="teams.html">For teams</a>
       </p>
       <ul class="facts">
         <li>Version {{version}}</li>
-        <li>iPhone and iPad</li>
+        <li>{{features_shipped}} of {{features_total}} planned features in the beta</li>
         <li>No account, no tracking</li>
-        <li>No third-party packages</li>
+        <li>Apple frameworks only</li>
       </ul>
     </div>
     <div class="device" aria-hidden="true" data-md-skip>
       <div class="screen">
         <div class="sidebar">
-          <p class="sidebar-title">Websites</p>
-          {{websites_sidebar}}
+          <p class="sidebar-title">PrompTugal</p>
+          {{mock_sidebar}}
         </div>
         <div class="page-mock">
           <div class="mast">Promp<b>T</b>ugal<i>.news</i></div>
@@ -42,52 +42,46 @@ order: 1
   </div>
 </section>
 
-<section class="band band-alt" id="reading">
+<section class="band band-alt" id="two">
   <div class="wrap">
-    <p class="kicker">How it reads</p>
-    <h2>Two ways in, one app.</h2>
-    <div class="pair">
+    <p class="kicker">Two platforms, one app</p>
+    <h2>Who it is for</h2>
+    <div class="two">
       <article class="card">
-        <h3><span class="num">01</span> The live websites</h3>
-        <p>Each website opens in its own tab with its own page and back history, so you can jump between the newsroom and the team’s sites without losing your place. Updates to the websites show up right away, with no app update needed.</p>
-        <p class="muted">Your theme, schedule picks and profile on PrompTugal.news are remembered on the device. Links to outside sources open in Safari.</p>
+        <h3><span class="num">01</span> Readers and attendees</h3>
+        <p class="count">{{features_readers_shipped}} of {{features_readers_total}} features in the beta</p>
+        <p>The news, the agenda in Lisbon time, the sessions you picked on the website and in the app as one list, reminders, and an offline copy for when the venue Wi-Fi fails. Your private data can live in your own encrypted vault, opened with Face ID.</p>
+        <p><a href="readers.html">What readers get</a></p>
       </article>
       <article class="card">
-        <h3><span class="num">02</span> The offline reader</h3>
-        <p>Tap the book icon for a native reader built for spotty conference networks. Agenda times always stay in Lisbon time, whatever your phone says.</p>
-        <ul class="tabs">
-          <li><strong>Now</strong> What is on and what is next.</li>
-          <li><strong>Agenda</strong> Every session, searchable by title or venue.</li>
-          <li><strong>Saved</strong> Your sessions, kept when you are offline.</li>
-          <li><strong>News</strong> The latest stories from the newsroom.</li>
-        </ul>
+        <h3><span class="num">02</span> Teams and newsrooms</h3>
+        <p class="count">{{features_teams_shipped}} of {{features_teams_total}} features in the beta</p>
+        <p>Native iPad dashboards of who is doing what: decisions waiting, briefings, what each agent reported, newsroom status. Messages to teammates go through vaults that only the team can read. Debug panels show every request and every decryption step.</p>
+        <p><a href="teams.html">What teams get</a></p>
       </article>
     </div>
   </div>
 </section>
 
-<section class="band" id="websites">
-  <div class="wrap split">
-    <div>
-      <p class="kicker">The sidebar</p>
-      <h2>{{site_count}} websites, ready at launch.</h2>
-      <p>The app comes with the newsroom and the sites around it. On iPad the list sits beside the page. On iPhone it opens as a sheet.</p>
-      <p>The list is a plain <code>Websites.json</code> file in <strong>Files → On My iPhone → PrompTugal</strong>. Reorder it, remove a site or add any HTTPS address, then reopen the app. A broken file falls back to the defaults and tells you so. <a href="support.html#websites">How to edit it</a>.</p>
-    </div>
-    {{websites_list}}
+<section class="band" id="first-customer">
+  <div class="wrap prose">
+    <p class="kicker">The first customer</p>
+    <h2>Our own team, at Web Summit Lisbon</h2>
+    <p>Seven to nine of us use PrompTugal at Web Summit Lisbon, 9 to 12 November 2026. That week tells us which features are worth keeping. After the summit we will offer the team features to other teams that work an event with agents. <a href="plans.html">How that will be sold</a>.</p>
+    <p>Today the beta is installed from Xcode or through TestFlight (<a href="support.html#beta">how to get it</a>). The App Store comes later.</p>
   </div>
 </section>
 
 <section class="band band-alt" id="built">
   <div class="wrap">
-    <p class="kicker">Built small, on purpose</p>
-    <h2>Only Apple’s frameworks, nothing else.</h2>
-    <p class="prose">SwiftUI and WebKit, with no third-party packages, no analytics SDK and no server of its own. The app reads the same public agenda feed, event records and RSS feed that PrompTugal.news publishes for everyone. These numbers are counted from the source each time this site is built.</p>
+    <p class="kicker">Built small, and shown</p>
+    <h2>Counted from the source on every build</h2>
+    <p class="prose">Apple’s own frameworks only, with no third-party packages and no analytics. These numbers are counted from the repository each time this site is built, and the <a href="features.html">feature list</a> is checked against the files that implement each feature.</p>
     <dl class="stats">
       <div><dt>{{swift_lines}}</dt><dd>lines of Swift</dd></div>
       <div><dt>{{swift_files}}</dt><dd>Swift files</dd></div>
       <div><dt>0</dt><dd>third-party packages</dd></div>
-      <div><dt>{{site_count}}</dt><dd>websites in the sidebar</dd></div>
+      <div><dt>{{features_shipped}}/{{features_total}}</dt><dd>features in the beta</dd></div>
     </dl>
   </div>
 </section>
@@ -95,8 +89,8 @@ order: 1
 <section class="band" id="independent">
   <div class="wrap"><div class="prose">
     <p class="kicker">Independent</p>
-    <h2>People and AI agents, reporting together.</h2>
-    <p>PrompTugal.news maps the AI scene in Portugal. Its stories are written by AI agents, then checked and signed by human editors, and every fact is sourced and dated. The app shows that work as it is. PrompTugal’s coverage is independent of Web Summit.</p>
-    <p><a href="https://promptugal.news/about/participant.html">About this coverage</a> · <a href="privacy.html">What the app keeps on your device</a></p>
+    <h2>People and AI agents, reporting together</h2>
+    <p>PrompTugal.news maps the AI scene in Portugal. Its stories are written by AI agents, then checked by human editors, and every fact is sourced and dated. The app shows that work as it is. PrompTugal is independent of Web Summit.</p>
+    <p><a href="https://promptugal.news/about/">About PrompTugal.news</a> · <a href="privacy.html">What the app keeps on your device</a> · <a href="{{repo_url}}">Source code</a></p>
   </div></div>
 </section>

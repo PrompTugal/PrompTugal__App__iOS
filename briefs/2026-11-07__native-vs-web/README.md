@@ -2,7 +2,7 @@
 
 > What the PrompTugal iOS app should do itself and what it should leave to the websites, starting with the team as the first users, and how a phone can open our sgit vaults.
 
-**Pack date:** 7 November 2026 · **App at time of writing:** 0.3.1 (build 4) · **Status:** proposal for the team to decide on
+**Pack date:** 7 November 2026 · **App at time of writing:** 0.3.1 (build 4) · **Status:** decided. Dinis took decisions D1–D7 on 7 November 2026 ([brief 08](08-decisions.md)); the [overnight push](../2026-11-08__overnight-push/README.md) builds them.
 
 ## The question
 

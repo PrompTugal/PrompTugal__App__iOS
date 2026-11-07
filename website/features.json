@@ -1,0 +1,203 @@
+{
+  "_about": "The feature list on the product site. A feature is shown as 'In the beta' only when every entry in 'evidence' is present at build time: a file glob must match at least one file, and 'screen:<id>' must be a screen registered in Shell/Destinations.swift with a real view, not a PendingFeatureView. Otherwise it is shown as 'Coming'. Write 'what' so it is true once the code is merged.",
+  "features": [
+    {
+      "id": "websites",
+      "platform": "readers",
+      "name": "PrompTugal.news in the app",
+      "kind": "web",
+      "what": "The live PrompTugal.news site opens in the app, with its own page and Back history, and updates the moment the site is released.",
+      "evidence": [
+        "PrompTugal/**/WebsiteView.swift"
+      ]
+    },
+    {
+      "id": "offline-reader",
+      "platform": "readers",
+      "name": "Offline reader",
+      "kind": "native",
+      "what": "Native Now, Agenda, Saved and News lists, kept on the device for when the venue Wi-Fi fails. Every time is shown in Lisbon time.",
+      "evidence": [
+        "PrompTugal/**/ReaderStore.swift",
+        "PrompTugal/**/Content.swift"
+      ]
+    },
+    {
+      "id": "one-schedule",
+      "platform": "readers",
+      "name": "One schedule",
+      "kind": "hybrid",
+      "what": "Sessions picked on the website and sessions saved in the app become one list, in the website's own format, so a pick made in one place shows in the other.",
+      "evidence": [
+        "PrompTugal/Schedule/ScheduleStore.swift",
+        "screen:team.schedule"
+      ]
+    },
+    {
+      "id": "web-bridge",
+      "platform": "readers",
+      "name": "Website and app talk to each other",
+      "kind": "hybrid",
+      "what": "A small, fixed set of messages between the website and the app, checked against a list of allowed sites. No message ever returns a key.",
+      "evidence": [
+        "PrompTugal/Bridge/*.swift"
+      ]
+    },
+    {
+      "id": "reminders",
+      "platform": "readers",
+      "name": "Reminders before sessions",
+      "kind": "native",
+      "what": "A notification before each picked session, with the venue, in Lisbon time.",
+      "evidence": [
+        "PrompTugal/Notifications/*.swift"
+      ]
+    },
+    {
+      "id": "news-native",
+      "platform": "readers",
+      "name": "The news, native and web side by side",
+      "kind": "hybrid",
+      "what": "The PrompTugal feed, newsletter editions and stories as native lists, next to the same pages on the web.",
+      "evidence": [
+        "screen:news.home"
+      ]
+    },
+    {
+      "id": "vault-reader",
+      "platform": "readers",
+      "name": "Your encrypted vault on the phone",
+      "kind": "native",
+      "what": "A vault reader written in Swift with Apple's own cryptography. It reads your encrypted vault, keeps a local cache and syncs only what changed. The server only ever holds ciphertext.",
+      "evidence": [
+        "Packages/SGitVault/Package.swift",
+        "Packages/SGitVault/Sources/**/*.swift",
+        "screen:vault"
+      ]
+    },
+    {
+      "id": "face-id",
+      "platform": "readers",
+      "name": "Face ID unlock",
+      "kind": "native",
+      "what": "Vault keys stay on this device, in the Keychain, behind Face ID. They are never synced, logged or shown.",
+      "evidence": [
+        "PrompTugal/Vault/VaultKeychain.swift"
+      ]
+    },
+    {
+      "id": "graph",
+      "platform": "readers",
+      "name": "The graph, drawn natively",
+      "kind": "native",
+      "what": "The PrompTugal.news graph of companies, people, events and topics, drawn as a native view you can pan and search.",
+      "evidence": [
+        "screen:news.graph"
+      ]
+    },
+    {
+      "id": "ask",
+      "platform": "readers",
+      "name": "Ask, with your own key",
+      "kind": "native",
+      "what": "Chat about the agenda, your picks and the news, using your own OpenRouter key, kept in the Keychain and sent only to openrouter.ai.",
+      "evidence": [
+        "PrompTugal/AI/*.swift",
+        "screen:collab.ai"
+      ]
+    },
+    {
+      "id": "topup",
+      "platform": "readers",
+      "name": "Reading meter top-up in the app",
+      "kind": "native",
+      "what": "The website's reading meter, topped up with an Apple in-app purchase instead of a card link.",
+      "evidence": [
+        "PrompTugal/Store/*.swift",
+        "screen:team.store"
+      ]
+    },
+    {
+      "id": "team-dashboards",
+      "platform": "teams",
+      "name": "What the team is doing",
+      "kind": "native",
+      "what": "Native iPad dashboards of the team: who is here, what needs a decision, what is overdue and what is named for me, built from the team site's public data and cached for offline use.",
+      "evidence": [
+        "screen:team.people"
+      ]
+    },
+    {
+      "id": "agents",
+      "platform": "teams",
+      "name": "What the agents are doing",
+      "kind": "native",
+      "what": "The agents' wakes, reports, pulse check-ins and log, in one native view, newest first.",
+      "evidence": [
+        "screen:agents.activity"
+      ]
+    },
+    {
+      "id": "newsroom-status",
+      "platform": "teams",
+      "name": "Newsroom status",
+      "kind": "native",
+      "what": "The newsroom's desks, stories in progress and decisions waiting, from its published JSON.",
+      "evidence": [
+        "screen:news.newsroom"
+      ]
+    },
+    {
+      "id": "briefed",
+      "platform": "teams",
+      "name": "Briefed",
+      "kind": "hybrid",
+      "what": "My stand-up briefings, the brief packs and the decisions waiting on me, in one place.",
+      "evidence": [
+        "screen:briefed"
+      ]
+    },
+    {
+      "id": "lanes",
+      "platform": "teams",
+      "name": "Messages through vaults",
+      "kind": "native",
+      "what": "Append-only lanes in the vault for notes to teammates and tips to the newsroom. Only people with the vault's keys can read them.",
+      "evidence": [
+        "PrompTugal/Lanes/*.swift",
+        "screen:collab.lanes"
+      ]
+    },
+    {
+      "id": "coordination",
+      "platform": "teams",
+      "name": "Where is everyone",
+      "kind": "native",
+      "what": "Teammates' picks, read from the vaults they choose to share, next to your own schedule.",
+      "evidence": [
+        "PrompTugal/Coordination/*.swift"
+      ]
+    },
+    {
+      "id": "debug",
+      "platform": "teams",
+      "name": "Debug panels",
+      "kind": "native",
+      "what": "Every request the app makes, every vault read and decryption step with its size and timing, the bridge messages, storage and the build. Which keys exist and where, never their values.",
+      "evidence": [
+        "screen:debug",
+        "PrompTugal/Debug/*.swift"
+      ]
+    },
+    {
+      "id": "charts",
+      "platform": "teams",
+      "name": "Traffic and status charts",
+      "kind": "native",
+      "what": "Website traffic and newsroom status as native charts on iPad, next to the web originals.",
+      "evidence": [
+        "screen:obs.native"
+      ]
+    }
+  ]
+}

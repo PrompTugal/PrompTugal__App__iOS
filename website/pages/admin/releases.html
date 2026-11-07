@@ -1,0 +1,21 @@
+<!--
+title: Releases · PrompTugal for iOS
+description: Every release of the PrompTugal iOS repository and its site, read from the git tags, with the changes each one released.
+robots: noindex
+order: 13
+-->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">Developer area</p>
+    <h1>Release history</h1>
+    <p class="lede">Each push to <code>dev</code> becomes a release: CI bumps <code>VERSION</code>, tags it and deploys this site. The current release is {{release}}. The app’s own version, {{version}} (build {{build}}), is separate and set in Xcode.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="history">
+  <div class="wrap prose">
+    <p class="kicker">From git tags</p>
+    <h2>Releases, newest first</h2>
+    {{releases}}
+  </div>
+</section>
