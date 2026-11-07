@@ -197,8 +197,9 @@ final class AIKeyStore {
     static let keyInfoURL = URL(string: "https://openrouter.ai/api/v1/key")!
 
     func check(http: HTTPClient = .shared) async throws -> KeyInfo {
+        let token = try key()
         var request = URLRequest(url: Self.keyInfoURL, timeoutInterval: 20)
-        request.setValue("Bearer \(try key())", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         let (data, response) = try await http.data(for: request, label: "ai.key.check")
         guard (200..<300).contains(response.statusCode) else {
             throw OpenRouter.ServerError(status: response.statusCode, detail: OpenRouter.errorMessage(in: data))
