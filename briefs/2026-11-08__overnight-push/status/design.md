@@ -2,7 +2,7 @@
 
 > The shell is the app's root on dev: every section is reachable on iPhone and iPad. Team and vault screens are wired in; collab's land with night/collab. Now polishing every screen on both devices.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 06:30 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 07:30 UTC
 
 ## Done
 
@@ -54,6 +54,21 @@ Branch: `night/design` (rebased on `night/platform`) · Last update: 06:30 UTC
 - **Ask beside any screen on iPad** (collab's `askAnywhere`, ⌘K), merged into dev.
 - **First screenshots reviewed** (platform's screens.yml, run 4): every screen renders on iPhone and iPad with sample data. Fixed from them: "in in 1 day" on the stand-up card, "Updated tomorrow" for future time stamps, the web twin's title leaking into the iPhone navigation bar (now a sheet on iPhone, a column on iPad), and long iPhone tab titles (now Today, Team, Agents, News).
 - **`pt.destination.<id>`** accessibility identifier on every screen the shell opens, so the screenshot test fails when a screen did not open.
+
+- **Agenda made fast** for 200+ sessions and VoiceOver (the screenshot test's accessibility query had timed out after 90 s): filtering, grouping and labels worked out once per change, small rows, one accessibility element per row with "open" and "add to my schedule" actions.
+- **Team's `NextHoursCard`** on My day (for me) and on the Wall.
+- **CI:** a80653e passed the iPhone unit tests (identifiers, screenshot fixes, native Agenda); b3142ce (Agenda speed, NextHoursCard) waiting for its build job.
+
+## What native taught us, for the website
+
+From building these screens over the website's own JSON, ideas worth taking back to promptugal.news and the team site:
+
+1. **One wall page.** The Wall (team load, wake grid, pipeline, runs, next stand-up, refreshing itself) is the screen people will leave open. The website has these on five pages; a single `/wall/` page would serve a screen at the stand.
+2. **The wake grid as data, not text.** `dashboard.json` sends the grid as a string of symbols (`●◐○✕H•·`). It draws well, but a small array of states per hour, with the wake's line attached, would let any client show what each dot was.
+3. **A `version` and `built_at` in every JSON file.** me.json and status.json have them; desks.json and stories.json do not. "Updated 4 min ago" needs them everywhere.
+4. **Lenient by default.** Some fields change type (agents' `asks` are strings or objects). Clients cope, but a schema per file (status.json has one) would stop surprises.
+5. **Newsletter as structured data.** The plain-text email reads well natively once headings, bullets and links are parsed; a JSON twin (sections, items, links) would make that exact.
+6. **Native and web side by side** (the web-twin column on iPad) is the fastest way to see what each does better. The website could link each page's JSON and its app screen the same way.
 
 ## In progress
 
