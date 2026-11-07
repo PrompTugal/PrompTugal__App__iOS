@@ -1,0 +1,10 @@
+// Copy to Config/Local.xcconfig (git ignores it) to build on your device
+// without editing the project file.
+
+// Your Apple team ID (Xcode → Settings → Accounts, or developer.apple.com → Membership).
+DEVELOPMENT_TEAM = ABCDE12345
+
+// A free (personal) team cannot sign App Groups or associated domains.
+// Uncomment to build without them: the vault, widgets and passkeys that need
+// them will not work, everything else will.
+// PT_ENTITLEMENTS = Config/PrompTugal-Basic.entitlements
