@@ -133,4 +133,18 @@ final class CryptoTests: XCTestCase {
         let bytes = try CanonicalJSON.signingBytes(commitJSON: Data(input.utf8))
         XCTAssertEqual(String(decoding: bytes, as: UTF8.self), expected)
     }
+
+    func testClassifyHowTeamKeysArrive() {
+        let hex = String(repeating: "ab", count: 32)
+        // Pasted from chat or notes: surrounding spaces and newlines are fine.
+        XCTAssertEqual(VaultKey.classify("  sgit_private_vault_abc123:fixtplain1\n"), .vault)
+        XCTAssertEqual(VaultKey.classify("sgit_vk1_abc:fixtplain1"), .vault)                 // legacy prefix
+        XCTAssertEqual(VaultKey.classify("sgit_rk1_\(hex):fixtplain1"), .privateRead)      // legacy prefix
+        XCTAssertEqual(VaultKey.classify("\(hex):fixtplain1"), .bareRead)
+        XCTAssertEqual(VaultKey.classify("passphrase24charsxxxxxxx:fixtplain1"), .vault)   // sgit's own key file form
+        XCTAssertNil(VaultKey.classify("no colon at all"))
+        // A 64-hex passphrase is read as a read key (sgit generates 24-character passphrases).
+        XCTAssertEqual(VaultKey.classify("\(hex.uppercased()):fixtplain1"), .bareRead)
+        XCTAssertEqual(VaultKey.classify("sgit_private_read_\(hex):fixtplain1"), .privateRead)
+    }
 }
