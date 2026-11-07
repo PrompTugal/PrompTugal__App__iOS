@@ -10,6 +10,9 @@
 3. The 4 team AITests may move to the Team test target.
 4. Order: PTLanes once PTVaultUI is on dev; PTAsk last, after PTAgenda, PTNews and PTVaultUI. The conductor pings at each step.
 
+## Design's map (7 Nov, 23:48 UTC)
+Two `TeamFeatures.shared` uses must be covered: `AIContext.swift:320` (`teamData`, now `TeamAskProvider.part(for:)`) and `AskView.swift:196` (`AskMentions` schedule, now `isPicked` / `togglePick` on the provider). Added to the protocol above.
+
 ## Done
 - Read the three-apps README, contracts and the overnight rules.
 - Mapped what `AI/` (9 files) and `Lanes/` (9 files) use from outside. About 4,000 lines.
@@ -55,6 +58,8 @@ Principle: PTAsk and PTLanes never name `TeamFeatures`, `CoordinationStore`, `Te
     var personName: String? { get }                       // used in the system prompt; nil in the public app
     func agenda() async -> [Event]
     func myPickIds() -> [String]
+    func isPicked(_ event: Event) -> Bool                 // AskMentions (AskView.swift:196) used TeamFeatures.shared.schedule
+    func togglePick(_ event: Event)                       // PublicAskProvider uses the reader's saved sessions; TeamAskProvider uses ScheduleStore
     func part(for kind: AIContextKind, now: Date) async -> AIContextPart?   // .team .agents .teammates .plan; public app returns nil
     func runTool(_ name: String, args: [String: String], now: Date) async -> (text: String, summary: String)?  // team_status, my_agents, where_is_everyone
     var extraStarters: [AIStarter] { get }                // "My agents" only in Team
