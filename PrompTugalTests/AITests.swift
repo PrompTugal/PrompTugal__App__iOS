@@ -300,3 +300,77 @@ struct AIKeyStoreTests {
         #expect(store.turns.last?.text.contains("No OpenRouter key") == true)
     }
 }
+
+@Suite("Ask: tools")
+struct AIToolTests {
+    private var events: [Event] {
+        [Event(date: "2026-11-10", time: "11:50-12:10", title: "The agentic internet", place: "Centre Stage", kind: "talk", official: true, page: "events/agentic/index.html"),
+         Event(date: "2026-11-10", time: "12:00-12:30", title: "Segurança e IA", place: "Stage 2", kind: "talk", official: true, page: "events/seg/index.html"),
+         Event(date: "2026-11-11", time: "10:00-10:30", title: "Agentic payments", place: "FinTech Stage", kind: "talk", official: true, page: "events/pay/index.html")]
+    }
+
+    @Test("Tool call deltas fold into whole calls, by index")
+    func accumulatesCalls() throws {
+        var acc = StreamAccumulator()
+        try acc.add(#"{"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call_a","function":{"name":"search_","arguments":"{\"que"}}]}}]}"#)
+        try acc.add(#"{"choices":[{"delta":{"tool_calls":[{"index":0,"function":{"name":"agenda","arguments":"ry\":\"agentic\"}"}}]}}]}"#)
+        try acc.add(#"{"choices":[{"delta":{"tool_calls":[{"index":1,"function":{"name":"now","arguments":"{}"}}]},"finish_reason":"tool_calls"}]}"#)
+        let calls = acc.toolCalls
+        #expect(calls.count == 2)
+        #expect(calls[0].id == "call_a" && calls[0].function.name == "search_agenda")
+        #expect(AITools.arguments(calls[0].function.arguments) == ["query": "agentic"])
+        #expect(calls[1].id == "call_1" && calls[1].function.name == "now")
+        #expect(acc.finishReason == "tool_calls")
+        var plain = StreamAccumulator()
+        try plain.add(#"{"choices":[{"delta":{"content":"hi"}}]}"#)
+        #expect(plain.toolCalls.isEmpty, "negative control: no calls without tool deltas")
+    }
+
+    @Test("Requests carry tools only when given, and tool messages encode their ids")
+    func requestWithTools() throws {
+        let call = OpenRouter.ToolCall(id: "c1", function: .init(name: "now", arguments: "{}"))
+        let messages: [OpenRouter.Message] = [.init(role: .user, content: "q"),
+                                              .init(role: .assistant, content: "", toolCalls: [call]),
+                                              .init(role: .tool, content: "12:00", toolCallId: "c1")]
+        let with = try OpenRouter.request(key: fakeKey, model: "m", messages: messages, tools: AITools.definitions)
+        let body = try #require(with.httpBody)
+        let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+        #expect((json["tools"] as? [Any])?.count == AITools.definitions.count)
+        #expect(json["tool_choice"] as? String == "auto")
+        let sent = try #require(json["messages"] as? [[String: Any]])
+        #expect(sent[2]["tool_call_id"] as? String == "c1")
+        #expect(((sent[1]["tool_calls"] as? [[String: Any]])?.first?["function"] as? [String: Any])?["name"] as? String == "now")
+        let without = try OpenRouter.request(key: fakeKey, model: "m", messages: messages)
+        let plainBody = try #require(without.httpBody)
+        let plain = try #require(try JSONSerialization.jsonObject(with: plainBody) as? [String: Any])
+        #expect(plain["tools"] == nil && plain["tool_choice"] == nil)
+    }
+
+    @Test("Agenda search: every word, any case or accent, one day if asked")
+    func search() {
+        #expect(AITools.search(events, query: "agentic", day: nil).map(\.title) == ["The agentic internet", "Agentic payments"])
+        #expect(AITools.search(events, query: "AGENTIC", day: "2026-11-11").map(\.title) == ["Agentic payments"])
+        #expect(AITools.search(events, query: "seguranca stage", day: nil).map(\.title) == ["Segurança e IA"])
+        #expect(AITools.search(events, query: "agentic nothing", day: nil).isEmpty)
+    }
+
+    @Test("On now and next hour")
+    func onNow() throws {
+        let at = try #require(Lisbon.instant(day: "2026-11-10", clock: "11:55"))
+        let (current, next) = AITools.onNow(events, at: at)
+        #expect(current.map(\.title) == ["The agentic internet"])
+        #expect(next.map(\.title) == ["Segurança e IA"])
+    }
+
+    @Test("Tool definitions have unique names and object schemas")
+    func definitions() throws {
+        let names = AITools.definitions.map(\.function.name)
+        #expect(Set(names).count == names.count)
+        let data = try JSONEncoder().encode(AITools.definitions)
+        let decoded = try #require(try JSONSerialization.jsonObject(with: data) as? [[String: Any]])
+        for tool in decoded {
+            let parameters = (tool["function"] as? [String: Any])?["parameters"] as? [String: Any]
+            #expect(parameters?["type"] as? String == "object")
+        }
+    }
+}

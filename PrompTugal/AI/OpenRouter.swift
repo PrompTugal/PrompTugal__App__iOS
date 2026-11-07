@@ -35,9 +35,44 @@ enum OpenRouter {
     // MARK: Messages
 
     struct Message: Codable, Hashable, Sendable {
-        enum Role: String, Codable, Sendable { case system, user, assistant }
+        enum Role: String, Codable, Sendable { case system, user, assistant, tool }
         var role: Role
         var content: String
+        /// On an assistant message that asked for tools.
+        var toolCalls: [ToolCall]?
+        /// On a tool result: which call it answers.
+        var toolCallId: String?
+
+        init(role: Role, content: String, toolCalls: [ToolCall]? = nil, toolCallId: String? = nil) {
+            self.role = role
+            self.content = content
+            self.toolCalls = toolCalls
+            self.toolCallId = toolCallId
+        }
+
+        enum CodingKeys: String, CodingKey { case role, content, toolCalls = "tool_calls", toolCallId = "tool_call_id" }
+    }
+
+    /// A function call the model asked for (OpenAI-style, as OpenRouter passes it through).
+    struct ToolCall: Codable, Hashable, Sendable {
+        struct Function: Codable, Hashable, Sendable {
+            var name: String
+            var arguments: String
+        }
+        var id: String
+        var type = "function"
+        var function: Function
+    }
+
+    /// A tool the model may call: a name, a description and a JSON schema for its arguments.
+    struct Tool: Encodable, Sendable {
+        struct Function: Encodable, Sendable {
+            let name: String
+            let description: String
+            let parameters: JSONValue
+        }
+        var type = "function"
+        let function: Function
     }
 
     // MARK: Request
@@ -48,6 +83,9 @@ enum OpenRouter {
         let messages: [Message]
         let stream: Bool
         let usage: Usage
+        var tools: [Tool]?
+        var toolChoice: String?
+        enum CodingKeys: String, CodingKey { case model, messages, stream, usage, tools, toolChoice = "tool_choice" }
     }
 
     enum RequestError: Error, Equatable, LocalizedError {
@@ -75,7 +113,8 @@ enum OpenRouter {
     }
 
     /// The POST. Streamed unless `stream` is false.
-    static func request(key: String, model: String, messages: [Message], stream: Bool = true) throws -> URLRequest {
+    static func request(key: String, model: String, messages: [Message], tools: [Tool] = [],
+                        stream: Bool = true) throws -> URLRequest {
         let key = try validated(key: key)
         var request = URLRequest(url: endpoint, timeoutInterval: 120)
         request.httpMethod = "POST"
@@ -85,7 +124,8 @@ enum OpenRouter {
         request.setValue(referer, forHTTPHeaderField: "HTTP-Referer")
         request.setValue(title, forHTTPHeaderField: "X-Title")
         let body = Body(model: model.isEmpty ? defaultModel : model, messages: messages, stream: stream,
-                        usage: .init(include: true))
+                        usage: .init(include: true), tools: tools.isEmpty ? nil : tools,
+                        toolChoice: tools.isEmpty ? nil : "auto")
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
         request.httpBody = try encoder.encode(body)
@@ -173,10 +213,30 @@ struct StreamAccumulator: Sendable {
     private(set) var finishReason: String?
     private(set) var usage: StreamUsage?
     private(set) var events = 0
+    private var calls: [Int: OpenRouter.ToolCall] = [:]
+
+    /// The tool calls the answer asked for, in order, each with an id.
+    var toolCalls: [OpenRouter.ToolCall] {
+        calls.keys.sorted().enumerated().compactMap { offset, key in
+            guard var call = calls[key], !call.function.name.isEmpty else { return nil }
+            if call.id.isEmpty { call.id = "call_\(offset)" }
+            return call
+        }
+    }
 
     private struct Event: Decodable {
         struct Choice: Decodable {
-            struct Delta: Decodable { let content: String? }
+            struct Delta: Decodable {
+                let content: String?
+                let toolCalls: [ToolCallDelta]?
+                enum CodingKeys: String, CodingKey { case content, toolCalls = "tool_calls" }
+            }
+            struct ToolCallDelta: Decodable {
+                struct Function: Decodable { let name: String?; let arguments: String? }
+                let index: Int?
+                let id: String?
+                let function: Function?
+            }
             let delta: Delta?
             let message: Delta?
             let finishReason: String?
@@ -204,11 +264,36 @@ struct StreamAccumulator: Sendable {
         if let usage = event.usage { self.usage = usage; delta.usage = usage }
         if let choice = event.choices?.first {
             if let reason = choice.finishReason { finishReason = reason; delta.finishReason = reason }
+            for (offset, part) in ((choice.delta ?? choice.message)?.toolCalls ?? []).enumerated() {
+                let index = part.index ?? (calls.keys.max().map { $0 + 1 } ?? offset)
+                var call = calls[index] ?? OpenRouter.ToolCall(id: "", function: .init(name: "", arguments: ""))
+                if let id = part.id, !id.isEmpty { call.id = id }
+                if let name = part.function?.name { call.function.name += name }
+                if let arguments = part.function?.arguments { call.function.arguments += arguments }
+                calls[index] = call
+            }
             if let text = (choice.delta ?? choice.message)?.content, !text.isEmpty {
                 content += text
                 delta.text = text
             }
         }
         return delta
+    }
+}
+
+/// Any JSON, for tool schemas.
+indirect enum JSONValue: Encodable, Sendable, Equatable {
+    case string(String), number(Double), bool(Bool), object([String: JSONValue]), array([JSONValue]), null
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let value): try container.encode(value)
+        case .number(let value): try container.encode(value)
+        case .bool(let value): try container.encode(value)
+        case .object(let value): try container.encode(value)
+        case .array(let value): try container.encode(value)
+        case .null: try container.encodeNil()
+        }
     }
 }

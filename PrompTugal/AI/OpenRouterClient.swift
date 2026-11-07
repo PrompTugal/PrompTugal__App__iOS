@@ -8,7 +8,7 @@ import Foundation
 struct OpenRouterClient: Sendable {
     enum Event: Sendable {
         case text(String)
-        case finished(model: String?, reason: String?, usage: StreamUsage?)
+        case finished(model: String?, reason: String?, usage: StreamUsage?, toolCalls: [OpenRouter.ToolCall])
     }
 
     let http: HTTPClient
@@ -18,12 +18,12 @@ struct OpenRouterClient: Sendable {
     }
 
     /// Streams the answer. Cancel the consuming task to stop: the request is cancelled and logged as such.
-    func stream(key: String, model: String, messages: [OpenRouter.Message],
+    func stream(key: String, model: String, messages: [OpenRouter.Message], tools: [OpenRouter.Tool] = [],
                 label: String = "ai.chat") -> AsyncThrowingStream<Event, Error> {
         AsyncThrowingStream { continuation in
             let task = Task {
                 do {
-                    let request = try OpenRouter.request(key: key, model: model, messages: messages)
+                    let request = try OpenRouter.request(key: key, model: model, messages: messages, tools: tools)
                     try await run(request, label: label, continuation: continuation)
                     continuation.finish()
                 } catch {
@@ -108,7 +108,7 @@ struct OpenRouterClient: Sendable {
                 }
             }
             continuation.yield(.finished(model: accumulator.model, reason: accumulator.finishReason,
-                                         usage: accumulator.usage))
+                                         usage: accumulator.usage, toolCalls: accumulator.toolCalls))
             await finish(nil)
         } catch {
             await finish(error)

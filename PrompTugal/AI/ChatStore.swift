@@ -8,7 +8,7 @@ final class ChatStore {
     static let shared = ChatStore()
 
     struct Turn: Identifiable, Equatable {
-        enum Role: Equatable { case user, assistant, error }
+        enum Role: Equatable { case user, assistant, error, tool }
         let id = UUID()
         let role: Role
         var text: String
@@ -29,6 +29,7 @@ final class ChatStore {
         var firstTokenMs: Double?
         var totalMs: Double?
         var finishReason: String?
+        var toolCalls: [String] = []
     }
 
     private(set) var turns: [Turn] = []
@@ -36,6 +37,10 @@ final class ChatStore {
     var draft = ""
     var model: String {
         didSet { defaults.set(model, forKey: "ai.model") }
+    }
+    /// Let the model call the app's read-only tools (agenda search, picks, team status).
+    var useTools: Bool {
+        didSet { defaults.set(useTools, forKey: "ai.tools") }
     }
     var contextKinds: Set<AIContextKind> {
         didSet { defaults.set(contextKinds.map(\.rawValue), forKey: "ai.context") }
@@ -56,6 +61,7 @@ final class ChatStore {
         self.defaults = defaults
         self.gather = gather
         model = defaults.string(forKey: "ai.model") ?? OpenRouter.defaultModel
+        useTools = defaults.object(forKey: "ai.tools") as? Bool ?? true
         let saved = (defaults.array(forKey: "ai.context") as? [String])?.compactMap(AIContextKind.init(rawValue:))
         contextKinds = Set(saved ?? [.agenda, .picks, .team])
     }
@@ -123,37 +129,58 @@ final class ChatStore {
             return
         }
         let parts = await gather(contextKinds.union(include)) + extra()
-        let system = AIContextAssembler.systemPrompt(parts: parts, now: .now, person: CollabHooks.me()?.name)
-        let messages = Self.messages(system: system, turns: history, question: question)
-        let bytes = (try? OpenRouter.request(key: key, model: model, messages: messages).httpBody?.count) ?? 0
-        var debug = RequestDebug(model: model, systemPrompt: system, parts: parts, messageCount: messages.count,
-                                 requestBytes: bytes, sentAt: .now)
-        turns.append(Turn(role: .assistant, text: "", model: model, debug: debug, streaming: true))
-        let index = turns.count - 1
-        let started = ContinuousClock.now
+        let system = AIContextAssembler.systemPrompt(parts: parts, now: .now, person: CollabHooks.me()?.name,
+                                                     tools: useTools)
+        var messages = Self.messages(system: system, turns: history, question: question)
 
-        do {
-            for try await event in client.stream(key: key, model: model, messages: messages) {
-                switch event {
-                case .text(let text):
-                    if debug.firstTokenMs == nil { debug.firstTokenMs = Self.ms(since: started) }
-                    turns[index].text += text
-                case .finished(let served, let reason, let usage):
-                    turns[index].model = served ?? model
-                    turns[index].usage = usage
-                    debug.finishReason = reason
+        for hop in 0...AITools.maxHops {
+            let tools = useTools && hop < AITools.maxHops ? AITools.definitions : []
+            let bytes = (try? OpenRouter.request(key: key, model: model, messages: messages, tools: tools).httpBody?.count) ?? 0
+            var debug = RequestDebug(model: model, systemPrompt: system, parts: parts, messageCount: messages.count,
+                                     requestBytes: bytes, sentAt: .now)
+            turns.append(Turn(role: .assistant, text: "", model: model, debug: debug, streaming: true))
+            let index = turns.count - 1
+            let started = ContinuousClock.now
+            var calls: [OpenRouter.ToolCall] = []
+            var failed = false
+
+            do {
+                for try await event in client.stream(key: key, model: model, messages: messages, tools: tools) {
+                    switch event {
+                    case .text(let text):
+                        if debug.firstTokenMs == nil { debug.firstTokenMs = Self.ms(since: started) }
+                        turns[index].text += text
+                    case .finished(let served, let reason, let usage, let toolCalls):
+                        turns[index].model = served ?? model
+                        turns[index].usage = usage
+                        debug.finishReason = reason
+                        calls = toolCalls
+                    }
+                }
+            } catch {
+                failed = true
+                if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
+                    turns.append(Turn(role: .error, text: error.localizedDescription))
+                } else {
+                    turns[index].text += turns[index].text.isEmpty ? "(stopped)" : " (stopped)"
                 }
             }
-        } catch {
-            if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
-                turns.append(Turn(role: .error, text: error.localizedDescription))
-            } else {
-                turns[index].text += turns[index].text.isEmpty ? "(stopped)" : " (stopped)"
+            debug.totalMs = Self.ms(since: started)
+            debug.toolCalls = calls.map(\.function.name)
+            turns[index].debug = debug
+            turns[index].streaming = false
+            guard !failed, !calls.isEmpty, !Task.isCancelled else { return }
+
+            // The model asked for data: run each tool, show it, send the results back.
+            messages.append(.init(role: .assistant, content: turns[index].text, toolCalls: calls))
+            if turns[index].text.isEmpty { turns.remove(at: index) }
+            for call in calls {
+                let (result, summary) = await AITools.run(call)
+                let args = call.function.arguments.trimmingCharacters(in: .whitespacesAndNewlines)
+                turns.append(Turn(role: .tool, text: "\(call.function.name)(\(args == "{}" ? "" : args)) → \(summary)"))
+                messages.append(.init(role: .tool, content: result, toolCallId: call.id))
             }
         }
-        debug.totalMs = Self.ms(since: started)
-        turns[index].debug = debug
-        turns[index].streaming = false
     }
 
     private static func ms(since start: ContinuousClock.Instant) -> Double {

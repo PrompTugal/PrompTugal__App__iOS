@@ -117,6 +117,11 @@ struct AskTurnView: View {
                     .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
                     .textSelection(.enabled)
             }
+        case .tool:
+            Label(turn.text, systemImage: "wrench.and.screwdriver")
+                .font(.caption.monospaced())
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
         case .error:
             Label(turn.text, systemImage: "exclamationmark.triangle")
                 .font(.subheadline)
@@ -156,6 +161,7 @@ struct AskDebugDisclosure: View {
                 if let first = request.firstTokenMs { LabeledContent("First text", value: "\(Int(first)) ms") }
                 if let total = request.totalMs { LabeledContent("Whole answer", value: "\(Int(total)) ms") }
                 if let reason = request.finishReason { LabeledContent("Finish", value: reason) }
+                if !request.toolCalls.isEmpty { LabeledContent("Asked for", value: request.toolCalls.joined(separator: ", ")) }
                 ForEach(request.parts) { part in
                     LabeledContent(part.kind.title, value: part.body.isEmpty ? "empty, left out" : "\(part.body.count) chars")
                 }
@@ -283,6 +289,12 @@ struct AskSettingsView: View {
                 Text(CollabHooks.vault == nil
                      ? "Vault copies need the vault on this build. The file is \(AIKeyStore.vaultPath), encrypted in your vault."
                      : "Writes \(AIKeyStore.vaultPath), encrypted in your vault, so your other devices can take it.")
+            }
+
+            Section {
+                Toggle("Let Ask read the app's data with tools", isOn: $store.useTools)
+            } footer: {
+                Text("Read-only: search the agenda, my picks, team status, my agents, teammates' plans. Each call shows in the conversation.")
             }
 
             Section("Model") {
