@@ -31,7 +31,7 @@ final class WriteTests: XCTestCase {
         // Python: json.dumps({"a": "Olá\n", "b": [None, True, 3], "c": {"d": ""}})
         let value = PythonJSON.object([("a", .string("Olá\n")), ("b", .array([.null, .bool(true), .int(3)])),
                                        ("c", .object([("d", .string(""))]))])
-        XCTAssertEqual(value.dumps(), #"{"a": "Olá\n", "b": [null, true, 3], "c": {"d": ""}}"#)
+        XCTAssertEqual(value.dumps(), #"{"a": "Ol\u00e1\n", "b": [null, true, 3], "c": {"d": ""}}"#)
     }
 
     func testCommitToANewDeviceBranchAndReadItBack() async throws {
