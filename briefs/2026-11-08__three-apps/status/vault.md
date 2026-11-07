@@ -35,6 +35,11 @@ Imports in Vault/: Foundation, SwiftUI, UIKit, CryptoKit, Security, LocalAuthent
 
 TeamFeatures, AIKeyStore, AskView, CollabDebugPanel, LaneAddress, LanesView, LanesStore, TeamNotes, VaultTrafficPanel, DebugHomeView, SystemPanels, DebugPreviews, CollabVaultGlue, CoordinationStore, CollabHooks, TeamPlansView, PrompTugalApp, TeamBackground, AppShell, Destinations, ScheduleVaultLink, ScheduleVaultSync, ScheduleMerge, MyDayView. These belong to other roles. They get `VaultSession` and friends through `@_exported import` in Exports.swift, so they need no change from me.
 
+## Added by the conductor
+
+- Collab defines `CollabVaultAccess` in PTCore (`CollabSeams.swift`, plain types only). PTVaultUI gets the conformance `VaultCollabAccess`, wrapping `VaultSession`, as `CollabVaultGlue` does today. That means PTVaultUI depends on PTCore after all. Waiting for the exact protocol from the conductor.
+- Make `VaultSession` API public for the callers in Schedule/, AI/, Lanes/ and Coordination/.
+
 ## Tests
 
 - `PrompTugalTests/VaultAppTests.swift` (uses `@testable import PrompTugal`, covers trust store, Keychain errors, "my vault", user-facing errors) moves to `Packages/PTVaultUI/Tests/PTVaultUITests/` with `@testable import PTVaultUI`. Risk: Keychain tests may need an app host on the simulator. If they fail without a host, they stay in the Team app's test target and I write that here.
