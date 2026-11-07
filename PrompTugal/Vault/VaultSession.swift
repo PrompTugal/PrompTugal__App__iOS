@@ -293,6 +293,32 @@ final class VaultSession {
         return nil
     }
 
+    // MARK: Append lanes (for collab)
+
+    /// The files under `folder` (e.g. "lanes/to-newsroom") in a vault, newest name last.
+    func files(in folder: String, vaultId: String? = nil) async throws -> [VaultFile] {
+        guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else { return [] }
+        let prefix = folder.hasSuffix("/") ? folder : folder + "/"
+        return try await entry.vault.files().filter { $0.path.hasPrefix(prefix) }
+    }
+
+    /// Add one new file to `folder` and push it to `branch`. The name is unique
+    /// (`<UTC time>-<device branch>-<4 hex>.json` unless given), so appends from several
+    /// devices never conflict; a lost race on the ref only retries. Returns the path written.
+    @discardableResult
+    func append(_ data: Data, to folder: String, name: String? = nil, vaultId: String? = nil,
+                branch: String = "current", message: String? = nil) async throws -> String {
+        let stamp = ISO8601DateFormatter().string(from: Date())
+            .replacingOccurrences(of: ":", with: "").replacingOccurrences(of: "-", with: "")
+        let unique = name ?? "\(stamp)-\(deviceBranch)-\(String(UUID().uuidString.prefix(4)).lowercased()).json"
+        let trimmed = folder.hasSuffix("/") ? String(folder.dropLast()) : folder
+        let path = trimmed.isEmpty ? unique : trimmed + "/" + unique
+        try await update(path, vaultId: vaultId, branch: branch, message: message ?? "Append to \(trimmed)") { current in
+            current == nil ? data : nil                    // never overwrite: an existing name is left alone
+        }
+        return path
+    }
+
     // MARK: Schedule picks (the website's `agenda/picks`, nr.schedule.v1)
 
     /// Where the website keeps picks in the reader vault: `__vault.save('agenda/picks', …)` writes
