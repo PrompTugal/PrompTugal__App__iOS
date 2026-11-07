@@ -32,7 +32,6 @@ struct AppShell: View {
         }
         .onOpenURL { url in route(url) }
         .onAppear {
-            if let me = LaunchOptions.me { UserDefaults.standard.set(me, forKey: DashboardData.meKey) }
             if let id = LaunchOptions.destination, let destination = Destinations.destination(id) {
                 selection = id
                 tab = destination.phoneTab != nil ? id : "more"

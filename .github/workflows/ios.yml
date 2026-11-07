@@ -6,6 +6,7 @@ name: iOS
 #
 #   build    xcodebuild build for the iOS Simulator, unsigned, then swift test in
 #            Packages/SGitVault on the same runner (skipped if the folder is missing)
+#   release  xcodebuild build -configuration Release for a device, unsigned (app + extensions)
 #   test     xcodebuild test on an iPhone and an iPad simulator: dev, pull requests
 #            and workflow_dispatch only (night/** pushes get the build job alone)
 #
@@ -97,6 +98,43 @@ jobs:
           cd Packages/SGitVault
           "$GITHUB_WORKSPACE/.github/scripts/run-and-summarize.sh" "SGitVault swift test" \
             "$RUNNER_TEMP/logs/swift-test.log" -- swift test
+
+  release:
+    name: Release build (device, unsigned)
+    # The configuration App Store and TestFlight builds use: optimised, DEBUG not defined, so
+    # code behind #if DEBUG (launch arguments, the web inspector) must compile out cleanly.
+    # Builds the app with its embedded widget and intents extensions and SGitVault. No signing.
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: macos-26
+    concurrency:
+      group: ios-release-build-${{ github.ref }}
+      cancel-in-progress: false
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # build info needs the commit count and tags
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: xcodebuild build -configuration Release
+        run: |
+          .github/scripts/run-and-summarize.sh "Release build (iOS device, unsigned)" "$RUNNER_TEMP/logs/release.log" -- \
+            xcodebuild build \
+              -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
+              -destination 'generic/platform=iOS' \
+              -derivedDataPath "$RUNNER_TEMP/dd" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          app=$(find "$RUNNER_TEMP/dd/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' | head -1)
+          echo "Built: $app"
+          ls "$app/PlugIns" "$app/Extensions" 2>/dev/null || true
+          # The extensions must be inside the app, or the archive would ship without them.
+          for ext in PrompTugalWidgets.appex PrompTugalIntents.appex; do
+            find "$app" -maxdepth 2 -name "$ext" | grep -q . || { echo "::error::$ext is not embedded in $app"; exit 1; }
+          done
+          echo "### ✅ Release build: app, widget and intents extensions" >> "$GITHUB_STEP_SUMMARY"
 
   test:
     name: App unit tests (${{ matrix.device }} simulator)
