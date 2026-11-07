@@ -167,12 +167,8 @@ enum Destinations {
     // MARK: Vault (vault session)
 
     static let vault: [AppDestination] = [
-        // vault: replace with VaultView() from PrompTugal/Vault when it lands.
         AppDestination(id: "vault", title: "Vault", symbol: "lock.shield", section: .vault, kind: .native,
-                       summary: "My encrypted vault, read in Swift") {
-            AnyView(PendingFeatureView(title: "Vault", owner: "night/vault",
-                                       note: "Read an sgit vault on the device, unlocked with Face ID."))
-        },
+                       summary: "My encrypted vault, read in Swift") { AnyView(VaultHomeView()) },
     ]
 
     // MARK: Debug and settings

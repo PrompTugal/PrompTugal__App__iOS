@@ -8,7 +8,7 @@ struct AppShell: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var data = DashboardData()
     /// The vault session's reader logs here; Debug → Vault traffic reads it.
-    @State private var vaultLog = VaultTrafficLog()
+    private var vaultLog: VaultTrafficLog { VaultSession.shared.log }
     @SceneStorage("shell.selection") private var selection: String = "today"
     @SceneStorage("shell.tab") private var tab: String = "today"
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
