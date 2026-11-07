@@ -102,10 +102,22 @@ extension View {
 
 private struct TeamFeaturesModifier: ViewModifier {
     let features: TeamFeatures
+    @Environment(\.teamFeaturesApplied) private var alreadyApplied
 
-    func body(content: Content) -> some View {
+    /// Applied more than once (the app root and the shell both do), only the outermost copy injects and presents,
+    /// so there is one top-up sheet.
+    @ViewBuilder func body(content: Content) -> some View {
+        if alreadyApplied {
+            content
+        } else {
+            applied(content)
+        }
+    }
+
+    private func applied(_ content: Content) -> some View {
         @Bindable var bridge = features.bridge
-        content
+        return content
+            .environment(\.teamFeaturesApplied, true)
             .environment(features.schedule)
             .environment(features.team)
             .environment(features.identity)
@@ -122,5 +134,16 @@ private struct TeamFeaturesModifier: ViewModifier {
                     .environment(features.credits)
             }
             .task { features.start() }
+    }
+}
+
+private struct TeamFeaturesAppliedKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var teamFeaturesApplied: Bool {
+        get { self[TeamFeaturesAppliedKey.self] }
+        set { self[TeamFeaturesAppliedKey.self] = newValue }
     }
 }

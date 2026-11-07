@@ -319,3 +319,23 @@ struct ScheduleVaultAPITests {
         #expect(store.document.picks.count == 5)
     }
 }
+
+@Suite("Deterministic JSON")
+struct ScheduleJSONTests {
+    @Test func keyOrderIsTheWebsitesEveryTime() {
+        let document = ScheduleDocument(picks: [.init(id: "b", at: Date(timeIntervalSince1970: 1)),
+                                                .init(id: "a", at: Date(timeIntervalSince1970: 2))])
+        for _ in 0..<20 {
+            #expect(document.json == #"{"v":1,"picks":[{"id":"b","at":"1970-01-01T00:00:01.000Z"},{"id":"a","at":"1970-01-01T00:00:02.000Z"}]}"#)
+        }
+    }
+
+    @Test func oddIdsAreEscapedAndReadBack() throws {
+        // ids never look like this on the website; the writer must still produce valid JSON
+        let odd = "quote\" back\\slash\ttab\u{01}"
+        let document = ScheduleDocument(picks: [.init(id: odd, at: Date(timeIntervalSince1970: 0))])
+        let parsed = try JSONSerialization.jsonObject(with: document.encoded()) as? [String: Any]
+        let picks = try #require(parsed?["picks"] as? [[String: Any]])
+        #expect(picks.first?["id"] as? String == odd)
+    }
+}
