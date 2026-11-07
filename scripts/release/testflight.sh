@@ -28,6 +28,7 @@ profile_for() { awk -F'\t' -v b="$1" '$1==b{print $2; exit}' "$OUT/profiles.tsv"
 settings=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER" DEVELOPMENT_TEAM="$APPLE_TEAM_ID")
 extra=()
 if [ "$MODE" = manual ]; then
+  "$(dirname "$0")/check-profiles.sh"
   # One profile per target, with no project change: a CI-only xcconfig sets
   # PROVISIONING_PROFILE_SPECIFIER = $(PT_PROFILE_$(TARGET_NAME)) and one
   # PT_PROFILE_<target> per signed target. Targets without a value (Swift

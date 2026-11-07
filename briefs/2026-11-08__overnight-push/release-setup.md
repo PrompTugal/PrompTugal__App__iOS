@@ -91,6 +91,7 @@ Either:
 
 Other inputs for a manual run:
 
+- **dry_run:** signs, checks every profile against its target's entitlements, and exports the App Store .ipa as an artifact, but does not upload. Use it first, right after adding the secrets. A missing capability shows as a ❌ row naming the entitlement, before the archive starts.
 - **internal_only:** sets `testFlightInternalTestingOnly`. That build can then only go to internal testers, never to external testers or the App Store. Leave it off unless you want that guarantee.
 - **source_ref:** builds another branch (for example `night/platform`) with the release scripts from the branch you run on.
 - **build_number:** overrides the build number.
