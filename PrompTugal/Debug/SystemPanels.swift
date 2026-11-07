@@ -129,7 +129,22 @@ struct KeysPanel: View {
                 Text("Names and protection only. The app never reads a key's value for this screen.")
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
-            if items.isEmpty {
+            let vaultKeys = VaultSession.shared.keyInventory
+            if !vaultKeys.isEmpty {
+                Section("Vault keys (from the vault session)") {
+                    ForEach(vaultKeys) { item in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.name).font(Typo.data)
+                            Text(item.detail).font(.caption).foregroundStyle(Palette.muted)
+                            HStack {
+                                Label(item.store, systemImage: "internaldrive").font(.caption2).foregroundStyle(Palette.blue)
+                                Label(item.protection, systemImage: "lock").font(.caption2).foregroundStyle(Palette.green)
+                            }
+                        }
+                    }
+                }
+            }
+            if items.isEmpty && vaultKeys.isEmpty {
                 Section { Text(error ?? "No keys stored on this device yet.").foregroundStyle(Palette.muted) }
             }
             ForEach(Dictionary(grouping: items, by: \.kind).sorted { $0.key < $1.key }, id: \.key) { kind, rows in
