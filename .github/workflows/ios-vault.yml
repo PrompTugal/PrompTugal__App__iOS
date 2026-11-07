@@ -1,15 +1,24 @@
-name: iOS vault
+name: iOS vault round trip
 
-# Interim CI for the Swift vault package, owned by the vault session.
-# The platform session's .github/workflows/ios.yml runs the same `swift test`
-# once it reaches dev; this file can then be deleted.
+# Swift writes a vault, sgit reads it back. Owned by the vault session.
+# ios.yml already runs `swift test` for Packages/SGitVault and builds the app, so this
+# workflow runs only when the write path changes (or by hand), to save macOS runners:
+#   swift-writes     macOS: the write tests export the vaults Swift wrote (SGITVAULT_ROUNDTRIP_OUT)
+#   sgit-reads-swift Linux: sgit-ai 0.27 clones each, switches to the Swift branch,
+#                    verifies every signature and compares every file
+#   reference-reader Linux: the fixtures, read by the Python reference reader
 
 on:
   push:
-    branches: [night/vault]
+    branches: [night/vault, dev]
     paths:
-      - 'Packages/SGitVault/**'
-      - 'PrompTugal/Vault/**'
+      - 'Packages/SGitVault/Sources/SGitVault/VaultCommitBuilder.swift'
+      - 'Packages/SGitVault/Sources/SGitVault/VaultWrite.swift'
+      - 'Packages/SGitVault/Sources/SGitVault/PythonJSON.swift'
+      - 'Packages/SGitVault/Sources/SGitVault/CanonicalJSON.swift'
+      - 'Packages/SGitVault/Sources/SGitVault/VaultCrypto.swift'
+      - 'Packages/SGitVault/Tests/SGitVaultTests/WriteTests.swift'
+      - 'Packages/SGitVault/Tests/Fixtures/**'
       - '.github/workflows/ios-vault.yml'
   workflow_dispatch:
 
@@ -21,90 +30,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  swift-test:
-    name: SGitVault swift test
+  swift-writes:
+    name: Swift writes vaults
     runs-on: macos-15
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-
-      - name: Toolchain
-        run: |
-          xcodebuild -version
-          swift --version
-
-      - name: swift test
+      - name: Write tests, exporting what Swift wrote
         working-directory: Packages/SGitVault
+        env:
+          SGITVAULT_ROUNDTRIP_OUT: ${{ runner.temp }}/roundtrip
         run: |
           set -o pipefail
-          mkdir -p "$RUNNER_TEMP/logs"
-          export SGITVAULT_ROUNDTRIP_OUT="$RUNNER_TEMP/roundtrip"
-          if swift test 2>&1 | tee "$RUNNER_TEMP/logs/swift-test.log"; then
-            echo "### ✅ SGitVault swift test passed" >> "$GITHUB_STEP_SUMMARY"
-            grep -E "Executed [0-9]+ tests" "$RUNNER_TEMP/logs/swift-test.log" | tail -1 >> "$GITHUB_STEP_SUMMARY" || true
-          else
-            {
-              echo "### ❌ SGitVault swift test failed"
-              echo '```'
-              grep -E "error:|failed|XCTAssert|Fatal" "$RUNNER_TEMP/logs/swift-test.log" | head -80
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-
-      - name: Type-check PrompTugal/Vault against SGitVault (iOS Simulator SDK)
-        run: |
-          set -o pipefail
-          SDK=$(xcrun --sdk iphonesimulator --show-sdk-path)
-          T="$RUNNER_TEMP/vaultcheck"; mkdir -p "$T" "$RUNNER_TEMP/logs"
-          TARGET=arm64-apple-ios18.0-simulator
-          ok=1
-          xcrun swiftc -emit-module -module-name SGitVault -parse-as-library -swift-version 6 \
-            -sdk "$SDK" -target "$TARGET" -emit-module-path "$T/SGitVault.swiftmodule" \
-            Packages/SGitVault/Sources/SGitVault/*.swift 2>&1 | tee "$RUNNER_TEMP/logs/vault-module.log" || ok=0
-          for mode in 5 6; do
-            xcrun swiftc -typecheck -parse-as-library -swift-version $mode -sdk "$SDK" -target "$TARGET" -I "$T" \
-              PrompTugal/Vault/*.swift 2>&1 | tee "$RUNNER_TEMP/logs/app-vault-swift$mode.log" || ok=0
-          done
-          if [ $ok = 1 ]; then
-            echo "### ✅ PrompTugal/Vault type-checks (iOS 18 simulator, Swift 5 and 6)" >> "$GITHUB_STEP_SUMMARY"
-          else
-            { echo "### ❌ PrompTugal/Vault type-check failed"; echo '```'
-              cat "$RUNNER_TEMP"/logs/vault-module.log "$RUNNER_TEMP"/logs/app-vault-swift*.log | grep -E "error:" | head -60
-              echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-
-      - name: Upload the vaults Swift wrote
-        uses: actions/upload-artifact@v4
+          swift test --filter WriteTests 2>&1 | tee "$RUNNER_TEMP/write-tests.log" || {
+            { echo "### ❌ Swift write tests failed"; echo '```'
+              grep -E "error:|failed" "$RUNNER_TEMP/write-tests.log" | head -40; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1; }
+      - uses: actions/upload-artifact@v4
         with:
           name: swift-written-vaults
           path: ${{ runner.temp }}/roundtrip/
           if-no-files-found: error
 
-      - name: Upload log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: swift-test-log
-          path: ${{ runner.temp }}/logs/
-          if-no-files-found: ignore
-
-  reference-reader:
-    name: Fixtures read by the Python reference reader
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-      - run: pip install cryptography
-      - run: python3 -I Packages/SGitVault/Tests/Fixtures/reference_reader.py Packages/SGitVault/Tests/Fixtures
-
   sgit-reads-swift:
     name: sgit reads the vaults Swift wrote
-    needs: swift-test
+    needs: swift-writes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -121,3 +71,15 @@ jobs:
         run: |
           set -o pipefail
           python3 -I Packages/SGitVault/Tests/Fixtures/sgit_reads_swift.py "$RUNNER_TEMP/roundtrip" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  reference-reader:
+    name: Fixtures read by the Python reference reader
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install cryptography
+      - run: python3 -I Packages/SGitVault/Tests/Fixtures/reference_reader.py Packages/SGitVault/Tests/Fixtures
