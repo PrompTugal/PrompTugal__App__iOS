@@ -31,6 +31,10 @@ struct DebugHomeView: View {
                 panel("Keys", symbol: "key", tint: Palette.red, line: "Which keys exist, and where. Never values") {
                     KeysPanel()
                 }
+                panel("Native and web", symbol: "square.split.2x1", tint: Palette.green,
+                      line: "\(Destinations.all.filter { $0.kind == .native }.count) of \(Destinations.all.count) screens native") {
+                    BalancePanel()
+                }
                 panel("Build", symbol: "hammer", tint: Palette.muted,
                       line: "\(BuildInfo.current.appVersion) · \(BuildInfo.current.shortCommit)") {
                     BuildPanel()
