@@ -249,8 +249,8 @@ class SiteTest(unittest.TestCase):
                            f"feature {first['id']} from features.json is missing")
 
     def test_refuses_push_dashboard_without_a_session(self):
-        self.assertRefused(self.broken('admin/push.html', lambda t: re.sub(r'/status/vault\.(html|md)"', '/status/x.html"', t)),
-                           'status page vault is missing')
+        self.assertRefused(self.broken('admin/push.html', lambda t: re.sub(r'__overnight-push/status/vault\.(html|md)"', '__overnight-push/status/x.html"', t)),
+                           'status page vault of 2026-11-08__overnight-push is missing')
 
     def test_feature_status_follows_the_files(self):
         root = self.tmp / 'feature-root'
