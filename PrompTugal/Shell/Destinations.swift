@@ -61,12 +61,10 @@ enum Destinations {
     static let today: [AppDestination] = [
         AppDestination(id: "today", title: "My day", symbol: "sun.max", section: .today, kind: .native,
                        summary: "Stand-up, what waits on me, my agents", phoneTab: 0) { AnyView(TodayView()) },
-        // team: replace with ScheduleView() from PrompTugal/Schedule when it lands.
         AppDestination(id: "team.schedule", title: "My schedule", symbol: "calendar", section: .today,
-                       kind: .hybrid, summary: "Picks from the website and the app, one list") {
-            AnyView(PendingFeatureView(title: "My schedule", owner: "night/team",
-                                       note: "One schedule: website picks and native saved sessions, with reminders."))
-        },
+                       kind: .hybrid, summary: "Picks from the website and the app, one list") { AnyView(MyDayView()) },
+        AppDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", section: .today,
+                       kind: .native, summary: "Free slots and walking times between picks") { AnyView(PlannerView()) },
         AppDestination(id: "reader.agenda", title: "Agenda", symbol: "clock", section: .today, kind: .native,
                        summary: "The summit agenda, offline") { AnyView(ReaderView()) },
     ]
@@ -86,12 +84,10 @@ enum Destinations {
             AnyView(PendingFeatureView(title: "Messages", owner: "night/collab",
                                        note: "Shared picks and notes, and lanes to teammates, through vaults."))
         },
-        // team: replace with StoreView() from PrompTugal/Store when it lands.
+        AppDestination(id: "team.home", title: "Team home", symbol: "person.crop.circle", section: .team,
+                       kind: .native, summary: "Who I am, and where everyone is") { AnyView(TeamHomeView()) },
         AppDestination(id: "team.store", title: "Reading credit", symbol: "creditcard", section: .team,
-                       kind: .native, summary: "The meter and native top-ups") {
-            AnyView(PendingFeatureView(title: "Reading credit", owner: "night/team",
-                                       note: "The website's meter, topped up with StoreKit."))
-        },
+                       kind: .native, summary: "The meter and native top-ups") { AnyView(ReadingCreditView()) },
     ]
 
     // MARK: Agents
@@ -181,6 +177,8 @@ enum Destinations {
     static let settings: [AppDestination] = [
         AppDestination(id: "settings", title: "Settings", symbol: "gearshape", section: .settings, kind: .native,
                        summary: "Who I am, debug mode, about") { AnyView(SettingsView()) },
+        AppDestination(id: "settings.reminders", title: "Reminders", symbol: "bell.badge", section: .settings, kind: .native,
+                       summary: "Before each pick and stand-up") { AnyView(ReminderSettingsView()) },
     ]
 }
 

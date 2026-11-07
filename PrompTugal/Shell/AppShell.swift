@@ -24,6 +24,7 @@ struct AppShell: View {
         }
         .environment(data)
         .environment(vaultLog)
+        .teamFeatures()
         .tint(Palette.red)
         .onChange(of: scenePhase, initial: true) { _, phase in
             if phase == .active { Task { await data.refreshAll() } }
