@@ -66,7 +66,7 @@ enum Destinations {
         AppDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", section: .today,
                        kind: .native, summary: "Free slots and walking times between picks") { AnyView(PlannerView()) },
         AppDestination(id: "reader.agenda", title: "Agenda", symbol: "clock", section: .today, kind: .native,
-                       summary: "The summit agenda, offline") { AnyView(ReaderView()) },
+                       summary: "The summit agenda, offline, with picks") { AnyView(AgendaView()) },
     ]
 
     // MARK: Team (design; team session adds Team and Store)
