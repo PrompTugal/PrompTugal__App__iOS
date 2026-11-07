@@ -1,6 +1,6 @@
 # PrompTugal
 
-SwiftUI beta for iPhone and iPad. Version 0.3.1 opens the live [PrompTugal website](https://promptugal.news/) with a sidebar for switching among five websites. Use the book icon in the bottom bar for the native agenda, saved sessions, and cached news. The project targets iOS and iPadOS 18 and later and uses the system SDK without third-party packages.
+SwiftUI beta for iPhone and iPad. Version 0.3.1 opens the live [PrompTugal website](https://promptugal.news/) with a sidebar for switching among the PrompTugal website, the team site and the newsroom. Use the book icon in the bottom bar for the native agenda, saved sessions, and cached news. The project targets iOS and iPadOS 18 and later and uses the system SDK without third-party packages.
 
 ## Run from Xcode
 
@@ -62,7 +62,7 @@ On iPad, the sidebar appears beside the current website and the sidebar button t
 - Each entry has a unique `id`, a display `name`, an HTTPS `url`, an SF Symbols `icon` name, and a `color`. Supported colors are red, orange, green, teal, blue, indigo, and purple. The array sets the sidebar order and its first entry opens at launch. Invalid local JSON falls back to the bundled shortcuts. Optional `iconAsset` selects a bundled image and `iconText` supplies a text badge. A custom shortcut can keep using its SF Symbol.
 - Existing 0.3.0 configurations still load. The original summit-team URL is updated to web-summit.sgit.ai on launch, with custom entries and order preserved.
 
-Sidebar artwork comes from the [PrompTugal icon](https://promptugal.news/assets/brand/icon-512.png), the [Web Summit team's road-trip badge](https://web-summit.sgit.ai/assets/stickers/vote/01-road-trip-patch-v1.webp), and the [RiskMandate mark](https://riskmandate.ai/assets/brand/riskmandate-mark.svg). [SGit Newsroom](https://newsroom.sgit.ai/) and [sgit.ai](https://sgit.ai/) use text badges based on their mastheads.
+Sidebar artwork comes from the [PrompTugal icon](https://promptugal.news/assets/brand/icon-512.png) and the [Web Summit team's road-trip badge](https://web-summit.sgit.ai/assets/stickers/vote/01-road-trip-patch-v1.webp). The [newsroom](https://newsroom.sgit.ai/) uses a text badge based on its masthead. Devices that already have a `Websites.json` in Files keep their own list.
 
 ## Website and device storage
 

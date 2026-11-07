@@ -22,21 +22,5 @@
     "icon": "mic.fill",
     "color": "orange",
     "iconText": "news\nroom"
-  },
-  {
-    "id": "riskmandate",
-    "name": "riskmandate.ai",
-    "url": "https://riskmandate.ai/",
-    "icon": "shield.lefthalf.filled",
-    "color": "teal",
-    "iconAsset": "ShortcutRiskMandate"
-  },
-  {
-    "id": "sgit",
-    "name": "sgit.ai",
-    "url": "https://sgit.ai/",
-    "icon": "lock.doc.fill",
-    "color": "blue",
-    "iconText": "sgit.ai"
   }
 ]
