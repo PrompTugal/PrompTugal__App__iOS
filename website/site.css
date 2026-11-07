@@ -258,3 +258,6 @@ dl.qa dd { margin: 0.3em 0 0; }
 a.card { display: block; color: var(--ink); text-decoration: none; }
 a.card:hover { border-color: var(--red); }
 .feature .sep { color: var(--rule); }
+.kv { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px 24px; margin: 0 0 1em; }
+.kv dt { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.kv dd { margin: 2px 0 0; font-weight: 600; }

@@ -318,3 +318,48 @@ def areas_html(areas):
                    for a, (n, lines) in sorted(areas.items()))
     return ('<div class="table-wrap"><table><thead><tr><th scope="col">Folder</th><th scope="col">Swift files</th>'
             '<th scope="col">Lines</th></tr></thead><tbody>' + rows + '</tbody></table></div>')
+
+
+# --- latest iOS build (from scripts/release/latest-build.sh) ----------------
+
+def latest_build(path):
+    """The JSON latest-build.sh wrote, or None when there is none or it does not parse."""
+    if not path:
+        return None
+    try:
+        data = json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) and data.get('available') else None
+
+
+def _size(n):
+    try:
+        n = int(n)
+    except (TypeError, ValueError):
+        return '?'
+    return f'{n / 1_048_576:.1f} MB' if n >= 1_048_576 else f'{round(n / 1024):,} KB'
+
+
+def latest_build_html(data, repo_url):
+    if not data:
+        return ('<p class="notice">No CI build information in this site build. The site build asks for the latest '
+                'successful iOS release run on <code>dev</code>; it shows here once there is one.</p>')
+    devices = {1: 'iPhone', 2: 'iPad'}
+    family = ' and '.join(devices.get(d, str(d)) for d in data.get('deviceFamily', [])) or '?'
+    commit = str(data.get('commit', ''))[:7]
+    built = str(data.get('builtAt', ''))[:16].replace('T', ' ')
+    run = data.get('runUrl') or data.get('run') or ''
+    rows = [('App version', f'{esc(str(data.get("version", "?")))} (build {esc(str(data.get("build", "?")))})'),
+            ('Commit', f'<a href="{repo_url}/commit/{esc(commit)}"><code>{esc(commit)}</code></a>' if commit else '?'),
+            ('Built', f'{esc(built)} UTC' if built else '?'),
+            ('Devices', esc(family)),
+            ('Minimum iOS', esc(str(data.get('minimumOS', '?')))),
+            ('Xcode and SDK', f'{esc(str(data.get("xcode", "?")))}, {esc(str(data.get("sdk", "?")))}'),
+            ('Sizes', f'app {_size(data.get("appBytes"))}, unsigned .ipa {_size(data.get("ipaBytes"))}'),
+            ('Run', f'<a href="{esc(run)}">{esc(run.rsplit("/", 1)[-1])}</a>' if run.startswith('https://') else '?')]
+    arts = ''.join(f'<li><code>{esc(str(a.get("name", "")))}</code> ({_size(a.get("size"))})</li>'
+                   for a in data.get('artifacts', []) if isinstance(a, dict))
+    table = ''.join(f'<div><dt>{k}</dt><dd>{v}</dd></div>' for k, v in rows)
+    return (f'<dl class="kv">{table}</dl>'
+            + (f'<p>Artifacts of that run (GitHub keeps them for a limited time):</p><ul>{arts}</ul>' if arts else ''))

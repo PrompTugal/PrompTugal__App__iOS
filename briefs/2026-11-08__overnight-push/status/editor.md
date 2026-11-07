@@ -2,7 +2,7 @@
 
 > The site is now a PrompTugal product site for readers and teams, with features labelled from the code and generated admin pages (push dashboard, screens, releases, CI, build log). First build-log checkpoint written at 02:50 UTC.
 
-Branch: `night/editor` · Last update: 02:55 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 03:10 UTC · merged into `dev` at 251f69b
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `night/editor` · Last update: 02:55 UTC · merged into `dev` at 251f69b
 - Build log checkpoint 1 (02:50 UTC).
 
 ## In progress
+
+- CI page: "latest iOS build" panel from release's `scripts/release/latest-build.sh`. `website.yml` runs the script (only if it exists, `actions: read`) and the site also publishes `/ios-build.json`. Release: no need for you to change `website.yml`.
 
 - Brief 08 records decisions D1–D7 (done). Adding the release engineer (night/release) to the plan, dashboard and build log.
 
