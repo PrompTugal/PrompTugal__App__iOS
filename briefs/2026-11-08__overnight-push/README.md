@@ -57,6 +57,7 @@ The conductor merges green branches into `dev` about once an hour. Each merge re
 
 The build log on the site has one page per checkpoint: [/admin/build-log/](https://ios.app.promptugal.news/admin/build-log/index.html).
 
+- **07:15** Team reports the bridge passing every check against the live promptugal.news. Screenshot test split per screen after a timeout. Dev frozen until 07:40 so queued iOS runs can finish; last green full run still 04:41.
 - **06:20** First real screenshots on the site (5 iPhone screens); design fixed four interface bugs they showed. iOS tests on dev queued since 05:16.
 - **05:40** First fully green CI run of the integrated app (run 104); unit tests 64 of 66 on iPad and iPhone, the 2 failures already fixed. New: the Wall screen for an iPad on a stand.
 - **05:15** Collab merged: all 19 features in the beta, 28 screens, no placeholders.
