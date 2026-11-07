@@ -301,7 +301,7 @@ class SiteTest(unittest.TestCase):
         out = self.tmp / 'with-shots'
         os.environ['SCREENS_DIR'] = str(shots.parent)
         real_devices = admin.screen_devices
-        admin.screen_devices = lambda root=None: {'iphone', 'ipad'}   # as when iPad shots are published
+        admin.screen_devices = lambda root=None, folder=None: {'iphone', 'ipad'}   # as when iPad shots are published
         try:
             build.build(out)
         finally:
@@ -353,6 +353,15 @@ class SiteTest(unittest.TestCase):
         page.write_text(page.read_text().replace('</main>', '<img src="screens/ipad-today.png" alt="x" width="40" height="30" '
                                                  'data-png-width="40" data-png-height="30"></main>'))
         self.assertRefused(validate.validate(out), 'EXIF orientation tag')
+
+    def test_ipad_only_from_a_fixed_run(self):
+        folder = self.tmp / 'run-number'
+        folder.mkdir()
+        self.assertEqual(admin.screen_devices(folder=folder), {'iphone'})          # no run.txt: iPhone only
+        (folder / 'run.txt').write_text('13\n')
+        self.assertEqual(admin.screen_devices(folder=folder), {'iphone'})
+        (folder / 'run.txt').write_text('15\n')
+        self.assertEqual(admin.screen_devices(folder=folder), {'iphone', 'ipad'})
 
     def test_no_screenshots_means_a_notice_not_a_broken_image(self):
         self.assertIn('No screenshots in this site build', (self.clean / 'admin' / 'screens.html').read_text())
