@@ -1,10 +1,10 @@
 # Status · Collaboration and AI
 
-> Ask (native OpenRouter chat, streamed, key in the Keychain), "Where is everyone" (overlaps, clashes, meet-here slots from vault-shared picks) and Messages (append lanes with sgit's envelope, inbox, newsroom notes, dictation) are pushed; first CI run in the queue. Vault and team glue are written and go in when those branches reach dev.
+> Ask (streamed OpenRouter chat with read-only tools over the app's data), "Where is everyone" and Messages (append lanes, inbox, newsroom notes) are merged with dev (4c78207) and wired to VaultSession and the team stores; the entry views are registered. First CI run on the merged branch is queued.
 
-Branch: `night/collab` · Last update: 04:10 UTC
+Branch: `night/collab` · Last update: 04:15 UTC
 
-## Entry views (for design, `Shell/Destinations.swift`)
+## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
 | id | View | Notes |
 | --- | --- | --- |
@@ -46,13 +46,13 @@ Branch: `night/collab` · Last update: 04:10 UTC
 
 ## In progress
 
-- CI run 74 (all of the above).
+- CI on the merged branch (7e097f2). Earlier queued runs that never started were cancelled so one run covers the lot.
 
 ## Next
 
 1. Fix whatever CI finds.
-2. Vault glue (`VaultCollabAccess`, written) once `night/vault` is on dev; team glue (picks from `ScheduleStore`, plan text from `PlannerStore`, written) once `night/team` is on dev.
-3. Ask: tool calls over the app's data (search the agenda, my picks), as the website's chat does.
+2. Ask: show the tool results' sources as links; a "send this answer to a lane" action.
+3. Coordination: offer "share my plan" right after picks change; read teammates' plans in the background.
 
 ## Blocked
 
@@ -60,7 +60,6 @@ Nothing.
 
 ## Needs from others
 
-- **Design:** register the entry views above. `collab.ai` → `AskView()`; add `collab.plans` → `TeamPlansView()`. Optionally `.askPanel(isPresented:)` on the iPad shell with an `AskPanelButton` in the toolbar, so Ask opens next to any screen. Screens that show a page can call `CollabHooks.noteCurrentPage(title:url:text:)` for the "current page" context.
+- **Design:** done by me at 04:12 (three lines in `Destinations.swift`, ids `collab.ai`, `collab.lanes`, new `collab.plans`); move or restyle as you like. Still open: `collab.ai` → `AskView()`; add `collab.plans` → `TeamPlansView()`. Optionally `.askPanel(isPresented:)` on the iPad shell with an `AskPanelButton` in the toolbar, so Ask opens next to any screen. Screens that show a page can call `CollabHooks.noteCurrentPage(title:url:text:)` for the "current page" context.
 - **Platform:** a streaming call on `HTTPClient` (e.g. `bytes(for:label:)` that logs on completion) would let `OpenRouterClient` drop its own bookkeeping. Not urgent.
-- **Team:** when `ScheduleStore` is on dev I set `CollabHooks.myPickIds` from it; until then picks come from the reader's saved sessions. `PlannerStore` text for "plan my day" via `CollabHooks.dayPlan`.
-- **Vault:** I code against `VaultSession` on `night/vault` (`readFile`, `update`, `savePicks`, `importKey`) and wire it once it is on dev.
+- **Team / vault:** nothing; wired to `TeamFeatures.shared` and `VaultSession.shared` as on dev.
