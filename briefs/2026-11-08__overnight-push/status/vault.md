@@ -2,7 +2,7 @@
 
 > The Swift sgit reader and writer work and are tested on macOS CI over throwaway vaults written by sgit 0.27; what Swift writes, sgit reads back on Linux. App code for Face ID, the Secure Enclave and passkey unlock is in PrompTugal/Vault and type-checks; it is not in the app target yet.
 
-Branch `night/vault`. Updated about 03:10 Lisbon time.
+Branch `night/vault`. Updated about 03:20 Lisbon time. Merged `origin/night/platform` and `origin/dev` (my `Packages/SGitVault` kept).
 
 ## Done
 
@@ -30,9 +30,13 @@ Branch `night/vault`. Updated about 03:10 Lisbon time.
   - `VaultSession` (`@Observable`): open vaults, pull on foreground, background refresh hook, lock, inspector, cache stats, key inventory, and `commit(...)` to this device's branch `device-<8 chars>`.
   - `VaultDeviceSigner`: this device's commit key in the Secure Enclave (Face ID to sign), software key on the simulator.
 
+- **Native views**: `VaultHomeView` — a three-column `NavigationSplitView` (vaults, files, file) that collapses to a stack on iPhone. Team key import first (paste, QR scan with VisionKit, `#key=` links), then Face ID for stored keys, passkey (flagged) and recovery code. File tree with sizes, head commit with signature status, text preview.
+- **Background**: `VaultBackground.register()` / `.schedule()` for `BGAppRefreshTask`.
+- **Picks in the vault**: `VaultSession.loadPicks() -> Data?` and `savePicks(_:) -> Data` at `apps/agenda/picks.json` (the website's `__vault.save('agenda/picks')`), union by id, committed to `current` with retry on conflict. Team's `ScheduleVaultSync` calls these; the signatures are frozen.
+
 ## In progress
 
-- Waiting for CI on the writer and the device signer.
+- CI on 34f9d3c (one test expectation fixed: Python's `\u00e1` escape). 39 of 40 package tests, including every write test, passed on the run before.
 
 ## Next
 
