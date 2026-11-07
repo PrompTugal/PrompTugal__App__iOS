@@ -363,6 +363,36 @@ class SiteTest(unittest.TestCase):
         (folder / 'run.txt').write_text('16\n')
         self.assertEqual(admin.screen_devices(folder=folder), {'iphone', 'ipad'})
 
+    def test_overnight_captions_name_real_screens(self):
+        night = admin.overnight()
+        ids = [s['id'] for s in night['screens']]
+        registered = {d['id'] for d in admin.destinations()}
+        self.assertEqual(len(ids), len(set(ids)), 'a screen is captioned twice')
+        self.assertTrue(set(ids) <= registered, f'not registered screens: {sorted(set(ids) - registered)}')
+        self.assertIn(night['hero'], registered)
+        self.assertTrue(all(s['title'] and s['text'] and s['kicker'] for s in night['screens']))
+
+    def test_overnight_shows_both_devices_when_ci_took_them(self):
+        shots = self.tmp / 'night-in' / 'screens-n'
+        self._png(shots / 'ipad-wall.png', 40, 28)
+        self._png(shots / 'iphone-wall.png', 30, 65)
+        self._png(shots / 'iphone-debug.png', 30, 65)
+        found = admin.screenshots(shots.parent, devices={'iphone', 'ipad'})
+        html_out = admin.overnight_bands(admin.overnight()['screens'], found)
+        self.assertNotIn('No screenshots in this site build', html_out)
+        wall = html_out[html_out.index('id="night-wall"'):]
+        self.assertIn('screens/ipad-wall.png', wall)
+        self.assertIn('screens/iphone-wall.png', wall)
+        today = html_out[html_out.index('id="night-today"'):html_out.index('id="night-team.people"')]
+        self.assertNotIn('<img', today)            # no shot of this screen: caption only, no broken image
+        self.assertIn('screens/ipad-wall.png', admin.overnight_hero(found, 'wall'))
+        self.assertEqual(admin.overnight_hero(found, 'today'), '')
+
+    def test_overnight_without_screenshots_is_a_notice(self):
+        page = (self.clean / 'overnight.html').read_text()
+        self.assertIn('No screenshots in this site build', page)
+        self.assertNotIn('screens/ipad-', page)
+
     def test_no_screenshots_means_a_notice_not_a_broken_image(self):
         self.assertIn('No screenshots in this site build', (self.clean / 'admin' / 'screens.html').read_text())
         self.assertFalse((self.clean / 'screens').exists())

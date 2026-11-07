@@ -1,0 +1,72 @@
+<!--
+title: Overnight · PrompTugal for iOS
+description: How seven Claude sessions built the native PrompTugal app for iPhone and iPad overnight on 7–8 November 2026, screen by screen, with what is proven and what the team does next.
+nav: Overnight
+order: 8
+-->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">Overnight push · 02:45–10:20 Lisbon · 7–8 November 2026</p>
+    <h1>The team’s app, built overnight</h1>
+    <p class="lede">Seven Claude sessions built the native PrompTugal app for iPhone and iPad while the team slept. By 10:20 the code was on <code>dev</code>, green in CI on both devices. The app is now {{swift_lines}} lines of Swift in {{swift_files}} files.</p>
+    <dl class="stats night-stats">
+      <div><dt>383</dt><dd>commits on <code>dev</code> during the night</dd></div>
+      <div><dt>7</dt><dd>sessions, plus a conductor merging their work</dd></div>
+      <div><dt>124</dt><dd>unit tests passing on iPhone and on iPad</dd></div>
+      <div><dt>13</dt><dd>screens photographed on both devices by CI</dd></div>
+    </dl>
+    {{overnight_hero}}
+    <p class="notice">The screenshots on this page are taken automatically by CI in the iOS simulator, from the code on <code>dev</code>, with sample data where a screen needs a signed-in person (“Ana Example”). The agenda, the news, the graph and the Wall’s team list come from the live public feeds. Nothing here has been tested on a physical device yet.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="screens">
+  <div class="wrap">
+    <p class="kicker">Screen by screen</p>
+    <h2>What was built</h2>
+    {{overnight_bands}}
+  </div>
+</section>
+
+<section class="band" id="also">
+  <div class="wrap prose">
+    <p class="kicker">Built, not in the screenshots</p>
+    <h2>Also in the app</h2>
+    <ul>
+      <li><strong>One schedule with promptugal.news.</strong> Tested in a real browser against the live site: a pick made in the app lights the website’s own “Add to my day” button, and website picks come back to the app.</li>
+      <li><strong>Plan my day, reminders, a widget and Siri.</strong> A planner proposes a day around your picks and stand-ups. Reminders fire 10 minutes before by default. “What’s next in PrompTugal” works from Siri.</li>
+      <li><strong>Ask.</strong> An OpenRouter chat that can look up the agenda, your picks, the team and the agents, with your key in the Keychain. On iPad it opens beside any screen.</li>
+      <li><strong>Messages and Where is everyone.</strong> Encrypted notes through vault lanes, and teammates’ shared plans once they share a read key.</li>
+      <li><strong>Reading credit.</strong> The website’s meter, topped up through Apple’s in-app purchase.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band band-alt" id="record">
+  <div class="wrap prose">
+    <p class="kicker">The record</p>
+    <h2>Proven, and not yet</h2>
+    <ul>
+      <li><strong>Proven:</strong> every job green on <code>dev</code>, meaning the app build, the vault package, and 124 unit tests on iPhone and on iPad.</li>
+      <li><strong>Proven:</strong> the vault command-line tool reads back and verifies vaults written by the Swift code, signatures included.</li>
+      <li><strong>Proven:</strong> the schedule and meter bridge, against the live website in a real browser.</li>
+      <li><strong>Proven:</strong> all 13 screens render on both devices, as shown above.</li>
+      <li><strong>Not yet:</strong> anything on a physical device; a live push to the vault server; passkey sign-in; messages to a teammate.</li>
+    </ul>
+    <h2>What the team does next</h2>
+    <ol class="steps">
+      <li>Get the first internal TestFlight build out, following the <a href="admin/briefs/2026-11-08__overnight-push/release-setup.html">release setup</a> (about 45 minutes).</li>
+      <li>Install from Xcode on an iPhone and an iPad, and run the ten checks in the <a href="admin/briefs/2026-11-08__overnight-push/morning.html">morning summary</a>.</li>
+      <li>Serve the passkey domain file on promptugal.news, issue vault access tokens, and create the two in-app purchases.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="band" id="how">
+  <div class="wrap prose">
+    <p class="kicker">How it was made</p>
+    <h2>Seven sessions and a conductor</h2>
+    <p>Each session owned a part of the app: platform and CI, the vault, team features, design and native screens, collaboration and AI, release, and this site. They worked on their own branches against a shared <a href="admin/briefs/2026-11-08__overnight-push/contracts.html">set of contracts</a>, and a conductor merged their work into <code>dev</code> about every 30 minutes once CI was green. The night is written up checkpoint by checkpoint in the <a href="admin/build-log/index.html">build log</a>, and each session’s own account is in the <a href="admin/briefs/2026-11-08__overnight-push/index.html">overnight brief pack</a>.</p>
+    <p>The night cost about $332 in model usage across the eight sessions, plus macOS CI minutes. Runner queues of 20 to 60 minutes were the main constraint.</p>
+  </div>
+</section>

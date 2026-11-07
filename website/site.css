@@ -274,3 +274,26 @@ a.card:hover { border-color: var(--red); }
 .device-shot { margin: 0; }
 .device-shot .shot { width: 100%; border-radius: 18px; box-shadow: var(--shadow); }
 .device-shot figcaption { margin-top: 8px; font-size: 0.85rem; }
+
+/* Overnight page: one band per screen, caption beside its iPad and iPhone screenshots */
+.night-stats { margin: 24px 0; }
+.night-hero { margin: 24px 0 16px; }
+.night-hero img { display: block; width: 100%; max-width: 960px; height: auto; border-radius: 18px; border: 8px solid #0d0e11; }
+.night-hero figcaption { margin-top: 8px; font-size: 0.85rem; }
+.night-bands { display: grid; gap: 40px; margin-top: 24px; }
+.night-band { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr); gap: 28px; align-items: start; padding-top: 28px; border-top: 1px solid var(--rule); }
+.night-text { display: grid; gap: 8px; align-content: start; }
+.night-text h3 { font-size: 1.4rem; margin: 0; }
+.night-text p { margin: 0; }
+.night-shots { display: grid; grid-template-columns: minmax(0, 3.2fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.night-shot { margin: 0; min-width: 0; }
+.night-shot img { display: block; width: 100%; height: auto; border: 6px solid #0d0e11; border-radius: 16px; }
+.night-iphone img { border-radius: 22px; }
+.night-shot figcaption { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+@media (max-width: 860px) {
+  .night-band { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .night-shots { grid-template-columns: minmax(0, 1fr); }
+  .night-iphone { max-width: 220px; justify-self: center; width: 100%; }
+}

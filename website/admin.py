@@ -603,3 +603,35 @@ def screens_gallery(items, shots, root='../'):
                                                      for d in missing) + '.</p>') if missing else ''
     return (f'<p>{have} of {len(items)} screens have a screenshot, taken by CI on a simulator from the code on '
             '<code>dev</code>.</p><div class="gallery">' + ''.join(cards) + '</div>' + rest)
+
+
+def overnight(root=ROOT):
+    """The Overnight page's captions (website/overnight.json)."""
+    return json.loads((root / 'website' / 'overnight.json').read_text())
+
+
+def overnight_bands(items, shots, root=''):
+    """One band per screen: caption, then its iPad and iPhone screenshots where CI took them."""
+    if not shots:
+        notice = ('<p class="notice">No screenshots in this site build. When the app\u2019s screens workflow has run on '
+                  '<code>dev</code>, each screen below shows its iPad and iPhone screenshot.</p>')
+    else:
+        notice = ''
+    bands = []
+    for s in items:
+        ipad = shot_img(shots, s['id'], s['title'], root=root, device='ipad', width=720)
+        phone = shot_img(shots, s['id'], s['title'], root=root, device='iphone', width=220)
+        pics = ''.join(f'<figure class="night-shot night-{d}">{img}<figcaption>{DEVICES[d]}</figcaption></figure>'
+                       for d, img in (('ipad', ipad), ('iphone', phone)) if img)
+        note = f'<p class="muted">{esc(s["note"])}</p>' if s.get('note') else ''
+        bands.append(f'<article class="night-band" id="night-{esc(s["id"])}">'
+                     f'<div class="night-text"><p class="kicker">{esc(s["kicker"])}</p><h3>{esc(s["title"])}</h3>'
+                     f'<p>{esc(s["text"])}</p>{note}</div>'
+                     f'<div class="night-shots">{pics}</div></article>')
+    return notice + '<div class="night-bands">' + ''.join(bands) + '</div>'
+
+
+def overnight_hero(shots, ident, root=''):
+    img = shot_img(shots, ident, 'The Wall', root=root, device='ipad', width=960) if ident else ''
+    return (f'<figure class="night-hero">{img}<figcaption class="muted">The Wall on iPad, from the latest CI screenshots.</figcaption></figure>'
+            if img else '')

@@ -403,6 +403,9 @@ def build(out):
     shots = {i: v for i, v in admin.screenshots(os.environ.get('SCREENS_DIR')).items() if i in screen_ids}
     tokens.update(admin.feature_tokens(REPO_URL, shots=shots))
     tokens.update(screens_gallery=admin.screens_gallery(admin.destinations(), shots))
+    night = admin.overnight()
+    tokens.update(overnight_bands=admin.overnight_bands(night['screens'], shots),
+                  overnight_hero=admin.overnight_hero(shots, night.get('hero')))
     # The home page shows a real iPad screenshot when CI took one; otherwise the drawn mock-up.
     hero = next((i for i in ('today', 'team.people', 'news.home') if 'ipad' in shots.get(i, {})), None)
     tokens['hero_device'] = (f'<figure class="device-shot">{admin.shot_img(shots, hero, {"today": "My day", "team.people": "The team", "news.home": "News"}[hero], device="ipad", width=640)}'
