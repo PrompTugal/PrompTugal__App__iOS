@@ -3,12 +3,21 @@ import SwiftUI
 @main @MainActor
 struct PrompTugalApp: App {
     @State private var store = ReaderStore()
+    @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        // Background tasks must be registered before the app finishes launching.
+        VaultBackground.register()
+    }
 
     var body: some Scene {
         WindowGroup {
             WebsiteView()
                 .environment(store)
                 .tint(Color("AccentColor"))
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { VaultBackground.schedule() }
         }
     }
 }
