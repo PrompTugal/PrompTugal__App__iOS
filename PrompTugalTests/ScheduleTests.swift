@@ -135,8 +135,8 @@ struct ScheduleMergeTests {
     }
 }
 
-@Suite("Lisbon time")
-struct LisbonTimeTests {
+@Suite("Lisbon time, for the schedule")
+struct ScheduleLisbonTimeTests {
     @Test func novemberIsUTC() throws {
         let start = try #require(Lisbon.instant(day: "2026-11-10", clock: "14:20"))
         #expect(start == ScheduleTime.parse("2026-11-10T14:20:00Z"))

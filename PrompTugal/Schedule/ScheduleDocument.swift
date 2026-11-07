@@ -109,8 +109,13 @@ enum ScheduleTime {
         return withFractional.string(from: date)
     }
 
+    /// Also reads the team site's short form, "2026-11-06T22:29Z" (no seconds).
     static func parse(_ text: String) -> Date? {
-        withFractional.date(from: text) ?? plain.date(from: text)
+        if let date = withFractional.date(from: text) ?? plain.date(from: text) { return date }
+        if text.count == 17, text.hasSuffix("Z"), text.dropFirst(10).first == "T" {
+            return plain.date(from: String(text.dropLast()) + ":00Z")
+        }
+        return nil
     }
 
     nonisolated(unsafe) private static let withFractional: ISO8601DateFormatter = {
