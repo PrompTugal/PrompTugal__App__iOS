@@ -80,11 +80,13 @@ enum Destinations {
                        section: .team, kind: .web(TeamSite.base), summary: "The team site's command centre") {
             AnyView(MyCommandCentreWeb())
         },
-        // collab: replace with LanesView() from PrompTugal/Lanes when it lands.
         AppDestination(id: "collab.lanes", title: "Messages", symbol: "bubble.left.and.bubble.right",
                        section: .team, kind: .native, summary: "Append lanes to teammates and the newsroom") {
-            AnyView(PendingFeatureView(title: "Messages", owner: "night/collab",
-                                       note: "Shared picks and notes, and lanes to teammates, through vaults."))
+            AnyView(LanesView())
+        },
+        AppDestination(id: "collab.plans", title: "Where is everyone", symbol: "person.2.wave.2",
+                       section: .team, kind: .native, summary: "Shared plans: together, clashes, where to meet") {
+            AnyView(TeamPlansView())
         },
         // team: replace with StoreView() from PrompTugal/Store when it lands.
         AppDestination(id: "team.store", title: "Reading credit", symbol: "creditcard", section: .team,
@@ -107,11 +109,9 @@ enum Destinations {
                        kind: .web(TeamSite.base.appendingPathComponent("reports/")), summary: "Every two hours") {
             AnyView(WebPage(url: TeamSite.base.appendingPathComponent("reports/"), title: "Reports"))
         },
-        // collab: replace with AIChatView() from PrompTugal/AI when it lands.
         AppDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", section: .agents, kind: .native,
                        summary: "OpenRouter chat over the app's own data") {
-            AnyView(PendingFeatureView(title: "Ask", owner: "night/collab",
-                                       note: "Chat with the key in the Keychain, using the agenda, picks and team status."))
+            AnyView(AskView())
         },
     ]
 

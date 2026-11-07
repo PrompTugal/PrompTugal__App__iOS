@@ -41,25 +41,27 @@ enum CollabHooks {
         }
     }
 
-    /// The vault session, when wired. Nil until the vault glue registers itself.
-    static var vault: (any CollabVaultAccess)?
+    /// The vault session (`VaultSession.shared`, through `VaultCollabAccess`). Tests may set nil or a fake.
+    static var vault: (any CollabVaultAccess)? = VaultCollabAccess()
 
-    /// My picks, as ids `events/<slug>` (nr.schedule.v1). Default: the reader's saved sessions on this device.
-    /// The team session's `ScheduleStore` replaces this.
-    static var myPickIds: () -> [String] = { ReaderFiles.savedEventIds() }
+    /// My picks as bare slugs (nr.schedule.v1), from the team session's `ScheduleStore` (which also takes in the
+    /// reader's saved sessions and the website's picks).
+    static var myPickIds: @MainActor () -> [String] = { TeamFeatures.shared.schedule.picks.map { PickId.normalise($0.id) } }
 
     /// The summit agenda. Default: the reader's cache on this device, then the network (logged).
-    static var agenda: () async -> [Event] = {
+    static var agenda: @MainActor () async -> [Event] = {
+        let loaded = TeamFeatures.shared.planner.agenda
+        if !loaded.isEmpty { return loaded }
         let cached = ReaderFiles.cachedAgenda()
         if !cached.isEmpty { return cached }
         return (try? await FeedClient.agenda()) ?? []
     }
 
     /// Who I am on the team (web-summit.sgit.ai `ws.me`). Default: the team session's saved identity.
-    static var me: () -> CollabIdentity? = { CollabIdentity.saved() }
+    static var me: @MainActor () -> CollabIdentity? = { CollabIdentity.saved() }
 
-    /// The day plan as text, from the team session's planner (`PlannerStore`) once wired. Nil: no planner.
-    static var dayPlan: (@MainActor () async -> String?)?
+    /// The day plan as text, from the team session's planner (`PlannerStore`). Nil: no planner.
+    static var dayPlan: (@MainActor () async -> String?)? = { CollabTeamGlue.planText(TeamFeatures.shared.planner.plan) }
 
     /// The page on screen, for "current page" context. Screens that show a page call `noteCurrentPage`.
     private(set) static var currentPage: PageContext?
