@@ -1,8 +1,8 @@
 # Status · Collaboration and AI
 
-> Everything of mine is on dev (up to 7f726d0): Ask, Where is everyone, Messages, team notes, and the iPhone/iPad polish below. night/collab now runs only the build job; dev runs the unit tests.
+> On dev and green (dev run 160): Ask, Where is everyone, Messages, team notes and the iPhone/iPad polish. night/collab 0965bfc (build green) adds opt-in "keep this conversation on this device" for Ask; ready to merge.
 
-Branch: `night/collab` · Last update: 07:40 UTC
+Branch: `night/collab` · Last update: 08:32 UTC
 
 ## Entry views (registered in `Shell/Destinations.swift` at 04:12, replacing the placeholders as their comments asked)
 
@@ -12,6 +12,15 @@ Branch: `night/collab` · Last update: 07:40 UTC
 | `collab.plans` | `TeamPlansView()` | "Where is everyone". Suggest section `.team`, kind `.native`. |
 | `collab.lanes` | `LanesView()` | Messages: newsroom notes, lanes, my inbox. |
 | (debug) | `CollabDebugPanel()` | For Debug: keys by presence only, hooks, Ask requests, lanes log. `LanesLogPanel()` is the lanes log alone. `CollabDebugPanel.keyRows(keys:lanes:)` gives rows for the Keys panel. |
+
+## How to use it (for the team, at the summit)
+
+1. **Ask.** Open Ask (Agents → Ask). Tap the menu (…) → Key and settings, paste your OpenRouter key (starts `sk-or-`), Save, then Check key. Choose what Ask may see with the chips above the text field. Try "Brief me", "Plan my day", "Where should we meet today?" or "What are my agents doing?". Hold the mic to talk. With your vault open (Vault), "Save key to my vault" lets your other devices take it.
+2. **Share my plan.** Open your vault with its vault key or passkey, then Team → Where is everyone → Share my plan. Your picks go to `apps/agenda/picks.json` in your vault.
+3. **See where everyone is.** Ask each teammate for the read key of their vault (it can only read). Where is everyone → Add key next to their name. Their picks then show as "Together", "Clashes" and "Meet here".
+4. **Team notes.** Team → Messages → Team notes: write and Post. Each note is a new file in `lanes/team/` of your vault. You see notes from every teammate you linked in step 3.
+5. **Note to the newsroom.** Messages → Note to the newsroom (needs the vault open and the notes lane the website made).
+6. **Write-only lanes.** Messages → Add a lane: paste a lane description or an `sgi1.` inbox link. To receive, Messages → Set up an inbox and share your lane description.
 
 ## Done
 
@@ -55,16 +64,17 @@ Branch: `night/collab` · Last update: 07:40 UTC
 - Messages: compose, add-lane and inbox sheets are form-sized on iPad.
 - Messages on iPad: two columns, what I send on the left (newsroom, lanes), what I read on the right (team notes, inbox, sent, lanes log). iPhone keeps one list.
 - Accessibility: one VoiceOver element per row in Messages, team notes and Where is everyone; clashes read in full; labels on tool-call rows, my questions and icon-only buttons.
+- Ask: "Keep this conversation on this device" (off by default): only the words of each turn, in a file protected while the device is locked; never the key, the context or the system prompt; off deletes the file.
 - Ask: sessions an answer names (full title, case and accents ignored) are listed under it with a star to pick and a link to open.
 
 ## In progress
 
-- Build job on night/collab (54b1499 = dev); unit tests run on dev.
+- Nothing running. 0965bfc build green; waiting for the merge to dev, whose unit tests run AIConversationTests.
 
 ## Next
 
 1. Fix anything dev's unit tests report for my folders.
-2. Ask: remember the last conversation across launches on this device (opt-in), never the key.
+2. Morning hand-over notes for the team: how to add an OpenRouter key, link a teammate's plan, and send a newsroom note.
 
 ## Blocked
 
