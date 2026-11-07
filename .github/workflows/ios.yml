@@ -72,7 +72,12 @@ jobs:
 
 
   test:
-    name: App unit tests (iPhone simulator)
+    name: App unit tests (${{ matrix.device }} simulator)
+    strategy:
+      fail-fast: false
+      matrix:
+        # The app must work on iPhone and iPad; both run every test.
+        device: [iPhone, iPad]
     runs-on: macos-26
     timeout-minutes: 45
     steps:
@@ -83,10 +88,10 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: Pick and boot an iPhone simulator
+      - name: Pick and boot an ${{ matrix.device }} simulator
         id: sim
         run: |
-          udid=$(.github/scripts/pick-simulator.py)
+          udid=$(.github/scripts/pick-simulator.py "${{ matrix.device }}")
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
           xcrun simctl boot "$udid" || true
           xcrun simctl bootstatus "$udid" -b
@@ -94,7 +99,7 @@ jobs:
       - name: xcodebuild test
         timeout-minutes: 20
         run: |
-          .github/scripts/run-and-summarize.sh "App unit tests" "$RUNNER_TEMP/logs/test.log" -- \
+          .github/scripts/run-and-summarize.sh "App unit tests (${{ matrix.device }})" "$RUNNER_TEMP/logs/test.log" -- \
             xcodebuild test \
               -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
               -destination "id=${{ steps.sim.outputs.udid }}" \
@@ -110,7 +115,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: test-log
+          name: test-log-${{ matrix.device }}
           path: ${{ runner.temp }}/logs/
           if-no-files-found: ignore
 
