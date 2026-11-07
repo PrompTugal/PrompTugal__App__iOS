@@ -1,8 +1,8 @@
 # Status · Design and native UI
 
-> Design system, app shell and four native dashboards are written and on CI. Next: news in every form, the native graph, observability and the debug panels.
+> Green on CI (Xcode 26.6). Design system, app shell, five native dashboards, news in every form with a native graph explorer, native observability, debug panels, widget designs. Waiting on the root-view swap and night/team's merge to wire their screens.
 
-Branch: `night/design` (rebased on `night/platform`) · Last update: 03:00 UTC
+Branch: `night/design` (rebased on `night/platform`) · Last update: 03:12 UTC
 
 ## Done
 
@@ -27,17 +27,24 @@ Branch: `night/design` (rebased on `night/platform`) · Last update: 03:00 UTC
 | Kind badge | `KindBadge`: Native (green), Web (blue), Hybrid (amber). `.surfaceKind(_:)` puts it in the toolbar of every screen when debug mode is on. |
 | States | `StateView` (loading, error with retry, empty), `FreshnessLabel` ("Updated 4 min ago", amber when older than 30 minutes or offline), `GapNote` (what the app cannot show, and why). |
 
+- **CI green** at `d9733c8`: build, unit tests, SGitVault tests and the simulator app, Xcode 26.6.
+- **News** (`PrompTugal/News/`): the feed (lead story plus a grid), the newsletter editions read **natively from their plain-text email** (headings, bullets, links), the story board by column, and the **graph explorer drawn natively**: all 1,688 nodes and 2,863 edges from `api/v1/graph/explorer.json` in one Canvas, at the layout the website's build computed. Pinch, pan, filter by world, search, tap a node for its links as the site's own sentences ("X is listed under Y"), and find the shortest path between two nodes.
+- **Observability** (`Dashboards/Observability/`): agent wakes by hour (stacked by outcome), runs by day and kind, the team's ten days, desk runs, and **endpoint health measured by the app** (median time, failures, bytes per endpoint). The gap is stated on screen: reader traffic is sealed in a vault, so there is no public JSON; the native vault reader will open it.
+- **Debug** (`PrompTugal/Debug/`): Network (platform's `HTTPLog`, host filters, timing bars, bytes by host), Vault traffic (`VaultTrafficLog`, kind filters, and a **decrypt pipeline** for one object: fetch → verify SHA-256 → key → AES-GCM → inflate → JSON), Storage (feeds, files, each website's data kinds), Keys (keychain names and protection only; the query never asks for data), Build (`BuildInfo` plus the versions of the sites read).
+- **Widget and Live Activity designs** (`Design/WidgetDesigns.swift`): small and medium "Next" widgets and a Lock Screen session activity, as plain views the widget target can use.
+- **Per Dinis via the conductor:** debug mode on by default (the team is the first audience); every screen has an iPhone (compact) and an iPad (regular) preview, with sample data (`PreviewSamples`, made-up people).
+- **Team wiring prepared** (local commit, applied once `night/team` is on dev): `.teamFeatures()` on the shell; MyDayView, PlannerView, TeamHomeView, ReadingCreditView, ReminderSettingsView and BridgeLogView in the registry; the bridge hooks in `WebPage`.
+
 ## In progress
 
-- Waiting on the first CI run of the shell and dashboards.
-- News in every form (`PrompTugal/News/`).
+- Rebased on `origin/dev`.
 
 ## Next
 
-1. News: feed, newsletter editions, stories, and the graph explorer drawn natively from `api/v1/graph/explorer.json` (the build already lays the graph out: every node has x and y).
-2. Observability: newsroom metrics with Swift Charts, and an honest note on the traffic data.
-3. Debug panels: Network (`HTTPLog`), Vault traffic, Bridge, Storage, Keys, Build.
-4. Previews with sample data for every screen.
+1. Apply the team wiring when `night/team` merges.
+2. iPhone pass on every screen at the largest Dynamic Type sizes.
+3. Switch Today and Team to the team session's `TeamStore` models (drop my `Wire` copies of me.json and data.json).
+4. Vault traffic against the real reader when `night/vault` lands.
 
 ## Blocked
 
