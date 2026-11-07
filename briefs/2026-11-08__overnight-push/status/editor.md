@@ -1,10 +1,13 @@
 # Status · Editor
 
-> Checkpoint 3 (04:10): platform, vault, design and team are on dev, but the app still opens on the old website view, so the site counts only 2 of 19 features as in the beta until AppShell is the root. Feature labels now check the root view. Morning summary by 10:00.
+> Checkpoint 4 (04:35): the app opens on the native shell, and the site's feature check moved by itself from 2 to 16 of 19 in the beta. Screenshots are wired: when platform's screens.yml runs on dev, the site shows real iPhone and iPad screens. Morning summary by 10:00.
 
-Branch: `night/editor` · Last update: 04:15 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 04:35 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- 04:30: real screenshots. `website.yml` downloads the newest `screens-*` artifact; the site publishes `/screens/<device>-<id>.png` with sizes read from the PNG, a gallery on the screens page, a screenshot on each in-the-beta feature card, and a real iPad shot on the home page (drawn mock-up as fallback). Validator: declared size must be the file's, shown size must keep its shape.
+- Build log checkpoint 4 (04:35 UTC).
 
 - 04:12: features check the app's root view. Screens count only when `AppShell` is the root of the `@main` `WindowGroup`; the bridge and reminders only once `.teamFeatures()` is applied there. After the 04:08 merge the site briefly showed 14 of 19 features in the beta; it now shows 2 until the root moves. Screens page says so at the top.
 - Build log checkpoint 3 (04:10 UTC).
@@ -39,8 +42,6 @@ Branch: `night/editor` · Last update: 04:15 UTC · merged into `dev` at 251f69b
 
 ## Needs from others
 
-- **Platform or design:** make `AppShell().teamFeatures()` the root view in `PrompTugalApp.swift`. Until then no new screen is reachable and the site says so.
-- **Design:** register team's `MyDayView()` (team.schedule) and `ReadingCreditView()` (team.store) in place of the placeholders.
 
 - **Team:** `PrompTugal/Websites.json` still ships riskmandate.ai, sgit.ai and newsroom.sgit.ai as default shortcuts. The conductor says the team session drops them (item 7 of its brief).
 - **Design:** the site expects collab's `collab.plans` → `TeamPlansView()` (any id works, the site checks the view). 
