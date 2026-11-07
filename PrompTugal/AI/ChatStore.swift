@@ -8,7 +8,17 @@ final class ChatStore {
     static let shared = ChatStore()
 
     struct Turn: Identifiable, Equatable {
-        enum Role: Equatable { case user, assistant, error, tool }
+        enum Role: Equatable {
+            case user, assistant, error, tool
+            var name: String {
+                switch self {
+                case .user: return "user"
+                case .assistant: return "assistant"
+                case .error: return "error"
+                case .tool: return "tool"
+                }
+            }
+        }
         let id = UUID()
         let role: Role
         var text: String
@@ -99,8 +109,7 @@ final class ChatStore {
     /// The words of each finished user, assistant and tool turn (errors and debug details are left out).
     static func snapshot(_ turns: [Turn]) throws -> Data {
         let saved = turns.filter { !$0.streaming && $0.role != .error }.suffix(200).map { turn in
-            SavedTurn(role: { switch turn.role { case .user: "user"; case .assistant: "assistant"; case .tool: "tool"; case .error: "error" } }(),
-                      text: turn.text, model: turn.model)
+            SavedTurn(role: turn.role.name, text: turn.text, model: turn.model)
         }
         return try JSONEncoder().encode(Array(saved))
     }
