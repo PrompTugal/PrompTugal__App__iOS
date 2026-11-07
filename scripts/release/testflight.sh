@@ -41,7 +41,7 @@ if [ "$MODE" = manual ]; then
     [ -n "${KEYCHAIN_PATH:-}" ] && echo "OTHER_CODE_SIGN_FLAGS = --keychain $KEYCHAIN_PATH"
   } > "$xc"
   missing=()
-  while IFS=$'\t' read -r target bundle type; do
+  while IFS=$'\t' read -r target bundle type _ent; do
     case "$type" in *application|*app-extension|*extensionkit-extension) ;; *) continue ;; esac
     pname=$(profile_for "$bundle")
     if [ -z "$pname" ]; then missing+=("$bundle ($target)"); continue; fi
