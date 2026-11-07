@@ -15,8 +15,12 @@ struct StoreKitEnvironmentTests {
 
     @Test("Products before any SKTestSession (scheme Test action configuration)")
     func schemeConfiguration() async {
-        let products = (try? await Product.products(for: Self.ids)) ?? []
-        print("STOREKIT-PROBE scheme-only products=\(products.count) ids=\(products.map(\.id).sorted())")
+        do {
+            let products = try await Product.products(for: Self.ids)
+            print("STOREKIT-PROBE scheme-only products=\(products.count) ids=\(products.map(\.id).sorted())")
+        } catch {
+            print("STOREKIT-PROBE scheme-only error=\(error)")
+        }
     }
 
     @Test("Products with an SKTestSession from the .storekit file")
@@ -25,8 +29,14 @@ struct StoreKitEnvironmentTests {
             .appendingPathComponent("PrompTugal/Store/PrompTugal.storekit")
         let session = try SKTestSession(contentsOf: file)
         session.disableDialogs = true
-        let products = (try? await Product.products(for: Self.ids)) ?? []
-        print("STOREKIT-PROBE session products=\(products.count) prices=\(products.map(\.displayPrice).sorted())")
+        do {
+            let products = try await Product.products(for: Self.ids)
+            print("STOREKIT-PROBE session products=\(products.count) prices=\(products.map(\.displayPrice).sorted())")
+        } catch {
+            print("STOREKIT-PROBE session error=\(error)")
+        }
+        let signed = Bundle.main.bundleURL.appendingPathComponent("_CodeSignature").path
+        print("STOREKIT-PROBE host=\(Bundle.main.bundleIdentifier ?? "?") signed=\(FileManager.default.fileExists(atPath: signed))")
         withExtendedLifetime(session) {}
     }
 }
