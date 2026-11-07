@@ -1,0 +1,11 @@
+// Settings for the PrompTugal app target. Values set in the project file
+// win over these, so keep signing and entitlements here only.
+
+// App Groups (group.news.promptugal.reader) and associated domains
+// (webcredentials: and applinks:promptugal.news). In-App Purchase needs no
+// entitlement key; it is enabled on the App ID.
+CODE_SIGN_ENTITLEMENTS = $(PT_ENTITLEMENTS)
+PT_ENTITLEMENTS = Config/PrompTugal.entitlements
+
+// Your own team and overrides, never committed. Copy Local.xcconfig.example.
+#include? "Local.xcconfig"

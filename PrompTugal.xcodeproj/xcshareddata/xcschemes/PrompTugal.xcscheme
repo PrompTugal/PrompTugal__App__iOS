@@ -18,6 +18,7 @@
       <BuildableProductRunnable runnableDebuggingMode="0">
          <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="A50000000000000000000001" BuildableName="PrompTugal.app" BlueprintName="PrompTugal" ReferencedContainer="container:PrompTugal.xcodeproj"/>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference identifier="../../PrompTugal/Store/PrompTugal.storekit"/>
    </LaunchAction>
    <ProfileAction buildConfiguration="Release" useCustomWorkingDirectory="NO" debugDocumentVersioning="YES">
       <BuildableProductRunnable runnableDebuggingMode="0">
