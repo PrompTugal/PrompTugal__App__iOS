@@ -234,7 +234,7 @@ extension View {
 
 private struct KindBadgeModifier: ViewModifier {
     let kind: SurfaceKind
-    @AppStorage(DebugMode.key) private var debug = false
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
     func body(content: Content) -> some View {
         content.toolbar {
@@ -248,6 +248,28 @@ private struct KindBadgeModifier: ViewModifier {
 /// The one switch for debug mode, shared by Settings, the shell and the badges.
 enum DebugMode {
     static let key = "debug.enabled"
+    /// On by default: the first users are the team, and the app should show its working.
+    static let defaultOn = true
+}
+
+// MARK: - Previews on both devices
+
+/// Every screen is previewed at iPhone and iPad sizes, with the size class each really has.
+enum PreviewDevice {
+    static let phone = CGSize(width: 393, height: 852)
+    static let pad = CGSize(width: 1180, height: 820)
+}
+
+extension View {
+    /// The compact (iPhone) layout of a screen, for previews.
+    func phonePreview() -> some View {
+        environment(\.horizontalSizeClass, .compact).frame(width: PreviewDevice.phone.width, height: PreviewDevice.phone.height)
+    }
+
+    /// The regular (iPad landscape) layout of a screen, for previews.
+    func padPreview() -> some View {
+        environment(\.horizontalSizeClass, .regular).frame(width: PreviewDevice.pad.width, height: PreviewDevice.pad.height)
+    }
 }
 
 // MARK: - Load states

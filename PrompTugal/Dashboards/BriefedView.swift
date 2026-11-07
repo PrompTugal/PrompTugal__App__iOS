@@ -109,6 +109,10 @@ struct BriefedView: View {
     }
 }
 
-#Preview("Briefed") {
-    NavigationStack { BriefedView() }.environment(PreviewSamples.data())
+#Preview("Briefed · iPhone") {
+    NavigationStack { BriefedView() }.environment(PreviewSamples.data()).phonePreview()
+}
+
+#Preview("Briefed · iPad") {
+    NavigationStack { BriefedView() }.environment(PreviewSamples.data()).padPreview()
 }

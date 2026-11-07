@@ -132,6 +132,10 @@ struct HandoffChart: View {
     }
 }
 
-#Preview("Agents") {
-    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.data())
+#Preview("Agents · iPhone") {
+    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.data()).phonePreview()
+}
+
+#Preview("Agents · iPad") {
+    NavigationStack { AgentsDashboardView() }.environment(PreviewSamples.data()).padPreview()
 }

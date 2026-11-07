@@ -25,14 +25,16 @@ struct TeamDashboardView: View {
         Page {
             ScreenHeader(kicker: "Team", title: "What the team is doing",
                          summary: "Everyone's load from the board: what only they can do, what waits on their decision, what is late.")
-            HStack {
-                FreshnessLabel(updated: data.team.updated, failed: data.team.failed)
-                Spacer()
-                Picker("Sort", selection: $sort) {
-                    ForEach(Sort.allCases) { Text($0.rawValue).tag($0) }
+            ViewThatFits(in: .horizontal) {
+                HStack {
+                    FreshnessLabel(updated: data.team.updated, failed: data.team.failed)
+                    Spacer()
+                    sortPicker.frame(maxWidth: 360)
                 }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 360)
+                VStack(alignment: .leading, spacing: Space.s) {
+                    FreshnessLabel(updated: data.team.updated, failed: data.team.failed)
+                    sortPicker
+                }
             }
             if people.isEmpty {
                 StateView(phase: data.team.phase, hasData: false, title: "team") {
@@ -58,6 +60,13 @@ struct TeamDashboardView: View {
         .refreshable { await data.refreshTeam(force: true) }
         .task { await data.refreshTeam() }
         .webTwin(TeamSite.base.appendingPathComponent("team/"), title: "Team")
+    }
+
+    private var sortPicker: some View {
+        Picker("Sort", selection: $sort) {
+            ForEach(Sort.allCases) { Text($0.rawValue).tag($0) }
+        }
+        .pickerStyle(.segmented)
     }
 
     private var totals: some View {
@@ -199,6 +208,10 @@ struct StandupTimeline: View {
     }
 }
 
-#Preview("Team") {
-    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.data())
+#Preview("Team · iPhone") {
+    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.data()).phonePreview()
+}
+
+#Preview("Team · iPad") {
+    NavigationStack { TeamDashboardView() }.environment(PreviewSamples.data()).padPreview()
 }

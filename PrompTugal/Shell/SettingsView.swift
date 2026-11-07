@@ -5,7 +5,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(DashboardData.self) private var data
     @AppStorage(DashboardData.meKey) private var me = ""
-    @AppStorage(DebugMode.key) private var debug = false
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
     var body: some View {
         Form {

@@ -228,6 +228,10 @@ struct AgentStatusChart: View {
     }
 }
 
-#Preview("Newsroom") {
-    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.data())
+#Preview("Newsroom · iPhone") {
+    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.data()).phonePreview()
+}
+
+#Preview("Newsroom · iPad") {
+    NavigationStack { NewsroomStatusView() }.environment(PreviewSamples.data()).padPreview()
 }

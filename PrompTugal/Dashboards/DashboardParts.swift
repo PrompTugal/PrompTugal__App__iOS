@@ -29,9 +29,11 @@ struct WakeGrid: View {
     let hours: [String]
     var highlight: (Wire.DashAgent) -> Bool = { _ in false }
     @State private var selected: Wire.DashAgent.ID?
+    @Environment(\.horizontalSizeClass) private var width
 
     private let rowHeight: CGFloat = 18
-    private let labelWidth: CGFloat = 120
+    /// Narrower names on iPhone, so the 24 hour columns keep a usable width.
+    private var labelWidth: CGFloat { width == .compact ? 78 : 130 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.s) {

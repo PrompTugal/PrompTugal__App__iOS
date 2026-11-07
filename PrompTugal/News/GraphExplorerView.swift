@@ -356,6 +356,10 @@ struct GraphCanvas: View {
     }
 }
 
-#Preview("Graph") {
-    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data())
+#Preview("Graph · iPhone") {
+    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data()).phonePreview()
+}
+
+#Preview("Graph · iPad") {
+    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.data()).padPreview()
 }

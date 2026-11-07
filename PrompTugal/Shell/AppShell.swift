@@ -11,7 +11,7 @@ struct AppShell: View {
     @State private var vaultLog = VaultTrafficLog()
     @SceneStorage("shell.selection") private var selection: String = "today"
     @SceneStorage("shell.tab") private var tab: String = "today"
-    @AppStorage(DebugMode.key) private var debug = false
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     @State private var columns: NavigationSplitViewVisibility = .all
 
     var body: some View {
@@ -204,7 +204,7 @@ private struct MoreList: View {
 /// ⌘1–⌘9 jump to the first screen of each section; ⌘, opens Settings; ⌘⇧D opens Debug.
 private struct ShellKeyboardShortcuts: View {
     @Binding var selection: String
-    @AppStorage(DebugMode.key) private var debug = false
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
     var body: some View {
         let sections = ShellSection.allCases.filter { $0 != .settings && $0 != .debug }
@@ -223,6 +223,10 @@ private struct ShellKeyboardShortcuts: View {
     }
 }
 
-#Preview("Shell") {
-    AppShell().environment(ReaderStore())
+#Preview("Shell · iPhone") {
+    AppShell().environment(ReaderStore()).phonePreview()
+}
+
+#Preview("Shell · iPad") {
+    AppShell().environment(ReaderStore()).padPreview()
 }

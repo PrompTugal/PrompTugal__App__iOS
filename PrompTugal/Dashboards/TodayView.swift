@@ -180,6 +180,10 @@ struct StandupCard: View {
     }
 }
 
-#Preview("My day") {
-    NavigationStack { TodayView() }.environment(PreviewSamples.data())
+#Preview("My day · iPhone") {
+    NavigationStack { TodayView() }.environment(PreviewSamples.data()).phonePreview()
+}
+
+#Preview("My day · iPad") {
+    NavigationStack { TodayView() }.environment(PreviewSamples.data()).padPreview()
 }
