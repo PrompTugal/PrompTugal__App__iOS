@@ -21,11 +21,11 @@ public actor SGitVault {
     public nonisolated let log: VaultTrafficLog
     public nonisolated let transportLabel: String
 
-    private let readKey: SymmetricKey
+    let readKey: SymmetricKey
     private let structureKey: SymmetricKey
     private let structureKeyMs: Double
-    private let transport: any VaultTransport
-    private let cache: VaultObjectCache
+    let transport: any VaultTransport
+    let cache: VaultObjectCache
 
     /// The named branch this instance reads. sgit's default is "current".
     public private(set) var branchName: String
@@ -38,14 +38,14 @@ public actor SGitVault {
     public private(set) var format: VaultFormat?
     public private(set) var lastPull: Date?
     public private(set) var lastPullMs: Double = 0
-    private var fileMap: [String: VaultFile] = [:]
+    var fileMap: [String: VaultFile] = [:]
     private var treeRoot: VaultTreeNode?
     private var announcedKeys = false
     private var pullTask: Task<VaultCommit, Error>?
 
     // Immutable objects decrypted this session, kept in memory (they never change).
     private var commitMemo: [String: VaultCommit] = [:]
-    private var treeMemo: [String: VaultTreeNode] = [:]
+    var treeMemo: [String: VaultTreeNode] = [:]
     private var treeFilesMemo: [String: [VaultFile]] = [:]
     private var publicKeyMemo: [String: P256.Signing.PublicKey] = [:]
 
@@ -379,7 +379,7 @@ public actor SGitVault {
         return try await decrypt(data, path: path, what: what)
     }
 
-    private func decrypt(_ data: Data, path: String, what: String) async throws -> Data {
+    func decrypt(_ data: Data, path: String, what: String) async throws -> Data {
         let start = ContinuousClock.now
         do {
             let opened = try VaultCrypto.open(data, readKey: readKey, structureKey: structureKey)
@@ -394,7 +394,7 @@ public actor SGitVault {
         }
     }
 
-    private func decode<T: Decodable>(_ data: Data, path: String, what: String, alreadyPlain: Bool = false) async throws -> T {
+    func decode<T: Decodable>(_ data: Data, path: String, what: String, alreadyPlain: Bool = false) async throws -> T {
         let plain = alreadyPlain ? data : try await decrypt(data, path: path, what: what)
         do {
             return try JSONDecoder().decode(T.self, from: plain)
@@ -448,7 +448,7 @@ public actor SGitVault {
 
     // MARK: Transport and logging
 
-    private func fetch(_ path: String, cacheable: Bool) async throws -> Data {
+    func fetch(_ path: String, cacheable: Bool) async throws -> Data {
         try await fetchWithSource(path, cacheable: cacheable).0
     }
 
@@ -474,7 +474,7 @@ public actor SGitVault {
         }
     }
 
-    private func emit(_ kind: VaultTrafficEvent.Kind, _ path: String, bytes: Int = 0, ms: Double = 0,
+    func emit(_ kind: VaultTrafficEvent.Kind, _ path: String, bytes: Int = 0, ms: Double = 0,
                       status: Int? = nil, detail: String = "") async {
         let event = VaultTrafficEvent(kind: kind, path: path, bytes: bytes, durationMs: ms, status: status,
                                       detail: detail, vaultId: address.vaultId)
@@ -482,7 +482,7 @@ public actor SGitVault {
     }
 
     /// Log the error, then throw it.
-    private func fail(_ path: String, _ error: VaultError, bytes: Int = 0) async throws -> Never {
+    func fail(_ path: String, _ error: VaultError, bytes: Int = 0) async throws -> Never {
         await emit(.error, path, bytes: bytes, detail: error.description)
         throw error
     }
