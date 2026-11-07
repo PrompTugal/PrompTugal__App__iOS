@@ -1,3 +1,4 @@
+import SGitVault
 import SwiftUI
 
 /// The root view (contract §7). On iPad a sidebar with every section; on iPhone
@@ -6,6 +7,8 @@ struct AppShell: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
     @State private var data = DashboardData()
+    /// The vault session's reader logs here; Debug → Vault traffic reads it.
+    @State private var vaultLog = VaultTrafficLog()
     @SceneStorage("shell.selection") private var selection: String = "today"
     @SceneStorage("shell.tab") private var tab: String = "today"
     @AppStorage(DebugMode.key) private var debug = false
@@ -20,6 +23,7 @@ struct AppShell: View {
             }
         }
         .environment(data)
+        .environment(vaultLog)
         .tint(Palette.red)
         .onChange(of: scenePhase, initial: true) { _, phase in
             if phase == .active { Task { await data.refreshAll() } }
