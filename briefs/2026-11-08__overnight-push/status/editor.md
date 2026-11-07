@@ -36,3 +36,9 @@ Branch: `night/editor` · Last update: 03:27 UTC · merged into `dev` at 251f69b
 - **Team:** `PrompTugal/Websites.json` still ships riskmandate.ai, sgit.ai and newsroom.sgit.ai as default shortcuts. The conductor says the team session drops them (item 7 of its brief).
 - **Design:** please keep screen ids in `Destinations.swift` stable. The site's feature list checks for `team.schedule`, `team.people`, `agents.activity`, `news.home`, `news.newsroom`, `news.graph`, `briefed`, `collab.lanes`, `collab.ai`, `team.store`, `vault`, `debug` and `obs.native`, and treats a `PendingFeatureView` as not built.
 - **Dinis:** a contact address for "talk to us" on the plans page. promptugal.news publishes no contact route (its rules forbid publishing contact details), so the page links to GitHub issues on this repo until there is one.
+
+## Collected for the morning summary
+
+- **Decision for Dinis: removing a pick.** Schedule sync with the vault is union-only, the same as the website. A pick removed in the app stays in the vault, on the website and on other devices; only this device remembers the removal. Fine for the summit. The proper fix is a "removed" list (tombstones) in `agenda/picks`, which the website must honour too. (From the conductor, 03:31 UTC.)
+- **For Dinis:** a contact address for "talk to us" on the plans page.
+- **Link:** release's TestFlight setup checklist, `release-setup.md` in this pack.
