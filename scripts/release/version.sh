@@ -27,7 +27,7 @@ marketing=$(xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Rele
   -destination 'generic/platform=iOS' -showBuildSettings 2>/dev/null \
   | awk -F' = ' '/^ *MARKETING_VERSION = /{print $2; exit}')
 marketing=${marketing:-0.0.0}
-sha=${GITHUB_SHA:-$(git rev-parse HEAD)}
+sha=${SOURCE_SHA:-${GITHUB_SHA:-$(git rev-parse HEAD)}}
 short=${sha:0:7}
 base="${APP_NAME}-${marketing}-${build}-${short}"
 

@@ -86,6 +86,9 @@ make_options() {  # make_options <destination> <out.plist>
       /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$bundle string $pname" "$plist"
     done < "$OUT/profiles.tsv"
   fi
+  if [ "${INTERNAL_ONLY:-false}" = true ]; then
+    /usr/libexec/PlistBuddy -c "Add :testFlightInternalTestingOnly bool true" "$plist"
+  fi
 }
 
 opts=$OUT/ExportOptions-export.plist

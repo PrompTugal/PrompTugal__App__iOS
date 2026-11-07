@@ -34,6 +34,14 @@ on:
         description: 'Override CFBundleVersion (leave empty for run number + offset)'
         type: string
         default: ''
+      internal_only:
+        description: 'TestFlight internal testing only (build can never go to external testers or the App Store)'
+        type: boolean
+        default: false
+      source_ref:
+        description: 'Build another branch (e.g. night/platform) with these release scripts'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -67,6 +75,17 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # the app's build-info phase reads the commit count and tags
+
+      - name: Use another branch's project (source_ref)
+        if: inputs.source_ref != ''
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          git fetch --no-tags origin "$SOURCE_REF"
+          git checkout --detach FETCH_HEAD
+          git checkout "$GITHUB_SHA" -- scripts/release
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "**Source:** \`$SOURCE_REF\` at \`$(git rev-parse --short HEAD)\`, release scripts from \`${GITHUB_SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Select Xcode
         run: scripts/release/select-xcode.sh
@@ -153,6 +172,7 @@ jobs:
       ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
       APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
       SIGNING: ${{ inputs.signing || 'auto' }}
+      INTERNAL_ONLY: ${{ inputs.internal_only && 'true' || 'false' }}
       BUILD_NUMBER: ${{ needs.package.outputs.build }}
       MARKETING_VERSION: ${{ needs.package.outputs.version }}
       ARTIFACT_BASE: ${{ needs.package.outputs.base }}
@@ -196,6 +216,17 @@ jobs:
         if: steps.gate.outputs.ready == 'true'
         with:
           fetch-depth: 0
+
+      - name: Use another branch's project (source_ref)
+        if: steps.gate.outputs.ready == 'true' && inputs.source_ref != ''
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          git fetch --no-tags origin "$SOURCE_REF"
+          git checkout --detach FETCH_HEAD
+          git checkout "$GITHUB_SHA" -- scripts/release
+          echo "SOURCE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "**Source:** \`$SOURCE_REF\` at \`$(git rev-parse --short HEAD)\`, release scripts from \`${GITHUB_SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Select Xcode
         if: steps.gate.outputs.ready == 'true'

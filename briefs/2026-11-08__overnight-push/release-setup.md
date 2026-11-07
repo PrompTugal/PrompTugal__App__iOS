@@ -2,6 +2,8 @@
 
 > What Dinis does once, in the Apple Developer portal, App Store Connect and GitHub, so the `iOS release` workflow signs PrompTugal and uploads it to TestFlight with no code changes. Also covers how to install the unsigned builds CI makes today.
 
+**Priority (Dinis):** PrompTugal is an internal app for the team first. The target is **internal TestFlight** (team members as App Store Connect users, no Beta App Review) plus the unsigned CI artifacts. External testers and the App Store come later.
+
 Owner: release engineering (`night/release`) · Workflow: `.github/workflows/ios-release.yml` · Scripts: `scripts/release/`
 
 ## What CI does today, with no keys
@@ -85,6 +87,12 @@ Either:
 
 - **By hand:** Actions → **iOS release** → Run workflow → pick the branch (normally `dev`) → tick **upload** → Run. Leave **signing** on `auto`.
 - **By tag:** `git tag ios-v0.3.1 && git push origin ios-v0.3.1` (on the commit you want). Tags never cancel half way.
+
+Other inputs for a manual run:
+
+- **internal_only:** sets `testFlightInternalTestingOnly`. That build can then only go to internal testers, never to external testers or the App Store. Leave it off unless you want that guarantee.
+- **source_ref:** builds another branch (for example `night/platform`) with the release scripts from the branch you run on.
+- **build_number:** overrides the build number.
 
 Pushes to branches never upload. After the job is green, App Store Connect processes the build in 5–30 minutes. You get an email, and with automatic distribution the internal group sees it in the TestFlight app.
 
