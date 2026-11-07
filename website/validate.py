@@ -7,7 +7,7 @@ Checks every page in the output directory:
   * JSON-LD parses, and the home page's softwareVersion matches the Xcode project
   * product pages (outside admin/) name no brand listed in OTHER_BRANDS (ours are all allowed)
   * every feature in features.json is on its platform page, labelled as the source says
-  * the push dashboard lists every status page of the overnight pack
+  * the push dashboard lists every status page of every brief pack
   * no scripts other than JSON-LD, no external stylesheets, no inline event handlers
   * one <h1>, a lang, a title and a description; every <img> has alt, width and height
   * no build tokens left behind and no banned words
@@ -233,9 +233,10 @@ def validate(out):
     # The push dashboard covers every status page
     if 'admin/push.html' in pages:
         dash = pages['admin/push.html'].read_text()
-        for path in sorted(ROOT.glob('briefs/*__overnight-push/status/*.md')):
-            if f'/status/{path.stem}.html"' not in dash and f'/status/{path.stem}.md"' not in dash:
-                problems.append(f'admin/push.html: status page {path.stem} is missing')
+        for path in sorted(ROOT.glob('briefs/*/status/*.md')):
+            pack = path.parent.parent.name
+            if f'/{pack}/status/{path.stem}.html"' not in dash and f'/{pack}/status/{path.stem}.md"' not in dash:
+                problems.append(f'admin/push.html: status page {path.stem} of {pack} is missing')
     return problems
 
 

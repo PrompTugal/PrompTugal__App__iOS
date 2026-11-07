@@ -181,7 +181,8 @@ public struct VaultCommitBuilder: Sendable {
                 direct[child, default: []] += []
                 folder = child
             }
-            direct[folder, default: []].append((parts.last!, file))
+            guard let name = parts.last else { continue }      // an empty path never reaches here (checkPath)
+            direct[folder, default: []].append((name, file))
         }
         // Deepest folders first.
         let folders = direct.keys.sorted { a, b in

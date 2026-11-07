@@ -28,15 +28,16 @@ public enum VaultCrypto {
     /// PBKDF2-HMAC-SHA256 with CommonCrypto.
     public static func pbkdf2(passphrase: String, salt: String, rounds: UInt32 = pbkdf2Rounds) -> SymmetricKey {
         let password = Array(passphrase.utf8)
+        let passwordBytes = password.isEmpty ? [UInt8(0)] : password      // a valid pointer even when empty
         let saltBytes = Array(salt.utf8)
         var derived = [UInt8](repeating: 0, count: 32)
-        let status = password.withUnsafeBufferPointer { pw in
+        let status = passwordBytes.withUnsafeBufferPointer { pw in
             saltBytes.withUnsafeBufferPointer { st in
                 derived.withUnsafeMutableBufferPointer { out in
                     pw.baseAddress!.withMemoryRebound(to: CChar.self, capacity: pw.count) { pwChars in
                         CCKeyDerivationPBKDF(
                             CCPBKDFAlgorithm(kCCPBKDF2),
-                            pwChars, pw.count,
+                            pwChars, password.count,
                             st.baseAddress, st.count,
                             CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
                             rounds,

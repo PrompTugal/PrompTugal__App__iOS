@@ -62,13 +62,23 @@ def features(root=ROOT):
             return evidence[len('root:'):] in scene
         if evidence.startswith('view:'):
             return evidence[len('view:'):] in views
+        if evidence.startswith('text:'):
+            # text:<file glob>::<exact text> — the text appears in a matching file (a button title, a type name)
+            pattern, _, needle = evidence[len('text:'):].partition('::')
+            return any(needle in p.read_text(errors='replace') for p in root.glob(pattern) if p.is_file())
         return any(p.is_file() for p in root.glob(evidence))
 
     for f in data:
         missing = [g for g in f['evidence'] if not present(g)]
-        f['shipped'] = not missing
+        # A feature the code switches off in Release builds is not "in the beta" for TestFlight testers.
+        f['debug_only'] = not missing and bool(f.get('hidden_in_release')) and all(present(g) for g in f['hidden_in_release'])
+        f['shipped'] = not missing and not f['debug_only']
         f['missing'] = missing
     return data
+
+
+def status_label(f):
+    return 'In the beta' if f['shipped'] else ('Debug builds only' if f.get('debug_only') else 'Coming')
 
 
 def features_cards(items, platform, shots=None):
@@ -79,7 +89,7 @@ def features_cards(items, platform, shots=None):
             ids = [e[len('screen:'):] for e in f['evidence'] if e.startswith('screen:')]
             pic = next((shot_img(shots, i, f['name'], device='iphone', width=200) for i in ids
                         if 'iphone' in shots.get(i, {})), '')
-        status = 'In the beta' if f['shipped'] else 'Coming'
+        status = status_label(f)
         cls = 'on' if f['shipped'] else 'soon'
         rows.append(f'<li class="feature" id="f-{esc(f["id"])}">{pic}<h3>{esc(f["name"])}</h3>'
                     f'<p>{esc(f["what"])}</p>'
@@ -91,7 +101,7 @@ def features_cards(items, platform, shots=None):
 def features_table(items, repo_url):
     rows = []
     for f in items:
-        status = 'In the beta' if f['shipped'] else 'Coming'
+        status = status_label(f)
         evidence = ', '.join(f'<code>{esc(g)}</code>' for g in f['evidence'])
         rows.append(f'<tr><td>{esc(f["name"])}</td><td>{"Readers" if f["platform"] == "readers" else "Teams"}</td>'
                     f'<td>{KIND_LABEL[f["kind"]]}</td><td><span class="status {"on" if f["shipped"] else "soon"}">'
@@ -115,7 +125,7 @@ def feature_tokens(repo_url, root=ROOT, shots=None):
         'features_teams_shipped': count('teams', True),
         'features_teams_total': str(sum(1 for f in items if f['platform'] == 'teams')),
         'mock_sidebar': mock_sidebar(items),
-        **{f'status_{f["id"].replace("-", "_")}': 'in the beta' if f['shipped'] else 'coming' for f in items},
+        **{f'status_{f["id"].replace("-", "_")}': status_label(f).lower() for f in items},
     }
 
 
@@ -191,7 +201,7 @@ def parse_status(text):
 
 
 def push_status(root=ROOT, remote='origin'):
-    """Every session's status page in the overnight pack.
+    """Every session's status page, in every brief pack that has a status/ folder.
 
     A session's own branch (origin/night/<slug>) is newer than dev between merges,
     so when the branch is in this checkout (the deploy fetches every branch) its copy
@@ -201,7 +211,9 @@ def push_status(root=ROOT, remote='origin'):
     branches = {line.strip()[len(remote) + len('/night/'):]: line.strip()
                 for line in git('branch', '-r', '--format=%(refname:short)', root=root).splitlines()
                 if line.strip().startswith(f'{remote}/night/')}
-    packs = sorted({p.parent.parent for p in root.glob('briefs/*__overnight-push/status/*.md')})
+    packs = sorted({p.parent.parent for p in root.glob('briefs/*/status/*.md')},
+                   key=lambda pack: git('log', '-1', '--format=%cI', '--', pack.relative_to(root).as_posix(),
+                                        root=root).strip() or '9999', reverse=True)   # newest push first
     for pack in packs:
         rel_pack = pack.relative_to(root).as_posix()
         slugs = {p.stem for p in pack.glob('status/*.md')}
@@ -226,9 +238,29 @@ def push_status(root=ROOT, remote='origin'):
     return out
 
 
+def pack_title(pack, root=ROOT):
+    """A brief pack's title, from its README's first heading."""
+    readme = root / 'briefs' / pack / 'README.md'
+    m = re.search(r'^#\s+(.+)$', readme.read_text(), re.M) if readme.exists() else None
+    return re.sub(r'[`*]', '', m.group(1)).strip() if m else pack
+
+
 def push_dashboard(items, repo_url=''):
+    """One table per brief pack, newest pack first."""
     if not items:
         return '<p>No status pages yet.</p>'
+    packs = []
+    for s in items:
+        if s['pack'] not in packs:
+            packs.append(s['pack'])
+    out = []
+    for pack in packs:
+        out.append(f'<h3 id="pack-{esc(pack)}"><a href="briefs/{esc(pack)}/index.html">{esc(pack_title(pack))}</a></h3>'
+                   + _dashboard_table([s for s in items if s['pack'] == pack], repo_url))
+    return '\n'.join(out)
+
+
+def _dashboard_table(items, repo_url):
     head = ''.join(f'<th scope="col">{s}</th>' for s in STATUS_SECTIONS)
     rows = []
     for s in items:
@@ -255,7 +287,7 @@ def push_blockers(items):
         name = re.sub(r'^Status\s*·\s*', '', s['title']) or s['slug']
         for kind in ('Blocked', 'Needs from others'):
             for item in s['sections'].get(kind, []):
-                rows.append(f'<li><strong>{esc(name)}</strong> ({kind.lower()}): {plain(item)}</li>')
+                rows.append(f'<li><strong>{esc(name)}</strong> ({kind.lower()}, {esc(pack_title(s["pack"]))}): {plain(item)}</li>')
     return '<ul>' + ''.join(rows) + '</ul>' if rows else '<p>Nothing blocked and nothing asked of others.</p>'
 
 

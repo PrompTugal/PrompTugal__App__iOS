@@ -55,8 +55,47 @@ final class ChatStore {
         didSet { defaults.set(useTools, forKey: "ai.tools") }
     }
     var contextKinds: Set<AIContextKind> {
-        didSet { defaults.set(contextKinds.map(\.rawValue), forKey: "ai.context") }
+        didSet { defaults.set(contextKinds.map(\.rawValue), forKey: Self.contextKey) }
     }
+    /// v2: the default became the agenda only, when consent was added. Earlier choices are not carried over.
+    static let contextKey = "ai.context.v2"
+
+    // MARK: Consent (App Review 5.1.2(i))
+
+    enum Consent: String, Sendable { case unknown, granted, declined }
+    static let consentKey = "ai.consent.v1"
+    /// Nothing is sent to OpenRouter unless this is `.granted`. Asked once, before the first question; changeable in settings.
+    private(set) var consent: Consent {
+        didSet { defaults.set(consent.rawValue, forKey: Self.consentKey) }
+    }
+    /// True while the consent sheet should show.
+    var consentRequested = false
+    /// The question waiting for the user's answer on the consent sheet.
+    @ObservationIgnored private var pending: (() -> Void)?
+
+    func grantConsent() {
+        consent = .granted
+        consentRequested = false
+        let next = pending
+        pending = nil
+        next?()
+    }
+
+    func declineConsent() {
+        consent = .declined
+        consentRequested = false
+        pending = nil
+    }
+
+    /// Settings: withdraw consent. The next question asks again.
+    func revokeConsent() {
+        stop()
+        consent = .unknown
+    }
+
+    /// The most turns kept in the conversation, and the most sent back with a question.
+    static let turnCap = 200
+    static let historyCap = 30
     /// Keep the conversation on this device between launches (off by default). Only the words of each turn are
     /// kept, in a file protected while the device is locked; never the key, the context or the system prompt.
     var keepConversation: Bool {
@@ -85,8 +124,9 @@ final class ChatStore {
         self.gather = gather
         model = defaults.string(forKey: "ai.model") ?? OpenRouter.defaultModel
         useTools = defaults.object(forKey: "ai.tools") as? Bool ?? true
-        let saved = (defaults.array(forKey: "ai.context") as? [String])?.compactMap(AIContextKind.init(rawValue:))
-        contextKinds = Set(saved ?? [.agenda, .picks, .team])
+        let saved = (defaults.array(forKey: Self.contextKey) as? [String])?.compactMap(AIContextKind.init(rawValue:))
+        contextKinds = Set(saved ?? Array(AIContextKind.defaults))
+        consent = Consent(rawValue: defaults.string(forKey: Self.consentKey) ?? "") ?? .unknown
         keepConversation = defaults.bool(forKey: "ai.keepConversation")
         if keepConversation, let data = try? Data(contentsOf: conversationFile) {
             turns = Self.restore(data)
@@ -146,7 +186,7 @@ final class ChatStore {
     /// The messages for the next request: the system message, then the conversation (errors left out).
     static func messages(system: String, turns: [Turn], question: String) -> [OpenRouter.Message] {
         var out = [OpenRouter.Message(role: .system, content: system)]
-        for turn in turns where !turn.streaming {
+        for turn in turns.suffix(historyCap) where !turn.streaming {
             switch turn.role {
             case .user: out.append(.init(role: .user, content: turn.text))
             case .assistant where !turn.text.isEmpty: out.append(.init(role: .assistant, content: turn.text))
@@ -160,7 +200,15 @@ final class ChatStore {
     func send(_ text: String? = nil) {
         let question = (text ?? draft).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !question.isEmpty, !isSending else { return }
+        guard consent == .granted else {
+            if consent == .unknown {
+                pending = { [weak self] in self?.send(question) }
+                consentRequested = true
+            }
+            return
+        }
         if text == nil { draft = "" }
+        isSending = true                       // before the Task, so a second tap cannot send twice
         task = Task { await run(question) }
     }
 
@@ -169,6 +217,14 @@ final class ChatStore {
     func ask(_ prompt: String, showing label: String? = nil, include: Set<AIContextKind> = [],
              extra: @escaping @MainActor () async -> [AIContextPart] = { [] }) {
         guard !isSending else { return }
+        guard consent == .granted else {
+            if consent == .unknown {
+                pending = { [weak self] in self?.ask(prompt, showing: label, include: include, extra: extra) }
+                consentRequested = true
+            }
+            return
+        }
+        isSending = true
         task = Task { await run(prompt, label: label, include: include, extra: extra) }
     }
 
@@ -185,7 +241,8 @@ final class ChatStore {
     private func run(_ question: String, label: String? = nil, include: Set<AIContextKind> = [],
                      extra: @MainActor () async -> [AIContextPart] = { [] }) async {
         isSending = true
-        defer { isSending = false; task = nil; saveConversation() }
+        defer { isSending = false; task = nil; capTurns(); saveConversation() }
+        guard consent == .granted else { return }    // never send without consent, whoever calls
         let history = turns
         turns.append(Turn(role: .user, text: label ?? question))
 
@@ -193,16 +250,18 @@ final class ChatStore {
         do {
             key = try keys.key()
         } catch {
-            turns.append(Turn(role: .error, text: error.localizedDescription))
+            turns.append(Turn(role: .error, text: CollabErrorText.short(error)))
             return
         }
-        let parts = await gather(contextKinds.union(include)) + extra()
+        let kinds = AIContextKind.allowed(include, toggles: contextKinds)
+        let parts = await gather(kinds) + extra().filter { kinds.contains($0.kind) }
+        let toolSet = useTools ? AITools.definitions(for: kinds) : []
         let system = AIContextAssembler.systemPrompt(parts: parts, now: .now, person: CollabHooks.me()?.name,
-                                                     tools: useTools)
+                                                     tools: !toolSet.isEmpty)
         var messages = Self.messages(system: system, turns: history, question: question)
 
         for hop in 0...AITools.maxHops {
-            let tools = useTools && hop < AITools.maxHops ? AITools.definitions : []
+            let tools = hop < AITools.maxHops ? toolSet : []
             let bytes = (try? OpenRouter.request(key: key, model: model, messages: messages, tools: tools).httpBody?.count) ?? 0
             var debug = RequestDebug(model: model, systemPrompt: system, parts: parts, messageCount: messages.count,
                                      requestBytes: bytes, sentAt: .now)
@@ -228,7 +287,7 @@ final class ChatStore {
             } catch {
                 failed = true
                 if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
-                    turns.append(Turn(role: .error, text: error.localizedDescription))
+                    turns.append(Turn(role: .error, text: CollabErrorText.short(error)))
                 } else {
                     turns[index].text += turns[index].text.isEmpty ? "(stopped)" : " (stopped)"
                 }
@@ -246,12 +305,16 @@ final class ChatStore {
             messages.append(.init(role: .assistant, content: turns[index].text, toolCalls: calls))
             if turns[index].text.isEmpty { turns.remove(at: index) }
             for call in calls {
-                let (result, summary) = await AITools.run(call)
+                let (result, summary) = await AITools.run(call, allowed: kinds)
                 let args = call.function.arguments.trimmingCharacters(in: .whitespacesAndNewlines)
                 turns.append(Turn(role: .tool, text: "\(call.function.name)(\(args == "{}" ? "" : args)) → \(summary)"))
                 messages.append(.init(role: .tool, content: result, toolCallId: call.id))
             }
         }
+    }
+
+    private func capTurns() {
+        if turns.count > Self.turnCap { turns.removeFirst(turns.count - Self.turnCap) }
     }
 
     private static func ms(since start: ContinuousClock.Instant) -> Double {

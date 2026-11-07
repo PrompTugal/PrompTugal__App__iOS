@@ -28,6 +28,8 @@ final class VaultSession {
         let canWrite: Bool
         let vault: SGitVault
         var state: State = .idle
+        /// Set when the head was refused because a key this device does not trust signed it.
+        var untrustedSigner: String?
         var head: VaultCommit?
         var fileCount = 0
         var lastPull: Date?
@@ -70,22 +72,79 @@ final class VaultSession {
 
     var isLocked: Bool { vaults.isEmpty }
     var hasStoredKeys: Bool { !keychain.inventory().isEmpty }
+
+    /// Roles. "Mine" is the person's own vault; a teammate's or pasted vault is never treated as theirs (S5).
+    enum Role: Sendable {
+        static let reader = "reader"        // the person's own vault, from the passkey account
+        static let master = "master"        // the person's master vault
+        static let mine = "mine"            // a key the person imported and marked as their own
+        static let teammate = "teammate"    // a teammate's or shared vault, read only for "my" purposes
+        static func isMine(_ role: String) -> Bool { role == reader || role == mine }
+    }
+
+    /// The vault the person explicitly chose as theirs (persisted), if any.
+    private(set) var chosenVaultId: String? = UserDefaults.standard.string(forKey: "vault.myVault")
+
+    /// "My vault": the person's explicit choice, else their reader vault, else a vault they marked as theirs,
+    /// else their master. Never just the first vault open: a teammate's vault must not become "mine" (S5).
     var reader: OpenVault? {
-        vaults.first { $0.vaultId == readerVaultId } ?? vaults.first { $0.role == "reader" } ?? vaults.first
+        let id = Self.myVaultId(among: vaults.map { (id: $0.vaultId, role: $0.role) }, chosen: chosenVaultId, account: readerVaultId)
+        return id.flatMap { id in vaults.first { $0.vaultId == id } }
+    }
+
+    /// The rule for "my vault", as a pure function (tested): the explicit choice, then the passkey account's
+    /// reader vault, then a vault marked as mine, then the master. A teammate's vault never qualifies.
+    nonisolated static func myVaultId(among vaults: [(id: String, role: String)], chosen: String?, account: String?) -> String? {
+        if let chosen, vaults.contains(where: { $0.id == chosen }) { return chosen }
+        if let account, vaults.contains(where: { $0.id == account }) { return account }
+        return vaults.first { Role.isMine($0.role) }?.id ?? vaults.first { $0.role == Role.master }?.id
+    }
+
+    /// How the stored keys are really protected, in words (S3).
+    var protectionSummary: String { keychain.protectionSummary() }
+
+    /// Make an open vault "my vault" (an explicit choice), or clear the choice.
+    func chooseMyVault(_ vaultId: String?) {
+        chosenVaultId = vaultId
+        UserDefaults.standard.set(vaultId, forKey: "vault.myVault")
     }
 
     // MARK: Opening
 
+    /// A reader that requires a verified signature from a trusted key on every new head (S1).
     func makeReader(for key: VaultKey) -> SGitVault {
-        SGitVault(key: key, server: VaultConfig.server, cache: VaultConfig.cacheDirectory, log: log)
+        SGitVault(key: key, server: VaultConfig.server, cache: VaultConfig.cacheDirectory, log: log,
+                  requireSignatures: true, trust: VaultTrustStore.trust(for: key.vaultId))
     }
 
     /// Paste or QR text → key (PBKDF2 off the main actor for vault keys) → Keychain → open → pull.
+    /// `mine`: the person says this is their own vault. Otherwise it is a teammate's (S5).
     @discardableResult
-    func importKey(_ raw: String, label: String = "Imported key") async throws -> OpenVault {
+    func importKey(_ raw: String, label: String = "Teammate vault", mine: Bool = false) async throws -> OpenVault {
         let key = try await SGitVault.deriveKey(from: VaultUnlock.keyText(fromScanned: raw), log: log)
-        try keychain.save(key, label: label, role: "imported")
-        return try await open(key, label: label, role: "imported")
+        let role = mine ? Role.mine : Role.teammate
+        try keychain.save(key, label: label, role: role)
+        let opened = try await open(key, label: label, role: role)
+        if mine { chooseMyVault(key.vaultId) }
+        return opened
+    }
+
+    /// The person approves a signer this device did not trust yet (shown after `untrustedSigner`).
+    func trustSigner(_ keyId: String, in vaultId: String) async {
+        guard let entry = vaults.first(where: { $0.vaultId == vaultId }) else { return }
+        await entry.vault.pin(keyId)
+        VaultTrustStore.save(await entry.vault.trust, for: vaultId)
+        await pull(vaultId)
+    }
+
+    /// Short text for people (Q7). The full detail goes to the vault traffic log, never to the screen.
+    func userMessage(for error: Error, context: String = "") -> String {
+        let detail = String(describing: error)
+        log.record(VaultTrafficEvent(kind: .error, path: context.isEmpty ? "app" : context, detail: detail))
+        if let vaultError = error as? VaultError { return vaultError.localizedDescription }
+        if let localized = error as? LocalizedError, let text = localized.errorDescription { return text }
+        if error is URLError { return "The vault server could not be reached. Check the connection and try again." }
+        return "Something went wrong. The details are in Debug → Vault traffic."
     }
 
     /// One Face ID, then every stored key opened and pulled.
@@ -95,12 +154,12 @@ final class VaultSession {
         do {
             let context = try await keychain.unlock(reason: reason)
             for (key, meta) in try keychain.loadAll(context: context) where !vaults.contains(where: { $0.vaultId == key.vaultId }) {
-                if meta.role == "reader" { readerVaultId = key.vaultId }
+                if meta.role == Role.reader { readerVaultId = key.vaultId }
                 try await open(key, label: meta.label, role: meta.role)
             }
             lastError = nil
         } catch {
-            lastError = String(describing: error)
+            lastError = userMessage(for: error, context: "unlock")
             throw error
         }
     }
@@ -114,7 +173,7 @@ final class VaultSession {
             defer { prf.resetBytes(in: 0..<prf.count) }
             try await openAccount(secret: prf)
         } catch {
-            lastError = String(describing: error)
+            lastError = userMessage(for: error, context: "passkey")
             throw error
         }
     }
@@ -130,16 +189,18 @@ final class VaultSession {
 
     private func openAccount(secret: Data) async throws {
         let log = self.log
+        let trusts = Dictionary(uniqueKeysWithValues: keychain.inventory().map { ($0.vaultId, VaultTrustStore.trust(for: $0.vaultId)) })
         let keys = try await VaultAccount.unlock(secret: secret, log: log) { key in
-            SGitVault(key: key, server: VaultConfig.server, cache: VaultConfig.cacheDirectory, log: log)
+            SGitVault(key: key, server: VaultConfig.server, cache: VaultConfig.cacheDirectory, log: log,
+                      requireSignatures: true, trust: trusts[key.vaultId] ?? VaultTrust())
         }
         accessToken = keys.accessToken ?? accessToken
-        try keychain.save(keys.master, label: "Master vault", role: "master")
-        try await open(keys.master, label: "Master vault", role: "master")
+        try keychain.save(keys.master, label: "Master vault", role: Role.master)
+        try await open(keys.master, label: "Master vault", role: Role.master)
         if let reader = keys.reader {
-            try keychain.save(reader, label: "Your vault", role: "reader")
+            try keychain.save(reader, label: "Your vault", role: Role.reader)
             readerVaultId = reader.vaultId
-            try await open(reader, label: "Your vault", role: "reader")
+            try await open(reader, label: "Your vault", role: Role.reader)
         }
     }
 
@@ -162,14 +223,18 @@ final class VaultSession {
         do {
             let head = try await vault.pull()
             let count = try await vault.files().count
+            VaultTrustStore.save(await vault.trust, for: vaultId)          // first use pins the signers seen now
             guard let i = vaults.firstIndex(where: { $0.vaultId == vaultId }) else { return }
             vaults[i].head = head
             vaults[i].fileCount = count
             vaults[i].lastPull = Date()
+            vaults[i].untrustedSigner = nil
             vaults[i].state = .ready
         } catch {
+            let message = userMessage(for: error, context: "pull \(vaultId)")
             guard let i = vaults.firstIndex(where: { $0.vaultId == vaultId }) else { return }
-            vaults[i].state = .failed(String(describing: error))
+            if case VaultError.untrustedSigner(_, let keyId) = error { vaults[i].untrustedSigner = keyId }
+            vaults[i].state = .failed(message)
         }
     }
 
@@ -245,6 +310,8 @@ final class VaultSession {
         let key = try keychain.load(vaultId: entry.vaultId, context: context)
         guard let writeKey = key.writeKey else { throw VaultError.invalidKey("no write key stored") }
         let signer = try VaultDeviceSigner.load(context: context)
+        await entry.vault.pin(signer.keyId)                          // this device's own commits are trusted
+        VaultTrustStore.save(await entry.vault.trust, for: entry.vaultId)
         let result = try await entry.vault.commit(changes, message: message, branch: deviceBranch, signer: signer,
                                                   writeKey: writeKey, accessToken: accessToken,
                                                   writer: HTTPVaultTransport(server: VaultConfig.server))
@@ -274,6 +341,8 @@ final class VaultSession {
         let key = try keychain.load(vaultId: entry.vaultId, context: context)
         guard let writeKey = key.writeKey else { throw VaultError.invalidKey("no write key stored") }
         let signer = try VaultDeviceSigner.load(context: context)
+        await entry.vault.pin(signer.keyId)                          // this device's own commits are trusted
+        VaultTrustStore.save(await entry.vault.trust, for: entry.vaultId)
         for attempt in 1...3 {
             await entry.vault.switchBranch(branch)
             try await entry.vault.pull()

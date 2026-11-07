@@ -81,19 +81,45 @@ final class HTTPClient: Sendable {
         return "PrompTugal/\(version) (\(build); iOS)"
     }()
 
+    /// The largest body any call accepts unless it asks for more: 10 MB. The app's feeds are well under
+    /// 1 MB; this stops a broken or hostile server from filling memory.
+    static let defaultMaxBytes = 10 * 1024 * 1024
+
+    /// Thrown when a response body is larger than the call's `maxBytes`.
+    struct ResponseTooLarge: LocalizedError, Equatable {
+        let limit: Int
+        var errorDescription: String? { "The response was larger than \(ByteCountFormatter.string(fromByteCount: Int64(limit), countStyle: .file))." }
+    }
+
     /// Sends a request, logs it, and returns the body and the HTTP response.
     /// Does not check the status code; `get` and `decode` do.
-    func data(for request: URLRequest, label: String? = nil) async throws -> (Data, HTTPURLResponse) {
+    /// Throws `ResponseTooLarge` as soon as the body passes `maxBytes` (or at once if the server's
+    /// Content-Length already says so), without reading the rest.
+    func data(for request: URLRequest, label: String? = nil,
+              maxBytes: Int = HTTPClient.defaultMaxBytes) async throws -> (Data, HTTPURLResponse) {
         let started = Date()
         let clock = ContinuousClock.now
         let url = request.url
         var record = HTTPRequestRecord(id: UUID(), startedAt: started, method: request.httpMethod ?? "GET",
                                        url: url.map(Self.redact) ?? "(no URL)", host: url?.host() ?? "",
                                        label: label, status: nil, bytes: 0, durationMs: 0, error: nil)
-        let data: Data
+        var data = Data()
         let response: URLResponse
         do {
-            (data, response) = try await session.data(for: request)
+            let (bytes, head) = try await session.bytes(for: request)
+            response = head
+            if head.expectedContentLength > Int64(maxBytes) {
+                bytes.task.cancel()
+                throw ResponseTooLarge(limit: maxBytes)
+            }
+            if head.expectedContentLength > 0 { data.reserveCapacity(Int(head.expectedContentLength)) }
+            for try await byte in bytes {
+                guard data.count < maxBytes else {
+                    bytes.task.cancel()
+                    throw ResponseTooLarge(limit: maxBytes)
+                }
+                data.append(byte)
+            }
         } catch {
             record.durationMs = Self.milliseconds(since: clock)
             record.error = Self.describe(error)
@@ -113,16 +139,19 @@ final class HTTPClient: Sendable {
     }
 
     /// GET a URL and return the body. Throws `URLError(.badServerResponse)` for a non-2xx status.
-    func get(_ url: URL, timeout: TimeInterval = 15, label: String? = nil) async throws -> Data {
-        let (data, response) = try await data(for: URLRequest(url: url, timeoutInterval: timeout), label: label)
+    func get(_ url: URL, timeout: TimeInterval = 15, label: String? = nil,
+             maxBytes: Int = HTTPClient.defaultMaxBytes) async throws -> Data {
+        let (data, response) = try await data(for: URLRequest(url: url, timeoutInterval: timeout), label: label,
+                                              maxBytes: maxBytes)
         guard (200..<300).contains(response.statusCode) else { throw URLError(.badServerResponse) }
         return data
     }
 
     /// GET a URL and decode its JSON body.
     func decode<Value: Decodable>(_ type: Value.Type, from url: URL, timeout: TimeInterval = 15,
-                                  label: String? = nil, decoder: JSONDecoder = JSONDecoder()) async throws -> Value {
-        try decoder.decode(type, from: await get(url, timeout: timeout, label: label))
+                                  label: String? = nil, maxBytes: Int = HTTPClient.defaultMaxBytes,
+                                  decoder: JSONDecoder = JSONDecoder()) async throws -> Value {
+        try decoder.decode(type, from: await get(url, timeout: timeout, label: label, maxBytes: maxBytes))
     }
 
     /// A URL safe to show and log: no user, password or fragment, and query values replaced with "…".
@@ -143,6 +172,7 @@ final class HTTPClient: Sendable {
     }
 
     private static func describe(_ error: Error) -> String {
+        if let error = error as? ResponseTooLarge { return "Too large (over \(error.limit) bytes)" }
         if let error = error as? URLError {
             return error.code == .cancelled ? "Cancelled" : "URLError \(error.code.rawValue)"
         }

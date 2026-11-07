@@ -6,11 +6,14 @@ import Foundation
 protocol CollabVaultAccess: AnyObject {
     /// A vault is open on this device.
     var isOpen: Bool { get }
-    /// The open reader vault was opened with a vault key (not a read key), so it can be written.
+    /// My own vault (the account's reader vault), never a vault imported from someone else's key. Nil when
+    /// none is open. Everything "mine" (my key copy, my plan, my notes) reads and writes only this vault (S5).
+    var ownVaultId: String? { get }
+    /// My own vault was opened with a vault key (not a read key), so it can be written.
     var canWrite: Bool { get }
-    /// A file of the reader vault, or nil when there is no such file.
+    /// A file of my own vault, or nil when there is no such file. Throws when my own vault is not open.
     func read(_ path: String) async throws -> Data?
-    /// Write one file to the reader vault (read-modify-write on the branch the website reads).
+    /// Write one file to my own vault (read-modify-write on the branch the website reads).
     func write(_ path: String, _ data: Data, _ message: String) async throws
     /// Open a teammate's vault with the read key they shared (`sgit_private_read_…:<vault_id>` or a `#key=` link).
     /// Stored behind Face ID like any key. Returns the vault id.
@@ -35,9 +38,10 @@ protocol CollabVaultAccess: AnyObject {
 @MainActor
 enum CollabHooks {
     enum HookError: Error, LocalizedError {
-        case noVault, noWritableVault, noNotesLane
+        case noVault, noWritableVault, noNotesLane, noOwnVault
         var errorDescription: String? {
             switch self {
+            case .noOwnVault: "Open your own vault first. A teammate's vault is never used as yours."
             case .noNotesLane: "Your account has no newsroom notes lane yet. The website makes it the first time you send to the newsroom."
             case .noVault: "Open your vault first (Vault in the sidebar)."
             case .noWritableVault: "Writing needs your vault opened with its vault key (or passkey), not a read key."

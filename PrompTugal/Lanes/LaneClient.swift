@@ -24,6 +24,9 @@ struct LaneClient: Sendable {
     // MARK: Sending (account-less)
 
     static func writeRequest(to address: LaneAddress, payload: String) throws -> URLRequest {
+        guard LaneAddress.isAllowedEndpoint(address.endpoint) else {
+            throw LaneAddress.Failure.hostNotAllowed(address.endpoint.host() ?? "")
+        }
         var request = URLRequest(url: address.writeURL, timeoutInterval: 30)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -48,7 +51,7 @@ struct LaneClient: Sendable {
             let key = try LaneCrypto.publicKey(pem: address.publicKeyPEM)
             encText = try LaneCrypto.encrypt(text, to: key)
         } catch {
-            log.add(.error, lane: lane, detail: "encrypt: \(error.localizedDescription)")
+            log.add(.error, lane: lane, detail: "encrypt: \(CollabErrorText.short(error))")
             throw error
         }
         log.add(.encrypt, lane: lane, bytes: encText.utf8.count, ms: Self.ms(since: started),
@@ -68,7 +71,7 @@ struct LaneClient: Sendable {
         } catch let error as Failure {
             throw error
         } catch {
-            log.add(.error, lane: lane, ms: Self.ms(since: sent), detail: "write: \(error.localizedDescription)")
+            log.add(.error, lane: lane, ms: Self.ms(since: sent), detail: "write: \(CollabErrorText.short(error))")
             throw error
         }
     }
@@ -111,6 +114,9 @@ struct LaneClient: Sendable {
     }
 
     private func post(_ path: String, address: LaneAddress, enumKey: String, body: [String: Any], label: String) async throws -> Data {
+        guard LaneAddress.isAllowedEndpoint(address.endpoint) else {
+            throw LaneAddress.Failure.hostNotAllowed(address.endpoint.host() ?? "")
+        }
         var request = URLRequest(url: address.endpoint.appendingPathComponent("api/vault/append/\(path)/\(address.vault)"), timeoutInterval: 30)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

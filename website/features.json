@@ -1,5 +1,5 @@
 {
-  "_about": "The feature list on the product site. A feature is shown as 'In the beta' only when every entry in 'evidence' is present at build time: a file glob must match at least one file, and 'screen:<id>' must be a screen registered in Shell/Destinations.swift with a real view, not a PendingFeatureView; 'view:<Name>' must be a view used by such a registration, whatever its id. Otherwise it is shown as 'Coming'. Write 'what' so it is true once the code is merged. Screens and views count only when AppShell is the root view of the app's @main WindowGroup; 'root:<text>' must appear in that WindowGroup.",
+  "_about": "The feature list on the product site. A feature is shown as 'In the beta' only when every entry in 'evidence' is present at build time: a file glob must match at least one file, and 'screen:<id>' must be a screen registered in Shell/Destinations.swift with a real view, not a PendingFeatureView; 'view:<Name>' must be a view used by such a registration, whatever its id. Otherwise it is shown as 'Coming'. Write 'what' so it is true once the code is merged. Screens and views count only when AppShell is the root view of the app's @main WindowGroup; 'root:<text>' must appear in that WindowGroup. 'text:<glob>::<text>' must find that exact text in a matching file. A feature whose 'hidden_in_release' evidence is all present is labelled 'Debug builds only', not 'In the beta'.",
   "features": [
     {
       "id": "websites",
@@ -20,6 +20,17 @@
       "evidence": [
         "PrompTugal/**/ReaderStore.swift",
         "PrompTugal/**/Content.swift"
+      ]
+    },
+    {
+      "id": "sample-data",
+      "platform": "readers",
+      "name": "Try with sample data",
+      "kind": "native",
+      "what": "\"Who are you?\" offers \"Try with sample data\": every team screen fills with made-up people and data that ship with the app, with a banner to turn it off.",
+      "evidence": [
+        "text:PrompTugal/**/*.swift::Try with sample data",
+        "root:AppShell("
       ]
     },
     {
@@ -80,12 +91,24 @@
     {
       "id": "face-id",
       "platform": "readers",
-      "name": "Face ID unlock",
+      "name": "Face ID or passcode unlock",
       "kind": "native",
-      "what": "Vault keys stay on this device, in the Keychain, behind Face ID. They are never synced, logged or shown.",
+      "what": "Vault keys stay on this device, in the Keychain, behind Face ID or the device passcode. The app never stores a vault key without one. Keys are never synced, logged or shown.",
       "evidence": [
         "PrompTugal/Vault/VaultKeychain.swift",
-        "screen:vault"
+        "screen:vault",
+        "text:PrompTugal/Vault/VaultKeychain.swift::for protection in [Protection.faceID, .userPresence]"
+      ]
+    },
+    {
+      "id": "vault-trust",
+      "platform": "readers",
+      "name": "Trusted signers and your own vault",
+      "kind": "native",
+      "what": "A vault's changes count only when signed by a key you trust: \"Trust this signer\" adds one. \"Make this my vault\" says which vault is yours, so a teammate's imported vault never is.",
+      "evidence": [
+        "text:PrompTugal/Vault/VaultViews.swift::Trust this signer",
+        "text:PrompTugal/Vault/VaultViews.swift::Make this my vault"
       ]
     },
     {
@@ -103,10 +126,20 @@
       "platform": "readers",
       "name": "Ask, with your own key",
       "kind": "native",
-      "what": "Chat about the agenda, your picks and the news, using your own OpenRouter key, kept in the Keychain and sent only to openrouter.ai.",
+      "what": "Chat about the agenda, your picks and the news, using your own OpenRouter key, kept in the Keychain and sent only to openrouter.ai and the model provider you choose.",
       "evidence": [
         "PrompTugal/AI/*.swift",
         "screen:collab.ai"
+      ]
+    },
+    {
+      "id": "ask-consent",
+      "platform": "readers",
+      "name": "Ask asks first",
+      "kind": "native",
+      "what": "Before the first message, Ask says what it sends and to whom, and sends nothing until you allow it. Each kind of context has its own switch; only the public agenda is on by default.",
+      "evidence": [
+        "text:PrompTugal/AI/*.swift::AskConsentSheet"
       ]
     },
     {
@@ -114,10 +147,13 @@
       "platform": "readers",
       "name": "Reading meter top-up in the app",
       "kind": "native",
-      "what": "The website's reading meter, topped up with an Apple in-app purchase instead of a card link.",
+      "what": "The website's reading meter, topped up with an Apple in-app purchase instead of a card link. Hidden in release builds until it does something in the app; available in builds from Xcode for testing.",
       "evidence": [
         "PrompTugal/Store/*.swift",
         "screen:team.store"
+      ],
+      "hidden_in_release": [
+        "text:PrompTugal/Store/ReadingCredit.swift::static let isAvailable = false"
       ]
     },
     {
@@ -172,6 +208,16 @@
       ]
     },
     {
+      "id": "report-block",
+      "platform": "teams",
+      "name": "Report and block",
+      "kind": "native",
+      "what": "Every message can be reported, and its lane or sender blocked on this device; blocked lanes and senders are listed and can be unblocked.",
+      "evidence": [
+        "text:PrompTugal/Lanes/*.swift::ReportBlockMenu"
+      ]
+    },
+    {
       "id": "coordination",
       "platform": "teams",
       "name": "Where is everyone",
@@ -197,10 +243,20 @@
       "platform": "teams",
       "name": "Debug panels",
       "kind": "native",
-      "what": "Every request the app makes, every vault read and decryption step with its size and timing, the bridge messages, storage and the build. Which keys exist and where, never their values.",
+      "what": "Every request the app makes, every vault read and decryption step with its size and timing, the bridge messages, storage and the build. Which keys exist and where, never their values. Debug mode is turned on in Settings.",
       "evidence": [
         "screen:debug",
         "PrompTugal/Debug/*.swift"
+      ]
+    },
+    {
+      "id": "privacy-cover",
+      "platform": "readers",
+      "name": "Private in the app switcher",
+      "kind": "native",
+      "what": "When the app leaves the screen, a cover hides its contents, so the app switcher never shows keys, messages or a conversation.",
+      "evidence": [
+        "text:PrompTugal/Shell/*.swift::struct PrivacyCover"
       ]
     },
     {
