@@ -48,11 +48,11 @@ struct AppShell: View {
             if let destination = Destinations.destination(selection), destination.ownsNavigation {
                 // The screen brings its own columns; the shell's sidebar steps aside (the system
                 // sidebar button brings it back).
-                destination.view().id(destination.id)
+                destination.view().destinationID(destination.id).id(destination.id)
             } else {
                 NavigationStack {
                     if let destination = Destinations.destination(selection) {
-                        destination.view()
+                        destination.view().destinationID(destination.id)
                             .id(destination.id)
                             .surfaceKind(destination.kind)
                             // Collab's Ask beside any screen: a toolbar button, ⌘K and a side panel.
@@ -175,7 +175,7 @@ private struct PhoneShell: View {
             ForEach(tabs) { destination in
                 Tab(destination.tabTitle ?? destination.title, systemImage: destination.symbol, value: destination.id) {
                     NavigationStack {
-                        destination.view().surfaceKind(destination.kind)
+                        destination.view().destinationID(destination.id).surfaceKind(destination.kind)
                     }
                 }
             }
@@ -204,7 +204,7 @@ private struct MoreList: View {
                                     .foregroundStyle(Palette.ink)
                             } else {
                                 NavigationLink {
-                                    destination.view().surfaceKind(destination.kind)
+                                    destination.view().destinationID(destination.id).surfaceKind(destination.kind)
                                 } label: {
                                     MoreRow(destination: destination)
                                 }
@@ -217,12 +217,12 @@ private struct MoreList: View {
         .navigationTitle("More")
         .navigationDestination(isPresented: $launched) {
             if let destination = LaunchOptions.launchedMoreDestination(ownsNavigation: false) {
-                destination.view().surfaceKind(destination.kind)
+                destination.view().destinationID(destination.id).surfaceKind(destination.kind)
             }
         }
         .fullScreenCover(item: Binding(get: { fullScreen.map(FullScreenID.init) }, set: { fullScreen = $0?.id })) { item in
             if let destination = Destinations.destination(item.id) {
-                destination.view()
+                destination.view().destinationID(destination.id)
                     .overlay(alignment: .topTrailing) {
                         Button { fullScreen = nil } label: {
                             Image(systemName: "xmark.circle.fill").font(.title2).symbolRenderingMode(.hierarchical)
@@ -284,4 +284,11 @@ private struct ShellKeyboardShortcuts: View {
 
 #Preview("Shell · iPad") {
     AppShell().environment(ReaderStore()).teamFeatures().padPreview()
+}
+
+extension View {
+    /// Marks the screen the shell opened, for UI tests and screenshots: "pt.destination.<id>".
+    func destinationID(_ id: String) -> some View {
+        accessibilityElement(children: .contain).accessibilityIdentifier("pt.destination.\(id)")
+    }
 }
