@@ -37,6 +37,7 @@ Branch `night/vault`. Updated about 05:50 Lisbon time; in sync with dev. ios.yml
 - **Debug pipeline data**: each object's events on one path, in order: fetch or cache hit, verify (sha256), key, AES-256-GCM, inflate (deflated blobs), JSON (with a tree summary). This fills every step of design's decrypt-pipeline panel.
 - **Unlock polish**: one Face ID prompt when the vault screen opens with stored keys; the opened vault is selected; three columns on iPad. Pull on foreground and the end of the Face ID reuse window are driven from `VaultSession` itself (app notifications), so the app needs no extra code.
 
+- **Picks and lanes logic in the package, tested**: `VaultPicks.union` (website member order, vault entry kept, malformed copies refused instead of overwritten) and `VaultLanes.fileName` (time-sorted, path-safe). `VaultSession`'s `loadPicks`/`savePicks`/`append` signatures are unchanged.
 - **Append lanes for collab**: `VaultSession.files(in:)` and `append(_:to:)` (a new uniquely named file per append, so devices never conflict), used by collab's team notes.
 
 ## How a teammate opens a team vault
