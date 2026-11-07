@@ -34,8 +34,35 @@ env:
   SCHEME: PrompTugal
 
 jobs:
+  # Cheap Ubuntu check so a night branch that only merged dev costs no macOS runner:
+  # on a push to night/**, if the pushed commit is already in origin/dev, dev's own
+  # run covers it and the macOS jobs are skipped.
+  gate:
+    name: Already on dev?
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - id: check
+        run: |
+          run=true
+          if [ "${{ github.event_name }}" = push ] && [[ "${{ github.ref }}" == refs/heads/night/* ]]; then
+            git fetch --quiet origin dev
+            if git merge-base --is-ancestor "$GITHUB_SHA" origin/dev; then
+              run=false
+              echo "### ⏭️ $GITHUB_SHA is already on dev; dev's run covers it, macOS jobs skipped" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "run=$run"
+
   build:
     name: App build and SGitVault tests
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
     runs-on: macos-26
     concurrency:
       group: ios-build-${{ github.ref }}
@@ -76,7 +103,8 @@ jobs:
     # Runner capacity: on night/** pushes only the build job runs (compile + SGitVault tests,
     # one runner). The unit tests run on dev, on pull requests and by hand. Run them for a
     # night branch from the Actions tab (workflow_dispatch) when you need them before a merge.
-    if: github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    needs: gate
+    if: needs.gate.outputs.run == 'true' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     strategy:
       fail-fast: false
       matrix:
