@@ -1,10 +1,12 @@
 # Status · Editor
 
-> Checkpoint 8 (06:20): real iPhone screenshots on the live site (5 of 29 screens; iPad off until a fixed run is checked). 20 of 20 features in the beta. Morning summary drafted with release's TestFlight checklist first; final by 10:00.
+> Checkpoint 9 (07:15): the bridge tested against the live website (team's report); screenshots per screen after a timeout; dev frozen until 07:40 for the CI queue. Morning summary: TestFlight checklist and what to test first are written; final by 10:00.
 
-Branch: `night/editor` · Last update: 06:20 UTC · merged into `dev` at 251f69b
+Branch: `night/editor` · Last update: 07:15 UTC · merged into `dev` at 251f69b
 
 ## Done
+
+- Build log checkpoint 9 (07:15). Morning summary: "What to test first" (ten steps, checked against the code).
 
 - Build log checkpoint 8 (06:20). Screenshots: only registered screen ids are published; iPhone only until the iPad fix is checked (`website/screens.json`). README: CI signing and the build number, from release.
 

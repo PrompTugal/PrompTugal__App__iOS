@@ -1,4 +1,6 @@
 {
-  "_about": "Which devices' screenshots the site publishes. iPad screenshots from screens.yml run 4 (10156e3) are rotated 90 degrees; platform is fixing that at the source. Add \"ipad\" back once a fixed run exists, and check one image first.",
-  "devices": ["iphone"]
+  "_about": "Which devices' screenshots the site publishes. iPad is off: in screens.yml run 12 (3fff23e) the iPad PNGs carry an EXIF orientation of 8, so browsers show them as 1103x1600 portrait with a black band across the top and the right of the screen cut off. The site also leaves out any PNG whose EXIF orientation is not 1, and the validator refuses one. Add \"ipad\" when a run's iPad image shows correctly in a browser.",
+  "devices": [
+    "iphone"
+  ]
 }

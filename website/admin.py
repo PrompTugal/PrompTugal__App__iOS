@@ -516,6 +516,33 @@ def screen_devices(root=ROOT):
         return set(DEVICES)
 
 
+def png_orientation(path):
+    """The EXIF orientation in a PNG's eXIf chunk (1 = as stored), or 1 when there is none.
+
+    Browsers apply it, so a screenshot tagged 6 or 8 shows rotated and with the other aspect."""
+    try:
+        data = Path(path).read_bytes()
+    except OSError:
+        return 1
+    i = 8
+    while i + 8 <= len(data):
+        n = int.from_bytes(data[i:i + 4], 'big')
+        kind = data[i + 4:i + 8]
+        if kind == b'eXIf':
+            exif = data[i + 8:i + 8 + n]
+            order = 'big' if exif[:2] == b'MM' else 'little'
+            ifd = int.from_bytes(exif[4:8], order)
+            for k in range(int.from_bytes(exif[ifd:ifd + 2], order)):
+                entry = exif[ifd + 2 + 12 * k:ifd + 14 + 12 * k]
+                if int.from_bytes(entry[0:2], order) == 0x0112:
+                    return int.from_bytes(entry[8:10], order)
+            return 1
+        if kind in (b'IDAT', b'IEND'):
+            return 1
+        i += 12 + n
+    return 1
+
+
 def screenshots(folder, devices=None):
     """{screen id: {device: (source path, width, height)}} from files named <device>-<id>.png,
     for the devices the site publishes."""
@@ -527,7 +554,7 @@ def screenshots(folder, devices=None):
         device, _, ident = path.stem.partition('-')
         device = device.lower()
         size = png_size(path)
-        if device in devices and ident and size:
+        if device in devices and ident and size and png_orientation(path) == 1:
             out.setdefault(ident, {})[device] = (path, *size)
     return out
 
@@ -555,12 +582,15 @@ def screens_gallery(items, shots, root='../'):
         return ('<p class="notice">No screenshots in this site build. When the app’s screens workflow has run on '
                 '<code>dev</code>, the site shows every screen on iPhone and iPad here.</p>')
     cards = []
-    for d in items:
+    missing = [d for d in items if d['id'] not in shots]
+    for d in (x for x in items if x['id'] in shots):
         pics = ''.join(shot_img(shots, d['id'], d['title'], root=root, device=dev, width=240 if dev == 'iphone' else 360)
                        for dev in DEVICES if dev in shots.get(d['id'], {}))
         body = pics or '<p class="muted">No screenshot of this screen yet.</p>'
         cards.append(f'<figure class="card shot-card" id="shot-{esc(d["id"])}"><div class="shots">{body}</div>'
                      f'<figcaption><strong>{esc(d["title"])}</strong> <code>{esc(d["id"])}</code></figcaption></figure>')
-    have = sum(1 for d in items if d['id'] in shots)
+    have = len(items) - len(missing)
+    rest = ('<p class="muted">No screenshot yet: ' + ', '.join(f'{esc(d["title"])} (<code>{esc(d["id"])}</code>)'
+                                                     for d in missing) + '.</p>') if missing else ''
     return (f'<p>{have} of {len(items)} screens have a screenshot, taken by CI on a simulator from the code on '
-            '<code>dev</code>.</p><div class="gallery">' + ''.join(cards) + '</div>')
+            '<code>dev</code>.</p><div class="gallery">' + ''.join(cards) + '</div>' + rest)
