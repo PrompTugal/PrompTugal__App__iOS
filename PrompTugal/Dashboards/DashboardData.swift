@@ -16,6 +16,13 @@ final class DashboardData {
     let desks = RemoteFeed<Wire.Desks>(name: "newsroom/desks", url: NewsroomAPI.url("newsroom/desks.json"))
     let newsletter = RemoteFeed<Wire.Newsletter>(name: "news/newsletter", url: NewsroomAPI.url("newsletter.json"))
 
+    /// The whole graph, about 0.9 MB. Loaded only when the graph screen opens.
+    let graph: RemoteFeed<GraphExplorer> = {
+        let feed = RemoteFeed<GraphExplorer>(name: "news/graph-explorer", url: NewsroomAPI.url("graph/explorer.json"))
+        feed.freshFor = 3600
+        return feed
+    }()
+
     @ObservationIgnored private var centres: [String: RemoteFeed<Wire.CommandCentre>] = [:]
 
     /// The command centre feed for one person, created on first use.
@@ -39,6 +46,7 @@ final class DashboardData {
             (decisions.name, decisions.url, decisions.updated, decisions.bytes, decisions.phase),
             (desks.name, desks.url, desks.updated, desks.bytes, desks.phase),
             (newsletter.name, newsletter.url, newsletter.updated, newsletter.bytes, newsletter.phase),
+            (graph.name, graph.url, graph.updated, graph.bytes, graph.phase),
         ]
         for feed in centres.values.sorted(by: { $0.name < $1.name }) {
             rows.append((feed.name, feed.url, feed.updated, feed.bytes, feed.phase))
