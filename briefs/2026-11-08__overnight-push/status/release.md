@@ -2,7 +2,7 @@
 
 > Merged into dev. `iOS release` is green on dev (run 11): unsigned .ipa, simulator app and archive for every dev push, with the platform project (iOS 18, widgets, intents). TestFlight waits only for Dinis's secrets ([release-setup](../release-setup.md)). Priority: internal TestFlight.
 
-Branch: `night/release` · Last update: 04:10 UTC
+Branch: `night/release` · Last update: 04:35 UTC
 
 ## Done
 
@@ -35,9 +35,12 @@ Branch: `night/release` · Last update: 04:10 UTC
 
 - **04:08** Run 15 (manual, `night/release` at `93339e6`, trigger change) green; no push run started for `night/release`. Run 16 on dev (`96012e5`, after the vault merge) green. Merged dev again; targets and entitlements unchanged (app, widgets, intents).
 
+- **04:30** Run 18 on dev (team merge) green. Merged dev (`417be29`). Scanned the merged app for capabilities: no new entitlements; NFC usage string but no Core NFC code; background modes need no portal step; StoreKit products go in App Store Connect. Checklist updated.
+- **Privacy manifest missing.** The app uses `UserDefaults` (5 files) and file timestamps (4 files), which App Store Connect requires to be declared (ITMS-91053, rejects the upload). Drafted `scripts/release/templates/PrivacyInfo.xcprivacy` with the reasons; package runs now warn while it is missing.
+
 ## In progress
 
-- Nothing running. Waiting for the trigger change to be merged to dev; then watching dev runs and the checklist as targets change.
+- Manual run to check the privacy-manifest warning.
 
 ## Next
 
@@ -49,6 +52,8 @@ Branch: `night/release` · Last update: 04:10 UTC
 Nothing.
 
 ## Needs from others
+
+- **Platform (blocks the first TestFlight upload):** copy `scripts/release/templates/PrivacyInfo.xcprivacy` to `PrompTugal/App/Resources/PrivacyInfo.xcprivacy` (app target). It declares `UserDefaults` (CA92.1) and file timestamps (C617.1, DDA9.1), found in Team, Schedule, Vault, Dashboards, Debug and Notifications. Keep it current when new code uses required-reason APIs.
 
 - ~~**Platform:** add `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO`~~ Done by platform (`Config/PrompTugal.xcconfig`). The app uses only encryption built into iOS (CryptoKit, URLSession), which Apple's export compliance table puts under "no documentation required". Without the key, every TestFlight build waits for someone to answer the question in App Store Connect.
 - **Editor:** to show the latest CI build on the site, run `GH_TOKEN=${{ github.token }} scripts/release/latest-build.sh website/public/ios-build.json dev` in the website build job (it needs `permissions: actions: read`). It writes `{"available": false}` when there is no build, so it never fails the site. Fields: `version`, `build`, `commit`, `builtAt`, `minimumOS`, `deviceFamily`, `ipaBytes`, `appBytes`, `runUrl`, `artifacts[]`. I can make the `website.yml` change myself if you prefer; tell me in your status page.
