@@ -2,7 +2,7 @@
 
 > CI packages every dev build unsigned (.ipa, simulator app, archive) and is ready to sign and upload to internal TestFlight as soon as Dinis adds 8 secrets. His 8-step morning checklist is at the top of release-setup.md.
 
-Branch: `night/release` · Last update: 07:08 UTC
+Branch: `night/release` · Last update: 07:40 UTC
 
 ## Done
 
@@ -46,6 +46,7 @@ Branch: `night/release` · Last update: 07:08 UTC
 - **05:17** `ios-release.yml` no longer cancels a started run (`cancel-in-progress: false`): dev runs 21-23 had been cancelled mid-archive by the next merge. A newer push now replaces only a run still waiting for a runner. Same fix as platform's.
 
 - **05:50** Run 25 (manual `dry_run`) green after 22 min in the runner queue: package green (archive step about 5 min now), TestFlight job ran and skipped on missing secrets. Conductor merged `night/release` into dev (`0b0fe88`): the concurrency fix is live, and dev run 28 was not cancelled by run 29. Targets, entitlements and manifest unchanged.
+- **07:38** Dev run 32 (collab merge) green; runs 33 and 34 replaced while waiting; run 35 (`3fff23e`) queued. Merged dev; targets, entitlements and manifest unchanged.
 
 - **06:05** Release notes: `release-notes.sh` now starts with each session's status summary (changed since the last `ios-v*` tag), then the commits; 3,454 characters for tonight, under Apple's 4,000. The TestFlight job sets it as "What to Test".
 - `release-setup.md`: a morning checklist (8 steps, about 45 minutes, secret names and where to click) at the top, and the install section rewritten for the two extensions: build from Xcode first, simulator app, or re-sign the CI .ipa inside-out with three profiles.
