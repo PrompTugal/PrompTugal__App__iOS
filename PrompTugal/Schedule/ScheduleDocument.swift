@@ -72,13 +72,37 @@ struct ScheduleDocument: Codable, Equatable, Sendable {
         decode(Data(text.utf8))
     }
 
-    func encoded() -> Data {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.withoutEscapingSlashes]
-        return (try? encoder.encode(self)) ?? Data(#"{"v":1,"picks":[]}"#.utf8)
+    /// Exactly what the website's `JSON.stringify` writes: keys in the order `v`, `picks`, and `id`, `at` in each
+    /// pick. Built by hand because JSONEncoder does not keep key order.
+    var json: String {
+        let items = self.picks.map { #"{"id":\#(Self.quoted($0.id)),"at":"\#(ScheduleTime.format($0.at))"}"# }
+        return #"{"v":1,"picks":["# + items.joined(separator: ",") + "]}"
     }
 
-    var json: String { String(decoding: encoded(), as: UTF8.self) }
+    func encoded() -> Data { Data(json.utf8) }
+
+    /// A JSON string literal, escaped as JSON.stringify does (quotes, backslashes, control characters).
+    static func quoted(_ text: String) -> String {
+        var out = "\""
+        for scalar in text.unicodeScalars {
+            switch scalar {
+            case "\"": out += "\\\""
+            case "\\": out += "\\\\"
+            case "\n": out += "\\n"
+            case "\r": out += "\\r"
+            case "\t": out += "\\t"
+            case "\u{08}": out += "\\b"
+            case "\u{0C}": out += "\\f"
+            default:
+                if scalar.value < 0x20 {
+                    out += String(format: "\\u%04x", scalar.value)
+                } else {
+                    out.unicodeScalars.append(scalar)
+                }
+            }
+        }
+        return out + "\""
+    }
 }
 
 /// Pick ids, as the website makes them.
