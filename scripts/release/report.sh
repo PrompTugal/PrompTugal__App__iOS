@@ -64,6 +64,17 @@ cat > "$OUT/dist/build-info.json" <<JSON
 }
 JSON
 
+# Privacy manifest: App Store Connect rejects uploads that use required-reason
+# APIs without one (ITMS-91053). Warn here so it is fixed before the first upload.
+if [ ! -f "$app/PrivacyInfo.xcprivacy" ]; then
+  echo "::warning::No PrivacyInfo.xcprivacy in the app bundle. TestFlight uploads will be rejected (ITMS-91053). Draft: scripts/release/templates/PrivacyInfo.xcprivacy"
+  summary ""
+  summary "⚠️ No \`PrivacyInfo.xcprivacy\` in the app. App Store Connect will reject the upload (ITMS-91053). Draft: \`scripts/release/templates/PrivacyInfo.xcprivacy\`."
+else
+  summary ""
+  summary "Privacy manifest: present ($(plutil -extract NSPrivacyAccessedAPITypes raw -o - "$app/PrivacyInfo.xcprivacy" 2>/dev/null || echo '?') API categories declared)."
+fi
+
 if [ "$families" != "1,2" ]; then
   echo "::error::UIDeviceFamily is '$families'; the app must be built for iPhone and iPad (1,2)."
   summary "❌ UIDeviceFamily is \`$families\`, expected \`1,2\` (iPhone and iPad)."
