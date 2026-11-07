@@ -46,6 +46,8 @@ xcodebuild test -project PrompTugal.xcodeproj -scheme PrompTugal \
 
 ## Distribute a private beta
 
+CI can sign and upload for you: see [the release setup](briefs/2026-11-08__overnight-push/release-setup.md) (morning checklist at the top). The steps below are the manual Xcode route.
+
 1. Create an iOS app record in App Store Connect using the bundle identifier in Xcode.
 2. Select a generic iOS device as the run destination. Choose **Product → Archive**, then **Distribute App** from Organizer and upload to App Store Connect.
 3. Add the processed build to an internal TestFlight group. Use the standard upload flow to keep the build eligible for external groups.
@@ -120,6 +122,7 @@ Pull requests run only the build step, with no release and no deploy. After a pu
 | Version | Set by | Shown as |
 | --- | --- | --- |
 | Release, `v0.1.n` in `VERSION` | CI, once per push to `dev` | Footer, git tag, `version.json` |
-| App version (`MARKETING_VERSION`) and build (`CURRENT_PROJECT_VERSION`) | You, in Xcode, before each TestFlight upload | Version badge, page text, JSON-LD, `version.json` |
+| App version (`MARKETING_VERSION`) | You, in Xcode, when you start a new release | Version badge, page text, JSON-LD, `version.json` |
+| App build (`CURRENT_PROJECT_VERSION`) | The iOS release workflow, on the `xcodebuild` command line: its run number plus `IOS_BUILD_OFFSET` (default 100). A hand upload from Xcode must use a build number above the last CI one. | The CI build panel on the site, `ios-build.json` |
 
 One-time GitHub setup: under **Settings → Pages**, set **Source** to **GitHub Actions** and the custom domain to `ios.app.promptugal.news`. Under **Settings → Environments → github-pages**, allow deployments from the `dev` branch. If `dev` is protected, let GitHub Actions push to it so the release commit and tag can land.
