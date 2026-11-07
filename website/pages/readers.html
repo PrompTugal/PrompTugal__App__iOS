@@ -1,0 +1,44 @@
+<!--
+title: For readers · PrompTugal for iOS
+description: What PrompTugal does for readers and attendees at Web Summit Lisbon: the news, the agenda in Lisbon time, one schedule shared with the website, reminders, offline reading and a private vault opened with Face ID.
+nav: Readers
+order: 2
+-->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">For readers and attendees</p>
+    <h1>The summit, the news and your day</h1>
+    <p class="lede">For people at Web Summit Lisbon, 9 to 12 November 2026, and for anyone who reads PrompTugal.news. No account is needed. {{features_readers_shipped}} of the {{features_readers_total}} reader features below are in the beta today; the rest are being built.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="features">
+  <div class="wrap">
+    <p class="kicker">What you get</p>
+    <h2>Reader features</h2>
+    <p class="prose">“In the beta” means the code is in the app on the <code>dev</code> branch. “Coming” means it is being built and is not in the app yet. This page is rebuilt on every release, so the labels follow the code.</p>
+    {{features_readers}}
+  </div>
+</section>
+
+<section class="band" id="day">
+  <div class="wrap prose">
+    <p class="kicker">At the summit</p>
+    <h2>Built for walking between halls</h2>
+    <ul>
+      <li><strong>Lisbon time, always.</strong> Every session is shown in Lisbon time, whatever time zone your phone is in. A session that ends after midnight ends on the next day.</li>
+      <li><strong>Offline first.</strong> Open the app once while you are online. After that, the agenda, your saved sessions and the latest stories are on the device. If a refresh fails, what you had stays on screen with the time of the last good sync.</li>
+      <li><strong>One schedule.</strong> PrompTugal.news already lets you add sessions to your day in the browser. The app reads and writes the same list, in the same format (<code>nr.schedule.v1</code>), so you do not keep two.</li>
+      <li><strong>The website is still the website.</strong> Articles, company and person pages, search and the graph stay on PrompTugal.news and open inside the app. The app adds what a browser cannot do: reminders, Face ID, a private store and offline lists.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band band-alt" id="vault">
+  <div class="wrap prose">
+    <p class="kicker">Private by design</p>
+    <h2>Your data in your own vault</h2>
+    <p>Your picks and notes can be kept in an encrypted vault that you hold the keys to. The app reads it with Apple’s own cryptography (AES-256-GCM, HMAC and HKDF in CryptoKit). The server it syncs with stores only ciphertext and opaque file names. The key stays on your device, in the Keychain, behind Face ID. Status: the vault reader is {{status_vault_reader}}, Face ID unlock is {{status_face_id}}.</p>
+    <p><a href="privacy.html">What the app keeps, and where</a> · <a href="support.html">Help and the beta</a></p>
+  </div>
+</section>

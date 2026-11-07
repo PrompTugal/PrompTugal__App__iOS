@@ -19,6 +19,7 @@ import shutil
 from html.parser import HTMLParser
 from pathlib import Path
 
+import admin
 import markdown
 import version
 
@@ -44,26 +45,65 @@ TINTS = {'red': '#d93a33', 'orange': '#e8870e', 'green': '#2f9e44', 'teal': '#2a
          'blue': '#2f6fdb', 'indigo': '#5856d6', 'purple': '#9b51c9'}
 
 
-def project_setting(name):
-    """The single value of a build setting, refusing if configurations disagree."""
-    values = set(re.findall(rf'\b{name} = "?([^";]+)"?;', PROJECT.read_text()))
-    if len(values) != 1:
-        raise SystemExit(f'build: expected one value for {name} in project.pbxproj, found {sorted(values)}')
-    return values.pop()
+def build_configurations(text):
+    """Each XCBuildConfiguration's buildSettings as a dict of raw values."""
+    blocks = []
+    for body in re.findall(r'isa = XCBuildConfiguration;\s*buildSettings = \{(.*?)\n\t\t\t\};', text, re.S):
+        blocks.append(dict((k, v.strip('"')) for k, v in re.findall(r'^\s*([A-Z_][A-Z0-9_]*) = (.+?);$', body, re.M)))
+    return blocks
+
+
+def project_setting(name, text=None):
+    """One build setting of the app target, refusing if its configurations disagree.
+
+    The app target is the one with the shortest bundle identifier (test targets and
+    extensions add a suffix). A setting not set on the app target is read from the
+    project-level configurations, which have no bundle identifier."""
+    blocks = build_configurations(text if text is not None else PROJECT.read_text())
+    ids = sorted({b['PRODUCT_BUNDLE_IDENTIFIER'] for b in blocks if 'PRODUCT_BUNDLE_IDENTIFIER' in b}, key=len)
+    app = [b for b in blocks if ids and b.get('PRODUCT_BUNDLE_IDENTIFIER') == ids[0]]
+    project = [b for b in blocks if 'PRODUCT_BUNDLE_IDENTIFIER' not in b and 'PRODUCT_NAME' not in b]
+    for scope in (app, project):
+        values = {b[name] for b in scope if name in b}
+        if len(values) == 1:
+            return values.pop()
+        if len(values) > 1:
+            raise SystemExit(f'build: the app target disagrees with itself on {name}: {sorted(values)}')
+    raise SystemExit(f'build: no value for {name} in project.pbxproj')
+
+
+def swift_sources():
+    """Every Swift file in the app and its local packages, tests included."""
+    files = sorted(APP.rglob('*.swift')) + sorted((ROOT / 'Packages').rglob('*.swift'))
+    return [f for f in files if '.build' not in f.parts]
+
+
+def code_areas(files):
+    """Swift files and lines per folder (PrompTugal/<area> or Packages/<name>)."""
+    areas = {}
+    for f in files:
+        rel = f.relative_to(ROOT).parts
+        area = '/'.join(rel[:2]) if len(rel) > 2 else rel[0] + ' (top level)'
+        n, lines = areas.get(area, (0, 0))
+        areas[area] = (n + 1, lines + len(f.read_text(errors='replace').splitlines()))
+    return areas
 
 
 def app_facts():
-    swift = sorted(APP.glob('*.swift'))
+    swift = swift_sources()
     websites = json.loads((APP / 'Websites.json').read_text())
+    tests = [f for f in swift if 'Tests' in f.as_posix()]
     return {
         'version': project_setting('MARKETING_VERSION'),
         'build': project_setting('CURRENT_PROJECT_VERSION'),
         'min_ios': project_setting('IPHONEOS_DEPLOYMENT_TARGET'),
         'bundle_id': project_setting('PRODUCT_BUNDLE_IDENTIFIER'),
         'swift_files': str(len(swift)),
-        'swift_lines': f'{sum(len(f.read_text().splitlines()) for f in swift):,}',
+        'swift_lines': f'{sum(len(f.read_text(errors="replace").splitlines()) for f in swift):,}',
+        'swift_test_files': str(len(tests)),
         'site_count': str(len(websites)),
         'websites': websites,
+        'areas': code_areas(swift),
         'release': version.read(),
         'site_commit': os.environ.get('SITE_COMMIT', '')[:7],
     }
@@ -134,6 +174,7 @@ class MarkdownTwin(HTMLParser):
     def __init__(self):
         super().__init__()
         self.out, self.line, self.href, self.skip, self.lists, self.pre = [], '', [], 0, [], False
+        self.row, self.rows_done, self.in_head = None, 0, False
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -142,7 +183,16 @@ class MarkdownTwin(HTMLParser):
         if self.skip or 'data-md-skip' in attrs:
             self.skip += 1
             return
-        if tag in ('ul', 'ol'):
+        if tag == 'table':
+            self.rows_done = 0
+            self.out.append('')
+        elif tag == 'thead':
+            self.in_head = True
+        elif tag == 'tr':
+            self.row = []
+        elif tag in ('td', 'th'):
+            self.line = ''
+        elif tag in ('ul', 'ol'):
             self.lists.append([tag, 0])
         elif tag == 'li':
             kind = self.lists[-1] if self.lists else ['ul', 0]
@@ -168,6 +218,23 @@ class MarkdownTwin(HTMLParser):
     def handle_endtag(self, tag):
         if self.skip:
             self.skip -= 1
+            return
+        if tag in ('td', 'th') and self.row is not None:
+            self.row.append(self.line.strip().replace('|', '\\|'))
+            self.line = ''
+            return
+        if tag == 'tr' and self.row is not None:
+            self.out.append('| ' + ' | '.join(self.row) + ' |')
+            if self.rows_done == 0:
+                self.out.append('|' + ' --- |' * len(self.row))
+            self.rows_done += 1
+            self.row = None
+            return
+        if tag == 'thead':
+            self.in_head = False
+            return
+        if tag == 'table':
+            self.out.append('')
             return
         if tag == 'a' and self.href:
             href = self.href.pop()
@@ -261,12 +328,36 @@ def read_briefs():
     return pages
 
 
+def read_build_log():
+    """Each checkpoint in website/build-log/ becomes a page under admin/build-log/."""
+    folder, pages = WEBSITE / 'build-log', []
+    for source in sorted(folder.glob('*.md')):
+        text = source.read_text()
+        title, summary = markdown.title_and_summary(text)
+        pages.append({'path': f'admin/build-log/{source.stem}.html', 'title': title, 'description': summary,
+                      'noindex': True, 'kind': 'brief',
+                      'body': '<article class="band"><div class="wrap prose brief">\n'
+                              + markdown.render(text, brief_link(source, ROOT / 'briefs'))
+                              + '\n<p class="muted"><a href="index.html">All checkpoints</a></p></div></article>',
+                      'twin_text': text, 'source': source.relative_to(ROOT).as_posix()})
+    return pages
+
+
+def build_log_list(pages):
+    rows = [p for p in pages if p['path'].startswith('admin/build-log/') and p.get('kind') == 'brief']
+    rows.sort(key=lambda p: p['path'], reverse=True)
+    items = ''.join(f'<li><a href="{p["path"][len("admin/build-log/"):]}">{html.escape(p["title"])}</a>'
+                    f'<span>{html.escape(p["description"])}</span></li>' for p in rows)
+    return f'<ol class="brief-list">{items}</ol>' if rows else '<p>No checkpoints yet.</p>'
+
+
 def brief_packs(pages):
     """The admin index's list of packs and the briefs in each."""
     packs = {}
     for page in pages:
         if page.get('kind') == 'brief':
-            packs.setdefault(page['path'].split('/')[2], []).append(page)
+            if page['path'].startswith('admin/briefs/'):
+                packs.setdefault(page['path'].split('/')[2], []).append(page)
     blocks = []
     for pack, items in sorted(packs.items(), reverse=True):
         items.sort(key=lambda p: (not p['path'].endswith('/index.html'), p['path']))
@@ -282,11 +373,21 @@ def brief_packs(pages):
 def build(out):
     facts = app_facts()
     sources = sorted((WEBSITE / 'pages').rglob('*.html'))
-    pages = sorted((read_page(p) for p in sources), key=lambda p: int(p['order'])) + read_briefs()
+    pages = sorted((read_page(p) for p in sources), key=lambda p: int(p['order'])) + read_briefs() + read_build_log()
     template = (WEBSITE / 'template.html').read_text()
     tokens = {k: v for k, v in facts.items() if isinstance(v, str)}
     tokens.update(websites_sidebar=websites_sidebar(facts), websites_list=websites_list(facts),
-                  repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages))
+                  repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages),
+                  build_log_list=build_log_list(pages))
+    tokens.update(admin.feature_tokens(REPO_URL))
+    status = admin.push_status()
+    tokens.update(push_dashboard=admin.push_dashboard(status), push_blockers=admin.push_blockers(status),
+                  push_sessions=str(len(status)),
+                  releases=admin.releases_html(admin.releases(), REPO_URL),
+                  workflows=admin.workflows_html(admin.workflows(), REPO_URL),
+                  workflow_count=str(len(admin.workflows())),
+                  screens=admin.screens_html(admin.destinations(), facts['websites']),
+                  code_areas=admin.areas_html(facts['areas']))
 
     if out.exists():
         shutil.rmtree(out)

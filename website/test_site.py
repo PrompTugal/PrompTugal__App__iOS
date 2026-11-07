@@ -14,6 +14,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import admin      # noqa: E402
 import build      # noqa: E402
 import version    # noqa: E402
 import validate   # noqa: E402
@@ -54,7 +55,9 @@ class SiteTest(unittest.TestCase):
         pbxproj = build.PROJECT.read_text()
         self.assertIn(f"MARKETING_VERSION = {self.facts['version']};", pbxproj)
         self.assertEqual(int(self.facts['site_count']), len(self.facts['websites']))
-        lines = sum(len(f.read_text().splitlines()) for f in build.APP.glob('*.swift'))
+        files = [f for f in list(build.APP.rglob('*.swift')) + list((build.ROOT / 'Packages').rglob('*.swift'))
+                 if '.build' not in f.parts]
+        lines = sum(len(f.read_text().splitlines()) for f in files)
         self.assertEqual(self.facts['swift_lines'], f'{lines:,}')
         self.assertIn(f">{self.facts['swift_lines']}<", (self.clean / 'index.html').read_text())
 
@@ -161,9 +164,120 @@ class SiteTest(unittest.TestCase):
         self.assertRefused(self.broken('index.html', lambda t: t.replace(
             f'"softwareVersion": "{self.facts["version"]}"', '"softwareVersion": "9.9.9"')), 'softwareVersion')
 
-    def test_refuses_missing_website(self):
-        self.assertRefused(self.broken('index.html', lambda t: t.replace('href="https://riskmandate.ai/"', 'href="#"')),
-                           'riskmandate.ai/ from Websites.json is missing')
+    def test_refuses_other_brand_on_product_page(self):
+        self.assertRefused(self.broken('readers.html', lambda t: t.replace('</main>', '<p>Powered by RiskMandate.</p></main>')),
+                           'names another brand ("riskmandate")')
+
+    def test_allows_host_names_in_code_and_brands_in_admin(self):
+        out = self.tmp / 'brands-ok'
+        shutil.copytree(self.clean, out)
+        page = out / 'privacy.html'
+        page.write_text(page.read_text().replace('</main>', '<p><code>web-summit.sgit.ai</code></p></main>'))
+        admin_page = out / 'admin' / 'index.html'
+        admin_page.write_text(admin_page.read_text().replace('</main>', '<p>sgit.ai</p></main>'))
+        self.assertEqual(validate.validate(out), [])
+
+    def test_refuses_feature_claimed_before_it_is_in_the_source(self):
+        coming = next(f for f in admin.features() if not f['shipped'])
+        page = f"{coming['platform']}.html"
+        def claim(text):
+            start = text.index(f'id="f-{coming["id"]}"')
+            end = text.index('</li>', start)
+            return text[:start] + text[start:end].replace('status soon', 'status on') + text[end:]
+        self.assertRefused(self.broken(page, claim), f"feature {coming['id']} is labelled wrongly")
+
+    def test_refuses_shipped_feature_labelled_coming(self):
+        shipped = next(f for f in admin.features() if f['shipped'])
+        page = f"{shipped['platform']}.html"
+        def hide(text):
+            start = text.index(f'id="f-{shipped["id"]}"')
+            end = text.index('</li>', start)
+            return text[:start] + text[start:end].replace('status on', 'status soon') + text[end:]
+        self.assertRefused(self.broken(page, hide), f"feature {shipped['id']} is labelled wrongly")
+
+    def test_refuses_missing_feature(self):
+        first = admin.features()[0]
+        page = f"{first['platform']}.html"
+        self.assertRefused(self.broken(page, lambda t: t.replace(f'id="f-{first["id"]}"', 'id="f-gone"')),
+                           f"feature {first['id']} from features.json is missing")
+
+    def test_refuses_push_dashboard_without_a_session(self):
+        self.assertRefused(self.broken('admin/push.html', lambda t: t.replace('/status/vault.html"', '/status/x.html"')),
+                           'status page vault is missing')
+
+    def test_feature_status_follows_the_files(self):
+        root = self.tmp / 'feature-root'
+        (root / 'website').mkdir(parents=True)
+        (root / 'website' / 'features.json').write_text(json.dumps({'features': [
+            {'id': 'a', 'platform': 'readers', 'name': 'A', 'kind': 'native', 'what': 'x',
+             'evidence': ['App/Schedule/*.swift', 'App/**/Store.swift']}]}))
+        self.assertFalse(admin.features(root)[0]['shipped'])
+        (root / 'App' / 'Schedule').mkdir(parents=True)
+        (root / 'App' / 'Schedule' / 'Store.swift').write_text('// x')
+        self.assertTrue(admin.features(root)[0]['shipped'])
+
+    def test_app_settings_ignore_test_targets(self):
+        def config(settings):
+            body = ''.join(f'\t\t\t\t{k} = {v};\n' for k, v in settings.items())
+            return f'\t\tX /* Debug */ = {{\n\t\t\tisa = XCBuildConfiguration;\n\t\t\tbuildSettings = {{\n{body}\t\t\t}};\n'
+        text = (config({'IPHONEOS_DEPLOYMENT_TARGET': '18.0'})
+                + config({'PRODUCT_BUNDLE_IDENTIFIER': 'news.promptugal.reader', 'MARKETING_VERSION': '0.4.0', 'PRODUCT_NAME': '"$(TARGET_NAME)"'})
+                + config({'PRODUCT_BUNDLE_IDENTIFIER': 'news.promptugal.readerTests', 'MARKETING_VERSION': '1.0', 'PRODUCT_NAME': '"$(TARGET_NAME)"'}))
+        self.assertEqual(build.project_setting('PRODUCT_BUNDLE_IDENTIFIER', text), 'news.promptugal.reader')
+        self.assertEqual(build.project_setting('MARKETING_VERSION', text), '0.4.0')
+        self.assertEqual(build.project_setting('IPHONEOS_DEPLOYMENT_TARGET', text), '18.0')
+        with self.assertRaises(SystemExit):
+            build.project_setting('MARKETING_VERSION', text + config(
+                {'PRODUCT_BUNDLE_IDENTIFIER': 'news.promptugal.reader', 'MARKETING_VERSION': '0.5.0'}))
+
+    def test_status_page_counts(self):
+        info = admin.parse_status('# Status · X\n\n> Going well.\n\n## Done\n\n- a\n- b\n  more\n\n## Blocked\n\n## Next\n* c\n')
+        self.assertEqual(info['summary'], 'Going well.')
+        self.assertEqual(len(info['sections']['Done']), 2)
+        self.assertEqual(info['sections']['Blocked'], [])
+        self.assertEqual(info['sections']['Next'], ['c'])
+
+    def test_workflows_are_read_from_the_files(self):
+        site = next(w for w in admin.workflows() if w['file'] == 'website.yml')
+        self.assertEqual([j['id'] for j in site['jobs']], ['release', 'build', 'deploy'])
+        self.assertIn('Validate', next(j for j in site['jobs'] if j['id'] == 'build')['steps'])
+        self.assertIn('push', site['triggers'])
+
+    def test_destinations_are_read_from_swift(self):
+        root = self.tmp / 'dest-root'
+        (root / 'PrompTugal' / 'Shell').mkdir(parents=True)
+        (root / 'PrompTugal' / 'Shell' / 'Destinations.swift').write_text(
+            '/// Example:\n///     AppDestination(id: "team.schedule", title: "My schedule", kind: .hybrid) { AnyView(X()) }\n'
+            'let all = [\n  AppDestination(id: "now", title: "Now", symbol: "clock", section: .today, kind: .native) { AnyView(NowView()) },\n'
+            '  Destination(id: "site", title: "PrompTugal.news", symbol: "globe", section: .news,\n'
+            '              kind: .web(URL(string: "https://promptugal.news/")!), view: { AnyView(EmptyView()) }),\n'
+            '  AppDestination(id: "vault", title: "Vault", symbol: "lock", section: .vault, kind: .native) {\n'
+            '      AnyView(PendingFeatureView(title: "Vault", owner: "night/vault"))\n  },\n'
+            '  AppDestination(id: "settings", title: "Settings", symbol: "gear", section: .settings, kind: .native) { AnyView(S()) },\n'
+            ']\nstruct PendingFeatureView: View { }\n')
+        found = admin.destinations(root)
+        self.assertEqual([(d['id'], d['kind'], d['pending']) for d in found],
+                         [('now', 'native', False), ('site', 'web', False), ('vault', 'native', True),
+                          ('settings', 'native', False)])
+        self.assertEqual(found[1]['url'], 'https://promptugal.news/')
+
+    def test_placeholder_screen_does_not_ship_a_feature(self):
+        root = self.tmp / 'dest-root-2'
+        (root / 'website').mkdir(parents=True)
+        (root / 'PrompTugal' / 'Shell').mkdir(parents=True)
+        (root / 'website' / 'features.json').write_text(json.dumps({'features': [
+            {'id': 'v', 'platform': 'readers', 'name': 'V', 'kind': 'native', 'what': 'x', 'evidence': ['screen:vault']}]}))
+        swift = root / 'PrompTugal' / 'Shell' / 'Destinations.swift'
+        swift.write_text('AppDestination(id: "vault", kind: .native) { AnyView(PendingFeatureView(title: "V")) }\n')
+        self.assertFalse(admin.features(root)[0]['shipped'])
+        swift.write_text('AppDestination(id: "vault", kind: .native) { AnyView(VaultView()) }\n')
+        self.assertTrue(admin.features(root)[0]['shipped'])
+
+    def test_build_log_checkpoints_are_published(self):
+        for source in sorted((build.WEBSITE / 'build-log').glob('*.md')):
+            page = self.clean / 'admin' / 'build-log' / f'{source.stem}.html'
+            self.assertTrue(page.exists(), f'{source.name} was not published')
+            self.assertIn(f'{source.stem}.html', (self.clean / 'admin' / 'build-log' / 'index.html').read_text())
 
     def test_refuses_bad_json_ld(self):
         self.assertRefused(self.broken('support.html', lambda t: t.replace('"@type"', '@type', 1)),

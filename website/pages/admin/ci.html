@@ -1,0 +1,29 @@
+<!--
+title: CI · PrompTugal for iOS
+description: How PrompTugal is built, tested, released and deployed: the GitHub workflows, what triggers them, and every job and step, read from the workflow files.
+robots: noindex
+order: 14
+-->
+<section class="band">
+  <div class="wrap prose">
+    <p class="kicker">Developer area</p>
+    <h1>Continuous integration</h1>
+    <p class="lede">Nobody on the team can compile Swift on Linux, and most of the code is written by agents on Linux. So CI is the compiler: every branch is built and tested on a Mac in GitHub Actions, and a red branch is not merged.</p>
+    <h2>Two jobs for two things</h2>
+    <ul>
+      <li><strong>The app.</strong> The iOS workflow runs on every push to a <code>night/*</code> branch and to <code>dev</code>, and on pull requests. It tests the vault package with <code>swift test</code>, builds the app for the simulator without signing, and runs the unit tests on an iPhone simulator. A failure puts the compiler error in the job summary, so a session can read it through the GitHub tools.</li>
+      <li><strong>The release and this site.</strong> The release workflow runs on every push to <code>dev</code>. It bumps <code>VERSION</code>, tags the release, then tests, builds and validates this site and deploys it to GitHub Pages. The deploy is only done when the live <a href="../version.json"><code>version.json</code></a> serves the new release.</li>
+    </ul>
+    <p>Below is what each workflow file on <code>dev</code> says, read on every build. A workflow that is still on a session branch appears here once it is merged.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="workflows">
+  <div class="wrap">
+    <p class="kicker">From .github/workflows</p>
+    <h2>{{workflow_count}} workflows</h2>
+    <div class="packs">
+{{workflows}}
+    </div>
+  </div>
+</section>

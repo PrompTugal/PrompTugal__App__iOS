@@ -225,3 +225,36 @@ dl.qa dd { margin: 0.3em 0 0; }
 .table-wrap th { background: var(--paper-2); font-weight: 700; white-space: nowrap; }
 .table-wrap tr:last-child td { border-bottom: 0; }
 .brief hr { border: 0; border-top: 3px solid var(--green); margin: 2em 0; }
+
+/* Features: status is worked out from the files at build time */
+.features { list-style: none; padding: 0; margin: 24px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.feature { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; }
+.feature h3 { font-size: 1.15rem; }
+.feature p { margin: 0 0 10px; }
+.feature .tags { margin-top: auto; margin-bottom: 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.status, .kind { font: 600 0.75rem/1 var(--mono); border-radius: 999px; padding: 5px 9px; border: 1px solid currentColor; white-space: nowrap; }
+.status.on { color: var(--green); }
+.status.soon { color: var(--muted); border-style: dashed; }
+.kind { color: var(--muted); border-color: var(--rule); }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.two .card p:last-child { margin-bottom: 0; }
+.count { font: 700 0.85rem/1.2 var(--mono); color: var(--green); }
+
+/* Admin pages */
+.dash td.n, td.n { text-align: right; font-family: var(--mono); }
+.dash td.warn { color: var(--red); font-weight: 700; }
+.release { border-top: 1px solid var(--rule); padding-top: 12px; margin-top: 12px; }
+.release h3 { font-size: 1.1rem; }
+.release ul { margin: 6px 0 0; padding-left: 1.2em; font-size: 0.95rem; }
+.jobs { padding-left: 1.2em; }
+.jobs ol { font-size: 0.92rem; color: var(--muted); }
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; margin-top: 20px; }
+.admin-grid .card h3 { font-size: 1.1rem; }
+.admin-grid .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+@media (max-width: 860px) {
+  .two { grid-template-columns: minmax(0, 1fr); }
+}
+a.card { display: block; color: var(--ink); text-decoration: none; }
+a.card:hover { border-color: var(--red); }
+.feature .sep { color: var(--rule); }

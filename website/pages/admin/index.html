@@ -8,7 +8,15 @@ order: 10
   <div class="wrap">
     <p class="kicker">Developer area</p>
     <h1>Briefs, releases and source</h1>
-    <p class="lede">Working material for the PrompTugal team and the agents that build with us. Everything here is public and readable. It is kept out of search engines, but anyone with the link can read it.</p>
+    <p class="lede">Working material for the PrompTugal team and the agents that build with us. Everything here is public and readable. It is kept out of search engines, but anyone with the link can read it. Every page below is generated from the repository when the site is built.</p>
+    <div class="admin-grid">
+      <a class="card" href="build-log/index.html"><h3>Build log</h3><p>The overnight push, checkpoint by checkpoint.</p></a>
+      <a class="card" href="push.html"><h3>Push dashboard</h3><p>{{push_sessions}} sessions: done, in progress and blocked, from their status pages.</p></a>
+      <a class="card" href="screens.html"><h3>Screens</h3><p>Every native screen and web page in the app, and the code per folder.</p></a>
+      <a class="card" href="releases.html"><h3>Releases</h3><p>Every site release, from the git tags, with what changed.</p></a>
+      <a class="card" href="ci.html"><h3>CI</h3><p>The {{workflow_count}} GitHub workflows, their jobs and steps.</p></a>
+      <a class="card" href="#briefs"><h3>Briefs</h3><p>Brief packs on where the app is going.</p></a>
+    </div>
   </div>
 </section>
 
@@ -33,7 +41,7 @@ order: 10
       <dt>App version</dt>
       <dd>{{version}} (build {{build}}), from <code>MARKETING_VERSION</code> and <code>CURRENT_PROJECT_VERSION</code> in the Xcode project. Bumped by hand before each TestFlight upload.</dd>
       <dt>The app’s code</dt>
-      <dd>{{swift_lines}} lines of Swift in {{swift_files}} files, with no third-party packages. It is kept in the sgit vault and on <a href="{{repo_url}}">GitHub</a>.</dd>
+      <dd>{{swift_lines}} lines of Swift in {{swift_files}} files ({{swift_test_files}} of them tests), with no third-party packages, on <a href="{{repo_url}}">GitHub</a>. <a href="screens.html#code">Lines per folder</a>.</dd>
     </dl>
     <h2>Working on this site</h2>
     <pre><code>python3 website/build.py

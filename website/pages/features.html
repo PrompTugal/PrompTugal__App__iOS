@@ -1,0 +1,50 @@
+<!--
+title: Features · PrompTugal for iOS
+description: Every PrompTugal feature for readers and for teams, whether it is in the beta or coming, and the files in the source that prove it.
+nav: Features
+order: 4
+-->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">Features</p>
+    <h1>What is in the beta, and what is coming</h1>
+    <p class="lede">{{features_shipped}} of {{features_total}} planned features are in the beta of PrompTugal {{version}}. The status of each one is not typed by hand: the site checks that the files that implement it exist in the source when the site is built.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="all">
+  <div class="wrap">
+    <p class="kicker">All features</p>
+    <h2>Readers and teams</h2>
+    {{features_table}}
+    <p class="prose muted">A feature is “in the beta” when every file pattern in the last column matches a file in the repository. The list lives in <a href="{{repo_url}}/blob/dev/website/features.json"><code>website/features.json</code></a>.</p>
+  </div>
+</section>
+
+<section class="band" id="native-web">
+  <div class="wrap prose">
+    <p class="kicker">Native, web or both</p>
+    <h2>How we decide where a feature lives</h2>
+    <p>We ask four questions, in order, and the first “yes” decides.</p>
+    <ol>
+      <li><strong>Does it need the device?</strong> Face ID, the Keychain, notifications, widgets, the camera, background refresh. Then it is native.</li>
+      <li><strong>Does it hold a secret or private data that must survive?</strong> Then the key is native and the data goes in the vault.</li>
+      <li><strong>Is it content, or a workflow that changes every week?</strong> Articles, agenda pages, search. Then it is web, shown inside the app.</li>
+      <li><strong>Do people do it while walking between halls?</strong> Checking what is next, saving a session. Then it is a native fast path over the website’s data.</li>
+    </ol>
+    <p>Some features are built both ways on purpose, side by side, so we can see which works better on a phone and on an iPad.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="platform">
+  <div class="wrap">
+    <p class="kicker">Requirements</p>
+    <h2>What it runs on</h2>
+    <dl class="stats">
+      <div><dt>{{min_ios}}</dt><dd>minimum iOS and iPadOS</dd></div>
+      <div><dt>{{version}}</dt><dd>app version (build {{build}})</dd></div>
+      <div><dt>{{swift_files}}</dt><dd>Swift files</dd></div>
+      <div><dt>{{swift_test_files}}</dt><dd>Swift test files</dd></div>
+    </dl>
+  </div>
+</section>
