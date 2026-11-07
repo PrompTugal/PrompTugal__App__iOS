@@ -153,13 +153,15 @@ struct MeterStoreTests {
 @Suite("StoreKit purchases", .serialized)
 @MainActor
 struct CreditStoreTests {
-    private func session() throws -> SKTestSession {
+    /// Held for the whole test: a test session only answers StoreKit while it is alive.
+    let session: SKTestSession
+
+    init() throws {
         let file = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
             .appendingPathComponent("PrompTugal/Store/PrompTugal.storekit")
-        let session = try SKTestSession(contentsOf: file)
+        session = try SKTestSession(contentsOf: file)
         session.disableDialogs = true
         session.clearTransactions()
-        return session
     }
 
     private func unfinishedIDs() async -> Set<String> {
@@ -177,7 +179,6 @@ struct CreditStoreTests {
     }
 
     @Test func productsLoadWithTheirStorePrice() async throws {
-        _ = try session()
         let credits = CreditStore(meter: MeterStore(directory: try tempDir("sk-load")))
         await credits.loadProducts()
         #expect(credits.products.map(\.id).sorted() == CreditStore.packs.map(\.id).sorted())
@@ -186,7 +187,6 @@ struct CreditStoreTests {
     }
 
     @Test func aSavedCreditFinishesTheTransaction() async throws {
-        _ = try session()
         await finishAll()
         let meter = MeterStore(directory: try tempDir("sk-ok"))
         let credits = CreditStore(meter: meter)
@@ -200,7 +200,6 @@ struct CreditStoreTests {
     }
 
     @Test func aFailedSaveLeavesTheTransactionForNextLaunch() async throws {
-        _ = try session()
         await finishAll()
         let blocker = FileManager.default.temporaryDirectory.appendingPathComponent("sk-blocked-\(UUID().uuidString)")
         try Data("x".utf8).write(to: blocker)
@@ -267,7 +266,8 @@ struct ReminderSchedulerTests {
 
     @Test func aTappedReminderWaitsUntilTheAppTakesIt() {
         let url = URL(string: "promptugal://open/team.schedule?session=x")!
-        ReminderInbox.receive(url)
+        // hold, not receive: receive also notifies the hosted app, whose own scheduler takes the link at once
+        ReminderInbox.hold(url)
         #expect(ReminderInbox.take() == url)
         #expect(ReminderInbox.take() == nil)       // taken once
     }

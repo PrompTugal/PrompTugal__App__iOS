@@ -178,9 +178,12 @@ enum ReminderInbox {
     private static var pending: URL?
 
     static func receive(_ url: URL) {
-        pending = url
+        hold(url)
         NotificationCenter.default.post(name: .reminderOpened, object: nil)
     }
+
+    /// Keeps the link until `take()`; `receive` also tells the running app.
+    static func hold(_ url: URL) { pending = url }
 
     static func take() -> URL? {
         defer { pending = nil }
