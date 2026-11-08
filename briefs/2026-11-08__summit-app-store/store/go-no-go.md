@@ -177,3 +177,14 @@ rc7 moved to **535e9ba** (14:17), the last product change before the freeze. `PT
 | G5 | Run 398 on 535e9ba: queued (the runners are busy with screens #36) | pending |
 | M4 | Screens #36 on rc7 535e9ba: three size jobs in progress | pending |
 | ASC dry run | No output yet in release.md | pending |
+
+## Run 12: release's ASC dry run (run 42490544114, 14:36 UTC)
+
+| # | Finding (from the real record) | Decision | Owner |
+| --- | --- | --- | --- |
+| A1 | The primary locale is **en-GB**, the record's only localization | Keep en-GB as primary (it holds the existing name). `listing.json` now has **en-GB** with the same English text as en-US ("program" kept, because "programme" pushes the subtitle to 31). Keep en-US too, for the US storefront. Screenshots: en-GB reuses the en-US set. | review (done), release |
+| A2 | The App Store version is a stub "1.0" in PREPARE_FOR_SUBMISSION | Set the version string to the binary's marketing version (0.4.x) before attaching the build | release |
+| A3 | What's New on a first version | **Drop it**: App Store Connect takes no What's New on the first release. `listing.json` has `whatsNewOnFirstVersion: false`; the text stays for the next version. | release |
+| A4 | Review details, categories, screenshots and content rights are not set | As planned: review-notes.txt, News and Business, USES_THIRD_PARTY_CONTENT; screenshots from screens #36 once they pass | release |
+| A5 | Age rating exists | Overwrite with [age-rating.md](age-rating.md) (4+), and read it back after saving | release |
+| M1 | listing.json diffs cleanly for en-US, pt-PT and pt-BR | GO | |
