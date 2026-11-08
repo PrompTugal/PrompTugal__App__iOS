@@ -34,7 +34,7 @@ struct ExploreView: View {
 
     private var hooks: ExploreHooks {
         ExploreHooks(
-            talks: { AnyView(AgendaView(openSession: { opened = TalkSheetItem(talk: TalkRef($0)) })) },
+            talks: { AnyView(AgendaView(title: String(localized: "Explore"), openSession: { opened = TalkSheetItem(talk: TalkRef($0)) })) },
             header: { AnyView(GraphCard(picks: reader.saved.count)) },
             graph: { AnyView(GraphExplorerView()) },
             talkActions: AppTalks.actions)
