@@ -109,3 +109,14 @@ struct HTTPClientSizeCapTests {
         }
     }
 }
+
+@Suite("HTTP client: no cookies")
+struct HTTPClientCookieTests {
+    @Test("The shared session keeps no cookie store, sets none and accepts none")
+    func noCookies() {
+        let configuration = HTTPClient.makeSession().configuration
+        #expect(configuration.httpCookieStorage == nil)
+        #expect(configuration.httpShouldSetCookies == false)
+        #expect(configuration.httpCookieAcceptPolicy == .never)
+    }
+}
