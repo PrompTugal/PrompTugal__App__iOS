@@ -9,14 +9,16 @@ import VisionKit
 /// A three-column `NavigationSplitView` (vaults → files → file). On iPhone it collapses to a stack;
 /// on iPad all three columns show. The first audience is the team: importing a team vault key is
 /// the first thing on the unlock screen, then Face ID for keys already on this device.
-struct VaultHomeView: View {
+public struct VaultHomeView: View {
     @State private var session = VaultSession.shared
     @State private var selectedVault: String?
     @State private var selectedFile: String?
     @State private var columns: NavigationSplitViewVisibility = .all
     @State private var triedFaceID = false
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         NavigationSplitView(columnVisibility: $columns) {
             VaultSidebar(session: session, selection: $selectedVault)
         } content: {
