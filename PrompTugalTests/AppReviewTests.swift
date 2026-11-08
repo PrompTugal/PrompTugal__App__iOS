@@ -102,7 +102,7 @@ struct CreditStoreTests {
                 continuation.resume()
             }
             Task { @MainActor in
-                await load(credits)
+                await credits.loadProducts()
                 finish()
             }
             Task { @MainActor in
