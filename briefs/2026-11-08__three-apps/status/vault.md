@@ -80,3 +80,14 @@ Phase 1 (empty packages linked) on dev. The conductor says I can start the move 
 ## Last CI run
 
 iOS run #272 (workflow_dispatch), split/vault e5328ff: green on all 7 jobs (build, Release build, SGitVault tests, package tests, iPhone and iPad unit tests).
+
+## Handoff
+
+Handed off to the session on account B. Do not dispatch CI from the old session.
+
+- **Head:** see the last commit on `split/vault` (the sha is in the handoff message). Code up to e5328ff is on dev, green in run #272.
+- **Waiting on CollabSeams:** the commit "vault: VaultCollabAccess moves into PTVaultUI" is pushed but does **not compile** until collab's `CollabSeams.swift` (the `CollabVaultAccess` protocol and `CollabHooks.HookError`, public, in PTCore) is on dev. It moves `Coordination/CollabVaultGlue.swift` to `Packages/PTVaultUI/Sources/PTVaultUI/VaultCollabAccess.swift`: `public final class VaultCollabAccess: CollabVaultAccess`, `public init(session: VaultSession = .shared)`, every protocol member `public`.
+- **install():** `public static func install()` sets `CollabHooks.vault = VaultCollabAccess()`. Each app entry point calls it at launch (platform adds the call). `CollabHooks.vault` defaults to nil in PTCore.
+- **Next steps:** when CollabSeams is on dev, merge origin/dev, check the file against the real protocol, dispatch ios.yml on split/vault (pushes to split/** do not trigger it), fix what CI shows, report to the conductor.
+- **Background task id:** `VaultBackground.register(taskIdentifier:)`. `PrompTugalApp.init` passes `news.promptugal.reader.vault-refresh`. Each app passes its own id and lists it in `BGTaskSchedulerPermittedIdentifiers`.
+- **Keychain note for the Team app (release notes):** Keychain items are scoped to team ID + bundle ID. The Team app (`news.promptugal.team`) will not see vault keys saved by the public app (`news.promptugal.reader`). Teammates re-import their key in the Team app. No keychain-sharing group tonight.
