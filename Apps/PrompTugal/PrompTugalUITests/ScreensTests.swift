@@ -86,13 +86,14 @@ final class ScreensTests: XCTestCase {
     }
 
     /// A system permission alert (notifications) sits in SpringBoard above every later launch and would be in every
-    /// screenshot. Tap its first button, "Don't Allow" in every language, so the shots show the app.
+    /// screenshot. Tap its last button, "Allow" in every language, so the shots show the app and My program shows
+    /// no "notifications are off" warning.
     @MainActor
     private static func dismissSystemAlert(timeout: TimeInterval = 5) {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let alert = springboard.alerts.firstMatch
         if alert.waitForExistence(timeout: timeout), alert.buttons.count > 0 {
-            alert.buttons.element(boundBy: 0).tap()
+            alert.buttons.element(boundBy: alert.buttons.count - 1).tap()
             sleep(1)
         }
     }
