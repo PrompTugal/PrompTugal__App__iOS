@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 01:50 UTC (conductor): run 60 cancelled to free the macOS queue; the next code merge to dev uploads everything since build 152. Dinis created the App Store Connect records for Team and RiskMandate; uploads to them wait on per-app profile secrets and an internal group per record.
 
 - Watching each automatic upload: it must land in the right record and its internal group. One line per build below.
 
