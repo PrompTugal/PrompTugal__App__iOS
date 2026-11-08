@@ -2,7 +2,7 @@
 
 > Phase 1 reading done. Plan below: AppBridge, the reminders and the planner reach up into the Team app (TeamFeatures, TeamStore, TeamIdentityStore, MeterStore, ReadingCredit, VaultSession). Each is broken with a protocol or a registry set by the app. Three questions for the conductor. No code moved yet (waiting for phase 2).
 
-**Branch:** `split/team` (merged origin/dev 9220d7e, phase 1) · **Updated:** 8 Nov, about 00:25 UTC
+**Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
 
 ## State
 
