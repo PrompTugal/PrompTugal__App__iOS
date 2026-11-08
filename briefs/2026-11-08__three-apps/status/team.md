@@ -1,8 +1,8 @@
 # Team session: PTWeb and PTAgenda
 
-> Summit priority (freeze 16:00 UTC): PTAgenda for participants. Done and pushed (1811803, quick run queued): NowBoard (now and next for the venue and my program, clashes, stages, summit phase), offline agenda seed hook, PTNowNext. Team-native screens are paused but kept on the branch (Debug build green on 1eb47bd). Waiting for ux's spec (screen ids) to shape the rest.
+> Summit priority (freeze 16:00 UTC): head d310767 is in split/rc 75203d5 (conductor's full run). Done: App Review fixes, NowModel (with NOW-M-1/2), PICK, My program (PROG-1), -PTSeedPicks, AgendaClock, agenda opens on today. Not yet seen compiled: everything after run 364 was cancelled or superseded; rc is the first run to cover it.
 
-**Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
+**Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 12:25 UTC
 
 ## Account B notes (8 Nov, about 01:50 UTC)
 
@@ -34,6 +34,15 @@
   - **Offline agenda:** `AgendaHub.seedAgenda` (the app sets it from the core pack at launch) is read when nothing is cached; `ReaderStore.agendaSource` (`none`, `seed`, `cache`, `network`) and `agendaUpdated` say where the agenda came from, for "synced 3 min ago".
   - **Reminders** already work for picks with no team (`ReminderScheduler(team: nil, identity: nil)`); clashes already feed the planner. Tests: `NowBoardTests`, `NowNextSnapshotTests` (PTNowNext).
   - **Waiting for:** ux's spec with screen ids. Needs from apps: PrompTugal.xcodeproj reference for PTNowNext and the widgets/intents links; from collab: set `AgendaHub.seedAgenda` from the core pack.
+
+- **12:25 UTC, summit app (PTAgenda, all on split/team, uncompiled until rc reports):**
+  - `NowModel` (`Schedule/NowModel.swift`, pure): phase, For you (with clash flag), On now, Up next, Tomorrow, countdown, first items. NOW-M-1: first items are the first `registration` and the first `summit` item (Opening Night); NOW-M-2: registration never takes an On now, Up next or Tomorrow slot. `ReaderStore.nowModel(at:)` feeds it.
+  - PICK: `PickRules`, `PickFeedback` (toast, clash toast with View), `PickStarButton(event:)`, `.pickToasts()`, `NowNextRepublisher(schedule:)`. App wiring (design): `.pickToasts()` at the root, one `ScheduleStore` per app, `PickStarButton` on every session row.
+  - My program (PROG-1): `ProgramModel` (clash groups, free gaps of 30 min or more, day counts, `defaultDay`) and `MyProgramView(chooseTalks:open:)`; needs `ScheduleStore`, `ReminderScheduler` and an optional `PickFeedback` in the environment. Route id `team.schedule` is kept.
+  - `AgendaView(openSession:)`: the app's native session detail (deck's PTExplore detail, per the conductor). The agenda opens on today (Lisbon) during the summit.
+  - `PickSeed` / `ScheduleStore.seedPicks(arguments:)`: DEBUG-only `-PTSeedPicks`, slugs or full ids. `AgendaClock.override` (set from `-PTNow` in DEBUG): the one clock of the agenda screens.
+  - App Review: PTAgenda text has no Web Summit trademark; `WebsiteSources.resource` selects `WebsitesPublic.json` (the public app sets it and removes the old shortcut asset).
+  - Waiting for: i18n's merge, then I switch my new strings to `String(localized:bundle:.module)`; design's registration of the screens; rc results.
 
 ## Handoff
 

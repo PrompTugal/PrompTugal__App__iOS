@@ -138,12 +138,6 @@ struct NowView: View {
 
     // MARK: State B, during the summit
 
-    /// Registration is not a talk: it never fills On now, Up next or Tomorrow. The model's entries carry the schedule slug,
-    /// so the kind comes from the agenda's copy of the session.
-    private func isRegistration(_ entry: NowModel.Entry) -> Bool {
-        reader.agenda.contains { $0.kind == "registration" && ScheduleID.fromPage($0.page) == entry.id }
-    }
-
     /// NOW-1c: my current pick, or my next one.
     @ViewBuilder private func forYou(_ model: NowModel, now: Date) -> some View {
         if let forYou = model.forYou {
@@ -158,7 +152,7 @@ struct NowView: View {
 
     /// NOW-1f: up to five sessions running now, Centre Stage first (the model sorts them).
     @ViewBuilder private func onNow(_ model: NowModel, now: Date) -> some View {
-        let running = model.onNow.filter { !isRegistration($0) }
+        let running = model.onNow
         if !running.isEmpty {
             TitledCard(String(localized: "On now at the venue"), accessory: {
                 if model.onNowCount > running.count {
@@ -174,7 +168,7 @@ struct NowView: View {
 
     /// NOW-1g: up to five sessions starting in the next 60 minutes.
     @ViewBuilder private func upNext(_ model: NowModel, now: Date) -> some View {
-        let soon = model.upNext.filter { !isRegistration($0) }
+        let soon = model.upNext
         if !soon.isEmpty {
             TitledCard(String(localized: "Up next"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
                 ForEach(soon) { entry in
@@ -186,7 +180,7 @@ struct NowView: View {
 
     /// Between days: the first three sessions of the next day.
     @ViewBuilder private func tomorrow(_ model: NowModel, now: Date) -> some View {
-        let first = model.tomorrow.filter { !isRegistration($0) }
+        let first = model.tomorrow
         if !first.isEmpty {
             TitledCard(String(localized: "Tomorrow"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
                 ForEach(first) { entry in
@@ -243,6 +237,12 @@ private struct StartProgramCard: View {
 private struct AskCard: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openDestination) private var open
+    @State private var asked: AskedQuestion?
+
+    /// The three questions the card offers once a key is saved (written as in the ux spec).
+    private static let questions: [LocalizedStringKey] = ["What's on now?", "Which talks clash in my program?", "What's new today?"]
+    private static let questionTexts = [String(localized: "What's on now?"), String(localized: "Which talks clash in my program?"),
+                                        String(localized: "What's new today?")]
 
     var body: some View {
         Card {
@@ -254,6 +254,15 @@ private struct AskCard: View {
                 }
                 Text("What's on now, what clashes in my program, what's new today. Uses your own OpenRouter key.")
                     .font(.footnote).foregroundStyle(Palette.muted)
+                if AIKeyStore.shared.hasKey {
+                    ForEach(Array(Self.questions.enumerated()), id: \.offset) { index, label in
+                        Button { asked = AskedQuestion(text: Self.questionTexts[index]) } label: {
+                            Label(label, systemImage: "text.bubble").frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .buttonStyle(.bordered)
+                        .accessibilityIdentifier("pt.now.ask.q\(index)")
+                    }
+                }
                 if width == .compact {
                     NavigationLink {
                         AskView().destinationID("collab.ai")
@@ -271,7 +280,19 @@ private struct AskCard: View {
                 }
             }
         }
+        .sheet(item: $asked) { question in
+            NavigationStack {
+                AskView(initialQuestion: question.text).destinationID("collab.ai")
+                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { asked = nil } } }
+            }
+        }
     }
+}
+
+/// A question sent from the card: Ask opens over Now with it.
+private struct AskedQuestion: Identifiable {
+    let text: String
+    var id: String { text }
 }
 
 /// A session row: the time in a fixed column, the title, and one line that depends on where the row is shown.
