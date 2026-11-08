@@ -12,11 +12,15 @@ struct PublicSettingsView: View {
     var body: some View {
         Form {
             Section {
-                NavigationLink {
-                    AskView()
-                } label: {
-                    Label("Ask, with your own AI key", systemImage: "sparkles")
+                #if DEBUG
+                if debug {
+                    NavigationLink {
+                        AskView()
+                    } label: {
+                        Label("Ask, with your own AI key", systemImage: "sparkles")
+                    }
                 }
+                #endif
                 NavigationLink {
                     ReminderSettingsView()
                 } label: {

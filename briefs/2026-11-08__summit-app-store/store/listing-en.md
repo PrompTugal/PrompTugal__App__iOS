@@ -17,7 +17,7 @@ The independent companion for the Lisbon tech summit, 9–12 November: what is o
 ## Description (4000)
 
 ```
-PrompTugal is an independent companion app for the people at the big Lisbon tech summit, 9–12 November 2026, made by PrompTugal.news, a newsroom covering AI in Portugal.
+PrompTugal is an independent companion app for the people at the big Lisbon tech summit, 9–12 November 2026, made by PrompTugal.news, an independent newsroom in Portugal.
 
 Open it at the venue and within seconds you know what is on now, what is next for you, and what is new.
 
@@ -37,12 +37,9 @@ NEWS
 • Live news and newsletter editions from PrompTugal.news, readable offline
 • A graph of the companies, people and events behind the stories
 
-ASK (OPTIONAL)
-• Ask about the program and your day, with your own OpenRouter key. Nothing is sent until you agree, and you choose what is shared
-
 PRIVATE BY DESIGN
 • No account, no sign-up, no tracking, no ads
-• Your picks and settings stay on your device
+• No data collected: your picks and settings stay on your device
 
 LANGUAGES
 • English, Portuguese (Portugal) and Portuguese (Brazil)
@@ -53,7 +50,7 @@ PrompTugal is independent. It is not affiliated with, endorsed by or sponsored b
 ## Keywords (100)
 
 ```
-conference,agenda,schedule,planner,tech,startup,AI,Portugal,news,talks,speakers,event,venue,offline
+conference,agenda,schedule,planner,tech,startup,Portugal,news,talks,speakers,event,venue,offline
 ```
 
 Words already in the name (PrompTugal, Lisbon, Summit) are indexed and not repeated. No event trademark and no competitor names (guideline 2.3.7).

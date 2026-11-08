@@ -4,7 +4,7 @@
   Privacy manifest for the public PrompTugal app (news.promptugal.reader).
   Starts from the reader's manifest: UserDefaults (CA92.1) and file timestamps for cache ages
   (C617.1). The public app has no team screens, so the debug-panel reason (DDA9.1) is left out.
-  Re-check against the code once the packages are linked in. No analytics, no tracking.
+  Re-check against the code once the packages are linked in. No analytics, no tracking, no data collected: Ask (the one feature that sent user text to a third party) is DEBUG-only.
 -->
 <plist version="1.0">
 <dict>
@@ -13,20 +13,7 @@
 	<key>NSPrivacyTrackingDomains</key>
 	<array/>
 	<key>NSPrivacyCollectedDataTypes</key>
-	<array>
-		<dict>
-			<key>NSPrivacyCollectedDataType</key>
-			<string>NSPrivacyCollectedDataTypeOtherUserContent</string>
-			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<false/>
-			<key>NSPrivacyCollectedDataTypeTracking</key>
-			<false/>
-			<key>NSPrivacyCollectedDataTypePurposes</key>
-			<array>
-				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
-			</array>
-		</dict>
-	</array>
+	<array/>
 	<key>NSPrivacyAccessedAPITypes</key>
 	<array>
 		<dict>
