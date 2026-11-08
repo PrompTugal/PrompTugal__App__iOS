@@ -88,6 +88,14 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(version.bump(path), 'v0.1.10')
         self.assertEqual(version.read(path), 'v0.1.10')
 
+    def test_minor_without_patch_bumps_to_dot_zero(self):
+        path = self.tmp / 'VERSION-minor'
+        path.write_text('v0.4\n')
+        self.assertEqual(version.read(path), 'v0.4.0')   # shown as the release it will become
+        self.assertEqual(version.bump(path), 'v0.4.0')
+        self.assertEqual(path.read_text(), 'v0.4.0\n')
+        self.assertEqual(version.bump(path), 'v0.4.1')   # and then counts up as before
+
     def test_release_is_stamped_from_version_file(self):
         stamp = json.loads((self.clean / 'version.json').read_text())
         self.assertEqual(stamp['release'], version.read())
@@ -95,7 +103,7 @@ class SiteTest(unittest.TestCase):
 
     def test_refuses_malformed_version(self):
         path = self.tmp / 'VERSION-bad'
-        for bad in ('0.1.3', 'v0.1', 'v0.1.3-beta', ''):
+        for bad in ('0.1.3', 'v0', 'v0.1.3-beta', 'v0.1.', ''):
             path.write_text(bad)
             with self.assertRaises(SystemExit, msg=bad):
                 version.read(path)

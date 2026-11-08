@@ -10,7 +10,8 @@
 set -euo pipefail
 to=${2:-HEAD}
 if [ -n "${1:-}" ]; then from=$1
-else from=$(git describe --tags --abbrev=0 --match "${APP_KEY:-ios}-v*" --match 'ios-v*' "$to^" 2>/dev/null || true); fi
+elif [ -n "${NOTES_FROM:-}" ] && git cat-file -e "$NOTES_FROM^{commit}" 2>/dev/null; then from=$NOTES_FROM
+else from=$(git describe --tags --abbrev=0 --match 'v[0-9]*' --match "${APP_KEY:-ios}-v*" --match 'ios-v*' "$to^" 2>/dev/null || true); fi
 if [ -n "$from" ]; then range="$from..$to"; since="since $from"
 else range="$(git rev-list -n 30 "$to" | tail -1)..$to"; since="in the last 30 commits"; fi
 
@@ -27,7 +28,7 @@ changes=$(git log --no-merges --format='%s' "$range" \
 count=$(printf '%s\n' "$changes" | grep -c '^- ' || true)
 
 {
-  echo "${APP_NAME:-PrompTugal} ${MARKETING_VERSION:-} (${BUILD_NUMBER:-}) · $(git rev-parse --short "$to")"
+  echo "${APP_NAME:-PrompTugal} ${MARKETING_VERSION:-} (${BUILD_NUMBER:-}) · tag ${RELEASE_TAG:-none} · commit $(git rev-parse --short "$to")"
   echo "Test on iPhone and iPad. Report problems to the team channel with the build number."
   if [ -n "$status" ]; then echo; echo "What each session changed:"; printf '%s\n' "$status"; fi
   echo; echo "Commits $since: $count"
