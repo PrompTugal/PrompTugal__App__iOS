@@ -188,3 +188,21 @@ rc7 moved to **535e9ba** (14:17), the last product change before the freeze. `PT
 | A4 | Review details, categories, screenshots and content rights are not set | As planned: review-notes.txt, News and Business, USES_THIRD_PARTY_CONTENT; screenshots from screens #36 once they pass | release |
 | A5 | Age rating exists | Overwrite with [age-rating.md](age-rating.md) (4+), and read it back after saving | release |
 | M1 | listing.json diffs cleanly for en-US, pt-PT and pt-BR | GO | |
+
+## Run 13: screens #36 on rc7 535e9ba, the iPhone 6.9" set (14:45 UTC)
+
+21 images (7 screens, en-US, pt-PT, pt-BR).
+
+| # | Image | Finding | State |
+| --- | --- | --- | --- |
+| S1 | all | No notification alert, no debug badges or rows | GO |
+| S2 | 01-now, 02-team.schedule, 03-explore | The time is on one line (12-hour en-US, 24-hour pt) | GO |
+| S5 | all pt | The UI is fully localized (pt-PT: Agora, O meu programa, Explorar, Notícias, Definições; pt-BR: Meu programa, Palestrantes, Reportagens). Content stays in English, as the sources publish it. | GO |
+| S6 | 04-explore.talk | The Registration item: "bring your ticket QR from the **Web Summit** app". Also the empty state "Connect to load this talk's times". `-PTHideTerm` does not reach PTExplore. | **leave out** |
+| S7 | 05-news.home | The lead story's summary: "Brazil's three days at **Web Summit**". The filter checks titles only. | **leave out**, or filter summaries and re-run |
+| S8 | 07-explore.graph | The node label "websummit.com/…" is legible | **leave out** (labels are not controlled) |
+| S9 | 01, 02, 03, 06 | Clean, native, and they show the core: now and next, my program with a clash, the agenda, people | **GO as the store set** (4 per locale and size) |
+| P | 02 (pt-BR) | The date chips truncate ("9 de nov. d…") | polish, next version |
+| P | 02 (pt-PT) | "palestra": "sessão" is more European | polish, next version |
+
+The 6.5" and iPad 13" artifacts get the same check when they land.
