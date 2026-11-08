@@ -43,23 +43,40 @@ class Requests(unittest.TestCase):
         self.assertEqual(b["data"]["type"], "betaAppReviewDetails")
 
 
+CONTACT = {"REVIEW_CONTACT_FIRST_NAME": "A", "REVIEW_CONTACT_LAST_NAME": "B",
+           "REVIEW_CONTACT_EMAIL": "a@b.c", "REVIEW_CONTACT_PHONE": "+351"}
+
+
 class ReviewInfo(unittest.TestCase):
     def test_missing_listed(self):
         attrs, missing = tf.review_attributes({}, "Key <DEMO_OPENROUTER_KEY> and <CONTACT_ADDRESS>", {})
-        self.assertIn("contactEmail", missing)
+        self.assertIn("REVIEW_CONTACT_EMAIL", missing)
         self.assertIn("notes placeholder <DEMO_OPENROUTER_KEY>", missing)
 
-    def test_complete(self):
-        info = {"contactFirstName": "A", "contactLastName": "B", "contactEmail": "a@b.c", "contactPhone": "+351"}
-        attrs, missing = tf.review_attributes(info, "Key <DEMO_KEY>", {"DEMO_KEY": "sk-x"})
+    def test_contact_from_env_only(self):
+        info = {"contactEmail": "leak@example.com"}
+        attrs, missing = tf.review_attributes(info, "n", CONTACT)
         self.assertEqual(missing, [])
+        self.assertEqual(attrs["contactEmail"], "a@b.c")
+        self.assertEqual(attrs["contactFirstName"], "A")
+        attrs, missing = tf.review_attributes(info, "n", {})
+        self.assertNotIn("contactEmail", attrs)
+
+    def test_fills_placeholders(self):
+        attrs, missing = tf.review_attributes({}, "Key <DEMO_KEY>", dict(CONTACT, DEMO_KEY="sk-x"))
         self.assertEqual(attrs["notes"], "Key sk-x")
         self.assertIs(attrs["demoAccountRequired"], False)
 
+    def test_optional_lines_dropped(self):
+        text = "a\n4. Vault: paste <DEMO_VAULT_KEY>\n5. Lane <DEMO_LANE_NAME>\nb <CAP>"
+        out, unfilled = tf.fill_placeholders(text, {"CAP": "5"})
+        self.assertEqual(out, "a\nb 5")
+        self.assertEqual(unfilled, [])
+        out, _ = tf.fill_placeholders(text, {"CAP": "5", "DEMO_VAULT_KEY": "k"})
+        self.assertIn("Vault: paste k", out)
+
     def test_demo_account_needs_credentials(self):
-        info = {"contactFirstName": "A", "contactLastName": "B", "contactEmail": "a@b.c", "contactPhone": "1",
-                "demoAccountRequired": True}
-        _, missing = tf.review_attributes(info, "n", {})
+        _, missing = tf.review_attributes({"demoAccountRequired": True}, "n", CONTACT)
         self.assertEqual(missing, ["demoAccountName", "demoAccountPassword"])
 
 
