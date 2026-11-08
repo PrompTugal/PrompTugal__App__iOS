@@ -313,9 +313,12 @@ def cmd_set_info(a, app, name):
     if a.whats_new:
         text = open(a.whats_new).read().strip()
         locs = call("GET", f"/v1/builds/{b['id']}/betaBuildLocalizations")["data"]
-        loc = next((l for l in locs if l["attributes"]["locale"] == a.locale), None)
-        steps.append(plan_whats_new(b["id"], loc["id"] if loc else None, a.locale, text))
-        lines.append(f"Set \"What to Test\" ({a.locale}, {len(text)} characters) on build {a.build}:")
+        # The app's primary locale is en-GB, so the text goes to every locale in --locale (default en-US and en-GB).
+        for locale in [x.strip() for x in a.locale.split(",") if x.strip()]:
+            loc = next((l for l in locs if l["attributes"]["locale"] == locale), None)
+            steps.append(plan_whats_new(b["id"], loc["id"] if loc else None, locale, text))
+            lines.append(f"Set \"What to Test\" ({locale}, {len(text)} characters) on build {a.build}.")
+        lines.append("Text (same for every locale above):")
         lines += [f"    > {l}" for l in text.splitlines()[:12]]
     if a.review_file:
         info = json.load(open(a.review_file))
@@ -382,6 +385,17 @@ def cmd_inspect(a, app, name):
     say("")
     r, err = call_soft(f"/v1/preReleaseVersions?filter[app]={app}&filter[version]={ver}&include=builds")
     say(f"**Pre-release version {ver}:** " + (f"error: {err}" if err else (f"{len(r['data'])} found, builds included: {len(r.get('included', []))}" if r["data"] else "not found")))
+    say("")
+    r, err = call_soft(f"/v1/apps/{app}?fields[apps]=primaryLocale")
+    say("**App primary locale:** " + (f"error: {err}" if err else str(r["data"]["attributes"].get("primaryLocale"))))
+    r, err = call_soft(f"/v1/builds?filter[app]={app}&filter[preReleaseVersion.version]={ver}&limit=20&fields[builds]=version")
+    say("**What to Test per build of this version (locale: characters; text not printed):**")
+    if err:
+        say(f"- error: {err}")
+    for b in (r or {}).get("data", []):
+        ls, lerr = call_soft(f"/v1/builds/{b['id']}/betaBuildLocalizations")
+        say(f"- build {b['attributes'].get('version')}: " + (f"error: {lerr}" if lerr else
+            (", ".join(f"{l['attributes']['locale']}: {len((l['attributes'].get('whatsNew') or '').strip())}" for l in ls["data"]) or "no localizations")))
     say("")
     r, err = call_soft(f"/v1/apps/{app}/buildUploads?limit=20")
     say("**Build uploads (/v1/apps/{id}/buildUploads):**")
@@ -478,7 +492,7 @@ def main(argv=None):
     for n in ("expire", "submit-beta-review"):
         s = sub.add_parser(n); s.add_argument("--build", required=True); s.add_argument("--yes", action="store_true")
     s = sub.add_parser("set-test-info"); s.add_argument("--build", required=True); s.add_argument("--yes", action="store_true")
-    s.add_argument("--whats-new"); s.add_argument("--review-file"); s.add_argument("--locale", default="en-US")
+    s.add_argument("--whats-new"); s.add_argument("--review-file"); s.add_argument("--locale", default="en-US,en-GB", help="comma-separated locales")
     a = p.parse_args(argv)
     for v in ("ASC_KEY_ID", "ASC_ISSUER_ID"):
         if not os.environ.get(v):
