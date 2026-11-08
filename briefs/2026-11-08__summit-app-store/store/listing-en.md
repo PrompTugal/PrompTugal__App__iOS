@@ -44,7 +44,7 @@ PRIVATE BY DESIGN
 • No account, no sign-up, no tracking, no ads
 • Your picks and settings stay on your device
 
-LANGUAGES (only if merged)
+LANGUAGES
 • English, Portuguese (Portugal) and Portuguese (Brazil)
 
 PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by the summit's organisers.

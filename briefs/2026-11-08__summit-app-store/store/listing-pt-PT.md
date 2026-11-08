@@ -46,7 +46,7 @@ PRIVACIDADE DE RAIZ
 • Sem conta, sem registo, sem rastreio, sem publicidade
 • As suas escolhas e definições ficam no seu dispositivo
 
-IDIOMAS (apenas se integrado)
+IDIOMAS
 • Inglês, português (Portugal) e português (Brasil)
 
 O PrompTugal é independente. Não está afiliado, nem é apoiado ou patrocinado pela organização da cimeira.

@@ -44,7 +44,7 @@ PRIVACIDADE EM PRIMEIRO LUGAR
 • Sem conta, sem cadastro, sem rastreamento, sem anúncios
 • Suas escolhas e configurações ficam no seu aparelho
 
-IDIOMAS (somente se integrado)
+IDIOMAS
 • Inglês, português (Portugal) e português (Brasil)
 
 PrompTugal é independente. Não é afiliado, endossado nem patrocinado pelos organizadores do evento.
