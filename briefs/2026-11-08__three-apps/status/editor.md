@@ -16,6 +16,8 @@ Branch: `split/editor` · Last update: 00:05 UTC
 
 ## In progress
 
+- 01:00 UTC: merged `dev` to v0.1.67 (TestFlight ops, release). Green, pushed. `scripts/testflight/review-notes.txt` and `what-to-test.txt` still describe the one app (sample data, Who are you); they are not mine. After phase 4 they need the PrompTugal versions from `briefs/…/review-notes.md`.
+
 - 00:45 UTC: merged PTVaultUI (`e5328ff`). Vault, Face ID and trusted-signer labels follow the moved files (`**/VaultKeychain.swift`, `**/VaultViews.swift`): all three still in the beta. Green, pushed.
 
 - 00:05 UTC: merged phase 1 (`9220d7e`). `apps.json` has only a `team` entry on the root project, so the PrompTugal app has no entry and counts as the one app: labels unchanged (13 of 13 public, same team count). Build, validator and 66 tests green. Pushed.
