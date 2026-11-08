@@ -213,7 +213,7 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 | --- | --- | --- |
 | M4 | The store set is 01-now, 02-team.schedule, 03-explore and 06-explore.people, for APP_IPHONE_69, APP_IPHONE_65 and APP_IPAD_PRO_3GEN_129, in en-US, pt-PT and pt-BR. All 36 checked: no alert, no debug UI, no "Web Summit", times on one line, iPad sidebar clean, pt localized. iPad images are landscape 2752×2064. en-GB reuses en-US. | **GO**: release may upload |
 | M1, M2 | ASC metadata applied (ios-submit 42491156901): en-GB (primary), en-US, pt-PT, pt-BR; name accepted; content rights; categories; review details | GO; check against a dry run |
-| M7 | The age rating overwrite | pending: release reads it back |
+| M7 | Age rating applied and read back (ios-submit 42491470177): every boolean false (including unrestrictedWebAccess, userGeneratedContent, messagingAndChat, advertising, socialMedia), every content level NONE, kidsAgeBand unset. That matches age-rating.md: 4+. | **GO** |
 | M6, M9 | Dinis's hand steps: App Privacy (Other User Content, not linked, no tracking), Mac and Vision Pro unticked, IDFA No | pending |
 | G5 | Run 398 | queued |
 | G1, G4 | The rc7 build is uploaded and processed; airplane-mode fresh install | pending |
