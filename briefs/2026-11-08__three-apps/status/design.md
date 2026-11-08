@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 03:32 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 04:22 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -185,3 +185,13 @@ None. Nothing moved yet.
 - Dispatched ios.yml app=all, runner=macos-26 on b1ef07a: run 312 (id 42441902683), queued at 03:32. Rule from the conductor: runner=macos-26 only; the self-hosted Mac is offline.
 - AppLinks.scheme switch is in (AppShell). PTNews has still never compiled; I fix PTNews errors only.
 - PublicShell not started; waits for the conductor's phase 4 word.
+
+## Update (8 Nov, 04:22 UTC, design.B)
+- Run 312 (b1ef07a) failed on real PTNews errors; run 318 (4c18d6b) failed on one more. Fixed all, each in PTNews or its public API:
+  - `GraphExplorerView` previews used the Team app's `PreviewSamples`: now `NewsFeeds()`.
+  - `NewsHomeView` used the dashboards' `InfoRow`: PTNews has its own `NewsRow`.
+  - `GraphExplorer.version` is now public (the Team debug panel `SystemPanels.swift:239` reads it).
+- Merged origin/dev again. Head 83f761f. Quick run 319 (id 42445321839, quick=true, macos-26) is queued. Runs 312 and 318 are cancelled.
+- Plan from the conductor: after a green quick run, one full run (quick off, macos-26) on the same sha, then READY.
+- `AppShell.swift:98` compares `url.scheme == AppLinks.scheme` (so the Team app's ptteam links work once its entry point sets the scheme).
+- PublicShell not started; waits for phase 4.
