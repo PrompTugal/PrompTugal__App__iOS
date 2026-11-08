@@ -165,3 +165,5 @@ The delta from rc4 56a630e is the rc5 parts already passed (screenshot filter, d
 | M4 | Screens on rc7, with the alert answered "Allow" | pending, then the full image and persona pass |
 
 rc7 moved to **0279acc** (14:06): the only change from 7f961a0 is `Packages/PTAgenda/Tests/PTAgendaTests/PickTests.swift` (`@MainActor`, test only). Run 10 holds. The full run is now 397 (42488067819).
+
+rc7 moved to **535e9ba** (14:17), the last product change before the freeze. `PTExplore/ExploreScreens.swift` row time: `lineLimit(1)`, `fixedSize()` and `minWidth: 64` replace the fixed 64 pt width. Layout only, so time ranges and 12-hour times no longer wrap. Run 10 holds; check Explore rows in the next screens run. The full run is now 398 (42488960402).
