@@ -162,6 +162,7 @@ struct PickSeedTests {
 }
 
 @Suite("Agenda opening day")
+@MainActor
 struct AgendaOpeningDayTests {
     @Test func opensOnTodayDuringTheSummitElseAllDays() {
         #expect(AgendaView.initialDay(now: Lisbon.instant(day: "2026-11-11", clock: "08:00")!) == "2026-11-11")
