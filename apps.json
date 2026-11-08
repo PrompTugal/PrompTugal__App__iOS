@@ -15,7 +15,7 @@
              "paths": ["Apps/Team/"],
              "packages": ["PTLanes", "PTAsk"], "testflight": true},
     "promptugal": {"project": "Apps/PrompTugal/PrompTugal.xcodeproj", "scheme": "PrompTugal", "bundle": "news.promptugal.reader",
-                   "paths": ["Apps/PrompTugal/"], "packages": ["PTAsk", "PTSync"], "testflight": true},
+                   "paths": ["Apps/PrompTugal/"], "packages": ["PTAsk"], "testflight": true},
     "riskmandate": {"project": "Apps/RiskMandate/RiskMandate.xcodeproj", "scheme": "RiskMandate", "bundle": "ai.riskmandate.app",
                     "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": true}
   },

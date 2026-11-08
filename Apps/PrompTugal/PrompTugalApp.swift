@@ -2,7 +2,6 @@ import SwiftUI
 import PTCore
 import PTAgenda
 import PTVaultUI
-import PTSync
 
 /// Entry point of the public PrompTugal app (news.promptugal.reader).
 /// Background task ids for this app: news.promptugal.reader.refresh and
@@ -26,8 +25,6 @@ struct PrompTugalApp: App {
         AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }
         // Background tasks must be registered before the app finishes launching.
         VaultBackground.register(taskIdentifier: "news.promptugal.reader.vault-refresh")
-        // Synced files of promptugal.news (PTSync): the build's seed, then the site's manifest. Also a background task.
-        PublicSync.start()
     }
 
     var body: some Scene {
@@ -35,11 +32,7 @@ struct PrompTugalApp: App {
             PublicShell()
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .background {
-                VaultBackground.schedule()
-                SyncBackground.schedule()
-            }
-            if phase == .active { Task { await PublicSync.refresh() } }
+            if phase == .background { VaultBackground.schedule() }
         }
     }
 }

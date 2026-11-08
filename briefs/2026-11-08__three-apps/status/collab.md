@@ -248,3 +248,183 @@ public enum SyncBackground { static func register(taskIdentifier: String, run: @
 3. Are the 2,330 promptugal.news files all public and cacheable (no cookies)? Does it send an `ETag`?
 4. Should removed files be deleted from the local store at the next switch (recommended) or kept for a day?
 5. Seed size: is a 20 MB `full` seed in the PrompTugal IPA acceptable, or only `core` (1–2 MB) in the build and `full` downloaded on first Wi-Fi?
+
+## PTSync wiring for the PrompTugal app (for apps; not on my branch)
+
+Conductor ruling (10:55 UTC): Apps/PrompTugal is apps' to edit, so my branch carries PTSync (package, tests, PTCore seam, seed script) and none of the app wiring. This is the wiring I built and had green-checked locally with `check_apps.py`: apply it with `git apply` (save the block below to a file) or copy the pieces.
+1. `apps.json`: `promptugal.packages` becomes `["PTAsk", "PTSync"]`.
+2. `PrompTugal.xcodeproj`: PTSync local package reference, product dependency and framework build file (same five places as PTVaultUI).
+3. `Info.plist`: add `news.promptugal.reader.sync` to BGTaskSchedulerPermittedIdentifiers.
+4. `PrompTugalApp.swift`: `import PTSync`, `PublicSync.start()` in `init`, and in `onChange(of: scenePhase)`: `SyncBackground.schedule()` on background and a refresh on active.
+5. New `Apps/PrompTugal/Shell/PublicSync.swift`: opens the `ContentStore` (looks for a bundled `Seed/promptugal.news` folder), registers it with PTCore's `ContentSources`, runs the `SyncEngine` with `PackRules.promptugalNews`, and registers the background task.
+
+```diff
+diff --git a/Apps/PrompTugal/Info.plist b/Apps/PrompTugal/Info.plist
+index 8be4469..26ff6d0 100644
+--- a/Apps/PrompTugal/Info.plist
++++ b/Apps/PrompTugal/Info.plist
+@@ -10,6 +10,7 @@
+ 	<array>
+ 		<string>news.promptugal.reader.refresh</string>
+ 		<string>news.promptugal.reader.vault-refresh</string>
++		<string>news.promptugal.reader.sync</string>
+ 	</array>
+ 	<key>CFBundleURLTypes</key>
+ 	<array>
+diff --git a/Apps/PrompTugal/PrompTugal.xcodeproj/project.pbxproj b/Apps/PrompTugal/PrompTugal.xcodeproj/project.pbxproj
+index 69b7e47..47a8c07 100644
+--- a/Apps/PrompTugal/PrompTugal.xcodeproj/project.pbxproj
++++ b/Apps/PrompTugal/PrompTugal.xcodeproj/project.pbxproj
+@@ -15,6 +15,7 @@
+ 		5B2719121FAAE433CDC36721 /* PTNews in Frameworks */ = {isa = PBXBuildFile; productRef = 8CA679B880DAE215C2AF5ED5 /* PTNews */; };
+ 		FA561A52534BBBD0C4E9F720 /* PTAsk in Frameworks */ = {isa = PBXBuildFile; productRef = FC463707B728B9D5A483F362 /* PTAsk */; };
+ 		62C152B82B7782691901FDE6 /* PTVaultUI in Frameworks */ = {isa = PBXBuildFile; productRef = 00CAC9EBB3D202E3D0898BB2 /* PTVaultUI */; };
++		A5C9E1D07B2F4A6E8D31C0F1 /* PTSync in Frameworks */ = {isa = PBXBuildFile; productRef = B6D0F2E18C3A5B7F9E42D1A2 /* PTSync */; };
+ 		AD62C18680AF9EC5A07E5B5A /* PrompTugalWidgets.appex in Embed */ = {isa = PBXBuildFile; fileRef = 0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+ 		A3DB1CA94FAE24CD2F779D42 /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 32154EC416734B3A20FF1516 /* PTAgenda */; };
+ 		FA989053DC0B7A670553676E /* PrompTugalIntents.appex in Embed */ = {isa = PBXBuildFile; fileRef = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+@@ -159,6 +160,7 @@
+ 				5B2719121FAAE433CDC36721 /* PTNews in Frameworks */,
+ 				FA561A52534BBBD0C4E9F720 /* PTAsk in Frameworks */,
+ 				62C152B82B7782691901FDE6 /* PTVaultUI in Frameworks */,
++				A5C9E1D07B2F4A6E8D31C0F1 /* PTSync in Frameworks */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+@@ -266,6 +268,7 @@
+ 				8CA679B880DAE215C2AF5ED5 /* PTNews */,
+ 				FC463707B728B9D5A483F362 /* PTAsk */,
+ 				00CAC9EBB3D202E3D0898BB2 /* PTVaultUI */,
++				B6D0F2E18C3A5B7F9E42D1A2 /* PTSync */,
+ 			);
+ 			productName = PrompTugal;
+ 			productReference = 0D08D33B90E2593AC336F1CD;
+@@ -409,6 +412,7 @@
+ 				689CF41318B6542F4B8EB9FE /* XCLocalSwiftPackageReference "../../Packages/PTNews" */,
+ 				020358F86EADE19098D947DA /* XCLocalSwiftPackageReference "../../Packages/PTAsk" */,
+ 				5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */,
++				C7E1A3F29D4B6C8A0F53E2B3 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */,
+ 			);
+ 			preferredProjectObjectVersion = 77;
+ 			productRefGroup = 6184002F36CB9470245CDFFC /* Products */;
+@@ -857,6 +861,10 @@
+ 			isa = XCLocalSwiftPackageReference;
+ 			relativePath = ../../Packages/PTVaultUI;
+ 		};
++		C7E1A3F29D4B6C8A0F53E2B3 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */ = {
++			isa = XCLocalSwiftPackageReference;
++			relativePath = ../../Packages/PTSync;
++		};
+ /* End XCLocalSwiftPackageReference section */
+ 
+ /* Begin XCSwiftPackageProductDependency section */
+@@ -895,6 +903,11 @@
+ 			package = 5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */;
+ 			productName = PTVaultUI;
+ 		};
++		B6D0F2E18C3A5B7F9E42D1A2 /* PTSync */ = {
++			isa = XCSwiftPackageProductDependency;
++			package = C7E1A3F29D4B6C8A0F53E2B3 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */;
++			productName = PTSync;
++		};
+ 		32154EC416734B3A20FF1516 /* PTAgenda */ = {
+ 			isa = XCSwiftPackageProductDependency;
+ 			package = E0A0E149DD8F39A2BD3E95E5 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
+diff --git a/Apps/PrompTugal/PrompTugalApp.swift b/Apps/PrompTugal/PrompTugalApp.swift
+index 6df6748..f64eca4 100644
+--- a/Apps/PrompTugal/PrompTugalApp.swift
++++ b/Apps/PrompTugal/PrompTugalApp.swift
+@@ -2,6 +2,7 @@ import SwiftUI
+ import PTCore
+ import PTAgenda
+ import PTVaultUI
++import PTSync
+ 
+ /// Entry point of the public PrompTugal app (news.promptugal.reader).
+ /// Background task ids for this app: news.promptugal.reader.refresh and
+@@ -25,6 +26,8 @@ struct PrompTugalApp: App {
+         AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }
+         // Background tasks must be registered before the app finishes launching.
+         VaultBackground.register(taskIdentifier: "news.promptugal.reader.vault-refresh")
++        // Synced files of promptugal.news (PTSync): the build's seed, then the site's manifest. Also a background task.
++        PublicSync.start()
+     }
+ 
+     var body: some Scene {
+@@ -32,7 +35,11 @@ struct PrompTugalApp: App {
+             PublicShell()
+         }
+         .onChange(of: scenePhase) { _, phase in
+-            if phase == .background { VaultBackground.schedule() }
++            if phase == .background {
++                VaultBackground.schedule()
++                SyncBackground.schedule()
++            }
++            if phase == .active { Task { await PublicSync.refresh() } }
+         }
+     }
+ }
+diff --git a/Apps/PrompTugal/Shell/PublicSync.swift b/Apps/PrompTugal/Shell/PublicSync.swift
+new file mode 100644
+index 0000000..91de7d9
+--- /dev/null
++++ b/Apps/PrompTugal/Shell/PublicSync.swift
+@@ -0,0 +1,44 @@
++import Foundation
++import PTCore
++import PTSync
++
++/// The public app's synced files: promptugal.news' manifest, kept on this device and checked against its SHA-256 hashes.
++/// The core pack (agenda, days, stories, indexes, about 1.5 MB) comes first; the full pack (graph, search, entity pages)
++/// follows when the connection is not cellular or in Low Data Mode. Nothing here is a screen: readers take the files
++/// through PTCore's `ContentSources` (site id `promptugal.news`), and fall back to the network when it holds nothing.
++@MainActor
++enum PublicSync {
++    /// Also listed in Info.plist under BGTaskSchedulerPermittedIdentifiers.
++    static let taskIdentifier = "news.promptugal.reader.sync"
++
++    private(set) static var store: ContentStore?
++    private(set) static var engine: SyncEngine?
++    private static let network = SystemNetworkPath()
++
++    /// Called once from the app's `init`, before any view reads content. Opens the store off the main thread, registers it,
++    /// then runs a first sync.
++    static func start() {
++        SyncBackground.register(taskIdentifier: taskIdentifier) { await PublicSync.refresh() }
++        Task {
++            // A folder named "Seed" in the app bundle holds the build's seed: Seed/promptugal.news/manifest.json and files.
++            let seed = Bundle.main.url(forResource: "Seed", withExtension: nil)?
++                .appendingPathComponent(SyncSource.promptugalNews.id, isDirectory: true)
++            let opened = await ContentStore.open(source: .promptugalNews, seed: seed)
++            store = opened
++            ContentSources.register(opened, for: SyncSource.promptugalNews.id)
++            engine = SyncEngine(store: opened, rules: .promptugalNews, network: network)
++            _ = await refresh()
++        }
++    }
++
++    /// One sync. Core always; full when the connection allows (the engine leaves it out otherwise). True when nothing failed.
++    @discardableResult
++    static func refresh(packs: Set<SyncPack> = [.core, .full]) async -> Bool {
++        guard let engine else { return false }
++        do {
++            return try await engine.sync(packs).failures.isEmpty
++        } catch {
++            return false
++        }
++    }
++}
+diff --git a/apps.json b/apps.json
+index 64ea72d..4e36acf 100644
+--- a/apps.json
++++ b/apps.json
+@@ -15,7 +15,7 @@
+              "paths": ["Apps/Team/"],
+              "packages": ["PTLanes", "PTAsk"], "testflight": true},
+     "promptugal": {"project": "Apps/PrompTugal/PrompTugal.xcodeproj", "scheme": "PrompTugal", "bundle": "news.promptugal.reader",
+-                   "paths": ["Apps/PrompTugal/"], "packages": ["PTAsk"], "testflight": true},
++                   "paths": ["Apps/PrompTugal/"], "packages": ["PTAsk", "PTSync"], "testflight": true},
+     "riskmandate": {"project": "Apps/RiskMandate/RiskMandate.xcodeproj", "scheme": "RiskMandate", "bundle": "ai.riskmandate.app",
+                     "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": true}
+   },
+```

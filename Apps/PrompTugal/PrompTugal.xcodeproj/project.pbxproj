@@ -15,7 +15,6 @@
 		5B2719121FAAE433CDC36721 /* PTNews in Frameworks */ = {isa = PBXBuildFile; productRef = 8CA679B880DAE215C2AF5ED5 /* PTNews */; };
 		FA561A52534BBBD0C4E9F720 /* PTAsk in Frameworks */ = {isa = PBXBuildFile; productRef = FC463707B728B9D5A483F362 /* PTAsk */; };
 		62C152B82B7782691901FDE6 /* PTVaultUI in Frameworks */ = {isa = PBXBuildFile; productRef = 00CAC9EBB3D202E3D0898BB2 /* PTVaultUI */; };
-		A5C9E1D07B2F4A6E8D31C0F1 /* PTSync in Frameworks */ = {isa = PBXBuildFile; productRef = B6D0F2E18C3A5B7F9E42D1A2 /* PTSync */; };
 		AD62C18680AF9EC5A07E5B5A /* PrompTugalWidgets.appex in Embed */ = {isa = PBXBuildFile; fileRef = 0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A3DB1CA94FAE24CD2F779D42 /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 32154EC416734B3A20FF1516 /* PTAgenda */; };
 		FA989053DC0B7A670553676E /* PrompTugalIntents.appex in Embed */ = {isa = PBXBuildFile; fileRef = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -160,7 +159,6 @@
 				5B2719121FAAE433CDC36721 /* PTNews in Frameworks */,
 				FA561A52534BBBD0C4E9F720 /* PTAsk in Frameworks */,
 				62C152B82B7782691901FDE6 /* PTVaultUI in Frameworks */,
-				A5C9E1D07B2F4A6E8D31C0F1 /* PTSync in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +266,6 @@
 				8CA679B880DAE215C2AF5ED5 /* PTNews */,
 				FC463707B728B9D5A483F362 /* PTAsk */,
 				00CAC9EBB3D202E3D0898BB2 /* PTVaultUI */,
-				B6D0F2E18C3A5B7F9E42D1A2 /* PTSync */,
 			);
 			productName = PrompTugal;
 			productReference = 0D08D33B90E2593AC336F1CD;
@@ -412,7 +409,6 @@
 				689CF41318B6542F4B8EB9FE /* XCLocalSwiftPackageReference "../../Packages/PTNews" */,
 				020358F86EADE19098D947DA /* XCLocalSwiftPackageReference "../../Packages/PTAsk" */,
 				5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */,
-				C7E1A3F29D4B6C8A0F53E2B3 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6184002F36CB9470245CDFFC /* Products */;
@@ -861,10 +857,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTVaultUI;
 		};
-		C7E1A3F29D4B6C8A0F53E2B3 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../Packages/PTSync;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -902,11 +894,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */;
 			productName = PTVaultUI;
-		};
-		B6D0F2E18C3A5B7F9E42D1A2 /* PTSync */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C7E1A3F29D4B6C8A0F53E2B3 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */;
-			productName = PTSync;
 		};
 		32154EC416734B3A20FF1516 /* PTAgenda */ = {
 			isa = XCSwiftPackageProductDependency;

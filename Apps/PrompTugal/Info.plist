@@ -10,7 +10,6 @@
 	<array>
 		<string>news.promptugal.reader.refresh</string>
 		<string>news.promptugal.reader.vault-refresh</string>
-		<string>news.promptugal.reader.sync</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
