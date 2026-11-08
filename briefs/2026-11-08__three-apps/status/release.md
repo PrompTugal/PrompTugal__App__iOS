@@ -89,3 +89,11 @@ Handed off at 01:40 UTC (8 Nov) to the session under conductor.B. I dispatch no 
 - Took over. Merged origin/dev (7b621f5), VERSION kept at `v0.4`. No workflow or release-script changes came with the merge.
 - Site checks and `check_apps.py` pass on 7b621f5.
 - Runs 287 (ios, queued) and 59 (ios-release dry run, in progress) on d0ad4d6 still pending.
+
+## Release.B update (8 Nov, ~02:55 UTC)
+
+- Head `2aa2059`: merged dev 36508b6 (runner input kept with quick mode). VERSION `v0.4`.
+- ios-release dry run on 2aa2059: green (conductor's run 62).
+- Quick run on 2aa2059: conductor moved it to GitHub runners (run 306). Green = merge condition met. I dispatch nothing more unless it fails.
+- Run 287 (d0ad4d6) failed only in Package PTAgenda: runner fault (no matching device).
+- Open: cancel the rest of a manual split/** run when its Debug build fails (conductor's ask), in a later push.
