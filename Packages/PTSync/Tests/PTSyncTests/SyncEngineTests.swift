@@ -70,6 +70,28 @@ struct SyncEngineTests {
         #expect(reopened.syncedAt == Date(timeIntervalSince1970: 1_300), "the time is kept on disk")
     }
 
+    @Test("A site that sends no ETag: an unchanged manifest body is still recognised, and changes are still found by file hash")
+    func noETag() async throws {
+        let dir = TempDir()
+        defer { dir.cleanup() }
+        let site = makeSite()
+        site.setSendsETag(false)
+        let store = ContentStore(source: testSource, directory: dir.url)
+        let engine = makeEngine(site: site, store: store)
+        _ = try await engine.sync([.core])
+        site.clearRequests()
+        let same = try await engine.sync([.core])
+        #expect(same.notModified && !same.switched && same.isUpToDate, "same manifest body")
+        #expect(site.totalRequests == 1, "the manifest only: no file is fetched again")
+
+        // The manifest's `version` is not trusted: a changed file with the same version string is still found.
+        site.set("api/a.json", "A2")
+        let changed = try await engine.sync([.core])
+        #expect(!changed.notModified && changed.switched && changed.changed == 1)
+        #expect(store.data(at: "api/a.json") == Data("A2".utf8))
+        #expect(store.version == "v1")
+    }
+
     @Test("A changed file is fetched alone; a snapshot taken before keeps the old bytes")
     func changedFile() async throws {
         let dir = TempDir()

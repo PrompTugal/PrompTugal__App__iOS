@@ -148,7 +148,12 @@ public actor SyncEngine {
             let size = ((try? FileManager.default.attributesOfItem(atPath: file.path)[.size]) as? NSNumber)?.intValue ?? 0
             guard size <= SyncLimits.maxManifestBytes else { throw SyncError.manifestTooLarge }
             let data = try Data(contentsOf: file)
-            parsed = try Manifest.parse(data)
+            if let cached, cached.bodySHA256 == SHA256Hex.of(data) {
+                parsed = (cached.manifest, 0)           // same body, whether or not the site sent an ETag
+                report.notModified = true
+            } else {
+                parsed = try Manifest.parse(data)
+            }
             store.saveRemote(data, etag: response.etag)
         } else {
             if let file = response.file { try? FileManager.default.removeItem(at: file) }

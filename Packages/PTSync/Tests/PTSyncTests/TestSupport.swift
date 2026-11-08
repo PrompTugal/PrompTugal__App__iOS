@@ -34,6 +34,7 @@ final class FakeSite: SyncTransport, @unchecked Sendable {
     private var oversize: Set<String> = []
     private(set) var requests: [String] = []
     private var manifestStatusOverride: Int?
+    private var sendsETag = true
 
     func set(_ path: String, _ content: String) { lock.withLock { files[path] = Data(content.utf8) } }
     func remove(_ path: String) { lock.withLock { _ = files.removeValue(forKey: path) } }
@@ -42,6 +43,7 @@ final class FakeSite: SyncTransport, @unchecked Sendable {
     func corrupt(_ path: String) { lock.withLock { _ = corrupt.insert(path) } }
     func oversize(_ path: String) { lock.withLock { _ = oversize.insert(path) } }
     func overrideManifestStatus(_ status: Int?) { lock.withLock { manifestStatusOverride = status } }
+    func setSendsETag(_ value: Bool) { lock.withLock { sendsETag = value } }
     func requestCount(for path: String) -> Int { lock.withLock { requests.filter { $0 == path }.count } }
     func clearRequests() { lock.withLock { requests.removeAll() } }
     var totalRequests: Int { lock.withLock { requests.count } }
@@ -65,6 +67,7 @@ final class FakeSite: SyncTransport, @unchecked Sendable {
             if path == "api/v1/manifest.json" {
                 if let status = manifestStatusOverride { return (status, nil, nil) }
                 let tag = "\"\(version)-\(files.count)-\(files.values.reduce(0) { $0 + $1.count })\""
+                if !sendsETag { return (200, nil, nil) }       // no ETag header, never a 304
                 if ifNoneMatch == tag { return (304, nil, tag) }
                 return (200, nil, tag)   // body filled in below
             }

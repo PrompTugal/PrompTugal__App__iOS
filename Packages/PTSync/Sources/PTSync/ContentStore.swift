@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 /// The files of one source on this device, in generations. Files are stored by their SHA-256 (`objects/<sha>`), and a
 /// generation is only a list of `path → entry` (`gen-N.json`). Switching is writing the new list, then replacing the
@@ -101,7 +102,8 @@ public final class ContentStore: ContentSource, @unchecked Sendable {
         }
     }
 
-    /// A closure other packages can take: `ContentStore.loader` is `(String) -> Data?`.
+    /// A closure for a package that takes plain closures: `ContentStore.loader` is `(String) -> Data?`.
+    /// Packages that read through PTCore's `ContentSource` take the store itself, registered with `ContentSources`.
     public var loader: @Sendable (String) -> Data? {
         { [self] path in self.data(at: path) }
     }
@@ -165,12 +167,14 @@ public final class ContentStore: ContentSource, @unchecked Sendable {
 
     // MARK: The site's last manifest
 
-    func cachedRemote() -> (manifest: Manifest, etag: String?)? {
+    /// The manifest as last received, its ETag (when the site sent one) and the SHA-256 of its body. A site that sends no
+    /// ETag is detected as unchanged by that hash. The manifest's own `version` is never trusted to change.
+    func cachedRemote() -> (manifest: Manifest, etag: String?, bodySHA256: String)? {
         guard let data = try? Data(contentsOf: root.appendingPathComponent("remote.json")),
               let parsed = try? Manifest.parse(data) else { return nil }
         let etag = (try? String(contentsOf: root.appendingPathComponent("remote.etag"), encoding: .utf8))
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-        return (parsed.manifest, (etag?.isEmpty ?? true) ? nil : etag)
+        return (parsed.manifest, (etag?.isEmpty ?? true) ? nil : etag, SHA256Hex.of(data))
     }
 
     func saveRemote(_ data: Data, etag: String?) {
