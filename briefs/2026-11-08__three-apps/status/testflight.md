@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 01:50 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 02:08 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 02:08 UTC: no new iOS release run since run 60 (cancelled). dev has only docs commits (tag v0.1.76), which do not upload. Conductor: signing is automatic for Team and RiskMandate; both records and internal groups exist. If a first signed build fails for lack of a profile, read the log and tell the conductor.
 - 01:50 UTC (conductor): run 60 cancelled to free the macOS queue; the next code merge to dev uploads everything since build 152. Dinis created the App Store Connect records for Team and RiskMandate; uploads to them wait on per-app profile secrets and an internal group per record.
 
 - Watching each automatic upload: it must land in the right record and its internal group. One line per build below.
