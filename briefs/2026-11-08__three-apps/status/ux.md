@@ -139,7 +139,30 @@ Copy is final in en here; i18n writes pt-PT and pt-BR. design builds it as a sta
 
 For every screenshot set from `screens.yml`, ux checks each screen id above against this page and sends fixes to the conductor as: `<screen id> · what · why`. Screenshots needed: NOW-1 (state A with picks, and state B with a fixed date if the Screens run can set `-PTNow 2026-11-10T14:05`), PROG-1 with a clash, EXP-1 Talks, EXP-D, NEWS-1, ASK-1 with chips (opened from NOW-1h). Ask release for a `-PTNow` launch argument (DEBUG only, like `-PTDestination`) so state B can be photographed today.
 
+## 11. App Store screenshots (for release; conductor asked 11:27 UTC)
+
+**One run, one time:** `now = 2026-11-10T11:00:00Z` (Tue 10 Nov, 11:00 Lisbon: Centre Stage, Stages 4, 6, 7, 9, 11, 12 all running or about to start). Same for every locale and size.
+
+**Seeded program** (DEBUG launch argument `-PTSeedPicks <comma-separated event slugs>`, read once at launch, ignored in Release; owner: team, in the screens test: release):
+`has-europe-s-tech-moment-arrived`, `double-agents-are-your-employees-ai-agents-working-for-or-against-your-business`, `ai-your-new-news-editor`, `the-agentic-internet-who-controls-the-web`, `trust-issues-letting-ai-agents-into-production-safely` (use the real slugs from `api/v1/live/agenda.json` `page`). This gives: next pick in 5 min on Centre Stage, one clash at 11:25 (Stage 4 vs Centre Stage), 5 picks so EXP-G shows.
+
+| # | Screen id (screens test id) | State | Caption idea (en) |
+| --- | --- | --- | --- |
+| 1 | `now` | seeded picks, 11:00 | What's on now, and what's next for you |
+| 2 | `team.schedule` | seeded, day Tue 10, clash group visible | Your own program, clashes marked |
+| 3 | `explore` | Talks, day Tue 10 | Every talk of the summit, offline |
+| 4 | `explore.talk` (new id: EXP-D for "Has Europe's tech moment arrived?") | starred | Star a talk, get a reminder before it starts |
+| 5 | `news.home` | Latest | Summit news, readable with no signal |
+| 6 | `explore.people` (new id: EXP-1 on Speakers) | — | Speakers, companies and places |
+| 7 | `explore.graph` (new id: EXP-G opened) | seeded | The people and companies behind your picks |
+
+- **Minimum (if the new ids are not ready):** 1 `now`, 2 `team.schedule`, 3 `explore`, 4 `news.home`. Four is enough for a first submission.
+- **Not photographed:** Ask (needs a personal key; the reviewer must not see a key screen as a feature), Settings, Vault, any web page.
+- **Captions:** en above; i18n writes pt-PT and pt-BR. Frames are for later; plain screenshots today.
+- iPad 13": the same ids; `now` shows the two-column layout if built, else one column (fine).
+
 ## Log
 
 - 11:30 UTC: spec v1 written from the briefs, the public app's code on `dev` (66089cd) and the live API (agenda 201 items, people 275, companies 120, places 83, `feed.xml`).
 - 11:35 UTC: conductor ruling applied: Ask leaves the tab bar; four tabs; new NOW-1h Ask card on Now; Ask first row in Settings and in the iPad More section.
+- 11:45 UTC: §11 App Store screenshot list for release.
