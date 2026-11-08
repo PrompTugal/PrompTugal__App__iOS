@@ -9,31 +9,66 @@ public struct ExploreHooks {
     public var talkDetail: (@MainActor (ExploreItem) -> AnyView)?
     /// A card above the search, e.g. "Your graph" (shown by the app only with three or more picks).
     public var header: (@MainActor () -> AnyView)?
+    /// The graph screen, opened by `ExploreStart.graph`.
+    public var graph: (@MainActor () -> AnyView)?
 
     public init(talks: (@MainActor () -> AnyView)? = nil,
                 talkDetail: (@MainActor (ExploreItem) -> AnyView)? = nil,
-                header: (@MainActor () -> AnyView)? = nil) {
+                header: (@MainActor () -> AnyView)? = nil,
+                graph: (@MainActor () -> AnyView)? = nil) {
         self.talks = talks
         self.talkDetail = talkDetail
         self.header = header
+        self.graph = graph
     }
 }
+
+/// Where the screen opens. The shell passes one for each destination id it routes:
+/// `explore` → `.talks`, `explore.people` → `.speakers`, `explore.talk` → `.talk(nil)` (or a talk's reference),
+/// `explore.graph` → `.graph`.
+public enum ExploreStart: Equatable, Sendable {
+    case talks, speakers, companies, places
+    /// A talk's detail. `nil` opens the first talk of 10 Nov (or the first talk there is).
+    case talk(ref: String?)
+    /// The graph screen from `ExploreHooks.graph`.
+    case graph
+
+    var kind: ExploreKind {
+        switch self {
+        case .talks, .talk, .graph: .event
+        case .speakers: .person
+        case .companies: .company
+        case .places: .place
+        }
+    }
+}
+
+struct ExploreGraphRoute: Hashable {}
 
 /// The Explore screen: search across talks, speakers, companies and places, a segment for each, and a detail page.
 /// Open it with `ExploreScreen()`; it brings its own navigation stack.
 public struct ExploreScreen: View {
     @State private var store: ExploreStore
+    @State private var path = NavigationPath()
+    @State private var started = false
     let hooks: ExploreHooks
+    let start: ExploreStart
 
-    public init(store: ExploreStore? = nil, hooks: ExploreHooks = ExploreHooks()) {
-        _store = State(initialValue: store ?? ExploreStore())
+    public init(store: ExploreStore? = nil, hooks: ExploreHooks = ExploreHooks(), start: ExploreStart = .talks) {
+        let store = store ?? ExploreStore()
+        store.kind = start.kind
+        _store = State(initialValue: store)
         self.hooks = hooks
+        self.start = start
     }
 
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ExploreListView(store: store, hooks: hooks)
                 .navigationTitle("Explore")
+                .navigationDestination(for: ExploreGraphRoute.self) { _ in
+                    if let graph = hooks.graph { graph() }
+                }
                 .navigationDestination(for: ExploreItem.self) { item in
                     if item.kind == .event, let talkDetail = hooks.talkDetail {
                         talkDetail(item)
@@ -41,6 +76,26 @@ public struct ExploreScreen: View {
                         ExploreDetailView(item: item, store: store)
                     }
                 }
+        }
+        .task(id: store.index?.items.count) { openStart() }
+    }
+
+    /// Pushes the start destination once, when it can be shown.
+    private func openStart() {
+        guard !started else { return }
+        switch start {
+        case .graph:
+            started = true
+            if hooks.graph != nil { path.append(ExploreGraphRoute()) }
+        case .talk(let ref):
+            guard let index = store.index else { return }
+            started = true
+            let talks = ExploreSearch.search(index, query: "", kind: .event)
+            let pick = ref.flatMap { index.item(ref: $0) }
+                ?? talks.first { $0.day == "2026-11-10" } ?? talks.first
+            if let pick { path.append(pick) }
+        default:
+            started = true
         }
     }
 }

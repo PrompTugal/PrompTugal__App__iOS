@@ -39,3 +39,4 @@ Branch: `split/deck` · Last update: 8 Nov, 12:00 UTC · Last CI run: none yet
 - `ExploreScreen(hooks:)` takes optional views from the app, because they live in packages PTExplore cannot see: `talks` (design passes AgendaView), `talkDetail` (pick star, Add to Calendar), `header` (the graph card, only with 3 or more picks). With no hooks, PTExplore shows its own talks list and detail.
 - Talk detail shows speakers from the talk's JSON; offline it says "Connect to load more".
 - Not built: EXP-G (design's card, via `header`), the Now / My picks chips (they belong with AgendaView).
+- Start destinations for screenshots: `ExploreScreen(hooks:, start:)` with `ExploreStart`: `explore` → `.talks`, `explore.people` → `.speakers`, `explore.talk` → `.talk(ref: nil)` (first talk of 10 Nov, or a given reference), `explore.graph` → `.graph` (pushes `ExploreHooks.graph`).

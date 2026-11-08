@@ -188,3 +188,15 @@ struct DetailTests {
         await #expect(throws: URLError.self) { _ = try await source.index() }
     }
 }
+
+@Suite("Start destinations")
+struct StartTests {
+    @Test("Each start opens the right segment")
+    func kinds() {
+        #expect(ExploreStart.speakers.kind == .person)
+        #expect(ExploreStart.companies.kind == .company)
+        #expect(ExploreStart.places.kind == .place)
+        #expect(ExploreStart.talk(ref: nil).kind == .event)
+        #expect(ExploreStart.graph.kind == .event)
+    }
+}
