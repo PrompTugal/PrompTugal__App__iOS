@@ -1,35 +1,64 @@
 import PTCore
 import SwiftUI
 
-/// The Explore screen: search, a kind picker, results, and a detail page for each entry.
+/// Views the app plugs in, because they live in packages PTExplore cannot see. All are optional.
+public struct ExploreHooks {
+    /// The Talks segment, e.g. the agenda list from PTAgenda. Without it, Talks is PTExplore's own list.
+    public var talks: (@MainActor () -> AnyView)?
+    /// The detail of a talk (with the pick star and Add to Calendar). Without it, the generic detail shows.
+    public var talkDetail: (@MainActor (ExploreItem) -> AnyView)?
+    /// A card above the search, e.g. "Your graph" (shown by the app only with three or more picks).
+    public var header: (@MainActor () -> AnyView)?
+
+    public init(talks: (@MainActor () -> AnyView)? = nil,
+                talkDetail: (@MainActor (ExploreItem) -> AnyView)? = nil,
+                header: (@MainActor () -> AnyView)? = nil) {
+        self.talks = talks
+        self.talkDetail = talkDetail
+        self.header = header
+    }
+}
+
+/// The Explore screen: search across talks, speakers, companies and places, a segment for each, and a detail page.
 /// Open it with `ExploreScreen()`; it brings its own navigation stack.
 public struct ExploreScreen: View {
     @State private var store: ExploreStore
+    let hooks: ExploreHooks
 
-    public init(store: ExploreStore? = nil) {
+    public init(store: ExploreStore? = nil, hooks: ExploreHooks = ExploreHooks()) {
         _store = State(initialValue: store ?? ExploreStore())
+        self.hooks = hooks
     }
 
     public var body: some View {
         NavigationStack {
-            ExploreListView(store: store)
+            ExploreListView(store: store, hooks: hooks)
                 .navigationTitle("Explore")
-                .navigationDestination(for: ExploreItem.self) { ExploreDetailView(item: $0, store: store) }
+                .navigationDestination(for: ExploreItem.self) { item in
+                    if item.kind == .event, let talkDetail = hooks.talkDetail {
+                        talkDetail(item)
+                    } else {
+                        ExploreDetailView(item: item, store: store)
+                    }
+                }
         }
     }
 }
 
 public struct ExploreListView: View {
     @Bindable var store: ExploreStore
+    let hooks: ExploreHooks
 
-    public init(store: ExploreStore) {
+    public init(store: ExploreStore, hooks: ExploreHooks = ExploreHooks()) {
         self.store = store
+        self.hooks = hooks
     }
 
     public var body: some View {
         VStack(spacing: 0) {
+            if let header = hooks.header { header().padding(.horizontal, Space.l).padding(.top, Space.s) }
             Picker("Show", selection: $store.kind) {
-                ForEach(ExploreKind.allCases) { Text($0.title).tag($0) }
+                ForEach(ExploreKind.browsable) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
             .padding(.horizontal, Space.l)
@@ -42,7 +71,11 @@ public struct ExploreListView: View {
     }
 
     @ViewBuilder private var content: some View {
-        if store.index == nil {
+        if store.isSearching {
+            searchResults
+        } else if store.kind == .event, let talks = hooks.talks {
+            talks()
+        } else if store.index == nil {
             if case .failed(let message) = store.phase {
                 ContentUnavailableView {
                     Label("Nothing to show yet", systemImage: "wifi.slash")
@@ -54,23 +87,49 @@ public struct ExploreListView: View {
             } else {
                 ProgressView("Loading…").frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-        } else if store.results.isEmpty {
-            ContentUnavailableView.search(text: store.query)
+        } else if store.kind == .event {
+            talkList
         } else {
-            list
+            alphabetical
         }
     }
 
-    private var list: some View {
-        List {
-            if store.kind == .event {
-                ForEach(days, id: \.day) { group in
-                    Section(ExploreFormat.day(group.day)) {
+    @ViewBuilder private var searchResults: some View {
+        let groups = store.grouped()
+        if store.index == nil {
+            ProgressView("Loading…").frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if groups.isEmpty {
+            ContentUnavailableView.search(text: store.query)
+        } else {
+            List {
+                ForEach(groups, id: \.kind) { group in
+                    Section(String(localized: group.kind.title)) {
                         ForEach(group.items) { row($0) }
                     }
                 }
-            } else {
-                ForEach(store.results) { row($0) }
+            }
+            .listStyle(.plain)
+        }
+    }
+
+    private var talkList: some View {
+        List {
+            ForEach(days, id: \.day) { group in
+                Section(ExploreFormat.day(group.day)) {
+                    ForEach(group.items) { row($0) }
+                }
+            }
+        }
+        .listStyle(.plain)
+    }
+
+    private var alphabetical: some View {
+        let sections = ExploreStore.letterSections(store.results)
+        return List {
+            ForEach(sections, id: \.letter) { section in
+                Section(section.letter) {
+                    ForEach(section.items) { row($0) }
+                }
             }
         }
         .listStyle(.plain)
@@ -88,13 +147,16 @@ public struct ExploreListView: View {
 
     private func row(_ item: ExploreItem) -> some View {
         NavigationLink(value: item) {
-            VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .firstTextBaseline, spacing: Space.m) {
                 if let time = ExploreFormat.time(item) {
                     Text(time).font(Typo.dataSmall).foregroundStyle(Palette.red)
+                        .frame(width: 64, alignment: .leading)
                 }
-                Text(item.title).font(Typo.headline)
-                if !item.subtitle.isEmpty {
-                    Text(item.subtitle).font(Typo.meta).foregroundStyle(Palette.muted).lineLimit(2)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(item.title).font(Typo.headline)
+                    if !item.subtitle.isEmpty {
+                        Text(item.subtitle).font(Typo.meta).foregroundStyle(Palette.muted).lineLimit(2)
+                    }
                 }
             }
         }
@@ -134,9 +196,20 @@ public struct ExploreDetailView: View {
                         }
                     }
                 }
-                if !detail.links.isEmpty {
+                if !detail.speakers.isEmpty {
+                    Section("Speakers") {
+                        ForEach(detail.speakers) { link in
+                            if let target = store.index?.item(ref: link.ref) {
+                                NavigationLink(value: target) { Text(link.label) }
+                            } else {
+                                Text(link.label)
+                            }
+                        }
+                    }
+                }
+                if !detail.otherLinks.isEmpty {
                     Section("Connections") {
-                        ForEach(detail.links) { link in
+                        ForEach(detail.otherLinks) { link in
                             if let target = store.index?.item(ref: link.ref) {
                                 NavigationLink(value: target) { linkRow(link) }
                             } else {
@@ -149,7 +222,7 @@ public struct ExploreDetailView: View {
                     Section { Link(destination: website) { Label("Website", systemImage: "safari") } }
                 }
             } else if failed {
-                Section { Text("More detail is not available offline yet.").foregroundStyle(Palette.muted) }
+                Section { Text("Connect to load more.").foregroundStyle(Palette.muted) }
             } else {
                 Section { ProgressView() }
             }

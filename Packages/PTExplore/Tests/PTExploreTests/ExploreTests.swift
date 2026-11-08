@@ -113,6 +113,42 @@ struct SearchTests {
     }
 }
 
+@Suite("Lists")
+struct ListTests {
+    @MainActor @Test("People are grouped A to Z with accents folded, symbols last")
+    func letters() throws {
+        let items = [ExploreItem(id: "person:b", kind: .person, title: "Bea"),
+                     ExploreItem(id: "person:a", kind: .person, title: "Álvaro"),
+                     ExploreItem(id: "person:z", kind: .person, title: "0xbow"),
+                     ExploreItem(id: "person:a2", kind: .person, title: "Ana")]
+        let sections = ExploreStore.letterSections(items)
+        #expect(sections.map(\.letter) == ["A", "B", "#"])
+        #expect(sections[0].items.map(\.title) == ["Álvaro", "Ana"])
+    }
+
+    @MainActor @Test("A search groups results by kind and skips kinds with no hits")
+    func grouped() async throws {
+        let store = ExploreStore(source: StubSource(stored: try makeIndex()))
+        await store.load()
+        store.query = "masterclass"
+        #expect(store.grouped().map(\.kind) == [.event, .place])
+        #expect(store.isSearching)
+    }
+
+    @Test("The speakers of a talk are the people who speak at it")
+    func speakers() throws {
+        let detail = try ExploreDetail.decode(Data(eventRecord.utf8), kind: .event)
+        #expect(detail.speakers.map(\.label) == ["João São Paulo"])
+        #expect(detail.otherLinks.map(\.label) == ["Web Summit"])
+    }
+}
+
+private struct StubSource: ExploreSource {
+    var stored: ExploreIndex
+    func index() async throws -> ExploreIndex { stored }
+    func detail(for item: ExploreItem) async throws -> ExploreDetail { throw URLError(.badURL) }
+}
+
 @Suite("Detail and offline")
 struct DetailTests {
     @Test("A record gives its facts and de-duplicated, known links")

@@ -22,6 +22,10 @@ public struct ExploreDetail: Sendable, Hashable {
     public var website: URL?
     public var links: [Link]
 
+    /// People who speak at this talk (links into a talk that say "speaks at").
+    public var speakers: [Link] { links.filter { $0.verb == "← speaks at" && $0.ref.hasPrefix("person:") } }
+    public var otherLinks: [Link] { links.filter { !speakers.contains($0) } }
+
     /// Fields shown per kind, in order: JSON key, label.
     static let fields: [ExploreKind: [(String, String)]] = [
         .event: [("kind", "Kind"), ("date", "Day"), ("time", "Time"), ("where", "Where"), ("track", "Track")],

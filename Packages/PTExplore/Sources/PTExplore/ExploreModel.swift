@@ -6,6 +6,10 @@ public enum ExploreKind: String, CaseIterable, Codable, Sendable, Hashable, Iden
 
     public var id: String { rawValue }
 
+    /// The kinds the screen lets a person browse: Talks, Speakers, Companies, Places. Organisations stay
+    /// in the data and in search results of the others, not as a segment.
+    public static let browsable: [ExploreKind] = [.event, .person, .company, .place]
+
     /// The path segment of the site's API: `api/v1/<folder>/<slug>.json`.
     var folder: String {
         switch self {
