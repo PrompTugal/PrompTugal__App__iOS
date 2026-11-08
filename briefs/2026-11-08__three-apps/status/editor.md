@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 08:05 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 08:30 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 08:05 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 08:30 UTC: dev unchanged since v0.4.6. Preview of phase 4 in a throwaway worktree: `split/editor` merged with `split/platform` (cd02fa7), `split/apps` (a53e3cc) and `split/design` (b8716f4): no conflicts, build and 68 tests pass, public page 5 in the beta and 8 coming, Team 23 in the beta. `split/apps` already has file sharing (`UIFileSharingEnabled`) and the widgets and intents in `Apps/PrompTugal`, so the support section on `Websites.json` in Files stays. **The validator fails on `split/design`'s status page** (`status/design.md` line 211: "Ask is a marked TODO until PTAsk is on dev"; `todo` is a banned word). Design needs to reword it before its branch reaches dev, or dev's checks fail. Not my file; told the conductor.
 
 - 08:05 UTC: started the privacy and support re-read against `Apps/PrompTugal` (dev) and its widgets and intents (`split/platform`). Privacy: added the widget and Siri answers (they read a small on-device copy of now and next from the App Group, no network, no vault) and the camera (VisionKit reads a vault QR code on the device, nothing saved or sent). Support: added how to add the widget and ask Siri. Dev has no new commits since v0.4.6.
 - **Found in `Apps/PrompTugal`: no file sharing.** The old project had `INFOPLIST_KEY_UIFileSharingEnabled = YES` and `INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES`; the new project has neither. The support page tells people to edit `Websites.json` in the Files app, which only works with them. See "Needs from others".
