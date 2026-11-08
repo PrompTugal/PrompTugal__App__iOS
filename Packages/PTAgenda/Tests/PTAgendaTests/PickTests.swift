@@ -141,3 +141,31 @@ struct NowNextRepublisherTests {
         #expect(published.calls == ["2/1", "2/2", "2/1"])
     }
 }
+
+@Suite("Pick seed")
+@MainActor
+struct PickSeedTests {
+    @Test func acceptsSlugsAndFullIdsAndDropsDuplicates() {
+        let ids = PickSeed.ids(in: ["app", "-PTSeedPicks", "a, events/b/index.html,a,,bad/slug", "-other"])
+        let expected: [String] = ["a", "b"]
+        #expect(ids == expected)
+        #expect(PickSeed.ids(in: ["app"]).isEmpty)
+        #expect(PickSeed.ids(in: ["-PTSeedPicks"]).isEmpty)
+    }
+
+    @Test func seedsTheScheduleOnce() {
+        let schedule = pickStore()
+        schedule.seedPicks(["a", "b"])
+        schedule.seedPicks(["a", "c"])
+        #expect(schedule.picks.count == 3)
+    }
+}
+
+@Suite("Agenda opening day")
+struct AgendaOpeningDayTests {
+    @Test func opensOnTodayDuringTheSummitElseAllDays() {
+        #expect(AgendaView.initialDay(now: Lisbon.instant(day: "2026-11-11", clock: "08:00")!) == "2026-11-11")
+        #expect(AgendaView.initialDay(now: Lisbon.instant(day: "2026-11-08", clock: "08:00")!) == "all")
+        #expect(AgendaView.initialDay(now: Lisbon.instant(day: "2026-11-13", clock: "08:00")!) == "all")
+    }
+}

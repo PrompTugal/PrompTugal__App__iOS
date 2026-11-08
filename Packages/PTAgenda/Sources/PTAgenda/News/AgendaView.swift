@@ -10,12 +10,24 @@ import PTWeb
 /// times are worked out once per change into `AgendaModel`, not in `body`; rows are small views
 /// with stable ids; each row is one accessibility element with a short label and two actions.
 public struct AgendaView: View {
-    public init() {}
+    /// `openSession`: the app's native session detail (works offline). Without it a row opens the session's web page.
+    public init(openSession: ((Event) -> Void)? = nil) {
+        self.openSession = openSession
+        _day = State(initialValue: Self.initialDay(now: .now))
+    }
+
+    private let openSession: ((Event) -> Void)?
+
+    /// During the summit the agenda opens on today (Lisbon time); otherwise on all days.
+    static func initialDay(now: Date) -> String {
+        let today = Lisbon.day(now)
+        return ProgramModel.summitDays.contains(today) ? today : "all"
+    }
 
     @Environment(ReaderStore.self) private var store
     @Environment(ScheduleStore.self) private var schedule
     @Environment(PickFeedback.self) private var feedback: PickFeedback?
-    @State private var day = "all"
+    @State private var day: String
     @State private var query = ""
     @State private var picksOnly = false
     @State private var now = Date.now
@@ -85,7 +97,7 @@ public struct AgendaView: View {
 
     private func rowView(_ row: AgendaModel.Row) -> some View {
         AgendaRow(row: row, picked: schedule.isPicked(row.event),
-                  open: { opened = row.event }, toggle: { togglePick(row.event) })
+                  open: { if let openSession { openSession(row.event) } else { opened = row.event } }, toggle: { togglePick(row.event) })
     }
 
     /// Picks or un-picks with the star's feedback (a toast, a clash warning) when the app shows toasts.
