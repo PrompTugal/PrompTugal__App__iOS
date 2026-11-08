@@ -31,6 +31,8 @@ final class TeamStore {
     private(set) var me: TeamMe?
     private(set) var centres: [String: CommandCentre] = [:]       // by person id
     private(set) var standups: [TeamStandup] = []
+    private(set) var standupSummaries: [StandupSummary] = []       // the list's open counts, by time
+    private(set) var agendas: [String: StandupAgenda] = [:]        // by stand-up slot, loaded on demand
     private(set) var wakes: [AgentWakes] = []
     private(set) var reports: [TeamReport] = []
     private(set) var pulse: [PulseEntry] = []
@@ -53,6 +55,11 @@ final class TeamStore {
                 centres[centre.person.id] = centre
             }
         }
+        for file in (try? FileManager.default.contentsOfDirectory(atPath: self.directory.path)) ?? []
+        where file.hasPrefix("agenda.") {
+            let key = String(file.dropLast(file.hasSuffix(".cache") ? 6 : 0))
+            if let data = cached(key) { applyAgenda(key, data) }
+        }
     }
 
     // MARK: Reading
@@ -63,6 +70,8 @@ final class TeamStore {
     }
 
     func centre(for person: String) -> CommandCentre? { centres[person] }
+
+    func agenda(for slot: String) -> StandupAgenda? { agendas[slot] }
 
     // MARK: Refreshing
 
@@ -93,6 +102,21 @@ final class TeamStore {
         }
     }
 
+    /// One stand-up's agenda (`/meetings/<slot>/index.md`), for the native stand-up screen.
+    func refreshAgenda(slot: String) async {
+        guard TeamStore.isValidSlot(slot), let url = TeamEndpoints.url("meetings/\(slot)/index.md") else { return }
+        do {
+            receive("agenda.\(slot)", .success(try await fetch(url)))
+        } catch {
+            receive("agenda.\(slot)", .failure(error))
+        }
+    }
+
+    /// "2026-11-08-1200": digits and dashes only, and a real stand-up time, since it goes into a URL and a file name.
+    nonisolated static func isValidSlot(_ slot: String) -> Bool {
+        slot.count == 15 && slot.allSatisfy { $0.isNumber || $0 == "-" } && TeamStandup(slot: slot) != nil
+    }
+
     private func receive(_ key: String, _ result: Result<Data, Error>) {
         switch result {
         case .success(let data):
@@ -102,6 +126,8 @@ final class TeamStore {
             } else if key.hasPrefix("centre."), let centre = try? JSONDecoder().decode(CommandCentre.self, from: data) {
                 centres[centre.person.id.isEmpty ? String(key.dropFirst(7)) : centre.person.id] = centre
                 ok = true
+            } else if key.hasPrefix("agenda.") {
+                ok = applyAgenda(key, data)
             } else {
                 ok = false
             }
@@ -125,6 +151,7 @@ final class TeamStore {
             let parsed = TeamMarkdown.standups(text)
             guard !parsed.isEmpty else { return false }
             standups = parsed
+            standupSummaries = TeamMarkdown.standupSummaries(text)
             NotificationCenter.default.post(name: .teamStandupsDidChange, object: self)
         case .wakes:
             wakes = TeamMarkdown.wakes(text)
@@ -135,6 +162,15 @@ final class TeamStore {
         case .log:
             log = TeamMarkdown.log(text)
         }
+        return true
+    }
+
+    @discardableResult
+    private func applyAgenda(_ key: String, _ data: Data) -> Bool {
+        let slot = String(key.dropFirst("agenda.".count))
+        let text = String(decoding: data, as: UTF8.self)
+        guard TeamStore.isValidSlot(slot), text.contains("# Stand-up") else { return false }
+        agendas[slot] = TeamMarkdown.agenda(text, slot: slot)
         return true
     }
 
