@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 02:40 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 03:15 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 02:40 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 03:15 UTC: merged `origin/dev` (v0.1.79): PTCore `CollabSeams.swift` and `AppLinks.scheme`, platform status. Both are new PTCore files, so the site's Swift file and line counts moved; build, validator and 67 tests green. No `features.json` change: neither file carries a feature label. Still no PTWeb, PTAgenda, PTNews, PTVaultUI-side, PTLanes or PTAsk move on dev.
 
 - 02:40 UTC: merged `origin/dev` (v0.1.77, ios.yml runner choice). CI files only; no site or feature change. No phase 3 package on dev yet. Checks green.
 
