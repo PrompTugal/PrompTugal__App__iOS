@@ -7,7 +7,7 @@ import SwiftUI
 public enum SupportLinks {
     public static let privacy = URL(string: "https://ios.app.promptugal.news/privacy.html")!
     public static let support = URL(string: "https://ios.app.promptugal.news/support.html")!
-    public static let independence = "PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by Web Summit."
+    public static let independence = String(localized: "PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by Web Summit.", bundle: .module)
 }
 
 /// Covers the app while it is not active, so the app-switcher snapshot shows no keys, messages or chats.

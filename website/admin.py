@@ -26,18 +26,123 @@ def plain(text):
     return esc(text).replace('{', '&#123;').replace('}', '&#125;')
 
 
+# --- the public app's project -----------------------------------------------
+
+# Where the PrompTugal app lives: its own folder after the split, the old app folder before.
+APP_PROJECTS = ('Apps/PrompTugal/PrompTugal.xcodeproj', 'PrompTugal.xcodeproj')
+APP_FOLDERS = ('Apps/PrompTugal', 'Packages/PTWeb', 'PrompTugal')
+
+
+def public_project(root=ROOT):
+    """The Xcode project of the PrompTugal app (the public one)."""
+    for candidate in APP_PROJECTS:
+        if (root / candidate).is_dir():
+            return root / candidate
+    raise SystemExit('build: no Xcode project for the PrompTugal app, looked in ' + ', '.join(APP_PROJECTS))
+
+
+def find_in_app(pattern, root=ROOT, prefer=None):
+    """The one file or folder matching a name in the PrompTugal app, or in the packages it uses.
+
+    The first folder of APP_FOLDERS with a match wins. Where it has several, the one that
+    contains `prefer` is taken, so a second asset catalog (a widget's) is not mistaken for the app's."""
+    for place in APP_FOLDERS:
+        base = root / place
+        found = sorted(p for p in base.rglob(pattern) if '.build' not in p.parts) if base.is_dir() else []
+        if prefer and len(found) > 1:
+            found = [p for p in found if (p / prefer).exists()] or found
+        if len(found) == 1:
+            return found[0]
+        if found:
+            raise SystemExit(f'build: expected one {pattern} under {place}/, found {[str(f) for f in found]}')
+    raise SystemExit(f'build: no {pattern} in {", ".join(APP_FOLDERS)}')
+
+
+# --- the split --------------------------------------------------------------
+
+def split_state(root=ROOT):
+    """Which of the three apps have their project in the repository (Apps/<App>/<App>.xcodeproj)."""
+    return {name: (root / 'Apps' / name / f'{name}.xcodeproj').is_dir() for name in ('Team', 'PrompTugal', 'RiskMandate')}
+
+
+def split_tokens(root=ROOT):
+    """Sentences on the apps page that are true only once the split has landed, written from the files."""
+    state = split_state(root)
+    done = all(state.values())
+    return {
+        'apps_lede': ('Until 8 November 2026 the PrompTugal team had one app for everything. Now there are three, built from '
+                      'the same repository and the same shared code. This site is about the first one, the public PrompTugal app.'
+                      if done else
+                      'Until 8 November 2026 the PrompTugal team had one app for everything. It is being split into three, built '
+                      'from the same repository and the same shared code. The split is not finished, so the app this site '
+                      'describes is still the one app. This site is about the first of the three, the public PrompTugal app.'),
+        'riskmandate_today': ('Today it is an empty app with a working build, so that it can ship as soon as there is something to show.'
+                              if state['RiskMandate'] else 'The empty app that will hold it is still being set up.'),
+    }
+
+
 # --- features --------------------------------------------------------------
 
-def app_source_dir(root=ROOT):
-    """The folder of the app these pages describe: the root PrompTugal/ folder, or Apps/Team/ once the project has moved."""
-    for place in ('PrompTugal', 'Apps/Team'):
-        if (root / place).is_dir():
-            return root / place
-    return root / 'PrompTugal'
+# The public site shows the PrompTugal app. The Team app's features live in the admin area.
+PLATFORM_APP = {'readers': 'promptugal', 'teams': 'team'}
+PLATFORM_PAGE = {'readers': 'readers.html', 'teams': 'admin/team-app.html'}
+PLATFORM_NAME = {'readers': 'PrompTugal app', 'teams': 'Team app'}
 
-def root_scene(root=ROOT):
+
+def apps_config(root=ROOT):
+    """apps.json (which packages each app is built from), or None before the split lands."""
+    path = root / 'apps.json'
+    return json.loads(path.read_text()) if path.exists() else None
+
+
+def package_closure(config, direct):
+    """The packages an app is built from: its direct packages and everything they depend on."""
+    packages, seen, queue = config.get('packages', {}), set(), list(direct)
+    while queue:
+        name = queue.pop()
+        if name not in seen and name in packages:
+            seen.add(name)
+            queue += packages[name].get('deps', [])
+    return sorted(seen)
+
+
+def app_scope(app, root=ROOT):
+    """The folders an app is built from, or None when the repository still holds one app.
+
+    A feature is in an app when its files are inside these folders: the app's own
+    folders and the packages it links. Before apps.json exists, or before the app's
+    folder exists, the old PrompTugal/ folder is the app."""
+    config = apps_config(root)
+    if not config or app not in config.get('apps', {}):
+        return None
+    entry = config['apps'][app]
+    folders = [root / p for p in entry.get('paths', []) if (root / p).is_dir()]
+    if not folders and (root / 'PrompTugal').is_dir():
+        folders = [root / 'PrompTugal']
+    folders += [root / config['packages'][n]['path'] for n in package_closure(config, entry.get('packages', []))
+                if (root / config['packages'][n]['path']).is_dir()]
+    return folders
+
+
+def in_scope(path, scope):
+    """Inside the app's folders, and not test code: a test that mentions a feature is not the feature."""
+    if any(part.endswith('Tests') for part in path.parts):
+        return False
+    return scope is None or any(path.is_relative_to(folder) for folder in scope)
+
+
+def swift_files(root, scope, pattern):
+    """Files matching a glob under the repository's app folders, limited to an app's scope."""
+    if scope is None:
+        return [p for place in ('PrompTugal', 'Apps', 'Packages') for p in sorted(root.glob(f'{place}/{pattern}'))]
+    return [p for folder in scope for p in sorted(folder.glob(pattern))]
+
+
+def root_scene(root=ROOT, scope=None):
     """The WindowGroup of the app's @main type: what the app actually shows at launch."""
-    for path in sorted(app_source_dir(root).glob('**/*.swift')):
+    for path in swift_files(root, scope, '**/*.swift'):
+        if '.build' in path.parts:
+            continue
         text = re.sub(r'(?m)^\s*//.*$', '', path.read_text(errors='replace'))
         if '@main' not in text:
             continue
@@ -50,19 +155,27 @@ def root_scene(root=ROOT):
 def features(root=ROOT):
     """features.json with each feature's status worked out from the files on disk.
 
-    PT_EXTRA_FEATURES (a path to a JSON list of features) adds features for tests, so a
-    negative control always has a feature whose evidence does not exist."""
+    A reader feature is checked against the PrompTugal app, a team feature against the
+    Team app (see app_scope). PT_EXTRA_FEATURES (a path to a JSON list of features) adds
+    features for tests, so a negative control always has a feature whose evidence does not exist."""
     data = json.loads((root / 'website' / 'features.json').read_text())['features']
     extra = os.environ.get('PT_EXTRA_FEATURES')
     if extra:
         data = data + json.loads(Path(extra).read_text())
-    scene = root_scene(root)
-    # Screens are reachable only when the shell is the app's root view.
-    built = [d for d in destinations(root) if not d['pending']] if 'AppShell(' in scene else []
-    screens = {d['id'] for d in built}
-    views = set().union(*(d['views'] for d in built)) if built else set()
+    checks = {}
 
-    def present(evidence):
+    def check(platform):
+        if platform not in checks:
+            scope = app_scope(PLATFORM_APP[platform], root)
+            scene = root_scene(root, scope)
+            # Screens are reachable only when the shell is the app's root view.
+            built = [d for d in destinations(root, scope) if not d['pending']] if ('AppShell(' in scene or 'PublicShell(' in scene) else []
+            checks[platform] = (scope, scene, {d['id'] for d in built},
+                                set().union(*(d['views'] for d in built)) if built else set())
+        return checks[platform]
+
+    def present(evidence, platform):
+        scope, scene, screens, views = check(platform)
         if evidence.startswith('screen:'):
             return evidence[len('screen:'):] in screens
         if evidence.startswith('root:'):
@@ -72,13 +185,15 @@ def features(root=ROOT):
         if evidence.startswith('text:'):
             # text:<file glob>::<exact text> — the text appears in a matching file (a button title, a type name)
             pattern, _, needle = evidence[len('text:'):].partition('::')
-            return any(needle in p.read_text(errors='replace') for p in root.glob(pattern) if p.is_file())
-        return any(p.is_file() for p in root.glob(evidence))
+            return any(needle in p.read_text(errors='replace') for p in root.glob(pattern)
+                       if p.is_file() and in_scope(p, scope))
+        return any(p.is_file() and in_scope(p, scope) for p in root.glob(evidence))
 
     for f in data:
-        missing = [g for g in f['evidence'] if not present(g)]
+        missing = [g for g in f['evidence'] if not present(g, f['platform'])]
         # A feature the code switches off in Release builds is not "in the beta" for TestFlight testers.
-        f['debug_only'] = not missing and bool(f.get('hidden_in_release')) and all(present(g) for g in f['hidden_in_release'])
+        f['debug_only'] = (not missing and bool(f.get('hidden_in_release'))
+                           and all(present(g, f['platform']) for g in f['hidden_in_release']))
         f['shipped'] = not missing and not f['debug_only']
         f['missing'] = missing
     return data
@@ -89,12 +204,13 @@ def status_label(f):
 
 
 def features_cards(items, platform, shots=None):
+    root = '../' if PLATFORM_PAGE[platform].count('/') else ''     # the Team app page is in the admin folder
     rows = []
     for f in (x for x in items if x['platform'] == platform):
         pic = ''
         if f['shipped'] and shots:
             ids = [e[len('screen:'):] for e in f['evidence'] if e.startswith('screen:')]
-            pic = next((shot_img(shots, i, f['name'], device='iphone', width=200) for i in ids
+            pic = next((shot_img(shots, i, f['name'], root=root, device='iphone', width=200) for i in ids
                         if 'iphone' in shots.get(i, {})), '')
         status = status_label(f)
         cls = 'on' if f['shipped'] else 'soon'
@@ -110,10 +226,10 @@ def features_table(items, repo_url):
     for f in items:
         status = status_label(f)
         evidence = ', '.join(f'<code>{esc(g)}</code>' for g in f['evidence'])
-        rows.append(f'<tr><td>{esc(f["name"])}</td><td>{"Readers" if f["platform"] == "readers" else "Teams"}</td>'
+        rows.append(f'<tr><td>{esc(f["name"])}</td>'
                     f'<td>{KIND_LABEL[f["kind"]]}</td><td><span class="status {"on" if f["shipped"] else "soon"}">'
                     f'{status}</span></td><td>{evidence}</td></tr>')
-    return ('<div class="table-wrap"><table><thead><tr><th scope="col">Feature</th><th scope="col">For</th>'
+    return ('<div class="table-wrap"><table><thead><tr><th scope="col">Feature</th>'
             '<th scope="col">Built as</th><th scope="col">Status</th><th scope="col">Files that prove it</th>'
             '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div>')
 
@@ -124,7 +240,8 @@ def feature_tokens(repo_url, root=ROOT, shots=None):
     return {
         'features_readers': features_cards(items, 'readers', shots),
         'features_teams': features_cards(items, 'teams', shots),
-        'features_table': features_table(items, repo_url),
+        'features_table': features_table([f for f in items if f['platform'] == 'readers'], repo_url),
+        'features_table_teams': features_table([f for f in items if f['platform'] == 'teams'], repo_url),
         'features_total': str(len(items)),
         'features_shipped': str(sum(f['shipped'] for f in items)),
         'features_readers_shipped': count('readers', True),
@@ -137,8 +254,8 @@ def feature_tokens(repo_url, root=ROOT, shots=None):
 
 
 def mock_sidebar(items):
-    """The decorative iPad sidebar on the home page: the features in the beta, nothing else."""
-    names = [f['name'] for f in items if f['shipped']][:8]
+    """The decorative iPad sidebar on the home page: the public app's features in the beta, nothing else."""
+    names = [f['name'] for f in items if f['shipped'] and f['platform'] == 'readers'][:8]
     rows = ''.join(f'<li{" aria-current=\"true\"" if i == 0 else ""}><span>{esc(n)}</span></li>'
                    for i, n in enumerate(names))
     return '<ul class="sidebar-list">' + rows + '</ul>'
@@ -207,40 +324,56 @@ def parse_status(text):
             'sections': sections}
 
 
+SESSION_BRANCHES = ('night', 'split')   # origin/night/<role> for the overnight pushes, origin/split/<role> for the split
+
+
+def session_branches(root=ROOT, remote='origin'):
+    """Remote session branches, by role: {'editor': ['origin/night/editor', 'origin/split/editor'], ...}."""
+    out = {}
+    for line in git('branch', '-r', '--format=%(refname:short)', root=root).splitlines():
+        ref = line.strip()
+        for kind in SESSION_BRANCHES:
+            if ref.startswith(f'{remote}/{kind}/'):
+                out.setdefault(ref[len(remote) + len(kind) + 2:], []).append(ref)
+    return out
+
+
 def push_status(root=ROOT, remote='origin'):
     """Every session's status page, in every brief pack that has a status/ folder.
 
-    A session's own branch (origin/night/<slug>) is newer than dev between merges,
-    so when the branch is in this checkout (the deploy fetches every branch) its copy
-    of the status page is read instead, with how many commits it is ahead of HEAD.
+    A session's own branch (origin/night/<role> or origin/split/<role>) is newer than dev
+    between merges, so when the branch is in this checkout (the deploy fetches every branch)
+    its copy of the status page is read instead, with how many commits it is ahead of HEAD.
+    A role has one branch per push, so the branch that has the page is the one that counts.
     Status pages that exist only on a branch are included too, linked to GitHub."""
-    out, seen = [], set()
-    branches = {line.strip()[len(remote) + len('/night/'):]: line.strip()
-                for line in git('branch', '-r', '--format=%(refname:short)', root=root).splitlines()
-                if line.strip().startswith(f'{remote}/night/')}
+    out = []
+    branches = session_branches(root, remote)
     packs = sorted({p.parent.parent for p in root.glob('briefs/*/status/*.md')},
                    key=lambda pack: git('log', '-1', '--format=%cI', '--', pack.relative_to(root).as_posix(),
                                         root=root).strip() or '9999', reverse=True)   # newest push first
     for pack in packs:
         rel_pack = pack.relative_to(root).as_posix()
-        slugs = {p.stem for p in pack.glob('status/*.md')}
-        slugs |= {s for s, ref in branches.items() if git_ok('cat-file', '-e', f'{ref}:{rel_pack}/status/{s}.md', root=root)}
+        refs = {s: [r for r in rs if git_ok('cat-file', '-e', f'{r}:{rel_pack}/status/{s}.md', root=root)]
+                for s, rs in branches.items()}
+        slugs = {p.stem for p in pack.glob('status/*.md')} | {s for s, rs in refs.items() if rs}
         for slug in sorted(slugs):
             rel = f'{rel_pack}/status/{slug}.md'
             local = root / rel
             text = local.read_text() if local.exists() else ''
             info = {'source': 'dev', 'ahead': None, 'on_site': local.exists()}
             updated = git('log', '-1', '--format=%cI', '--', rel, root=root).strip() if local.exists() else ''
-            ref = branches.get(slug)
+            ref = None
+            for candidate in refs.get(slug, []):
+                when = git('log', '-1', '--format=%cI', candidate, '--', rel, root=root).strip()
+                if ref is None or when > ref_updated:
+                    ref, ref_updated = candidate, when
             if ref:
                 info['ahead'] = int(git('rev-list', '--count', f'HEAD..{ref}', root=root).strip() or 0)
                 branch_text = git('show', f'{ref}:{rel}', root=root)
-                branch_updated = git('log', '-1', '--format=%cI', ref, '--', rel, root=root).strip()
-                if branch_text and branch_updated and branch_updated > updated:
-                    text, updated, info['source'] = branch_text, branch_updated, f'night/{slug}'
+                if branch_text and ref_updated and ref_updated > updated:
+                    text, updated, info['source'] = branch_text, ref_updated, ref[len(remote) + 1:]
             info.update(parse_status(text))
             info.update(slug=slug, pack=pack.name, updated=updated, branch=ref)
-            seen.add(slug)
             out.append(info)
     return out
 
@@ -275,7 +408,7 @@ def _dashboard_table(items, repo_url):
         if s['source'] == 'dev' and s['on_site']:
             href = f'briefs/{s["pack"]}/status/{s["slug"]}.html'
         else:
-            href = f'{repo_url}/blob/night/{s["slug"]}/briefs/{s["pack"]}/status/{s["slug"]}.md'
+            href = f'{repo_url}/blob/{esc(s["branch"][len("origin/"):] if s["branch"] else "dev")}/briefs/{s["pack"]}/status/{s["slug"]}.md'
         counts = ''.join(f'<td class="n{" warn" if k == "Blocked" and s["sections"].get(k) else ""}">'
                          f'{len(s["sections"].get(k, []))}</td>' for k in STATUS_SECTIONS)
         when = s['updated'][11:16] + ' UTC' if s['updated'] else 'not in git'
@@ -375,13 +508,14 @@ def _balanced(text, start, pair='()'):
     return len(text)
 
 
-def destinations(root=ROOT):
-    """Destination(...) registrations in the app's Shell, in source order.
+def destinations(root=ROOT, scope=None):
+    """Destination(...) registrations in an app's Shell, in source order.
 
     Comments are ignored. Each registration is its call plus a trailing closure, if
-    any. A screen whose view is a PendingFeatureView is registered but not built yet."""
+    any. A screen whose view is a PendingFeatureView is registered but not built yet.
+    With no scope, every app in the repository counts."""
     out = []
-    for path in sorted(app_source_dir(root).glob('**/Destinations.swift')):
+    for path in swift_files(root, scope, '**/Destinations.swift'):
         out += parse_destinations(path.read_text(), path.relative_to(root).as_posix())
     return out
 
@@ -391,9 +525,9 @@ def branch_destinations(root=ROOT, remote='origin'):
     on_dev = {d['id']: d for d in destinations(root)}
     out = []
     for ref in git('branch', '-r', '--format=%(refname:short)', root=root).split():
-        if not ref.startswith(f'{remote}/night/'):
+        if not any(ref.startswith(f'{remote}/{k}/') for k in SESSION_BRANCHES):
             continue
-        files = [f for f in git('ls-tree', '-r', '--name-only', ref, 'PrompTugal', 'Apps/Team', root=root).splitlines()
+        files = [f for f in git('ls-tree', '-r', '--name-only', ref, 'PrompTugal', 'Apps', root=root).splitlines()
                  if f.endswith('/Destinations.swift')]
         for f in files:
             for d in parse_destinations(git('show', f'{ref}:{f}', root=root), f):
@@ -411,7 +545,7 @@ def parse_destinations(source, file=''):
     if True:
         text = re.sub(r'/\*.*?\*/', '', source, flags=re.S)
         text = re.sub(r'(?m)^\s*//.*$', '', text)
-        for m in re.finditer(r'\b(?:App)?Destination\((?=\s*id:\s*")', text):
+        for m in re.finditer(r'\b(?:App|Shell)?Destination\((?=\s*id:\s*")', text):
             end = _balanced(text, m.end() - 1)
             closure = re.match(r'\s*\{', text[end:])
             if closure:
@@ -446,7 +580,7 @@ def branch_screens_html(items):
             '<th scope="col">Branch</th></tr></thead><tbody>' + rows + '</tbody></table></div>')
 
 
-def screens_html(items, websites, websites_path='PrompTugal/Websites.json'):
+def screens_html(items, websites, websites_path):
     if items:
         counts = {k: sum(1 for d in items if d['kind'] == k) for k in ('native', 'web', 'hybrid')}
         pending = sum(1 for d in items if d['pending'])

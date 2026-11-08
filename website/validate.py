@@ -98,9 +98,10 @@ class Page(HTMLParser):
 
 
 def project_version():
-    text = build.PROJECT.read_text()
+    text = (admin.public_project(ROOT) / 'project.pbxproj').read_text()
+    marketing = set(re.findall(r'MARKETING_VERSION = ([^;]+);', text))
     release = version.read()
-    return {build.app_version(release, m) for m in re.findall(r'MARKETING_VERSION = ([^;]+);', text)}
+    return {build.app_version(release, m) for m in marketing}
 
 
 def validate(out):
@@ -220,7 +221,7 @@ def validate(out):
 
     # Feature labels follow the files in the repository
     for feature in admin.features(ROOT):
-        page = f"{feature['platform']}.html"
+        page = admin.PLATFORM_PAGE[feature['platform']]
         if page not in pages:
             problems.append(f"{page}: missing, but features.json lists {feature['id']} for it")
             continue

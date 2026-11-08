@@ -25,7 +25,7 @@ xcodebuild -project Apps/Team/Team.xcodeproj -scheme Team \
 | `Apps/Team/Sources/<Feature>/` | The Team app's own folders: Shell, Dashboards, Debug, Team, Store, Coordination, Schedule (App Intents) |
 | `Apps/Team/Tests/`, `Apps/Team/UITests/` | Unit tests (Swift Testing, hosted in the app) and the screenshot tests |
 | `Apps/PrompTugal/`, `Apps/RiskMandate/` | The public PrompTugal app (with its widgets and intents) and the RiskMandate app |
-| `Packages/PTCore`, `PTWeb`, `PTAgenda`, `PTNews`, `PTAsk`, `PTLanes`, `PTVaultUI` | The shared code, with its tests; `apps.json` says which app builds from which |
+| `Packages/PTCore`, `PTWeb`, `PTAgenda`, `PTNowNext`, `PTNews`, `PTAsk`, `PTLanes`, `PTVaultUI` | The shared code, with its tests; `apps.json` says which app builds from which |
 | `Packages/SGitVault/` | The Swift vault reader, a local package with its own tests |
 | `Apps/Team/Config/` | The Team app's build settings, entitlements and Info.plist keys |
 | `Config/` | An example for your local signing settings (`Local.xcconfig.example`) |

@@ -25,15 +25,15 @@ public struct VaultHomeView: View {
             if let id = selectedVault, let entry = session.vaults.first(where: { $0.vaultId == id }) {
                 VaultFilesView(entry: entry, selection: $selectedFile)
             } else {
-                ContentUnavailableView("No vault selected", systemImage: "lock.shield",
-                                       description: Text("Open a vault with your team key or Face ID."))
+                ContentUnavailableView(String(localized: "No vault selected", bundle: .module), systemImage: "lock.shield",
+                                       description: Text(String(localized: "Open a vault with your team key or Face ID.", bundle: .module)))
             }
         } detail: {
             if let id = selectedVault, let path = selectedFile,
                let entry = session.vaults.first(where: { $0.vaultId == id }) {
                 VaultFileView(vault: entry.vault, path: path)
             } else {
-                ContentUnavailableView("No file selected", systemImage: "doc.text")
+                ContentUnavailableView(String(localized: "No file selected", bundle: .module), systemImage: "doc.text")
             }
         }
         .onChange(of: selectedVault) { selectedFile = nil }
@@ -61,7 +61,7 @@ struct VaultSidebar: View {
     var body: some View {
         List(selection: $selection) {
             if !session.vaults.isEmpty {
-                Section("Open vaults") {
+                Section(String(localized: "Open vaults", bundle: .module)) {
                     ForEach(session.vaults) { entry in
                         VaultRow(entry: entry).tag(entry.vaultId)
                     }
@@ -70,15 +70,15 @@ struct VaultSidebar: View {
             Section {
                 VaultUnlockPanel(session: session)
             } header: {
-                Text(session.vaults.isEmpty ? "Open a vault" : "Add a vault")
+                Text(session.vaults.isEmpty ? String(localized: "Open a vault", bundle: .module) : String(localized: "Add a vault", bundle: .module))
             }
         }
-        .navigationTitle("Vaults")
+        .navigationTitle(String(localized: "Vaults", bundle: .module))
         .refreshable { await session.pullAll() }
         .toolbar {
             if !session.vaults.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Lock", systemImage: "lock") {
+                    Button(String(localized: "Lock", bundle: .module), systemImage: "lock") {
                         selection = nil
                         session.lock()
                     }
@@ -100,7 +100,7 @@ struct VaultRow: View {
                 Spacer()
                 stateBadge
             }
-            Text("vault \(entry.vaultId) · \(entry.fileCount) files")
+            Text(String(localized: "vault \(entry.vaultId) · \(entry.fileCount) files", bundle: .module))
                 .font(.caption).foregroundStyle(.secondary).monospaced()
             if let head = entry.head {
                 Text(head.message).font(.caption).lineLimit(2)
@@ -141,12 +141,12 @@ struct VaultUnlockPanel: View {
                 Button {
                     run { try await session.unlockStoredKeys() }
                 } label: {
-                    Label("Open with Face ID", systemImage: "faceid").frame(maxWidth: .infinity)
+                    Label(String(localized: "Open with Face ID", bundle: .module), systemImage: "faceid").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
             }
 
-            Text("Team or read key").font(.subheadline.weight(.semibold))
+            Text(String(localized: "Team or read key", bundle: .module)).font(.subheadline.weight(.semibold))
             // S6: the key is never shown on screen or in the app switcher.
             SecureField("sgit_private_vault_…:<vault id>", text: $keyText)
                 .font(.callout.monospaced())
@@ -154,15 +154,15 @@ struct VaultUnlockPanel: View {
                 .autocorrectionDisabled()
                 .textContentType(.password)
                 .privacySensitive()
-            TextField("Name (optional), e.g. Team keyring", text: $label)
+            TextField(String(localized: "Name (optional), e.g. Team keyring", bundle: .module), text: $label)
                 .font(.callout)
-            Toggle("This is my own vault", isOn: $isMine)
+            Toggle(String(localized: "This is my own vault", bundle: .module), isOn: $isMine)
                 .font(.callout)
             HStack {
                 Button {
                     let text = keyText
                     let mine = isMine
-                    let name = label.isEmpty ? (mine ? "My vault" : "Teammate vault") : label
+                    let name = label.isEmpty ? (mine ? String(localized: "My vault", bundle: .module) : String(localized: "Teammate vault", bundle: .module)) : label
                     let fromClipboard = pastedFromClipboard
                     run {
                         try await session.importKey(text, label: name, mine: mine)
@@ -173,7 +173,7 @@ struct VaultUnlockPanel: View {
                         if fromClipboard { offerClearClipboard = true }
                     }
                 } label: {
-                    Label("Import", systemImage: "key")
+                    Label(String(localized: "Import", bundle: .module), systemImage: "key")
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(!VaultUnlock.looksLikeKey(keyText) || working)
@@ -185,13 +185,13 @@ struct VaultUnlockPanel: View {
                         pastedFromClipboard = true
                     }
                 } label: {
-                    Label("Paste", systemImage: "doc.on.clipboard")
+                    Label(String(localized: "Paste", bundle: .module), systemImage: "doc.on.clipboard")
                 }
                 .buttonStyle(.bordered)
                 #endif
 
                 if VaultQRScanner.isAvailable {
-                    Button { showScanner = true } label: { Label("Scan", systemImage: "qrcode.viewfinder") }
+                    Button { showScanner = true } label: { Label(String(localized: "Scan", bundle: .module), systemImage: "qrcode.viewfinder") }
                         .buttonStyle(.bordered)
                 }
             }
@@ -201,18 +201,18 @@ struct VaultUnlockPanel: View {
                 Button {
                     run { try await session.unlockWithPasskey() }
                 } label: {
-                    Label("Open with passkey (promptugal.news)", systemImage: "person.badge.key")
+                    Label(String(localized: "Open with passkey (promptugal.news)", bundle: .module), systemImage: "person.badge.key")
                 }
                 .buttonStyle(.bordered)
             }
 
-            DisclosureGroup("Recovery code", isExpanded: $showRecovery) {
+            DisclosureGroup(String(localized: "Recovery code", bundle: .module), isExpanded: $showRecovery) {
                 TextField("ABCD-EFGH-…", text: $recoveryCode)
                     .font(.callout.monospaced())
                     .textInputAutocapitalization(.characters)
                     .autocorrectionDisabled()
                     .privacySensitive()
-                Button("Open with recovery code") {
+                Button(String(localized: "Open with recovery code", bundle: .module)) {
                     let code = recoveryCode
                     run {
                         try await session.unlockWithRecoveryCode(code)
@@ -223,7 +223,7 @@ struct VaultUnlockPanel: View {
             }
             .font(.subheadline)
 
-            if working { ProgressView("Deriving keys and pulling…") }
+            if working { ProgressView(String(localized: "Deriving keys and pulling…", bundle: .module)) }
             if let message {
                 Text(message).font(.caption).foregroundStyle(.orange)
             }
@@ -232,11 +232,11 @@ struct VaultUnlockPanel: View {
         }
         .padding(.vertical, 4)
         #if canImport(UIKit)
-        .alert("Clear the key from the clipboard?", isPresented: $offerClearClipboard) {
-            Button("Clear", role: .destructive) { UIPasteboard.general.items = [] }
-            Button("Keep", role: .cancel) {}
+        .alert(String(localized: "Clear the key from the clipboard?", bundle: .module), isPresented: $offerClearClipboard) {
+            Button(String(localized: "Clear", bundle: .module), role: .destructive) { UIPasteboard.general.items = [] }
+            Button(String(localized: "Keep", bundle: .module), role: .cancel) {}
         } message: {
-            Text("The vault is open. Other apps can read the clipboard, so clearing it is safer.")
+            Text(String(localized: "The vault is open. Other apps can read the clipboard, so clearing it is safer.", bundle: .module))
         }
         #endif
         .sheet(isPresented: $showScanner) {
@@ -277,9 +277,9 @@ struct VaultFilesView: View {
                     Label(text, systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
                     if let keyId = entry.untrustedSigner {
                         // S1: a new signer is never trusted silently. The person decides.
-                        Text("Signed by \(keyId). Trust it only if you know this key belongs to someone who should write to this vault.")
+                        Text(String(localized: "Signed by \(keyId). Trust it only if you know this key belongs to someone who should write to this vault.", bundle: .module))
                             .font(.caption).foregroundStyle(.secondary)
-                        Button("Trust this signer") {
+                        Button(String(localized: "Trust this signer", bundle: .module)) {
                             Task { await VaultSession.shared.trustSigner(keyId, in: entry.vaultId) }
                         }
                     }
@@ -287,26 +287,26 @@ struct VaultFilesView: View {
             }
             Section {
                 if VaultSession.shared.reader?.vaultId == entry.vaultId {
-                    Label("My vault", systemImage: "person.crop.circle.badge.checkmark")
+                    Label(String(localized: "My vault", bundle: .module), systemImage: "person.crop.circle.badge.checkmark")
                 } else {
                     // S5: a vault becomes "mine" only by this explicit choice (or the passkey account).
-                    Button("Make this my vault") { VaultSession.shared.chooseMyVault(entry.vaultId) }
+                    Button(String(localized: "Make this my vault", bundle: .module)) { VaultSession.shared.chooseMyVault(entry.vaultId) }
                 }
             }
             if let head = entry.head {
-                Section("Head") {
+                Section(String(localized: "Head", bundle: .module)) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(head.message)
                         Text("\(String(head.commitId.suffix(12))) · \(head.timestamp.formatted(date: .abbreviated, time: .shortened))")
                             .font(.caption.monospaced()).foregroundStyle(.secondary)
-                        Label(head.signature.isVerified ? "Signature verified" : "Signature not verified",
+                        Label(head.signature.isVerified ? String(localized: "Signature verified", bundle: .module) : String(localized: "Signature not verified", bundle: .module),
                               systemImage: head.signature.isVerified ? "checkmark.seal" : "exclamationmark.triangle")
                             .font(.caption)
                             .foregroundStyle(head.signature.isVerified ? .green : .orange)
                     }
                 }
             }
-            Section("Files") {
+            Section(String(localized: "Files", bundle: .module)) {
                 if let root {
                     OutlineGroup(root.children, children: \.outlineChildren) { node in
                         HStack {
@@ -362,7 +362,7 @@ struct VaultFileView: View {
             do {
                 let data = try await vault.read(path)
                 size = data.count
-                text = String(data: data, encoding: .utf8) ?? "Binary file, \(data.count.vaultByteString)"
+                text = String(data: data, encoding: .utf8) ?? String(localized: "Binary file, \(data.count.vaultByteString)", bundle: .module)
             } catch {
                 self.error = VaultSession.shared.userMessage(for: error, context: "read")
             }

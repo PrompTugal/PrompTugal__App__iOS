@@ -1,3 +1,5 @@
+import PTAgenda
+import PTAsk
 import PTCore
 import SwiftUI
 
@@ -9,6 +11,18 @@ struct PublicSettingsView: View {
 
     var body: some View {
         Form {
+            Section {
+                NavigationLink {
+                    AskView()
+                } label: {
+                    Label("Ask, with your own AI key", systemImage: "sparkles")
+                }
+                NavigationLink {
+                    ReminderSettingsView()
+                } label: {
+                    Label("Reminders", systemImage: "bell.badge")
+                }
+            }
             Section {
                 LabeledContent("Version") {
                     versionText

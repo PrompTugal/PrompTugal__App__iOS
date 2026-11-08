@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "PTNews",
+    defaultLocalization: "en",
     platforms: [.iOS(.v18)],
     products: [
         .library(name: "PTNews", targets: ["PTNews"]),
@@ -15,7 +16,8 @@ let package = Package(
     targets: [
         .target(
             name: "PTNews",
-            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "PTWeb", package: "PTWeb")]
+            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "PTWeb", package: "PTWeb")],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "PTNewsTests",

@@ -14,6 +14,9 @@
       location = "group:Packages/PTAgenda">
    </FileRef>
    <FileRef
+      location = "group:Packages/PTNowNext">
+   </FileRef>
+   <FileRef
       location = "group:Packages/PTNews">
    </FileRef>
    <FileRef

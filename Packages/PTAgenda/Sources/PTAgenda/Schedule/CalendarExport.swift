@@ -22,7 +22,7 @@ public enum CalendarExport {
         } catch {
             return .denied
         }
-        guard let calendar = store.defaultCalendarForNewEvents else { return .failed("No calendar to add to.") }
+        guard let calendar = store.defaultCalendarForNewEvents else { return .failed(String(localized: "No calendar to add to.", bundle: .module)) }
         var added = 0
         for pick in timed {
             guard let start = pick.start else { continue }
@@ -34,7 +34,7 @@ public enum CalendarExport {
             event.timeZone = Lisbon.zone
             event.location = pick.event?.place
             event.url = pick.url
-            event.notes = ["From PrompTugal · Web Summit Lisbon 2026", pick.url?.absoluteString ?? ""]
+            event.notes = [String(localized: "From PrompTugal · Lisbon 2026", bundle: .module), pick.url?.absoluteString ?? ""]
                 .filter { !$0.isEmpty }.joined(separator: "\n")
             do {
                 try store.save(event, span: .thisEvent, commit: false)
@@ -46,7 +46,7 @@ public enum CalendarExport {
         do {
             try store.commit()
         } catch {
-            return .failed("The calendar did not save.")
+            return .failed(String(localized: "The calendar did not save.", bundle: .module))
         }
         return .added(added)
     }

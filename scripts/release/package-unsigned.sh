@@ -10,6 +10,7 @@
 # Output in $OUT/dist.
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
+: "${APP_NAME:?APP_NAME is not set (name of the app, from apps.json)}"
 
 : "${MARKETING_VERSION:?run version.sh first}" "${BUILD_NUMBER:?run version.sh first}" "${ARTIFACT_BASE:?run version.sh first}"
 DIST=$OUT/dist

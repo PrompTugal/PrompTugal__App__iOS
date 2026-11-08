@@ -40,9 +40,9 @@ on:
         type: boolean
         default: false
       runner:
-        description: 'macOS runner for the build, test and package jobs (self-hosted = the Mac registered to this repository)'
+        description: 'macOS runner for the build, test and package jobs. macos-26 = GitHub-hosted, self-hosted = the Mac registered to this repository, auto = self-hosted when a self-hosted runner is online, else macos-26'
         type: choice
-        options: [macos-26, self-hosted]
+        options: [macos-26, self-hosted, auto]
         default: macos-26
 
 permissions:
@@ -54,6 +54,32 @@ permissions:
 # started but whose other jobs were still queued.)
 
 jobs:
+  # Which runner the macOS jobs use. Pushes and pull requests: macos-26. Manual runs: the input;
+  # auto asks the API whether a self-hosted runner is online. Listing a repository's runners needs
+  # an administration-read token (secret RUNNER_PROBE_TOKEN); the workflow's own token cannot do
+  # it, so without that secret, or if the call fails for any reason, auto means macos-26.
+  pick-runner:
+    name: Pick the runner
+    runs-on: ubuntu-latest
+    outputs:
+      runner: ${{ steps.pick.outputs.runner }}
+    steps:
+      - id: pick
+        env:
+          WANT: ${{ inputs.runner || 'macos-26' }}
+          GH_TOKEN: ${{ secrets.RUNNER_PROBE_TOKEN || github.token }}
+          HAVE_PROBE_TOKEN: ${{ secrets.RUNNER_PROBE_TOKEN != '' }}
+        run: |
+          runner=$WANT
+          if [ "$WANT" = auto ]; then
+            runner=macos-26
+            online=$(gh api "repos/$GITHUB_REPOSITORY/actions/runners" --jq '[.runners[] | select(.status=="online")] | length' 2>/dev/null || echo "")
+            if [ -n "$online" ] && [ "$online" -gt 0 ]; then runner=self-hosted; fi
+            echo "auto: online self-hosted runners=${online:-unknown} (probe token set: $HAVE_PROBE_TOKEN) -> $runner"
+            echo "- Runner **$runner** (auto: online self-hosted runners: ${online:-unknown}; probe token set: $HAVE_PROBE_TOKEN)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "runner=$runner" >> "$GITHUB_OUTPUT"
+
   # Cheap Ubuntu check so a night or split branch that only merged dev costs no macOS runner:
   # on a push to night/** or split/**, if the pushed commit is already in origin/dev, dev's own
   # run covers it and the macOS jobs are skipped.
@@ -109,8 +135,11 @@ jobs:
 
   build:
     name: ${{ matrix.config }} build (${{ matrix.app.app }})
-    needs: [gate, changes]
+    needs: [gate, changes, pick-runner]
     if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_apps == 'true'
+    permissions:
+      contents: read
+      actions: write   # to cancel the rest of a manual run when this build fails
     strategy:
       fail-fast: false
       matrix:
@@ -118,7 +147,7 @@ jobs:
         # Debug for the simulator; Release is what App Store and TestFlight builds use:
         # optimised, DEBUG not defined, so code behind #if DEBUG compiles out cleanly.
         config: ${{ fromJSON(inputs.quick && '["Debug"]' || '["Debug","Release"]') }}
-    runs-on: ${{ inputs.runner || 'macos-26' }}
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     concurrency:
       group: ios-build-${{ matrix.app.app }}-${{ matrix.config }}-${{ github.ref }}
       cancel-in-progress: false
@@ -158,12 +187,20 @@ jobs:
           # Each extension target of the project must be inside the app.
           scripts/release/check-embedded.sh "$app"
 
+      # A red manual run on a split branch stops here: cancel the rest of the run so it does not
+      # keep holding runners. Pushes, pull requests and dev are left alone.
+      - name: Cancel the rest of this manual run
+        if: failure() && github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/split/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run cancel "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" || true
+
   test:
     name: ${{ matrix.app.app }} unit tests (${{ matrix.device }} simulator)
     # Runner capacity: on night/** and split/** pushes only the build legs run. The unit tests
     # run on dev, on pull requests and by hand. Run them for a branch from the Actions tab
     # (workflow_dispatch) when you need them before a merge.
-    needs: [gate, changes]
+    needs: [gate, changes, pick-runner]
     if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_apps == 'true' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
     strategy:
       fail-fast: false
@@ -171,7 +208,7 @@ jobs:
         app: ${{ fromJSON(needs.changes.outputs.apps) }}
         # The app must work on iPhone and iPad; both run every test.
         device: ${{ fromJSON(inputs.quick && '["iPhone"]' || '["iPhone","iPad"]') }}
-    runs-on: ${{ inputs.runner || 'macos-26' }}
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 45
     concurrency:
       group: ios-test-${{ matrix.app.app }}-${{ matrix.device }}-${{ github.ref }}
@@ -234,13 +271,13 @@ jobs:
     name: Package ${{ matrix.package.name }}
     # A package's own tests, when it or something it depends on changed. They run on every
     # push where they are affected, as SGitVault's did before the split (one runner each).
-    needs: [gate, changes]
+    needs: [gate, changes, pick-runner]
     if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_packages == 'true'
     strategy:
       fail-fast: false
       matrix:
         package: ${{ fromJSON(needs.changes.outputs.packages) }}
-    runs-on: ${{ inputs.runner || 'macos-26' }}
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 30
     concurrency:
       group: ios-package-${{ matrix.package.name }}-${{ github.ref }}
