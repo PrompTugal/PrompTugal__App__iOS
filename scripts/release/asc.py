@@ -101,6 +101,18 @@ def app_id():
     return data[0]["id"]
 
 
+def cmd_has_record(a):
+    """Exit 0 and print the record id if the bundle has an App Store Connect record; exit 3 if not.
+    The release workflow uses it so an app without a record (Team, until Dinis creates it) is
+    skipped, not failed, and so an upload can never go to a record of another bundle id."""
+    data = call("GET", f"/v1/apps?filter[bundleId]={BUNDLE_ID}&fields[apps]=bundleId,name")["data"]
+    exact = [d for d in data if d.get("attributes", {}).get("bundleId") == BUNDLE_ID]
+    if not exact:
+        say(f"- ⏭️ no App Store Connect record for `{BUNDLE_ID}`; create it by hand (release-setup.md), nothing uploaded.")
+        sys.exit(3)
+    say(f"- App Store Connect record for `{BUNDLE_ID}`: \"{exact[0]['attributes'].get('name')}\" (id {exact[0]['id']}).")
+
+
 def find_build(app, version, build):
     q = (f"/v1/builds?filter[app]={app}&filter[version]={build}"
          f"&filter[preReleaseVersion.version]={version}&fields[builds]=version,processingState,usesNonExemptEncryption,expired")
@@ -202,6 +214,7 @@ def cmd_submit(a):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("has-record")
     for name in ("wait-build", "compliance", "whats-new", "submit"):
         s = sub.add_parser(name)
         s.add_argument("--version", required=True)
@@ -219,7 +232,7 @@ def main():
             sys.exit(f"skipped: secret {v} missing")
     if not (os.environ.get("ASC_KEY_PATH") or os.environ.get("ASC_KEY_P8_BASE64")):
         sys.exit("skipped: secret ASC_KEY_P8_BASE64 missing")
-    {"wait-build": cmd_wait_build, "compliance": cmd_compliance,
+    {"has-record": cmd_has_record, "wait-build": cmd_wait_build, "compliance": cmd_compliance,
      "whats-new": cmd_whats_new, "submit": cmd_submit}[a.cmd](a)
 
 
