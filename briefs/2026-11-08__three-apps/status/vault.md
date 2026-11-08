@@ -2,7 +2,7 @@
 
 > Vault/ is moved into PTVaultUI and green in CI (run #272, commit e5328ff). The background task id is now a parameter. Still to do: move VaultCollabAccess once collab's protocol is in PTCore.
 
-**Branch:** `split/vault` (from origin/dev 45284d0) · **Phase:** 3 (move done, green) · **Updated:** 8 Nov, night
+**Branch:** `split/vault` (from origin/dev 45284d0) · **Phase:** 3 (move done, green) · **Updated:** 8 Nov, 01:05 UTC
 
 ## Done
 
@@ -56,6 +56,8 @@ TeamFeatures, AIKeyStore, AskView, CollabDebugPanel, LaneAddress, LanesView, Lan
 `VaultCollabAccess` stays in `Coordination/CollabVaultGlue.swift` until collab's `CollabVaultAccess` protocol is in PTCore.
 
 ## Next
+
+0. (01:05 UTC) Merged to dev as e5328ff. Waiting for collab's `CollabSeams.swift` (PTCore) on dev. Then: `git mv` CollabVaultGlue.swift to PTVaultUI as `VaultCollabAccess` (public, `install()`), dispatch CI, report. The edited file is prepared.
 
 1. Merge origin/dev. `git mv` the 9 files to `Packages/PTVaultUI/Sources/PTVaultUI/`.
 2. Add `public`, change the BGTask id to a parameter, set `Package.swift` deps to SGitVault (platform owns the dependency list; I will ask if it is not already right).
