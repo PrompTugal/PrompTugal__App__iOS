@@ -41,7 +41,7 @@ def _shortcut_images():
 
     While files move during the split, the sidebar artwork can sit in another catalog than the app icon."""
     found = {}
-    for place in admin.APP_FOLDERS:
+    for place in (*admin.APP_FOLDERS, 'Apps', 'Packages'):      # the app's folders first, then anywhere the artwork moved to
         base = ROOT / place
         for catalog in sorted(base.rglob('Assets.xcassets')) if base.is_dir() else []:
             for d in sorted(catalog.glob('Shortcut*.imageset')):

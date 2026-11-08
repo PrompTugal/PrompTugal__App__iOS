@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 06:25 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 07:15 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,10 @@ Branch: `split/editor` · Last update: 06:25 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 07:15 UTC: **phase 4 started** (conductor, dev 02f3624). Merged `origin/dev` (v0.4.5) with PTAsk (`02f3624`), no conflict. Public page now 4 in the beta (Ask), 9 coming; Team page unchanged. 68 tests green.
+- Test of platform's move before it lands: in a throwaway worktree I did the layout of its plan (step 1: `PrompTugal.xcodeproj` to `Apps/Team/Team.xcodeproj`, `PrompTugal/` to `Apps/Team/Sources/`, tests to `Apps/Team/Tests` and `UITests`; step 8: the `apps.json` team entry on `Apps/Team/`). The first build stopped: the sidebar artwork (`Shortcut*.imageset`) then sits in `Apps/Team/Sources/App/Resources/Assets.xcassets`. I made the site look for it under `Apps/` and `Packages/` too, after the app's own folders. With that, build, validator and all 68 tests pass on the moved layout, with the same labels (Team 23 in the beta, public 4). So dev's `website/build.py` needs no fix for platform's move. Still to check against the real `split/platform` when it pushes.
+- Left to do for phase 4: read facts (version, bundle, icon, `Websites.json`) from the real `Apps/PrompTugal` once apps and design finish it; re-read `privacy.html` and `support.html` against its code (widgets, intents, URL scheme `promptugal://`, background refresh); swap in the PrompTugal review texts; then send READY.
 
 - 06:25 UTC: merged `origin/dev` (v0.4.3) with PTLanes and VaultCollabAccess (`6300658`). No conflict. The lanes feature still reads as in the beta on the Team page: its evidence names `**/LanesStore.swift` and `text:**/LanesView.swift::ReportBlockMenu`, which are now in `Packages/PTLanes`, inside the Team app's package closure. Team page unchanged (23 in the beta, 2 debug only, 1 coming); public page 3 in the beta, 10 coming. 68 tests green. Only PTAsk and phase 4 remain.
 
