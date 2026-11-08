@@ -1,8 +1,8 @@
 # Vault: PTVaultUI
 
-> Plan written while waiting for PTCore. Vault/ has no upward dependencies, so the move is mechanical: `public` on what other code uses, plus one change to the background task id. No code moved yet.
+> Vault/ is moved into PTVaultUI and green in CI (run #272, commit e5328ff). The background task id is now a parameter. Still to do: move VaultCollabAccess once collab's protocol is in PTCore.
 
-**Branch:** `split/vault` (from origin/dev 45284d0) · **Phase:** 1 (map and plan) · **Updated:** 8 Nov, night
+**Branch:** `split/vault` (from origin/dev 45284d0) · **Phase:** 3 (move done, green) · **Updated:** 8 Nov, night
 
 ## Done
 
@@ -45,9 +45,15 @@ TeamFeatures, AIKeyStore, AskView, CollabDebugPanel, LaneAddress, LanesView, Lan
 - `PrompTugalTests/VaultAppTests.swift` (uses `@testable import PrompTugal`, covers trust store, Keychain errors, "my vault", user-facing errors) moves to `Packages/PTVaultUI/Tests/PTVaultUITests/` with `@testable import PTVaultUI`. Risk: Keychain tests may need an app host on the simulator. If they fail without a host, they stay in the Team app's test target and I write that here.
 - Other tests that mention Vault (AITests, ScheduleTests, CoordinationTests) stay with their owners.
 
+## Done (move)
+
+- 9 files moved with `git mv` to `Packages/PTVaultUI/Sources/PTVaultUI/`; `VaultAppTests` moved to the package tests.
+- `public` on `VaultSession` and the members outside code calls, `OpenVault`, `KeyInventoryItem`, `VaultHomeView`, `VaultBackground`.
+- `VaultBackground.register(taskIdentifier:)`; `VaultConfig.backgroundRefreshTask` removed. `PrompTugalApp.init` passes `news.promptugal.reader.vault-refresh` (platform's file, one-line change so it compiles).
+
 ## In progress
 
-Nothing. Waiting for the conductor to say PTCore is on dev.
+`VaultCollabAccess` stays in `Coordination/CollabVaultGlue.swift` until collab's `CollabVaultAccess` protocol is in PTCore.
 
 ## Next
 
@@ -71,4 +77,4 @@ Phase 1 (empty packages linked) on dev. The conductor says I can start the move 
 
 ## Last CI run
 
-None yet on this branch.
+iOS run #272 (workflow_dispatch), split/vault e5328ff: green on all 7 jobs (build, Release build, SGitVault tests, package tests, iPhone and iPad unit tests).
