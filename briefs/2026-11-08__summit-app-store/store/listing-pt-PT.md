@@ -19,7 +19,7 @@ O companheiro independente da cimeira de tecnologia de Lisboa, de 9 a 12 de nove
 ## Descrição (4000)
 
 ```
-O PrompTugal é uma app independente para quem está na grande cimeira de tecnologia de Lisboa, de 9 a 12 de novembro de 2026, feita pelo PrompTugal.news, uma redação que acompanha a inteligência artificial em Portugal.
+O PrompTugal é uma app independente para quem está na grande cimeira de tecnologia de Lisboa, de 9 a 12 de novembro de 2026, feita pelo PrompTugal.news, uma redação independente em Portugal.
 
 Abra-a no recinto e, em segundos, fica a saber o que está a decorrer, o que vem a seguir para si e o que há de novo.
 
@@ -39,12 +39,9 @@ NOTÍCIAS
 • Notícias ao minuto e edições da newsletter do PrompTugal.news, para ler sem rede
 • Um grafo das empresas, pessoas e eventos por trás das notícias
 
-PERGUNTE (OPCIONAL)
-• Pergunte sobre o programa e o seu dia, com a sua própria chave OpenRouter. Nada é enviado sem a sua autorização, e é o utilizador que escolhe o que partilha
-
 PRIVACIDADE DE RAIZ
 • Sem conta, sem registo, sem rastreio, sem publicidade
-• As suas escolhas e definições ficam no seu dispositivo
+• Nenhum dado recolhido: as suas escolhas e definições ficam no seu dispositivo
 
 IDIOMAS
 • Inglês, português (Portugal) e português (Brasil)
@@ -55,7 +52,7 @@ O PrompTugal é independente. Não está afiliado, nem é apoiado ou patrocinado
 ## Palavras-chave (100)
 
 ```
-conferência,agenda,programa,horário,tecnologia,startup,IA,Portugal,notícias,oradores,evento
+conferência,agenda,programa,horário,tecnologia,startup,Portugal,notícias,oradores,evento,sessões
 ```
 
 ## Novidades (4000)

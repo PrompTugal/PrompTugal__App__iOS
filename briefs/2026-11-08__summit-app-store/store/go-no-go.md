@@ -177,3 +177,99 @@ rc7 moved to **535e9ba** (14:17), the last product change before the freeze. `PT
 | G5 | Run 398 on 535e9ba: queued (the runners are busy with screens #36) | pending |
 | M4 | Screens #36 on rc7 535e9ba: three size jobs in progress | pending |
 | ASC dry run | No output yet in release.md | pending |
+
+## Run 12: release's ASC dry run (run 42490544114, 14:36 UTC)
+
+| # | Finding (from the real record) | Decision | Owner |
+| --- | --- | --- | --- |
+| A1 | The primary locale is **en-GB**, the record's only localization | Keep en-GB as primary (it holds the existing name). `listing.json` now has **en-GB** with the same English text as en-US ("program" kept, because "programme" pushes the subtitle to 31). Keep en-US too, for the US storefront. Screenshots: en-GB reuses the en-US set. | review (done), release |
+| A2 | The App Store version is a stub "1.0" in PREPARE_FOR_SUBMISSION | Set the version string to the binary's marketing version (0.4.x) before attaching the build | release |
+| A3 | What's New on a first version | **Drop it**: App Store Connect takes no What's New on the first release. `listing.json` has `whatsNewOnFirstVersion: false`; the text stays for the next version. | release |
+| A4 | Review details, categories, screenshots and content rights are not set | As planned: review-notes.txt, News and Business, USES_THIRD_PARTY_CONTENT; screenshots from screens #36 once they pass | release |
+| A5 | Age rating exists | Overwrite with [age-rating.md](age-rating.md) (4+), and read it back after saving | release |
+| M1 | listing.json diffs cleanly for en-US, pt-PT and pt-BR | GO | |
+
+## Run 13: screens #36 on rc7 535e9ba, the iPhone 6.9" set (14:45 UTC)
+
+21 images (7 screens, en-US, pt-PT, pt-BR).
+
+| # | Image | Finding | State |
+| --- | --- | --- | --- |
+| S1 | all | No notification alert, no debug badges or rows | GO |
+| S2 | 01-now, 02-team.schedule, 03-explore | The time is on one line (12-hour en-US, 24-hour pt) | GO |
+| S5 | all pt | The UI is fully localized (pt-PT: Agora, O meu programa, Explorar, Notícias, Definições; pt-BR: Meu programa, Palestrantes, Reportagens). Content stays in English, as the sources publish it. | GO |
+| S6 | 04-explore.talk | The Registration item: "bring your ticket QR from the **Web Summit** app". Also the empty state "Connect to load this talk's times". `-PTHideTerm` does not reach PTExplore. | **leave out** |
+| S7 | 05-news.home | The lead story's summary: "Brazil's three days at **Web Summit**". The filter checks titles only. | **leave out**, or filter summaries and re-run |
+| S8 | 07-explore.graph | The node label "websummit.com/…" is legible | **leave out** (labels are not controlled) |
+| S9 | 01, 02, 03, 06 | Clean, native, and they show the core: now and next, my program with a clash, the agenda, people | **GO as the store set** (4 per locale and size) |
+| P | 02 (pt-BR) | The date chips truncate ("9 de nov. d…") | polish, next version |
+| P | 02 (pt-PT) | "palestra": "sessão" is more European | polish, next version |
+
+The 6.5" and iPad 13" artifacts get the same check when they land.
+
+## Run 14: screens #36, all sizes; ASC metadata applied (14:50 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| M4 | The store set is 01-now, 02-team.schedule, 03-explore and 06-explore.people, for APP_IPHONE_69, APP_IPHONE_65 and APP_IPAD_PRO_3GEN_129, in en-US, pt-PT and pt-BR. All 36 checked: no alert, no debug UI, no "Web Summit", times on one line, iPad sidebar clean, pt localized. iPad images are landscape 2752×2064. en-GB reuses en-US. | **GO**: release may upload |
+| M1, M2 | ASC metadata applied (ios-submit 42491156901): en-GB (primary), en-US, pt-PT, pt-BR; name accepted; content rights; categories; review details | GO; check against a dry run |
+| M7 | Age rating applied and read back (ios-submit 42491470177): every boolean false (including unrestrictedWebAccess, userGeneratedContent, messagingAndChat, advertising, socialMedia), every content level NONE, kidsAgeBand unset. That matches age-rating.md: 4+. | **GO** |
+| M6, M9 | Dinis's hand steps: App Privacy (Other User Content, not linked, no tracking), Mac and Vision Pro unticked, IDFA No | pending |
+| G5 | Run 398 | queued |
+| G1, G4 | The rc7 build is uploaded and processed; airplane-mode fresh install | pending |
+
+## Run 15: dev = rc7 535e9ba (15:07 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| G5 | Run 398 on 535e9ba: 28 of 28 green; dev is 535e9ba (release v0.4.22) | **GO** |
+| M4 | Screenshots applied in ASC: 12 sets (4 locales × 3 sizes) × 4 images (ios-submit 42491790589) | **GO** |
+| M8 | `scripts/testflight/review-notes.txt` on dev still has the old step 4 ("asked only then"). Since rc7, the first pick asks too. | **fix**: copy store/review-notes.txt; re-apply the ASC review notes if they were set from the old copy |
+| G1, G4 | Build number, processing, version string, airplane-mode fresh install | pending |
+| M6, M9 | Dinis: App Privacy, Mac and Vision Pro, IDFA | pending (pinged) |
+
+15:09: the ASC version string is **0.4.22** (ios-submit 42493272621). dev is tagged v0.4.22 = 535e9ba plus the version commit. iOS release #103 (42493212548) is building and uploading. Open: build number and processing, airplane check, review-notes step 4 on dev, Dinis's hand steps.
+
+15:10: **M8**: the ASC App Review notes were applied from store/review-notes.txt at 5d64ad7 (step 4 is new) and confirmed equal at 15:08. testflight 56b60f0 has the recopied file, merged to dev after release #103 uploads, and Beta App Review uses the same file. **GO** once merged. **G4** (airplane-mode fresh install) goes to Dinis on a device. If that cannot happen before 17:30, review accepts it on the code evidence: `AgendaHub.seedAgenda` is set in `PrompTugalApp.init`, `ReaderStore` reads the seed when the cache is empty, and `PrompTugalTests` checks that the bundled seed decodes (more than 150 events).
+
+15:13: release #103 is still archiving PrompTugal (45f44d8). Open for the final GO: build number and processing VALID; Dinis: App Privacy, Mac and Vision Pro, IDFA; G4 airplane check (or code evidence after 17:30).
+
+15:22: release #103 (v0.4.22) did not upload (release-notes.sh SIGPIPE). dev is tagged **v0.4.23** = 3125e3e, with app code identical to 535e9ba (only the release-notes fix, testflight text and version commits). Release #104 (42494256284) uploads it, and the ASC version string is 0.4.23. Run 15 holds for the app; the final GO is on 0.4.23.
+
+15:40: release #104 (3125e3e) is still archiving PrompTugal. Open: build number and processing VALID, attached to 0.4.23; Dinis's hand steps; G4.
+
+16:03: **uploaded: PrompTugal 0.4.23 (204)** from iOS release #104 (v0.4.23, 3125e3e; app code = 535e9ba). An ios-submit dry run (submit, 0.4.23, build 204, confirm=false) is running: wait-build, compliance, submit plan. Open: processing VALID (G1), the dry-run plan, Dinis's hand steps (M6, M9), G4.
+
+## FINAL: GO for PrompTugal 0.4.23 (204), conditional on Dinis's three hand steps (16:05 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| G1 | 0.4.23 (204) processed VALID, no ITMS; export compliance usesNonExemptEncryption = false; version 0.4.23 PREPARE_FOR_SUBMISSION | GO |
+| G2, G3, G6, G7, G8, G9 | Purpose strings (5, each in en, pt-PT, pt-BR); no debug UI in Release; Ask reachable with the review key; Vault absent; no trademark on screen except the independence note | GO (runs 2 to 10) |
+| G4 | Airplane-mode fresh install: accepted on code evidence (seed wired in `PrompTugalApp.init`, `ReaderStore` falls back to it when the cache is empty, `PrompTugalTests` checks it decodes). Dinis should still confirm it on the TestFlight build. | GO (evidence) |
+| G5 | Run 398 on 535e9ba: 28/28; 3125e3e has identical app code | GO |
+| M1–M5, M7, M8, M10 | Listings in four locales applied; 12 screenshot sets × 4; URLs live; age rating 4+ read back; review notes (two hosts, demo key, step 4); content rights; categories | GO |
+| M6 | App Privacy: Other User Content, App Functionality, not linked, no tracking; every other type not collected; tracking No | **condition: Dinis** |
+| M9 | Mac (Apple silicon) and Vision Pro availability unticked; IDFA question: No | **condition: Dinis** |
+| P1 | No open "stuck" persona finding on the submitted screens | GO |
+
+**Verdict:** submit 0.4.23 (204) for App Review as soon as Dinis confirms M6 and M9. The same build and the same review notes are GO for the TestFlight public link (Beta App Review).
+
+16:05, dry run 42497866805: (a) 204 VALID, no ITMS lines in the job log (testflight is checking the email); (b) usesNonExemptEncryption already false; (c) the confirm run attaches 204, then creates and submits the review submission; (d) no blocking items beyond the plan. asc.py cannot see App Privacy, IDFA or Mac and Vision Pro: those rest on Dinis. If one is missing, Apple refuses the submit with a clear error, and nothing is lost. The final GO stands.
+
+16:11: **TestFlight external SUBMITTED** for Beta App Review (run 42498490708). 0.4.23 (204) is in "PrompTugal External Users"; What to Test is 1,104 characters (store/what-to-test.txt); the notes are 3,470 characters (store/review-notes.txt, 3,418, plus the demo key). The App Store submit waits on Dinis's three steps and his release-type choice.
+
+## Run 16: rc8 4f58965, Ask removed from the App Store build (21:50 UTC)
+
+Dinis's decision: no Ask (OpenRouter) in the App Store app, and the label reads "Data Not Collected".
+
+| # | Check | State |
+| --- | --- | --- |
+| Code | `origin/dev...origin/split/rc8` has 5 files. The Ask destination is `#if DEBUG` with `debugOnly`; the Now card and the Settings row are `#if DEBUG` and only with debug mode on; the Settings summary has no "Ask" in Release; `askAnywhere` is gone from the shell; `PrivacyInfo.xcprivacy` has `NSPrivacyCollectedDataTypes` empty. The new string "Reminders, about, privacy, support" is in en, pt-PT and pt-BR. | **GO** |
+| Hosts | Release talks to one host, promptugal.news (network-audit.md, rc8 section) | GO |
+| M6 | App Privacy: **"No, we do not collect data from this app"** (app-privacy.md) | Dinis |
+| M1, M2 | Listings: the Ask section is removed in all four locales; "AI" and "IA" are out of the keywords; the description's newsroom line says "independent newsroom in Portugal"; the privacy line says "No data collected". listing.json regenerated and checked. | GO; release re-applies |
+| M8 | review-notes.txt: the Ask step, the demo key, dictation and the openrouter line are removed; "one host only: promptugal.news" (2,450 characters, no placeholders left). what-to-test.txt: the Ask line is removed. | GO; testflight recopies, release re-applies the review details |
+| M4 | Screens #36: the **iPad** images list **"Ask"** in the sidebar's More group (all 4 ids, all locales). The iPhone images show no Ask: the Now card is below the fold, and Ask was never a tab. | **re-run screens on rc8** (iPad at least), then re-upload the iPad sets |
+| Site | privacy.html still describes Ask. True for the app's DEBUG builds and the TestFlight build 204, but it will confuse a reviewer next to "Data Not Collected". | editor: say Ask is not in the App Store version |
+| TestFlight | Build 204, already in Beta App Review, still has Ask (with the demo key in its notes). Fine for the beta. | note |

@@ -29,7 +29,7 @@
 | Gambling (real money) | No | |
 | Loot boxes | No | |
 
-If App Store Connect asks about generated content, answer that Ask produces AI text answers about the program, on request, behind a consent step. Ask is limited to summit topics by its system prompt (`AIContext.swift`). If Ask is hidden (B1 option (b)), the question does not apply.
+From rc8 on, Ask is not in the App Store build, so no generated content: the questions about AI or generated content do not apply. (In build 204, Ask produced AI answers about the program, on request, behind a consent step.)
 
 **Made for Kids:** No.
 

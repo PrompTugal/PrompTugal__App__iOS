@@ -49,6 +49,11 @@ def main():
             assert "only if merged" not in fields[name] and "se integrado" not in fields[name], f"{locale} {name}: marker left"
             assert not re.search(r"web ?summit", fields[name], re.I), f"{locale} {name}: trademark"
         result["locales"][locale] = fields
+    # The record's primary locale is en-GB (its only existing localization): same English text as en-US.
+    # "program" stays as is: "programme" would push the subtitle past 30 characters.
+    result["locales"]["en-GB"] = dict(result["locales"]["en-US"])
+    # A first App Store version takes no "What's New"; keep it here for later versions, but asc.py skips it on 1st release.
+    result["whatsNewOnFirstVersion"] = False
     with open("listing.json", "w", encoding="utf-8") as out:
         json.dump(result, out, ensure_ascii=False, indent=2)
         out.write("\n")

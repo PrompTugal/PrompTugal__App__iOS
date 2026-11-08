@@ -1,6 +1,6 @@
 # Review status
 
-> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". The checklist, the store listing in three languages, the App Privacy and age-rating answers, the review notes and the go/no-go list are in [summit-app-store/store](../../2026-11-08__summit-app-store/store/README.md). Five blockers went to the conductor at 11:30 UTC. The persona walk-through below covers the code on `dev` (66089cd); there are no screenshots yet.
+> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". **FINAL GO at 16:05 UTC for 0.4.23 (204)**, conditional on Dinis's App Privacy, Mac and Vision Pro, and IDFA steps (see [go-no-go.md](../../2026-11-08__summit-app-store/store/go-no-go.md)). The store pack is in [summit-app-store/store](../../2026-11-08__summit-app-store/store/README.md); next-version items are in [next-version.md](../../2026-11-08__summit-app-store/next-version.md).
 
 ## Done
 - 11:30 UTC: App Review checklist ([checklist.md](../../2026-11-08__summit-app-store/store/checklist.md)): 5 blockers, 11 risks, the rest OK. Blockers B1 to B5 sent to the conductor.
@@ -33,6 +33,18 @@
 | F15 | all | My program (launch) | The notification permission prompt appears without a tap, as soon as My program is built. It covers 60 of 63 store images. | Drop `requestAuthorization()` from `MyProgramView` `.task`; ask on the first pick or from the Reminders toggle | team | stuck (store), confusing (people) |
 | F16 | P3 (en-US), P5 | `now` | The time wraps: "11:05 A" / "M". A busy speaker reads the time first. | `lineLimit(1)`, a wider column, or 24-hour Lisbon time | design | confusing |
 | F17 | P1, P5 | `now` | Good: "Next in your program" with "in 5 min · Centre Stage" answers "what's next for me" at a glance. "On now at the venue" shows 5 with See all (7). | none | | ok |
+
+## Screenshot pass 2 (14:45 UTC, screens #36, rc7)
+
+| # | Persona | Screen | Finding | Severity |
+| --- | --- | --- | --- | --- |
+| F18 | P1 Ana (pt-BR) | all | Every label is in Brazilian Portuguese, and the talk content stays in English. She can follow the app. | ok |
+| F19 | P5 Maria | `now` | "Next in your program · in 5 min · Centre Stage" is the first card: the glance she needs | ok |
+| F20 | P3 Sarah | `team.schedule` | "Clash · choose one" between two 11:25 talks, with Keep this one: she can resolve her double booking | ok |
+| F21 | P2 Rui, P3 Sarah | `explore.people` | Speakers A–Z with role and company: they can find investors and founders | ok |
+| F22 | P4 João | `news.home` | The lead story reads well, and the share button is there (the earlier F10 is fixed) | ok |
+| F23 | P1 Ana | `explore.talk` (Registration) | Opens with "Connect to load this talk's times" when offline | confusing (next version) |
+| F24 | P1 Ana (pt-BR) | `team.schedule` | The date chips truncate | polish |
 
 ## Next
 - Walk the personas through each screenshot set and each new build (Now, Explore, pt strings).
