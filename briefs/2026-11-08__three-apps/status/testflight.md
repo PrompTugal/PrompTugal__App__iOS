@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 12:25 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 13:10 UTC (account B session watching)
 
 ## Done
 
@@ -24,6 +24,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 
 ## In progress
+
+- 8 Nov 13:10 UTC: merged split/rc2 (3de45dd); `scripts/testflight/review-notes.txt` and `what-to-test.txt` now equal the summit store pack (commit a11b10f). Dev is still at v0.4.21 (run 102 cancelled), no new upload since 0.4.16 (197). External path for the public app is on hold: plan-only until the conductor says go on the final build after the 16:00 UTC freeze.
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
 - 12:25 UTC: first good public-app build: 0.4.16 (197), iOS release run 97 (dev `89badfe`): Apple build upload COMPLETE (the 0.4.12 (189) upload stays FAILED 90683), processed VALID, in PrompTugal Internal Users, not yet in the external group. Exported entitlements: associated-domains, time-sensitive, group.news.promptugal.reader on app, widgets and intents. External path ready on the conductor's go: set-test-info, add-to-group "PrompTugal External Users", submit-beta-review (build 197). Review notes (3121 chars) and What to Test (1105 chars) from the summit store pack are in scripts/testflight/.
