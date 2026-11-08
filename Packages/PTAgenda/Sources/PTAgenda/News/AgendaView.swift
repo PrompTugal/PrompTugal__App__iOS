@@ -14,6 +14,7 @@ public struct AgendaView: View {
 
     @Environment(ReaderStore.self) private var store
     @Environment(ScheduleStore.self) private var schedule
+    @Environment(PickFeedback.self) private var feedback: PickFeedback?
     @State private var day = "all"
     @State private var query = ""
     @State private var picksOnly = false
@@ -84,7 +85,12 @@ public struct AgendaView: View {
 
     private func rowView(_ row: AgendaModel.Row) -> some View {
         AgendaRow(row: row, picked: schedule.isPicked(row.event),
-                  open: { opened = row.event }, toggle: { schedule.toggle(row.event) })
+                  open: { opened = row.event }, toggle: { togglePick(row.event) })
+    }
+
+    /// Picks or un-picks with the star's feedback (a toast, a clash warning) when the app shows toasts.
+    private func togglePick(_ event: Event) {
+        if let feedback { feedback.toggle(event, in: schedule) } else { schedule.toggle(event) }
     }
 }
 
@@ -116,10 +122,10 @@ private struct AgendaRow: View {
         // One element for VoiceOver and UI tests: a short label, open by default, pick as an action.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(row.accessibilityLabel)
-        .accessibilityValue(picked ? "In my schedule" : "")
+        .accessibilityValue(picked ? "In my program" : "")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { open() }
-        .accessibilityAction(named: picked ? "Remove from my schedule" : "Add to my schedule", toggle)
+        .accessibilityAction(named: picked ? "Remove from my program" : "Add to my program", toggle)
     }
 }
 
