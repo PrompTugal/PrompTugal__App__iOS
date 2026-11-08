@@ -25,6 +25,11 @@ on:
         description: Build number (as in TestFlight). Not needed for status.
         type: string
         required: false
+      bundle:
+        description: Bundle ID of the app record (default news.promptugal.reader)
+        type: string
+        required: false
+        default: news.promptugal.reader
       group:
         description: Beta group name, for add-to-group and remove-from-group
         type: string
@@ -46,7 +51,7 @@ jobs:
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
-      BUNDLE_ID: news.promptugal.reader
+      BUNDLE_ID: ${{ inputs.bundle || 'news.promptugal.reader' }}
       # Placeholders in scripts/testflight/review-notes.txt. Unset ones stay missing and are listed,
       # except DEMO_VAULT_KEY and DEMO_LANE_NAME: their line is left out when unset.
       # Contact for Beta App Review (personal, so secrets only; the repository is public).
