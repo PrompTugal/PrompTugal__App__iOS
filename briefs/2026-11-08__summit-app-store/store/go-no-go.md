@@ -237,3 +237,5 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 15:22: release #103 (v0.4.22) did not upload (release-notes.sh SIGPIPE). dev is tagged **v0.4.23** = 3125e3e, with app code identical to 535e9ba (only the release-notes fix, testflight text and version commits). Release #104 (42494256284) uploads it, and the ASC version string is 0.4.23. Run 15 holds for the app; the final GO is on 0.4.23.
 
 15:40: release #104 (3125e3e) is still archiving PrompTugal. Open: build number and processing VALID, attached to 0.4.23; Dinis's hand steps; G4.
+
+16:03: **uploaded: PrompTugal 0.4.23 (204)** from iOS release #104 (v0.4.23, 3125e3e; app code = 535e9ba). An ios-submit dry run (submit, 0.4.23, build 204, confirm=false) is running: wait-build, compliance, submit plan. Open: processing VALID (G1), the dry-run plan, Dinis's hand steps (M6, M9), G4.
