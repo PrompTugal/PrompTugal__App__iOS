@@ -20,8 +20,8 @@ struct OnboardingView: View {
                         "Tap the star on any talk, in Explore or on Now. It goes into My program.")
                     row("calendar.badge.exclamationmark", "See clashes and free time",
                         "My program puts your talks in order, marks the ones that clash and shows the gaps between them. A reminder comes before each one.")
-                    row("wifi.slash", "Works offline, stays on your phone",
-                        "The agenda and the news are saved here and work with no signal. Your picks stay on this phone: no account, no tracking.")
+                    row("wifi.slash", "Works offline",
+                        "The agenda and the news are saved here and work with no signal. Your picks never leave your phone.")
                 }
             }
             .padding(.horizontal, Space.l)
