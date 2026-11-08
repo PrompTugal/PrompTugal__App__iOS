@@ -7,7 +7,7 @@ struct PrompTugalApp: App {
 
     init() {
         // Background tasks must be registered before the app finishes launching.
-        VaultBackground.register()
+        VaultBackground.register(taskIdentifier: "news.promptugal.reader.vault-refresh")
         TeamBackground.register()
         // Before launch finishes, so a reminder tapped while the app was not running is delivered (Q6).
         ReminderScheduler.installNotificationDelegate()
