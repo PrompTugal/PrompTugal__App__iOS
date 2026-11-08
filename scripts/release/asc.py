@@ -9,7 +9,7 @@ runs on any GitHub runner without installing anything.
     asc.py whats-new    --version 0.3.1 --build 123 --file notes.txt
     asc.py submit       --version 0.3.1 --build 123 [--yes] # App Store review
     asc.py store-screenshots --dir shots --ids 01-now,02-team.schedule,03-explore,06-explore.people
-                        [--also en-GB=en-US] [--version 0.4.n] [--yes]   # dry run unless --yes
+                        [--also en-GB=en-US] [--version 0.4.n] [--replace] [--yes]   # dry run unless --yes; a set is skipped only if names and md5 checksums match
     asc.py age-rating   [--set key=value ...] [--yes]       # shows the declaration; sets only what --set names
     asc.py store-metadata --listing store/listing.json [--version 0.4.n] [--also en-GB=en-US]
                         [--skip whatsNew] [--content-rights USES_THIRD_PARTY_CONTENT] [--categories NEWS,BUSINESS]
@@ -512,9 +512,21 @@ def cmd_store_screenshots(a):
             names_now = [h["attributes"].get("fileName") for h in have]
             names_want = [f"{i + 1:02d}-{os.path.basename(p).split('-', 1)[-1]}" for i, p in enumerate(files)]
             states = [(h["attributes"].get("assetDeliveryState") or {}).get("state") for h in have]
-            same = names_now == names_want and all(st in ("COMPLETE", "UPLOAD_COMPLETE") for st in states)
+            sums_now = [h["attributes"].get("sourceFileChecksum") for h in have]
+            sums_want = [md5_hex(p) for p in files]
+            same_names = names_now == names_want
+            same_content = sums_now == sums_want
+            same = (same_names and same_content and not a.replace
+                    and all(st in ("COMPLETE", "UPLOAD_COMPLETE") for st in states))
+            if same:
+                verdict = "same (names and checksums), skipped"
+            else:
+                why = ("forced by --replace" if a.replace else
+                       "different names" if not same_names else
+                       "different content (checksums)" if not same_content else "not finished processing")
+                verdict = f"{len(files)} image(s) to write ({why}): " + ", ".join(names_want)
             now_txt = f"{len(have)} image(s)" + (f" ({', '.join(sorted(set(str(x) for x in states)))}; {', '.join(str(n) for n in names_now)})" if have and not same else "")
-            say(f"| {loc} | {disp} | {now_txt} | {'same, skipped' if same else str(len(files)) + ' image(s): ' + ', '.join(names_want)} |")
+            say(f"| {loc} | {disp} | {now_txt} | {verdict} |")
             if not same:
                 todo.append((loc, l["id"], disp, sets.get(disp), have, files, names_want))
     say("")
@@ -592,6 +604,7 @@ def main():
     ss.add_argument("--ids", required=True)
     ss.add_argument("--also", action="append", default=[])
     ss.add_argument("--version", default="")
+    ss.add_argument("--replace", action="store_true", help="delete and rewrite every set, even when names and checksums match")
     ss.add_argument("--yes", action="store_true")
     ar = sub.add_parser("age-rating")
     ar.add_argument("--set", action="append", default=[], help="field=value")
