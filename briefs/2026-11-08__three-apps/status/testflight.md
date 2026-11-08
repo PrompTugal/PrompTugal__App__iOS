@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 15:43 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 16:26 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 8 Nov 16:26 UTC: public app 0.4.23 (204), release #104 on dev 3125e3e: upload COMPLETE, VALID, in PrompTugal Internal Users. Conductor dispatched the confirm runs (set-test-info, add-to-group "PrompTugal External Users", submit-beta-review; my own confirm dispatch was blocked by the permission layer). Verified read-only at 16:12: Beta App Review WAITING_FOR_REVIEW, build in both groups, review notes and contact set. Build 4 (0.3.1) stays in the external group until Dinis says otherwise. Watching the review result.
 
 - 8 Nov 15:43 UTC: summit build on dev. Release #103 (v0.4.22, 45f44d8) failed in "Release notes" (SIGPIPE from `head -c 3900` under pipefail), no upload. Conductor fixed release-notes.sh; release #104 (v0.4.23, 3125e3e) archives are green, TestFlight jobs queued. Will report the public app version and build when the upload is COMPLETE and VALID. External path on hold.
 
