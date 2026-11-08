@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 14:50 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 15:43 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 8 Nov 15:43 UTC: summit build on dev. Release #103 (v0.4.22, 45f44d8) failed in "Release notes" (SIGPIPE from `head -c 3900` under pipefail), no upload. Conductor fixed release-notes.sh; release #104 (v0.4.23, 3125e3e) archives are green, TestFlight jobs queued. Will report the public app version and build when the upload is COMPLETE and VALID. External path on hold.
 
 - 8 Nov 14:50 UTC: merged split/review a793738 (56b60f0); what-to-test.txt and review-notes.txt already equal the store pack, no text change. Dev still v0.4.21, no upload since 0.4.16 (197). External path on hold until the conductor says go on the final build.
 
