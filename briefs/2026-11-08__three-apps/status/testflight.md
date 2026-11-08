@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 08:48 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 09:45 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 09:45 UTC: first build on the Team record: 0.4.7 (182) from run 82 (dev `cd81f2d`), VALID, "PrompTugal Team Internal". RiskMandate 0.4.7 (182) VALID too. The reader record gets no new build until the public PrompTugal app's testflight is on. Cheap way to read runs: `gh api repos/PrompTugal/PrompTugal__App__iOS/actions/runs/<id>/jobs`.
 - 08:48 UTC: dev unchanged since v0.4.6 (`67e6281`); no new release run, no new upload. Latest builds: reader 0.4.6 (180), RiskMandate 0.4.4 (178), Team none.
 - 08:20 UTC: run 80 (v0.4.6, dev `67e6281`) uploaded 0.4.6 (180) to the reader record: VALID, PrompTugal Internal Users only; exported app keeps associated-domains, time-sensitive and app group `group.news.promptugal.reader`, widgets and intents carry the app group. RiskMandate unchanged at 0.4.4 (178); Team record still empty.
 - 07:58 UTC: first dev uploads with the signing fix: run 78 (v0.4.4, dev `f4fd02c`) uploaded 0.4.4 (178) to the reader record and to RiskMandate, both VALID, internal groups only. The exported reader app keeps associated-domains, time-sensitive notifications and app group `group.news.promptugal.reader`; widgets and intents carry the app group. Team record `news.promptugal.team` still empty. Run 79 (v0.4.5) cancelled; run 80 (v0.4.6) in progress.
@@ -70,6 +71,8 @@ During the summit everything runs on internal testers only. The external swap pl
 | 0.4.4 | 178 (reader record, "TestFlight (team)" job) | `f4fd02c` (run 78, v0.4.4) | yes, VALID (status run 19, 07:51 UTC) | PrompTugal Internal Users only; app group, associated domains, time-sensitive kept; widgets and intents carry the app group |
 | 0.4.4 | 178 (RiskMandate) | `f4fd02c` (run 78) | yes, VALID (status run 20, 07:51 UTC) | RiskMandate Internal |
 | 0.4.6 | 180 (reader record, "TestFlight (team)" job) | `67e6281` (run 80, v0.4.6) | yes, VALID (status run 21, 08:14 UTC) | PrompTugal Internal Users only; entitlements complete again |
+| 0.4.7 | 182 (Team, `news.promptugal.team`) | `cd81f2d` (run 82, v0.4.7) | yes, VALID (status run 22, 09:41 UTC); first Team build | PrompTugal Team Internal; associated-domains and time-sensitive present, no app group declared |
+| 0.4.7 | 182 (RiskMandate) | `cd81f2d` (run 82) | yes, VALID (status run 23) | RiskMandate Internal |
 | 0.4.0 | 167 (RiskMandate, `ai.riskmandate.app`) | `d525706` (run 67, v0.4.0) | yes, VALID (status run 9, 04:01 UTC) | RiskMandate Internal |
 
 ## Needs from others
