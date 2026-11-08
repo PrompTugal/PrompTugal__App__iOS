@@ -8,6 +8,8 @@ runs on any GitHub runner without installing anything.
     asc.py compliance   --version 0.3.1 --build 123        # usesNonExemptEncryption = false
     asc.py whats-new    --version 0.3.1 --build 123 --file notes.txt
     asc.py submit       --version 0.3.1 --build 123 [--yes] # App Store review
+    asc.py store-metadata --listing store/listing.json [--version 0.4.n] [--yes]
+                        # App Store name, subtitle, texts and URLs per locale; dry run unless --yes
 
 Environment: ASC_KEY_ID, ASC_ISSUER_ID and either ASC_KEY_PATH (a .p8 file) or
 ASC_KEY_P8_BASE64. BUNDLE_ID defaults to news.promptugal.reader.
@@ -211,10 +213,120 @@ def cmd_submit(a):
     say(f"- ✅ Submitted {a.version} ({a.build}) for App Review.")
 
 
+# ---- App Store listing (metadata only: no build, no screenshots, no submission) ----
+
+APP_INFO_FIELDS = ("name", "subtitle", "privacyPolicyUrl")
+VERSION_FIELDS = ("description", "keywords", "promotionalText", "whatsNew", "supportUrl", "marketingUrl")
+EDITABLE = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "REJECTED", "METADATA_REJECTED", "WAITING_FOR_REVIEW",
+            "INVALID_BINARY"}
+
+
+def get_opt(path):
+    """GET that returns None instead of stopping when the resource does not exist."""
+    try:
+        return call("GET", path)
+    except SystemExit:
+        return None
+
+
+def short(value, n=60):
+    value = "" if value is None else str(value).replace("\n", " ")
+    return value if len(value) <= n else value[:n - 1] + "…"
+
+
+def diff_fields(current, wanted, fields):
+    return {f: wanted[f] for f in fields if f in wanted and (current or {}).get(f) != wanted[f]}
+
+
+def cmd_store_metadata(a):
+    listing = json.load(open(a.listing))["locales"]
+    app = app_id()
+    attrs = call("GET", f"/v1/apps/{app}")["data"]["attributes"]
+    say(f"### App Store listing for `{BUNDLE_ID}`: {'APPLY' if a.yes else 'dry run, nothing is changed'}")
+    say("")
+    say(f"- App \"{attrs.get('name')}\", primary locale `{attrs.get('primaryLocale')}`, "
+        f"content rights `{attrs.get('contentRightsDeclaration')}`.")
+    versions = call("GET", f"/v1/apps/{app}/appStoreVersions?filter[platform]=IOS&limit=20")["data"]
+    for v in versions:
+        say(f"- Version {v['attributes']['versionString']}: `{v['attributes'].get('appStoreState')}` (id {v['id']})")
+    if a.version:
+        version = next((v for v in versions if v["attributes"]["versionString"] == a.version), None)
+    else:
+        version = next((v for v in versions if v["attributes"].get("appStoreState") in EDITABLE), None)
+    if not version:
+        say("- ❌ No editable App Store version" + (f" {a.version}" if a.version else "") +
+            ". Create it first (`submit` creates it without --yes only as a plan).")
+        sys.exit(1)
+    vid = version["id"]
+    say(f"- Using version {version['attributes']['versionString']} (`{version['attributes'].get('appStoreState')}`).")
+
+    infos = call("GET", f"/v1/apps/{app}/appInfos")["data"]
+    info = next((i for i in infos if (i["attributes"].get("appStoreState") or i["attributes"].get("state")) in EDITABLE), infos[0])
+    say(f"- App info `{info['id']}` state `{info['attributes'].get('appStoreState') or info['attributes'].get('state')}`.")
+
+    changes = []   # (what, method, path, body)
+    info_locs = {l["attributes"]["locale"]: l for l in call("GET", f"/v1/appInfos/{info['id']}/appInfoLocalizations?limit=50")["data"]}
+    ver_locs = {l["attributes"]["locale"]: l for l in call("GET", f"/v1/appStoreVersions/{vid}/appStoreVersionLocalizations?limit=50")["data"]}
+    say("")
+    say("| Locale | Part | Field | Now | Would be |")
+    say("| --- | --- | --- | --- | --- |")
+    for loc, want in listing.items():
+        cur = info_locs.get(loc)
+        d = diff_fields(cur["attributes"] if cur else None, want, APP_INFO_FIELDS)
+        for f, val in d.items():
+            say(f"| {loc} | app info | {f} | {short(cur['attributes'].get(f)) if cur else '(no localization)'} | {short(val)} |")
+        if d and cur:
+            changes.append((f"{loc} app info", "PATCH", f"/v1/appInfoLocalizations/{cur['id']}",
+                            {"data": {"type": "appInfoLocalizations", "id": cur["id"], "attributes": d}}))
+        elif d:
+            body = {"data": {"type": "appInfoLocalizations", "attributes": dict(d, locale=loc),
+                             "relationships": {"appInfo": {"data": {"type": "appInfos", "id": info["id"]}}}}}
+            changes.append((f"{loc} app info (new locale)", "POST", "/v1/appInfoLocalizations", body))
+        cur = ver_locs.get(loc)
+        d = diff_fields(cur["attributes"] if cur else None, want, VERSION_FIELDS)
+        for f, val in d.items():
+            say(f"| {loc} | version | {f} | {short(cur['attributes'].get(f)) if cur else '(no localization)'} | {short(val)} |")
+        if d and cur:
+            changes.append((f"{loc} version", "PATCH", f"/v1/appStoreVersionLocalizations/{cur['id']}",
+                            {"data": {"type": "appStoreVersionLocalizations", "id": cur["id"], "attributes": d}}))
+        elif d:
+            body = {"data": {"type": "appStoreVersionLocalizations", "attributes": dict(d, locale=loc),
+                             "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}}
+            changes.append((f"{loc} version (new locale)", "POST", "/v1/appStoreVersionLocalizations", body))
+    if not changes:
+        say("| | | | nothing differs | |")
+    say("")
+    # Read-only report on what this command does not touch
+    say("Not touched by this command (current state, for the checklist):")
+    for loc, l in ver_locs.items():
+        sets = get_opt(f"/v1/appStoreVersionLocalizations/{l['id']}/appScreenshotSets") or {"data": []}
+        kinds = [f"{s['attributes']['screenshotDisplayType']}" for s in sets["data"]]
+        say(f"- {loc}: screenshot sets {', '.join(kinds) or 'none'}")
+    detail = get_opt(f"/v1/appStoreVersions/{vid}/appStoreReviewDetail")
+    say(f"- Review details: {'present' if detail and detail.get('data') else 'missing'}")
+    age = get_opt(f"/v1/appInfos/{info['id']}/ageRatingDeclaration")
+    say(f"- Age rating declaration: {'present' if age and age.get('data') else 'missing'}")
+    inc = get_opt(f"/v1/appInfos/{info['id']}?include=primaryCategory,secondaryCategory") or {}
+    cats = [x["id"] for x in inc.get("included", [])]
+    say(f"- Categories: {', '.join(cats) or 'none set'}")
+    say(f"- Changes planned: {len(changes)}")
+    if not a.yes:
+        say("")
+        say("Dry run: nothing changed. Run with **confirm** ticked to apply these changes.")
+        return
+    for what, method, path, body in changes:
+        call(method, path, body)
+        say(f"- ✅ {what}: {method} done")
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("has-record")
+    sm = sub.add_parser("store-metadata")
+    sm.add_argument("--listing", required=True)
+    sm.add_argument("--version", default="")
+    sm.add_argument("--yes", action="store_true")
     for name in ("wait-build", "compliance", "whats-new", "submit"):
         s = sub.add_parser(name)
         s.add_argument("--version", required=True)
@@ -233,7 +345,7 @@ def main():
     if not (os.environ.get("ASC_KEY_PATH") or os.environ.get("ASC_KEY_P8_BASE64")):
         sys.exit("skipped: secret ASC_KEY_P8_BASE64 missing")
     {"has-record": cmd_has_record, "wait-build": cmd_wait_build, "compliance": cmd_compliance,
-     "whats-new": cmd_whats_new, "submit": cmd_submit}[a.cmd](a)
+     "whats-new": cmd_whats_new, "submit": cmd_submit, "store-metadata": cmd_store_metadata}[a.cmd](a)
 
 
 if __name__ == "__main__":
