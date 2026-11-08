@@ -124,7 +124,7 @@ public final class ReminderScheduler {
 
     /// Replaces the app's pending reminders with the current plan. Returns how many are scheduled.
     @discardableResult
-    public func reschedule(now: Date = .now) async -> Int {
+    public func reschedule(now: Date = AgendaClock.now) async -> Int {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
         switch settings.authorizationStatus {

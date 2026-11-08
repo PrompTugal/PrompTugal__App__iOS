@@ -143,12 +143,12 @@ public final class VaultSession {
         log.record(VaultTrafficEvent(kind: .error, path: context.isEmpty ? "app" : context, detail: detail))
         if let vaultError = error as? VaultError { return vaultError.localizedDescription }
         if let localized = error as? LocalizedError, let text = localized.errorDescription { return text }
-        if error is URLError { return "The vault server could not be reached. Check the connection and try again." }
-        return "Something went wrong. The details are in Debug → Vault traffic."
+        if error is URLError { return String(localized: "The vault server could not be reached. Check the connection and try again.", bundle: .module) }
+        return String(localized: "Something went wrong. The details are in Debug → Vault traffic.", bundle: .module)
     }
 
     /// One Face ID, then every stored key opened and pulled.
-    func unlockStoredKeys(reason: String = "Open your vaults") async throws {
+    func unlockStoredKeys(reason: String = String(localized: "Open your vaults", bundle: .module)) async throws {
         isUnlocking = true
         defer { isUnlocking = false }
         do {

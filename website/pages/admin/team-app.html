@@ -1,27 +1,37 @@
 <!--
-title: For teams · PrompTugal for iOS
-description: What PrompTugal does for teams and newsrooms that work with AI agents: native iPad dashboards of people, agents and decisions, briefings, messages through encrypted vaults, and debug panels that show every request.
-nav: Teams
-order: 3
+title: Team app · PrompTugal for iOS
+description: The PrompTugal Team app, for the team's own use: native iPad dashboards of people, agents and decisions, briefings, messages through encrypted vaults, and debug panels that show every request.
+robots: noindex
+order: 13
 -->
 <section class="band">
   <div class="wrap">
-    <p class="kicker">For teams and newsrooms · in use by our team</p>
-    <h1>See what your people and agents are doing</h1>
-    <p class="lede">This is what the app is for today: our own team, its newsroom and its agents. Later, the same features for other teams that run AI agents alongside people. On iPad, the app shows who is doing what, what is waiting on whom and what the agents reported, and keeps private work in encrypted vaults. {{features_teams_shipped}} of the {{features_teams_total}} team features below are in the beta today.</p>
+    <p class="kicker">Developer area · Team app</p>
+    <h1>The Team app: what your people and agents are doing</h1>
+    <p class="lede">The Team app is the PrompTugal team’s own app, for Web Summit Lisbon and after. It is not in the App Store and not for the public: the team installs it from its own TestFlight. On iPad it shows who is doing what, what is waiting on whom and what the agents reported, and it keeps private work in encrypted vaults. It has everything the public <a href="../readers.html">PrompTugal app</a> has, and the screens below. {{features_teams_shipped}} of the {{features_teams_total}} features below are in the Team app today.</p>
+    <p class="muted">The three apps are described on the <a href="../apps.html">apps page</a>. The Team app’s privacy page is <a href="team-privacy.html">here</a>.</p>
   </div>
 </section>
 
 <section class="band band-alt" id="features">
   <div class="wrap">
-    <p class="kicker">What a team gets</p>
+    <p class="kicker">What the team gets</p>
     <h2>Team features</h2>
-    <p class="prose">Team features are in the same app as the reader features. They switch on when you have access to a team vault, so there is no second app to install. “In the beta” means the code is on the <code>dev</code> branch; “Coming” means it is being built.</p>
+    <p class="prose">These are the features the public app does not have. “In the beta” means the code is in the Team app on the <code>dev</code> branch; “Coming” means it is being built. Labels follow the files, and the list is checked on every build.</p>
     {{features_teams}}
   </div>
 </section>
 
-<section class="band" id="how">
+<section class="band" id="table">
+  <div class="wrap">
+    <p class="kicker">Evidence</p>
+    <h2>Team features and the files that prove them</h2>
+    {{features_table_teams}}
+    <p class="prose muted">A feature is “in the beta” when every file pattern in the last column matches a file the Team app is built from. The list lives in <a href="{{repo_url}}/blob/dev/website/features.json"><code>website/features.json</code></a>.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="how">
   <div class="wrap prose">
     <p class="kicker">How it works</p>
     <h2>Public data, private vaults</h2>
@@ -34,7 +44,7 @@ order: 3
   </div>
 </section>
 
-<section class="band band-alt" id="abp">
+<section class="band" id="abp">
   <div class="wrap prose">
     <p class="kicker">What makes it possible</p>
     <h2>100+ agents, each with a behaviour policy</h2>
@@ -48,11 +58,11 @@ order: 3
   </div>
 </section>
 
-<section class="band" id="first">
+<section class="band band-alt" id="first">
   <div class="wrap prose">
     <p class="kicker">Internal first</p>
     <h2>Our team is the first user</h2>
-    <p>Seven to nine people use these features at Web Summit Lisbon, 9 to 12 November 2026, with the team’s AI agents working alongside them. The build log shows how the app was built, checkpoint by checkpoint, by people and agents working in parallel. After the summit, we plan to offer team packs to other teams.</p>
-    <p><a href="plans.html">Plans for teams</a> · <a href="features.html">Every feature and its status</a></p>
+    <p>Seven to nine people use these features at Web Summit Lisbon, 9 to 12 November 2026, with the team’s AI agents working alongside them. The build log shows how the app was built, checkpoint by checkpoint, by people and agents working in parallel. After the summit we may offer team features to other teams that work an event with agents; that would be its own offer, not part of the public app.</p>
+    <p><a href="../plans.html">Plans</a> · <a href="../features.html">Every public feature and its status</a></p>
   </div>
 </section>

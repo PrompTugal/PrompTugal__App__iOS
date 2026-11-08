@@ -76,13 +76,13 @@ public final class RemoteFeed<Value: Decodable & Sendable> {
     nonisolated private static func message(for error: Error) -> String {
         if let error = error as? URLError {
             switch error.code {
-            case .notConnectedToInternet, .networkConnectionLost: return "You are offline."
-            case .timedOut: return "The server took too long to answer."
-            case .badServerResponse: return "The server answered with an error."
-            default: return "The request failed (\(error.code.rawValue))."
+            case .notConnectedToInternet, .networkConnectionLost: return String(localized: "You are offline.", bundle: .module)
+            case .timedOut: return String(localized: "The server took too long to answer.", bundle: .module)
+            case .badServerResponse: return String(localized: "The server answered with an error.", bundle: .module)
+            default: return String(localized: "The request failed (\(error.code.rawValue)).", bundle: .module)
             }
         }
-        if error is DecodingError { return "The data changed shape and could not be read." }
+        if error is DecodingError { return String(localized: "The data changed shape and could not be read.", bundle: .module) }
         return error.localizedDescription
     }
 }

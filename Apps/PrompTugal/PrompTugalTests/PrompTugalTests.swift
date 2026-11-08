@@ -15,4 +15,9 @@ struct PublicAppTests {
         let schemes = types.flatMap { $0["CFBundleURLSchemes"] as? [String] ?? [] }
         #expect(schemes.contains("promptugal"))
     }
+
+    @Test("the agenda seed is bundled and decodes (offline first launch)")
+    func agendaSeed() {
+        #expect(AgendaSeed.events().count > 150)
+    }
 }

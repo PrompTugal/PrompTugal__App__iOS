@@ -128,4 +128,7 @@ public enum AgendaHub {
     public static var agendaDidLoad: ([Event]) -> Void = { _ in }
     /// Publish "Now and next" with the saved sessions, when there is no agenda yet.
     public static var publishNowNext: (_ agenda: [Event], _ saved: [Event]) -> Void = { _, _ in }
+    /// The agenda built into the app, read when nothing has been cached yet, so the first launch works with no
+    /// network at the venue. The app sets it at launch (the core pack of PTSync); the default has none.
+    public static var seedAgenda: () -> [Event] = { [] }
 }

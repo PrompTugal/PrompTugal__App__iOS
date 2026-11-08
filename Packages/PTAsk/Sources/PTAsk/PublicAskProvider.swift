@@ -12,6 +12,13 @@ public final class PublicAskProvider: AskContextProvider {
     public var supportedKinds: Set<AIContextKind> { [.agenda, .picks, .page] }
     public var personName: String? { nil }
 
+    /// The public app has no team context, so the text says nothing about a team.
+    public var askIntro: String { String(localized: "Ask about the summit and your day. Choose below what Ask may see.", bundle: .module) }
+    public var askPlaceholder: String { String(localized: "Ask about today and your picks…", bundle: .module) }
+    public var askAudience: String { "visitors to the Lisbon summit (9–12 November)" }
+    public var unknownPersonLine: String { "You do not know who you are talking to." }
+    public var offersVaultKeyCopy: Bool { false }
+
     /// The reader's cache on this device, then the network (logged in Debug → Network).
     public func agenda() async -> [Event] {
         let cached = AskAgendaCache.events()
@@ -33,11 +40,11 @@ public final class PublicAskProvider: AskContextProvider {
 
     /// Two prepared questions the public app can answer from the agenda and the picks.
     public var extraStarters: [AIStarter] {
-        [AIStarter(id: "now-next", title: "What is on now and next?", symbol: "clock",
-                   prompt: "What is on at the summit right now, and what starts in the next two hours? Times in Lisbon time, one line each: time, title, place. If nothing is on, say when the next session starts.",
+        [AIStarter(id: "now-next", title: String(localized: "What is on now and next?", bundle: .module), symbol: "clock",
+                   prompt: String(localized: "What is on at the summit right now, and what starts in the next two hours? Times in Lisbon time, one line each: time, title, place. If nothing is on, say when the next session starts.", bundle: .module),
                    include: [.agenda]),
-         AIStarter(id: "my-picks-day", title: "Plan my day from my picks", symbol: "star",
-                   prompt: "Using my picks first, then the agenda, plan the rest of my day at the summit, from now, in Lisbon time. Show a timeline: time, what, where. Point out clashes (two things at once) and say which you would choose and why. Leave about 10 minutes to walk between venues and one break.",
+         AIStarter(id: "my-picks-day", title: String(localized: "Plan my day from my picks", bundle: .module), symbol: "star",
+                   prompt: String(localized: "Using my picks first, then the agenda, plan the rest of my day at the summit, from now, in Lisbon time. Show a timeline: time, what, where. Point out clashes (two things at once) and say which you would choose and why. Leave about 10 minutes to walk between venues and one break.", bundle: .module),
                    include: [.agenda, .picks])]
     }
 }

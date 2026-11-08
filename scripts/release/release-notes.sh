@@ -6,6 +6,8 @@
 #      briefs/*/status/ that changed in the range, one line per session.
 #   2. Changes: commit subjects in the range, without merges, the website's
 #      "release: v…" bumps and status-only commits.
+# An app can add a fixed intro that goes first on every upload: scripts/release/notes/<app>.txt
+# (APP_KEY from apps.json), at most 1,500 characters.
 # Range: from the previous tag of the app (<app>-v*, or the old ios-v*) (or the last 30 commits) to HEAD.
 set -euo pipefail
 to=${2:-HEAD}
@@ -27,10 +29,15 @@ changes=$(git log --no-merges --format='%s' "$range" \
   | awk '!seen[$0]++' | sed 's/^/- /')
 count=$(printf '%s\n' "$changes" | grep -c '^- ' || true)
 
-{
+# Build the whole text first, then cut it: piping a long text into `head -c` closes the pipe early, and
+# with pipefail the writer's SIGPIPE ("printf: write error: Broken pipe") would fail the release step.
+notes=$({
   echo "${APP_NAME:-PrompTugal} ${MARKETING_VERSION:-} (${BUILD_NUMBER:-}) · tag ${RELEASE_TAG:-none} · commit $(git rev-parse --short "$to")"
   echo "Test on iPhone and iPad. Report problems to the team channel with the build number."
+  intro="$(dirname "$0")/notes/${APP_KEY:-}.txt"
+  if [ -n "${APP_KEY:-}" ] && [ -f "$intro" ]; then echo; head -c 1500 "$intro"; echo; fi
   if [ -n "$status" ]; then echo; echo "What each session changed:"; printf '%s\n' "$status"; fi
   echo; echo "Commits $since: $count"
   printf '%s\n' "$changes"
-} | head -c 3900
+})
+printf '%s\n' "${notes:0:3900}"

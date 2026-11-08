@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "PTVaultUI",
+    defaultLocalization: "en",
     platforms: [.iOS(.v18)],
     products: [
         .library(name: "PTVaultUI", targets: ["PTVaultUI"]),
@@ -15,7 +16,8 @@ let package = Package(
     targets: [
         .target(
             name: "PTVaultUI",
-            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "SGitVault", package: "SGitVault")]
+            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "SGitVault", package: "SGitVault")],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "PTVaultUITests",

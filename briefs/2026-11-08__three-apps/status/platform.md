@@ -1,6 +1,6 @@
 # Platform status
 
-> Phase 4 (Team project move) is pushed on split/platform at 09623bd, not yet compiled: an ios.yml run (app=all, macos-26) is queued. READY follows a green run and an ios-release dry run for app=team.
+> Support role. My cookie fix (b30c9f7) is in the conductor's split/rc 75203d5 (one consolidated full run there; my run #388 cancelled by the conductor). I dispatch no more runs; new work goes into rc2. The SecretStore/SpeechDictation move stays parked in history (e7a6ac4, reverted by db548cd).
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -101,3 +101,31 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Left as is: `Schedule/ScheduleIntents.swift` stays in the Team app (it reads `TeamFeatures.shared`, so it cannot move to the public app unchanged). StoreKit product ids and Keychain service names keep the `reader` prefix.
 - For other roles: `website/build.py`, `validate.py` and `test_site.py` on dev read `PrompTugal.xcodeproj` and `PrompTugal/Store/...`. Editor's branch (admin.public_project) already handles the moved layout; merge editor with this branch. `scripts/release/lib.sh` still defaults PROJECT to `PrompTugal.xcodeproj` (release's file; the workflows pass the project from apps.json).
 - Next: read the ios.yml run, fix, then the ios-release dry run (app=team) and READY.
+
+## Update (08:35 UTC)
+- Merged split/team (NowNext in PTAgenda, d599843). My first merge commit carried conflict markers in `NowNext.swift` (d9ffef5); fixed in f0c53a9 by taking team's files. Run 335 (on d9ffef5) was cancelled before it ran. Always grep for conflict markers before committing a merge.
+- Run 336 (f0c53a9): Team Release build compiled; Team iPad tests failed only on `@testable import PrompTugal` in AppReviewTests (the merge restored the old module name). Fixed in cd02fa7; cancelled 336.
+- Run 338 (cd02fa7), so far green: apps.json check, Debug and Release builds (Team, PrompTugal, RiskMandate where run), Team iPad tests, PrompTugal iPhone tests, PTAsk, PTNews, PTLanes. Still queued: Team iPhone tests, remaining package tests, RiskMandate tests.
+- ios-release dry run, app=team, run 81 (id 42461685105), dispatched at 08:09, queued.
+- Team entry point also sets `SharedContainer.appGroup = "group.news.promptugal.team"` so the Now/Next snapshot can never go to the PrompTugal group (Team declares no group, so nothing is written).
+
+## Update (09:02 UTC): READY sent
+- Run 338 green on cd02fa7 (all jobs). Release dry run 81 (app=team) green: unsigned archive, bundle id matches apps.json, sign and export with associated-domains and time-sensitive, no upload.
+- READY sent to the conductor with both run ids.
+- Open for others: the apps session adds the widgets and intents targets to Apps/PrompTugal (sources in `Apps/PrompTugal/Widgets` and `Intents`; link PTAgenda for `SharedContainer`, `NowNextSnapshot`, `LisbonClock`). Their xcconfig and entitlements are in `Apps/PrompTugal/Config/`.
+
+## Update (11:20 UTC): SecretStore and SpeechDictation into PTCore
+- Phase 4 merged to dev as d94a5b4 (cd02fa7, run 338, dry run 81).
+- New task from the conductor (collab noted the duplicates): one copy of `SecretStore` (with `SecretStoreError`, `KeychainSecretStore`, `MemorySecretStore`) and one `SpeechDictation` now live in `Packages/PTCore/Sources/PTCore/Secrets` and `Speech`, public. Both copies are gone from PTAsk and PTLanes. `KeychainSecretStore(service:)` has no default; `AIKeyStore` passes `news.promptugal.reader.ai` and `LanesStore` passes `news.promptugal.reader.lanes`, so the Keychain services are unchanged. PTCore builds in Swift 5 language mode now (every other package and the apps already do). New `SecretStoreTests` in PTCore.
+- Commit e7a6ac4 on split/platform, merged with origin/dev v0.4.12 first. Run 348 (ios.yml app=all, macos-26): the PrompTugal iPhone unit tests passed (they build PTCore and PTAsk); the rest was queued at 11:18.
+- `scripts/release/lib.sh` PROJECT default: asked release; I edit it only if they say yes. No answer yet.
+- Reviewed team's PTNowNext reference in `Apps/Team/Team.xcodeproj` (split/team e70d928): one packageReferences line and one XCLocalSwiftPackageReference block, nothing else. Fine.
+
+## Update (11:30 UTC): parked, now support
+- New priority from the conductor (briefs/2026-11-08__summit-app-store/README.md): everything goes to the summit app. The SecretStore/SpeechDictation dedupe was not fully green, so it is parked: commit e7a6ac4 stays on split/platform, run 348 cancelled (only the PrompTugal iPhone tests had run, green). To resume: merge origin/dev, dispatch ios.yml, READY after a green run. Nobody depends on it.
+- Support: I review package and project changes from apps, deck and team for dependency-graph and `check_apps.py` problems before they reach the conductor.
+
+## Update (12:25 UTC): consolidated into split/rc
+- Cookie fix: `HTTPClient.makeSession()` sets `httpCookieStorage = nil`, `httpShouldSetCookies = false`, `httpCookieAcceptPolicy = .never`, with a test (b30c9f7 on split/platform). The conductor folded it into split/rc 75203d5 (dev + design 1b5a0a7 + team d310767 + b30c9f7); the full run is there. No runs of mine are queued.
+- Reviewed split/i18n a8aee16 for package risk earlier: no blocker (see the message to the conductor and i18n; follow-ups: pt-PT and pt-BR in the PrompTugal project knownRegions, widget bundle check, PTExplore resources).
+- Standing by as support for graph and check_apps reviews; not dispatching CI.

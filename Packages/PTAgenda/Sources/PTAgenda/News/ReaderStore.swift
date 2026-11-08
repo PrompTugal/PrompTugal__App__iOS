@@ -25,10 +25,15 @@ public final class ReaderStore {
     public private(set) var agendaUnavailable = false
     public private(set) var newsUnavailable = false
     public private(set) var refreshing = false
+    /// Where the agenda on screen came from, for a "synced 3 min ago" line: the app's seed, the cache of an earlier
+    /// run, or this run's refresh.
+    public enum AgendaSource: Equatable, Sendable { case none, seed, cache, network }
+    public private(set) var agendaSource: AgendaSource = .none
     public var storageMessage: String?
 
-    public var agenda: [Event] { cache.agenda }
-    public var news: [Story] { cache.news }
+    // Both go through the screenshot filter (-PTHideTerm, Debug builds only; a no-op in Release).
+    public var agenda: [Event] { ScreenshotFilter.events(cache.agenda) }
+    public var news: [Story] { ScreenshotFilter.stories(cache.news) }
     public var agendaUpdated: Date? { cache.agendaUpdated }
     public var newsUpdated: Date? { cache.newsUpdated }
     public var saved: [Event] { (schedule?.picks ?? []).compactMap(\.event).sorted(by: Event.earlier) }
@@ -57,6 +62,7 @@ public final class ReaderStore {
             if cache.agendaUpdated == nil {
                 cache.agenda = decoded.agenda
                 cache.agendaUpdated = decoded.agendaUpdated
+                if !decoded.agenda.isEmpty { agendaSource = .cache }
             }
             if cache.newsUpdated == nil {
                 cache.news = decoded.news
@@ -64,6 +70,15 @@ public final class ReaderStore {
             }
             cache.details = Self.trimmed(decoded.details.merging(cache.details) { _, fresh in fresh },
                                          keeping: keptDetailIDs)
+        }
+        // Nothing cached yet: start from the agenda built into the app, so the first launch works with no network.
+        // The seed is not written to the cache; only a real refresh is.
+        if cache.agenda.isEmpty {
+            let seed = AgendaHub.seedAgenda()
+            if !seed.isEmpty {
+                cache.agenda = seed
+                agendaSource = .seed
+            }
         }
         publishNowNext()
     }
@@ -91,8 +106,13 @@ public final class ReaderStore {
         if cache.agenda.isEmpty {
             AgendaHub.publishNowNext([], saved)
         } else {
-            AgendaHub.agendaDidLoad(cache.agenda)
+            AgendaHub.agendaDidLoad(agenda)
         }
+    }
+
+    /// What the Now screen shows at `now`: the phase, what is next for the person, what is on, what starts soon.
+    public func nowModel(at now: Date = AgendaClock.now) -> NowModel {
+        NowModel(events: cache.agenda, picks: schedule?.picks ?? [], now: now)
     }
 
     public func event(id: String) -> Event? {
@@ -121,6 +141,7 @@ public final class ReaderStore {
             try Task.checkCancellation()
             cache.agenda = events
             cache.agendaUpdated = .now
+            agendaSource = .network
             agendaUnavailable = false
             persistCache()
             publishNowNext()
@@ -158,7 +179,7 @@ public final class ReaderStore {
         do {
             try write(cache, to: "content.json")
         } catch {
-            storageMessage = "The latest content couldn’t be stored for offline use."
+            storageMessage = String(localized: "The latest content couldn’t be stored for offline use.", bundle: .module)
         }
     }
 

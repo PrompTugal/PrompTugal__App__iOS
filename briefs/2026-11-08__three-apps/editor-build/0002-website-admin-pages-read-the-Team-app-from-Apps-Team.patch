@@ -1,0 +1,87 @@
+From 23c4fa50123d86cb0adff1ad6f852284bd102cee Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 8 Nov 2026 07:12:30 +0000
+Subject: [PATCH 2/2] website: admin pages read the Team app from Apps/Team
+ once the project has moved
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Kw9UwEsi13SbMcKeL3t96X
+---
+ website/admin.py | 17 ++++++++++++-----
+ website/build.py |  2 +-
+ 2 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/website/admin.py b/website/admin.py
+index d11f2c9..7ccc511 100644
+--- a/website/admin.py
++++ b/website/admin.py
+@@ -28,9 +28,16 @@ def plain(text):
+ 
+ # --- features --------------------------------------------------------------
+ 
++def app_source_dir(root=ROOT):
++    """The folder of the app these pages describe: the root PrompTugal/ folder, or Apps/Team/ once the project has moved."""
++    for place in ('PrompTugal', 'Apps/Team'):
++        if (root / place).is_dir():
++            return root / place
++    return root / 'PrompTugal'
++
+ def root_scene(root=ROOT):
+     """The WindowGroup of the app's @main type: what the app actually shows at launch."""
+-    for path in sorted(root.glob('PrompTugal/**/*.swift')):
++    for path in sorted(app_source_dir(root).glob('**/*.swift')):
+         text = re.sub(r'(?m)^\s*//.*$', '', path.read_text(errors='replace'))
+         if '@main' not in text:
+             continue
+@@ -374,7 +381,7 @@ def destinations(root=ROOT):
+     Comments are ignored. Each registration is its call plus a trailing closure, if
+     any. A screen whose view is a PendingFeatureView is registered but not built yet."""
+     out = []
+-    for path in sorted(root.glob('PrompTugal/**/Destinations.swift')):
++    for path in sorted(app_source_dir(root).glob('**/Destinations.swift')):
+         out += parse_destinations(path.read_text(), path.relative_to(root).as_posix())
+     return out
+ 
+@@ -386,7 +393,7 @@ def branch_destinations(root=ROOT, remote='origin'):
+     for ref in git('branch', '-r', '--format=%(refname:short)', root=root).split():
+         if not ref.startswith(f'{remote}/night/'):
+             continue
+-        files = [f for f in git('ls-tree', '-r', '--name-only', ref, 'PrompTugal', root=root).splitlines()
++        files = [f for f in git('ls-tree', '-r', '--name-only', ref, 'PrompTugal', 'Apps/Team', root=root).splitlines()
+                  if f.endswith('/Destinations.swift')]
+         for f in files:
+             for d in parse_destinations(git('show', f'{ref}:{f}', root=root), f):
+@@ -439,7 +446,7 @@ def branch_screens_html(items):
+             '<th scope="col">Branch</th></tr></thead><tbody>' + rows + '</tbody></table></div>')
+ 
+ 
+-def screens_html(items, websites):
++def screens_html(items, websites, websites_path='PrompTugal/Websites.json'):
+     if items:
+         counts = {k: sum(1 for d in items if d['kind'] == k) for k in ('native', 'web', 'hybrid')}
+         pending = sum(1 for d in items if d['pending'])
+@@ -457,7 +464,7 @@ def screens_html(items, websites):
+         table = ('<p class="notice">No <code>Destinations.swift</code> on this branch yet. The app has one native '
+                  'screen, the offline reader, and opens websites in the sidebar below.</p>')
+     sites = ''.join(f'<tr><td>{esc(s["name"])}</td><td><code>{esc(s["url"])}</code></td></tr>' for s in websites)
+-    return (table + '<h3>Websites in the sidebar</h3><p>From <code>PrompTugal/Websites.json</code>, the defaults the '
++    return (table + '<h3>Websites in the sidebar</h3><p>From <code>' + esc(websites_path) + '</code>, the defaults the '
+             'app ships with. Users can edit the list in the Files app.</p><div class="table-wrap"><table><thead><tr>'
+             '<th scope="col">Name</th><th scope="col">Address</th></tr></thead><tbody>' + sites + '</tbody></table></div>')
+ 
+diff --git a/website/build.py b/website/build.py
+index dbf18f9..ecf243f 100644
+--- a/website/build.py
++++ b/website/build.py
+@@ -456,7 +456,7 @@ def build(out):
+                   releases=admin.releases_html(admin.releases(), REPO_URL),
+                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
+                   workflow_count=str(len(admin.workflows())),
+-                  screens=admin.screens_html(admin.destinations(), facts['websites']),
++                  screens=admin.screens_html(admin.destinations(), facts['websites'], WEBSITES_JSON.relative_to(ROOT).as_posix()),
+                   branch_screens=admin.branch_screens_html(admin.branch_destinations()),
+                   shell_root_note=('<p class="notice">The app shows the shell at launch (<code>AppShell</code> is the root view), so these screens are reachable.</p>'
+                                    if 'AppShell(' in admin.root_scene() else
+-- 
+2.43.0
+
