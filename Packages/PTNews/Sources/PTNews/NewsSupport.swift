@@ -103,3 +103,19 @@ struct NewsFreshness: View {
         }
     }
 }
+
+/// Share a story: the system share sheet with the story's page and title (review finding F10).
+struct StoryShare: View {
+    let url: URL
+    let title: String
+
+    var body: some View {
+        ShareLink(item: url, subject: Text(title), message: Text(title)) {
+            Image(systemName: "square.and.arrow.up")
+                .font(.subheadline)
+                .foregroundStyle(Palette.muted)
+                .frame(width: 44, height: 44)
+        }
+        .accessibilityLabel("Share \(title)")
+    }
+}

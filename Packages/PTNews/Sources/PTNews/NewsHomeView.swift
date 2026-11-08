@@ -81,6 +81,7 @@ public struct NewsHomeView: View {
                 }
             }
             .buttonStyle(.plain)
+            .overlay(alignment: .topTrailing) { StoryShare(url: lead.url, title: lead.title) }
         }
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Space.m)], spacing: Space.m) {
             ForEach(store.news.dropFirst()) { story in
@@ -95,6 +96,7 @@ public struct NewsHomeView: View {
                     .frame(maxHeight: .infinity, alignment: .top)
                 }
                 .buttonStyle(.plain)
+                .overlay(alignment: .topTrailing) { StoryShare(url: story.url, title: story.title) }
             }
         }
     }
