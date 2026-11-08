@@ -4,12 +4,12 @@
 #
 #   manual     the imported Apple Distribution certificate and the installed
 #              App Store profiles; ExportOptions signingStyle manual.
-#   automatic  The archive is built unsigned (CODE_SIGNING_ALLOWED=NO) and
-#              -exportArchive signs it with a cloud-managed distribution certificate
-#              (-allowProvisioningUpdates + API key, key role Admin). No Apple
-#              Development certificate is created, so runs do not use up the
-#              account's certificate limit. AUTO_ARCHIVE=development restores the
-#              old behaviour (Xcode signs the archive itself).
+#   automatic  Xcode signs with the API key (-allowProvisioningUpdates); export
+#              uses a cloud-managed distribution certificate (key role Admin).
+#              AUTO_ARCHIVE picks how the archive is signed: distribution (default:
+#              automatic, distribution identity, no Apple Development certificate),
+#              adhoc, unsigned, or development (creates a development certificate
+#              per run and so uses up the account's limit).
 #
 # Upload: xcodebuild -exportArchive with destination upload and the API key
 # (UPLOAD_TOOL=xcodebuild, default) or xcrun altool (UPLOAD_TOOL=altool).
@@ -62,14 +62,22 @@ if [ "$MODE" = manual ]; then
   fi
   extra+=(-xcconfig "$xc")
 else
-  if [ "${AUTO_ARCHIVE:-unsigned}" = development ]; then
-    extra+=(-allowProvisioningUpdates "${auth[@]}")
-    settings+=(CODE_SIGN_STYLE=Automatic)
-  else
-    # Unsigned archive; the export step does the signing (see the header).
-    settings+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=)
-    summary "- Archive built unsigned; export signs with the cloud-managed distribution certificate."
-  fi
+  case "${AUTO_ARCHIVE:-distribution}" in
+    development)  # Xcode signs the archive itself; creates an Apple Development certificate per run
+      extra+=(-allowProvisioningUpdates "${auth[@]}")
+      settings+=(CODE_SIGN_STYLE=Automatic) ;;
+    distribution) # automatic signing with the distribution identity: no development certificate
+      extra+=(-allowProvisioningUpdates "${auth[@]}")
+      settings+=(CODE_SIGN_STYLE=Automatic CODE_SIGN_IDENTITY="Apple Distribution")
+      summary "- Archive signed automatically with the distribution identity." ;;
+    adhoc)        # ad-hoc signature that carries the entitlements; the export re-signs
+      settings+=(CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=NO PROVISIONING_PROFILE_SPECIFIER=)
+      summary "- Archive signed ad hoc with its entitlements; the export signs it for distribution." ;;
+    unsigned)     # no entitlements in the archive; the export adds only the basics
+      settings+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=)
+      summary "- Archive built unsigned." ;;
+    *) echo "::error::unknown AUTO_ARCHIVE=$AUTO_ARCHIVE"; exit 1 ;;
+  esac
 fi
 
 run_logged "Archive (signed)" "$LOGS/archive-signed.log" -- \
@@ -126,18 +134,39 @@ ipa_bundle=$(unzip -p "$ipa" 'Payload/*.app/Info.plist' | plutil -extract CFBund
 # Show who signed the exported app (the archive itself may be unsigned).
 tmp=$(mktemp -d); unzip -q "$ipa" 'Payload/*' -d "$tmp"
 codesign -dvv "$tmp"/Payload/*.app 2>&1 | grep -E '^(Authority|TeamIdentifier|Identifier)=' | head -4 | sed 's/^/    /' || true
-# Entitlements of the exported app and every extension: an unsigned archive must come out
-# of the export with its entitlements (app group, keychain groups) re-applied.
+# Entitlements of the exported app and every extension. Every key the target's entitlements
+# file declares must be in the signed export, or the build would break widgets, shared data,
+# webcredentials. A missing key stops the run before any upload.
 summary "#### Entitlements in the exported .ipa"
+ent_dir=$(dirname "$PROJECT")
+"$(dirname "$0")/targets.sh" > "$OUT/targets.tsv"
+ent_fail=0
 for b in "$tmp"/Payload/*.app "$tmp"/Payload/*.app/PlugIns/*.appex "$tmp"/Payload/*.app/Extensions/*.appex; do
   [ -e "$b" ] || continue
-  echo "== entitlements: $(basename "$b")"; codesign -d --entitlements :- "$b" 2>/dev/null | plutil -convert xml1 -o - - 2>/dev/null | grep -E '<key>|<string>|<true/>|<false/>' || echo "(none)"
-  summary "**$(basename "$b")**"
-  summary '```'
-  codesign -d --entitlements :- "$b" 2>/dev/null | plutil -convert xml1 -o - - 2>/dev/null | grep -E '<key>|<string>|<true/>|<false/>' | sed 's/^[[:space:]]*//' | while IFS= read -r l; do summary "$l"; done || true
-  summary '```'
+  bid=$(plist_get "$b/Info.plist" CFBundleIdentifier)
+  codesign -d --entitlements :- "$b" 2>/dev/null | plutil -convert xml1 -o "$OUT/ent-got.plist" - 2>/dev/null || echo '<plist version="1.0"><dict/></plist>' > "$OUT/ent-got.plist"
+  want=$(awk -F'\t' -v b="$bid" '$2==b && $4!=""{print $4; exit}' "$OUT/targets.tsv")
+  echo "== entitlements: $(basename "$b") ($bid), declared in: ${want:-none}"
+  plutil -p "$OUT/ent-got.plist" | sed 's/^/    /'
+  summary "**$(basename "$b")** (\`$bid\`, declared in \`${want:-none}\`)"
+  summary '```'; plutil -p "$OUT/ent-got.plist" | while IFS= read -r l; do summary "$l"; done; summary '```'
+  if [ -n "$want" ]; then
+    wf="$ent_dir/$want"; [ -f "$wf" ] || wf="$want"
+    missing=$(python3 - "$wf" "$OUT/ent-got.plist" <<'PY'
+import plistlib, sys
+want = plistlib.load(open(sys.argv[1], "rb")); got = plistlib.load(open(sys.argv[2], "rb"))
+print(" ".join(k for k in want if k not in got))
+PY
+)
+    if [ -n "$missing" ]; then
+      echo "::error::$(basename "$b") is missing entitlements declared in $want: $missing"
+      summary "- ❌ missing in the export: $missing"
+      ent_fail=1
+    fi
+  fi
 done
 rm -rf "$tmp"
+[ "$ent_fail" = 0 ] || { summary "- ❌ entitlements missing in the export: nothing uploaded."; exit 1; }
 
 if [ "${SKIP_UPLOAD:-false}" = true ]; then
   note "- Upload skipped (SKIP_UPLOAD=true). The signed .ipa is an artifact."

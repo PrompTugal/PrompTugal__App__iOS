@@ -75,6 +75,11 @@ on:
         description: 'TestFlight internal testing only (build can never go to external testers or the App Store)'
         type: boolean
         default: false
+      archive_signing:
+        description: 'Automatic signing: how the archive is signed (distribution = no Apple Development certificate; development = old behaviour)'
+        type: choice
+        options: [distribution, adhoc, unsigned, development]
+        default: distribution
       source_ref:
         description: 'Build another branch (e.g. night/platform) with these release scripts'
         type: string
@@ -361,6 +366,7 @@ jobs:
         if: steps.gate.outputs.ready == 'true' && env.RECORD_MISSING != 'true'
         env:
           MODE: ${{ steps.gate.outputs.mode }}
+          AUTO_ARCHIVE: ${{ inputs.archive_signing || 'distribution' }}
         run: scripts/release/testflight.sh
 
       - name: Wait for processing, answer export compliance, set What to Test
