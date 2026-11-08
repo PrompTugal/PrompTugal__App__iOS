@@ -1,10 +1,11 @@
 import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
+import PTCore
 
 /// Ask: the native AI chat (entry view for `collab.ai`). On iPhone it is a screen or a sheet; on iPad it also
 /// opens as a side panel next to any screen with `.askPanel(isPresented:)`.
-struct AskView: View {
+public struct AskView: View {
     var store: ChatStore = .shared
     /// Shown in the side panel, where the navigation title is not.
     var compact = false
@@ -13,7 +14,13 @@ struct AskView: View {
     @FocusState private var composerFocused: Bool
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
-    var body: some View {
+    public init() {}
+    init(store: ChatStore, compact: Bool) {
+        self.store = store
+        self.compact = compact
+    }
+
+    public var body: some View {
         @Bindable var store = store
         ScrollViewReader { proxy in
             ScrollView {
@@ -102,7 +109,7 @@ private struct AskStarters: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Ask about the summit, your day and the team. Choose below what Ask may see.")
                 .font(.subheadline).foregroundStyle(.secondary)
-            ForEach(AIPrompts.starters) { starter in
+            ForEach(AIPrompts.starters(for: AskEnvironment.provider)) { starter in
                 Button {
                     starter.run(store)
                 } label: {
@@ -193,15 +200,15 @@ struct AskTurnView: View {
 /// Sessions named in an answer: pick (star) and open the event page.
 struct AskMentions: View {
     let events: [Event]
-    private var schedule: ScheduleStore { TeamFeatures.shared.schedule }
+    private var provider: any AskContextProvider { AskEnvironment.provider }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             ForEach(events) { event in
-                let picked = schedule.isPicked(event)
+                let picked = provider.isPicked(event)
                 HStack(spacing: 8) {
                     Button {
-                        schedule.toggle(event)
+                        provider.togglePick(event)
                     } label: {
                         Image(systemName: picked ? "star.fill" : "star")
                     }
@@ -236,7 +243,7 @@ struct AskConsentSheet: View {
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
-                ForEach(AIContextKind.toggleable) { kind in
+                ForEach(AIContextKind.toggleableHere) { kind in
                     Toggle(isOn: Binding(get: { store.isOn(kind) }, set: { on in if on != store.isOn(kind) { store.toggle(kind) } })) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(kind.title)
@@ -300,7 +307,7 @@ private struct AskComposer: View {
         VStack(spacing: 8) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
-                    ForEach(AIContextKind.toggleable) { kind in
+                    ForEach(AIContextKind.toggleableHere) { kind in
                         let on = store.isOn(kind)
                         Button {
                             store.toggle(kind)
@@ -456,7 +463,7 @@ struct AskSettingsView: View {
             }
 
             Section {
-                ForEach(AIContextKind.toggleable) { kind in
+                ForEach(AIContextKind.toggleableHere) { kind in
                     Toggle(isOn: Binding(get: { store.isOn(kind) }, set: { on in if on != store.isOn(kind) { store.toggle(kind) } })) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(kind.title)
@@ -527,7 +534,7 @@ extension View {
     /// Ask next to any screen, in one line: a toolbar button and ⌘K open it as a side panel on iPad (regular
     /// width) and as a sheet on iPhone. For the shell's detail view, e.g.
     /// `destination.view().askAnywhere(enabled: destination.id != "collab.ai")`.
-    func askAnywhere(enabled: Bool = true) -> some View {
+    public func askAnywhere(enabled: Bool = true) -> some View {
         modifier(AskAnywhere(enabled: enabled))
     }
 }
@@ -584,5 +591,20 @@ enum AIMarkdown {
     static func render(_ text: String) -> AttributedString {
         (try? AttributedString(markdown: text, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
             ?? AttributedString(text)
+    }
+}
+
+/// The last Ask requests as sent, for Debug → Collaboration and AI (the Team app's panel shows it).
+public struct AskRequestsDebugRows: View {
+    var chat: ChatStore = .shared
+
+    public init() {}
+
+    public var body: some View {
+        let requests = chat.turns.compactMap(\.debug)
+        if requests.isEmpty { Text("No question asked yet.").foregroundStyle(.secondary) }
+        ForEach(Array(requests.enumerated().reversed()), id: \.offset) { _, request in
+            AskDebugDisclosure(request: request)
+        }
     }
 }

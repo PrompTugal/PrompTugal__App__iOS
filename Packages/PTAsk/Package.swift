@@ -24,5 +24,6 @@ let package = Package(
             dependencies: ["PTAsk"],
             path: "Tests/PTAskTests"
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )

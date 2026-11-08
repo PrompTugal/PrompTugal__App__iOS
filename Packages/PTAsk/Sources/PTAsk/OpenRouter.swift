@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 /// OpenRouter's chat completions API, as promptugal.news `/ask/` uses it (assets/chat/chat-core.js):
 /// one POST to `/api/v1/chat/completions`, streamed as server-sent events, `usage: { include: true }`.

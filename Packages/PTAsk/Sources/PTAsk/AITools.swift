@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 /// Tools Ask can call to read the app's own data when the question needs it (as the website's chat does with
 /// `window.__tool`). Read only: no tool changes anything. Each call and a one-line result show in the conversation.
@@ -108,31 +109,25 @@ enum AITools {
             return ("error: the user has not shared this data with Ask", "not shared")
         }
         let args = arguments(call.function.arguments)
+        let provider = AskEnvironment.provider
         switch call.function.name {
         case "now":
-            let (current, next) = onNow(await CollabHooks.agenda(), at: now)
+            let (current, next) = onNow(await provider.agenda(), at: now)
             let text = (["Lisbon: \(AIContextAssembler.longLisbon(now))", "On now:"] + current.map { "- " + line($0) }
                         + ["Next hour:"] + next.map { "- " + line($0) }).joined(separator: "\n")
             return (cap(text), "\(current.count) on now, \(next.count) next")
         case "search_agenda":
-            let found = search(await CollabHooks.agenda(), query: args["query"] ?? "", day: args["day"])
+            let found = search(await provider.agenda(), query: args["query"] ?? "", day: args["day"])
             let text = found.isEmpty ? "No session matches." : found.map(line).joined(separator: "\n")
             return (cap(text), "\(found.count) \(found.count == 1 ? "result" : "results")")
         case "my_picks":
-            let part = AIContextAssembler.picksPart(ids: CollabHooks.myPickIds(), events: await CollabHooks.agenda(), now: now)
+            let part = AIContextAssembler.picksPart(ids: provider.myPickIds(), events: await provider.agenda(), now: now)
             return (cap(part.body.isEmpty ? "No picks yet." : part.body), part.summary)
-        case "team_status":
-            let part = await AIContextGatherer.teamPart()
-            return (cap(part.body.isEmpty ? part.summary : part.body), part.summary)
-        case "my_agents":
-            let part = await AIContextGatherer.agentsPart()
-            return (cap(part.body.isEmpty ? part.summary : part.body), part.summary)
-        case "where_is_everyone":
-            let store = CoordinationStore.shared
-            if store.plans.isEmpty { await store.load() }
-            let day = args["day"] ?? Lisbon.day(now)
-            return (cap(store.summary(for: day)), "\(store.plans.count) plans")
         default:
+            // The team tools (team_status, my_agents, where_is_everyone) belong to the app's provider.
+            if let (text, summary) = await provider.runTool(call.function.name, args: args, now: now) {
+                return (cap(text), summary)
+            }
             return ("error: no tool called \(call.function.name)", "unknown tool")
         }
     }

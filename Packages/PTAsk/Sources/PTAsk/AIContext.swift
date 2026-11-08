@@ -1,15 +1,20 @@
 import Foundation
+import PTCore
 
 /// What the user lets Ask see, chosen with toggles. Each part is gathered fresh for a question, shown in the
 /// debug disclosure exactly as sent, and capped so one part cannot crowd out the question.
-enum AIContextKind: String, CaseIterable, Identifiable, Codable, Sendable {
+public enum AIContextKind: String, CaseIterable, Identifiable, Codable, Sendable {
     case agenda, picks, team, teammates, page
     /// Added by a prepared prompt, and only when the toggle it belongs to is on: plan with picks, agents with team.
     case plan, agents
 
-    var id: String { rawValue }
+    public var id: String { rawValue }
     /// The kinds the user switches on and off. Each one is its own explicit choice (App Review 5.1.2(i)).
     static let toggleable: [AIContextKind] = [.agenda, .picks, .team, .teammates, .page]
+    /// The toggles this app offers: the app's provider says which kinds it can fill.
+    @MainActor static var toggleableHere: [AIContextKind] {
+        toggleable.filter { AskEnvironment.provider.supportedKinds.contains($0) }
+    }
     /// What is shared until the user changes it: the public agenda only.
     static let defaults: Set<AIContextKind> = [.agenda]
 
@@ -78,15 +83,19 @@ enum AIContextKind: String, CaseIterable, Identifiable, Codable, Sendable {
     }
 }
 
-struct AIContextPart: Identifiable, Equatable, Sendable {
-    var id: AIContextKind { kind }
-    let kind: AIContextKind
+public struct AIContextPart: Identifiable, Equatable, Sendable {
+    public var id: AIContextKind { kind }
+    public let kind: AIContextKind
     /// e.g. "12 sessions on Tue 10 Nov", shown on the toggle.
-    let summary: String
+    public let summary: String
     /// The text the model sees. Empty when there is nothing (the part is then left out).
-    let body: String
+    public let body: String
     /// Where it came from, for the disclosure.
-    let source: String
+    public let source: String
+
+    public init(kind: AIContextKind, summary: String, body: String, source: String) {
+        self.kind = kind; self.summary = summary; self.body = body; self.source = source
+    }
 }
 
 /// Builds the system message. Pure: same parts, same text.
@@ -175,102 +184,19 @@ enum AIContextAssembler {
         if let text = page.text, !text.isEmpty { lines.append("Text:\n\(text)") }
         return AIContextPart(kind: .page, summary: page.title, body: lines.joined(separator: "\n"), source: "the screen I am on")
     }
-
-    /// From the team session's models (`TeamPerson` from me.json, `CommandCentre` from my data.json): one set of
-    /// team models in the app (Q8).
-    static func teamPart(person: String, me: TeamPerson?, centre: CommandCentre?) -> AIContextPart {
-        var lines: [String] = []
-        var counts: [String] = []
-        if let me {
-            lines.append("Team member: \(me.name) (\(person))\(me.role.isEmpty ? "" : ", \(me.role)")")
-            for (n, label) in [(me.onlyYou, "only you"), (me.decide, "to decide"), (me.overdue, "overdue"),
-                               (me.soon, "due soon"), (me.open, "open")] {
-                counts.append("\(n) \(label)")
-            }
-            lines.append("Counts: " + counts.joined(separator: ", "))
-            if let standup = me.standupAt { lines.append("Next stand-up: \(lisbonTime(standup))") }
-            if !me.urgent.isEmpty {
-                lines.append("Urgent items:")
-                for item in me.urgent.prefix(10) {
-                    lines.append("- \(item.id) \(item.title) (due \(item.due.isEmpty ? "?" : item.due)\(item.late ? ", late" : ""))")
-                }
-            }
-        }
-        if let centre {
-            if !centre.standupTimesUTC.isEmpty {
-                lines.append("Stand-ups every day at \(centre.standupTimesUTC.joined(separator: " and ")) Lisbon time.")
-            }
-            if !centre.decisions.isEmpty {
-                lines.append("Decisions waiting on me (\(centre.decisions.count)):")
-                for item in centre.decisions.prefix(12) {
-                    lines.append("- \(item.what)\(item.recommend.isEmpty ? "" : " (recommended: \(item.recommend))")")
-                }
-            }
-            if !centre.agents.isEmpty {
-                lines.append("My agents (\(centre.agents.count)):")
-                for agent in centre.agents.prefix(12) {
-                    let last = agent.lastAt.map(lisbonTime) ?? "?"
-                    lines.append("- \(agent.short.isEmpty ? agent.name : agent.short): \(agent.commits24h) commits in 24 h, last \(last): \(agent.lastSubject)")
-                }
-            }
-            if !centre.messages.isEmpty {
-                lines.append("Latest reports and messages:")
-                for item in centre.messages.prefix(8) {
-                    lines.append("- \(item.at.map(lisbonTime) ?? "") \(item.subject)")
-                }
-            }
-        }
-        let summary = counts.isEmpty ? (lines.isEmpty ? "No team data" : "Team data for \(person)") : counts.prefix(3).joined(separator: " · ")
-        return AIContextPart(kind: .team, summary: summary, body: lines.joined(separator: "\n"),
-                             source: "web-summit.sgit.ai me.json and people/\(person)/app/data.json")
-    }
-
-    /// My agents in detail, and the team's latest commits with mine marked.
-    static func agentsPart(person: String, centre: CommandCentre?) -> AIContextPart {
-        guard let centre else {
-            return AIContextPart(kind: .agents, summary: "No data", body: "", source: "web-summit.sgit.ai")
-        }
-        var lines = ["My agents (\(centre.agents.count)):"]
-        for agent in centre.agents {
-            let last = agent.lastAt.map(lisbonTime) ?? "never"
-            var line = "- \(agent.name) [\(agent.status.isEmpty ? "?" : agent.status)]: \(agent.commits24h) commits in 24 h, \(agent.commits7d) in 7 days; last at \(last): \(agent.lastSubject)"
-            if !agent.job.isEmpty { line += " · job: \(agent.job)" }
-            if !agent.schedule.isEmpty { line += " · schedule: \(agent.schedule)" }
-            lines.append(line)
-        }
-        if !centre.messages.isEmpty {
-            lines.append("Their latest reports and messages:")
-            for item in centre.messages.prefix(12) { lines.append("- \(item.at.map(lisbonTime) ?? "") \(item.subject)") }
-        }
-        if !centre.activity.isEmpty {
-            lines.append("Latest team activity (mine marked *):")
-            for item in centre.activity.prefix(25) {
-                lines.append("- \(item.mine ? "* " : "")\(item.at.map(lisbonTime) ?? "") \(item.subject)")
-            }
-        }
-        let active = centre.agents.filter { $0.commits24h > 0 }.count
-        return AIContextPart(kind: .agents, summary: "\(centre.agents.count) agents, \(active) active in 24 h",
-                             body: lines.joined(separator: "\n"), source: "web-summit.sgit.ai people/\(person)/app/data.json")
-    }
-
-    static func lisbonTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_GB")
-        formatter.timeZone = Lisbon.zone
-        formatter.dateFormat = "EEE d MMM HH:mm"
-        return formatter.string(from: date)
-    }
-
 }
 
-/// Gathers the parts the user switched on. Network reads go through `HTTPClient` (Debug → Network).
+/// Gathers the parts the user switched on. The agenda, picks and page are the same everywhere; the team kinds come
+/// from the app's provider (`AskEnvironment.provider`), which returns nothing for kinds it does not offer.
 @MainActor
 enum AIContextGatherer {
     static func gather(_ kinds: Set<AIContextKind>, now: Date = .now) async -> [AIContextPart] {
+        let provider = AskEnvironment.provider
+        let kinds = kinds.intersection(provider.supportedKinds)
         var parts: [AIContextPart] = []
         let needsAgenda = kinds.contains(.agenda) || kinds.contains(.picks)
-        let events = needsAgenda ? await CollabHooks.agenda() : []
-        let picks = Set(CollabHooks.myPickIds())
+        let events = needsAgenda ? await provider.agenda() : []
+        let picks = Set(provider.myPickIds())
         for kind in AIContextKind.allCases where kinds.contains(kind) {
             switch kind {
             case .agenda:
@@ -279,50 +205,10 @@ enum AIContextGatherer {
                 parts.append(AIContextAssembler.picksPart(ids: picks.sorted(), events: events, now: now))
             case .page:
                 parts.append(AIContextAssembler.pagePart(CollabHooks.currentPage))
-            case .team:
-                parts.append(await teamPart())
-            case .agents:
-                parts.append(await agentsPart())
-            case .teammates:
-                let store = CoordinationStore.shared
-                if store.plans.isEmpty { await store.load() }
-                let day = Lisbon.day(now)
-                parts.append(AIContextPart(kind: .teammates, summary: "\(max(store.plans.count - 1, 0)) teammates' plans",
-                                           body: store.plans.count > 1 ? store.summary(for: day) : "",
-                                           source: "plans shared through vaults"))
-            case .plan:
-                if let plan = await CollabHooks.dayPlan?() {
-                    parts.append(AIContextPart(kind: .plan, summary: "Planner", body: plan, source: "the app's day planner"))
-                }
+            case .team, .agents, .teammates, .plan:
+                if let part = await provider.part(for: kind, now: now) { parts.append(part) }
             }
         }
         return parts
-    }
-
-    static func teamPart() async -> AIContextPart {
-        guard let me = CollabHooks.me() else {
-            return AIContextPart(kind: .team, summary: "Choose who you are in Settings", body: "", source: "web-summit.sgit.ai")
-        }
-        let (person, centre) = await teamData(person: me.id)
-        return AIContextAssembler.teamPart(person: me.id, me: person, centre: centre)
-    }
-
-    static func agentsPart() async -> AIContextPart {
-        guard let me = CollabHooks.me() else {
-            return AIContextPart(kind: .agents, summary: "Choose who you are in Settings", body: "", source: "web-summit.sgit.ai")
-        }
-        let (_, centre) = await teamData(person: me.id)
-        return AIContextAssembler.agentsPart(person: me.id, centre: centre)
-    }
-
-    /// My entry and my command centre from the team session's store, refreshed when missing.
-    static func teamData(person: String) async -> (TeamPerson?, CommandCentre?) {
-        let team = TeamFeatures.shared.team
-        if team.me?.person(person) == nil {
-            await team.refresh(person: person)
-        } else if team.centre(for: person) == nil {
-            await team.refreshCentre(for: person)
-        }
-        return (team.me?.person(person), team.centre(for: person))
     }
 }
