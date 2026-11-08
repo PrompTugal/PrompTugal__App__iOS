@@ -26,6 +26,8 @@
 
 7. (team, split/team d599843, not on dev yet) NowNext moves into PTAgenda: `NowNextSnapshot`, `SharedContainer`, `LisbonClock`, public `NowNextPublisher`. Once it is on dev: widgets and intents targets link PTAgenda; their three Swift files need `import PTAgenda`; in PrompTugalApp.swift set `AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }` and call it from agendaDidLoad with the schedule's picks, as TeamFeatures does.
 
+8. (collab, split/collab 86cf060; waits for PTSync on dev and the conductor's go) PTSync (PTCore only): apps.json promptugal packages += PTSync; project reference + product + framework build file; Info.plist BGTaskSchedulerPermittedIdentifiers += news.promptugal.reader.sync; PrompTugalApp.swift imports PTSync, PublicSync.start() at the end of init, SyncBackground.schedule() on background, PublicSync.refresh() on active; new Apps/PrompTugal/Shell/PublicSync.swift (Shell is design's folder: need a ruling on who adds it). Diff is in collab's status page. Later: Seed folder resource and scripts/seed/fetch_seed.py before xcodebuild.
+
 ## RiskMandate upload
 - Dinis: same Apple account. Set `testflight: true` after the first green CI run. Upload waits for the App Store Connect record; release must skip with a clear line until then (conductor to confirm with release).
 
