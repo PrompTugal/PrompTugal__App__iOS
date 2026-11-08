@@ -23,7 +23,7 @@ public struct LanesView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             if width == .regular {
                 // iPad: two columns when there is room (full screen, wide Split View), one list otherwise.

@@ -65,7 +65,8 @@ final class TeamNotesStore {
     /// Files read per vault, newest names first (names start with the UTC time).
     let perVault = 40
 
-    func load(linkedVaults: [String: String] = LanesEnvironment.linkedVaults(), log: LanesLog = .shared) async {
+    func load(linkedVaults: [String: String]? = nil, log: LanesLog = .shared) async {
+        let linkedVaults = linkedVaults ?? LanesEnvironment.linkedVaults()
         guard let vault = CollabHooks.vault, vault.isOpen else {
             message = CollabHooks.HookError.noVault.localizedDescription
             return
