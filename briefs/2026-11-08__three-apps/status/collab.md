@@ -1,8 +1,8 @@
 # Collab status: PTAsk and PTLanes
 
-> CollabSeams, PTLanes and VaultCollabAccess are on dev. PTAsk is moved on split/collab (AskContextProvider, PublicAskProvider in PTAsk, TeamAskProvider in Coordination/): quick run 329 green on f3b0a1c, full run queued. Needs from others: the Team entry point must call TeamLanesWiring.install() once at launch; the public app must set AgendaHub.schedule.
+> Summit app status (12:05 UTC). PTSync is built and tested on split/collab 86cf060: Package PTSync, PTCore, PTWeb, both Debug builds, promptugal and team tests green in quick run 359; remaining package jobs finishing, full run follows, then READY. Local, not pushed yet (they wait behind the full run so it stays on 86cf060): live feeds (RSS, Atom, JSON Feed, newsletter JSON; FeedStore, FeedSyncer, PTCore LiveFeedSource) and Ask changes for the public app (AskView initialQuestion, plain no-key card, no vault copy in the public app, provider-owned prompt wording, no trademark). Practical info: no external feed today; the card reads optional api/v1/practical.json with a bundled fallback in the core pack (ux and design own the card). Open questions for Dinis: none blocking; whether Bundle.module resources in PTAsk (Localizable.xcstrings) are acceptable for the app's localization.
 
-**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** PTAsk move: quick run 329 (f3b0a1c) green; full run on f3b0a1c queued (macos-26) · **Updated:** 10:30 UTC (collab.B; PTSync design added at the end)
+**Branch:** `split/collab` · **Last CI run:** quick run 359 on 86cf060 (PTSync): most jobs green, rest finishing · **Updated:** 12:05 UTC (collab.B)
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
