@@ -1,5 +1,5 @@
 import SwiftUI
-import PTAgenda
+import PTNowNext
 import WidgetKit
 
 struct NowNextEntry: TimelineEntry {

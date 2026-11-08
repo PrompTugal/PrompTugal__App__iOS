@@ -1,0 +1,15 @@
+PrompTugal: Lisbon Summit, the independent companion app for the Lisbon tech summit, 9 to 12 November. No account needed.
+
+Please try, at the venue if you can:
+- Now: what is on now, what is next for you, and the latest news, in Lisbon time.
+- Explore: search the program, tap the star to pick a talk.
+- My program: your picks in one list, clashes and free time; Add to Calendar.
+- Reminders: turn them on in Settings (the gear on Now). You get a notification before each pick.
+- News: read a story, then try the app in airplane mode. The program, your picks and saved news should still work.
+- The widget and Siri: add the PrompTugal widget, or ask "What's next in PrompTugal".
+- Ask (optional, card on Now): questions about the program, with your own OpenRouter key. Nothing is sent until you allow it.
+
+Tell us with Send Beta Feedback (take a screenshot in the app, or open TestFlight): what was confusing, what was missing, and anything that broke. Please include what you were trying to do.
+
+Privacy: https://ios.app.promptugal.news/privacy.html
+Support: https://ios.app.promptugal.news/support.html
