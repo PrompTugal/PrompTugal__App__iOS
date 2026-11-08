@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 /// Reporting a message or note someone else wrote (App Review 1.2).
 enum LaneReport {

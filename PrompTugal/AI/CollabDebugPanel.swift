@@ -42,7 +42,7 @@ struct CollabDebugPanel: View {
         [("OpenRouter key", keys.hasKey ? "present · Keychain, this device\(keys.savedToVaultAt == nil ? "" : " · copy in vault")" : "absent"),
          ("Lane inbox key (RSA-4096)", LaneIdentity.exists ? "present · Keychain, this device" : "absent"),
          ("Lane enumeration key", lanes.hasEnumKey ? "present · Keychain, this device" : "absent"),
-         ("Account inbox key", lanes.websiteInbox == nil ? "not open" : "in memory, from the master vault"),
-         ("Lanes I can write to", "\(lanes.lanes.count) (tokens are write-only)")]
+         ("Account inbox key", !lanes.hasWebsiteInbox ? "not open" : "in memory, from the master vault"),
+         ("Lanes I can write to", "\(lanes.laneCount) (tokens are write-only)")]
     }
 }

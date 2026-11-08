@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import Testing
+import PTCore
 @testable import PrompTugal
 
 /// A made-up key: the format of a real one, the value of none.
@@ -619,5 +620,18 @@ struct AILinkTests {
         #expect(board.string == "hello")
         #expect(AskClipboard.lifetime <= 300)
         UIPasteboard.remove(withName: board.name)
+    }
+}
+
+@Suite("Collab: error text")
+struct CollabErrorTextTests {
+    @Test("Error text is short and readable")
+    func errorText() {
+        #expect(CollabErrorText.short(URLError(.notConnectedToInternet)).hasPrefix("No internet"))
+        #expect(CollabErrorText.short(URLError(.timedOut)).contains("too long"))
+        #expect(CollabErrorText.short(OpenRouter.RequestError.noKey).contains("OpenRouter key"))
+        let raw = NSError(domain: "NSOSStatusErrorDomain", code: -25300,
+                          userInfo: [NSLocalizedDescriptionKey: "Error Domain=NSOSStatusErrorDomain Code=-25300 \"(null)\""])
+        #expect(CollabErrorText.short(raw) == "Something went wrong. Try again.")
     }
 }

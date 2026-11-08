@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 import Security
+import PTCore
 
 /// sgit's hybrid envelope (`sgit pki encrypt`, v2), as sgit-ai 0.27 `crypto/PKI__Crypto.py` writes it:
 /// a fresh AES-256-GCM key encrypts the message (12-byte IV, ciphertext with its 16-byte tag), RSA-OAEP with

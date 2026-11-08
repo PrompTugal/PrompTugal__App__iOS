@@ -1,7 +1,9 @@
+// A copy of PTLanes's SpeechDictation: PTAsk and PTLanes both use it and neither may depend on the other. It moves into PTAsk with AI/.
 import AVFoundation
 import Foundation
 import Observation
 import Speech
+import PTCore
 
 /// Hold-to-talk dictation for notes, transcribed on the device when the language allows it
 /// (`requiresOnDeviceRecognition`). Audio is not kept.
