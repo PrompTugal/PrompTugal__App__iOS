@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 06:25 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 06:55 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 06:55 UTC: dev unchanged since v0.4.3 (`a810f38`); release's signing fix (266c7ba, now 2b3835a on split/release) not merged: the dry run built without the app group, associated domains and time-sensitive entitlements. No dev upload until a fix keeps them. When the first upload after the fix lands: check the reader record, the exported app's entitlements in the job log (app group `group.news.promptugal.reader`), and that widgets and intents are intact.
 - 06:25 UTC: run 71 (dev `a810f38`, v0.4.3, build 171) failed at "Archive, sign, export and upload" with the same error as run 69: "Your account has reached the maximum number of certificates", then no development profiles for news.promptugal.reader and its .intents and .widgets targets. No upload. Dev still has the old signing script; release's fix is on split/release (cfffe8d, run 70 green there, run 73 in progress), not on dev yet. Latest builds unchanged: reader 0.4.1 (168), RiskMandate 0.4.0 (167), Team none (status runs 16 to 18, 06:20 UTC).
 - 05:52 UTC: conductor reports iOS release #69 (dev `0614bed`) failed to sign: the Apple account hit its maximum number of development certificates (automatic signing creates one per CI run); no upload from #69, release is fixing the archive step. Read-only count (new `certificates` action in testflight-ops, run 15): 12 signing certificates, 11 DEVELOPMENT (10 created 7-8 Nov) and 1 DEVELOPER_ID_APPLICATION_G2; no distribution certificate. Nothing changed in App Store Connect or the developer portal.
 - 05:18 UTC: dev unchanged since v0.4.1 (`a0c8bde`), no new release run, no new upload. Waiting for phase 4 (first Team build, promptugal TestFlight job).
