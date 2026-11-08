@@ -1,6 +1,6 @@
 # App Privacy answers (the nutrition label)
 
-> The answers Dinis enters by hand in App Store Connect → App Privacy. They are derived from the code the public app links (PTCore, PTWeb, PTAgenda, PTNews, PTAsk, PTVaultUI, SGitVault; no PTLanes). They must agree with `Apps/PrompTugal/Resources/PrivacyInfo.xcprivacy` and with the privacy page. If B1 hides Ask and B2 hides Vault, the answer becomes "Data Not Collected" (see the end of this page).
+> The answers Dinis enters by hand in App Store Connect → App Privacy. They are derived from the code the public app links (PTCore, PTWeb, PTAgenda, PTNews, PTAsk, PTVaultUI, SGitVault; no PTLanes). They must agree with `Apps/PrompTugal/Resources/PrivacyInfo.xcprivacy` and with the privacy page. **Ruling at 11:30 UTC:** Ask ships (B1 option a) and Vault is hidden (B2). The answers below are the ones to enter.
 
 ## Where data goes, from the code
 
@@ -12,7 +12,7 @@
 | Calendar | One event written on request; write-only access, no read | the user's own calendar (on device) | `CalendarExport.swift` |
 | Ask | The question, the conversation and the context the user switches on (the public agenda by default; picks and the current page optional). Sent with the user's own key, only after consent | openrouter.ai and the model maker | `PTAsk/OpenRouter.swift`, `PublicAskProvider.swift` |
 | Dictation in Ask | Audio, only while the button is held. On device when the language allows it, otherwise to Apple's speech service; not kept | Apple | `PTAsk/SpeechDictation.swift` |
-| Vault | Files encrypted on the device; the server stores ciphertext and opaque names | dev.send.sgraph.ai | `SGitVault`, `PTVaultUI` |
+| Vault (hidden in this build, B2) | Files encrypted on the device; the server stores ciphertext and opaque names | dev.send.sgraph.ai | `SGitVault`, `PTVaultUI` |
 | Analytics, crash reporting, ads | None. No third-party SDK | none | the privacy manifest: `NSPrivacyTracking` false, no tracking domains |
 
 ## Answers
@@ -33,12 +33,12 @@ Every other data type is **not collected**. That covers contact info, health and
 
 **Tracking:** No. The app does not track users across apps or websites, and has no tracking domains.
 
-## If Ask and Vault are hidden in this build
+## If Ask is ever hidden
 
-With B1 option (b) and B2, nothing leaves the device except reads of public files. Then answer **"No, we do not collect data from this app"** (Data Not Collected). Change the label back to the table above in the version that turns Ask on again.
+In a build without Ask (and without Vault), nothing leaves the device except reads of public files. Then the answer is **"No, we do not collect data from this app"** (Data Not Collected). That is not the case for this submission.
 
 ## Consistency checks before submitting
 
 - [ ] The privacy page lists the same features and hosts as the table above. Editor's `split/editor` privacy page; R3.
-- [ ] `PrivacyInfo.xcprivacy`: `NSPrivacyCollectedDataTypes` is empty. That is consistent only if Ask is hidden. If Ask ships, apps adds `NSPrivacyCollectedDataTypeOtherUserContent` (not linked, not tracking, purpose `NSPrivacyCollectedDataTypePurposeAppFunctionality`), so the manifest and the label agree.
+- [ ] `PrivacyInfo.xcprivacy`: `NSPrivacyCollectedDataTypes` is empty on dev, and Ask ships. **Apps adds** `NSPrivacyCollectedDataTypeOtherUserContent` (not linked, not tracking, purpose `NSPrivacyCollectedDataTypePurposeAppFunctionality`), so the manifest and the label agree.
 - [ ] The widget and intents manifests (`split/apps` bc65b90) are merged.

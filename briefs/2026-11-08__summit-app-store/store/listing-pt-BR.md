@@ -37,8 +37,8 @@ NOTÍCIAS
 • Notícias em tempo real e edições da newsletter do PrompTugal.news, para ler offline
 • Um grafo das empresas, pessoas e eventos por trás das notícias
 
-PERGUNTE (somente se integrado)
-• Pergunte sobre a programação e o seu dia. Nada é enviado sem a sua permissão, e você escolhe o que compartilhar
+PERGUNTE (OPCIONAL)
+• Pergunte sobre a programação e o seu dia, com sua própria chave OpenRouter. Nada é enviado sem a sua permissão, e você escolhe o que compartilhar
 
 PRIVACIDADE EM PRIMEIRO LUGAR
 • Sem conta, sem cadastro, sem rastreamento, sem anúncios
@@ -64,11 +64,13 @@ A primeira versão na App Store: a agenda do evento offline, sua programação c
 
 ## URLs
 
+The same `/pt/` pages as pt-PT; one Portuguese page is enough today. The privacy and support pages are reference text, not marketing, so European Portuguese is acceptable for Brazil.
+
 | Campo | Valor |
 | --- | --- |
-| URL de suporte | https://ios.app.promptugal.news/support.html |
-| URL de marketing | https://ios.app.promptugal.news/ |
-| URL da política de privacidade | https://ios.app.promptugal.news/privacy.html |
+| URL de suporte | https://ios.app.promptugal.news/pt/support.html |
+| URL de marketing | https://ios.app.promptugal.news/pt/ |
+| URL da política de privacidade | https://ios.app.promptugal.news/pt/privacy.html |
 
 ## TestFlight: o que testar (4000)
 

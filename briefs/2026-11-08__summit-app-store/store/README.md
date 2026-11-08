@@ -10,7 +10,7 @@
 | [listing-pt-BR.md](listing-pt-BR.md) | Portuguese (Brazil) listing |
 | [app-privacy.md](app-privacy.md) | App Privacy (nutrition label) answers, derived from the code |
 | [age-rating.md](age-rating.md) | Age rating answers, plus category, price and availability |
-| [review-notes.md](review-notes.md) | App Review and Beta App Review notes for the public app, and the demo instructions |
+| [review-notes.md](review-notes.md), [review-notes.txt](review-notes.txt) | App Review and Beta App Review notes for the public app: settings and checks, and the final text |
 | [go-no-go.md](go-no-go.md) | The final list, checked before each submission |
 
 The persona walk-throughs (synthetic users) are in [status/review.md](../../2026-11-08__three-apps/status/review.md).
@@ -30,4 +30,4 @@ The persona walk-throughs (synthetic users) are in [status/review.md](../../2026
 | Marketing URL | https://ios.app.promptugal.news/ |
 | Privacy policy URL | https://ios.app.promptugal.news/privacy.html |
 
-The three URLs answer 200 today. They match `SupportLinks` in `Packages/PTCore/Sources/PTCore/Shell/ShellParts.swift`. Editor confirms the final URLs through the conductor; if the site moves the pages, `SupportLinks` and this table change together.
+The three English URLs answer 200 today, and they match `SupportLinks` in `Packages/PTCore/Sources/PTCore/Shell/ShellParts.swift`. Editor confirmed them through the conductor at 11:25 UTC. The Portuguese listings use `/pt/`, `/pt/support.html` and `/pt/privacy.html`, which go live when `split/editor` merges. The pt listings go in only if i18n merges by 16:00 (conductor); otherwise the store has English only.
