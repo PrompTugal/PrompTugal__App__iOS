@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 07:08 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 07:58 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 07:58 UTC: first dev uploads with the signing fix: run 78 (v0.4.4, dev `f4fd02c`) uploaded 0.4.4 (178) to the reader record and to RiskMandate, both VALID, internal groups only. The exported reader app keeps associated-domains, time-sensitive notifications and app group `group.news.promptugal.reader`; widgets and intents carry the app group. Team record `news.promptugal.team` still empty. Run 79 (v0.4.5) cancelled; run 80 (v0.4.6) in progress.
 - 07:08 UTC: conductor says the signing fix is on dev (`d36d147`); the next dev release should upload again. No dev release run since run 71 yet (only split/release dry runs, run 77 in progress). To confirm on that upload: build reaches the reader record and PrompTugal Internal Users, exported app entitlements in the job log include app group `group.news.promptugal.reader`, widgets and intents intact.
 - 06:55 UTC: dev unchanged since v0.4.3 (`a810f38`); release's signing fix (266c7ba, now 2b3835a on split/release) not merged: the dry run built without the app group, associated domains and time-sensitive entitlements. No dev upload until a fix keeps them. When the first upload after the fix lands: check the reader record, the exported app's entitlements in the job log (app group `group.news.promptugal.reader`), and that widgets and intents are intact.
 - 06:25 UTC: run 71 (dev `a810f38`, v0.4.3, build 171) failed at "Archive, sign, export and upload" with the same error as run 69: "Your account has reached the maximum number of certificates", then no development profiles for news.promptugal.reader and its .intents and .widgets targets. No upload. Dev still has the old signing script; release's fix is on split/release (cfffe8d, run 70 green there, run 73 in progress), not on dev yet. Latest builds unchanged: reader 0.4.1 (168), RiskMandate 0.4.0 (167), Team none (status runs 16 to 18, 06:20 UTC).
@@ -64,6 +65,8 @@ During the summit everything runs on internal testers only. The external swap pl
 | 0.3.1 | 165 | `11ab789` (run 65) | yes, VALID (status run 10, 04:13 UTC) | PrompTugal Internal Users only |
 | 0.4.0 | 167 (reader record, from the "TestFlight (team)" job) | `d525706` (run 67) | yes, VALID (status run 10, 04:13 UTC) | PrompTugal Internal Users only |
 | 0.4.1 | 168 (reader record, from the "TestFlight (team)" job) | `a0c8bde` (run 68, v0.4.1) | yes, VALID (status run 12, 04:44 UTC) | PrompTugal Internal Users only |
+| 0.4.4 | 178 (reader record, "TestFlight (team)" job) | `f4fd02c` (run 78, v0.4.4) | yes, VALID (status run 19, 07:51 UTC) | PrompTugal Internal Users only; app group, associated domains, time-sensitive kept; widgets and intents carry the app group |
+| 0.4.4 | 178 (RiskMandate) | `f4fd02c` (run 78) | yes, VALID (status run 20, 07:51 UTC) | RiskMandate Internal |
 | 0.4.0 | 167 (RiskMandate, `ai.riskmandate.app`) | `d525706` (run 67, v0.4.0) | yes, VALID (status run 9, 04:01 UTC) | RiskMandate Internal |
 
 ## Needs from others
