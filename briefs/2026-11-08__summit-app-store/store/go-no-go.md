@@ -256,3 +256,5 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 **Verdict:** submit 0.4.23 (204) for App Review as soon as Dinis confirms M6 and M9. The same build and the same review notes are GO for the TestFlight public link (Beta App Review).
 
 16:05, dry run 42497866805: (a) 204 VALID, no ITMS lines in the job log (testflight is checking the email); (b) usesNonExemptEncryption already false; (c) the confirm run attaches 204, then creates and submits the review submission; (d) no blocking items beyond the plan. asc.py cannot see App Privacy, IDFA or Mac and Vision Pro: those rest on Dinis. If one is missing, Apple refuses the submit with a clear error, and nothing is lost. The final GO stands.
+
+16:11: **TestFlight external SUBMITTED** for Beta App Review (run 42498490708). 0.4.23 (204) is in "PrompTugal External Users"; What to Test is 1,104 characters (store/what-to-test.txt); the notes are 3,470 characters (store/review-notes.txt, 3,418, plus the demo key). The App Store submit waits on Dinis's three steps and his release-type choice.
