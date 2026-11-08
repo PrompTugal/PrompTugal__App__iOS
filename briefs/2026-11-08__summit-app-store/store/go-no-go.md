@@ -116,3 +116,11 @@ The conductor's decision: the binary is **rc4 d8a5020**. rc5 differs from it onl
 | G5 | Run 393 on d8a5020 | **queued at 13:05** (not started) |
 | G1, G4 | Processing; a fresh install in airplane mode on the uploaded build | pending |
 | M1–M10 | release applies the ASC corrections (content rights, IDFA No, Mac and Vision Pro unticked, texts from store/) | pending: check release's dry-run output |
+
+## Run 7: binary rc4 56a630e, screenshots rc5 3e6cd9f (13:16 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| Binary | `git diff d8a5020 56a630e -- Apps Packages` touches only `PTExploreTests`, `PTWebTests` and the PTExplore **test target's** dependency in `Package.swift`. The product code is byte-identical to d8a5020, so runs 2 to 6 still apply. | GO in the repository |
+| G5 | Run 393: every app build and app test green; two package test targets did not compile (fixed in 56a630e). Run 394 (42484035275) on 56a630e: pending at 13:16. | pending |
+| Screenshots | rc5 3e6cd9f = 706b153 plus rc4's test fixes | as run 6 |
