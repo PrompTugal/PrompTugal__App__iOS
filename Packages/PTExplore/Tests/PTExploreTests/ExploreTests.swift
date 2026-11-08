@@ -200,3 +200,35 @@ struct StartTests {
         #expect(ExploreStart.graph.kind == .event)
     }
 }
+
+@Suite("Talk references")
+struct TalkRefTests {
+    @Test("Every id form gives the same slug")
+    func ids() {
+        #expect(TalkRef(id: "events/opening-night/index.html").slug == "opening-night")
+        #expect(TalkRef(id: "event:opening-night").slug == "opening-night")
+        #expect(TalkRef(id: "opening-night").slug == "opening-night")
+        #expect(TalkRef(id: "opening-night").reference == "event:opening-night")
+    }
+
+    @Test("An agenda event gives its day, times and place")
+    func event() {
+        let event = Event(date: "2026-11-09", time: "18:00-20:00", title: "Opening Night", place: "Centre Stage",
+                          kind: "summit", official: true, page: "events/opening-night/index.html")
+        let ref = TalkRef(event)
+        #expect(ref.slug == "opening-night")
+        #expect(ref.day == "2026-11-09")
+        #expect(ref.start == "18:00")
+        #expect(ref.end == "20:00")
+        #expect(ref.place == "Centre Stage")
+        #expect(ref.timeText == "18:00–20:00")
+    }
+
+    @Test("An entry from the index gives a talk reference and back")
+    func item() throws {
+        let talk = try #require(try makeIndex().item(ref: "event:startup-guide"))
+        let ref = TalkRef(talk)
+        #expect(ref.reference == talk.id)
+        #expect(ref.item.day == "2026-11-10")
+    }
+}
