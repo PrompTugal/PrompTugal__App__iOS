@@ -21,7 +21,7 @@ public struct PlannerView: View {
         HStack(spacing: 0) {
         List {
             Section {
-                Picker("Day", selection: $planner.day) {
+                Picker(String(localized: "Day", bundle: .module), selection: $planner.day) {
                     ForEach(planner.days, id: \.self) { Text(Lisbon.dayLabel($0)).tag($0) }
                 }
                 Toggle(String(localized: "Official programme only", bundle: .module), isOn: $planner.preferences.officialOnly)

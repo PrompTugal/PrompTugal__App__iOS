@@ -153,7 +153,7 @@ public enum DayPlanner {
                         end: event.end ?? start.addingTimeInterval(30 * 60), place: event.place, eventID: pick.id)
         }
         fixed += standups.filter { Lisbon.day($0.at) == day }.map {
-            Item(id: "standup.\($0.slot)", kind: .standup, title: "Team stand-up", start: $0.at, end: $0.end,
+            Item(id: "standup.\($0.slot)", kind: .standup, title: String(localized: "Team stand-up", bundle: .module), start: $0.at, end: $0.end,
                  place: "", eventID: nil)
         }
         fixed.sort { $0.start == $1.start ? $0.id < $1.id : $0.start < $1.start }

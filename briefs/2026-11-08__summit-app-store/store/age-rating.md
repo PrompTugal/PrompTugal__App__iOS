@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | Parental controls / in-app controls | No | None in the app |
 | Age assurance | No | No accounts |
-| Unrestricted web access | **No** | Web views stay on each site's own host (`WebsiteView.swift:212`); any other link opens in Safari. **Only true once R1 is fixed:** today the shortcut list can be edited in Files to add any site. |
+| Unrestricted web access | **No** | Web views stay on each site's own host (`WebsiteView.swift:212`); any other link opens in Safari. **Only true once R1 and N4 are fixed:** R1 is fixed on rc2 (WebsitesPublic.json). N4 is fixed on rc3: `WebPage` sends links to other sites to Safari (see [network-audit.md](network-audit.md)). |
 | User-generated content | No | No posts, messages or comments; PTLanes is not linked |
 | Messaging and chat | No | No user-to-user messaging. Ask is a question-and-answer assistant, not chat between people. |
 | Advertising | No | None |

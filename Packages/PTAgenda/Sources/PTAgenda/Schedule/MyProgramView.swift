@@ -124,7 +124,7 @@ public struct MyProgramView: View {
                 Image(systemName: "star.fill").font(.title3).foregroundStyle(Palette.red).frame(minWidth: 44, minHeight: 44)
             }
             .buttonStyle(.borderless)
-            .accessibilityLabel("Remove from my program")
+            .accessibilityLabel(String(localized: "Remove from my program", bundle: .module))
         }
         .accessibilityElement(children: .combine)
     }

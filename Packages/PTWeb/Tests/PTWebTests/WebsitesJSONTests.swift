@@ -78,10 +78,15 @@ struct PublicWebsitesTests {
         let url = try #require(Bundle.module.url(forResource: "WebsitesPublic", withExtension: "json"),
                                "WebsitesPublic.json is not in the PTWeb bundle")
         let shortcuts = try JSONDecoder().decode([WebsiteShortcut].self, from: Data(contentsOf: url))
-        #expect(shortcuts.map(\.id) == ["promptugal"])
-        #expect(shortcuts.allSatisfy(\.isValid))
-        #expect(shortcuts.compactMap { $0.url.host() } == ["promptugal.news"])
-        #expect(shortcuts.allSatisfy { $0.iconAsset != "ShortcutWebSummit" })
+        // Computed outside #expect: key paths as functions inside the macro are diagnosed as unhandled throws.
+        let ids = shortcuts.map { $0.id }
+        let hosts = shortcuts.compactMap { $0.url.host() }
+        let allValid = shortcuts.allSatisfy { $0.isValid }
+        let noWebSummitArt = shortcuts.allSatisfy { $0.iconAsset != "ShortcutWebSummit" }
+        #expect(ids == ["promptugal"])
+        #expect(allValid)
+        #expect(hosts == ["promptugal.news"])
+        #expect(noWebSummitArt)
     }
 
     @Test("An app picks its list by name, and the Team list is the default")

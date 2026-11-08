@@ -39,3 +39,32 @@
 | --- | --- | --- |
 | P1 | No open finding with severity "stuck" from the persona walk-through of this build ([status/review.md](../../2026-11-08__three-apps/status/review.md)) | pending |
 | P2 | The conductor's go recorded for this submission | pending |
+
+## Run 1: summit candidate `split/rc2` 3de45dd (12:40 UTC): NO-GO, two blockers
+
+| # | Check | State |
+| --- | --- | --- |
+| G2 | All five purpose strings are in the project; pt-PT and pt-BR exist for camera, Face ID and calendar, but not for microphone or speech | GO (risk: pt text missing for 2 strings, i18n) |
+| G3 | Vault, All websites and Debug are `#if DEBUG` only | GO |
+| G6 | Ask is reachable from the Now card and from Settings > "Ask, with your own AI key"; the review key is in the notes | GO |
+| G7 | Vault absent in Release | GO |
+| G8 | "Web Summit" appears only in the independence footer (a disclaimer) and in Safari link URLs; WebsitesPublic.json; the ShortcutWebSummit asset is removed | GO |
+| M6 | Native hosts are promptugal.news and openrouter.ai; cookies off; PrivacyInfo declares OtherUserContent | **NO-GO**: N4, `WebPage` loads linked sites in the app (team) |
+| M8 | Review notes in the build's `scripts/testflight/` | **NO-GO**: rc2 has editor's old notes and the old What to Test ("PrompTugal for Web Summit Lisbon"). Copy store/review-notes.txt and store/what-to-test.txt over them (testflight). |
+| N2 | Vault background task still registered | risk (apps) |
+| G1, G4, G5, M1–M5, M7, M9, M10, P1, P2 | Need the build, screenshots and App Store Connect | pending |
+
+## Run 2: `split/rc3` 98767dd (12:40 UTC): GO on everything checkable in the repository
+
+| # | Check | State |
+| --- | --- | --- |
+| M6, N4 | `WebPage` sends other sites to Safari (team ae618cf, with tests); native hosts are promptugal.news and openrouter.ai; cookies off; PrivacyInfo declares OtherUserContent | GO |
+| M8 | `scripts/testflight/review-notes.txt` and `what-to-test.txt` are byte-identical to store/ (testflight a11b10f); no "Web Summit" in What to Test | GO |
+| G2 | All five purpose strings, each in en, pt-PT and pt-BR (i18n b009f5e); the pt texts read correctly | GO |
+| G3, G6, G7, G8 | Same as run 1; the only other code change is `@MainActor` in `TalkScreens.swift` (a fix for the Release build) | GO |
+| N2 | Vault background task | accepted for this version |
+| G5 | Full run 391 (id 42480839902) on 98767dd | **pending**: queued at 12:33 |
+| G1, G4, M1–M5, M7, M9, M10, P1 | The uploaded build's processing, a cold launch offline, screenshots, the App Store Connect entries, the persona pass on the screenshots | pending: on the build and on release's plan |
+| P2 | The conductor's go | pending |
+
+**Verdict:** rc3 can be submitted once run 391 is green, the upload passes processing, and release's screenshots pass G8 and M4.
