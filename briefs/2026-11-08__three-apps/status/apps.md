@@ -37,11 +37,11 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (04:25 UTC)
-- 305 (riskmandate, cceddbf): green, merged to dev by the conductor as fef81e2.
-- 316 (promptugal, 6775d65 = dev at v0.1.82, macos-26): Release build, iPhone and iPad tests, PTNews, PTWeb, SGitVault, PTAsk green; PTAgenda, PTLanes, PTVaultUI running; Debug build and PTCore queued. No failures so far.
-- Runs must use runner=macos-26 (the laptop runner is offline).
-- apps.json: riskmandate testflight true; promptugal false until phase 4.
+## Last CI run (08:55 UTC)
+- 305 riskmandate: green, on dev (fef81e2). 316 promptugal on 6775d65: green (before phase 4).
+- 337 promptugal on 9a0d3b0 (phase 4): red. Release build: `PrompTugalIntents.swift` was missing `import PTAgenda` (SharedContainer, LisbonClock moved there). Cancelled.
+- 340 promptugal on a53e3cc (macos-26, import fixed): Debug build, iPhone and iPad tests, PTAsk, PTVaultUI, PTNews green; Release build and the other package jobs still running or queued. Both extension targets compile in Debug.
+- Next: when 340 is green, ios-release dry run app=promptugal (dry_run, internal_only); check-embedded and the entitlement guard; then tell the conductor. testflight stays false until the conductor flips it.
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.
