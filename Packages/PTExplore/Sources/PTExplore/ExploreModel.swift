@@ -21,13 +21,13 @@ public enum ExploreKind: String, CaseIterable, Codable, Sendable, Hashable, Iden
         }
     }
 
-    public var title: LocalizedStringResource {
+    public var title: String {
         switch self {
-        case .event: "Talks"
-        case .person: "Speakers"
-        case .company: "Companies"
-        case .organisation: "Organisations"
-        case .place: "Places"
+        case .event: String(localized: "Talks", bundle: .module)
+        case .person: String(localized: "Speakers", bundle: .module)
+        case .company: String(localized: "Companies", bundle: .module)
+        case .organisation: String(localized: "Organisations", bundle: .module)
+        case .place: String(localized: "Places", bundle: .module)
         }
     }
 

@@ -27,13 +27,23 @@ public struct ExploreDetail: Sendable, Hashable {
     public var otherLinks: [Link] { links.filter { !speakers.contains($0) } }
 
     /// Fields shown per kind, in order: JSON key, label.
-    static let fields: [ExploreKind: [(String, String)]] = [
-        .event: [("kind", "Kind"), ("date", "Day"), ("time", "Time"), ("where", "Where"), ("track", "Track")],
-        .person: [("role", "Role"), ("organisation", "Organisation")],
-        .company: [("what", "What it does"), ("country", "Country"), ("category", "Category"), ("attending_as", "At the summit as")],
-        .organisation: [],
-        .place: [("kind", "Kind"), ("note", "Note")],
-    ]
+    static func fields(_ kind: ExploreKind) -> [(String, String)] {
+        switch kind {
+        case .event:
+            [("kind", String(localized: "Kind", bundle: .module)), ("date", String(localized: "Day", bundle: .module)),
+             ("time", String(localized: "Time", bundle: .module)), ("where", String(localized: "Where", bundle: .module)),
+             ("track", String(localized: "Track", bundle: .module))]
+        case .person:
+            [("role", String(localized: "Role", bundle: .module)), ("organisation", String(localized: "Organisation", bundle: .module))]
+        case .company:
+            [("what", String(localized: "What it does", bundle: .module)), ("country", String(localized: "Country", bundle: .module)),
+             ("category", String(localized: "Category", bundle: .module)), ("attending_as", String(localized: "At the summit as", bundle: .module))]
+        case .organisation:
+            []
+        case .place:
+            [("kind", String(localized: "Kind", bundle: .module)), ("note", String(localized: "Note", bundle: .module))]
+        }
+    }
 
     public static func decode(_ data: Data, kind: ExploreKind) throws -> ExploreDetail {
         guard let root = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
@@ -41,7 +51,7 @@ public struct ExploreDetail: Sendable, Hashable {
         }
         let record = root["data"] as? [String: Any] ?? [:]
         let title = (root["label"] as? String) ?? (record["name"] as? String) ?? (record["title"] as? String) ?? ""
-        let facts: [Fact] = (fields[kind] ?? []).compactMap { key, label in
+        let facts: [Fact] = fields(kind).compactMap { key, label in
             guard let value = record[key] as? String, !value.isEmpty else { return nil }
             return Fact(label: label, value: value)
         }

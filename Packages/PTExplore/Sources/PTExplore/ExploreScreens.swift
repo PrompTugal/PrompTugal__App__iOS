@@ -65,7 +65,7 @@ public struct ExploreScreen: View {
     public var body: some View {
         NavigationStack(path: $path) {
             ExploreListView(store: store, hooks: hooks)
-                .navigationTitle("Explore")
+                .navigationTitle(String(localized: "Explore", bundle: .module))
                 .navigationDestination(for: ExploreGraphRoute.self) { _ in
                     if let graph = hooks.graph { graph() }
                 }
@@ -112,7 +112,7 @@ public struct ExploreListView: View {
     public var body: some View {
         VStack(spacing: 0) {
             if let header = hooks.header { header().padding(.horizontal, Space.l).padding(.top, Space.s) }
-            Picker("Show", selection: $store.kind) {
+            Picker(String(localized: "Show", bundle: .module), selection: $store.kind) {
                 ForEach(ExploreKind.browsable) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
@@ -120,7 +120,7 @@ public struct ExploreListView: View {
             .padding(.vertical, Space.s)
             content
         }
-        .searchable(text: $store.query, prompt: "Search talks, speakers, companies, places")
+        .searchable(text: $store.query, prompt: String(localized: "Search talks, speakers, companies, places", bundle: .module))
         .task { if store.index == nil { await store.load() } }
         .refreshable { await store.load() }
     }
@@ -133,14 +133,14 @@ public struct ExploreListView: View {
         } else if store.index == nil {
             if case .failed(let message) = store.phase {
                 ContentUnavailableView {
-                    Label("Nothing to show yet", systemImage: "wifi.slash")
+                    Label(String(localized: "Nothing to show yet", bundle: .module), systemImage: "wifi.slash")
                 } description: {
-                    Text("The summit data loads once online, then works offline. \(message)")
+                    Text(String(localized: "The summit data loads once online, then works offline. \(message)", bundle: .module))
                 } actions: {
-                    Button("Try again") { Task { await store.load() } }
+                    Button(String(localized: "Try again", bundle: .module)) { Task { await store.load() } }
                 }
             } else {
-                ProgressView("Loading…").frame(maxWidth: .infinity, maxHeight: .infinity)
+                ProgressView(String(localized: "Loading…", bundle: .module)).frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         } else if store.kind == .event {
             talkList
@@ -152,13 +152,13 @@ public struct ExploreListView: View {
     @ViewBuilder private var searchResults: some View {
         let groups = store.grouped()
         if store.index == nil {
-            ProgressView("Loading…").frame(maxWidth: .infinity, maxHeight: .infinity)
+            ProgressView(String(localized: "Loading…", bundle: .module)).frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if groups.isEmpty {
             ContentUnavailableView.search(text: store.query)
         } else {
             List {
                 ForEach(groups, id: \.kind) { group in
-                    Section(String(localized: group.kind.title)) {
+                    Section(group.kind.title) {
                         ForEach(group.items) { row($0) }
                     }
                 }
@@ -233,7 +233,7 @@ public struct ExploreDetailView: View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: Space.xs) {
-                    Label(String(localized: item.kind.title), systemImage: item.kind.symbol)
+                    Label(item.kind.title, systemImage: item.kind.symbol)
                         .font(Typo.kicker).foregroundStyle(Palette.red)
                     Text(item.title).font(Typo.title)
                     if let time = ExploreFormat.time(item) { Text(time).font(Typo.data).foregroundStyle(Palette.muted) }
@@ -245,14 +245,14 @@ public struct ExploreDetailView: View {
                     Section {
                         ForEach(detail.facts) { fact in
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(LocalizedStringKey(fact.label)).font(Typo.meta).foregroundStyle(Palette.muted)
+                                Text(fact.label).font(Typo.meta).foregroundStyle(Palette.muted)
                                 Text(fact.value)
                             }
                         }
                     }
                 }
                 if !detail.speakers.isEmpty {
-                    Section("Speakers") {
+                    Section(String(localized: "Speakers", bundle: .module)) {
                         ForEach(detail.speakers) { link in
                             if let target = store.index?.item(ref: link.ref) {
                                 NavigationLink(value: target) { Text(link.label) }
@@ -263,7 +263,7 @@ public struct ExploreDetailView: View {
                     }
                 }
                 if !detail.otherLinks.isEmpty {
-                    Section("Connections") {
+                    Section(String(localized: "Connections", bundle: .module)) {
                         ForEach(detail.otherLinks) { link in
                             if let target = store.index?.item(ref: link.ref) {
                                 NavigationLink(value: target) { linkRow(link) }
@@ -274,15 +274,15 @@ public struct ExploreDetailView: View {
                     }
                 }
                 if let website = detail.website {
-                    Section { Link(destination: website) { Label("Website", systemImage: "safari") } }
+                    Section { Link(destination: website) { Label(String(localized: "Website", bundle: .module), systemImage: "safari") } }
                 }
             } else if failed {
-                Section { Text("Connect to load more.").foregroundStyle(Palette.muted) }
+                Section { Text(item.kind == .event ? String(localized: "Connect to see speakers", bundle: .module) : String(localized: "Saved details not available offline yet", bundle: .module)).foregroundStyle(Palette.muted) }
             } else {
                 Section { ProgressView() }
             }
             if let page = item.page {
-                Section { Link(destination: page) { Label("Open on promptugal.news", systemImage: "arrow.up.right.square") } }
+                Section { Link(destination: page) { Label(String(localized: "Open on promptugal.news", bundle: .module), systemImage: "arrow.up.right.square") } }
             }
         }
         .navigationBarTitleDisplayMode(.inline)

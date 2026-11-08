@@ -40,3 +40,4 @@ Branch: `split/deck` · Last update: 8 Nov, 12:00 UTC · Last CI run: none yet
 - Talk detail shows speakers from the talk's JSON; offline it says "Connect to load more".
 - Not built: EXP-G (design's card, via `header`), the Now / My picks chips (they belong with AgendaView).
 - Start destinations for screenshots: `ExploreScreen(hooks:, start:)` with `ExploreStart`: `explore` → `.talks`, `explore.people` → `.speakers`, `explore.talk` → `.talk(ref: nil)` (first talk of 10 Nov, or a given reference), `explore.graph` → `.graph` (pushes `ExploreHooks.graph`).
+- Strings (i18n rule): every PTExplore string is `String(localized: "...", bundle: .module)` with the literal as the key; `Resources/Localizable.xcstrings` has the keys (empty, for i18n to fill); package has `defaultLocalization: "en"`. PTDeck is not localised yet (decks are not in the summit build).
