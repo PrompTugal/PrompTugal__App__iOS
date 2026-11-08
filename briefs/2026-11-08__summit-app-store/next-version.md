@@ -74,3 +74,16 @@ Today's check (review and apps): the public build sends no telemetry and no logs
 | Summit data research, domain proposal | vault session (research only) |
 | Billing (credit, usage, no payment) | new session, Team app first |
 | OpenRouter workflows | Team and RiskMandate apps |
+
+## From App Review and the screenshots (review, 8 Nov)
+
+Found while preparing the first submission. None of these blocks it.
+
+- **Screenshot filter on summaries.** `ScreenshotFilter.stories` checks only the title, so a story summary can show a third-party trademark in a store image. Check the summary too.
+- **Seeded talk detail for screenshots.** `explore.talk` opens the first item, which is the Registration row. Open a seeded talk, so the store set can include a talk detail.
+- **Talk detail offline.** A talk that is not in the cache shows "Connect to load this talk's times". Fall back to the bundled agenda seed, which already has the time and place.
+- **pt-BR date chips** in My program truncate ("9 de nov. d…"). Use a shorter day format, such as "ter 10", or a wider chip.
+- **pt-PT wording.** "palestra" is Brazilian usage; "sessão" reads more naturally in European Portuguese.
+- **Graph labels** show raw URLs (for example "websummit.com/…"). Use readable names, and keep the graph out of store images until then.
+- **The planner.** "Plan my day" (free slots and walking times) is only in the Team app. Bring it to My program, then add it back to the store description.
+- **A "send nothing" switch** in Settings, with the line "This app sends nothing about you; Ask sends only what you allow" (see the privacy section above).
