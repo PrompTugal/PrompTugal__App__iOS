@@ -20,7 +20,7 @@ let package = Package(
         ),
         .testTarget(
             name: "PTExploreTests",
-            dependencies: ["PTExplore"],
+            dependencies: ["PTExplore", .product(name: "PTCore", package: "PTCore")],
             path: "Tests/PTExploreTests"
         ),
     ],
