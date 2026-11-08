@@ -227,3 +227,5 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 | M8 | `scripts/testflight/review-notes.txt` on dev still has the old step 4 ("asked only then"). Since rc7, the first pick asks too. | **fix**: copy store/review-notes.txt; re-apply the ASC review notes if they were set from the old copy |
 | G1, G4 | Build number, processing, version string, airplane-mode fresh install | pending |
 | M6, M9 | Dinis: App Privacy, Mac and Vision Pro, IDFA | pending (pinged) |
+
+15:09: the ASC version string is **0.4.22** (ios-submit 42493272621). dev is tagged v0.4.22 = 535e9ba plus the version commit. iOS release #103 (42493212548) is building and uploading. Open: build number and processing, airplane check, review-notes step 4 on dev, Dinis's hand steps.
