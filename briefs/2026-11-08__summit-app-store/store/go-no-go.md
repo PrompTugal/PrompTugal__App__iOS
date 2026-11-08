@@ -163,3 +163,5 @@ The delta from rc4 56a630e is the rc5 parts already passed (screenshot filter, d
 | Tests | `@MainActor` on `WebPageHostTests` (test only) | GO |
 | G5 | Full run 396 (42487965688) | pending |
 | M4 | Screens on rc7, with the alert answered "Allow" | pending, then the full image and persona pass |
+
+rc7 moved to **0279acc** (14:06): the only change from 7f961a0 is `Packages/PTAgenda/Tests/PTAgendaTests/PickTests.swift` (`@MainActor`, test only). Run 10 holds. The full run is now 397 (42488067819).
