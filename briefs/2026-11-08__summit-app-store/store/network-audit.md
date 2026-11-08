@@ -56,7 +56,7 @@ git grep -nohE "https://[a-z0-9.-]+" -- Packages/*/Sources Apps/PrompTugal | sor
 | Item | State on rc2 |
 | --- | --- |
 | N1 cookies off in `HTTPClient` | done (`HTTPClient.swift:89-91`) |
-| N2 vault background task | still at `PrompTugalApp.swift:30` and `:40`. **Accepted for this version** (conductor, 12:32): with no vault keys, `backgroundRefresh` returns at once, so it makes no network calls and shows no prompt or UI. |
+| N2 vault background task | **Done on rc4 d8a5020**: `#if DEBUG` only. (Earlier: accepted for this version) (conductor, 12:32): with no vault keys, `backgroundRefresh` returns at once, so it makes no network calls and shows no prompt or UI. |
 | N3 "Save key to my vault" | done: `PublicAskProvider.offersVaultKeyCopy` is false |
 | N4 `WebPage` loads linked sites in the app | **open, blocker** (team). **Fixed on `split/rc3` 98767dd** (team ae618cf): see below. |
 | New native sources | PTExplore (`ExploreSource.swift`: promptugal.news only); PTNowNext makes no network calls; PTSync is not linked |

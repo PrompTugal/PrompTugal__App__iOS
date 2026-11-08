@@ -78,3 +78,13 @@
 | Localization sweep (i18n 5e4ef2b) | `String(localized:bundle: .module)` in AgendaView, ShellParts, PTAgenda and PTNews; catalogs extended | GO |
 | Hosts, WebPage, notes, purpose strings | Unchanged since rc3 | GO |
 | G5 | Full run 42481029792 on ce58c5e | pending |
+
+## Run 4: `split/rc4` d8a5020 (12:50 UTC): GO on everything checkable in the repository
+
+| # | Check | State |
+| --- | --- | --- |
+| G4 | `AgendaHub.seedAgenda = { AgendaSeed.events() }` is set in `PrompTugalApp.init()`, before `ReaderStore` is created. The seed's shape (`items` of date, time, title, place, kind, official, page) matches the live `AgendaFeed`, so it decodes the same way. Still needs one airplane-mode fresh install on the build. | GO in code |
+| N2 | The vault background task is now `#if DEBUG` only (in rc4) | done |
+| Everything else | As in runs 2 and 3 | GO |
+| G5 | Full run 393 (42481160021) on d8a5020 | pending (started 12:37) |
+| G1, M1–M10, P1, P2 | Processing, screenshots (watch the "Web Summit" program titles), App Store Connect entries, the conductor's go | pending |
