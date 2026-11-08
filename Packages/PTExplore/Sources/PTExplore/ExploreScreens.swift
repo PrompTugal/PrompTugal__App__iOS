@@ -11,15 +11,19 @@ public struct ExploreHooks {
     public var header: (@MainActor () -> AnyView)?
     /// The graph screen, opened by `ExploreStart.graph`.
     public var graph: (@MainActor () -> AnyView)?
+    /// The pick and calendar controls shown on PTExplore's own talk detail.
+    public var talkActions: TalkActions
 
     public init(talks: (@MainActor () -> AnyView)? = nil,
                 talkDetail: (@MainActor (ExploreItem) -> AnyView)? = nil,
                 header: (@MainActor () -> AnyView)? = nil,
-                graph: (@MainActor () -> AnyView)? = nil) {
+                graph: (@MainActor () -> AnyView)? = nil,
+                talkActions: TalkActions = TalkActions()) {
         self.talks = talks
         self.talkDetail = talkDetail
         self.header = header
         self.graph = graph
+        self.talkActions = talkActions
     }
 }
 
@@ -72,6 +76,8 @@ public struct ExploreScreen: View {
                 .navigationDestination(for: ExploreItem.self) { item in
                     if item.kind == .event, let talkDetail = hooks.talkDetail {
                         talkDetail(item)
+                    } else if item.kind == .event {
+                        TalkDetailView(talk: TalkRef(item), store: store, actions: hooks.talkActions)
                     } else {
                         ExploreDetailView(item: item, store: store)
                     }

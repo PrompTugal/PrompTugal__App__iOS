@@ -20,7 +20,12 @@ public struct ExploreDetail: Sendable, Hashable {
     public var title: String
     public var facts: [Fact]
     public var website: URL?
+    /// The talk or entry's page on the site, when the record names it.
+    public var pageURL: URL?
     public var links: [Link]
+
+    static var placeLabel: String { String(localized: "Where", bundle: .module) }
+    static var kindLabel: String { String(localized: "Kind", bundle: .module) }
 
     /// People who speak at this talk (links into a talk that say "speaks at").
     public var speakers: [Link] { links.filter { $0.verb == "← speaks at" && $0.ref.hasPrefix("person:") } }
@@ -69,6 +74,7 @@ public struct ExploreDetail: Sendable, Hashable {
                 if seen.insert(link.id).inserted { links.append(link) }
             }
         }
-        return ExploreDetail(title: title, facts: facts, website: website, links: links)
+        let page = (root["page"] as? String).flatMap { URL(string: $0) }
+        return ExploreDetail(title: title, facts: facts, website: website, pageURL: page, links: links)
     }
 }
