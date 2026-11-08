@@ -26,6 +26,8 @@
 
 7. (team, split/team d599843, not on dev yet) NowNext moves into PTAgenda: `NowNextSnapshot`, `SharedContainer`, `LisbonClock`, public `NowNextPublisher`. Once it is on dev: widgets and intents targets link PTAgenda; their three Swift files need `import PTAgenda`; in PrompTugalApp.swift set `AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }` and call it from agendaDidLoad with the schedule's picks, as TeamFeatures does.
 
+8. (collab, split/collab 86cf060; waits for PTSync on dev and the conductor's go) PTSync (PTCore only): apps.json promptugal packages += PTSync; project reference + product + framework build file; Info.plist BGTaskSchedulerPermittedIdentifiers += news.promptugal.reader.sync; PrompTugalApp.swift imports PTSync, PublicSync.start() at the end of init, SyncBackground.schedule() on background, PublicSync.refresh() on active; new Apps/PrompTugal/Shell/PublicSync.swift (Shell is design's folder: need a ruling on who adds it). Diff is in collab's status page. Later: Seed folder resource and scripts/seed/fetch_seed.py before xcodebuild.
+
 ## RiskMandate upload
 - Dinis: same Apple account. Set `testflight: true` after the first green CI run. Upload waits for the App Store Connect record; release must skip with a clear line until then (conductor to confirm with release).
 
@@ -37,10 +39,18 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (09:50 UTC)
-- 340 promptugal on a53e3cc: green, merged to dev by the conductor (a84a277).
-- ios-release run 84 on 42d2aab (promptugal testflight true on that commit only; dry run, internal only): success. Archive and export succeeded, upload skipped. Entitlements printed by the guard: app (app group group.news.promptugal.reader, associated-domains webcredentials:promptugal.news, time-sensitive), widgets and intents (app group group.news.promptugal.reader). One warning: ValidateEmbeddedBinary says the intents extension path is odd (../../../BuildProductsPath/.../Extensions); not an error.
-- Head 49c80c7: promptugal testflight false again. Conductor flips it after design's PublicShell is on dev.
+## Last CI run (11:30 UTC)
+- 340 + ios-release 84 (phase 4): green; guard printed the three entitlement sets. Merged to dev by the conductor.
+- Missing 0.4.12 build: Apple said ITMS-90683 (NSSpeechRecognitionUsageDescription missing). Fixed on 326147f: microphone and speech strings, plus privacy manifests in the widgets and intents folders, PTDeck and the external display scene.
+- Waiting on quick run 357 and ios-release dry run 94 (both on 326147f). After they finish: read the signed .ipa, READY to the conductor.
+
+## Summit queue (conductor's order, 8 Nov 11:30 UTC; freeze 16:00)
+1. READY for 326147f (purpose strings, the blocker).
+2. PTNowNext relink: merge split/team (e70d928 or later), package reference Packages/PTNowNext, widgets and intents link PTNowNext instead of PTAgenda.
+3. Localizations: knownRegions en, pt-PT, pt-BR (i18n sends the catalog files).
+4. Wiring when green: PTSync (glue inside PrompTugalApp.swift or Apps/PrompTugal/App/PublicSync.swift, not Shell/), PTExplore (package reference and apps.json), debug-only launch argument -PTNow <ISO date> (coordinate the clock hook with team; NowModel in PTAgenda reads it).
+5. PrompTugalScreens UI test: one XCTAttachment per destination (lifetime .keepAlways, named "<NN>-<screen id>") with -PTDestination and -PTNow: now, team.schedule, explore, news.home, plus what ux picks.
+6. App Store build settings review with review.B. No App Store Connect changes.
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.

@@ -27,7 +27,7 @@
 | M3 | The pt-PT and pt-BR listings exist only if the app has those localizations. A Portuguese store page with an English-only app is allowed, but then delete the Languages line. | pending |
 | M4 | Screenshots: 6.9", 6.5" and iPad 13". Native screens only, no event name or logo, no status bar with a carrier name, real content (not placeholder) | pending |
 | M5 | The support, marketing and privacy URLs answer 200. The privacy page describes the public app (R3), and the support page has a contact method. | pending |
-| M6 | The App Privacy answers match [app-privacy.md](app-privacy.md) for this build (with or without Ask), and agree with `PrivacyInfo.xcprivacy` | pending |
+| M6 | The App Privacy answers match [app-privacy.md](app-privacy.md) for this build (with or without Ask), and agree with `PrivacyInfo.xcprivacy`. The [network audit](network-audit.md) recheck finds only promptugal.news and openrouter.ai, with N1 to N3 done. | pending |
 | M7 | Age rating answered as in [age-rating.md](age-rating.md) (4+). "Unrestricted web access" is No, and R1 is fixed. | pending |
 | M8 | The review notes are [review-notes.md](review-notes.md), with only the paragraphs for this build. Contact name, email and phone are set. | pending |
 | M9 | Price free; availability all regions; "Manually release"; Mac and Vision Pro availability unticked | pending |
