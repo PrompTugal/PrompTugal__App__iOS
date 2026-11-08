@@ -64,12 +64,20 @@ enum PublicDestinations {
 
     // MARK: Web
 
-    static let web: [ShellDestination] = [
-        ShellDestination(id: "web.promptugal", title: "PrompTugal.news", symbol: "newspaper.fill", group: "Web",
-                         kind: .web(FeedClient.site)) { AnyView(WebPage(url: FeedClient.site, title: "PrompTugal.news")) },
-        ShellDestination(id: "web.all", title: "All websites", symbol: "safari", group: "Web", kind: .web(FeedClient.site),
-                         summary: "The website shell, with its shortcuts") { AnyView(WebsiteView()) },
-    ]
+    static var web: [ShellDestination] {
+        var rows = [
+            ShellDestination(id: "web.promptugal", title: "PrompTugal.news", symbol: "newspaper.fill", group: "Web",
+                             kind: .web(FeedClient.site)) { AnyView(WebPage(url: FeedClient.site, title: "PrompTugal.news")) },
+        ]
+        // The website list still names the team site: DEBUG builds only until the public app has its own list.
+        #if DEBUG
+        rows.append(ShellDestination(id: "web.all", title: "All websites", symbol: "safari", group: "Web",
+                                     kind: .web(FeedClient.site), summary: "The website shell, with its shortcuts") {
+            AnyView(WebsiteView())
+        })
+        #endif
+        return rows
+    }
 
     // MARK: Personal
 
