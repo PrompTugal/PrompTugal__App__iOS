@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 05:55 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 06:25 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 05:55 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 06:25 UTC: merged `origin/dev` (v0.4.3) with PTLanes and VaultCollabAccess (`6300658`). No conflict. The lanes feature still reads as in the beta on the Team page: its evidence names `**/LanesStore.swift` and `text:**/LanesView.swift::ReportBlockMenu`, which are now in `Packages/PTLanes`, inside the Team app's package closure. Team page unchanged (23 in the beta, 2 debug only, 1 coming); public page 3 in the beta, 10 coming. 68 tests green. Only PTAsk and phase 4 remain.
 
 - 05:55 UTC: merged `origin/dev` (v0.4.2) with PTNews (`d3cb173`): news screens and the graph moved to `Packages/PTNews`. No conflict. Checked the labels against the moved files: Team page unchanged (23 in the beta, 2 debug only, 1 coming), so `features.json` needs no change (it names files, and the `screen:news.home` / `screen:news.graph` registrations are still in the Team app's Destinations). Public page still 3 in the beta, 10 coming, until `PublicShell` registers screens. 68 tests green. Still waiting for PTLanes, PTAsk and the phase 4 word.
 
