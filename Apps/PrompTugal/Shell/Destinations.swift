@@ -1,4 +1,5 @@
 import PTAgenda
+import PTAsk
 import PTCore
 import PTNews
 import PTVaultUI
@@ -51,11 +52,11 @@ enum PublicDestinations {
     ]
 
     // MARK: Ask
-    // TODO(PTAsk): when PTAsk is on dev, add
-    //   ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "Ask",
-    //                    summary: "Ask about the agenda, your picks and the news", phoneTab: 3) { AnyView(AskView()) }
-    // with `PublicAskProvider` set at launch, and `.askAnywhere()` on the iPad detail.
-    static let ask: [ShellDestination] = []
+
+    static let ask: [ShellDestination] = [
+        ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "Ask",
+                         summary: "Ask about the agenda, your picks and the news", phoneTab: 3) { AnyView(AskView()) },
+    ]
 
     // MARK: Web
 

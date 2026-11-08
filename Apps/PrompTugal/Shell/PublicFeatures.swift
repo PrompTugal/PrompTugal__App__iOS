@@ -39,7 +39,8 @@ final class PublicFeatures {
     /// Tells the packages where the app's one bridge and schedule are. Called once, when `shared` is made.
     private func registerHubs() {
         WebBridgeHub.bridge = bridge
-        // WebBridgeHub.offlineReader and .noteCurrentPage: set when the offline reader and Ask are in place.
+        // The offline reader stays nil in the public app's first build. Ask reads the page on screen.
+        WebBridgeHub.noteCurrentPage = { title, url in CollabHooks.noteCurrentPage(title: title, url: url) }
         AgendaHub.schedule = schedule
         AgendaHub.agendaDidLoad = { [weak self] agenda in self?.agendaDidLoad(agenda) }
     }

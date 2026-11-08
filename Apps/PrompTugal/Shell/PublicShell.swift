@@ -1,4 +1,5 @@
 import PTAgenda
+import PTAsk
 import PTCore
 import PTNews
 import PTWeb
@@ -72,6 +73,8 @@ struct PublicShell: View {
                         destination.view().destinationID(destination.id)
                             .id(destination.id)
                             .surfaceKind(destination.kind)
+                            // Ask beside any screen: a toolbar button, ⌘K and a side panel.
+                            .askAnywhere(enabled: destination.id != "collab.ai")
                     } else {
                         ContentUnavailableView("Choose a screen", systemImage: "sidebar.left")
                     }
