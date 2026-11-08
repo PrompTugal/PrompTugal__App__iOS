@@ -1,8 +1,8 @@
 # Collab status: PTAsk and PTLanes
 
-> CollabSeams.swift is on dev (d597b8f). PTLanes is merged with vault's VaultCollabAccess on split/collab. Runs 314 and 322 found the errors below, all fixed in 99c3e91: PTLanes own SecretStore copy, public LanesView.body, TeamNotes default argument, SpeechDictation copy for AskView, hasWebsiteInbox, error-text test moved to the Team tests. Quick run 324 is queued; a full run follows when it is green. PTLanes and PTAsk are next, in that order. Collab moves AI/ into PTAsk and Lanes/ into PTLanes. Coordination/ stays in the Team app. Phase 0 (mapping and plan) is done. Waiting for team, design and vault packages on dev. No code moved yet.
+> CollabSeams, PTLanes and VaultCollabAccess are on dev. PTAsk is moved on split/collab (AskContextProvider, PublicAskProvider in PTAsk, TeamAskProvider in Coordination/): quick run 329 green on f3b0a1c, full run queued. Needs from others: the Team entry point must call TeamLanesWiring.install() once at launch; the public app must set AgendaHub.schedule.
 
-**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** run 322 (0cdbebc) red with two errors, fixed in 99c3e91; quick run 324 (macos-26) queued · **Updated:** 05:12 UTC (collab.B)
+**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** PTAsk move: quick run 329 (f3b0a1c) green; full run on f3b0a1c queued (macos-26) · **Updated:** 06:50 UTC (collab.B)
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
