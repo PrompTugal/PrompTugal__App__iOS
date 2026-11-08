@@ -105,3 +105,38 @@ Handed off to the session on account B. Do not dispatch CI from the old session.
 - 05:05 UTC: collab's run 322 (split/collab 0cdbebc): Package PTVaultUI passed (Test PTVaultUI, iPhone), promptugal and riskmandate builds and tests passed. Failures are collab's: PTLanes tests (OpenRouter not in scope), Team Debug build (LanesStore.websiteInbox is internal, used in AI/CollabDebugPanel.swift:45), Team unit tests. None in PTVaultUI or VaultCollabAccess. Vault code unchanged: b614118.
 - 05:37 UTC: collab's run 324 (split/collab 99c3e91, contains vault b614118) is green. That is the joint run that covers VaultCollabAccess and install(). Run 326 (c6e7a26, status page only) is queued. Nothing more for vault to do; the conductor merges split/collab (vault commits included).
 - 05:58 UTC: vault's phase 3 work is on dev (b614118 via collab's c6e7a26, dev 6300658, run 326 green). Standing by. Phase 4 contract for entry points: call `VaultCollabAccess.install()` once at launch and `VaultBackground.register(taskIdentifier: "<this app's id>")` (PrompTugal: news.promptugal.reader.vault-refresh); list the id in BGTaskSchedulerPermittedIdentifiers.
+
+## Research for next-version.md (8 Nov, about 12:00 UTC)
+
+Read-only, no code. The organiser is Web Summit (Lisbon, 9-12 Nov 2026). Confidence is marked on each item: **read** means a fetched page, **search** means a web-search summary I could not open myself.
+
+### 1. Can a participant export their own data from Web Summit's app or site?
+
+| Question | What exists | Confidence |
+| --- | --- | --- |
+| Connections export | The help article "Exporting your attendee connections" says: open the app (attend.websummit.com/lis26), Discovery tab, "Download Connections". An older media-hub page says Connections tab, Accepted connections, download icon. Format: CSV, emailed to the ticket's email address. A third-party guide says only confirmed connections are included. | search only. The article URL returned 404 to our fetch, so steps and columns are unverified. |
+| Contacts as a ticket benefit | websummit.com/llms.txt lists "Downloadable file of contacts" among General attendee benefits, next to "Personalised schedule builder", "Searchable attendee list" and "App messaging function". Format, columns and scope are not stated. | read |
+| Meetings | No export of meetings found. The app has a schedule builder and messaging; nothing says meetings can be downloaded. | not found |
+| Schedule / calendar | No ICS or calendar feed found. The public schedule is at websummit.com/schedule. Personal schedule help article exists (support-rio.websummit.com) but returned 404. | not found |
+| Profile | Nothing found on exporting your own profile. | not found |
+| Public API for participants | None found. API Evangelist (a third party, "not affiliated") lists three "APIs" (Attendee Platform, Startup Programme, Developer Programme) captured from the web; it does not say they are public or documented. github.com/websummit has no attendee API. websummit.com/developers is a marketing page for the free developer ticket. developers.websummit.com does not resolve from here. | read |
+| GDPR access (privacy policy) | The policy says it is oriented by the GDPR (search snippet; about.websummit.com/privacy, updated 29 Jun 2023, and websummit.com/privacy, updated 27 Oct 2026). Page bodies were not captured, so the request address, form, response time and format are **unverified**. Art. 15 and 20 GDPR give the right regardless; the practical route is the contact or DPO address in the policy. | body not read |
+| Terms against reuse | Website terms (about.websummit.com, updated 14 Mar 2022) and websummit.com/terms-and-conditions: bodies not captured. **No clause verified, either way.** | not read |
+
+Pages we could not reach: the connections help article (404 on both hosts we tried), the personal schedule article (404), support.websummit.com help centre (403), the Google Sites app guide (sign-in), developers.websummit.com (DNS), and the body text of the privacy and terms pages.
+
+**What this means for us.** The one real route is the participant's own CSV of connections, downloaded by the participant from Web Summit's app and imported by hand into our app. That is user-initiated, so it is the safe design. We should not log in for the user, scrape, or call Web Summit's internal APIs: the terms are unread and it is the kind of thing they usually forbid. Before building the import: (a) someone with a ticket opens the app at the event and downloads the CSV, so we know the columns; (b) someone reads the terms and the privacy policy in a browser; (c) ask Web Summit's data protection contact whether meetings and the schedule can be exported.
+
+### 2. Domain names (we cannot register anything)
+
+Checked 8 Nov about 12:00 UTC by registry lookup (RDAP) and DNS: "not registered" means the registry had no record and the name had no DNS. Premium pricing and trademark checks are not done. None uses "Web Summit" or another third-party mark.
+
+| Name | Why |
+| --- | --- |
+| tugasummit.app | "Tuga" is the informal name for Portuguese things; says Lisbon and summit, short, no mark. (.com also free.) |
+| summitnow.app | Matches the Now tab: what is on now. Plain English, easy to say. |
+| lisbonloop.app | For the feedback site: the feedback loop between users, the website and the builds. |
+| summitpal.app | Friendly, personal; fits "who are you?" and the persona idea. summitpal.com is taken (it resolves). |
+| ptsummit.app | Shortest, ties to PrompTugal; weakest as a public name. |
+
+Taken or not usable: summitloop.com and summitloop.app (registered), feedloop.app (in use), summitpal.com (resolves), promptugal.com and promptugal.ai (registered, pointing at a parking-style address; **someone must check whether Dinis owns them**). promptugal.org was not registered when checked.
