@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 06:00 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 07:40 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -214,3 +214,7 @@ None. Nothing moved yet.
   - **Platform (widgets, phase 4):** `NowNextPublisher` is not in a package, so the public app does not publish "Now and next" yet (`AgendaHub.publishNowNext` is left at its default).
   - **Team:** `TeamFeatures.swift:20` `urlScheme`.
   - **Offline reader:** `WebBridgeHub.offlineReader` is nil in the public app until a reader view moves out of the Team app's `PrompTugalApp.swift`.
+
+## Update (8 Nov, 07:40 UTC, design.B): phase 4, PublicShell pushed
+- Conductor started phase 4 at 07:07 UTC. Pushed PublicShell on top of origin/dev (02f3624 era): `Apps/PrompTugal/Shell/` (PublicShell, Destinations, PublicSettingsView, PublicDebugView, PublicFeatures) and `Packages/PTCore/Sources/PTCore/Shell/` (shared parts). Ask is in (iPhone tab 4; `askAnywhere` on iPad). Offline reader stays nil in the public app.
+- Head c025f83. Full run 333 (id 42457549551, app=all, macos-26), dispatched 07:08. At 07:40: Debug build (team), Debug build (riskmandate), riskmandate iPad tests and Package PTAsk passed; no failure; the rest queued behind the runner queue. The Debug build (promptugal) is the first compile of PublicShell.
