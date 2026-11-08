@@ -1,6 +1,6 @@
 # Apps status
 
-> The RiskMandate and PrompTugal projects are written and pushed on split/apps. Neither has been built yet: CI is the first compiler.
+> RiskMandate and PrompTugal both build in CI (PrompTugal: all four app jobs green on 3a63963). RiskMandate's Release build and iPad tests are still queued; READY goes to the conductor when run 290 finishes.
 
 ## Done
 - `Apps/RiskMandate/RiskMandate.xcodeproj`: bundle ai.riskmandate.app, version 0.4.0, one screen, privacy manifest, placeholder icon, one unit test, scheme "RiskMandate". Links PTCore.
@@ -9,7 +9,7 @@
 - `apps.json`: entries "promptugal" and "riskmandate", both testflight false. `check_apps.py` and its tests pass on Linux.
 
 ## In progress
-- Dispatching ios.yml on split/apps for riskmandate, then promptugal.
+- Waiting for run 290 (riskmandate) to finish.
 
 ## Next
 - Fix whatever CI finds. Add packages to PrompTugal as they land (PTLanes is not in it by design).
@@ -32,10 +32,11 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run
-- 285 (riskmandate, 7d28094): Debug, Release and iPhone tests green; iPad tests queued.
-- 290 = riskmandate and 289 = promptugal, both on 3a63963, queued behind other runs.
-- apps.json: riskmandate testflight true (CI does not read the flag).
+## Last CI run (02:25 UTC)
+- 289 (promptugal, 3a63963): Debug build, Release build, iPhone tests and iPad tests all green. The six package jobs (PTCore, PTWeb, PTNews, PTVaultUI, SGitVault, PTAsk, PTLanes) were cancelled at 01:20:55 by something other than me, so "iOS result" shows failure. No code failure found.
+- 290 (riskmandate, 3a63963): Debug build green; iPhone tests running; Release build and iPad tests queued.
+- 285 was cancelled by the conductor (superseded).
+- apps.json: riskmandate testflight true (CI does not read the flag); promptugal stays false until phase 4.
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.
