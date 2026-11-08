@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import PrompTugal
+@testable import PTCore
 
 @Suite("HTTP client")
 struct HTTPClientTests {

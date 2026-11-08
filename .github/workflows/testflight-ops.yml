@@ -9,7 +9,7 @@ name: TestFlight ops
 #   remove-from-group    build + group
 #   set-test-info        build; sets What to Test (scripts/testflight/what-to-test.txt)
 #                        and the Beta App Review details (scripts/testflight/review-info.json
-#                        + review-notes.txt, with demo keys from secrets)
+#                        + review-notes.txt; contact and demo keys from secrets)
 #   submit-beta-review   build
 #   expire               build
 
@@ -47,7 +47,13 @@ jobs:
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
       BUNDLE_ID: news.promptugal.reader
-      # Placeholders in scripts/testflight/review-notes.txt. Unset ones stay missing and are listed.
+      # Placeholders in scripts/testflight/review-notes.txt. Unset ones stay missing and are listed,
+      # except DEMO_VAULT_KEY and DEMO_LANE_NAME: their line is left out when unset.
+      # Contact for Beta App Review (personal, so secrets only; the repository is public).
+      REVIEW_CONTACT_FIRST_NAME: ${{ secrets.REVIEW_CONTACT_FIRST_NAME }}
+      REVIEW_CONTACT_LAST_NAME: ${{ secrets.REVIEW_CONTACT_LAST_NAME }}
+      REVIEW_CONTACT_EMAIL: ${{ secrets.REVIEW_CONTACT_EMAIL }}
+      REVIEW_CONTACT_PHONE: ${{ secrets.REVIEW_CONTACT_PHONE }}
       DEMO_OPENROUTER_KEY: ${{ secrets.DEMO_OPENROUTER_KEY }}
       DEMO_VAULT_KEY: ${{ secrets.DEMO_VAULT_KEY }}
       DEMO_LANE_NAME: ${{ vars.DEMO_LANE_NAME }}
