@@ -235,3 +235,5 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 15:13: release #103 is still archiving PrompTugal (45f44d8). Open for the final GO: build number and processing VALID; Dinis: App Privacy, Mac and Vision Pro, IDFA; G4 airplane check (or code evidence after 17:30).
 
 15:22: release #103 (v0.4.22) did not upload (release-notes.sh SIGPIPE). dev is tagged **v0.4.23** = 3125e3e, with app code identical to 535e9ba (only the release-notes fix, testflight text and version commits). Release #104 (42494256284) uploads it, and the ASC version string is 0.4.23. Run 15 holds for the app; the final GO is on 0.4.23.
+
+15:40: release #104 (3125e3e) is still archiving PrompTugal. Open: build number and processing VALID, attached to 0.4.23; Dinis's hand steps; G4.
