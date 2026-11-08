@@ -1,23 +1,37 @@
 name: iOS release
 
-# Packaging and distribution for the PrompTugal app (news.promptugal.reader).
+# Packaging and distribution for the apps in apps.json (contracts section 5).
 #
-#   package   pushes to dev (not docs/site-only), tags ios-v*, and by hand.
-#             Unsigned: .xcarchive, .ipa (Payload/PrompTugal.app zipped) and a
-#             simulator .app, uploaded as artifacts. Needs no Apple account.
-#   testflight  on every push to dev that builds (same filters as package), on a
-#             tag ios-v*, and by hand (workflow_dispatch with upload or dry_run).
-#             Signs, exports and uploads to App Store Connect / TestFlight, so
-#             the team's internal testers get each dev build automatically.
-#             Turn the push uploads off with the repo variable
-#             TESTFLIGHT_ON_PUSH = false (tags and manual runs still upload).
-#             Skips cleanly, with "skipped: secret X missing" in the summary,
-#             until the signing secrets exist.
+#   changes   ubuntu: which apps this run touches, from apps.json and the diff
+#             (ios-changes.yml). An app whose project does not exist yet is skipped.
+#   package   per affected app: pushes to dev (not docs/site-only), release tags,
+#             and by hand. Unsigned: .xcarchive, .ipa (Payload/<App>.app zipped) and
+#             a simulator .app, uploaded as artifacts. Needs no Apple account.
+#   testflight  per affected app with "testflight": true whose unsigned package
+#             succeeded: signs, exports and uploads to THAT app's App Store Connect
+#             record. The built bundle id must equal apps.json, and the record must
+#             exist for it, or nothing is uploaded.
 #
-# Build number: CFBundleVersion = run number of THIS workflow + IOS_BUILD_OFFSET
-# (repo variable, default 100), passed as CURRENT_PROJECT_VERSION. Both jobs of
-# one run use the same number. MARKETING_VERSION comes from the project.
-# Setup and secrets: briefs/2026-11-08__overnight-push/release-setup.md
+# Triggers
+#   push to dev          every affected app uploads, unless paused
+#   tags                 team-v*, promptugal-v*, riskmandate-v* release that app;
+#                        the old ios-v* means the app with bundle news.promptugal.reader
+#   workflow_dispatch    input "app": all, or one app; "upload" or "dry_run" to sign
+#
+# Pausing (repository variables, Settings > Secrets and variables > Actions > Variables)
+#   TESTFLIGHT_ON_PUSH=false           pauses push uploads of every app
+#   TESTFLIGHT_ON_PUSH_TEAM=false      pauses one app (…_PROMPTUGAL, …_RISKMANDATE)
+#   Tags and manual runs still upload.
+#
+# Build number: CFBundleVersion = run number of THIS workflow + the app's offset, passed as
+# CURRENT_PROJECT_VERSION. Offset: variable IOS_BUILD_OFFSET_<APP>, else IOS_BUILD_OFFSET,
+# else 100 (above the manual builds; PrompTugal's last manual build is 6). Both jobs of one
+# app use the same number. MARKETING_VERSION comes from the app's own project.
+#
+# Secrets: ASC_* and the certificate are shared. Profiles are per app:
+#   IOS_PROFILE_<APP>_{APP,WIDGETS,INTENTS,SHARE}_BASE64, for example IOS_PROFILE_TEAM_APP_BASE64.
+#   The app with bundle news.promptugal.reader also accepts the old IOS_PROFILE_{APP,WIDGETS,INTENTS}_BASE64.
+# Setup: briefs/2026-11-08__overnight-push/release-setup.md
 
 on:
   push:
@@ -25,7 +39,7 @@ on:
     # workflow_dispatch (+ source_ref). Changes to this workflow are tested the
     # same way, so merges of dev into a night branch do not rebuild dev twice.
     branches: [dev]
-    tags: ['ios-v*']        # path filters do not apply to tag pushes
+    tags: ['ios-v*', 'team-v*', 'promptugal-v*', 'riskmandate-v*']   # path filters do not apply to tag pushes
     paths-ignore:           # same as ios.yml: docs and site-only pushes skip the macOS runner
       - 'briefs/**'
       - 'website/**'
@@ -33,6 +47,11 @@ on:
       - 'VERSION'
   workflow_dispatch:
     inputs:
+      app:
+        description: 'Which app: all, or one'
+        type: choice
+        options: [all, team, promptugal, riskmandate]
+        default: all
       upload:
         description: 'Sign and upload to TestFlight (needs the signing secrets)'
         type: boolean
@@ -43,7 +62,7 @@ on:
         options: [auto, manual, automatic]
         default: auto
       build_number:
-        description: 'Override CFBundleVersion (leave empty for run number + offset)'
+        description: 'Override CFBundleVersion (leave empty for run number + the app offset)'
         type: string
         default: ''
       dry_run:
@@ -72,24 +91,38 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  PROJECT: PrompTugal.xcodeproj
-  SCHEME: PrompTugal
-  APP_NAME: PrompTugal
-  IOS_BUILD_OFFSET: ${{ vars.IOS_BUILD_OFFSET || '100' }}
   BUILD_NUMBER_OVERRIDE: ${{ inputs.build_number }}
 
 jobs:
+  changes:
+    name: Changes
+    uses: ./.github/workflows/ios-changes.yml
+    with:
+      app: ${{ inputs.app || 'all' }}
+      upload: ${{ inputs.upload && 'true' || 'false' }}
+      dry_run: ${{ inputs.dry_run && 'true' || 'false' }}
+      source_ref: ${{ inputs.source_ref }}
+
   package:
-    name: Unsigned archive, .ipa and simulator app
+    name: Unsigned archive (${{ matrix.app.app }})
+    needs: changes
+    if: needs.changes.outputs.has_apps == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.apps) }}
     runs-on: macos-26
     timeout-minutes: 45
     permissions:
       contents: read
       actions: read   # size check reads the latest dev build-info artifact
-    outputs:
-      version: ${{ steps.version.outputs.MARKETING_VERSION }}
-      build: ${{ steps.version.outputs.BUILD_NUMBER }}
-      base: ${{ steps.version.outputs.ARTIFACT_BASE }}
+    env:
+      PROJECT: ${{ matrix.app.project }}
+      SCHEME: ${{ matrix.app.scheme }}
+      APP_NAME: ${{ matrix.app.name }}
+      APP_KEY: ${{ matrix.app.app }}
+      EXPECTED_BUNDLE: ${{ matrix.app.bundle }}
+      IOS_BUILD_OFFSET: ${{ matrix.app.offset }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -116,6 +149,15 @@ jobs:
 
       - name: Archive and package (unsigned)
         run: scripts/release/package-unsigned.sh
+
+      - name: Bundle id matches apps.json
+        run: |
+          built=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["app"])' "$RUNNER_TEMP/release/dist/build-info.json")
+          if [ "$built" != "$EXPECTED_BUNDLE" ]; then
+            # Only a warning here: the unsigned package uploads nowhere. The TestFlight job refuses to upload.
+            echo "::warning::${APP_KEY}: the project builds $built but apps.json says $EXPECTED_BUNDLE. TestFlight will refuse to upload until they agree."
+            echo "- ⚠️ \`$APP_KEY\`: project builds \`$built\`, apps.json says \`$EXPECTED_BUNDLE\`; TestFlight will not upload." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Size check
         env:
@@ -155,7 +197,7 @@ jobs:
       - name: Upload build-info.json
         uses: actions/upload-artifact@v5
         with:
-          name: build-info
+          name: build-info-${{ matrix.app.app }}
           path: |
             ${{ runner.temp }}/release/dist/build-info.json
             ${{ runner.temp }}/release/dist/release-notes.txt
@@ -165,29 +207,44 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: release-logs-unsigned
+          name: release-logs-unsigned-${{ matrix.app.app }}
           path: ${{ runner.temp }}/release/logs/
           if-no-files-found: ignore
           retention-days: 14
 
   testflight:
-    name: Sign and upload to TestFlight
-    needs: package
-    if: >-
-      (github.event_name == 'workflow_dispatch' && (inputs.upload || inputs.dry_run)) ||
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ios-v')) ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/dev' && vars.TESTFLIGHT_ON_PUSH != 'false')
+    name: TestFlight (${{ matrix.app.app }})
+    # Which apps upload is decided in the changes job: affected, testflight true, not paused
+    # (pushes), or named by the tag or the manual run. A package that failed for one app does
+    # not stop the others; the first step below checks this app's own package.
+    needs: [changes, package]
+    if: ${{ !cancelled() && needs.changes.outputs.has_upload == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.upload) }}
     runs-on: macos-26
     timeout-minutes: 60
     environment: testflight   # optional protection rules; secrets may live here or at repo level
+    permissions:
+      contents: read
+      actions: read   # to see this run's artifacts
     env:
+      PROJECT: ${{ matrix.app.project }}
+      SCHEME: ${{ matrix.app.scheme }}
+      APP_NAME: ${{ matrix.app.name }}
+      APP_KEY: ${{ matrix.app.app }}
+      EXPECTED_BUNDLE: ${{ matrix.app.bundle }}
+      BUNDLE_ID: ${{ matrix.app.bundle }}   # asc.py looks the record up by this
+      IOS_BUILD_OFFSET: ${{ matrix.app.offset }}
+      GH_TOKEN: ${{ github.token }}
       # Only the presence of these is checked in the gate step; values never print.
       IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
       IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
-      IOS_PROFILE_APP_BASE64: ${{ secrets.IOS_PROFILE_APP_BASE64 }}
-      IOS_PROFILE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_WIDGETS_BASE64 }}
-      IOS_PROFILE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_INTENTS_BASE64 }}
-      IOS_PROFILE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_SHARE_BASE64 }}
+      IOS_PROFILE_APP_BASE64: ${{ secrets[format('IOS_PROFILE_{0}_APP_BASE64', matrix.app.secret)] || (matrix.app.legacy && secrets.IOS_PROFILE_APP_BASE64) || '' }}
+      IOS_PROFILE_WIDGETS_BASE64: ${{ secrets[format('IOS_PROFILE_{0}_WIDGETS_BASE64', matrix.app.secret)] || (matrix.app.legacy && secrets.IOS_PROFILE_WIDGETS_BASE64) || '' }}
+      IOS_PROFILE_INTENTS_BASE64: ${{ secrets[format('IOS_PROFILE_{0}_INTENTS_BASE64', matrix.app.secret)] || (matrix.app.legacy && secrets.IOS_PROFILE_INTENTS_BASE64) || '' }}
+      IOS_PROFILE_SHARE_BASE64: ${{ secrets[format('IOS_PROFILE_{0}_SHARE_BASE64', matrix.app.secret)] || (matrix.app.legacy && secrets.IOS_PROFILE_SHARE_BASE64) || '' }}
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
@@ -195,9 +252,6 @@ jobs:
       SIGNING: ${{ inputs.signing || 'auto' }}
       INTERNAL_ONLY: ${{ inputs.internal_only && 'true' || 'false' }}
       SKIP_UPLOAD: ${{ inputs.dry_run && 'true' || 'false' }}
-      BUILD_NUMBER: ${{ needs.package.outputs.build }}
-      MARKETING_VERSION: ${{ needs.package.outputs.version }}
-      ARTIFACT_BASE: ${{ needs.package.outputs.base }}
     steps:
       - name: Check signing secrets
         id: gate
@@ -218,7 +272,14 @@ jobs:
           fi
           [ "$mode" = manual ] && missing+=("${cert_missing[@]}")
           [ "$mode" = automatic ] && [ -z "$APPLE_TEAM_ID" ] && missing+=(APPLE_TEAM_ID)
-          echo "## TestFlight" >> "$GITHUB_STEP_SUMMARY"
+          echo "## TestFlight: $APP_KEY (\`$EXPECTED_BUNDLE\`)" >> "$GITHUB_STEP_SUMMARY"
+          # This app's unsigned package must have succeeded in this run (its build-info is the last upload).
+          if ! gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" --paginate --jq '.artifacts[].name' | grep -qx "build-info-$APP_KEY"; then
+            echo "skipped: the unsigned package of $APP_KEY did not succeed in this run"
+            echo "- ⏭️ skipped: the unsigned package of \`$APP_KEY\` did not succeed in this run" >> "$GITHUB_STEP_SUMMARY"
+            echo "ready=false" >> "$GITHUB_OUTPUT"; echo "mode=none" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           if [ ${#missing[@]} -gt 0 ]; then
             for s in "${missing[@]}"; do
               echo "skipped: secret $s missing"
@@ -227,7 +288,7 @@ jobs:
             echo "" >> "$GITHUB_STEP_SUMMARY"
             if [ "$mode" = automatic ] && [ ${#cert_missing[@]} -gt 0 ]; then
               echo "" >> "$GITHUB_STEP_SUMMARY"
-              echo "For manual signing (the default once present) add instead of \`APPLE_TEAM_ID\`: $(printf '\`%s\` ' "${cert_missing[@]}")and the extension profiles \`IOS_PROFILE_WIDGETS_BASE64\`, \`IOS_PROFILE_INTENTS_BASE64\`." >> "$GITHUB_STEP_SUMMARY"
+              echo "For manual signing (the default once present) add instead of \`APPLE_TEAM_ID\`: $(printf '\`%s\` ' "${cert_missing[@]}")and the extension profiles of this app (see release-setup.md)." >> "$GITHUB_STEP_SUMMARY"
             fi
             echo "Nothing was signed or uploaded (signing mode \`$mode\`). Add the secrets listed in \`briefs/2026-11-08__overnight-push/release-setup.md\`, then run this workflow again with **upload** ticked." >> "$GITHUB_STEP_SUMMARY"
             echo "ready=false" >> "$GITHUB_OUTPUT"
@@ -258,6 +319,10 @@ jobs:
       - name: Select Xcode
         if: steps.gate.outputs.ready == 'true'
         run: scripts/release/select-xcode.sh
+
+      - name: Version and build number
+        if: steps.gate.outputs.ready == 'true'
+        run: scripts/release/version.sh
 
       - name: Install certificate, profiles and API key
         if: steps.gate.outputs.ready == 'true'
@@ -294,7 +359,7 @@ jobs:
         if: always() && steps.gate.outputs.ready == 'true'
         uses: actions/upload-artifact@v5
         with:
-          name: release-logs-testflight
+          name: release-logs-testflight-${{ matrix.app.app }}
           path: ${{ runner.temp }}/release/logs/
           if-no-files-found: ignore
           retention-days: 14

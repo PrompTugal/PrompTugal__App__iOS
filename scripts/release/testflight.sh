@@ -12,7 +12,7 @@
 set -euo pipefail
 set +x
 . "$(dirname "$0")/lib.sh"
-: "${MODE:?}" "${BUILD_NUMBER:?}" "${ARTIFACT_BASE:?}" "${ASC_KEY_PATH:?}" "${APPLE_TEAM_ID:?}"
+: "${MODE:?}" "${EXPECTED_BUNDLE:?}" "${BUILD_NUMBER:?}" "${ARTIFACT_BASE:?}" "${ASC_KEY_PATH:?}" "${APPLE_TEAM_ID:?}"
 UPLOAD_TOOL=${UPLOAD_TOOL:-xcodebuild}
 DD=$OUT/dd-signed
 archive=$OUT/$APP_NAME-signed.xcarchive
@@ -70,6 +70,14 @@ run_logged "Archive (signed)" "$LOGS/archive-signed.log" -- \
     ${extra[@]+"${extra[@]}"} "${settings[@]}"
 
 app=$(find "$archive/Products/Applications" -maxdepth 1 -name '*.app' | head -1)
+# Never upload to the wrong App Store record: the archive must be the app apps.json names.
+built=$(plist_get "$app/Info.plist" CFBundleIdentifier)
+if [ "$built" != "$EXPECTED_BUNDLE" ]; then
+  echo "::error::the archive is $built, but apps.json says this app is $EXPECTED_BUNDLE. Nothing exported or uploaded."
+  summary "- ❌ bundle id mismatch: archive \`$built\`, apps.json \`$EXPECTED_BUNDLE\`. Nothing uploaded."
+  exit 1
+fi
+summary "- Bundle id \`$built\` matches apps.json."
 enc=$(plist_get "$app/Info.plist" ITSAppUsesNonExemptEncryption)
 if [ "$enc" = "?" ]; then
   echo "::warning::Info.plist has no ITSAppUsesNonExemptEncryption; App Store Connect will ask the export compliance question for every build."
@@ -102,12 +110,24 @@ run_logged "Export App Store .ipa" "$LOGS/export.log" -- \
 
 ipa=$(find "$export_dir" -maxdepth 1 -name '*.ipa' | head -1)
 mv "$ipa" "$export_dir/$ARTIFACT_BASE-appstore.ipa"; ipa=$export_dir/$ARTIFACT_BASE-appstore.ipa
+ipa_bundle=$(unzip -p "$ipa" 'Payload/*.app/Info.plist' | plutil -extract CFBundleIdentifier raw -o - -)
+[ "$ipa_bundle" = "$EXPECTED_BUNDLE" ] || { echo "::error::the .ipa is $ipa_bundle, expected $EXPECTED_BUNDLE. Nothing uploaded."; exit 1; }
 "$(dirname "$0")/report.sh" "$app" "$ipa"
 codesign -dvv "$app" 2>&1 | grep -E '^(Authority|TeamIdentifier|Identifier)=' | head -4 | sed 's/^/    /'
 
 if [ "${SKIP_UPLOAD:-false}" = true ]; then
   note "- Upload skipped (SKIP_UPLOAD=true). The signed .ipa is an artifact."
   exit 0
+fi
+
+# The record must exist for exactly this bundle id. An app without one (Team, before Dinis
+# creates it) is skipped, not failed. Any other error stops here, before the upload.
+BUNDLE_ID=$EXPECTED_BUNDLE python3 "$(dirname "$0")/asc.py" has-record && rec=0 || rec=$?
+if [ "$rec" = 3 ]; then
+  note "Not uploaded: no App Store Connect record for $EXPECTED_BUNDLE yet."
+  exit 0
+elif [ "$rec" != 0 ]; then
+  exit "$rec"
 fi
 
 case "$UPLOAD_TOOL" in
@@ -122,7 +142,7 @@ case "$UPLOAD_TOOL" in
     if [ -n "${ASC_APP_ID:-}" ]; then
       run_logged "Upload to App Store Connect (altool --upload-package)" "$LOGS/upload.log" -- \
         xcrun altool --upload-package "$ipa" --platform ios --apple-id "$ASC_APP_ID" \
-          --bundle-id news.promptugal.reader --bundle-version "$BUILD_NUMBER" \
+          --bundle-id "$EXPECTED_BUNDLE" --bundle-version "$BUILD_NUMBER" \
           --bundle-short-version-string "$MARKETING_VERSION" \
           --api-key "$ASC_KEY_ID" --api-issuer "$ASC_ISSUER_ID"
     else

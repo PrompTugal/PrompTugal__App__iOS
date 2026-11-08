@@ -20,10 +20,13 @@ summary "| --- | ---: | ---: | ---: | ---: |"
 
 base=""
 if [ -n "${GH_TOKEN:-}" ] && command -v gh >/dev/null; then
-  run=$(gh run list --workflow ios-release.yml --branch dev --status success --limit 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)
-  if [ -n "$run" ] && gh run download "$run" -n build-info -D "$OUT/baseline" >/dev/null 2>&1; then
-    base=$OUT/baseline/build-info.json
-  fi
+  # The newest successful dev run that has a build-info for THIS app. Runs that did not
+  # touch the app have none, so look back a few runs. Older runs named it plain build-info.
+  for run in $(gh run list --workflow ios-release.yml --branch dev --status success --limit 20 --json databaseId -q '.[].databaseId' 2>/dev/null || true); do
+    for art in "build-info-${APP_KEY:-app}" build-info; do
+      if gh run download "$run" -n "$art" -D "$OUT/baseline" >/dev/null 2>&1; then base=$OUT/baseline/build-info.json; break 2; fi
+    done
+  done
 fi
 
 warn=$(get "$budget" warnPercent)
