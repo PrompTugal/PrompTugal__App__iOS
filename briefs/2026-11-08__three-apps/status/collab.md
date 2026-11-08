@@ -1,8 +1,8 @@
 # Collab status: PTAsk and PTLanes
 
-> CollabSeams.swift is green (run 302, 86c1f7b) and waits for the conductor to merge. PTLanes and PTAsk are next, in that order. Collab moves AI/ into PTAsk and Lanes/ into PTLanes. Coordination/ stays in the Team app. Phase 0 (mapping and plan) is done. Waiting for team, design and vault packages on dev. No code moved yet.
+> CollabSeams.swift is on dev (d597b8f). PTLanes is merged with vault's VaultCollabAccess on split/collab; run 314 failed on three PTLanes errors (SecretStore copy, public body, TeamNotes default argument), fixed in 44217b1, quick run 320 is queued. PTLanes and PTAsk are next, in that order. Collab moves AI/ into PTAsk and Lanes/ into PTLanes. Coordination/ stays in the Team app. Phase 0 (mapping and plan) is done. Waiting for team, design and vault packages on dev. No code moved yet.
 
-**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet on this branch. Run 302 (split/collab-seams 86c1f7b, self-hosted) is green, READY sent to the conductor · **Updated:** 03:08 UTC (collab.B)
+**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** run 314 (72c152c) red and cancelled; quick run 320 (ff66065, macos-26) queued · **Updated:** 04:08 UTC (collab.B)
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
