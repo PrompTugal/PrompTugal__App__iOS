@@ -33,6 +33,7 @@ final class TeamStore {
     private(set) var standups: [TeamStandup] = []
     private(set) var standupSummaries: [StandupSummary] = []       // the list's open counts, by time
     private(set) var agendas: [String: StandupAgenda] = [:]        // by stand-up slot, loaded on demand
+    private(set) var pages: [String: TeamPage] = [:]               // by site path, e.g. "board-health", loaded on demand
     private(set) var wakes: [AgentWakes] = []
     private(set) var reports: [TeamReport] = []
     private(set) var pulse: [PulseEntry] = []
@@ -56,9 +57,10 @@ final class TeamStore {
             }
         }
         for file in (try? FileManager.default.contentsOfDirectory(atPath: self.directory.path)) ?? []
-        where file.hasPrefix("agenda.") {
+        where file.hasPrefix("agenda.") || file.hasPrefix("page.") {
             let key = String(file.dropLast(file.hasSuffix(".cache") ? 6 : 0))
-            if let data = cached(key) { applyAgenda(key, data) }
+            guard let data = cached(key) else { continue }
+            if key.hasPrefix("agenda.") { applyAgenda(key, data) } else { applyPage(key, data) }
         }
     }
 
@@ -72,6 +74,9 @@ final class TeamStore {
     func centre(for person: String) -> CommandCentre? { centres[person] }
 
     func agenda(for slot: String) -> StandupAgenda? { agendas[slot] }
+
+    /// A page of the team site, by path ("board-health", "reports/2026-11-07-1457"), once it has been fetched.
+    func page(_ path: String) -> TeamPage? { pages[path] }
 
     // MARK: Refreshing
 
@@ -112,6 +117,36 @@ final class TeamStore {
         }
     }
 
+    /// One team-site page's markdown twin (`/<path>/index.md`), for the native page screen.
+    func refreshPage(_ path: String) async {
+        guard let url = TeamStore.pageURL(path) else { return }
+        let key = "page." + TeamStore.pageKey(path)
+        do {
+            receive(key, .success(try await fetch(url)))
+        } catch {
+            receive(key, .failure(error))
+        }
+    }
+
+    /// The status key of a page, to show whether its last refresh failed.
+    nonisolated static func pageStatusKey(_ path: String) -> String { "page." + pageKey(path) }
+
+    /// Letters, digits, "-", "_" and "/" only, no empty or dotted segments: the path goes into a URL and a file name.
+    nonisolated static func isValidPagePath(_ path: String) -> Bool {
+        guard !path.isEmpty, path.count <= 120 else { return false }
+        let segments = path.split(separator: "/", omittingEmptySubsequences: false)
+        return segments.allSatisfy { segment in
+            !segment.isEmpty && segment.allSatisfy { ($0.isASCII && ($0.isLetter || $0.isNumber)) || $0 == "-" || $0 == "_" }
+        }
+    }
+
+    nonisolated static func pageURL(_ path: String) -> URL? {
+        isValidPagePath(path) ? TeamEndpoints.url("\(path)/index.md") : nil
+    }
+
+    /// "reports/2026-11-07-1457" ↔ "reports~2026-11-07-1457": one flat file per page.
+    nonisolated static func pageKey(_ path: String) -> String { path.replacingOccurrences(of: "/", with: "~") }
+
     /// "2026-11-08-1200": digits and dashes only, and a real stand-up time, since it goes into a URL and a file name.
     nonisolated static func isValidSlot(_ slot: String) -> Bool {
         slot.count == 15 && slot.allSatisfy { $0.isNumber || $0 == "-" } && TeamStandup(slot: slot) != nil
@@ -128,6 +163,8 @@ final class TeamStore {
                 ok = true
             } else if key.hasPrefix("agenda.") {
                 ok = applyAgenda(key, data)
+            } else if key.hasPrefix("page.") {
+                ok = applyPage(key, data)
             } else {
                 ok = false
             }
@@ -171,6 +208,17 @@ final class TeamStore {
         let text = String(decoding: data, as: UTF8.self)
         guard TeamStore.isValidSlot(slot), text.contains("# Stand-up") else { return false }
         agendas[slot] = TeamMarkdown.agenda(text, slot: slot)
+        return true
+    }
+
+    @discardableResult
+    private func applyPage(_ key: String, _ data: Data) -> Bool {
+        let path = String(key.dropFirst("page.".count)).replacingOccurrences(of: "~", with: "/")
+        let text = String(decoding: data, as: UTF8.self)
+        guard TeamStore.isValidPagePath(path), text.hasPrefix("#") else { return false }
+        let page = TeamPage(markdown: text)
+        guard !page.isEmpty else { return false }
+        pages[path] = page
         return true
     }
 

@@ -178,6 +178,118 @@ struct StandupNativeTests {
     }
 }
 
+private let reportPage = """
+# What happened: Saturday 7 November, 14:57
+
+A quiet afternoon, v0.2.1045 to v0.2.1056: the live-map spec.
+
+Site version: v0.2.1248
+
+*By journalist@web-summit.dinis. Covers site v0.2.1045 since [the 12:57 report](../reports/2026-11-07-1257/index.html).*
+
+## What happened {#what}
+
+1. **The live map, specified for Angelo.** Replay inside "Team and the machine" (`e330e542`).
+2. **WS-181 in two parts.** Part A is approved.
+
+## Who did what
+
+- **dev@PrompTugal.angelo** 4, **runner.conductor@PrompTugal.angelo** 3.
+- **reviewer@PrompTugal.vicky** 2.
+  Carried on a second line.
+
+## The week
+
+| Day | Morning | Evening |
+|---|---|---|
+| Sun 8 Nov | no check-in | no check-in |
+| Sat 7 Nov | check-in | check-in |
+
+> A note from the editor.
+
+```
+code line
+```
+"""
+
+@Suite("Team pages, native")
+struct TeamPageNativeTests {
+    @Test func aPageIsReadBlockByBlock() throws {
+        let page = TeamPage(markdown: reportPage)
+        #expect(page.title == "What happened: Saturday 7 November, 14:57")
+        let blocks = page.items.map(\.block)
+        #expect(blocks.count == 12)
+        #expect(blocks[0] == .heading(level: 1, text: "What happened: Saturday 7 November, 14:57"))
+        #expect(blocks[4] == .heading(level: 2, text: "What happened"))          // the {#what} anchor is dropped
+        guard case .numbered(let steps) = blocks[5] else { Issue.record("not a numbered list"); return }
+        #expect(steps.count == 2)
+        guard case .bullets(let people) = blocks[7] else { Issue.record("not a bullet list"); return }
+        #expect(people.count == 2)
+        #expect(people[1] == "**reviewer@PrompTugal.vicky** 2. Carried on a second line.")
+        guard case .table(let header, let rows) = blocks[9] else { Issue.record("not a table"); return }
+        #expect(header == ["Day", "Morning", "Evening"])
+        #expect(rows == [["Sun 8 Nov", "no check-in", "no check-in"], ["Sat 7 Nov", "check-in", "check-in"]])
+        #expect(blocks[10] == .quote("A note from the editor."))
+        #expect(blocks[11] == .code("code line"))
+        #expect(page.items.map(\.id) == Array(0..<12))
+    }
+
+    @Test func textThatIsNotMarkdownStillReadsAsAParagraph() {
+        #expect(TeamPage(markdown: "just some words\nacross two lines").items.map(\.block)
+                == [.paragraph("just some words across two lines")])
+        #expect(TeamPage(markdown: "").isEmpty)
+    }
+
+    @Test func relativeLinksAreMadeAbsoluteAgainstThePage() {
+        let base = URL(string: "https://web-summit.sgit.ai/meetings/2026-11-08-1200/index.html")
+        let text = TeamInline.attributed("see [the board](../../briefs/index.html#issues) and **bold**", base: base)
+        #expect(text.runs.compactMap { $0.link }.map { $0.absoluteString } == ["https://web-summit.sgit.ai/briefs/index.html#issues"])
+        #expect(String(text.characters) == "see the board and bold")
+        let outside = TeamInline.attributed("[PrompTugal](https://promptugal.news/)", base: base)
+        #expect(outside.runs.compactMap { $0.link }.map { $0.absoluteString } == ["https://promptugal.news/"])
+    }
+
+    @Test func pulseCheckInsAreTheDatedEntries() {
+        #expect(PulseView.isDated("2026-11-03-morning"))
+        #expect(!PulseView.isDated("index"))
+        #expect(!PulseView.isDated("2026-1-03-morning"))
+    }
+
+    @Test func onlyPlainPathsGoIntoAUrl() {
+        #expect(TeamStore.isValidPagePath("board-health"))
+        #expect(TeamStore.isValidPagePath("reports/2026-11-07-1457"))
+        for bad in ["", "../x", "a//b", "a/./b", "/a", "a/", "a b", "a?x=1", "a%2Fb", "a/../b"] {
+            #expect(!TeamStore.isValidPagePath(bad), "\(bad)")
+        }
+        #expect(TeamStore.pageURL("board-health")?.absoluteString == "https://web-summit.sgit.ai/board-health/index.md")
+        #expect(TeamStore.pageURL("../x") == nil)
+    }
+
+    @MainActor
+    @Test func theStoreFetchesAPageKeepsItAndReadsItBack() async throws {
+        let dir = try nativeTempDir("page")
+        let requested = Requests()
+        let fetch: TeamStore.Fetch = { url in
+            await requested.add(url.absoluteString)
+            return Data(reportPage.utf8)
+        }
+        let store = TeamStore(directory: dir, fetch: fetch)
+        #expect(store.page("reports/2026-11-07-1457") == nil)
+        await store.refreshPage("reports/2026-11-07-1457")
+        #expect(store.page("reports/2026-11-07-1457")?.items.count == 12)
+        #expect(await requested.all == ["https://web-summit.sgit.ai/reports/2026-11-07-1457/index.md"])
+
+        await store.refreshPage("../secret")                                  // never fetched
+        #expect(await requested.all.count == 1)
+
+        let offline = TeamStore(directory: dir, fetch: { _ in throw URLError(.notConnectedToInternet) })
+        #expect(offline.page("reports/2026-11-07-1457")?.title == "What happened: Saturday 7 November, 14:57")
+        await offline.refreshPage("reports/2026-11-07-1457")
+        #expect(offline.page("reports/2026-11-07-1457") != nil)               // a failed refresh keeps what it had
+        #expect(offline.status[TeamStore.pageStatusKey("reports/2026-11-07-1457")]?.failed == true)
+    }
+}
+
 private actor Requests {
     private(set) var all: [String] = []
     func add(_ url: String) { all.append(url) }
