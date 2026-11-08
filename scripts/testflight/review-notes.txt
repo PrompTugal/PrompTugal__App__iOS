@@ -1,29 +1,29 @@
-PrompTugal is the companion app of PrompTugal.news, an independent newsroom covering the AI scene in Portugal, for readers and for the people at Web Summit Lisbon (9 to 12 November 2026). PrompTugal is independent; it is not affiliated with, endorsed by or sponsored by Web Summit (the app says so in Settings → About).
+PrompTugal is an independent companion app for participants of Web Summit Lisbon (9 to 12 November 2026), made by PrompTugal.news, a newsroom covering AI in Portugal. It is not affiliated with, endorsed by or sponsored by Web Summit; the app says so in Settings > About, and the store name, icon and screenshots do not use the event's name or marks.
 
-**No account is needed.** The app has no sign-up and no login.
+NO ACCOUNT IS NEEDED. There is no sign-up and no login. Every main screen works as soon as the app opens.
 
-**No keys are needed to see the app.** Install it and open it: the summit agenda and the news load from the public site, and every part of the app that does not send your own data to a service works. The two optional features that use a key or a vault have demo keys below.
+THINGS TO TRY
+1. Now (first tab). The date and time in Lisbon, what is on now and next, and the latest news. On iPhone, the gear at the top opens Settings.
+2. Explore (third tab). The full summit program in Lisbon time, built into the app and refreshed from promptugal.news. Search "AI" and tap the star on a session to pick it. Tapping a session opens its details.
+3. My program (second tab). Your picks in one list, with clashes and free time, and Add to Calendar (write-only calendar access; the app cannot read the calendar).
+4. Reminders. Settings > Reminders: turn them on. The notification permission is asked only then. A local notification is scheduled before each pick.
+5. News (fourth tab). Stories and newsletter editions from PrompTugal.news. Turn on airplane mode: the program, your picks and cached news still work.
+6. Widget and Siri. Add the PrompTugal widget for what is next, or ask Siri "What's next in PrompTugal".
+7. Ask (the "Ask about the summit" card on Now, or Settings > Ask, with your own AI key). An optional AI assistant for the program. It uses the user's own OpenRouter key. For review, tap Add key and paste this key, created for review with a spending cap: <DEMO_OPENROUTER_KEY>
+   Then tap a suggested question, for example "What is on now and next?". Before the first message, a sheet says what is sent (the question, plus only the context switched on; the public agenda by default) and where (OpenRouter and the model's provider). Nothing is sent until you tap Allow. Hold the microphone button to dictate; the microphone and speech recognition permissions are asked then.
 
-**Things to try**
+WHAT THE APP SENDS
+- Public feeds are read from promptugal.news; nothing about the user is sent with them.
+- Picks, plans and reminders stay on the device.
+- Ask sends the question and the chosen context to openrouter.ai with the user's own key, only after consent.
+- Dictation is transcribed on the device when the language allows it, otherwise by Apple's speech service. The app does not keep the audio.
+- The app talks to two hosts only: promptugal.news (public content) and openrouter.ai (Ask, with the user's own key, after consent). No cookies, no telemetry, no tracking, no analytics, no advertising, no third-party SDK.
+Privacy policy: https://ios.app.promptugal.news/privacy.html (also Settings > About > Privacy). Support: https://ios.app.promptugal.news/support.html (contact address on that page, answered within 48 hours).
 
-1. **Agenda.** The Web Summit Lisbon agenda in Lisbon time. Open a session and add it to your schedule. **My schedule** shows it, and a reminder is scheduled 10 minutes before (if you allow notifications).
-2. **News.** The PrompTugal.news feed, newsletter editions and a native graph of companies, people and events.
-3. **Websites.** The PrompTugal.news website opens inside the app, with the app's own page and back history. Links that leave the site open in Safari.
-4. **Ask (optional).** An AI assistant. It needs an OpenRouter key: paste `<DEMO_OPENROUTER_KEY>` (a key we created for review, with a spending cap of `<CAP>`). Before the first message the app shows a consent sheet that says what is sent (your question and only the context you switch on) and where (OpenRouter and the model provider). Nothing is sent until you agree.
-5. **Vault (optional).** An encrypted personal store, opened on the device with Apple's cryptography. Tap **Vault → Import**, paste `<DEMO_VAULT_KEY>`, then **Import**. The vault opens on its files. Next time, Face ID opens it.
+AGENDA SOURCE. The program is the summit's public schedule, republished on promptugal.news by our newsroom; each session opens its page there. We are an independent news site covering the event.
 
-**What the app sends, and where** (also on our privacy page, `https://ios.app.promptugal.news/privacy.html`, linked from Settings → About → Privacy; support is at Settings → About → Support):
+NO USER-GENERATED CONTENT. No posts, comments or messages between people.
 
-- Public feeds are read from promptugal.news. No personal data is sent with them.
-- Ask sends the question and the chosen context to openrouter.ai, with the user's own key, only after consent.
-- Vault files are encrypted on the device; the server stores only ciphertext.
-- "Add to Calendar" writes one session to the calendar when the user asks, with write-only access.
-- Dictation in Ask (microphone and speech recognition) starts only when the user holds the microphone button; the permission questions come then. iOS transcribes on the device when the language allows it, otherwise it sends the audio to Apple's speech service. The app does not keep the audio.
-- The camera is used only to scan the QR code of a vault key, when the user taps Scan.
-- There is no tracking, no analytics, no advertising and no third-party SDK.
+NO PURCHASES. No in-app purchases or subscriptions; payment pages are not opened inside the app.
 
-**User-generated content (guideline 1.2).** The app has no user-generated content: no posts, no messages between people, no comments. Everything it shows comes from PrompTugal.news or from the websites it opens. Reports about the content reach us through `<CONTACT_ADDRESS>` and GitHub issues, and we act on them within `<RESPONSE_TIME>`.
-
-**In-app purchases.** None. The app has no purchase, no subscription and no credit. Payment pages on websites are not opened inside the app.
-
-**Encryption.** The app uses only encryption provided by Apple (CryptoKit, the Keychain, the Secure Enclave and HTTPS), so `ITSAppUsesNonExemptEncryption` is set to NO.
+ENCRYPTION. Only Apple's encryption (CryptoKit, Keychain, HTTPS); ITSAppUsesNonExemptEncryption is NO.

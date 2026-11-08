@@ -20,11 +20,21 @@ on:
         description: What to do
         type: choice
         required: true
-        options: [status, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
+        options: [status, inspect, groups, public-link, certificates, set-whats-new, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
       build:
         description: Build number (as in TestFlight). Not needed for status.
         type: string
         required: false
+      bundle:
+        description: Bundle ID of the app record (default news.promptugal.reader)
+        type: string
+        required: false
+        default: news.promptugal.reader
+      text_file:
+        description: Text file for set-whats-new (default scripts/testflight/what-to-test.txt)
+        type: string
+        required: false
+        default: scripts/testflight/what-to-test.txt
       group:
         description: Beta group name, for add-to-group and remove-from-group
         type: string
@@ -46,7 +56,7 @@ jobs:
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
-      BUNDLE_ID: news.promptugal.reader
+      BUNDLE_ID: ${{ inputs.bundle || 'news.promptugal.reader' }}
       # Placeholders in scripts/testflight/review-notes.txt. Unset ones stay missing and are listed,
       # except DEMO_VAULT_KEY and DEMO_LANE_NAME: their line is left out when unset.
       # Contact for Beta App Review (personal, so secrets only; the repository is public).
@@ -62,6 +72,7 @@ jobs:
       RESPONSE_TIME: ${{ vars.REVIEW_RESPONSE_TIME }}
       ACTION: ${{ inputs.action }}
       BUILD: ${{ inputs.build }}
+      TEXT_FILE: ${{ inputs.text_file }}
       GROUP: ${{ inputs.group }}
       CONFIRM: ${{ inputs.confirm }}
     steps:
@@ -77,6 +88,16 @@ jobs:
           [ "$CONFIRM" = "true" ] && flag=(--yes) || flag=()
           case "$ACTION" in
             status) args=(status) ;;
+            groups) args=(groups) ;;
+            public-link)
+              [ -n "$GROUP" ] || { echo "::error::group is required"; exit 1; }
+              args=(public-link --group "$GROUP" "${flag[@]}") ;;
+            inspect) args=(inspect --version "${BUILD:-0}") ;;
+            certificates) args=(certificates) ;;
+            set-whats-new)
+              [ -n "$BUILD" ] || { echo "::error::build is required"; exit 1; }
+              case "$TEXT_FILE" in scripts/testflight/*.txt) ;; *) echo "::error::text_file must be scripts/testflight/*.txt"; exit 1;; esac
+              args=(set-test-info --build "$BUILD" --whats-new "$TEXT_FILE" "${flag[@]}") ;;
             add-to-group|remove-from-group)
               [ -n "$BUILD" ] && [ -n "$GROUP" ] || { echo "::error::build and group are required"; exit 1; }
               args=("$ACTION" --build "$BUILD" --group "$GROUP" "${flag[@]}") ;;
