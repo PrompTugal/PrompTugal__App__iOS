@@ -1,19 +1,18 @@
-// PTLanes keeps its own copy of the small secret-store types: PTAsk and PTLanes both need them and neither may
-// depend on the other. Move them down into PTCore later (platform's call) and delete both copies.
+// The one copy of the small secret-store types, shared by PTAsk (the OpenRouter key) and PTLanes (lane secrets).
 import Foundation
 import Security
 
 /// Where one secret string lives. The Keychain in the app; memory in tests.
-protocol SecretStore: Sendable {
+public protocol SecretStore: Sendable {
     func read(_ account: String) throws -> String?
     func write(_ value: String, account: String) throws
     func delete(_ account: String) throws
 }
 
-enum SecretStoreError: Error, Equatable, LocalizedError {
+public enum SecretStoreError: Error, Equatable, LocalizedError {
     case keychain(OSStatus)
     case notText
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .keychain(let status): "Keychain error \(status)"
         case .notText: "The stored item is not text"
@@ -23,10 +22,11 @@ enum SecretStoreError: Error, Equatable, LocalizedError {
 
 /// Generic-password items in the Keychain, this device only, readable after the first unlock
 /// (`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`), never synced to iCloud (contracts §9).
-struct KeychainSecretStore: SecretStore {
-    let service: String
+public struct KeychainSecretStore: SecretStore {
+    public let service: String
 
-    init(service: String = "news.promptugal.reader.lanes") {
+    /// `service` names the Keychain service: each feature passes its own (for example "news.promptugal.reader.ai").
+    public init(service: String) {
         self.service = service
     }
 
@@ -37,7 +37,7 @@ struct KeychainSecretStore: SecretStore {
          kSecAttrSynchronizable as String: false]
     }
 
-    func read(_ account: String) throws -> String? {
+    public func read(_ account: String) throws -> String? {
         var query = query(account)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
@@ -51,7 +51,7 @@ struct KeychainSecretStore: SecretStore {
         return text
     }
 
-    func write(_ value: String, account: String) throws {
+    public func write(_ value: String, account: String) throws {
         let data = Data(value.utf8)
         let update: [String: Any] = [kSecValueData as String: data,
                                      kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly]
@@ -67,13 +67,13 @@ struct KeychainSecretStore: SecretStore {
         }
     }
 
-    func delete(_ account: String) throws {
+    public func delete(_ account: String) throws {
         let status = SecItemDelete(query(account) as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else { throw SecretStoreError.keychain(status) }
     }
 
     /// Whether an item exists, without reading its value.
-    func exists(_ account: String) -> Bool {
+    public func exists(_ account: String) -> Bool {
         var query = query(account)
         query[kSecReturnAttributes as String] = true
         return SecItemCopyMatching(query as CFDictionary, nil) == errSecSuccess
@@ -81,25 +81,25 @@ struct KeychainSecretStore: SecretStore {
 }
 
 /// For tests and previews: nothing leaves memory.
-final class MemorySecretStore: SecretStore, @unchecked Sendable {
+public final class MemorySecretStore: SecretStore, @unchecked Sendable {
     private var items: [String: String] = [:]
     private let lock = NSLock()
     /// Counts reads, so tests can check the key is read only when a request is made.
-    private(set) var reads = 0
+    public private(set) var reads = 0
 
-    init(_ items: [String: String] = [:]) {
+    public init(_ items: [String: String] = [:]) {
         self.items = items
     }
 
-    func read(_ account: String) throws -> String? {
+    public func read(_ account: String) throws -> String? {
         lock.withLock { reads += 1; return items[account] }
     }
 
-    func write(_ value: String, account: String) throws {
+    public func write(_ value: String, account: String) throws {
         lock.withLock { items[account] = value }
     }
 
-    func delete(_ account: String) throws {
+    public func delete(_ account: String) throws {
         lock.withLock { _ = items.removeValue(forKey: account) }
     }
 }

@@ -2,22 +2,23 @@ import AVFoundation
 import Foundation
 import Observation
 import Speech
-import PTCore
 
 /// Hold-to-talk dictation for notes, transcribed on the device when the language allows it
 /// (`requiresOnDeviceRecognition`). Audio is not kept.
 @MainActor @Observable
-final class SpeechDictation {
-    private(set) var isRecording = false
-    private(set) var transcript = ""
-    private(set) var onDevice = false
-    private(set) var error: String?
+public final class SpeechDictation {
+    public private(set) var isRecording = false
+    public private(set) var transcript = ""
+    public private(set) var onDevice = false
+    public private(set) var error: String?
 
     @ObservationIgnored private let engine = AVAudioEngine()
     @ObservationIgnored private var request: SFSpeechAudioBufferRecognitionRequest?
     @ObservationIgnored private var task: SFSpeechRecognitionTask?
 
-    func start(locale: Locale = Locale(identifier: "en-GB")) async {
+    public init() {}
+
+    public func start(locale: Locale = Locale(identifier: "en-GB")) async {
         guard !isRecording else { return }
         error = nil
         transcript = ""
@@ -81,7 +82,7 @@ final class SpeechDictation {
         }
     }
 
-    func stop() {
+    public func stop() {
         request?.endAudio()
         finish()
     }
