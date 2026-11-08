@@ -2,7 +2,7 @@
 
 > Plan approved by the conductor; waiting for phase 2 (PTCore) on dev. PTNews cannot move as the contract says: News/ pulls in ReaderStore, DashboardData and ScheduleStore, which sit above it. Proposed fixes below need a yes from the conductor. The PrompTugal app's shell is drafted.
 
-Branch: `split/design` (merged with dev b845004) · Last update: 8 Nov, 01:08 UTC, still waiting for phase 2 · Last CI run: none yet (no code moved)
+Branch: `split/design` (merged dev b845004 and split/apps 7d28094) · Last update: 8 Nov, 01:13 UTC, waiting for PTCore (platform run 278) · Last CI run: none yet (no code moved)
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -17,8 +17,10 @@ Branch: `split/design` (merged with dev b845004) · Last update: 8 Nov, 01:08 UT
 
 - Editor needs code markers for site labels: PrompTugal root struct `PublicShell` (search `PublicShell(`); Team keeps `AppShell(` and `.teamFeatures()`. Sent the id list to the conductor.
 
+- Merged `split/apps` (7d28094): `Apps/PrompTugal/` has the project, `PrompTugalApp.swift` (root `PublicShell()`, apps owns it) and a placeholder `Shell/PublicShell.swift` (mine). `Shell/` is a synchronized folder, so new files need no project edit.
+
 ## In progress
-- Waiting for phase 2.
+- Waiting for PTCore. `PublicShell` needs Design and the shared shell parts; with only PTVaultUI on dev I would be writing against types that do not exist yet. I start the moment PTCore is on dev.
 
 ## Next
 1. Phase 3: merge `origin/dev`, move PTNews (with the fixes in section 1 once approved), push, read CI.
