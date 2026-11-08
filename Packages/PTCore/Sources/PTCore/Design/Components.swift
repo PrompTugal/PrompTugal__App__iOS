@@ -331,11 +331,13 @@ public struct FreshnessLabel: View {
     public let updated: Date?
     public var staleAfter: TimeInterval = 30 * 60
 
-    public init(updated: Date?, staleAfter: TimeInterval = 30 * 60) {
+    public var failed = false
+
+    public init(updated: Date?, staleAfter: TimeInterval = 30 * 60, failed: Bool = false) {
         self.updated = updated
         self.staleAfter = staleAfter
+        self.failed = failed
     }
-    public var failed = false
 
     public var body: some View {
         TimelineView(.periodic(from: .now, by: 30)) { context in
@@ -365,9 +367,10 @@ public struct StateView: View {
     public var title = "data"
     public var retry: (() -> Void)?
 
-    public init(phase: LoadPhase, hasData: Bool, retry: (() -> Void)? = nil) {
+    public init(phase: LoadPhase, hasData: Bool, title: String = "data", retry: (() -> Void)? = nil) {
         self.phase = phase
         self.hasData = hasData
+        self.title = title
         self.retry = retry
     }
 

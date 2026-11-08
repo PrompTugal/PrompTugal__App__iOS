@@ -32,7 +32,7 @@ public struct FilterChip: View {
     public var color: Color = Palette.red
     public let action: () -> Void
 
-    public init(title: String, isOn: Bool, color: Color = Palette.red, action: () -> Void) {
+    public init(title: String, isOn: Bool, color: Color = Palette.red, action: @escaping () -> Void) {
         self.title = title
         self.isOn = isOn
         self.color = color
