@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 10:58 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 11:50 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 11:50 UTC: Dinis lifted internal-only for the public app (brief `briefs/2026-11-08__summit-app-store/README.md`). Plan only, nothing changed: external group "PrompTugal External Users" exists with the public link already enabled (no limit, feedback on), serving 0.3.1 build 4 (the old all-in-one app) today; Beta App Review details: contact set, notes empty; review notes ready in `scripts/testflight/review-notes.txt` (3419 chars); What to Test text still says "Web Summit" and needs the new name. Sequence for the first good public build N: set-test-info, add-to-group "PrompTugal External Users", submit-beta-review, each on the conductor's go. New testflight-ops actions: `groups` (read-only) and `public-link` (plan unless confirmed). Build 189 of the public app was rejected (error 90683, plist fix pending).
 - 10:58 UTC: run 89 (v0.4.12, dev `7d83217`): Team 0.4.12 (189) VALID; RiskMandate job finished; the first public-app upload (`news.promptugal.reader`, build 189) was REJECTED by Apple: build upload state FAILED, error 90683, missing `NSSpeechRecognitionUsageDescription` in PrompTugal.app's Info.plist. No build record exists, so the wait step said "build not found". Found with the new read-only testflight-ops action `inspect` (run 42473260107; inputs bundle, build = version). The Team project has both `INFOPLIST_KEY_NSMicrophoneUsageDescription` and `INFOPLIST_KEY_NSSpeechRecognitionUsageDescription`; the PrompTugal project has neither. Reported to the conductor. Exported public-app entitlements are complete (associated-domains, time-sensitive, group.news.promptugal.reader on app, widgets, intents).
 - 10:27 UTC: conductor asked for tester guidance for the Team app. Draft "What to Test" for PT Team is in `scripts/testflight/what-to-test-team.txt` (vault key must be imported again, team tools live in PT Team, PrompTugal.news becomes the public app). New testflight-ops action `set-whats-new` (inputs bundle, build, text_file, confirm): plan run 42471333246 on Team build 182 changed nothing. Applying needs confirm=true and the conductor's or Dinis's go. Run 89 (v0.4.12, dev `7d83217`, first with the public app's TestFlight job) is in its TestFlight jobs, queued.
 - 09:45 UTC: first build on the Team record: 0.4.7 (182) from run 82 (dev `cd81f2d`), VALID, "PrompTugal Team Internal". RiskMandate 0.4.7 (182) VALID too. The reader record gets no new build until the public PrompTugal app's testflight is on. Cheap way to read runs: `gh api repos/PrompTugal/PrompTugal__App__iOS/actions/runs/<id>/jobs`.
