@@ -71,16 +71,25 @@ public final class ReaderStore {
             cache.details = Self.trimmed(decoded.details.merging(cache.details) { _, fresh in fresh },
                                          keeping: keptDetailIDs)
         }
-        // Nothing cached yet: start from the agenda built into the app, so the first launch works with no network.
-        // The seed is not written to the cache; only a real refresh is.
+        // Nothing cached yet: start from the agenda in the synced files (PTSync, kept on the device), then from the one
+        // built into the app, so the first launch works with no network. Neither is written to the cache; only a real
+        // refresh is.
         if cache.agenda.isEmpty {
-            let seed = AgendaHub.seedAgenda()
+            let seed = LiveContent.agenda() ?? AgendaHub.seedAgenda()
             if !seed.isEmpty {
                 cache.agenda = seed
                 agendaSource = .seed
             }
         }
+        adoptKeptNews()
         publishNowNext()
+    }
+
+    /// News the feed syncer already holds on the device, used only while the cache and the network have none.
+    private func adoptKeptNews() {
+        guard cache.news.isEmpty else { return }
+        let kept = LiveContent.stories()
+        if !kept.isEmpty { cache.news = kept }
     }
 
     /// The ids whose details stay first when the cache is trimmed: today's agenda, then the picks.
@@ -159,7 +168,10 @@ public final class ReaderStore {
             newsUnavailable = false
             persistCache()
         } catch {
-            if !Task.isCancelled { newsUnavailable = true }
+            if !Task.isCancelled {
+                newsUnavailable = true
+                adoptKeptNews()
+            }
         }
     }
 
