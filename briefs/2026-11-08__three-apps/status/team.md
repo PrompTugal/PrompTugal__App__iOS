@@ -1,6 +1,6 @@
 # Team session: PTWeb and PTAgenda
 
-> Round 2 (Team native): stand-ups, command centre, reports, wakes, pulse and generic pages are written (cfce712, 063e3c2); quick run 352 on cfce712 is queued, nothing compiled yet. PTNowNext split done (7dc4298 and the Team project reference). None of the new screens is registered in Destinations yet (design).
+> Summit priority (freeze 16:00 UTC): PTAgenda for participants. Done and pushed (1811803, quick run queued): NowBoard (now and next for the venue and my program, clashes, stages, summit phase), offline agenda seed hook, PTNowNext. Team-native screens are paused but kept on the branch (Debug build green on 1eb47bd). Waiting for ux's spec (screen ids) to shape the rest.
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
 
@@ -28,6 +28,12 @@
   - `TeamStore`: `standupSummaries`, `agendas`, `pages`, `refreshAgenda(slot:)`, `refreshPage(_:)`, validated paths, offline cache. Tests: `Apps/Team/Tests/TeamNativeTests.swift`.
   - **Not registered:** design owns `Shell/Destinations.swift`. Entries to add once green: `team.commandcentre` → `MyCommandCentreView()` (kind native), `team.standups` → `StandupsView()`, `agents.reports` → `ReportsView()`, `agents.wakes` → `WakesView()`, `briefings.pulse` → `PulseView()`, `briefings.board` → `TeamPageView(path: "board-health", title: "Board health")`.
 - **PTNowNext (conductor request):** `Packages/PTNowNext` (no dependencies) holds `NowNextSnapshot`, `SharedContainer`, `LisbonClock`; PTAgenda depends on it and re-exports it; `NowNextPublisher` stays in PTAgenda. In `apps.json` and the workspace. **Exception to the project-ownership rule, approved by the conductor:** I added a reference-only `XCLocalSwiftPackageReference` for `../../Packages/PTNowNext` to `Apps/Team/Team.xcodeproj` (platform told). `PrompTugal.xcodeproj` is apps': its reference and the widgets and intents product links come with their merge.
+
+- **11:30 UTC, summit app (summit-app-store brief):** conductor paused Team-native; my job is PTAgenda for participants.
+  - **`NowBoard`** (`Packages/PTAgenda/Sources/PTAgenda/Schedule/NowBoard.swift`): `NowBoard.snapshot(agenda:picks:now:)` gives venue now/next, my now/next (a day ahead), clashes among my picks (`DayPlanner.clashes(in:)`, extracted from the planner), per-stage now/next, and the summit phase (`noAgenda`, `before`, `live`, `between`, `ended`). My program is built from the picks' own event copies, so it shows even before the agenda loads. `ReaderStore.nowBoard(at:)` feeds it from the screen's one-minute timeline.
+  - **Offline agenda:** `AgendaHub.seedAgenda` (the app sets it from the core pack at launch) is read when nothing is cached; `ReaderStore.agendaSource` (`none`, `seed`, `cache`, `network`) and `agendaUpdated` say where the agenda came from, for "synced 3 min ago".
+  - **Reminders** already work for picks with no team (`ReminderScheduler(team: nil, identity: nil)`); clashes already feed the planner. Tests: `NowBoardTests`, `NowNextSnapshotTests` (PTNowNext).
+  - **Waiting for:** ux's spec with screen ids. Needs from apps: PrompTugal.xcodeproj reference for PTNowNext and the widgets/intents links; from collab: set `AgendaHub.seedAgenda` from the core pack.
 
 ## Handoff
 
