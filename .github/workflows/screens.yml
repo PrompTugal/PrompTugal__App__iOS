@@ -22,6 +22,14 @@ on:
         description: 'App Store screenshots instead of the site set: 6.9" and 6.5" iPhone and 13" iPad at the native pixel size, one set per locale. Use app=promptugal.'
         type: boolean
         default: false
+      ids:
+        description: 'Store screenshots: screen ids to keep, in store order, comma-separated (empty = all, alphabetical). Apple takes at most 10 per set.'
+        type: string
+        default: 'now,team.schedule,explore,news.home'
+      now:
+        description: 'Store screenshots: pretend the time is this ISO date (e.g. 2026-11-10T11:00:00Z). Passed to the screens test as the environment variable PT_NOW (TEST_RUNNER_PT_NOW); the test adds the launch argument -PTNow <date>. Empty = real time.'
+        type: string
+        default: '2026-11-10T11:00:00Z'
       locales:
         description: 'Store screenshots: locales, comma-separated (language code, then region; en-US, pt-PT, pt-BR)'
         type: string
@@ -180,6 +188,8 @@ jobs:
       cancel-in-progress: false
     env:
       LOCALES: ${{ inputs.locales }}
+      IDS: ${{ inputs.ids }}
+      TEST_RUNNER_PT_NOW: ${{ inputs.now }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -233,15 +243,28 @@ jobs:
           for dir in "$RUNNER_TEMP"/store/*/; do
             loc=$(basename "$dir")
             n=0
-            for f in "$dir"*.png; do
+            # Store order: the ids input, in that order (those missing from the run are an error);
+            # empty means every screen, alphabetical.
+            if [ -n "${IDS// /}" ]; then
+              files=()
+              IFS=',' read -r -a want <<< "$IDS"
+              for id in "${want[@]}"; do
+                id=$(echo "$id" | tr -d ' ')
+                f="$dir${{ matrix.size.label }}-$id.png"
+                if [ -e "$f" ]; then files+=("$f"); else echo "::error::$loc: no screenshot for id '$id' ($f)"; bad=1; fi
+              done
+            else
+              files=("$dir"*.png)
+            fi
+            for f in "${files[@]}"; do
               [ -e "$f" ] || continue
               o=$(python3 .github/scripts/png-normalize.py --orientation "$f")
               python3 .github/scripts/png-normalize.py "$f" >/dev/null
               case "$o" in 3) sips -r 180 "$f" >/dev/null ;; 6) sips -r 90 "$f" >/dev/null ;; 8) sips -r 270 "$f" >/dev/null ;; esac
               n=$((n+1)); id=$(basename "$f" .png | sed -E 's/^(iphone|ipad)-//')
               sips -s format jpeg -s formatOptions 100 "$f" --out "$dir$(printf '%02d' $n)-$id.jpg" >/dev/null
-              rm "$f"
             done
+            rm -f "$dir"*.png
             python3 .github/scripts/store-check.py "${{ matrix.size.kind }}" "$dir"*.jpg || bad=1
             echo "- $loc: $n screenshots (${{ matrix.size.kind }})" >> "$GITHUB_STEP_SUMMARY"
           done
