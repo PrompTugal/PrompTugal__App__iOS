@@ -330,7 +330,7 @@ jobs:
           mkdir -p final
           for d in out/*/; do
             kind=${d#out/appstore-screens-${{ github.sha }}-${{ matrix.app.app }}-}; kind=${kind%/}
-            case "$kind" in iphone-6.9) disp=APP_IPHONE_69 ;; iphone-6.5) disp=APP_IPHONE_65 ;; ipad-13) disp=APP_IPAD_PRO_3GEN_129 ;; *) disp=$kind ;; esac
+            case "$kind" in iphone-6.9) disp=APP_IPHONE_67 ;; iphone-6.5) disp=APP_IPHONE_65 ;; ipad-13) disp=APP_IPAD_PRO_3GEN_129 ;; *) disp=$kind ;; esac
             for l in "$d"*/; do
               loc=$(basename "$l"); mkdir -p "final/$loc/$disp"; cp "$l"*.jpg "final/$loc/$disp/" 2>/dev/null || true
             done

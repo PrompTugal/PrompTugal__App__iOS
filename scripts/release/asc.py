@@ -425,6 +425,11 @@ def md5_hex(path):
     return h.hexdigest()
 
 
+# Folder name written by screens.yml -> display type App Store Connect accepts. Apple files the 6.9" iPhone
+# screenshots (1320x2868) under APP_IPHONE_67; APP_IPHONE_69 is rejected by the API.
+DISPLAY_TYPE = {"APP_IPHONE_69": "APP_IPHONE_67"}
+
+
 def plan_screenshots(a):
     """{locale: {display type: [files in store order]}} from the folder, the ids and the --also copies."""
     ids = [i.strip() for i in a.ids.split(",") if i.strip()]
@@ -444,7 +449,7 @@ def plan_screenshots(a):
                 if not match:
                     sys.exit(f"::error::{loc}/{disp}: no file for id {i}")
                 files.append(os.path.join(ddir, match[0]))
-            out.setdefault(loc, {})[disp] = files
+            out.setdefault(loc, {})[DISPLAY_TYPE.get(disp, disp)] = files
     for spec in a.also:
         dst, src = spec.split("=")
         out[dst] = out[src]

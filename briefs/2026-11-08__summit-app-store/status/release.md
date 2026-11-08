@@ -11,7 +11,7 @@
 
 | Size | Simulator (first one the runner has) | Pixels | ASC display type |
 | --- | --- | --- | --- |
-| iPhone 6.9" | iPhone 17 Pro Max, then 16 Pro Max | 1320×2868 | `APP_IPHONE_69` |
+| iPhone 6.9" | iPhone 17 Pro Max, then 16 Pro Max | 1320×2868 | `APP_IPHONE_67` (Apple files 6.9" under 67) |
 | iPhone 6.5" | iPhone 14 Plus, 13 Pro Max, 11 Pro Max, XS Max | 1284×2778 or 1242×2688 | `APP_IPHONE_65` |
 | iPad 13" | iPad Pro 13-inch (M5), then (M4) | 2064×2752 | `APP_IPAD_PRO_3GEN_129` |
 
