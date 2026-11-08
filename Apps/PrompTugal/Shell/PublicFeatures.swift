@@ -24,11 +24,22 @@ final class PublicFeatures {
     let vaultLink: ScheduleVaultLink
 
     private var started = false
-    private var agenda: [Event] = []
-    private var observers: [NSObjectProtocol] = []
+    /// Republishes the widgets' and Siri's "Now and next" when an agenda loads and when picks change.
+    private let nowNext: NowNextRepublisher
 
     init(directory: URL? = nil) {
+        #if DEBUG
+        // Screenshots and UI tests: `-PTNow <ISO date>` is the one clock of every screen, `-PTSeedPicks a,b` seeds picks.
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-PTNow"), index + 1 < arguments.count {
+            AgendaClock.override = ISO8601DateFormatter().date(from: arguments[index + 1])
+        }
+        #endif
         schedule = ScheduleStore(directory: directory)
+        #if DEBUG
+        schedule.seedPicks(arguments: arguments)
+        #endif
+        nowNext = NowNextRepublisher(schedule: schedule)
         reminders = ReminderScheduler(schedule: schedule, team: nil, identity: nil, urlScheme: AppLinks.scheme)
         bridgeLog = BridgeLog()
         bridge = AppBridge(log: bridgeLog, services: AgendaBridgeServices(
@@ -52,12 +63,6 @@ final class PublicFeatures {
         started = true
         reminders.start()
         vaultLink.start()
-        // A pick or an un-pick changes the widgets' and Siri's "Now and next".
-        observers.append(NotificationCenter.default.addObserver(forName: .scheduleDidChange, object: schedule,
-                                                                queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated { self?.publishNowNext() }
-        })
-        publishNowNext()
     }
 
     /// The app came to the foreground: top up reminders (iOS keeps at most 64) and read the vault's picks.
@@ -71,17 +76,9 @@ final class PublicFeatures {
 
     /// Gives the schedule and the planner the current agenda, so picks sort and remind by start time.
     func agendaDidLoad(_ events: [Event]) {
-        agenda = events
         schedule.updateEvents(events)
         planner.updateAgenda(events)
-        publishNowNext()
-    }
-
-    /// The widgets' and Siri's "Now and next", with the schedule's picks as mine. Without it the widget shows nothing
-    /// once the agenda has loaded.
-    func publishNowNext() {
-        guard !agenda.isEmpty else { return }       // until the agenda arrives, the reader's snapshot stands
-        NowNextPublisher.publish(agenda: agenda, saved: schedule.picks.compactMap(\.event))
+        nowNext.agendaDidLoad(events)
     }
 }
 

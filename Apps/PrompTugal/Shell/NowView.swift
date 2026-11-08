@@ -18,34 +18,36 @@ extension EnvironmentValues {
 }
 
 /// Now (ux spec NOW-1): the first screen. It changes with the summit's phase, worked out from Lisbon time and the
-/// agenda (`NowBoard`, PTAgenda): before the summit a countdown, during it For you, On now and Up next, between days
+/// agenda (`NowModel`, PTAgenda): before the summit a countdown, during it For you, On now and Up next, between days
 /// Tomorrow, after it a thank you. The latest news, the practical card and the Ask card are in every phase.
 /// Every user-facing string is written exactly as in the ux spec, so the String Catalog keys match.
 struct NowView: View {
     @Environment(ReaderStore.self) private var reader
 
     var body: some View {
-        // One minute at a time: the clock, the board and the countdowns follow it. `-PTNow` fixes the time in DEBUG builds.
+        // One minute at a time: the clock, the model and the countdowns follow it. `-PTNow` fixes the time in DEBUG builds.
         TimelineView(.everyMinute) { context in
-            let now = PublicLaunch.now ?? context.date
-            let board = reader.nowBoard(at: now)
+            let now = AgendaClock.override ?? context.date
+            let model = reader.nowModel(at: now)
             Page(maxWidth: Space.readable) {
                 header(now: now)
-                switch board.phase {
-                case .noAgenda:
+                if reader.agenda.isEmpty {
                     agendaMissing
-                case .before(let start):
-                    countdown(to: start, from: now)
-                    startProgram(board: board, now: now)
-                case .live:
-                    forYou(board: board, now: now)
-                    onNow(board: board, now: now)
-                    upNext(board: board, now: now)
-                case .between(let next):
-                    forYou(board: board, now: now)
-                    tomorrow(after: next, now: now)
-                case .ended:
-                    thanks
+                } else {
+                    switch model.phase {
+                    case .before:
+                        countdown(model)
+                        startProgram(model, now: now)
+                    case .during:
+                        forYou(model, now: now)
+                        onNow(model, now: now)
+                        upNext(model, now: now)
+                    case .between:
+                        forYou(model, now: now)
+                        tomorrow(model, now: now)
+                    case .after:
+                        thanks(count: model.pickCount)
+                    }
                 }
                 LatestNewsCard()
                 PracticalCard()
@@ -83,26 +85,15 @@ struct NowView: View {
 
     // MARK: State A, before the summit
 
-    /// The first two official items: the first registration item and the first summit item (Opening Night). When the agenda
-    /// does not carry those kinds, the first two sessions.
-    private var firstItems: [Event] {
-        let timed = reader.agenda.filter { $0.start != nil }
-            .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
-        let registration = timed.first { $0.kind == "registration" }
-        let summit = timed.first { $0.kind == "summit" }
-        let named = [registration, summit].compactMap { $0 }
-        return named.isEmpty ? Array(timed.prefix(2)) : named
-    }
-
-    private func countdown(to start: Date, from now: Date) -> some View {
-        TitledCard(Self.countdownTitle(to: start, from: now), kicker: "Lisbon · 9–12 Nov") {
+    private func countdown(_ model: NowModel) -> some View {
+        TitledCard(Self.countdownTitle(model.countdown), kicker: "Lisbon · 9–12 Nov") {
             VStack(alignment: .leading, spacing: Space.m) {
-                ForEach(firstItems, id: \.id) { event in
-                    EventLink(event: event) {
+                ForEach(model.firstItems) { entry in
+                    EntryLink(entry: entry) {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(event.title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                            Text(entry.title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                                 .multilineTextAlignment(.leading)
-                            Text(Self.whenAndWhere(event)).font(Typo.data).foregroundStyle(Palette.muted)
+                            Text(Self.whenAndWhere(entry)).font(Typo.data).foregroundStyle(Palette.muted)
                         }
                     }
                 }
@@ -110,25 +101,24 @@ struct NowView: View {
         }
     }
 
-    /// "The summit starts in 1 day" (or 5 hours, 20 minutes): the whole unit that fits.
-    static func countdownTitle(to start: Date, from now: Date) -> String {
-        let minutes = max(0, Int(start.timeIntervalSince(now) / 60))
-        switch minutes {
-        case 2 * 1440...: let days = minutes / 1440; return String(localized: "The summit starts in \(days) days")
-        case 1440...: return String(localized: "The summit starts in 1 day")
-        case 120...: let hours = minutes / 60; return String(localized: "The summit starts in \(hours) hours")
-        case 60...: return String(localized: "The summit starts in 1 hour")
-        default:
-            let count = max(1, minutes)
-            return count == 1 ? String(localized: "The summit starts in 1 minute")
-                : String(localized: "The summit starts in \(count) minutes")
+    /// "The summit starts in 1 day" (or 5 hours, 20 minutes): the largest whole unit, from team's model.
+    static func countdownTitle(_ countdown: NowModel.Countdown?) -> String {
+        guard let countdown else { return String(localized: "The summit starts soon") }
+        let value = countdown.largest.value
+        switch countdown.largest.unit {
+        case .days:
+            return value == 1 ? String(localized: "The summit starts in 1 day") : String(localized: "The summit starts in \(value) days")
+        case .hours:
+            return value == 1 ? String(localized: "The summit starts in 1 hour") : String(localized: "The summit starts in \(value) hours")
+        case .minutes:
+            return value == 1 ? String(localized: "The summit starts in 1 minute")
+                : String(localized: "The summit starts in \(value) minutes")
         }
     }
 
-    private static func whenAndWhere(_ event: Event) -> String {
-        guard let start = event.start else { return event.place }
-        let day = start.formatted(Self.shortDayStyle)
-        return [day + ", " + Lisbon.timeLabel(start), event.place].filter { !$0.isEmpty }.joined(separator: " · ")
+    private static func whenAndWhere(_ entry: NowModel.Entry) -> String {
+        let day = entry.start.formatted(Self.shortDayStyle)
+        return [day + ", " + Lisbon.timeLabel(entry.start), entry.place].filter { !$0.isEmpty }.joined(separator: " · ")
     }
 
     private static let shortDayStyle: Date.FormatStyle = {
@@ -138,88 +128,69 @@ struct NowView: View {
     }()
 
     /// NOW-1b: with no picks, a card that starts the program; with picks, the next one.
-    @ViewBuilder private func startProgram(board: NowBoard.Snapshot, now: Date) -> some View {
-        if reader.saved.isEmpty {
+    @ViewBuilder private func startProgram(_ model: NowModel, now: Date) -> some View {
+        if model.pickCount == 0 {
             StartProgramCard()
         } else {
-            forYou(board: board, now: now)
+            forYou(model, now: now)
         }
     }
 
     // MARK: State B, during the summit
 
-    /// Registration is not a talk: it never fills On now, Up next or Tomorrow. The board's entries carry the schedule slug,
+    /// Registration is not a talk: it never fills On now, Up next or Tomorrow. The model's entries carry the schedule slug,
     /// so the kind comes from the agenda's copy of the session.
-    private func isRegistration(_ entry: NowBoard.Entry) -> Bool {
+    private func isRegistration(_ entry: NowModel.Entry) -> Bool {
         reader.agenda.contains { $0.kind == "registration" && ScheduleID.fromPage($0.page) == entry.id }
     }
 
     /// NOW-1c: my current pick, or my next one.
-    @ViewBuilder private func forYou(board: NowBoard.Snapshot, now: Date) -> some View {
-        if let entry = board.mineNow.first ?? board.nextMine {
-            let clash = board.clashes.contains { $0.first.eventID == entry.id || $0.second.eventID == entry.id }
+    @ViewBuilder private func forYou(_ model: NowModel, now: Date) -> some View {
+        if let forYou = model.forYou {
             TitledCard(String(localized: "For you"),
-                       kicker: board.mineNow.first != nil ? String(localized: "On now") : String(localized: "Next in your program")) {
-                SessionRow(entry: entry, now: now, style: .forYou, clash: clash)
+                       kicker: forYou.isNow ? String(localized: "On now") : String(localized: "Next in your program")) {
+                SessionRow(entry: forYou.entry, now: now, style: .forYou, clash: forYou.clashes)
             }
-        } else if board.phase == .live {
+        } else if model.phase == .during {
             StartProgramCard()
         }
     }
 
-    /// NOW-1f: up to five sessions running now, Centre Stage first.
-    @ViewBuilder private func onNow(board: NowBoard.Snapshot, now: Date) -> some View {
-        let running = board.venueNow.filter { !isRegistration($0) }.sorted { lhs, rhs in
-            let l = Self.isCentreStage(lhs.place), r = Self.isCentreStage(rhs.place)
-            if l != r { return l }
-            return lhs.start < rhs.start
-        }
+    /// NOW-1f: up to five sessions running now, Centre Stage first (the model sorts them).
+    @ViewBuilder private func onNow(_ model: NowModel, now: Date) -> some View {
+        let running = model.onNow.filter { !isRegistration($0) }
         if !running.isEmpty {
             TitledCard(String(localized: "On now at the venue"), accessory: {
-                if running.count > 5 {
-                    SeeAllButton(title: String(localized: "See all (\(running.count))"))
+                if model.onNowCount > running.count {
+                    SeeAllButton(title: String(localized: "See all (\(model.onNowCount))"))
                 }
             }, content: {
-                ForEach(running.prefix(5)) { entry in
+                ForEach(running) { entry in
                     SessionRow(entry: entry, now: now, style: .onNow, clash: false)
                 }
             })
         }
     }
 
-    private static func isCentreStage(_ place: String) -> Bool {
-        place.localizedCaseInsensitiveContains("centre stage") || place.localizedCaseInsensitiveContains("center stage")
-    }
-
     /// NOW-1g: up to five sessions starting in the next 60 minutes.
-    @ViewBuilder private func upNext(board: NowBoard.Snapshot, now: Date) -> some View {
-        let soon = board.venueNext.filter { $0.start <= now.addingTimeInterval(3600) && !isRegistration($0) }
+    @ViewBuilder private func upNext(_ model: NowModel, now: Date) -> some View {
+        let soon = model.upNext.filter { !isRegistration($0) }
         if !soon.isEmpty {
             TitledCard(String(localized: "Up next"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
-                ForEach(soon.prefix(5)) { entry in
+                ForEach(soon) { entry in
                     SessionRow(entry: entry, now: now, style: .upNext, clash: false)
                 }
             })
         }
     }
 
-    /// Between days, after the last session and before the next day's first: the first three sessions of the next day.
-    @ViewBuilder private func tomorrow(after next: Date, now: Date) -> some View {
-        let day = Lisbon.day(next)
-        let first = reader.agenda.filter { event in
-            guard let start = event.start else { return false }
-            return Lisbon.day(start) == day && start > now && event.kind != "registration"
-        }.sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }.prefix(3)
+    /// Between days: the first three sessions of the next day.
+    @ViewBuilder private func tomorrow(_ model: NowModel, now: Date) -> some View {
+        let first = model.tomorrow.filter { !isRegistration($0) }
         if !first.isEmpty {
             TitledCard(String(localized: "Tomorrow"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
-                ForEach(Array(first), id: \.id) { event in
-                    if let start = event.start {
-                        SessionRow(entry: NowBoard.Entry(id: ScheduleID.fromPage(event.page) ?? event.page, title: event.title,
-                                                         place: event.place, start: start,
-                                                         end: event.end ?? start.addingTimeInterval(1800),
-                                                         mine: reader.isSaved(event), url: event.url),
-                                   now: now, style: .upNext, clash: false)
-                    }
+                ForEach(first) { entry in
+                    SessionRow(entry: entry, now: now, style: .upNext, clash: false)
                 }
             })
         }
@@ -227,9 +198,8 @@ struct NowView: View {
 
     // MARK: State C, after the summit
 
-    private var thanks: some View {
-        let count = reader.saved.count
-        return TitledCard(String(localized: "Thanks for coming"), kicker: "Lisbon · 9–12 Nov") {
+    private func thanks(count: Int) -> some View {
+        TitledCard(String(localized: "Thanks for coming"), kicker: "Lisbon · 9–12 Nov") {
             Text(count == 0 ? String(localized: "The summit is over. The news and the agenda stay on this phone.")
                  : count == 1 ? String(localized: "You picked 1 talk. The news and the agenda stay on this phone.")
                  : String(localized: "You picked \(count) talks. The news and the agenda stay on this phone."))
@@ -308,7 +278,7 @@ private struct AskCard: View {
 private struct SessionRow: View {
     enum Style { case forYou, onNow, upNext }
 
-    let entry: NowBoard.Entry
+    let entry: NowModel.Entry
     let now: Date
     let style: Style
     let clash: Bool
@@ -387,14 +357,14 @@ private struct SessionRow: View {
     }
 }
 
-/// A row that opens an event's page on the site.
-private struct EventLink<Content: View>: View {
-    let event: Event
+/// A row that opens a session's page on the site.
+private struct EntryLink<Content: View>: View {
+    let entry: NowModel.Entry
     @ViewBuilder let content: () -> Content
 
     var body: some View {
-        if let url = event.url {
-            NavigationLink { WebPage(url: url, title: event.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
+        if let url = entry.url {
+            NavigationLink { WebPage(url: url, title: entry.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
                 .buttonStyle(.plain)
         } else {
             content().frame(maxWidth: .infinity, alignment: .leading)

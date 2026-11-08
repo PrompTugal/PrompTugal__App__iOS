@@ -71,7 +71,7 @@ enum PublicDestinations {
         ShellDestination(id: "now", title: "Now", symbol: "dot.radiowaves.left.and.right", group: "Tabs",
                          summary: "What is on now, what is next for you, what is new", phoneTab: 0) { AnyView(NowView()) },
         ShellDestination(id: "team.schedule", title: "My program", symbol: "star", group: "Tabs", kind: .hybrid,
-                         summary: "The talks you picked, clashes and free time", phoneTab: 1) { AnyView(MyDayView()) },
+                         summary: "The talks you picked, clashes and free time", phoneTab: 1) { AnyView(MyProgramScreen()) },
         ShellDestination(id: "explore", title: "Explore", symbol: "magnifyingglass", group: "Tabs",
                          summary: "Talks, speakers, companies and places", phoneTab: 2, wrapsStack: false) {
             AnyView(ExploreView())
