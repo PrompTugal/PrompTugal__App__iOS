@@ -15,7 +15,6 @@ let package = Package(
     targets: [
         .target(
             name: "PTExplore",
-    defaultLocalization: "en",
             dependencies: [.product(name: "PTCore", package: "PTCore")],
             resources: [.process("Resources")]
         ),
