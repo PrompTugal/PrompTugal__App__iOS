@@ -32,7 +32,9 @@ public struct NowModel: Equatable, Sendable {
 
     /// One session.
     public struct Entry: Identifiable, Hashable, Sendable {
-        public init(id: String, title: String, place: String, start: Date, end: Date, mine: Bool, official: Bool, url: URL?) {
+        public init(id: String, title: String, place: String, start: Date, end: Date, mine: Bool, official: Bool, url: URL?,
+                    kind: String = "") {
+            self.kind = kind
             self.id = id
             self.title = title
             self.place = place
@@ -51,6 +53,7 @@ public struct NowModel: Equatable, Sendable {
         public let mine: Bool           // in the person's program
         public let official: Bool
         public let url: URL?
+        public let kind: String         // the event's kind: "registration" and "summit" are special on the Now screen
 
         public func isLive(at now: Date) -> Bool { start <= now && now < end }
 
@@ -145,19 +148,21 @@ public struct NowModel: Equatable, Sendable {
             forYou = nil
         }
 
-        let running = venue.filter { $0.isLive(at: now) }.sorted { lhs, rhs in
+        // Registration runs all day, every day: it is not "on now" or "up next", it only opens the countdown screen.
+        let sessions = venue.filter { $0.kind != Self.registrationKind }
+        let running = sessions.filter { $0.isLive(at: now) }.sorted { lhs, rhs in
             let (l, r) = (Self.isCentreStage(lhs.place), Self.isCentreStage(rhs.place))
             if l != r { return l }
             return Self.soonest(lhs, rhs)
         }
         onNowCount = running.count
         onNow = Array(running.prefix(Self.onNowLimit))
-        upNext = Array(venue.filter { $0.start > now && $0.start <= now.addingTimeInterval(TimeInterval(Self.upNextMinutes * 60)) }
+        upNext = Array(sessions.filter { $0.start > now && $0.start <= now.addingTimeInterval(TimeInterval(Self.upNextMinutes * 60)) }
             .sorted(by: Self.soonest).prefix(Self.upNextLimit))
 
-        if phase == .between, let first = venue.filter({ $0.start > now }).map(\.start).min() {
+        if phase == .between, let first = sessions.filter({ $0.start > now }).map(\.start).min() {
             let day = Lisbon.day(first)
-            tomorrow = Array(venue.filter { $0.start > now && Lisbon.day($0.start) == day }
+            tomorrow = Array(sessions.filter { $0.start > now && Lisbon.day($0.start) == day }
                 .sorted(by: Self.soonest).prefix(Self.tomorrowLimit))
         } else {
             tomorrow = []
@@ -165,7 +170,11 @@ public struct NowModel: Equatable, Sendable {
 
         if phase == .before {
             countdown = Countdown(opens: summit.opens, now: now)
-            firstItems = Array(venue.filter { $0.official && $0.start > now }.sorted(by: Self.soonest).prefix(2))
+            // The first registration and the opening night (the first "summit" item), in time order.
+            let ahead = venue.filter { $0.start > now }.sorted(by: Self.soonest)
+            let picked = [ahead.first { $0.kind == Self.registrationKind }, ahead.first { $0.kind == Self.summitKind }]
+                .compactMap { $0 }.sorted(by: Self.soonest)
+            firstItems = picked.isEmpty ? Array(ahead.filter(\.official).prefix(2)) : picked
         } else {
             countdown = nil
             firstItems = []
@@ -176,6 +185,9 @@ public struct NowModel: Equatable, Sendable {
 
     /// A session without an end time lasts thirty minutes.
     static let defaultLength: TimeInterval = 30 * 60
+
+    static let registrationKind = "registration"
+    static let summitKind = "summit"
 
     static func soonest(_ a: Entry, _ b: Entry) -> Bool { a.start == b.start ? a.title < b.title : a.start < b.start }
 
@@ -188,7 +200,8 @@ public struct NowModel: Equatable, Sendable {
         guard end > start else { return nil }
         let id = ScheduleID.fromPage(event.page) ?? event.page
         return Entry(id: id, title: event.title, place: event.place, start: start, end: end,
-                     mine: forced || pickedIDs.contains(id), official: event.official, url: event.url)
+                     mine: forced || pickedIDs.contains(id), official: event.official, url: event.url,
+                     kind: event.kind)
     }
 
     /// Before the summit opens: `.before`; from its close: `.after`; in between: `.during` while a session runs or more
