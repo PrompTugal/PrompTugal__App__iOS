@@ -1,5 +1,6 @@
 import StoreKit
 import SwiftUI
+import PTCore
 
 /// Entry view for reading credit: the website's meter balance, shown natively, and the native top-up (D6).
 struct ReadingCreditView: View {
@@ -36,7 +37,7 @@ struct ReadingCreditView: View {
                 if meter.snapshot == nil || !meter.pendingCredits.isEmpty {
                     Button {
                         if showsDone { dismiss() }
-                        if let url = URL(string: "promptugal://open/web.promptugal") { openURL(url) }
+                        if let url = AppLinks.open("web.promptugal") { openURL(url) }
                     } label: {
                         Label("Open PrompTugal.news", systemImage: "newspaper")
                     }
