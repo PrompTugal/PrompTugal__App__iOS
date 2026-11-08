@@ -19,6 +19,7 @@
 		A3DB1CA94FAE24CD2F779D42 /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 32154EC416734B3A20FF1516 /* PTAgenda */; };
 		FA989053DC0B7A670553676E /* PrompTugalIntents.appex in Embed */ = {isa = PBXBuildFile; fileRef = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BDF15758967827341EB8892C /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 96AD954C7DFBE4B782BD54D8 /* PTAgenda */; };
+		E61982BA70FD0A0841506D63 /* PTDeck in Frameworks */ = {isa = PBXBuildFile; productRef = BA97653A6021BA60AD1358C3 /* PTDeck */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -159,6 +160,7 @@
 				5B2719121FAAE433CDC36721 /* PTNews in Frameworks */,
 				FA561A52534BBBD0C4E9F720 /* PTAsk in Frameworks */,
 				62C152B82B7782691901FDE6 /* PTVaultUI in Frameworks */,
+				E61982BA70FD0A0841506D63 /* PTDeck in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +268,7 @@
 				8CA679B880DAE215C2AF5ED5 /* PTNews */,
 				FC463707B728B9D5A483F362 /* PTAsk */,
 				00CAC9EBB3D202E3D0898BB2 /* PTVaultUI */,
+				BA97653A6021BA60AD1358C3 /* PTDeck */,
 			);
 			productName = PrompTugal;
 			productReference = 0D08D33B90E2593AC336F1CD;
@@ -409,6 +412,7 @@
 				689CF41318B6542F4B8EB9FE /* XCLocalSwiftPackageReference "../../Packages/PTNews" */,
 				020358F86EADE19098D947DA /* XCLocalSwiftPackageReference "../../Packages/PTAsk" */,
 				5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */,
+				6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6184002F36CB9470245CDFFC /* Products */;
@@ -577,6 +581,8 @@
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera only to scan the QR code of a vault key, when you choose to scan one.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal uses the microphone while you hold the dictation button, to turn what you say into text for a question or a message. The audio is not kept.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal turns your dictation into text. It does this on your device when your language allows it; otherwise your audio is sent to Apple to be transcribed.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -611,6 +617,8 @@
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera only to scan the QR code of a vault key, when you choose to scan one.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal uses the microphone while you hold the dictation button, to turn what you say into text for a question or a message. The audio is not kept.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal turns your dictation into text. It does this on your device when your language allows it; otherwise your audio is sent to Apple to be transcribed.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -857,6 +865,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTVaultUI;
 		};
+		6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTDeck;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -904,6 +916,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E0A0E149DD8F39A2BD3E95E5 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
 			productName = PTAgenda;
+		};
+		BA97653A6021BA60AD1358C3 /* PTDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */;
+			productName = PTDeck;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
