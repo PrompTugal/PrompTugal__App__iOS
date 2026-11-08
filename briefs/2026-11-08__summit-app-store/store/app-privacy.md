@@ -42,3 +42,27 @@ In a build without Ask (and without Vault), nothing leaves the device except rea
 - [ ] The privacy page lists the same features and hosts as the table above. Editor's `split/editor` privacy page; R3.
 - [ ] `PrivacyInfo.xcprivacy`: `NSPrivacyCollectedDataTypes` is empty on dev, and Ask ships. **Apps adds** `NSPrivacyCollectedDataTypeOtherUserContent` (not linked, not tracking, purpose `NSPrivacyCollectedDataTypePurposeAppFunctionality`), so the manifest and the label agree.
 - [ ] The widget and intents manifests (`split/apps` bc65b90) are merged.
+
+## The exact keys for apps: `Apps/PrompTugal/Resources/PrivacyInfo.xcprivacy`
+
+Replace the empty `NSPrivacyCollectedDataTypes` array with this one. It is the only change: tracking stays false, there are no tracking domains, and the two API reasons stay as they are. The widget and intents manifests need no collected types, because they send nothing.
+
+```xml
+<key>NSPrivacyCollectedDataTypes</key>
+<array>
+	<dict>
+		<key>NSPrivacyCollectedDataType</key>
+		<string>NSPrivacyCollectedDataTypeOtherUserContent</string>
+		<key>NSPrivacyCollectedDataTypeLinked</key>
+		<false/>
+		<key>NSPrivacyCollectedDataTypeTracking</key>
+		<false/>
+		<key>NSPrivacyCollectedDataTypePurposes</key>
+		<array>
+			<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+		</array>
+	</dict>
+</array>
+```
+
+Also update the comment at the top of the file: "Ask sends the user's questions and chosen context to OpenRouter (Other User Content, not linked, not tracking)." Check with `plutil -lint` after editing.
