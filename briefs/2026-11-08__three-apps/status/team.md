@@ -1,6 +1,6 @@
 # Team session: PTWeb and PTAgenda
 
-> PTWeb and PTAgenda are on dev (7863ae2). The follow-up (reminders from AppLinks.scheme, bounded StoreKit test) is green: run 313, commit 3899bb1, all 15 jobs. READY sent to the conductor. Nothing open for team.
+> Round 2 (Team native): stand-ups, command centre, reports, wakes, pulse and generic pages are written (cfce712, 063e3c2); quick run 352 on cfce712 is queued, nothing compiled yet. PTNowNext split done (7dc4298 and the Team project reference). None of the new screens is registered in Destinations yet (design).
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
 
@@ -20,6 +20,14 @@
 - **07:15 UTC, phase 4 review:** Read platform's plan against my folders and sent platform and the conductor the findings: module rename breaks 10 `@testable import PrompTugal` files; InfoPlistTests expects the old BGTask ids; NowNext is not in PTAgenda yet, so the Team project must keep the Shared group and `NowNextPublisher` (or I delete the publisher calls); design's `AppShell.swift:97` must compare with `AppLinks.scheme`. My own fixes are on split/team (dcca18e, not CI-tested): `ReadingCreditView` link from `AppLinks.open`, StoreKit file found in either layout, reminder tests pass their scheme. Waiting for platform's move to review it.
 
 - **07:25 UTC, NowNext moved (conductor ruling):** `Shared/NowNext.swift` is now `Packages/PTAgenda/Sources/PTAgenda/NowNext.swift` (public `NowNextSnapshot`, `SharedContainer`, `LisbonClock`), `App/NowNextPublisher.swift` is `Packages/PTAgenda/Sources/PTAgenda/NowNextPublisher.swift` (public, no team dependency), and `NowNextTests.swift` is in `Packages/PTAgenda/Tests/PTAgendaTests/`. `SharedContainer.appGroup` is now a settable static (default `group.news.promptugal.reader`; an app with its own group sets it at launch). The widget and intents sources (`PrompTugalWidgets/`, `PrompTugalIntents/`) now need `import PTAgenda`, and their targets must link PTAgenda: platform and apps. Not CI-tested.
+
+- **11:00 UTC, round 2 (contracts §8): native Team screens.** All in `Apps/Team/Sources/Team/`, read through `TeamStore` from the team site's public data, kept on the device, web page one tap away.
+  - `TeamStandupAgenda.swift` (parsers), `StandupsView.swift` (`StandupsView`, `StandupDetailView`, items): list with open counts, agenda by kind, "only items for me", briefings.
+  - `MyCommandCentreView.swift` (`MyCommandCentreView`, `CentreIssuesView`): decisions, issues with filters, workstreams, agents, activity, messages, sessions.
+  - `TeamPage.swift`, `TeamPageView.swift`: any twin page as native blocks (reports, board health, pulse summary); `ReportsView`, `WakesView`, `PulseView`.
+  - `TeamStore`: `standupSummaries`, `agendas`, `pages`, `refreshAgenda(slot:)`, `refreshPage(_:)`, validated paths, offline cache. Tests: `Apps/Team/Tests/TeamNativeTests.swift`.
+  - **Not registered:** design owns `Shell/Destinations.swift`. Entries to add once green: `team.commandcentre` → `MyCommandCentreView()` (kind native), `team.standups` → `StandupsView()`, `agents.reports` → `ReportsView()`, `agents.wakes` → `WakesView()`, `briefings.pulse` → `PulseView()`, `briefings.board` → `TeamPageView(path: "board-health", title: "Board health")`.
+- **PTNowNext (conductor request):** `Packages/PTNowNext` (no dependencies) holds `NowNextSnapshot`, `SharedContainer`, `LisbonClock`; PTAgenda depends on it and re-exports it; `NowNextPublisher` stays in PTAgenda. In `apps.json` and the workspace. **Exception to the project-ownership rule, approved by the conductor:** I added a reference-only `XCLocalSwiftPackageReference` for `../../Packages/PTNowNext` to `Apps/Team/Team.xcodeproj` (platform told). `PrompTugal.xcodeproj` is apps': its reference and the widgets and intents product links come with their merge.
 
 ## Handoff
 
