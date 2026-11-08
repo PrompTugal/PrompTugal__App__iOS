@@ -58,3 +58,16 @@ struct ProgramModelTests {
         #expect(ProgramModel.defaultDay(picks: [], now: Lisbon.instant(day: "2026-11-08", clock: "09:00")!) == "2026-11-10")
     }
 }
+
+@Suite("Program day chips")
+struct ProgramDayChipTests {
+    @Test func chipsAreShortInEveryLanguage() {
+        for id in ["en_US", "pt_BR", "pt_PT"] {
+            let label = ProgramModel.shortLabel("2026-11-10", locale: Locale(identifier: id))
+            #expect(label.contains("10"))
+            #expect(label.count <= 9)              // weekday abbreviation and the day number, never "Nov 10, 2026"
+            #expect(!label.contains("2026"))
+        }
+        #expect(ProgramModel.shortLabel("not a day") == "not a day")
+    }
+}
