@@ -63,3 +63,29 @@
 - App Store Connect records for Team and RiskMandate: register the bundle IDs, create the apps, add internal groups with automatic distribution.
 - The optional `REVIEW_CONTACT_PHONE` secret, needed only for external review after the summit.
 - The optional self-hosted Mac runner, with its safety steps (see the conductor session's notes).
+
+## Final heads (all nine sessions on account A stopped, 01:44 UTC)
+
+Each branch's status page has a "## Handoff" section. None of the runs listed below had finished when the sessions stopped. Read their results before merging anything.
+
+| Role | Branch | Final head | Last code commit and run |
+| --- | --- | --- | --- |
+| platform | `split/platform` | 15a0970 | ce3602e `AppLinks.scheme`; run 292 queued |
+| team | `split/team` | 203c598 | 6cccf88 PTWeb + PTAgenda; run 293 queued, never compiled |
+| design | `split/design` | d7e6a69 | 4430e67 PTNews; run 294 queued. Needs split/team's PTWeb |
+| collab | `split/collab-seams` | 11acc2e | CollabSeams.swift alone; run 291 queued. **Merge this first** |
+| collab | `split/collab` | 0ddf084 | PTLanes and team-side hooks; won't build until CollabSeams and VaultCollabAccess are on dev |
+| vault | `split/vault` | d24514e | VaultCollabAccess and install(); won't build until CollabSeams is on dev |
+| release | `split/release` | b5565d9 | Code is 0ed75bc. Runs 287 (quick) and 59 (version dry run) queued. VERSION on the branch is `v0.4` on purpose, so the first release after merge is v0.4.0 |
+| editor | `split/editor` | a889cb9 | Held until phase 4 |
+| testflight | `split/testflight` | 9869149 | Watching uploads only |
+| apps | `split/apps` | f5dc0ed | PrompTugal and RiskMandate projects; runs 285, 289 and 290 queued |
+
+Suggested first merges for conductor.B, each only once its run is green:
+1. `split/collab-seams` 11acc2e
+2. platform's ce3602e
+3. vault's VaultCollabAccess
+4. apps' RiskMandate
+5. release
+6. team's PTWeb and PTAgenda, then design's PTNews, then collab's PTLanes, then PTAsk
+7. phase 4
