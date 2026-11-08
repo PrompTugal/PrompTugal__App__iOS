@@ -37,8 +37,8 @@ NEWS
 • Live news and newsletter editions from PrompTugal.news, readable offline
 • A graph of the companies, people and events behind the stories
 
-ASK (only if merged)
-• Ask about the program and your day. Nothing is sent until you agree, and you choose what is shared
+ASK (OPTIONAL)
+• Ask about the program and your day, with your own OpenRouter key. Nothing is sent until you agree, and you choose what is shared
 
 PRIVATE BY DESIGN
 • No account, no sign-up, no tracking, no ads

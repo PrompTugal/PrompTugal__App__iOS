@@ -39,8 +39,8 @@ NOTÍCIAS
 • Notícias ao minuto e edições da newsletter do PrompTugal.news, para ler sem rede
 • Um grafo das empresas, pessoas e eventos por trás das notícias
 
-PERGUNTE (apenas se integrado)
-• Pergunte sobre o programa e o seu dia. Nada é enviado sem a sua autorização, e é o utilizador que escolhe o que partilha
+PERGUNTE (OPCIONAL)
+• Pergunte sobre o programa e o seu dia, com a sua própria chave OpenRouter. Nada é enviado sem a sua autorização, e é o utilizador que escolhe o que partilha
 
 PRIVACIDADE DE RAIZ
 • Sem conta, sem registo, sem rastreio, sem publicidade
@@ -66,13 +66,13 @@ A primeira versão na App Store: a agenda da cimeira sem rede, o seu programa co
 
 ## URLs
 
-The same pages as English until editor publishes Portuguese versions. If editor publishes `/pt/` pages, release uses them here (the conductor confirms).
+Editor's Portuguese pages (`/pt/`), confirmed by the conductor at 11:25 UTC. They go live when the conductor merges `split/editor`; check that they answer 200 before submitting.
 
 | Campo | Valor |
 | --- | --- |
-| URL de suporte | https://ios.app.promptugal.news/support.html |
-| URL de marketing | https://ios.app.promptugal.news/ |
-| URL da política de privacidade | https://ios.app.promptugal.news/privacy.html |
+| URL de suporte | https://ios.app.promptugal.news/pt/support.html |
+| URL de marketing | https://ios.app.promptugal.news/pt/ |
+| URL da política de privacidade | https://ios.app.promptugal.news/pt/privacy.html |
 
 ## TestFlight: o que testar (4000)
 
