@@ -68,3 +68,13 @@
 | P2 | The conductor's go | pending |
 
 **Verdict:** rc3 can be submitted once run 391 is green, the upload passes processing, and release's screenshots pass G8 and M4.
+
+## Run 3: `split/rc4` ce58c5e, the delta from rc3 (12:45 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| G4 | Offline first launch: `agenda-seed.json` (201 items) ships in the synced Resources group, but `AgendaHub.seedAgenda` is never assigned (`AgendaSources.swift:133` default `{ [] }`; `AgendaSeed` in `PrompTugalApp.swift:49` is unused). So the agenda is still empty offline on first launch. | **must-fix** (apps): `AgendaHub.seedAgenda = { AgendaSeed.events() }` in `PrompTugalApp.init()` |
+| G8, M4 | Program titles in the seed and the live feed contain "Web Summit" (9 items, for example the Registration row that Now shows first). Allowed in the app, not in screenshots. | risk (release): choose screenshot states without these rows |
+| Localization sweep (i18n 5e4ef2b) | `String(localized:bundle: .module)` in AgendaView, ShellParts, PTAgenda and PTNews; catalogs extended | GO |
+| Hosts, WebPage, notes, purpose strings | Unchanged since rc3 | GO |
+| G5 | Full run 42481029792 on ce58c5e | pending |
