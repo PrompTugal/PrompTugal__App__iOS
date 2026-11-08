@@ -48,7 +48,10 @@ DEFAULT_CONFIG = {
 
 
 def sh(*args):
-    return subprocess.run(args, capture_output=True, text=True)
+    try:
+        return subprocess.run(args, capture_output=True, text=True)
+    except FileNotFoundError:   # e.g. no gh on this machine
+        return subprocess.CompletedProcess(args, 127, "", f"{args[0]}: not found")
 
 
 def load_config(root="."):
@@ -141,20 +144,34 @@ def diff_range(env):
     return None
 
 
+IGNORED_DIRS = ("briefs/", "website/")
+
+
+def relevant(files):
+    """Docs, the site and VERSION cannot change an app. (ios.yml's path filters say the same.)"""
+    return [f for f in files if not f.startswith(IGNORED_DIRS) and f != "VERSION" and not ("/" not in f and f.endswith(".md"))]
+
+
 def files_between(base, head):
     r = sh("git", "diff", "--name-only", base, head)
-    return r.stdout.split() if r.returncode == 0 else None
+    return relevant(r.stdout.split()) if r.returncode == 0 else None
 
 
 PLATFORM = {"packages": None}   # packages from scripts/apps/affected.py, when it gave them
 
 
-def platform_affected(base, head):
+def platform_affected(files):
     """Ask scripts/apps/affected.py. Returns a set of app keys, or None if unusable."""
     script = "scripts/apps/affected.py"
-    if not os.path.exists(script):
+    if files is None or not os.path.exists(script):
         return None
-    r = sh(sys.executable, script, base, head)
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+        f.write("\n".join(files) + "\n")
+    try:
+        r = sh(sys.executable, script, "--files-from", f.name)
+    finally:
+        os.unlink(f.name)
     if r.returncode != 0:
         print(f"{script} failed ({r.returncode}); using the fallback rules. {r.stderr.strip()[:300]}", file=sys.stderr)
         return None
@@ -167,6 +184,39 @@ def platform_affected(base, head):
         data = data.get("apps", [k for k, v in data.items() if v])
     if isinstance(data, list):
         return {x if isinstance(x, str) else x.get("app") or x.get("key") for x in data}
+    return None
+
+
+def find_release(head_sha):
+    """The release commit and tag that website.yml made for a push: a v* tag whose commit's
+    parent is the pushed commit. Returns (tag, sha) or (None, None)."""
+    r = sh("git", "tag", "--list", "v[0-9]*", "--sort=-version:refname")
+    for tag in r.stdout.split()[:40]:
+        c = sh("git", "rev-parse", tag + "^{commit}").stdout.strip()
+        p = sh("git", "rev-parse", c + "^").stdout.strip()
+        if c and p == head_sha:
+            return tag, c
+    return None, None
+
+
+def last_built(key, legacy, limit=15):
+    """The commit an app was last built from: the build-info of the newest ios-release run on dev
+    that has one for it (written only when its unsigned package succeeded). None if there is none,
+    or gh is not usable; then the app counts as changed."""
+    import tempfile
+    names = [f"build-info-{key}"] + (["build-info"] if legacy else [])
+    r = sh("gh", "run", "list", "--workflow", "ios-release.yml", "--branch", "dev", "--limit", str(limit),
+           "--json", "databaseId", "-q", ".[].databaseId")
+    for run in r.stdout.split():
+        for name in names:
+            with tempfile.TemporaryDirectory() as d:
+                if sh("gh", "run", "download", run, "-n", name, "-D", d).returncode == 0:
+                    try:
+                        commit = json.load(open(os.path.join(d, "build-info.json"))).get("commit", "")
+                    except (OSError, ValueError):
+                        continue
+                    if commit and sh("git", "cat-file", "-e", commit + "^{commit}").returncode == 0:
+                        return commit
     return None
 
 
@@ -223,7 +273,7 @@ def plan(cfg, env, files, platform_set, exists, variables):
         # TestFlight
         tf = app.get("testflight", False)
         if mode == "diff":
-            if ev == "push" and ref == "refs/heads/dev":
+            if ev == "workflow_run" or (ev == "push" and ref == "refs/heads/dev"):
                 if not tf:
                     row["why"].append("no upload: testflight is false in apps.json")
                 elif paused(key, variables):
@@ -254,8 +304,9 @@ def plan(cfg, env, files, platform_set, exists, variables):
     return rows, pkgs, notes
 
 
-def matrix_entry(key, app, variables):
+def matrix_entry(key, app, variables, base=""):
     return {
+        "base": base or "",   # the commit this app was last built from; release notes start there
         "app": key, "secret": key.upper(), "project": app["project"], "scheme": app["scheme"],
         "name": app["scheme"], "bundle": app["bundle"], "offset": offset_for(key, variables),
         # profile secrets: IOS_PROFILE_<KEY>_APP_BASE64 ...; the old IOS_PROFILE_APP_BASE64 names
@@ -290,7 +341,7 @@ def write_output(name, value):
 
 def main_plan():
     env = {k: os.environ.get(k, "") for k in
-           ("EVENT_NAME", "REF", "SHA", "BEFORE", "BASE_SHA", "INPUT_APP", "INPUT_UPLOAD", "INPUT_DRY_RUN")}
+           ("EVENT_NAME", "REF", "SHA", "BEFORE", "BASE_SHA", "INPUT_APP", "INPUT_UPLOAD", "INPUT_DRY_RUN", "RUN_HEAD_SHA")}
     try:
         variables = json.loads(os.environ.get("VARS_JSON") or "{}")
     except ValueError:
@@ -298,20 +349,45 @@ def main_plan():
     cfg, source = load_config()
     lines = [f"Config: {source}."]
     files, platform_set, how = None, None, "whole tree (no diff for this event)"
-    rng = diff_range(env)
-    if rng:
-        base, head = rng
-        files = files_between(base, head)
-        platform_set = platform_affected(base, head)
-        how = f"`{base[:7]}..{head[:7]}`, {len(files) if files is not None else '?'} changed files" + \
-              (" (scripts/apps/affected.py)" if platform_set is not None else "")
+    release_tag, release_sha, bases = "", "", {}
+    if env["EVENT_NAME"] == "workflow_run":
+        # website.yml finished for a push to dev. Build the release commit it made, and for each
+        # app compare with the commit that app was last built from, so a run that was skipped
+        # or replaced never loses an app's changes.
+        release_tag, release_sha = find_release(env["RUN_HEAD_SHA"])
+        if not release_sha:
+            lines.append(f"No release tag found for pushed commit `{env['RUN_HEAD_SHA'][:7]}`; nothing to build.")
+            cfg = dict(cfg, apps={})
+            how = "no release"
+        else:
+            selected, parts = set(), []
+            for key, app in cfg["apps"].items():
+                base = last_built(key, app["bundle"] == LEGACY_BUNDLE)
+                bases[key] = base
+                changed = files_between(base, release_sha) if base else None
+                aff = platform_affected(changed) if changed is not None else None
+                aff = aff if aff is not None else affected_by_files(cfg, changed)
+                if key in aff:
+                    selected.add(key)
+                parts.append(f"`{key}` since " + (f"`{base[:7]}` ({len(changed)} files)" if base else "never built"))
+            platform_set = selected
+            files = []
+            how = f"release `{release_tag}` (`{release_sha[:7]}`): " + "; ".join(parts)
+    else:
+        rng = diff_range(env)
+        if rng:
+            base, head = rng
+            files = files_between(base, head)
+            platform_set = platform_affected(files)
+            how = f"`{base[:7]}..{head[:7]}`, {len(files) if files is not None else '?'} changed files" + \
+                  (" (scripts/apps/affected.py)" if platform_set is not None else "")
     lines.append(f"Compared: {how}.")
 
     exists = os.path.exists
     rows, pkgs, notes = plan(cfg, env, files, platform_set, exists, variables)
     apps = cfg["apps"]
-    build = [matrix_entry(r["app"], apps[r["app"]], variables) for r in rows if r["build"]]
-    upload = [matrix_entry(r["app"], apps[r["app"]], variables) for r in rows if r["upload"]]
+    build = [matrix_entry(r["app"], apps[r["app"]], variables, bases.get(r["app"])) for r in rows if r["build"]]
+    upload = [matrix_entry(r["app"], apps[r["app"]], variables, bases.get(r["app"])) for r in rows if r["upload"]]
     screens, no_screens = [], []
     for e in build:
         se = screens_entry(e["app"], apps[e["app"]], e)
@@ -344,6 +420,8 @@ def main_plan():
             f.write(text)
     print(text)
 
+    write_output("ref", release_sha)          # commit to check out and build (empty: the default)
+    write_output("tag", release_tag)
     write_output("apps", json.dumps(build, separators=(",", ":")))
     write_output("has_apps", "true" if build else "false")
     write_output("upload", json.dumps(upload, separators=(",", ":")))
@@ -421,6 +499,14 @@ def self_test():
     entry = matrix_entry("promptugal", cfg["apps"]["promptugal"], {})
     check("legacy profile names go to the reader app", entry["legacy"], True)
     check("team is not legacy", matrix_entry("team", cfg["apps"]["team"], {})["legacy"], False)
+    check("docs and site are not app changes", relevant(["briefs/a.md", "website/x.py", "VERSION", "README.md", "PrompTugal/A.swift", "docs/x.md"]),
+          ["PrompTugal/A.swift", "docs/x.md"])
+    rows, _, _ = plan(cfg, {"EVENT_NAME": "workflow_run", "REF": "refs/heads/main"}, [], {"promptugal"}, exists, {"TESTFLIGHT_ON_PUSH_PROMPTUGAL": "false"})
+    check("release run: affected + paused -> builds, no upload", {r["app"]: (r["build"], r["upload"]) for r in rows},
+          {"team": (False, False), "promptugal": (True, False), "riskmandate": (False, False)})
+    rows, _, _ = plan(cfg, {"EVENT_NAME": "workflow_run", "REF": "refs/heads/main"}, [], {"team", "riskmandate"}, exists, {})
+    check("release run uploads like a dev push", {r["app"]: (r["build"], r["upload"]) for r in rows},
+          {"team": (True, True), "promptugal": (False, False), "riskmandate": (False, False)})
     print("self-test:", "ok" if ok else "FAILED")
     return 0 if ok else 1
 

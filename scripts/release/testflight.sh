@@ -21,11 +21,11 @@ mkdir -p "$export_dir" "$LOGS"
 auth=(-authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
 
 summary ""
-summary "### Signed archive ($MODE signing), $MARKETING_VERSION ($BUILD_NUMBER)"
+summary "### Signed archive ($MODE signing): $MARKETING_VERSION ($BUILD_NUMBER) · tag ${RELEASE_TAG:-none} · commit ${SHORT_SHA:-?}"
 
 profile_for() { awk -F'\t' -v b="$1" '$1==b{print $2; exit}' "$OUT/profiles.tsv" 2>/dev/null; }
 
-settings=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER" DEVELOPMENT_TEAM="$APPLE_TEAM_ID")
+settings=(CURRENT_PROJECT_VERSION="$BUILD_NUMBER" MARKETING_VERSION="$MARKETING_VERSION" DEVELOPMENT_TEAM="$APPLE_TEAM_ID")
 extra=()
 if [ "$MODE" = manual ]; then
   "$(dirname "$0")/check-profiles.sh"
