@@ -24,6 +24,7 @@ final class PublicFeatures {
     let vaultLink: ScheduleVaultLink
 
     private var started = false
+    private var agenda: [Event] = []
     private var observers: [NSObjectProtocol] = []
 
     init(directory: URL? = nil) {
@@ -51,6 +52,12 @@ final class PublicFeatures {
         started = true
         reminders.start()
         vaultLink.start()
+        // A pick or an un-pick changes the widgets' and Siri's "Now and next".
+        observers.append(NotificationCenter.default.addObserver(forName: .scheduleDidChange, object: schedule,
+                                                                queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.publishNowNext() }
+        })
+        publishNowNext()
     }
 
     /// The app came to the foreground: top up reminders (iOS keeps at most 64) and read the vault's picks.
@@ -64,8 +71,17 @@ final class PublicFeatures {
 
     /// Gives the schedule and the planner the current agenda, so picks sort and remind by start time.
     func agendaDidLoad(_ events: [Event]) {
+        agenda = events
         schedule.updateEvents(events)
         planner.updateAgenda(events)
+        publishNowNext()
+    }
+
+    /// The widgets' and Siri's "Now and next", with the schedule's picks as mine. Without it the widget shows nothing
+    /// once the agenda has loaded.
+    func publishNowNext() {
+        guard !agenda.isEmpty else { return }       // until the agenda arrives, the reader's snapshot stands
+        NowNextPublisher.publish(agenda: agenda, saved: schedule.picks.compactMap(\.event))
     }
 }
 
