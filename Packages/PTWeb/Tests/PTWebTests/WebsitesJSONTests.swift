@@ -70,3 +70,22 @@ struct WebsiteSidebarWidthTests {
         #expect(WebsiteView.sidebarWidth(for: 320) == nil)
     }
 }
+
+@Suite("Public app's shortcuts")
+struct PublicWebsitesTests {
+    @Test("The public list is PrompTugal.news alone: no team site, no team artwork")
+    func publicList() throws {
+        let url = try #require(Bundle.module.url(forResource: "WebsitesPublic", withExtension: "json"),
+                               "WebsitesPublic.json is not in the PTWeb bundle")
+        let shortcuts = try JSONDecoder().decode([WebsiteShortcut].self, from: Data(contentsOf: url))
+        #expect(shortcuts.map(\.id) == ["promptugal"])
+        #expect(shortcuts.allSatisfy(\.isValid))
+        #expect(shortcuts.compactMap { $0.url.host() } == ["promptugal.news"])
+        #expect(shortcuts.allSatisfy { $0.iconAsset != "ShortcutWebSummit" })
+    }
+
+    @Test("An app picks its list by name, and the Team list is the default")
+    func theResourceIsInjectable() {
+        #expect(WebsiteSources.resource == "Websites")
+    }
+}

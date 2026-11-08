@@ -43,6 +43,12 @@ public struct WebsiteShortcut: Decodable, Identifiable {
     }
 }
 
+/// Which bundled shortcuts list an app shows. The Team app keeps `Websites` (every site the team uses); the public
+/// app sets `WebsitesPublic` (PrompTugal.news only) once at launch, before any view reads it.
+public enum WebsiteSources {
+    public nonisolated(unsafe) static var resource = "Websites"
+}
+
 public struct WebsiteDirectory {
     public init(shortcuts: [WebsiteShortcut], notice: String?) {
         self.shortcuts = shortcuts
@@ -52,9 +58,9 @@ public struct WebsiteDirectory {
     public let shortcuts: [WebsiteShortcut]
     public let notice: String?
 
-    public static func load() -> Self {
+    public static func load(resource: String = WebsiteSources.resource) -> Self {
         let filename = "Websites.json"
-        guard let bundled = Bundle.module.url(forResource: "Websites", withExtension: "json"),
+        guard let bundled = Bundle.module.url(forResource: resource, withExtension: "json"),
               let data = try? Data(contentsOf: bundled),
               let defaults = decode(data) else {
             return Self(shortcuts: [

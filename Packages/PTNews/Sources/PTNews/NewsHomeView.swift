@@ -16,14 +16,30 @@ public struct NewsHomeView: View {
     enum Form: String, CaseIterable, Identifiable {
         case feed = "Feed", editions = "Editions", stories = "Stories"
         var id: Self { self }
+        /// What the segmented control shows. The raw values stay as they are: they are the saved selection.
+        var label: LocalizedStringKey {
+            switch self {
+            case .feed: "Latest"
+            case .editions: "Newsletter"
+            case .stories: "Stories"
+            }
+        }
+        /// The English name, for the web twin's title.
+        var title: String {
+            switch self {
+            case .feed: "Latest"
+            case .editions: "Newsletter"
+            case .stories: "Stories"
+            }
+        }
     }
 
     public var body: some View {
         Page(maxWidth: 900) {
             ScreenHeader(kicker: "PrompTugal.news", title: "The news",
-                         summary: "Independent coverage from Lisbon, in every form: the feed, the editions, the stories being made, and the graph.")
+                         summary: "Independent coverage from Lisbon: the latest, the newsletter and the stories being made.")
             Picker("Form", selection: $form) {
-                ForEach(Form.allCases) { Text($0.rawValue).tag($0) }
+                ForEach(Form.allCases) { Text($0.label).tag($0) }
             }
             .pickerStyle(.segmented)
             switch form {
@@ -31,21 +47,6 @@ public struct NewsHomeView: View {
             case .editions: editions
             case .stories: stories
             }
-            NavigationLink { GraphExplorerView() } label: {
-                Card {
-                    HStack(spacing: Space.m) {
-                        Image(systemName: "point.3.connected.trianglepath.dotted").font(.title).foregroundStyle(Palette.red)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("The graph").font(Typo.headline).foregroundStyle(Palette.ink)
-                            Text("Every company, event, person and source, and how they connect. Drawn natively.")
-                                .font(.caption).foregroundStyle(Palette.muted)
-                        }
-                        Spacer()
-                        KindBadge(kind: .native)
-                    }
-                }
-            }
-            .buttonStyle(.plain)
         }
         .navigationTitle("News")
         .refreshable {
@@ -57,7 +58,7 @@ public struct NewsHomeView: View {
             await data.newsletter.load()
             await data.board.load()
         }
-        .webTwin(twinURL, title: form.rawValue)
+        .webTwin(twinURL, title: form.title)
     }
 
     private var twinURL: URL {
@@ -71,13 +72,13 @@ public struct NewsHomeView: View {
     // MARK: Feed
 
     @ViewBuilder private var feed: some View {
-        FreshnessLabel(updated: store.newsUpdated, failed: store.newsUnavailable)
+        NewsFreshness(updated: store.newsUpdated, failed: store.newsUnavailable)
         if store.news.isEmpty {
             StateView(phase: store.newsUnavailable ? .failed("The feed could not be reached.") : .loading,
                       hasData: false, title: "news") { Task { await store.refresh() } }
         }
         if let lead = store.news.first {
-            NavigationLink { WebPage(url: lead.url, title: "Story") } label: {
+            NavigationLink { WebPage(url: lead.url, title: lead.title) } label: {
                 Card(padding: Space.xl) {
                     if !lead.category.isEmpty { Kicker(lead.category) }
                     Text(lead.title).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
@@ -88,10 +89,11 @@ public struct NewsHomeView: View {
                 }
             }
             .buttonStyle(.plain)
+            .overlay(alignment: .topTrailing) { StoryShare(url: lead.url, title: lead.title) }
         }
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Space.m)], spacing: Space.m) {
             ForEach(store.news.dropFirst()) { story in
-                NavigationLink { WebPage(url: story.url, title: "Story") } label: {
+                NavigationLink { WebPage(url: story.url, title: story.title) } label: {
                     Card {
                         if !story.category.isEmpty { Kicker(story.category) }
                         Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
@@ -102,6 +104,7 @@ public struct NewsHomeView: View {
                     .frame(maxHeight: .infinity, alignment: .top)
                 }
                 .buttonStyle(.plain)
+                .overlay(alignment: .topTrailing) { StoryShare(url: story.url, title: story.title) }
             }
         }
     }
@@ -110,7 +113,7 @@ public struct NewsHomeView: View {
 
     @ViewBuilder private var editions: some View {
         let list = data.newsletter.value?.editions ?? []
-        FreshnessLabel(updated: data.newsletter.updated, failed: data.newsletter.failed)
+        NewsFreshness(updated: data.newsletter.updated, failed: data.newsletter.failed)
         if list.isEmpty {
             StateView(phase: data.newsletter.phase, hasData: false, title: "newsletter") {
                 Task { await data.newsletter.load(force: true) }
