@@ -1,6 +1,6 @@
 # Platform status
 
-> Phase 4 (Team project move) is pushed on split/platform at 09623bd, not yet compiled: an ios.yml run (app=all, macos-26) is queued. READY follows a green run and an ios-release dry run for app=team.
+> Phase 4 (Team project move) is pushed on split/platform at cd02fa7. Run 338 (ios.yml, app=all, macos-26) is partly done and green so far (Team Debug, Team iPad tests, PrompTugal, packages); the ios-release dry run for app=team (run 81) is queued. READY follows when both are green.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -101,3 +101,10 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Left as is: `Schedule/ScheduleIntents.swift` stays in the Team app (it reads `TeamFeatures.shared`, so it cannot move to the public app unchanged). StoreKit product ids and Keychain service names keep the `reader` prefix.
 - For other roles: `website/build.py`, `validate.py` and `test_site.py` on dev read `PrompTugal.xcodeproj` and `PrompTugal/Store/...`. Editor's branch (admin.public_project) already handles the moved layout; merge editor with this branch. `scripts/release/lib.sh` still defaults PROJECT to `PrompTugal.xcodeproj` (release's file; the workflows pass the project from apps.json).
 - Next: read the ios.yml run, fix, then the ios-release dry run (app=team) and READY.
+
+## Update (08:35 UTC)
+- Merged split/team (NowNext in PTAgenda, d599843). My first merge commit carried conflict markers in `NowNext.swift` (d9ffef5); fixed in f0c53a9 by taking team's files. Run 335 (on d9ffef5) was cancelled before it ran. Always grep for conflict markers before committing a merge.
+- Run 336 (f0c53a9): Team Release build compiled; Team iPad tests failed only on `@testable import PrompTugal` in AppReviewTests (the merge restored the old module name). Fixed in cd02fa7; cancelled 336.
+- Run 338 (cd02fa7), so far green: apps.json check, Debug and Release builds (Team, PrompTugal, RiskMandate where run), Team iPad tests, PrompTugal iPhone tests, PTAsk, PTNews, PTLanes. Still queued: Team iPhone tests, remaining package tests, RiskMandate tests.
+- ios-release dry run, app=team, run 81 (id 42461685105), dispatched at 08:09, queued.
+- Team entry point also sets `SharedContainer.appGroup = "group.news.promptugal.team"` so the Now/Next snapshot can never go to the PrompTugal group (Team declares no group, so nothing is written).
