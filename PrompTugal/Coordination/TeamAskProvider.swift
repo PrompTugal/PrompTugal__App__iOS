@@ -21,8 +21,8 @@ final class TeamAskProvider: AskContextProvider {
 
     func part(for kind: AIContextKind, now: Date) async -> AIContextPart? {
         switch kind {
-        case .team: await teamPart()
-        case .agents: await agentsPart()
+        case .team: return await teamPart()
+        case .agents: return await agentsPart()
         case .teammates:
             let store = CoordinationStore.shared
             if store.plans.isEmpty { await store.load() }
@@ -33,7 +33,7 @@ final class TeamAskProvider: AskContextProvider {
         case .plan:
             guard let plan = await CollabHooks.dayPlan?() else { return nil }
             return AIContextPart(kind: .plan, summary: "Planner", body: plan, source: "the app's day planner")
-        default: nil
+        default: return nil
         }
     }
 
