@@ -22,5 +22,6 @@ let package = Package(
             dependencies: ["PTLanes"],
             path: "Tests/PTLanesTests"
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )
