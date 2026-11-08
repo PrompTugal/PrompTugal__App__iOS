@@ -26,6 +26,11 @@ public protocol AskContextProvider: AnyObject {
     /// The line above the prepared questions, and the hint in the empty question box. They name only what this app can see.
     var askIntro: String { get }
     var askPlaceholder: String { get }
+    /// Who Ask is for, in the system prompt ("used by …"), and how it names a person it does not know.
+    var askAudience: String { get }
+    var unknownPersonLine: String { get }
+    /// Whether Ask settings offer to copy the key to and from a vault. Off where the app has no vault.
+    var offersVaultKeyCopy: Bool { get }
 }
 
 public extension AskContextProvider {
@@ -33,6 +38,9 @@ public extension AskContextProvider {
     /// The Team app's text (what the app said before there was a public app).
     var askIntro: String { "Ask about the summit, your day and the team. Choose below what Ask may see." }
     var askPlaceholder: String { "Ask about today, your picks, the team…" }
+    var askAudience: String { "the PrompTugal team" }
+    var unknownPersonLine: String { "You do not know which team member you are talking to." }
+    var offersVaultKeyCopy: Bool { true }
 }
 
 /// The provider Ask uses. Set once at launch; the default needs no wiring.

@@ -113,8 +113,8 @@ private struct AskKeyCallout: View {
     let open: () -> Void
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Ask needs your own OpenRouter key", systemImage: "key.fill").font(.headline)
-            Text("Ask is an optional extra. It sends your question to OpenRouter, an AI service, and needs a key from your own OpenRouter account. The key stays in this device's Keychain, and you pay OpenRouter for what you ask. The rest of the app works without it.")
+            Label(String(localized: "Ask needs your own OpenRouter key", bundle: .module), systemImage: "key.fill").font(.headline)
+            Text(String(localized: "Ask is an optional extra. It sends your question to OpenRouter, an AI service, and needs a key from your own OpenRouter account. The key stays in this device's Keychain, and you pay OpenRouter for what you ask. The rest of the app works without it.", bundle: .module))
                 .font(.subheadline).foregroundStyle(.secondary)
             Button("Add key", action: open).buttonStyle(.borderedProminent)
         }
@@ -445,6 +445,7 @@ struct AskSettingsView: View {
                 Text("Kept in this device's Keychain, never synced, sent only to openrouter.ai. Not in logs or debug panels.")
             }
 
+            if AskEnvironment.provider.offersVaultKeyCopy {
             Section {
                 Button("Save key to my vault") { Task { await vault(save: true) } }
                     .disabled(!keys.hasKey || !(CollabHooks.vault?.canWrite ?? false) || working)
@@ -459,6 +460,7 @@ struct AskSettingsView: View {
                 Text(CollabHooks.vault == nil
                      ? "Vault copies need the vault on this build. The file is \(AIKeyStore.vaultPath), encrypted in your vault."
                      : "Writes \(AIKeyStore.vaultPath), encrypted in your vault, so your other devices can take it.")
+            }
             }
 
             Section {

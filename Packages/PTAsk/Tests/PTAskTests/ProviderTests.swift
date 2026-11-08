@@ -29,6 +29,17 @@ struct ProviderTests {
         #expect(team.askIntro == "Ask about the summit, your day and the team. Choose below what Ask may see.")
     }
 
+    @Test("The public app's prompt says nothing about a team and its settings offer no vault copy")
+    func publicAudience() throws {
+        let publicApp = PublicAskProvider()
+        #expect(!publicApp.offersVaultKeyCopy)
+        let now = try #require(Lisbon.instant(day: "2026-11-10", clock: "08:00"))
+        let prompt = AIContextAssembler.systemPrompt(parts: [], now: now, person: publicApp.personName,
+                                                     audience: publicApp.askAudience, unknownPerson: publicApp.unknownPersonLine)
+        #expect(!prompt.lowercased().contains("team"))
+        #expect(DefaultTextProvider().offersVaultKeyCopy)
+    }
+
     @Test("The public provider offers the agenda, picks and page, and no team context or tools")
     func publicKinds() async {
         let provider = PublicAskProvider()
