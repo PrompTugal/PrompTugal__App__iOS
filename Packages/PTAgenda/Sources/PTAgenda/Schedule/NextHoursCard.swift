@@ -67,10 +67,12 @@ public struct NextHoursCard: View {
         HStack(alignment: .top, spacing: 10) {
             VStack(alignment: .trailing, spacing: 2) {
                 Text(Lisbon.timeLabel(item.start)).font(.subheadline.monospacedDigit().bold())
+                    .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                 Text(countdown(item, now: now)).font(.caption2.monospacedDigit())
+                    .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                     .foregroundStyle(item.start <= now ? Color.green : Color.secondary)
             }
-            .frame(width: 64, alignment: .trailing)
+            .frame(minWidth: 64, alignment: .trailing)
             Button {
                 if let url = item.url { openURL(url) }
             } label: {
