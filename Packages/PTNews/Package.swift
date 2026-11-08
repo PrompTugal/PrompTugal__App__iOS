@@ -22,5 +22,6 @@ let package = Package(
             dependencies: ["PTNews"],
             path: "Tests/PTNewsTests"
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )

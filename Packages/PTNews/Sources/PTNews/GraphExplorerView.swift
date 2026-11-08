@@ -1,10 +1,12 @@
+import PTCore
+import PTWeb
 import SwiftUI
 
 /// The newsroom's graph, drawn natively: 1,688 nodes and 2,863 edges in one Canvas,
 /// using the layout the website's build computed. Pinch to zoom, drag to pan, tap a
 /// node to see its neighbours as sentences, find the path between two nodes.
-struct GraphExplorerView: View {
-    @Environment(DashboardData.self) private var data
+public struct GraphExplorerView: View {
+    @Environment(NewsFeeds.self) private var data
     @Environment(\.horizontalSizeClass) private var width
     @State private var index: GraphIndex?
     @State private var indexing = false
@@ -26,7 +28,9 @@ struct GraphExplorerView: View {
 
     private var feed: RemoteFeed<GraphExplorer> { data.graph }
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         Group {
             if let index {
                 explorer(index)
@@ -393,9 +397,9 @@ enum GraphLayout {
 }
 
 #Preview("Graph · iPhone") {
-    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.previewData()).phonePreview()
+    NavigationStack { GraphExplorerView() }.environment(NewsFeeds()).phonePreview()
 }
 
 #Preview("Graph · iPad") {
-    NavigationStack { GraphExplorerView() }.environment(PreviewSamples.previewData()).padPreview()
+    NavigationStack { GraphExplorerView() }.environment(NewsFeeds()).padPreview()
 }

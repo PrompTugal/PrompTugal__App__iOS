@@ -30,7 +30,7 @@ public final class ReminderScheduler {
     @ObservationIgnored private let schedule: ScheduleStore
     @ObservationIgnored private let team: (any AgendaTeamSource)?
     @ObservationIgnored private let identity: (any AgendaIdentitySource)?
-    @ObservationIgnored private let urlScheme: String
+    @ObservationIgnored private let urlScheme: String?
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var pending: Task<Void, Never>?
     @ObservationIgnored private var observers: [NSObjectProtocol] = []
@@ -44,7 +44,7 @@ public final class ReminderScheduler {
     }
 
     public init(schedule: ScheduleStore, team: (any AgendaTeamSource)?, identity: (any AgendaIdentitySource)?,
-         urlScheme: String = "promptugal", defaults: UserDefaults = .standard) {
+         urlScheme: String? = nil, defaults: UserDefaults = .standard) {
         self.urlScheme = urlScheme
         self.schedule = schedule
         self.team = team
@@ -134,7 +134,7 @@ public final class ReminderScheduler {
         }
         let plan = ReminderPlan.items(picks: schedule.picks, standups: team?.upcomingStandups(after: now) ?? [],
                                       person: identity?.currentID, leadMinutes: leadMinutes, now: now,
-                                      includePicks: picksOn, includeStandups: standupsOn, scheme: urlScheme)
+                                      includePicks: picksOn, includeStandups: standupsOn, scheme: urlScheme ?? AppLinks.scheme)
         planned = plan
         guard authorization == .allowed else { return 0 }
 
@@ -207,7 +207,7 @@ public final class ReminderDelegate: NSObject, UNUserNotificationCenterDelegate,
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         let info = response.notification.request.content.userInfo
-        guard let text = info["open"] as? String, let url = URL(string: text), ["promptugal", "ptteam"].contains(url.scheme ?? "") else { return }
+        guard let text = info["open"] as? String, let url = URL(string: text), url.scheme == AppLinks.scheme else { return }
         await MainActor.run { ReminderInbox.receive(url) }
     }
 }

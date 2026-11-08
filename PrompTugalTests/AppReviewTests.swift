@@ -91,6 +91,27 @@ struct CreditStoreTests {
         return true
     }
 
+    /// Loads the products, but never waits longer than `seconds`: on the CI simulator StoreKit can hold the call open
+    /// for the test's whole 60 s limit and return nothing. After the wait, `productsLoaded` records the known issue.
+    private func load(_ credits: CreditStore, seconds: Double = 15) async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            var finished = false
+            func finish() {
+                guard !finished else { return }
+                finished = true
+                continuation.resume()
+            }
+            Task { @MainActor in
+                await credits.loadProducts()
+                finish()
+            }
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(seconds))
+                finish()
+            }
+        }
+    }
+
     private func unfinishedIDs() async -> Set<String> {
         var ids = Set<String>()
         for await result in Transaction.unfinished {
@@ -107,7 +128,7 @@ struct CreditStoreTests {
 
     @Test func productsLoadWithTheirStorePrice() async throws {
         let credits = CreditStore(meter: MeterStore(directory: try tempDir("sk-load")))
-        await credits.loadProducts()
+        await load(credits)
         guard productsLoaded(credits) else { return }
         #expect(credits.products.map(\.id).sorted() == CreditStore.packs.map(\.id).sorted())
         // the price the app shows is the store's, never a number of its own (R5)
@@ -118,7 +139,7 @@ struct CreditStoreTests {
         await finishAll()
         let meter = MeterStore(directory: try tempDir("sk-ok"))
         let credits = CreditStore(meter: meter)
-        await credits.loadProducts()
+        await load(credits)
         guard productsLoaded(credits) else { return }
         let product = try #require(credits.products.first { $0.id == "news.promptugal.reader.credit.5" })
         await credits.purchase(product)
@@ -134,7 +155,7 @@ struct CreditStoreTests {
         try Data("x".utf8).write(to: blocker)
         let meter = MeterStore(directory: blocker)
         let credits = CreditStore(meter: meter)
-        await credits.loadProducts()
+        await load(credits)
         guard productsLoaded(credits) else { return }
         let product = try #require(credits.products.first { $0.id == "news.promptugal.reader.credit.20" })
         await credits.purchase(product)
