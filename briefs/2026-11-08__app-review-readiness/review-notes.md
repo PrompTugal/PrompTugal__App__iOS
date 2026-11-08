@@ -45,6 +45,8 @@ PrompTugal is the companion app of PrompTugal.news, an independent newsroom cove
 - Ask sends the question and the chosen context to openrouter.ai, with the user's own key, only after consent.
 - Vault files are encrypted on the device; the server stores only ciphertext.
 - "Add to Calendar" writes one session to the calendar when the user asks, with write-only access.
+- Dictation in Ask (microphone and speech recognition) starts only when the user holds the microphone button; the permission questions come then. iOS transcribes on the device when the language allows it, otherwise it sends the audio to Apple's speech service. The app does not keep the audio.
+- The camera is used only to scan the QR code of a vault key, when the user taps Scan.
 - There is no tracking, no analytics, no advertising and no third-party SDK.
 
 **User-generated content (guideline 1.2).** The app has no user-generated content: no posts, no messages between people, no comments. Everything it shows comes from PrompTugal.news or from the websites it opens. Reports about the content reach us through `agent@riskmandate.ai` and GitHub issues, and we act on them within 48 hours.

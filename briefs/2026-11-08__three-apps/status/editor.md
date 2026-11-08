@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 10:40 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 11:00 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 10:40 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 11:00 UTC: conductor's note on Apple's rejection (ITMS-90683, speech purpose string). I checked the code: Ask in the public app (PTAsk `AskView` and `SpeechDictation`) has hold-to-talk dictation with the microphone and speech recognition; it asks `requiresOnDeviceRecognition` only when the language supports it, so otherwise iOS sends the audio to Apple; audio is not kept. My earlier text said the public app had no dictation. Fixed: privacy page ("Dictation in Ask"), and the data section of `review-notes.txt` and `review-notes.md` (dictation and camera lines). The project's usage strings on `split/apps` still list only calendar, camera and Face ID (apps is adding microphone and speech). Re-check the privacy page once that lands. Two things for collab, not mine: the Ask screen does not tell the user whether dictation is on the device or at Apple, and its placeholder reads "Ask about today, your picks, the team…" in the public app.
 
 - 10:40 UTC: merged `origin/dev` (v0.4.13): `apps.json` now uploads the public PrompTugal app to TestFlight; contracts §8 (next round: PTSync, decks, Team native). No site change needed; checks green (69 tests, `check_apps.py` OK). Public page 13 of 13 in the beta. Waiting for the conductor to merge `split/editor`. For §8: when `PTSync` or `PTDeck` land and the PrompTugal app lists them in `apps.json`, I add feature entries (offline sync, decks and presenter mode) with evidence from their files; I will not label them before they are built.
 
