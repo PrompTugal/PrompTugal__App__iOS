@@ -1,5 +1,28 @@
 # App Privacy answers (the nutrition label)
 
+> **Answer for the App Store build from rc8 on ( Dinis's decision at 21:40 UTC): "No, we do not collect data from this app" (Data Not Collected).** Ask is only in DEBUG builds, so the Release build sends nothing off the device except plain reads of public files from promptugal.news. `PrivacyInfo.xcprivacy` has an empty `NSPrivacyCollectedDataTypes` (rc8 4f58965). The rest of this page is the earlier analysis, kept for the record and for a future version that brings Ask back.
+
+## What Dinis enters in App Store Connect → App Privacy
+
+1. "Do you or your third-party partners collect data from this app?" → **No, we do not collect data from this app.**
+2. Publish. The label then reads **Data Not Collected**.
+3. Privacy policy URL (already set): https://ios.app.promptugal.news/privacy.html
+
+Why that is true for the rc8 build:
+
+| Feature | In Release? | Leaves the device |
+| --- | --- | --- |
+| Agenda, news, explore data | yes | plain GETs for public files from promptugal.news; nothing about the user |
+| Session and site pages | yes | promptugal.news pages; other sites open in Safari; the site sets no cookies |
+| Picks, program, reminders, calendar, widget, Siri | yes | nothing: on the device only |
+| Ask (OpenRouter) and dictation | **no** (DEBUG only, `Destinations.askScreens`, `NowView`, `PublicSettingsView`) | none in Release |
+| Vault | **no** (DEBUG only) | none in Release |
+| Analytics, crash reporting, ads, third-party SDKs | none | none |
+
+---
+
+## Earlier analysis (build 204, with Ask)
+
 > The answers Dinis enters by hand in App Store Connect → App Privacy. They are derived from the code the public app links (PTCore, PTWeb, PTAgenda, PTNews, PTAsk, PTVaultUI, SGitVault; no PTLanes). They must agree with `Apps/PrompTugal/Resources/PrivacyInfo.xcprivacy` and with the privacy page. **Ruling at 11:30 UTC:** Ask ships (B1 option a) and Vault is hidden (B2). The answers below are the ones to enter.
 
 ## Where data goes, from the code

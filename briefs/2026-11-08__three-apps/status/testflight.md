@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 14:50 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 21:24 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,22 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 8 Nov 21:24 UTC: 0.4.23 (204) still WAITING_FOR_REVIEW in Beta App Review after about 5h15 (last check 21:23). Dev unchanged at v0.4.23. Build 4 stays APPROVED in the external group.
+
+- 8 Nov 20:25 UTC: 0.4.23 (204) still WAITING_FOR_REVIEW in Beta App Review after about 4h15 (last check 20:23). Dev unchanged at v0.4.23. Build 4 stays APPROVED in the external group.
+
+- 8 Nov 19:28 UTC: 0.4.23 (204) still WAITING_FOR_REVIEW in Beta App Review after about 3h15 (last check 19:26). Dev unchanged at v0.4.23. Build 4 stays APPROVED in the external group and is what the public link serves meanwhile.
+
+- 8 Nov 18:33 UTC: 0.4.23 (204) still WAITING_FOR_REVIEW in Beta App Review (submitted about 16:10; checked every 20 to 25 minutes, last 18:31). Dev unchanged at v0.4.23. Build 4 stays APPROVED in the external group.
+
+- 8 Nov 17:42 UTC: 0.4.23 (204) still WAITING_FOR_REVIEW in Beta App Review (checked 16:34, 16:56, 17:19, 17:41). Dev unchanged at v0.4.23, no new builds. Build 4 stays APPROVED in the external group.
+
+- 8 Nov 16:58 UTC: Beta App Review for 0.4.23 (204) still WAITING_FOR_REVIEW (checked 16:34 and 16:56); build 4 remains APPROVED in the external group. Checking every 20 minutes.
+
+- 8 Nov 16:26 UTC: public app 0.4.23 (204), release #104 on dev 3125e3e: upload COMPLETE, VALID, in PrompTugal Internal Users. Conductor dispatched the confirm runs (set-test-info, add-to-group "PrompTugal External Users", submit-beta-review; my own confirm dispatch was blocked by the permission layer). Verified read-only at 16:12: Beta App Review WAITING_FOR_REVIEW, build in both groups, review notes and contact set. Build 4 (0.3.1) stays in the external group until Dinis says otherwise. Watching the review result.
+
+- 8 Nov 15:43 UTC: summit build on dev. Release #103 (v0.4.22, 45f44d8) failed in "Release notes" (SIGPIPE from `head -c 3900` under pipefail), no upload. Conductor fixed release-notes.sh; release #104 (v0.4.23, 3125e3e) archives are green, TestFlight jobs queued. Will report the public app version and build when the upload is COMPLETE and VALID. External path on hold.
 
 - 8 Nov 14:50 UTC: merged split/review a793738 (56b60f0); what-to-test.txt and review-notes.txt already equal the store pack, no text change. Dev still v0.4.21, no upload since 0.4.16 (197). External path on hold until the conductor says go on the final build.
 
