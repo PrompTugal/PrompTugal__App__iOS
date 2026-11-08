@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 04:22 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 05:22 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -195,3 +195,9 @@ None. Nothing moved yet.
 - Plan from the conductor: after a green quick run, one full run (quick off, macos-26) on the same sha, then READY.
 - `AppShell.swift:98` compares `url.scheme == AppLinks.scheme` (so the Team app's ptteam links work once its entry point sets the scheme).
 - PublicShell not started; waits for phase 4.
+
+## Update (8 Nov, 05:22 UTC, design.B): READY
+- Quick run 319 on 83f761f: green. Full run 323 (id 42447845511, app=all, macos-26) on bb50751: green. Debug and Release builds of all three apps, iPhone and iPad tests, packages PTNews and PTAsk.
+- bb50751 is 83f761f plus this status page only.
+- READY sent to the conductor. PTNews merges to dev now that team's PTWeb is there.
+- Next: wait for the conductor's phase 4 word, then PublicShell in Apps/PrompTugal/Shell/ (drafting allowed locally on a separate branch, not pushed to split/design).
