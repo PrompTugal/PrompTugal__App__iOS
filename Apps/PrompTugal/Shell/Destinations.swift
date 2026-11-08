@@ -73,10 +73,15 @@ enum PublicDestinations {
 
     // MARK: Personal
 
-    static let personal: [ShellDestination] = [
-        ShellDestination(id: "vault", title: "Vault", symbol: "lock.shield", group: "Personal",
-                         summary: "My encrypted vault, read in Swift", ownsNavigation: true) { AnyView(VaultHomeView()) },
-    ]
+    /// The vault is a dead end without a key and is not in the first App Store build: DEBUG builds only.
+    static var personal: [ShellDestination] {
+        #if DEBUG
+        [ShellDestination(id: "vault", title: "Vault", symbol: "lock.shield", group: "Personal",
+                          summary: "My encrypted vault, read in Swift", ownsNavigation: true) { AnyView(VaultHomeView()) }]
+        #else
+        []
+        #endif
+    }
 
     // MARK: Settings and debug
 
