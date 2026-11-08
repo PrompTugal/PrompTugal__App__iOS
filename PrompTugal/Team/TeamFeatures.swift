@@ -16,9 +16,6 @@ final class TeamFeatures {
         return features
     }()
 
-    /// The URL scheme reminder links use. The Team app switches to `ptteam` when it gets its own bundle (phase 4).
-    static let urlScheme = "promptugal"
-
     let schedule: ScheduleStore
     let team: TeamStore
     let identity: TeamIdentityStore
@@ -38,7 +35,7 @@ final class TeamFeatures {
         schedule = ScheduleStore(directory: directory)
         team = TeamStore(directory: directory?.appendingPathComponent("team", isDirectory: true))
         identity = TeamIdentityStore()
-        reminders = ReminderScheduler(schedule: schedule, team: team, identity: identity, urlScheme: Self.urlScheme)
+        reminders = ReminderScheduler(schedule: schedule, team: team, identity: identity)
         meter = MeterStore(directory: directory)
         credits = CreditStore(meter: meter)
         bridgeLog = BridgeLog()
