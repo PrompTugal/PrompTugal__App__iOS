@@ -146,6 +146,9 @@ def files_between(base, head):
     return r.stdout.split() if r.returncode == 0 else None
 
 
+PLATFORM = {"packages": None}   # packages from scripts/apps/affected.py, when it gave them
+
+
 def platform_affected(base, head):
     """Ask scripts/apps/affected.py. Returns a set of app keys, or None if unusable."""
     script = "scripts/apps/affected.py"
@@ -160,6 +163,7 @@ def platform_affected(base, head):
     except ValueError:
         return None
     if isinstance(data, dict):
+        PLATFORM["packages"] = data.get("packages")
         data = data.get("apps", [k for k, v in data.items() if v])
     if isinstance(data, list):
         return {x if isinstance(x, str) else x.get("app") or x.get("key") for x in data}
@@ -243,6 +247,8 @@ def plan(cfg, env, files, platform_set, exists, variables):
     pk = cfg.get("packages", {})
     pkgs = []
     chosen = set(pk) if mode != "diff" else affected_packages(cfg, files)
+    if mode == "diff" and PLATFORM["packages"] is not None:
+        chosen = set(PLATFORM["packages"]) & set(pk)
     for name in sorted(chosen):
         pkgs.append({"name": name, "path": pk[name]["path"]})
     return rows, pkgs, notes
