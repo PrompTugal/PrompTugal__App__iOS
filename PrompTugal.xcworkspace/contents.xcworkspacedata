@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:PrompTugal.xcodeproj">
+      location = "group:Apps/Team/Team.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Packages/PTCore">

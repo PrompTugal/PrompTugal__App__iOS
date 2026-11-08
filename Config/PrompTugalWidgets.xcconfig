@@ -1,8 +1,0 @@
-// Settings for the PrompTugalWidgets extension. Values set in the project
-// file win over these, so keep signing and entitlements here only.
-
-// The App Group the app writes "Now and next" to.
-CODE_SIGN_ENTITLEMENTS = $(PT_WIDGET_ENTITLEMENTS)
-PT_WIDGET_ENTITLEMENTS = Config/PrompTugalWidgets.entitlements
-
-#include? "Local.xcconfig"
