@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 01:25 UTC
+**Branch:** `split/testflight` · **Updated:** 8 Nov 01:35 UTC (handed off)
 
 ## Done
 
@@ -52,3 +52,29 @@ During the summit everything runs on internal testers only. The external swap pl
 ## Last CI run
 
 - TestFlight ops #3 (status) on `5c5ce57`; iOS release run 52: success.
+
+## Handoff
+
+Handed to the next TestFlight session (account B) at 01:35 UTC. My scheduled check-ins are cancelled.
+
+**Last known state (8 Nov 01:19 UTC, TestFlight ops #5, record "PrompTugal.news", `news.promptugal.reader`, version 0.3.1):**
+
+| Build | Processing | Internal | External | Beta review | Groups |
+|---|---|---|---|---|---|
+| 152 (dev `e5328ff`, first automatic upload) | VALID | IN_BETA_TESTING | READY_FOR_BETA_SUBMISSION | none | Internal |
+| 6 | VALID | IN_BETA_TESTING | READY_FOR_BETA_SUBMISSION | none | Internal |
+| 5 | VALID | IN_BETA_TESTING | READY_FOR_BETA_SUBMISSION | none | Internal |
+| 4 | VALID | IN_BETA_TESTING | BETA_APPROVED | APPROVED (01:19 UTC) | Internal, External |
+
+Build 152 had export compliance answered and an automatic "What to Test" (2216 characters). Build 4 is older than the App Review fixes and stays as it is unless Dinis says otherwise. Later pushes to dev upload automatically; versions will become 0.4.n once release's change lands.
+
+**Internal testers only (Dinis, 01:22 UTC).** During the summit every build goes to the internal group. For each new automatic upload, send the conductor one line: version, build, commit, processed, internal group. When the Team and RiskMandate records exist, check their builds reach their internal groups too.
+
+**Shelved external plan (do not run without Dinis's go).** Set test info on the newest build (needs secret REVIEW_CONTACT_PHONE, the only one not yet set), add it to "PrompTugal External Users", submit it for Beta App Review, then optionally remove or expire build 4 once the new build is approved. A plan-only `set-test-info` run on 152 showed nothing else missing.
+
+**How to run testflight-ops** (Actions > "TestFlight ops", or `actions_run_trigger` on `testflight-ops.yml`, ref `dev` once merged; it is on dev):
+- Inputs: `action` (status, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire), `build` (build number), `group` (group name), `confirm` (false by default).
+- Without `confirm` it only prints the plan; `status` always only reads. The output is in the job log (and the run summary).
+- Contact comes from secrets `REVIEW_CONTACT_FIRST_NAME`, `REVIEW_CONTACT_LAST_NAME`, `REVIEW_CONTACT_EMAIL`, `REVIEW_CONTACT_PHONE`; demo notes from secret `DEMO_OPENROUTER_KEY`, variables `DEMO_OPENROUTER_CAP`, `REVIEW_CONTACT_ADDRESS`, `REVIEW_RESPONSE_TIME`; optional `DEMO_VAULT_KEY`, `DEMO_LANE_NAME`. The editor owns `review-notes.txt` and `what-to-test.txt`.
+- Code: `scripts/testflight/tf.py` and tests in `scripts/testflight/tests/` (run `python3 -I scripts/testflight/tests/test_tf.py`).
+- A new workflow only runs once it is on the default branch; the repository is public, so no personal details go in files.
