@@ -1,6 +1,6 @@
 # Team session: PTWeb and PTAgenda
 
-> Phase 3 moves for PTWeb and PTAgenda are pushed (6cccf88). Run 293 is still queued (7th in line). Account B read all of PTWeb and the PTAgenda seams and found no compile error by eye. See "Account B notes".
+> Run 293 failed on one PTWeb compile error (BridgeScripts used PTAgenda's ScheduleDocument); fixed in 115ba30. Run 296 (app=all) on 115ba30 is queued. Waiting on AppLinks.scheme on dev for the last step.
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
 
@@ -10,6 +10,8 @@
 - Read by eye, no compiler: PTWeb (all of Bridge/, WebPage, BridgeServices, public inits, PTCore symbols it uses) and the PTAgenda seams, ReminderPlan, AgendaBridgeServices, ReaderStore head. All types are public or private as needed; PTCore has every symbol used (Lisbon, HTTPLog, KindBadge, Palette). Nothing to fix before the first compile.
 - One behaviour bug to fix with the `AppLinks.scheme` change: `ReminderDelegate` (ReminderScheduler.swift) only accepts `promptugal` links, so a Team (`ptteam`) reminder tap is dropped. It will check `AppLinks.scheme`.
 - `AppLinks` is not on dev yet (platform ce3602e, run 292 queued).
+
+- **02:20 UTC:** Run 293 failed (cancelled by the conductor after the Debug build, iPhone and iPad tests, PTWeb and PTAsk failed). The log has one real error, twice: `BridgeScripts.swift` used `ScheduleDocument.storageKey` and `.changeEvent`, and PTWeb cannot see PTAgenda. PTWeb now owns both strings (`BridgeScripts.scheduleKey`, `scheduleChangeEvent`) and `ScheduleDocument` reads them. PTAsk failed through PTWeb, so the same fix should clear it. `ReminderDelegate` now accepts `promptugal` and `ptteam` links. Pushed as 115ba30; run 296 (app=all) queued. PTAgenda itself has not compiled yet.
 
 ## Handoff
 
