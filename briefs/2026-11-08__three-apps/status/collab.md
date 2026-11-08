@@ -2,7 +2,7 @@
 
 > Collab moves AI/ into PTAsk and Lanes/ into PTLanes. Coordination/ stays in the Team app. Phase 0 (mapping and plan) is done. Waiting for team, design and vault packages on dev. No code moved yet.
 
-**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed) · **Updated:** 00:55 UTC
+**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed) · **Updated:** 01:45 UTC (handoff)
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
@@ -100,3 +100,88 @@ public enum AskEnvironment { @MainActor public static var provider: any AskConte
 2. `git mv` `Lanes/*` (minus nothing; all 9 files) to `Packages/PTLanes/Sources/PTLanes/`, `public`, `import PTCore`/`PTVaultUI`. Inject `linkedVaults`. Move `LanesTests.swift` to `Packages/PTLanes/Tests/`. Push, read CI.
 3. Add `AskContextProvider`, `PublicAskProvider`; `git mv` `AI/*` (minus `CollabDebugPanel.swift`) to `Packages/PTAsk/Sources/PTAsk/`. Add `TeamAskProvider` in `Coordination/`. Move `AITests` (except the 4 team-part tests) to `Packages/PTAsk/Tests/`. Push, read CI.
 4. Check consent, own-vault and lanes tests are all still present and green. Report to `@parent` with branch, commit and run number.
+
+
+## Handoff (8 Nov, about 01:45 UTC, to conductor.B / account B)
+
+Collab session stopped on the conductor's handoff. No scheduled tasks of mine remain and I dispatch no more CI.
+
+### Heads and last runs
+| Branch | Head | Last run |
+| --- | --- | --- |
+| `split/collab-seams` | 11acc2e (from dev 116a350 era, only adds `Packages/PTCore/Sources/PTCore/CollabSeams.swift`) | ios.yml run 291 (id 42433846852), dispatched 01:20 UTC, **still queued at 01:42 UTC, no result** |
+| `split/collab` | a32e67a (last merge of origin/dev, 00:45 UTC; contains the prepared PTLanes move and the Coordination edits) | none. It cannot compile until `CollabSeams.swift` is on dev. Red is expected. |
+
+### Agreed order
+1. `CollabSeams.swift` (branch `split/collab-seams`): read run 291 and merge commit 11acc2e if green.
+2. Vault's `VaultCollabAccess` and `VaultCollabAccess.install()` in PTVaultUI (vault holds it locally until step 1 is on dev).
+3. PTLanes (`split/collab`): merge origin/dev, then `TeamLanesWiring.install()` should call `VaultCollabAccess.install()` instead of setting `CollabHooks.vault` itself. Add `swiftLanguageModes: [.v5]` to `Packages/PTLanes/Package.swift` (team's moved packages use it). Dispatch ios.yml on `split/collab`, fix until green.
+4. PTAsk last, after PTAgenda, PTNews and PTVaultUI are on dev.
+
+### What `split/collab` already holds (prepared, uncompiled)
+- 9 `Lanes/` files `git mv`'d to `Packages/PTLanes/Sources/PTLanes/`, `import PTCore` added, `public` only where outside code needs it (`LanesView`+init, `LaneEventRow`+init, `LaneEvent`, `LanesLog`, `LanesStore.shared/log/laneCount/hasEnumKey`, `LaneIdentity.exists`).
+- `LanesEnvironment.linkedVaults` (new, PTLanes) replaces `CoordinationStore` in `TeamNotesStore.load`.
+- `LanesTests.swift` moved to `Packages/PTLanes/Tests/PTLanesTests/` (`@testable import PTLanes`, `import PTCore`). The placeholder test and file were removed.
+- Team side: `Coordination/CollabHooks.swift` keeps only team hooks (`myPickIds`, `agenda`, `dayPlan` as an extension of PTCore's `CollabHooks`), plus `ReaderFiles` and `PickId`. `Coordination/CollabErrorText.swift` removed (now in PTCore). New `Coordination/TeamLanesWiring.swift`, called from `CoordinationStore.shared`'s initialiser as a stopgap until the Team app entry point (phase 4) calls `TeamLanesWiring.install()` once at launch.
+- `AI/CollabDebugPanel.swift` uses `lanes.laneCount`. It stays in the Team app.
+- `LanesView` uses `DebugMode` (now in PTCore).
+- Note: `CollabSeams.swift` also sits on `split/collab` (commit d369089), so after `split/collab-seams` is on dev, merging origin/dev into `split/collab` will show it as the same file. Expect an add/add conflict if the content differs; take dev's.
+
+### The exact `CollabVaultAccess` protocol (PTCore, public, plain types)
+```swift
+/// The vault, as collaboration features need it. Plain types only.
+@MainActor
+public protocol CollabVaultAccess: AnyObject {
+    /// A vault is open on this device.
+    var isOpen: Bool { get }
+    /// My own vault (the account's reader vault), never a vault imported from someone else's key. Nil when
+    /// none is open. Everything "mine" (my key copy, my plan, my notes) reads and writes only this vault (S5).
+    var ownVaultId: String? { get }
+    /// My own vault was opened with a vault key (not a read key), so it can be written.
+    var canWrite: Bool { get }
+    /// A file of my own vault, or nil when there is no such file. Throws when my own vault is not open.
+    func read(_ path: String) async throws -> Data?
+    /// Write one file to my own vault (read-modify-write on the branch the website reads).
+    func write(_ path: String, _ data: Data, _ message: String) async throws
+    /// Open a teammate's vault with the read key they shared (`sgit_private_read_…:<vault_id>` or a `#key=` link).
+    /// Stored behind Face ID like any key. Returns the vault id.
+    func openShared(readKey: String, label: String) async throws -> String
+    /// A file of another open vault.
+    func read(_ path: String, vaultId: String) async throws -> Data?
+    /// My picks merged into the vault's copy (`apps/agenda/picks.json`, nr.schedule.v1). Returns the merged document.
+    func savePicks(_ document: Data) async throws -> Data
+    /// Commit one note file to my newsroom notes lane: the vault of my own whose read key the newsroom holds
+    /// (newsroom.sgit.ai "the feedback loop"; its vault key is in my master vault's `lane.json`).
+    func writeNewsroomNote(_ path: String, _ data: Data) async throws
+    /// Paths of the files under `folder` in a vault (mine when `vaultId` is nil).
+    func files(in folder: String, vaultId: String?) async throws -> [String]
+    /// A new file in `folder` of my vault, never overwriting (vault session's `append`). Returns its path.
+    func append(_ data: Data, to folder: String, message: String) async throws -> String
+    /// A file of my master vault (e.g. `inbox.json`, the inbox record the website made), or nil.
+```
+`CollabHooks` (PTCore): `HookError` (noVault, noWritableVault, noNotesLane, noOwnVault), `vault` (nil by default; the app installs `VaultCollabAccess`), `me`, `currentPage`, `noteCurrentPage`, `clearCurrentPage`. Also in PTCore: `PageContext`, `CollabIdentity`, `CollabErrorText`, `ISO8601DateFormatter.collabJS`. Team says PTWeb's `WebBridgeHub` now carries `noteCurrentPage`.
+
+### AskContextProvider design (PTAsk, approved by the conductor; not started)
+```swift
+@MainActor public protocol AskContextProvider: AnyObject {
+    var supportedKinds: Set<AIContextKind> { get }   // public app: [.agenda, .picks, .page]; Team: all seven
+    var personName: String? { get }                  // nil in the public app
+    func agenda() async -> [Event]
+    func myPickIds() -> [String]
+    func isPicked(_ event: Event) -> Bool              // AskMentions (AskView.swift:196)
+    func togglePick(_ event: Event)                    // both providers use ScheduleStore (PTAgenda)
+    func part(for kind: AIContextKind, now: Date) async -> AIContextPart?  // .team .agents .teammates .plan; nil in public
+    func runTool(_ name: String, args: [String: String], now: Date) async -> (text: String, summary: String)?  // team_status, my_agents, where_is_everyone
+    var extraStarters: [AIStarter] { get }           // "My agents" only in Team
+}
+public enum AskEnvironment { @MainActor public static var provider: any AskContextProvider = PublicAskProvider() }
+```
+- `AIContextKind` enum is unchanged. The consent sheet, toggles, gatherer and `AITools.definitions(for:)` filter by `supportedKinds`. Consent behaves exactly as today in the Team app.
+- `PublicAskProvider` (in PTAsk): agenda from the reader cache then `FeedClient`, picks through `ScheduleStore`, no team.
+- `TeamAskProvider` (in `Coordination/`): carries `AIContextGatherer.teamPart/agentsPart/teamData` and the `.teammates` / `.plan` branches (uses `TeamFeatures.shared`, `CoordinationStore.shared`, `CollabTeamGlue`). `AIContextAssembler.teamPart/agentsPart` and the 4 AITests that call them (AITests lines ~181–211) move to the Team app. All other AITests, including consent and own-vault, move to `Packages/PTAsk/Tests/`.
+- `AIKeyStore`'s vault copy keeps using `CollabHooks.vault`. `CollabDebugPanel` stays in the Team app. `AI/` goes to `Packages/PTAsk/Sources/PTAsk/` with `git mv`, `import PTCore/PTAgenda/PTNews/PTVaultUI`, `swiftLanguageModes: [.v5]`.
+
+### Next steps
+1. Read run 291. Report commit 11acc2e and the run number to the conductor.
+2. After vault's file and `CollabSeams.swift` are on dev: PTLanes as above, then PTAsk.
+3. `python3 scripts/apps/check_apps.py` before any push to dev (conductor only pushes to dev).
