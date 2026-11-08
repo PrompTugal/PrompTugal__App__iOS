@@ -18,6 +18,14 @@ on:
         type: choice
         options: [all, team, promptugal, riskmandate]
         default: all
+      store:
+        description: 'App Store screenshots instead of the site set: 6.9" and 6.5" iPhone and 13" iPad at the native pixel size, one set per locale. Use app=promptugal.'
+        type: boolean
+        default: false
+      locales:
+        description: 'Store screenshots: locales, comma-separated (language code, then region; en-US, pt-PT, pt-BR)'
+        type: string
+        default: 'en-US,pt-PT,pt-BR'
 
 permissions:
   contents: read
@@ -39,7 +47,7 @@ jobs:
   shoot:
     name: Screens (${{ matrix.app.app }}, ${{ matrix.device }})
     needs: changes
-    if: needs.changes.outputs.has_screens == 'true'
+    if: needs.changes.outputs.has_screens == 'true' && !inputs.store
     strategy:
       fail-fast: false
       matrix:
@@ -135,7 +143,7 @@ jobs:
   collect:
     name: One artifact for both devices (${{ matrix.app.app }})
     needs: [changes, shoot]
-    if: always() && needs.changes.outputs.has_screens == 'true'
+    if: always() && needs.changes.outputs.has_screens == 'true' && !inputs.store
     strategy:
       matrix:
         app: ${{ fromJSON(needs.changes.outputs.screens) }}
@@ -146,3 +154,138 @@ jobs:
           name: screens-${{ github.sha }}${{ matrix.app.suffix }}
           pattern: screens-${{ github.sha }}-${{ matrix.app.app }}-*
           delete-merged: true
+
+  # App Store screenshots (manual, store=true). One job per display size, all locales in the job:
+  # the app is built once, then the screens test runs once per locale (-testLanguage/-testRegion).
+  # Pixel size is the device's, so nothing is scaled: iPhone 17 Pro Max 1320x2868 (6.9"),
+  # iPhone 14 Plus 1284x2778 or 11 Pro Max 1242x2688 (6.5"), iPad Pro 13" 2064x2752. store-check.py
+  # fails the job on any other size. Output: <locale>/<NN>-<screen id>.jpg (JPEG: App Store Connect
+  # takes no alpha channel), in artifact appstore-screens-<sha>-<size>.
+  store:
+    name: Store screens (${{ matrix.app.app }}, ${{ matrix.size.kind }})
+    needs: changes
+    if: needs.changes.outputs.has_screens == 'true' && inputs.store
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.screens) }}
+        size:
+          - {kind: iphone-6.9, devices: "iPhone 17 Pro Max|iPhone 16 Pro Max", label: iphone}
+          - {kind: iphone-6.5, devices: "iPhone 14 Plus|iPhone 13 Pro Max|iPhone 11 Pro Max|iPhone XS Max", label: iphone}
+          - {kind: ipad-13, devices: "iPad Pro 13-inch (M5)|iPad Pro 13-inch (M4)", label: ipad}
+    runs-on: macos-26
+    timeout-minutes: 60
+    concurrency:
+      group: store-screens-${{ matrix.app.app }}-${{ matrix.size.kind }}-${{ github.ref }}
+      cancel-in-progress: false
+    env:
+      LOCALES: ${{ inputs.locales }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Create and boot the ${{ matrix.size.kind }} simulator
+        id: sim
+        timeout-minutes: 8
+        run: |
+          IFS='|' read -r -a names <<< "${{ matrix.size.devices }}"
+          udid=$(.github/scripts/store-simulator.py "${names[@]}")
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$udid" || true
+          for i in $(seq 1 60); do
+            xcrun simctl list devices | grep "$udid" | grep -q "(Booted)" && break
+            sleep 5
+          done
+          # Light appearance and a clean status bar, the same for every set.
+          xcrun simctl ui "$udid" appearance light || true
+          xcrun simctl status_bar "$udid" override --time "9:41" --batteryState charged --batteryLevel 100 \
+            --cellularMode active --cellularBars 4 --wifiBars 3 || true
+
+      - name: Take the screenshots, once per locale
+        timeout-minutes: 45
+        run: |
+          mkdir -p "$RUNNER_TEMP/store"
+          IFS=',' read -r -a locales <<< "$LOCALES"
+          for loc in "${locales[@]}"; do
+            loc=$(echo "$loc" | tr -d ' ')
+            lang=$loc; region=${loc##*-}
+            result="$RUNNER_TEMP/Screens-$loc.xcresult"
+            .github/scripts/run-and-summarize.sh "Store screens ${{ matrix.size.kind }} $loc" "$RUNNER_TEMP/logs/screens-$loc.log" -- \
+              xcodebuild test \
+                -project "${{ matrix.app.project }}" -scheme "${{ matrix.app.screens_scheme }}" -configuration Debug \
+                -destination "id=${{ steps.sim.outputs.udid }}" \
+                -derivedDataPath "$RUNNER_TEMP/dd" \
+                -resultBundlePath "$result" \
+                -testLanguage "$lang" -testRegion "$region" \
+                -parallel-testing-enabled NO \
+                CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO || true
+            .github/scripts/export-screens.py "$result" "$RUNNER_TEMP/store/$loc" "${{ matrix.size.label }}" || true
+          done
+
+      - name: Normalise, check sizes, convert to JPEG
+        run: |
+          .github/scripts/store-check.py --self-test
+          bad=0
+          for dir in "$RUNNER_TEMP"/store/*/; do
+            loc=$(basename "$dir")
+            n=0
+            for f in "$dir"*.png; do
+              [ -e "$f" ] || continue
+              o=$(python3 .github/scripts/png-normalize.py --orientation "$f")
+              python3 .github/scripts/png-normalize.py "$f" >/dev/null
+              case "$o" in 3) sips -r 180 "$f" >/dev/null ;; 6) sips -r 90 "$f" >/dev/null ;; 8) sips -r 270 "$f" >/dev/null ;; esac
+              n=$((n+1)); id=$(basename "$f" .png | sed -E 's/^(iphone|ipad)-//')
+              sips -s format jpeg -s formatOptions 100 "$f" --out "$dir$(printf '%02d' $n)-$id.jpg" >/dev/null
+              rm "$f"
+            done
+            python3 .github/scripts/store-check.py "${{ matrix.size.kind }}" "$dir"*.jpg || bad=1
+            echo "- $loc: $n screenshots (${{ matrix.size.kind }})" >> "$GITHUB_STEP_SUMMARY"
+          done
+          [ "$bad" = 0 ] || { echo "::error::a screenshot has a size App Store Connect does not take for ${{ matrix.size.kind }}"; exit 1; }
+          ls -R "$RUNNER_TEMP/store" | head -80
+
+      - name: Delete the simulator
+        if: always() && steps.sim.outputs.udid != ''
+        run: xcrun simctl delete "${{ steps.sim.outputs.udid }}" || true
+
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: appstore-screens-${{ github.sha }}-${{ matrix.app.app }}-${{ matrix.size.kind }}
+          path: ${{ runner.temp }}/store/
+          if-no-files-found: warn
+          retention-days: 14
+
+  store-collect:
+    name: One store artifact (${{ matrix.app.app }})
+    needs: [changes, store]
+    if: always() && needs.changes.outputs.has_screens == 'true' && inputs.store
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.screens) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: appstore-screens-${{ github.sha }}-${{ matrix.app.app }}-*
+          path: out
+      - name: Lay out as <locale>/<display type>/<NN-id>.jpg
+        run: |
+          mkdir -p final
+          for d in out/*/; do
+            kind=${d#out/appstore-screens-${{ github.sha }}-${{ matrix.app.app }}-}; kind=${kind%/}
+            case "$kind" in iphone-6.9) disp=APP_IPHONE_69 ;; iphone-6.5) disp=APP_IPHONE_65 ;; ipad-13) disp=APP_IPAD_PRO_3GEN_129 ;; *) disp=$kind ;; esac
+            for l in "$d"*/; do
+              loc=$(basename "$l"); mkdir -p "final/$loc/$disp"; cp "$l"*.jpg "final/$loc/$disp/" 2>/dev/null || true
+            done
+          done
+          find final -type f | sort | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: appstore-screens-${{ github.sha }}-${{ matrix.app.app }}
+          path: final/
+          retention-days: 14
