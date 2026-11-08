@@ -60,7 +60,7 @@
 
 ## Waiting on Dinis
 
-- App Store Connect records for Team and RiskMandate: register the bundle IDs, create the apps, add internal groups with automatic distribution.
+- ~~App Store Connect records for Team and RiskMandate~~: **done at about 02:00 UTC.** Both bundle IDs are registered, the records "PrompTugal Team" (`news.promptugal.team`) and "RiskMandate" (`ai.riskmandate.app`) exist, and each has an internal group with the 4 current testers. Uploads to them now succeed once each app's code is on dev.
 - The optional `REVIEW_CONTACT_PHONE` secret, needed only for external review after the summit.
 - The optional self-hosted Mac runner, with its safety steps (see the conductor session's notes).
 
