@@ -1,11 +1,12 @@
 import Foundation
+import PTCore
 import SwiftUI
 
 /// promptugal.news/api/v1/graph/explorer.json: the whole graph, compact.
 /// nodes[i] = {id, type, label, page?, deg, bc, pr, x, y} (x and y are the build's force layout);
 /// edges[j] = [from index, to index, verb index, source index, read date or 0, edge betweenness].
-struct GraphExplorer: Decodable, Sendable {
-    let version: String?
+public struct GraphExplorer: Decodable, Sendable {
+    public let version: String?
     let worlds: [World]?
     let types: [NodeType]?
     let verbs: [Verb]?
