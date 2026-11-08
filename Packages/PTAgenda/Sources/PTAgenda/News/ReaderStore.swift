@@ -109,9 +109,9 @@ public final class ReaderStore {
         }
     }
 
-    /// What is on now and next, for the whole venue and for my program (the Now screen draws it).
-    public func nowBoard(at now: Date = .now) -> NowBoard.Snapshot {
-        NowBoard.snapshot(agenda: cache.agenda, picks: schedule?.picks ?? [], now: now)
+    /// What the Now screen shows at `now`: the phase, what is next for the person, what is on, what starts soon.
+    public func nowModel(at now: Date = AgendaClock.now) -> NowModel {
+        NowModel(events: cache.agenda, picks: schedule?.picks ?? [], now: now)
     }
 
     public func event(id: String) -> Event? {

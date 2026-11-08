@@ -39,18 +39,17 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (11:30 UTC)
-- 340 + ios-release 84 (phase 4): green; guard printed the three entitlement sets. Merged to dev by the conductor.
-- Missing 0.4.12 build: Apple said ITMS-90683 (NSSpeechRecognitionUsageDescription missing). Fixed on 326147f: microphone and speech strings, plus privacy manifests in the widgets and intents folders, PTDeck and the external display scene.
-- Waiting on quick run 357 and ios-release dry run 94 (both on 326147f). After they finish: read the signed .ipa, READY to the conductor.
+## Last CI run (12:00 UTC)
+- Public app first upload failed processing (ITMS-90683, missing NSSpeechRecognitionUsageDescription). Fixed on 326147f (merged to dev as fb7cd76, dry run 94 proved it in the signed .ipa).
+- Quick run 380 (promptugal, 7ba2c14, macos-26): queued then running at 11:56; no failure yet. 7ba2c14 = 326147f + PTNowNext relink (widgets and intents no longer link WebKit), scene manifest from Info.plist (external display), WebsitesPublic, no ShortcutWebSummit, privacy collected-data entry, knownRegions en/pt-PT/pt-BR, PTExplore, vault background DEBUG-only, no second ScheduleStore.
+- 7580c50 on top: ScreensTests.swift only (UI tests; proved by the screens run).
 
-## Summit queue (conductor's order, 8 Nov 11:30 UTC; freeze 16:00)
-1. READY for 326147f (purpose strings, the blocker).
-2. PTNowNext relink: merge split/team (e70d928 or later), package reference Packages/PTNowNext, widgets and intents link PTNowNext instead of PTAgenda.
-3. Localizations: knownRegions en, pt-PT, pt-BR (i18n sends the catalog files).
-4. Wiring when green: PTSync (glue inside PrompTugalApp.swift or Apps/PrompTugal/App/PublicSync.swift, not Shell/), PTExplore (package reference and apps.json), debug-only launch argument -PTNow <ISO date> (coordinate the clock hook with team; NowModel in PTAgenda reads it).
-5. PrompTugalScreens UI test: one XCTAttachment per destination (lifetime .keepAlways, named "<NN>-<screen id>") with -PTDestination and -PTNow: now, team.schedule, explore, news.home, plus what ux picks.
-6. App Store build settings review with review.B. No App Store Connect changes.
+## Summit queue (conductor's order; freeze 16:00 UTC)
+1. Done and pushed: purpose strings, PTNowNext relink, knownRegions, PTExplore, privacy entry, N2 vault DEBUG-only, screens tests.
+2. Waiting: PTSync wiring (PTSync green on split/collab and the conductor's go; glue in PrompTugalApp.swift or Apps/PrompTugal/App/PublicSync.swift, plus a new Apps/PrompTugal/App synchronized group if a file is added).
+3. Not mine: -PTNow in the app (design: PublicFeatures sets team's AgendaClock.override and seeds picks).
+4. App Store build settings review with review.B (nothing requested yet).
+5. Known gap for design: PublicFeatures.agendaDidLoad must call NowNextPublisher.publish for the widget feed.
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.
