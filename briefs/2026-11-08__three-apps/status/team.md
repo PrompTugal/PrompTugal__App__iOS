@@ -1,8 +1,33 @@
 # Team session: PTWeb and PTAgenda
 
-> Phase 1 reading done. Plan below: AppBridge, the reminders and the planner reach up into the Team app (TeamFeatures, TeamStore, TeamIdentityStore, MeterStore, ReadingCredit, VaultSession). Each is broken with a protocol or a registry set by the app. Three questions for the conductor. No code moved yet (waiting for phase 2).
+> Phase 3 moves for PTWeb and PTAgenda are pushed (6cccf88), CI run 293 queued, not yet read. Handed off to the session on account B at 01:35 UTC; see "Handoff".
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
+
+## Handoff
+
+**Handed off at 01:35 UTC, 8 Nov, to the session on account B.**
+
+- **Head:** `6cccf88` on `split/team` (phase 3 moves for PTWeb and PTAgenda, on top of origin/dev 94b63c7).
+- **Last CI run:** ios.yml run 293 (`workflow_dispatch`, app=all) on 6cccf88. It was still queued when I stopped. Result not seen. Read it first: `actions_list` for ios.yml, branch split/team.
+- **Done:**
+  - PTWeb: `Bridge/`, `WebPage`, `WebsiteView`, `WebsiteShortcuts`, `Websites.json` (package resource, `Bundle.module`). Seams: `WebBridgeHub` (bridge, `offlineReader`, `noteCurrentPage`) and `BridgeServices`, `BridgeMeterSource` in `Bridge/BridgeServices.swift`.
+  - PTAgenda: `Schedule/` (not `ScheduleIntents.swift`), `Notifications/`, `AgendaView`, `ReaderStore` (in `News/`). Seams in `AgendaSources.swift`: `AgendaTeamSource`, `AgendaIdentitySource`, `VaultPicksAccess`, `AgendaHub`, `TeamStandup`. `AgendaBridgeServices` is the adapter for the bridge.
+  - Team app glue: `Team/TeamAgendaConformances.swift` (conformances and `VaultSessionPicks`), `Team/TeamFeatures.swift` (`registerHubs()`).
+  - Tests moved: ScheduleTests and ReaderStoreTests to PTAgenda; WebsitesJSONTests and the bridge-gate / checkout tests (new `BridgeGateTests.swift`) to PTWeb.
+  - Both `Package.swift` files use `swiftLanguageModes: [.v5]`, matching the app (SWIFT_VERSION 5.0). PTWeb has `resources: [.process("Resources")]`.
+- **Half-done / unknown:**
+  - Nothing has been compiled. Expect errors: I added `public` with a script (`publicize.py`, not in the repo) and generated public inits for structs without one. Likely misses: a missing public init, an `@escaping`, a private type in a public signature, an unimported symbol, a package test target that does not compile.
+  - Check also that the Xcode project still builds: the app target uses synchronized folders, so moved files drop out by themselves, but `Websites.json` and `Shared/` are worth a look.
+- **Exact next steps:**
+  1. Read run 293 (`get_job_logs` with `failed_only`). Fix, push, dispatch ios.yml again (`app=all`; pushes to split/** do not trigger it).
+  2. Switch the reminder URL scheme to `AppLinks.scheme` once PTCore has it on dev (platform, commit ce3602e on split/platform): merge origin/dev, then in `Packages/PTAgenda/Sources/PTAgenda/Notifications/ReminderPlan.swift` replace the default `"promptugal"` (`ReminderItem.scheme`, `ReminderPlan.items(scheme:)`) and in `ReminderScheduler.init(urlScheme:)` use `AppLinks.scheme`. Then `TeamFeatures.urlScheme` can go.
+  3. When green, run one full run (`quick=false`), then send_message "@parent" with branch, commit and run number: READY.
+  4. `Shared/NowNext.swift` stays until the widget target links PTAgenda (phase 4, platform). `ScheduleIntents.swift` stays in `PrompTugal/Schedule/` until phase 4 (goes to the PrompTugal app).
+- **Open questions:**
+  - Is `swiftLanguageModes: [.v5]` right for all packages? The other packages on dev do not set it.
+  - `WebBridgeHub.noteCurrentPage` is wired to `CollabHooks.noteCurrentPage` in `TeamFeatures.registerHubs()`. The public app needs its own wiring for Ask's "current page".
+  - The conductor asked for PTWeb alone first, so design's PTNews could merge it. It is in the same commit as PTAgenda. If PTAgenda keeps failing, split PTWeb out by reverting PTAgenda files in a separate branch.
 
 ## State
 
