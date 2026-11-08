@@ -51,8 +51,11 @@ if sys.argv[1:] == ["--self-test"]:
     sys.exit(0)
 
 kind, files = sys.argv[1], sys.argv[2:]
-if kind not in ACCEPTED or not files:
+if kind not in ACCEPTED:
     sys.exit(__doc__)
+files = [f for f in files if not f.endswith("*.jpg") and not f.endswith("*.png")]  # an unmatched glob
+if not files:
+    sys.exit("store-check.py: no files to check")
 bad = 0
 for p in files:
     w, h = size(p)

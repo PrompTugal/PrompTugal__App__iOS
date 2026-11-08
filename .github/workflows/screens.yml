@@ -245,6 +245,7 @@ jobs:
                 -destination "id=${{ steps.sim.outputs.udid }}" \
                 -derivedDataPath "$RUNNER_TEMP/dd" \
                 -resultBundlePath "$result" \
+                -only-testing:PrompTugalUITests/ScreensTests \
                 -testLanguage "$lang" -testRegion "$region" \
                 -parallel-testing-enabled NO \
                 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO || true
@@ -272,7 +273,7 @@ jobs:
               IFS=',' read -r -a want <<< "$IDS"
               for id in "${want[@]}"; do
                 id=$(echo "$id" | tr -d ' ')
-                f="$dir${{ matrix.size.label }}-$id.png"
+                f="${dir}${{ matrix.size.label }}-$id.png"
                 if [ -e "$f" ]; then files+=("$f")
                 elif [[ ",${IDS_REQUIRED// /}," == *",$id,"* ]]; then echo "::error::$loc: no screenshot for required id '$id' ($f)"; bad=1
                 else echo "::warning::$loc: no screenshot for id '$id', skipped"; fi
@@ -289,7 +290,11 @@ jobs:
               sips -s format jpeg -s formatOptions 100 "$f" --out "$dir$(printf '%02d' $n)-$id.jpg" >/dev/null
             done
             rm -f "$dir"*.png
-            python3 .github/scripts/store-check.py "${{ matrix.size.kind }}" "$dir"*.jpg || bad=1
+            if ls "$dir"*.jpg >/dev/null 2>&1; then
+              python3 .github/scripts/store-check.py "${{ matrix.size.kind }}" "$dir"*.jpg || bad=1
+            else
+              echo "::error::$loc: no screenshots to check for ${{ matrix.size.kind }}"; bad=1
+            fi
             echo "- $loc: $n screenshots (${{ matrix.size.kind }})" >> "$GITHUB_STEP_SUMMARY"
           done
           [ "$bad" = 0 ] || { echo "::error::a screenshot has a size App Store Connect does not take for ${{ matrix.size.kind }}"; exit 1; }
