@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1F3A661E8BAD652C582DA133 /* PrompTugalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F77B7572332898E66E5B40C /* PrompTugalApp.swift */; };
-		EA63F4215BACBF8F0343AE0E /* PublicShell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FFEAE3CD9E96A4605968EC /* PublicShell.swift */; };
 		A90CFD5B909BE3F2E7E24CC7 /* SGitVault in Frameworks */ = {isa = PBXBuildFile; productRef = E0DAD927408E1B9355089C8D /* SGitVault */; };
 		77D3C190A835D36AFA6FAB79 /* PTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3FBF59D84B6C3C73D057680C /* PTCore */; };
 		658EA48FB57CDEEE53D18D39 /* PTWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 8A93070012CAAE110C411763 /* PTWeb */; };
@@ -40,29 +39,18 @@
 		62385C59273EE55AFA88D2C5 /* PrompTugalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrompTugalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A8D29CF7EFF87A0CDB981F2 /* PrompTugalUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrompTugalUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F77B7572332898E66E5B40C /* PrompTugalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrompTugalApp.swift; sourceTree = "<group>"; };
-		B8FFEAE3CD9E96A4605968EC /* PublicShell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicShell.swift; sourceTree = "<group>"; };
 		C5443ECAB7D4F84049BEE315 /* PrompTugal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PrompTugal.xcconfig; sourceTree = "<group>"; };
 		C49BA95E746809D084900CB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		333310F24A95B1462843FAB0 /* PrompTugal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrompTugal.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		AC390245826D8CEA687D2DAF /* Exceptions for "Screens" folder in "PrompTugal" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				.gitkeep,
-			);
-			target = C42BBFBFA7E400E628E67134 /* PrompTugal */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		F19A31C326DD738B1E15671B /* Screens */ = {
+		E9107D2D073DF2248736FA42 /* Shell */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				AC390245826D8CEA687D2DAF /* Exceptions for "Screens" folder in "PrompTugal" target */,
-			);
-			path = Screens;
+			path = Shell;
 			sourceTree = "<group>";
 		};
 		BC4E976463CB6D4FC1A867C6 /* Resources */ = {
@@ -118,11 +106,10 @@
 			isa = PBXGroup;
 			children = (
 				5F77B7572332898E66E5B40C /* PrompTugalApp.swift */,
-				B8FFEAE3CD9E96A4605968EC /* PublicShell.swift */,
 				C5443ECAB7D4F84049BEE315 /* PrompTugal.xcconfig */,
 				C49BA95E746809D084900CB4 /* Info.plist */,
 				333310F24A95B1462843FAB0 /* PrompTugal.entitlements */,
-				F19A31C326DD738B1E15671B /* Screens */,
+				E9107D2D073DF2248736FA42 /* Shell */,
 				BC4E976463CB6D4FC1A867C6 /* Resources */,
 				EE7292B7BF0ED91485087DF6 /* PrompTugalTests */,
 				782AFEF8406860F059472FD3 /* PrompTugalUITests */,
@@ -156,7 +143,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				F19A31C326DD738B1E15671B /* Screens */,
+				E9107D2D073DF2248736FA42 /* Shell */,
 				BC4E976463CB6D4FC1A867C6 /* Resources */,
 			);
 			name = PrompTugal;
@@ -302,7 +289,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F3A661E8BAD652C582DA133 /* PrompTugalApp.swift in Sources */,
-				EA63F4215BACBF8F0343AE0E /* PublicShell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

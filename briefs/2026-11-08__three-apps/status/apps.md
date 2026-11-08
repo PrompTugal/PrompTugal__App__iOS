@@ -19,7 +19,7 @@
 
 ## Needs from others
 - Platform: the apps.json entries are mine for now; please keep them when you merge.
-- Design: `Apps/PrompTugal/Screens/` is a folder-synchronized group, so new files there need no project edit. `PublicShell.swift` is yours to fill in.
+- Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
 ## Last CI run

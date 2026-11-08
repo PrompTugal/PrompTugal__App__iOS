@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Root view of the public app. Placeholder: design replaces the body with the real shell
-/// and adds its screens under Screens/.
+/// and adds its screens under Shell/.
 struct PublicShell: View {
     var body: some View {
         VStack(spacing: 8) {
