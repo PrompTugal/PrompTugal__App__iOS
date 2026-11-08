@@ -348,33 +348,6 @@ extension Wire {
 // MARK: - Newsroom: stories.json, decisions.json, desks.json
 
 extension Wire {
-    struct StoryBoard: Decodable, Sendable {
-        let built: String?
-        let columns: [Column]?
-        let stories: [BoardStory]?
-    }
-
-    struct Column: Decodable, Identifiable, Hashable, Sendable {
-        let id: String
-        let name: String?
-        let count: Int?
-    }
-
-    struct BoardStory: Decodable, Identifiable, Sendable {
-        let id: String
-        let title: String?
-        let column: String?
-        let beat: String?
-        let desk: String?
-        let assignee: String?
-        let needs: LooseText?
-        let next: String?
-        let sources: Int?
-        let page: String?
-
-        var url: URL? { page.flatMap { URL(string: $0, relativeTo: FeedClient.site)?.absoluteURL } }
-    }
-
     struct Decisions: Decodable, Sendable {
         let built: String?
         let decisions: [NewsroomDecision]?
@@ -436,26 +409,3 @@ extension Wire {
         let first: String?
     }
 }
-
-// MARK: - News: newsletter.json
-
-extension Wire {
-    struct Newsletter: Decodable, Sendable {
-        let editions: [Edition]?
-    }
-
-    struct Edition: Decodable, Identifiable, Sendable {
-        let date: String?
-        let edition: String?
-        let title: String?
-        let summary: String?
-        let authored: Bool?
-        let page: String?
-        let email: String?
-
-        var id: String { page ?? "\(date ?? "")-\(edition ?? "")" }
-        var pageURL: URL? { page.flatMap(URL.init(string:)) }
-        var emailURL: URL? { email.flatMap(URL.init(string:)) }
-    }
-}
-

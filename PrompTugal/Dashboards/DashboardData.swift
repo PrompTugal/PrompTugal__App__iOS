@@ -11,17 +11,14 @@ final class DashboardData {
     let team = RemoteFeed<Wire.Me>(name: "team/me", url: TeamEndpoints.base.appendingPathComponent("me.json"))
     let dashboard = RemoteFeed<Wire.NewsroomDashboard>(name: "newsroom/dashboard", url: NewsroomAPI.url("newsroom/dashboard.json"))
     let status = RemoteFeed<Wire.NewsroomStatus>(name: "newsroom/status", url: NewsroomAPI.url("newsroom/status.json"))
-    let board = RemoteFeed<Wire.StoryBoard>(name: "newsroom/stories", url: NewsroomAPI.url("newsroom/stories.json"))
     let decisions = RemoteFeed<Wire.Decisions>(name: "newsroom/decisions", url: NewsroomAPI.url("newsroom/decisions.json"))
     let desks = RemoteFeed<Wire.Desks>(name: "newsroom/desks", url: NewsroomAPI.url("newsroom/desks.json"))
-    let newsletter = RemoteFeed<Wire.Newsletter>(name: "news/newsletter", url: NewsroomAPI.url("newsletter.json"))
 
-    /// The whole graph, about 0.9 MB. Loaded only when the graph screen opens.
-    let graph: RemoteFeed<GraphExplorer> = {
-        let feed = RemoteFeed<GraphExplorer>(name: "news/graph-explorer", url: NewsroomAPI.url("graph/explorer.json"))
-        feed.freshFor = 3600
-        return feed
-    }()
+    /// The news screens' feeds (PTNews). The properties below forward to it, so the dashboards read them as before.
+    let news = NewsFeeds()
+    var board: RemoteFeed<Wire.StoryBoard> { news.board }
+    var newsletter: RemoteFeed<Wire.Newsletter> { news.newsletter }
+    var graph: RemoteFeed<GraphExplorer> { news.graph }
 
     @ObservationIgnored private var centres: [String: RemoteFeed<Wire.CommandCentre>] = [:]
 
@@ -73,8 +70,4 @@ final class DashboardData {
         async let c: Void = newsletter.load(force: force)
         _ = await (a, b, c)
     }
-}
-
-enum NewsroomAPI {
-    static func url(_ path: String) -> URL { FeedClient.site.appendingPathComponent("api/v1/\(path)") }
 }

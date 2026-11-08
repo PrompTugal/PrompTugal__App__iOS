@@ -18,6 +18,7 @@ struct PrompTugalApp: App {
             // The shell (design) is the root; the team's stores and the native top-up come from .teamFeatures().
             AppShell()
                 .environment(store)
+                .environment(\.newsSource, store)
                 .teamFeatures()
         }
         .onChange(of: scenePhase) { _, phase in

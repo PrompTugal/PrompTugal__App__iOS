@@ -10,7 +10,11 @@ import UserNotifications
 /// Every view in Schedule/, Team/, Notifications/ and Store/ reads its store from the environment.
 @MainActor
 final class TeamFeatures {
-    static let shared = TeamFeatures()
+    static let shared: TeamFeatures = {
+        let features = TeamFeatures()
+        features.registerHubs()
+        return features
+    }()
 
     let schedule: ScheduleStore
     let team: TeamStore
@@ -35,9 +39,22 @@ final class TeamFeatures {
         meter = MeterStore(directory: directory)
         credits = CreditStore(meter: meter)
         bridgeLog = BridgeLog()
-        bridge = AppBridge(log: bridgeLog, schedule: schedule, meter: meter, identity: identity, reminders: reminders)
+        bridge = AppBridge(log: bridgeLog, services: AgendaBridgeServices(
+            schedule: schedule, reminders: reminders, meter: meter, identity: identity,
+            offersAppTopUp: ReadingCredit.isAvailable))
         planner = PlannerStore(schedule: schedule, team: team, identity: identity)
-        vaultLink = ScheduleVaultLink(schedule: schedule, log: bridgeLog)
+        vaultLink = ScheduleVaultLink(schedule: schedule, log: bridgeLog, vault: VaultSessionPicks())
+    }
+
+    /// Tells the packages where the app's one bridge and schedule are. Called once, when `shared` is made, so the
+    /// first web view and the first reader screen find them.
+    private func registerHubs() {
+        WebBridgeHub.bridge = bridge
+        WebBridgeHub.offlineReader = { AnyView(ReaderView()) }
+        WebBridgeHub.noteCurrentPage = { title, url in CollabHooks.noteCurrentPage(title: title, url: url) }
+        AgendaHub.schedule = schedule
+        AgendaHub.agendaDidLoad = { [weak self] agenda in self?.agendaDidLoad(agenda) }
+        AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }
     }
 
     /// Starts the StoreKit listener and the reminders, and refreshes the team data in the background.
@@ -139,6 +156,8 @@ private struct TeamFeaturesModifier: ViewModifier {
             .environment(features.schedule)
             .environment(features.team)
             .environment(features.identity)
+            .environment(\.agendaTeam, features.team)
+            .environment(\.agendaIdentity, features.identity)
             .environment(features.reminders)
             .environment(features.meter)
             .environment(features.credits)
