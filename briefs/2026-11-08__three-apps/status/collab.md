@@ -1,8 +1,8 @@
 # Collab status: PTAsk and PTLanes
 
-> Summit app status (12:05 UTC). PTSync is built and tested on split/collab 86cf060: Package PTSync, PTCore, PTWeb, both Debug builds, promptugal and team tests green in quick run 359; remaining package jobs finishing, full run follows, then READY. Local, not pushed yet (they wait behind the full run so it stays on 86cf060): live feeds (RSS, Atom, JSON Feed, newsletter JSON; FeedStore, FeedSyncer, PTCore LiveFeedSource) and Ask changes for the public app (AskView initialQuestion, plain no-key card, no vault copy in the public app, provider-owned prompt wording, no trademark). Practical info: no external feed today; the card reads optional api/v1/practical.json with a bundled fallback in the core pack (ux and design own the card). Open questions for Dinis: none blocking; whether Bundle.module resources in PTAsk (Localizable.xcstrings) are acceptable for the app's localization.
+> 0.4.25 (23:45 UTC): live updates for the public app are on split/collab (merged from dev 1a50c81, no CI run yet): `LiveUpdates` in PTSync (kept feed items, refresh at launch and foreground with a 5-minute floor, one background hook, ephemeral URLSession, promptugal.news only), PTCore `LiveContent` (stories and agenda from the kept files) and a small change in PTAgenda `ReaderStore` to use them before the app's seed. A test pins every feed host to promptugal.news. Needs from apps: the glue file and Info.plist/project/apps.json lines under "Live updates wiring (0.4.25)" at the end. Ask is not touched (the Release build no longer ships it).
 
-**Branch:** `split/collab` · **Last CI run:** quick run 359 on 86cf060 (PTSync): most jobs green, rest finishing · **Updated:** 12:05 UTC (collab.B)
+**Branch:** `split/collab` · **Last CI run:** none for this round (conductor: no runs) · **Updated:** 23:45 UTC, 8 Nov (collab.B)
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
@@ -428,3 +428,43 @@ index 64ea72d..4e36acf 100644
                      "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": true}
    },
 ```
+
+
+## Live updates wiring (0.4.25, for apps; supersedes the PTSync wiring above for this round)
+
+What is on split/collab (all packages; nothing under Apps/):
+- **PTSync `LiveUpdates`**: `LiveUpdates()` owns a `FeedStore` and a `FeedSyncer` for `LiveFeed.publicApp` (promptugal.news `feed.xml` and `api/v1/newsletter.json`, https, host pinned). `start()` registers the store as PTCore's `LiveFeeds.source`. `refresh()` fetches (skipped when the last one began less than 5 minutes ago; `refresh(force: true)` always fetches). `backgroundWork()` is for the BGAppRefresh closure. The session is `URLSessionTransport.ephemeral()`: no cookies, no disk cache, no stored credentials, no identifier beyond the app version in the User-Agent that PTCore already sends.
+- **PTCore `LiveContent`**: `LiveContent.stories()` (kept feed items as `Story`, promptugal.news https links only) and `LiveContent.agenda()` (the agenda from the synced files, when a `ContentSources` source for `promptugal.news` is registered). Both answer empty or nil when nothing is registered, so the readers behave as before.
+- **PTAgenda `ReaderStore`** (two small edits, for design to know): on first launch with no cache it takes the agenda from `LiveContent.agenda()` before `AgendaHub.seedAgenda()`, and it shows `LiveContent.stories()` when the cache and the network have no news.
+- **Test**: `LiveUpdatesTests.onlyPromptugalNews` fails if any feed in `LiveFeed.publicApp`, or the sync source, is not https on promptugal.news. A feed on another host is refused before any request (`otherHostRefused`).
+
+To apply in the app:
+1. `apps.json`: add `"PTSync"` to `promptugal.packages`.
+2. `PrompTugal.xcodeproj`: PTSync local package reference, product dependency and framework build file (same five places as PTDeck).
+3. `Info.plist`: add `news.promptugal.reader.sync` to BGTaskSchedulerPermittedIdentifiers.
+4. New `Apps/PrompTugal/App/PublicLive.swift`:
+
+```swift
+import Foundation
+import PTCore
+import PTSync
+
+/// Live news for the public app: promptugal.news feeds only, kept on the device, refreshed at launch, when the app
+/// comes to the front and in the background.
+enum PublicLive {
+    static let taskIdentifier = "news.promptugal.reader.sync"          // also in Info.plist
+    static let updates = LiveUpdates()
+
+    /// Call once from `PrompTugalApp.init`, before the first screen reads.
+    static func start() {
+        updates.start()
+        SyncBackground.register(taskIdentifier: taskIdentifier) { await updates.backgroundWork() }
+        Task { await updates.refresh() }
+    }
+
+    static func foreground() { Task { await updates.refresh() } }
+}
+```
+5. `PrompTugalApp.swift`: `import PTSync`; `PublicLive.start()` in `init`; in `.onChange(of: scenePhase)` (which is `#if DEBUG` today, move it out of the guard): `if phase == .active { PublicLive.foreground() }` and `if phase == .background { SyncBackground.schedule() }` next to the DEBUG-only `VaultBackground.schedule()`.
+
+Not in this round: the content pack (ContentStore, Seed folder, `SyncEngine`). `LiveContent.agenda()` starts helping when that is registered; until then the agenda seed in the app is used as before.

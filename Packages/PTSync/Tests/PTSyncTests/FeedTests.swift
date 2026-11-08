@@ -202,7 +202,7 @@ struct FeedParserTests {
     }
 }
 
-@Suite("PTSync: feed store")
+@Suite("PTSync: feed store", .serialized)      // two tests set LiveFeeds.source
 struct FeedStoreTests {
     private func item(_ id: String, _ title: String = "T", feed: String = "f", at seconds: TimeInterval? = nil) -> FeedItem {
         FeedItem(id: id, feed: feed, title: title, published: seconds.map { Date(timeIntervalSince1970: $0) })
