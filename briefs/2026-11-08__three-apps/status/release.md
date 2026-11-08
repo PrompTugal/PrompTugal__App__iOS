@@ -14,6 +14,13 @@
 - `screens.yml`: per app, for apps that have a shared `<Scheme>Screens` scheme.
 - Artifacts are named per app (`build-info-<app>`); the size check and the website's latest-build script were updated to match.
 
+## Runner load and one version number (Dinis, via conductor)
+
+- Done: `screens.yml` is manual only. `ios.yml` does not run on `split/**` pushes.
+- In progress: one version. App version = `VERSION` of the built commit (v0.4.n -> 0.4.n). `website/version.py` turns `v0.4` into v0.4.0 (test added; `VERSION` is `v0.4`). `ios-release.yml` now follows "Release and deploy" (`workflow_run`), builds the release commit, passes `MARKETING_VERSION`, and compares each app with its own last build.
+- Touches outside release files: `VERSION`, `website/version.py`, `website/test_site.py` only.
+- Cannot be tested before merge: the `workflow_run` trigger only fires from the default branch. Tested by manual dispatch.
+
 ## Screens artifact names (for the site's screens.json)
 
 - The app with bundle `news.promptugal.reader`: `screens-<sha>` (unchanged). Every other app: `screens-<sha>-<app>`.
