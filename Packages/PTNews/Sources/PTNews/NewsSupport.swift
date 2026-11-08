@@ -59,3 +59,29 @@ public final class NewsFeeds {
         _ = await (a, b)
     }
 }
+
+/// A list row with a title, a line of detail and an icon. The news screens' own copy of the
+/// dashboards' `InfoRow` (which stays in the Team app).
+struct NewsRow: View {
+    let title: String
+    var detail: String?
+    var symbol: String?
+    var tint: Color = Palette.muted
+
+    var body: some View {
+        HStack(alignment: .top, spacing: Space.m) {
+            if let symbol {
+                Image(systemName: symbol).foregroundStyle(tint).frame(width: 20)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.subheadline).foregroundStyle(Palette.ink)
+                if let detail, !detail.isEmpty {
+                    Text(detail).font(.caption).foregroundStyle(Palette.muted).lineLimit(3)
+                }
+            }
+            Spacer(minLength: Space.s)
+        }
+        .padding(.vertical, 3)
+        .accessibilityElement(children: .combine)
+    }
+}

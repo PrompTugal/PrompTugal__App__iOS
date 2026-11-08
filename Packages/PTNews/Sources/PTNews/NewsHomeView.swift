@@ -146,12 +146,12 @@ public struct NewsHomeView: View {
                         ForEach(items) { story in
                             if let url = story.url {
                                 NavigationLink { WebPage(url: url, title: "Story") } label: {
-                                    InfoRow(title: story.title ?? story.id, detail: story.next, symbol: "doc.text",
+                                    NewsRow(title: story.title ?? story.id, detail: story.next, symbol: "doc.text",
                                             tint: Palette.stable(column.id))
                                 }
                                 .buttonStyle(.plain)
                             } else {
-                                InfoRow(title: story.title ?? story.id, detail: story.next, symbol: "doc.text")
+                                NewsRow(title: story.title ?? story.id, detail: story.next, symbol: "doc.text")
                             }
                         }
                     }
