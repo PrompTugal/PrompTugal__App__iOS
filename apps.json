@@ -9,7 +9,8 @@
     "PTVaultUI": {"path": "Packages/PTVaultUI", "deps": ["PTCore", "SGitVault"]},
     "PTAsk": {"path": "Packages/PTAsk", "deps": ["PTCore", "PTAgenda", "PTNews", "PTVaultUI"]},
     "PTLanes": {"path": "Packages/PTLanes", "deps": ["PTCore", "PTVaultUI"]},
-    "PTDeck": {"path": "Packages/PTDeck", "deps": ["PTCore"]}
+    "PTDeck": {"path": "Packages/PTDeck", "deps": ["PTCore"]},
+    "PTExplore": {"path": "Packages/PTExplore", "deps": ["PTCore"]}
   },
   "apps": {
     "team": {"project": "Apps/Team/Team.xcodeproj", "scheme": "Team", "bundle": "news.promptugal.team",
