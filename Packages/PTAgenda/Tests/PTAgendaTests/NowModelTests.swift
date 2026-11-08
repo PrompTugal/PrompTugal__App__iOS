@@ -6,8 +6,8 @@ import PTCore
 @Suite("Now model")
 struct NowModelTests {
     private func event(_ slug: String, _ day: String, _ time: String, place: String = "Stage 1",
-                       official: Bool = false) -> Event {
-        Event(date: day, time: time, title: slug, place: place, kind: "talk", official: official,
+                       official: Bool = false, kind: String = "talk") -> Event {
+        Event(date: day, time: time, title: slug, place: place, kind: kind, official: official,
               page: "events/\(slug)/index.html")
     }
 
@@ -18,8 +18,9 @@ struct NowModelTests {
     }
 
     // Monday 9 to Thursday 12 November: registration and opening night, a busy Tuesday afternoon, then three more days.
-    private var registration: Event { event("registration", "2026-11-09", "07:30-18:00", place: "Humberto Delgado Airport, Terminal 1", official: true) }
-    private var openingNight: Event { event("openingNight", "2026-11-09", "18:00-21:00", place: "Centre Stage", official: true) }
+    private var registration: Event { event("registration", "2026-11-09", "07:30-18:00", place: "Humberto Delgado Airport, Terminal 1", official: true, kind: "registration") }
+    private var registration10: Event { event("registration10", "2026-11-10", "07:30-17:00", place: "Humberto Delgado Airport, Terminal 1", official: true, kind: "registration") }
+    private var openingNight: Event { event("openingNight", "2026-11-09", "18:00-21:00", place: "Centre Stage", official: true, kind: "summit") }
     private var keynote: Event { event("keynote", "2026-11-10", "14:00-14:40", place: "Centre Stage", official: true) }
     private var s4a: Event { event("s4a", "2026-11-10", "13:30-14:20", place: "Stage 4") }
     private var s6: Event { event("s6", "2026-11-10", "14:00-15:00", place: "Stage 6") }
@@ -38,7 +39,7 @@ struct NowModelTests {
     private var d12: Event { event("d12", "2026-11-12", "17:00-18:00") }
 
     private var agenda: [Event] {
-        [registration, openingNight, keynote, s4a, s6, s7, s8, s9, s11, stage12, stage2, later, closing10,
+        [registration, openingNight, registration10, keynote, s4a, s6, s7, s8, s9, s11, stage12, stage2, later, closing10,
          d11a, d11b, d11c, d11d, d12]
     }
 
@@ -49,7 +50,8 @@ struct NowModelTests {
         #expect(model.phase == .before)
         #expect(model.countdown?.largest.unit == .hours)
         #expect(model.countdown?.largest.value == 19)                      // 19 h 30 min to 9 Nov 07:30
-        #expect(model.firstItems.map(\.title) == ["registration", "openingNight"])
+        let first: [String] = model.firstItems.map(\.title)
+        #expect(first == ["registration", "openingNight"])                 // one registration, then the opening night
         #expect(model.forYou == nil && model.onNow.isEmpty && model.onNowCount == 0 && model.tomorrow.isEmpty)
     }
 
@@ -66,7 +68,17 @@ struct NowModelTests {
         let model = NowModel(events: agenda, picks: [], now: at("2026-11-09", "07:30"))
         #expect(model.phase == .during)                                    // registration is running
         #expect(model.countdown == nil && model.firstItems.isEmpty)
-        #expect(model.onNow.map(\.title) == ["registration"])
+        #expect(model.onNow.isEmpty)                                       // registration is not a session
+    }
+
+    @Test func registrationNeverTakesASlotOnNowUpNextOrTomorrow() {
+        let model = NowModel(events: agenda, picks: [], now: at("2026-11-10", "11:00"))
+        let titles: [String] = model.onNow.map(\.title)
+        #expect(!titles.contains("registration10") && !titles.contains("registration"))
+        #expect(model.onNowCount == 0 && model.firstItems.isEmpty)
+        let evening = NowModel(events: agenda, picks: [], now: at("2026-11-09", "17:30"))
+        let upNext: [String] = evening.upNext.map(\.title)
+        #expect(upNext == ["openingNight"])                                // registration is live but is not listed
     }
 
     // MARK: During the summit (10 Nov, 14:05)
