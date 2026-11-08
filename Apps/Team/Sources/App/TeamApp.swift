@@ -8,6 +8,9 @@ struct TeamApp: App {
     init() {
         // The app's own deep-link scheme, set before any view or reminder reads it.
         AppLinks.scheme = "ptteam"
+        // The Team app has no widgets and declares no App Group, so the Now/Next snapshot is never written.
+        // Point it at the Team name, so it can never touch the PrompTugal app's group.
+        SharedContainer.appGroup = "group.news.promptugal.team"
         // Gives PTLanes its vault seam and Ask the Team provider (without it Ask uses the public provider).
         TeamLanesWiring.install()
         // Background tasks must be registered before the app finishes launching.

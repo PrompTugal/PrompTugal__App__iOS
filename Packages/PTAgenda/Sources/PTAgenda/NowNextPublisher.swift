@@ -1,5 +1,4 @@
 import Foundation
-import PTCore
 import WidgetKit
 import PTCore
 

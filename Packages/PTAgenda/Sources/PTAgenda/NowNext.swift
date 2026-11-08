@@ -4,11 +4,7 @@ import Foundation
 ///
 /// The app writes it to the App Group container; widgets and intents read it
 /// and never touch the vault or the network (brief 05, "Targets").
-<<<<<<<< HEAD:Packages/PTAgenda/Sources/PTAgenda/NowNext/NowNext.swift
-/// PTAgenda holds it, so the app and every extension link the same code.
-========
 /// It lives in PTAgenda, which the app and the widget and intents extensions all link.
->>>>>>>> origin/split/team:Packages/PTAgenda/Sources/PTAgenda/NowNext.swift
 public struct NowNextSnapshot: Codable, Sendable, Equatable {
     public struct Item: Codable, Sendable, Hashable, Identifiable {
         public var id: String
@@ -60,13 +56,9 @@ public struct NowNextSnapshot: Codable, Sendable, Equatable {
 }
 
 public enum SharedContainer {
-<<<<<<<< HEAD:Packages/PTAgenda/Sources/PTAgenda/NowNext/NowNext.swift
-    public static let appGroup = "group.news.promptugal.reader"
-========
     /// The App Group the app and its widgets share. The PrompTugal app keeps the original group; an app with its
     /// own group (Team) sets this once at launch, before anything reads or writes the snapshot.
     public nonisolated(unsafe) static var appGroup = "group.news.promptugal.reader"
->>>>>>>> origin/split/team:Packages/PTAgenda/Sources/PTAgenda/NowNext.swift
     public static let nowNextKind = "news.promptugal.reader.now-next"
     private static let nowNextFile = "now-next.json"
 
