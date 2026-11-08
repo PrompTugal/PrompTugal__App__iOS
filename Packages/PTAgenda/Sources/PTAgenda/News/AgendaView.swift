@@ -229,7 +229,7 @@ public struct AgendaModel {
         }
 
         func row(_ event: Event) -> Row {
-            let kind = event.official ? "Official programme" : "Side event"
+            let kind = event.official ? String(localized: "Official programme", bundle: .module) : String(localized: "Side event", bundle: .module)
             let detail = event.place.isEmpty ? kind : "\(event.place) · \(kind)"
             return Row(event: event, detail: detail,
                        accessibilityLabel: "\(labels[event.date] ?? event.date), \(event.time). \(event.title). \(event.place)")

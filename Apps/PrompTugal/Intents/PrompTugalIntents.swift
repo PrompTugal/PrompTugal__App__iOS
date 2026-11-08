@@ -18,7 +18,7 @@ struct NextSessionIntent: AppIntent {
         }
         let next = snapshot.next(after: now, limit: 1).first
         if let running = snapshot.now(at: now).first {
-            let after = next.map { " Next, at \(LisbonClock.time($0.start)): \($0.title)." } ?? ""
+            let after = next.map { " " + String(localized: "After that, at \(LisbonClock.time($0.start)): \($0.title).") } ?? ""
             return .result(value: running.title, dialog: "Now: \(running.title), \(running.place).\(after)")
         }
         guard let next else {
