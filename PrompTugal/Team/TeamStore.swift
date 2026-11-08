@@ -169,10 +169,6 @@ final class TeamStore {
     }
 }
 
-extension Notification.Name {
-    static let teamStandupsDidChange = Notification.Name("PrompTugal.teamStandupsDidChange")
-}
-
 private extension Result where Failure == Error {
     init(catching body: () async throws -> Success) async {
         do { self = .success(try await body()) } catch { self = .failure(error) }

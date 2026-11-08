@@ -1,10 +1,6 @@
 import Foundation
 import Observation
 
-extension Notification.Name {
-    static let teamIdentityDidChange = Notification.Name("PrompTugal.teamIdentityDidChange")
-}
-
 /// "Who are you?" (as on web-summit.sgit.ai, `ws.me`): a person picked from the team's people list.
 /// Picking is a view choice, not a sign-in, exactly as on the website. It becomes **verified** only when a team vault
 /// is open on this device (decision D7): the vault session calls `verify(by:)` after it opens one.
