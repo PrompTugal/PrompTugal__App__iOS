@@ -11,7 +11,7 @@
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-: "${BUILD_NUMBER:?run version.sh first}" "${ARTIFACT_BASE:?run version.sh first}"
+: "${MARKETING_VERSION:?run version.sh first}" "${BUILD_NUMBER:?run version.sh first}" "${ARTIFACT_BASE:?run version.sh first}"
 DIST=$OUT/dist
 DD=${DERIVED_DATA:-$OUT/dd}
 mkdir -p "$DIST" "$LOGS"
@@ -26,7 +26,7 @@ run_logged "Archive (generic/platform=iOS, unsigned)" "$LOGS/archive-unsigned.lo
     -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
     -destination 'generic/platform=iOS' \
     -archivePath "$archive" -derivedDataPath "$DD" \
-    "${unsigned[@]}" CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
+    "${unsigned[@]}" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" MARKETING_VERSION="$MARKETING_VERSION"
 
 app=$(find "$archive/Products/Applications" -maxdepth 1 -name '*.app' | head -1)
 [ -d "$app" ] || { echo "::error::no .app in $archive/Products/Applications"; exit 1; }
@@ -45,7 +45,7 @@ run_logged "Release build (iOS Simulator)" "$LOGS/build-simulator.log" -- \
   xcodebuild build \
     -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
     -destination 'generic/platform=iOS Simulator' -derivedDataPath "$DD" \
-    "${unsigned[@]}" CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
+    "${unsigned[@]}" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" MARKETING_VERSION="$MARKETING_VERSION"
 simapp=$(find "$DD/Build/Products/Release-iphonesimulator" -maxdepth 1 -name '*.app' | head -1)
 ditto -c -k --sequesterRsrc --keepParent "$simapp" "$DIST/$ARTIFACT_BASE-simulator.app.zip"
 

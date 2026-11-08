@@ -25,6 +25,7 @@
 ## The short answer
 
 - **Internal TestFlight (the team): ready now.** It needs no Beta App Review. The privacy manifest and the export-compliance key are already in place.
+- **Update, 8 Nov:** Apple's Beta App Review approved build 0.3.1 (4), the version reviewed here before these fixes, in about 24 hours. See [three apps: Apple review so far](../2026-11-08__three-apps/README.md#apple-review-so-far).
 - **External TestFlight or Unlisted App Store: about a day of fixes.** These go through App Review. Five things would very likely get the app rejected today (see the list below).
 - **Public App Store: not recommended.** This is an internal app tied to one event. Apple's **Unlisted App Distribution** is meant for exactly this case ("limited audiences … conference attendees").
 
