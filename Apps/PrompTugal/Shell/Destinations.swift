@@ -1,6 +1,7 @@
 import PTAgenda
 import PTAsk
 import PTCore
+import PTDeck
 import PTNews
 import PTVaultUI
 import PTWeb
@@ -40,6 +41,9 @@ enum PublicDestinations {
                          summary: "Picks from the website and the app, one list", phoneTab: 1) { AnyView(MyDayView()) },
         ShellDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", group: "Summit",
                          summary: "Free slots and walking times between picks") { AnyView(PlannerView()) },
+        // DeckScreen brings its own NavigationStack, so the shell does not wrap it.
+        ShellDestination(id: "decks", title: "Decks", symbol: "rectangle.on.rectangle.angled", group: "Summit",
+                         summary: "Decks and presenter mode, offline", ownsNavigation: true) { AnyView(DeckScreen()) },
     ]
 
     // MARK: News
