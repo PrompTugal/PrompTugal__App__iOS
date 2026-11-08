@@ -74,3 +74,16 @@ Today's check (review and apps): the public build sends no telemetry and no logs
 | Summit data research, domain proposal | vault session (research only) |
 | Billing (credit, usage, no payment) | new session, Team app first |
 | OpenRouter workflows | Team and RiskMandate apps |
+
+## UX follow-ups from the rc2 review (ux, 8 Nov, 12:45 UTC)
+
+Not blockers for today's submission; for the next build.
+
+- **NOW-1h Ask card:** `AIKeyStore.shared.hasKey` is not observed, so the three questions appear only after the next minute tick once a key is added. Make the key store observable or read it through the environment.
+- **EXP-1 offline message:** "The summit data loads once online, then works offline." is followed by the raw system error. Show only our sentence; log the error.
+- **EXP-1 Talks:** `AgendaView` sets its own title "Agenda" inside Explore, and its rows' web fallback is titled "Session" (English in every locale). Let Explore own the title; use the talk's title.
+- **EXP-G scoped graph:** the card opens the full graph ("Explore the summit graph"). Next: only the people and companies behind the person's picks, from `api/v1/graph/events/<id>.json`.
+- **PROG-1:** a source comment in `MyProgramView.swift` was rewritten by the strings pass (`String(localized: "Add to Calendar"…)` inside a doc comment). Cosmetic; tidy the comment.
+- **NOW-1 iPad:** two columns (For you, On now, Up next | News, Practical), cut today.
+- **NOW-1e Practical:** move the rows to `api/v1/practical.json` so the newsroom can update them during the summit without a build.
+- **Old My day screen:** `MyDayView` (team stand-ups, vault, planner) is no longer reached in the public app; keep it for the Team app only.
