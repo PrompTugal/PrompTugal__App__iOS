@@ -1,0 +1,10 @@
+[
+  {
+    "id": "promptugal",
+    "name": "PrompTugal.news",
+    "url": "https://promptugal.news/",
+    "icon": "newspaper.fill",
+    "color": "red",
+    "iconAsset": "ShortcutPrompTugal"
+  }
+]

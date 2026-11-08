@@ -1,6 +1,7 @@
 import Foundation
 import WidgetKit
 import PTCore
+import PTNowNext
 
 /// Writes the "Now and next" snapshot to the App Group for the widgets, and
 /// asks WidgetKit to reload them when it changes.
@@ -11,7 +12,7 @@ import PTCore
 public enum NowNextPublisher {
     private static var lastWritten: NowNextSnapshot?
 
-    public static func publish(agenda: [Event], saved: [Event], now: Date = .now) {
+    public static func publish(agenda: [Event], saved: [Event], now: Date = AgendaClock.now) {
         let snapshot = makeSnapshot(agenda: agenda, saved: saved, now: now)
         guard snapshot.items != lastWritten?.items else { return }
         do {

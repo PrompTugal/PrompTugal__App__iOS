@@ -52,7 +52,7 @@ public struct WebsiteView: View {
                     WebsiteSidebar(directory: directory, selectedID: selectedID, select: select)
                         .toolbar {
                             ToolbarItem(placement: .confirmationAction) {
-                                Button("Done") { showsShortcuts = false }
+                                Button(String(localized: "Done", bundle: .module)) { showsShortcuts = false }
                             }
                         }
                 }
@@ -62,9 +62,9 @@ public struct WebsiteView: View {
             (WebBridgeHub.offlineReader?() ?? AnyView(EmptyView()))
                 .safeAreaInset(edge: .top, spacing: 0) {
                     HStack {
-                        Text("Offline Reader").font(.headline)
+                        Text(String(localized: "Offline Reader", bundle: .module)).font(.headline)
                         Spacer()
-                        Button("Done") { showsReader = false }
+                        Button(String(localized: "Done", bundle: .module)) { showsReader = false }
                     }
                     .padding()
                     .background(.bar)
@@ -85,11 +85,11 @@ public struct WebsiteView: View {
             .overlay {
                 if let failure = browser.failure {
                     ContentUnavailableView {
-                        Label("Website unavailable", systemImage: "wifi.slash")
+                        Label(String(localized: "Website unavailable", bundle: .module), systemImage: "wifi.slash")
                     } description: {
                         Text(failure)
                     } actions: {
-                        Button("Try Again") { browser.reload() }
+                        Button(String(localized: "Try again", bundle: .module)) { browser.reload() }
                             .buttonStyle(.borderedProminent)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -101,30 +101,30 @@ public struct WebsiteView: View {
                     if browser.isLoading {
                         ProgressView()
                             .progressViewStyle(.linear)
-                            .accessibilityLabel("Loading website")
+                            .accessibilityLabel(String(localized: "Loading website", bundle: .module))
                     }
                     HStack(spacing: 4) {
                         Button {
                             if sidebarFits { sidebarVisible.toggle() }
                             else { showsShortcuts = true }
                         } label: {
-                            Label("Websites", systemImage: "sidebar.left").labelStyle(.iconOnly)
+                            Label(String(localized: "Websites", bundle: .module), systemImage: "sidebar.left").labelStyle(.iconOnly)
                         }
                         Button { browser.goBack() } label: {
-                            Label("Back", systemImage: "chevron.left").labelStyle(.iconOnly)
+                            Label(String(localized: "Back", bundle: .module), systemImage: "chevron.left").labelStyle(.iconOnly)
                         }
                         .disabled(!browser.canGoBack)
                         Button { browser.goHome() } label: {
-                            Label("Home", systemImage: "house").labelStyle(.iconOnly)
+                            Label(String(localized: "Home", bundle: .module), systemImage: "house").labelStyle(.iconOnly)
                         }
                         Button { browser.reload() } label: {
-                            Label("Reload", systemImage: "arrow.clockwise").labelStyle(.iconOnly)
+                            Label(String(localized: "Reload", bundle: .module), systemImage: "arrow.clockwise").labelStyle(.iconOnly)
                         }
                         Spacer(minLength: 4)
                         Button {
                             showsReader = true
                         } label: {
-                            Label("Offline Reader", systemImage: "book")
+                            Label(String(localized: "Offline Reader", bundle: .module), systemImage: "book")
                                 .labelStyle(.iconOnly)
                         }
                     }
@@ -274,12 +274,12 @@ private final class WebsiteBrowser: NSObject, WKNavigationDelegate, WKUIDelegate
     }
 
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-        failure = "The website stopped responding. Try reloading the page."
+        failure = String(localized: "The website stopped responding. Try reloading the page.", bundle: .module)
     }
 
     private func showFailure(_ error: Error) {
         let error = error as NSError
         guard error.domain != NSURLErrorDomain || error.code != NSURLErrorCancelled else { return }
-        failure = "Check your connection and try again. Cached sessions are available in Offline Reader."
+        failure = String(localized: "Check your connection and try again. Cached sessions are available in Offline Reader.", bundle: .module)
     }
 }

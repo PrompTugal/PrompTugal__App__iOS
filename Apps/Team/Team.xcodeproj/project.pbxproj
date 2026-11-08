@@ -286,6 +286,7 @@
 				C10000000000000000000006 /* XCLocalSwiftPackageReference "../../Packages/PTAsk" */,
 				C10000000000000000000007 /* XCLocalSwiftPackageReference "../../Packages/PTLanes" */,
 				C10000000000000000000008 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */,
+				C10000000000000000000009 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A40000000000000000000003 /* Products */;
@@ -610,6 +611,10 @@
 		C10000000000000000000008 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTVaultUI;
+		};
+		C10000000000000000000009 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTNowNext;
 		};
 /* End XCLocalSwiftPackageReference section */
 

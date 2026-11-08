@@ -43,6 +43,12 @@ public struct WebsiteShortcut: Decodable, Identifiable {
     }
 }
 
+/// Which bundled shortcuts list an app shows. The Team app keeps `Websites` (every site the team uses); the public
+/// app sets `WebsitesPublic` (PrompTugal.news only) once at launch, before any view reads it.
+public enum WebsiteSources {
+    public nonisolated(unsafe) static var resource = "Websites"
+}
+
 public struct WebsiteDirectory {
     public init(shortcuts: [WebsiteShortcut], notice: String?) {
         self.shortcuts = shortcuts
@@ -52,9 +58,9 @@ public struct WebsiteDirectory {
     public let shortcuts: [WebsiteShortcut]
     public let notice: String?
 
-    public static func load() -> Self {
+    public static func load(resource: String = WebsiteSources.resource) -> Self {
         let filename = "Websites.json"
-        guard let bundled = Bundle.module.url(forResource: "Websites", withExtension: "json"),
+        guard let bundled = Bundle.module.url(forResource: resource, withExtension: "json"),
               let data = try? Data(contentsOf: bundled),
               let defaults = decode(data) else {
             return Self(shortcuts: [
@@ -71,7 +77,7 @@ public struct WebsiteDirectory {
                 if let data = try? Data(contentsOf: url) { custom = decode(data) }
             }
             guard coordinationError == nil, let custom else {
-                return Self(shortcuts: defaults, notice: "Websites.json is invalid. The default shortcuts are shown.")
+                return Self(shortcuts: defaults, notice: String(localized: "Websites.json is invalid. The default shortcuts are shown.", bundle: .module))
             }
             return Self(shortcuts: custom.map { applyingDefaults(to: $0, from: defaults) }, notice: nil)
         }
@@ -141,7 +147,7 @@ public struct WebsiteSidebar: View {
                     .accessibilityAddTraits(selected ? .isSelected : [])
                 }
             } header: {
-                Text("Websites").font(.headline).accessibilityAddTraits(.isHeader)
+                Text(String(localized: "Websites", bundle: .module)).font(.headline).accessibilityAddTraits(.isHeader)
             } footer: {
                 if let notice = directory.notice {
                     Text(notice)

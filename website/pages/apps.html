@@ -1,0 +1,51 @@
+<!--
+title: The three apps · PrompTugal for iOS
+description: PrompTugal for iOS is three apps from one repository: the public PrompTugal app, the PrompTugal team's own app, and a RiskMandate app that comes after the Web Summit Lisbon summit.
+nav: Three apps
+order: 3
+-->
+<section class="band">
+  <div class="wrap">
+    <p class="kicker">One repository, three apps</p>
+    <h1>Which app is which</h1>
+    <p class="lede">{{apps_lede}}</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="apps">
+  <div class="wrap">
+    <div class="two">
+      <article class="card" id="promptugal">
+        <h3><span class="num">01</span> PrompTugal</h3>
+        <p class="count">The public app · version {{version}} · in beta</p>
+        <p>For readers and for everyone at Web Summit Lisbon: the news, the agenda in Lisbon time, your own day, reminders, offline reading, Ask, and a private vault opened with Face ID. It works without any team keys. {{features_readers_shipped}} of its {{features_readers_total}} planned features are in the beta today.</p>
+        <p><a href="readers.html">What the app does</a> · <a href="features.html">Every feature and its status</a></p>
+      </article>
+      <article class="card" id="team">
+        <h3><span class="num">02</span> Team</h3>
+        <p class="count">The team’s own app · internal</p>
+        <p>For the PrompTugal team only. Dashboards of people, agents and decisions, briefings, messages through encrypted vaults, and debug panels. It has everything the public app has, plus the team screens. It is not in the App Store. The team gets it from its own TestFlight.</p>
+        <p><a href="admin/team-app.html">Team app (developer area)</a></p>
+      </article>
+      <article class="card" id="riskmandate">
+        <h3><span class="num">03</span> RiskMandate</h3>
+        <p class="count">Coming after the summit</p>
+        <p>An app that explains and demonstrates Agent Behaviour Policies and our agentic workflows, with demos and videos. It is not built yet. {{riskmandate_today}} It has no features, and none are listed.</p>
+        <p><a href="https://riskmandate.ai/">RiskMandate</a></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="why">
+  <div class="wrap prose">
+    <p class="kicker">Why three</p>
+    <h2>A public app should hold only public things</h2>
+    <ul>
+      <li><strong>The public app has no team data.</strong> No team names, no messages between people, no debug panels. Anyone can install it and use it without keys.</li>
+      <li><strong>The team keeps its tools.</strong> The Team app has every tool the team had in the one app, and it never needs App Review.</li>
+      <li><strong>Shared code, built once.</strong> The apps share local Swift packages. A change to one app’s code builds and uploads only that app. A change in a shared package builds every app that uses it.</li>
+    </ul>
+    <p>The plan and the rules are in the <a href="admin/briefs/2026-11-08__three-apps/index.html">three-apps brief</a>. The privacy page of this app is <a href="privacy.html">here</a>; the Team app has <a href="admin/team-privacy.html">its own</a>.</p>
+  </div>
+</section>

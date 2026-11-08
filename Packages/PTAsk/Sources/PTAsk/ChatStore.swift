@@ -258,7 +258,9 @@ final class ChatStore {
         let parts = await gather(kinds) + extra().filter { kinds.contains($0.kind) }
         let toolSet = useTools ? AITools.definitions(for: kinds) : []
         let system = AIContextAssembler.systemPrompt(parts: parts, now: .now, person: AskEnvironment.provider.personName,
-                                                     tools: !toolSet.isEmpty)
+                                                     tools: !toolSet.isEmpty,
+                                                     audience: AskEnvironment.provider.askAudience,
+                                                     unknownPerson: AskEnvironment.provider.unknownPersonLine)
         var messages = Self.messages(system: system, turns: history, question: question)
 
         for hop in 0...AITools.maxHops {

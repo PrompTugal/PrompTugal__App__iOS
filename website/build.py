@@ -28,39 +28,10 @@ REPO_URL = 'https://github.com/PrompTugal/PrompTugal__App__iOS'
 
 WEBSITE = Path(__file__).resolve().parent
 ROOT = WEBSITE.parent
-# Where the PrompTugal app lives: its own folder once the split has landed, the root project before.
-APP_PROJECTS = ('Apps/PrompTugal/PrompTugal.xcodeproj', 'PrompTugal.xcodeproj')
-APP_FOLDERS = ('Apps/PrompTugal', 'Packages/PTWeb', 'PrompTugal')
-
-
-def public_project(root=ROOT):
-    """The Xcode project of the PrompTugal app (the public one)."""
-    for candidate in APP_PROJECTS:
-        if (root / candidate).is_dir():
-            return root / candidate
-    raise SystemExit('build: no Xcode project for the PrompTugal app, looked in ' + ', '.join(APP_PROJECTS))
-
-
-def find_in_app(pattern, root=ROOT, prefer=None):
-    """The one file or folder matching a name in the PrompTugal app or the packages it uses.
-
-    The first folder of APP_FOLDERS with a match wins. Where it has several, the one that contains
-    `prefer` is taken, so a second asset catalog (a widget's) is not mistaken for the app's."""
-    for place in APP_FOLDERS:
-        base = root / place
-        found = sorted(p for p in base.rglob(pattern) if '.build' not in p.parts) if base.is_dir() else []
-        if prefer and len(found) > 1:
-            found = [p for p in found if (p / prefer).exists()] or found
-        if len(found) == 1:
-            return found[0]
-        if found:
-            raise SystemExit(f'build: expected one {pattern} under {place}/, found {[str(f) for f in found]}')
-    raise SystemExit(f'build: no {pattern} in {", ".join(APP_FOLDERS)}')
-
-
-PROJECT = public_project() / 'project.pbxproj'
-ASSETS = find_in_app('Assets.xcassets', prefer='AppIcon.appiconset')
-WEBSITES_JSON = find_in_app('Websites.json')
+PROJECT = admin.public_project() / 'project.pbxproj'
+PROJECT_PATH = PROJECT.parent.relative_to(ROOT).as_posix()
+ASSETS = admin.find_in_app('Assets.xcassets', prefer='AppIcon.appiconset')
+WEBSITES_JSON = admin.find_in_app('Websites.json')
 
 # Published path -> source file in the Xcode asset catalog (artwork exists once).
 # Every Shortcut*.imageset is published, so a removed shortcut leaves no dangling image.
@@ -70,7 +41,7 @@ def _shortcut_images():
 
     While files move during the split, the sidebar artwork can sit in another catalog than the app icon."""
     found = {}
-    for place in (*APP_FOLDERS, 'Apps', 'Packages'):      # the app's folders first, then anywhere the artwork moved to
+    for place in (*admin.APP_FOLDERS, 'Apps', 'Packages'):      # the app's folders first, then anywhere the artwork moved to
         base = ROOT / place
         for catalog in sorted(base.rglob('Assets.xcassets')) if base.is_dir() else []:
             for d in sorted(catalog.glob('Shortcut*.imageset')):
@@ -435,19 +406,21 @@ def build(out):
     template = (WEBSITE / 'template.html').read_text()
     tokens = {k: v for k, v in facts.items() if isinstance(v, str)}
     tokens.update(websites_sidebar=websites_sidebar(facts), websites_list=websites_list(facts),
-                  repo_url=REPO_URL, site_url=SITE_URL, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages),
+                  repo_url=REPO_URL, site_url=SITE_URL, project_path=PROJECT_PATH, site_stamp=site_stamp(facts), brief_packs=brief_packs(pages),
                   build_log_list=build_log_list(pages))
     # Only screenshots of screens the shell registers: a file whose id is not a screen is left out.
     screen_ids = {d['id'] for d in admin.destinations()}
     shots = {i: v for i, v in admin.screenshots(os.environ.get('SCREENS_DIR')).items() if i in screen_ids}
     tokens.update(admin.feature_tokens(REPO_URL, shots=shots))
+    tokens.update(admin.split_tokens())
     tokens.update(screens_gallery=admin.screens_gallery(admin.destinations(), shots))
     night = admin.overnight()
-    tokens.update(overnight_bands=admin.overnight_bands(night['screens'], shots),
-                  overnight_hero=admin.overnight_hero(shots, night.get('hero')))
+    # The Overnight page is in the admin area, one folder down, so its images start with ../
+    tokens.update(overnight_bands=admin.overnight_bands(night['screens'], shots, root='../'),
+                  overnight_hero=admin.overnight_hero(shots, night.get('hero'), root='../'))
     # The home page shows a real iPad screenshot when CI took one; otherwise the drawn mock-up.
-    hero = next((i for i in ('today', 'team.people', 'news.home') if 'ipad' in shots.get(i, {})), None)
-    tokens['hero_device'] = (f'<figure class="device-shot">{admin.shot_img(shots, hero, {"today": "My day", "team.people": "The team", "news.home": "News"}[hero], device="ipad", width=640)}'
+    hero = next((i for i in ('news.home', 'reader.agenda', 'today') if 'ipad' in shots.get(i, {})), None)
+    tokens['hero_device'] = (f'<figure class="device-shot">{admin.shot_img(shots, hero, {"today": "My day", "reader.agenda": "The agenda", "news.home": "News"}[hero], device="ipad", width=640)}'
                              '<figcaption class="muted">The app on iPad, from the latest CI screenshots.</figcaption></figure>'
                              if hero else fill((WEBSITE / 'hero_mock.html').read_text(), tokens))
     status = admin.push_status()
@@ -477,10 +450,10 @@ def build(out):
         shutil.copy(source, out / published)
 
     llms = ['# PrompTugal for iOS', '',
-            f"> PrompTugal {facts['version']} for iPhone and iPad, in beta. Today it is the PrompTugal team's internal "
-            'app for Web Summit Lisbon 2026, being built to hold the news, the agenda and each person\'s day offline, and what the team '
-            'and its AI agents are doing. Where it is going: a platform for readers and for teams. '
-            'Independent of Web Summit.', '', '## Pages', '']
+            f"> PrompTugal {facts['version']} for iPhone and iPad, in beta. The public PrompTugal app, for readers and "
+            'participants at Web Summit Lisbon 2026: the news, the agenda in Lisbon time and each person\'s day, offline. '
+            'It is one of three apps from one repository; the others are the PrompTugal team\'s own app and RiskMandate, '
+            'which comes after the summit. Independent of Web Summit.', '', '## Pages', '']
     llms_team = ['', '## For the team: developer area and briefs', '']
     sitemap = []
     for page in pages:

@@ -21,21 +21,21 @@ public struct PlannerView: View {
         HStack(spacing: 0) {
         List {
             Section {
-                Picker("Day", selection: $planner.day) {
+                Picker(String(localized: "Day", bundle: .module), selection: $planner.day) {
                     ForEach(planner.days, id: \.self) { Text(Lisbon.dayLabel($0)).tag($0) }
                 }
-                Toggle("Official programme only", isOn: $planner.preferences.officialOnly)
+                Toggle(String(localized: "Official programme only", bundle: .module), isOn: $planner.preferences.officialOnly)
             } footer: {
-                Text("Walking times are estimates: 5 minutes between rooms at the venue, 25 to anywhere else. All times are Lisbon time.")
+                Text(String(localized: "Walking times are estimates: 5 minutes between rooms at the venue, 25 to anywhere else. All times are Lisbon time.", bundle: .module))
             }
 
             if !plan.clashes.isEmpty {
-                Section("Clashes") {
+                Section(String(localized: "Clashes", bundle: .module)) {
                     ForEach(plan.clashes, id: \.self) { clash in
                         Label {
                             Text(clash.travel
-                                 ? "\(clash.first.title) → \(clash.second.title): \(clash.minutes) min short to walk between them"
-                                 : "\(clash.first.title) and \(clash.second.title) overlap by \(clash.minutes) min")
+                                 ? String(localized: "\(clash.first.title) → \(clash.second.title): \(clash.minutes) min short to walk between them", bundle: .module)
+                                 : String(localized: "\(clash.first.title) and \(clash.second.title) overlap by \(clash.minutes) min", bundle: .module))
                         } icon: {
                             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                         }
@@ -43,17 +43,17 @@ public struct PlannerView: View {
                 }
             }
 
-            Section("Your day") {
+            Section(String(localized: "Your day", bundle: .module)) {
                 if plan.fixed.isEmpty {
-                    Text("No picks or stand-ups on this day yet.").foregroundStyle(.secondary)
+                    Text(String(localized: "No picks or stand-ups on this day yet.", bundle: .module)).foregroundStyle(.secondary)
                 }
                 ForEach(plan.fixed) { item in itemRow(item, symbol: item.kind == .standup ? "person.3" : "star.fill") }
             }
 
             if !plan.gaps.isEmpty {
-                Section("Free time") {
+                Section(String(localized: "Free time", bundle: .module)) {
                     ForEach(plan.gaps, id: \.self) { gap in
-                        Text("\(Lisbon.timeLabel(gap.start)) to \(Lisbon.timeLabel(gap.end)) · \(gap.minutes) min")
+                        Text(String(localized: "\(Lisbon.timeLabel(gap.start)) to \(Lisbon.timeLabel(gap.end)) · \(gap.minutes) min", bundle: .module))
                             .font(.subheadline.monospacedDigit())
                     }
                 }
@@ -61,7 +61,7 @@ public struct PlannerView: View {
 
             Section {
                 if proposals.isEmpty {
-                    Text(planner.agenda.isEmpty ? "The agenda is still loading." : "Nothing more fits this day.")
+                    Text(planner.agenda.isEmpty ? String(localized: "The agenda is still loading.", bundle: .module) : String(localized: "Nothing more fits this day.", bundle: .module))
                         .foregroundStyle(.secondary)
                 }
                 ForEach(bases) { base in
@@ -73,26 +73,26 @@ public struct PlannerView: View {
                             Text(proposal.reasons.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
                         }
                         HStack {
-                            Button("Add") { planner.accept([proposal]); accepted += 1 }
+                            Button(String(localized: "Add", bundle: .module)) { planner.accept([proposal]); accepted += 1 }
                                 .buttonStyle(.borderedProminent)
                             if options.count > 1 {
-                                Button("Another") {
+                                Button(String(localized: "Another", bundle: .module)) {
                                     let index = options.firstIndex { $0.id == proposal.id } ?? 0
                                     swapped[base.id] = options[(index + 1) % options.count]
                                 }
                                 .buttonStyle(.bordered)
                             }
-                            Button("Skip") { rejected.insert(base.id) }.buttonStyle(.bordered)
+                            Button(String(localized: "Skip", bundle: .module)) { rejected.insert(base.id) }.buttonStyle(.bordered)
                         }
                         .font(.subheadline)
                     }
                     .padding(.vertical, 2)
                 }
             } header: {
-                Text("Proposed")
+                Text(String(localized: "Proposed sessions", bundle: .module))
             } footer: {
                 if identity?.currentID != nil {
-                    Text("Sessions the team picked for you rank first, then sessions teammates have, then ones like your picks.")
+                    Text(String(localized: "Sessions the team picked for you rank first, then sessions teammates have, then ones like your picks.", bundle: .module))
                 }
             }
         }
@@ -106,10 +106,10 @@ public struct PlannerView: View {
                 .background(Color(.systemGroupedBackground))
         }
         }
-        .navigationTitle("Plan my day")
+        .navigationTitle(String(localized: "Plan my day", bundle: .module))
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Add all") {
+                Button(String(localized: "Add all", bundle: .module)) {
                     planner.accept(proposals)
                     accepted += proposals.count
                 }

@@ -13,6 +13,27 @@
 - Rulings received at 11:25 UTC (B1 option a, B2 hide Vault, B3 to B5 and R1 as proposed). The pack is updated: final [review-notes.txt](../../2026-11-08__summit-app-store/store/review-notes.txt), the App Privacy label with Ask (Other User Content), `/pt/` URLs, and the Ask lines in the listings marked optional (own key).
 - Waiting for the first screenshot set from release and the merges of B3, B5, R1 and Vault hidden.
 
+## 12:16 UTC check
+- Only the briefs and B5 (microphone and speech strings) are on dev. Every other fix is on a branch: B3, R1 and F3 on team; B1, B2 and F4 on design; the privacy manifest on apps; N1 on platform. The table is in [checklist.md](../../2026-11-08__summit-app-store/store/checklist.md#where-each-fix-is-12-16-utc).
+- Not started: N2 (vault background task) and N3 (Ask's "Save key to my vault").
+- testflight holds an older copy of the review notes.
+- i18n's catalogs have pt-PT and pt-BR, but the project's `knownRegions` does not list them.
+- No screenshot set yet.
+
+## 13:00 UTC check
+- Candidates rc2 to rc5 reviewed (go/no-go runs 1 to 5 in [go-no-go.md](../../2026-11-08__summit-app-store/store/go-no-go.md)). The app code is GO from rc4 d8a5020 on.
+- Release's screenshot pipeline photographs a Debug build with debug mode on: kind badges, plus Debug, Vault and All websites in the iPad sidebar. Fix: `-debug.enabled NO` plus `debugOnly` on those rows.
+- In the ASC plan, the content rights answer must be "uses third-party content".
+- No screenshot set yet, so the persona walk-through of images waits. The code walk-through findings F3, F4, F11 and F14 are fixed in rc4 (opens on today, native talk detail, Vault and All websites hidden, no vault copy in Ask). F10 (share on news) and F6 (Graph copy) are not checked yet.
+
+## Screenshot pass 1 (14:05 UTC, screens #34)
+
+| # | Persona | Screen | Problem | Fix | Owner | Severity |
+| --- | --- | --- | --- | --- | --- | --- |
+| F15 | all | My program (launch) | The notification permission prompt appears without a tap, as soon as My program is built. It covers 60 of 63 store images. | Drop `requestAuthorization()` from `MyProgramView` `.task`; ask on the first pick or from the Reminders toggle | team | stuck (store), confusing (people) |
+| F16 | P3 (en-US), P5 | `now` | The time wraps: "11:05 A" / "M". A busy speaker reads the time first. | `lineLimit(1)`, a wider column, or 24-hour Lisbon time | design | confusing |
+| F17 | P1, P5 | `now` | Good: "Next in your program" with "in 5 min · Centre Stage" answers "what's next for me" at a glance. "On now at the venue" shows 5 with See all (7). | none | | ok |
+
 ## Next
 - Walk the personas through each screenshot set and each new build (Now, Explore, pt strings).
 - Fill in [go-no-go.md](../../2026-11-08__summit-app-store/store/go-no-go.md) for the build chosen for each submission, then send "GO <build>" or the open items.

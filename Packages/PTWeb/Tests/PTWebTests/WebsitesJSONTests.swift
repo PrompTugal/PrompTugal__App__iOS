@@ -70,3 +70,27 @@ struct WebsiteSidebarWidthTests {
         #expect(WebsiteView.sidebarWidth(for: 320) == nil)
     }
 }
+
+@Suite("Public app's shortcuts")
+struct PublicWebsitesTests {
+    @Test("The public list is PrompTugal.news alone: no team site, no team artwork")
+    func publicList() throws {
+        let url = try #require(Bundle.module.url(forResource: "WebsitesPublic", withExtension: "json"),
+                               "WebsitesPublic.json is not in the PTWeb bundle")
+        let shortcuts = try JSONDecoder().decode([WebsiteShortcut].self, from: Data(contentsOf: url))
+        // Computed outside #expect: key paths as functions inside the macro are diagnosed as unhandled throws.
+        let ids = shortcuts.map { $0.id }
+        let hosts = shortcuts.compactMap { $0.url.host() }
+        let allValid = shortcuts.allSatisfy { $0.isValid }
+        let noWebSummitArt = shortcuts.allSatisfy { $0.iconAsset != "ShortcutWebSummit" }
+        #expect(ids == ["promptugal"])
+        #expect(allValid)
+        #expect(hosts == ["promptugal.news"])
+        #expect(noWebSummitArt)
+    }
+
+    @Test("An app picks its list by name, and the Team list is the default")
+    func theResourceIsInjectable() {
+        #expect(WebsiteSources.resource == "Websites")
+    }
+}

@@ -46,15 +46,15 @@ public struct NextHoursCard: View {
             let mine = upcomingMine(now: now)
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text(mine.isEmpty ? "Starting soon" : "My next \(Int(hours)) hours")
+                    Text(mine.isEmpty ? String(localized: "Starting soon", bundle: .module) : String(localized: "My next \(Int(hours)) hours", bundle: .module))
                         .font(.headline)
                     Spacer()
-                    Text("\(Lisbon.timeLabel(now)) Lisbon")
+                    Text(String(localized: "\(Lisbon.timeLabel(now)) Lisbon", bundle: .module))
                         .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
                 }
                 let items = mine.isEmpty ? soon(now: now) : mine
                 if items.isEmpty {
-                    Text("Nothing in the next \(Int(hours)) hours.").font(.subheadline).foregroundStyle(.secondary)
+                    Text(String(localized: "Nothing in the next \(Int(hours)) hours.", bundle: .module)).font(.subheadline).foregroundStyle(.secondary)
                 }
                 ForEach(items) { item in row(item, now: now) }
             }
@@ -90,16 +90,16 @@ public struct NextHoursCard: View {
                     Image(systemName: schedule.isPicked(event) ? "star.fill" : "star")
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel(schedule.isPicked(event) ? "Remove from my day" : "Add to my day")
+                .accessibilityLabel(schedule.isPicked(event) ? String(localized: "Remove from my day", bundle: .module) : String(localized: "Add to my day", bundle: .module))
             }
         }
         .accessibilityElement(children: .combine)
     }
 
     private func countdown(_ item: Item, now: Date) -> String {
-        if item.start <= now { return "now" }
+        if item.start <= now { return String(localized: "now", bundle: .module) }
         let minutes = Int(item.start.timeIntervalSince(now) / 60)
-        return minutes < 60 ? "in \(max(1, minutes)) min" : "in \(minutes / 60) h \(minutes % 60)"
+        return minutes < 60 ? String(localized: "in \(max(1, minutes)) min", bundle: .module) : String(localized: "in \(minutes / 60) h \(minutes % 60)", bundle: .module)
     }
 
     public func upcomingMine(now: Date) -> [Item] {
@@ -116,7 +116,7 @@ public struct NextHoursCard: View {
         }
         if let me = identity?.currentID {
             items += (team?.standups ?? []).filter { $0.end > now && $0.at < horizon }.map {
-                Item(id: "standup.\($0.slot)", title: "Team stand-up", detail: "Open my briefing", start: $0.at,
+                Item(id: "standup.\($0.slot)", title: String(localized: "Team stand-up", bundle: .module), detail: String(localized: "Open my briefing", bundle: .module), start: $0.at,
                      end: $0.end, url: $0.briefingURL(for: me), mine: true, event: nil)
             }
         }

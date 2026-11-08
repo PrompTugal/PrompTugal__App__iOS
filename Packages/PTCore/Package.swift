@@ -4,12 +4,13 @@ import PackageDescription
 
 let package = Package(
     name: "PTCore",
+    defaultLocalization: "en",
     platforms: [.iOS(.v18)],
     products: [
         .library(name: "PTCore", targets: ["PTCore"]),
     ],
     targets: [
-        .target(name: "PTCore"),
+        .target(name: "PTCore", resources: [.process("Resources")]),
         .testTarget(
             name: "PTCoreTests",
             dependencies: ["PTCore"],

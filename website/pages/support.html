@@ -1,6 +1,6 @@
 <!--
 title: Support · PrompTugal for iOS
-description: How to install the PrompTugal beta, edit the website shortcuts, use the offline reader and build the app from source.
+description: How to install the PrompTugal beta, edit the website shortcuts, read offline, report a problem and build the app from source.
 nav: Support
 order: 6
 -->
@@ -49,8 +49,10 @@ order: 6
       <dd>The app does not open payment pages inside its web views: Stripe, PayPal and other hosted checkouts, and the reading-meter top-up page on PrompTugal.news. App Store rules require it.</dd>
       <dt>When does the app ask to send notifications?</dt>
       <dd>Only after you tap to turn reminders on. A website inside the app can suggest reminders, but the app then shows its own question first, and the system prompt follows only if you tap it.</dd>
-      <dt>Where are the team features?</dt>
-      <dd>In the same app. They switch on when you have access to a team vault. <a href="teams.html">What teams get</a>.</dd>
+      <dt>How do I add the widget or ask Siri what is next?</dt>
+      <dd>Touch and hold the Home Screen, tap <strong>+</strong> and choose PrompTugal to add the Now and Next widget. For Siri, say “What’s next in PrompTugal”; the same answer is in the Shortcuts app. Both show the agenda from the last time the app was open, so open the app once to fill them. They use no network and cannot reach your vault.</dd>
+      <dt>Is there a team version?</dt>
+      <dd>The PrompTugal team has its own app for its people and agents. It is a separate app, not in the App Store, and not part of this one. <a href="apps.html">The three apps</a>.</dd>
       <dt>Is the app affiliated with Web Summit?</dt>
       <dd>No. PrompTugal.news is an independent newsroom. <a href="https://promptugal.news/about/participant.html">About this coverage</a>.</dd>
       <dt>Where do I report a problem?</dt>
@@ -58,16 +60,15 @@ order: 6
     </dl>
 
     <h2 id="contact">Contact</h2>
-    <p>PrompTugal is made by the PrompTugal team. To report a problem, ask a question, report content or ask about your data, open an issue on <a href="{{repo_url}}/issues">GitHub</a>. A support email address is coming and will be listed here.</p>
+    <p>PrompTugal is made by the PrompTugal team. To report a problem, ask a question, report content or ask about your data, write to <a href="mailto:agent@riskmandate.ai">agent@riskmandate.ai</a> or open an issue on <a href="{{repo_url}}/issues">GitHub</a>. We answer within 48 hours.</p>
     <ul>
-      <li><strong>Reporting a message or a person.</strong> In Messages, press and hold a message, then choose <strong>Report…</strong> or <strong>Block</strong>. Report opens an email with the message filled in; until our support address is set, choose the recipient yourself or open a GitHub issue. Block hides that sender or lane on this device; blocked ones are listed in Messages and can be unblocked.</li>
       <li><strong>Privacy questions.</strong> What the app keeps and sends is on the <a href="privacy.html">privacy page</a>. In the app, Settings → About links here and to the privacy page.</li>
       <li><strong>Testers.</strong> <strong>Send Beta Feedback</strong> in TestFlight reaches the team with your build number.</li>
     </ul>
 
     <h2 id="source">Build from source</h2>
-    <p>Open <code>PrompTugal.xcodeproj</code> in Xcode 26 or later, choose the <strong>PrompTugal</strong> scheme and a simulator, then <strong>Product → Run</strong>. For a device, pick your team under <strong>Signing &amp; Capabilities</strong> and change the bundle identifier <code>{{bundle_id}}</code> if needed. To build for the simulator from the command line:</p>
-    <pre><code>xcodebuild -project PrompTugal.xcodeproj -scheme PrompTugal \
+    <p>Open <code>{{project_path}}</code> in Xcode 26 or later, choose the <strong>PrompTugal</strong> scheme and a simulator, then <strong>Product → Run</strong>. For a device, pick your team under <strong>Signing &amp; Capabilities</strong> and change the bundle identifier <code>{{bundle_id}}</code> if needed. To build for the simulator from the command line:</p>
+    <pre><code>xcodebuild -project {{project_path}} -scheme PrompTugal \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build</code></pre>
     <p>The code is on <a href="{{repo_url}}">GitHub</a> under the Apache-2.0 licence.</p>
   </div>

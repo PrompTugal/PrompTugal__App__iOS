@@ -47,7 +47,7 @@ final class PasskeyPRF: NSObject, ASAuthorizationControllerDelegate, ASAuthoriza
         }
         var errorDescription: String? {
             switch self {
-            case .failed: "The passkey request failed. Try again, or paste your key."
+            case .failed: String(localized: "The passkey request failed. Try again, or paste your key.", bundle: .module)
             default: description
             }
         }
