@@ -10,7 +10,7 @@ name: iOS
 #   build     per affected app: Debug build for the iOS Simulator and Release build
 #             for a device (unsigned), as two matrix legs
 #   test      per affected app, on an iPhone and an iPad simulator: dev, pull requests
-#             and workflow_dispatch only (night/** and split/** pushes build only)
+#             and workflow_dispatch only (night/** pushes build only; split/** branches run by workflow_dispatch)
 #   packages  per affected Swift package with a Tests/ folder
 #   result    one stable check name that is green when everything above is
 #
@@ -23,7 +23,7 @@ name: iOS
 
 on:
   push:
-    branches: [dev, 'night/**', 'split/**']
+    branches: [dev, 'night/**']
     paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
   pull_request:
     paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
