@@ -2346,6 +2346,29 @@
         }
       }
     },
+    "Session": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão"
+          }
+        }
+      }
+    },
     "Sessions or venues": {
       "extractionState": "manual",
       "localizations": {
@@ -3078,6 +3101,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "agora"
+          }
+        }
+      }
+    },
+    "the agenda": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the agenda"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a agenda"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a agenda"
           }
         }
       }

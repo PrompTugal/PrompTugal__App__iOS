@@ -38,7 +38,7 @@ public struct NewsHomeView: View {
         Page(maxWidth: 900) {
             ScreenHeader(kicker: "PrompTugal.news", title: String(localized: "The news", bundle: .module),
                          summary: String(localized: "Independent coverage from Lisbon: the latest, the newsletter and the stories being made.", bundle: .module))
-            Picker("Form", selection: $form) {
+            Picker(String(localized: "Form", bundle: .module), selection: $form) {
                 ForEach(Form.allCases) { Text($0.label).tag($0) }
             }
             .pickerStyle(.segmented)

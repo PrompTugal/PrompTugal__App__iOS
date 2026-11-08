@@ -51,12 +51,12 @@ public enum ShellLink {
         let items = URLComponents(url: link, resolvingAgainstBaseURL: false)?.queryItems ?? []
         if let slug = items.first(where: { $0.name == "session" })?.value,
            !slug.isEmpty, slug.range(of: #"^[a-z0-9][a-z0-9-]*$"#, options: .regularExpression) != nil {
-            return LinkedPage(url: FeedClient.site.appendingPathComponent("events/\(slug)/index.html"), title: "Session")
+            return LinkedPage(url: FeedClient.site.appendingPathComponent("events/\(slug)/index.html"), title: String(localized: "Session", bundle: .module))
         }
         if let text = items.first(where: { $0.name == "url" })?.value, let url = URL(string: text),
            url.scheme == "https", let host = url.host()?.lowercased(), allowedHosts.contains(host),
            !isBlocked(url) {
-            return LinkedPage(url: url, title: "Briefing")
+            return LinkedPage(url: url, title: String(localized: "Briefing", bundle: .module))
         }
         return nil
     }
