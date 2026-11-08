@@ -8,6 +8,9 @@ runs on any GitHub runner without installing anything.
     asc.py compliance   --version 0.3.1 --build 123        # usesNonExemptEncryption = false
     asc.py whats-new    --version 0.3.1 --build 123 --file notes.txt
     asc.py submit       --version 0.3.1 --build 123 [--yes] # App Store review
+    asc.py store-screenshots --dir shots --ids 01-now,02-team.schedule,03-explore,06-explore.people
+                        [--also en-GB=en-US] [--version 0.4.n] [--yes]   # dry run unless --yes
+    asc.py age-rating   [--set key=value ...] [--yes]       # shows the declaration; sets only what --set names
     asc.py store-metadata --listing store/listing.json [--version 0.4.n] [--also en-GB=en-US]
                         [--skip whatsNew] [--content-rights USES_THIRD_PARTY_CONTENT] [--categories NEWS,BUSINESS]
                         [--review-notes review-notes.txt] [--set-version-string 0.4.n] [--yes]
@@ -411,10 +414,174 @@ def cmd_store_metadata(a):
         say(f"- ✅ {what}: {method} done")
 
 
+# ---- App Store screenshots: <dir>/<locale>/<DISPLAY_TYPE>/<NN>-<id>.jpg from the Screens run ----
+
+def md5_hex(path):
+    import hashlib
+    h = hashlib.md5()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def plan_screenshots(a):
+    """{locale: {display type: [files in store order]}} from the folder, the ids and the --also copies."""
+    ids = [i.strip() for i in a.ids.split(",") if i.strip()]
+    out = {}
+    root = a.dir
+    for loc in sorted(os.listdir(root)):
+        ldir = os.path.join(root, loc)
+        if not os.path.isdir(ldir):
+            continue
+        for disp in sorted(os.listdir(ldir)):
+            ddir = os.path.join(ldir, disp)
+            if not os.path.isdir(ddir):
+                continue
+            files = []
+            for i in ids:
+                match = [f for f in sorted(os.listdir(ddir)) if f.split("-", 1)[-1] == i + ".jpg" or f == i + ".jpg"]
+                if not match:
+                    sys.exit(f"::error::{loc}/{disp}: no file for id {i}")
+                files.append(os.path.join(ddir, match[0]))
+            out.setdefault(loc, {})[disp] = files
+    for spec in a.also:
+        dst, src = spec.split("=")
+        out[dst] = out[src]
+    return out
+
+
+def upload_screenshot(set_id, path, name):
+    size = os.path.getsize(path)
+    res = call("POST", "/v1/appScreenshots", {"data": {"type": "appScreenshots",
+               "attributes": {"fileName": name, "fileSize": size},
+               "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": set_id}}}}})["data"]
+    data = open(path, "rb").read()
+    for op in res["attributes"]["uploadOperations"]:
+        chunk = data[op["offset"]:op["offset"] + op["length"]]
+        req = urllib.request.Request(op["url"], data=chunk, method=op["method"],
+                                     headers={h["name"]: h["value"] for h in op.get("requestHeaders", [])})
+        with urllib.request.urlopen(req, timeout=120):
+            pass
+    call("PATCH", f"/v1/appScreenshots/{res['id']}", {"data": {"type": "appScreenshots", "id": res["id"],
+         "attributes": {"uploaded": True, "sourceFileChecksum": md5_hex(path)}}})
+    return res["id"]
+
+
+def cmd_store_screenshots(a):
+    plan = plan_screenshots(a)
+    app = app_id()
+    versions = call("GET", f"/v1/apps/{app}/appStoreVersions?filter[platform]=IOS&limit=20")["data"]
+    if a.version:
+        version = next((v for v in versions if v["attributes"]["versionString"] == a.version), None)
+    else:
+        version = next((v for v in versions if v["attributes"].get("appStoreState") in EDITABLE), None)
+    if not version:
+        sys.exit("::error::no editable App Store version")
+    vid = version["id"]
+    locs = {l["attributes"]["locale"]: l for l in
+            call("GET", f"/v1/appStoreVersions/{vid}/appStoreVersionLocalizations?limit=50")["data"]}
+    say(f"### App Store screenshots, version {version['attributes']['versionString']}: {'APPLY' if a.yes else 'dry run, nothing is changed'}")
+    say("")
+    say("| Locale | Display type | Now | Would be |")
+    say("| --- | --- | --- | --- |")
+    todo = []
+    for loc, kinds in plan.items():
+        l = locs.get(loc)
+        if not l:
+            say(f"| {loc} | | (no version localization) | ❌ create the localization first (store-metadata) |")
+            continue
+        sets = {s["attributes"]["screenshotDisplayType"]: s for s in
+                call("GET", f"/v1/appStoreVersionLocalizations/{l['id']}/appScreenshotSets?limit=50")["data"]}
+        for disp, files in kinds.items():
+            have = []
+            if disp in sets:
+                have = call("GET", f"/v1/appScreenshotSets/{sets[disp]['id']}/appScreenshots?limit=50")["data"]
+            names_now = [h["attributes"].get("fileName") for h in have]
+            names_want = [f"{i + 1:02d}-{os.path.basename(p).split('-', 1)[-1]}" for i, p in enumerate(files)]
+            same = names_now == names_want and all(h["attributes"].get("assetDeliveryState", {}).get("state") == "COMPLETE" for h in have)
+            say(f"| {loc} | {disp} | {len(have)} image(s) | {'same, skipped' if same else str(len(files)) + ' image(s): ' + ', '.join(names_want)} |")
+            if not same:
+                todo.append((loc, l["id"], disp, sets.get(disp), have, files, names_want))
+    say("")
+    say(f"- Sets to (re)write: {len(todo)}")
+    if not a.yes:
+        say("Dry run: nothing changed. Run with **confirm** ticked to upload.")
+        return
+    for loc, lid, disp, existing, have, files, names in todo:
+        if existing:
+            set_id = existing["id"]
+            for h in have:
+                call("DELETE", f"/v1/appScreenshots/{h['id']}")
+        else:
+            set_id = call("POST", "/v1/appScreenshotSets", {"data": {"type": "appScreenshotSets",
+                          "attributes": {"screenshotDisplayType": disp},
+                          "relationships": {"appStoreVersionLocalization": {"data": {"type": "appStoreVersionLocalizations", "id": lid}}}}})["data"]["id"]
+        ids = [upload_screenshot(set_id, p, n) for p, n in zip(files, names)]
+        call("PATCH", f"/v1/appScreenshotSets/{set_id}/relationships/appScreenshots",
+             {"data": [{"type": "appScreenshots", "id": i} for i in ids]})
+        say(f"- ✅ {loc} {disp}: {len(ids)} image(s) uploaded")
+    # Wait for Apple to finish processing
+    deadline = time.time() + 600
+    pending = 1
+    while pending and time.time() < deadline:
+        pending = 0
+        for loc, lid, disp, existing, have, files, names in todo:
+            for s in call("GET", f"/v1/appStoreVersionLocalizations/{lid}/appScreenshotSets?limit=50")["data"]:
+                if s["attributes"]["screenshotDisplayType"] != disp:
+                    continue
+                for sc in call("GET", f"/v1/appScreenshotSets/{s['id']}/appScreenshots?limit=50")["data"]:
+                    if sc["attributes"].get("assetDeliveryState", {}).get("state") != "COMPLETE":
+                        pending += 1
+        if pending:
+            time.sleep(10)
+    say(f"- Processing: {'all complete' if not pending else str(pending) + ' image(s) still processing'}")
+
+
+# ---- Age rating declaration ----
+
+def cmd_age_rating(a):
+    app = app_id()
+    infos = call("GET", f"/v1/apps/{app}/appInfos")["data"]
+    info = next((i for i in infos if (i["attributes"].get("appStoreState") or i["attributes"].get("state")) in EDITABLE), infos[0])
+    decl = call("GET", f"/v1/appInfos/{info['id']}/ageRatingDeclaration")["data"]
+    attrs = decl["attributes"]
+    say(f"### Age rating declaration `{decl['id']}`: {'APPLY' if a.yes and a.set else 'dry run, nothing is changed'}")
+    say("")
+    say("| Field | Now | Would be |")
+    say("| --- | --- | --- |")
+    want = {}
+    for kv in a.set:
+        k, v = kv.split("=", 1)
+        if k not in attrs:
+            sys.exit(f"::error::unknown field {k}; the declaration has: {', '.join(sorted(attrs))}")
+        want[k] = {"true": True, "false": False}.get(v.lower(), v)
+    for k in sorted(attrs):
+        w = want.get(k)
+        say(f"| {k} | {attrs[k]} | {'**' + str(w) + '**' if k in want and attrs[k] != w else ('same' if k in want else '')} |")
+    changed = {k: v for k, v in want.items() if attrs[k] != v}
+    if not a.yes or not changed:
+        say("")
+        say("Dry run: nothing changed." if not a.yes else "Nothing to change.")
+        return
+    call("PATCH", f"/v1/ageRatingDeclarations/{decl['id']}", {"data": {"type": "ageRatingDeclarations", "id": decl["id"], "attributes": changed}})
+    back = call("GET", f"/v1/appInfos/{info['id']}/ageRatingDeclaration")["data"]["attributes"]
+    say(f"- ✅ Set {', '.join(changed)}; read back: " + ", ".join(f"{k}={back.get(k)}" for k in changed))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("has-record")
+    ss = sub.add_parser("store-screenshots")
+    ss.add_argument("--dir", required=True)
+    ss.add_argument("--ids", required=True)
+    ss.add_argument("--also", action="append", default=[])
+    ss.add_argument("--version", default="")
+    ss.add_argument("--yes", action="store_true")
+    ar = sub.add_parser("age-rating")
+    ar.add_argument("--set", action="append", default=[], help="field=value")
+    ar.add_argument("--yes", action="store_true")
     sm = sub.add_parser("store-metadata")
     sm.add_argument("--listing", required=True)
     sm.add_argument("--version", default="")
@@ -443,7 +610,8 @@ def main():
     if not (os.environ.get("ASC_KEY_PATH") or os.environ.get("ASC_KEY_P8_BASE64")):
         sys.exit("skipped: secret ASC_KEY_P8_BASE64 missing")
     {"has-record": cmd_has_record, "wait-build": cmd_wait_build, "compliance": cmd_compliance,
-     "whats-new": cmd_whats_new, "submit": cmd_submit, "store-metadata": cmd_store_metadata}[a.cmd](a)
+     "whats-new": cmd_whats_new, "submit": cmd_submit, "store-metadata": cmd_store_metadata,
+     "store-screenshots": cmd_store_screenshots, "age-rating": cmd_age_rating}[a.cmd](a)
 
 
 if __name__ == "__main__":

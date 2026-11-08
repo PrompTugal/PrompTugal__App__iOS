@@ -15,7 +15,7 @@ on:
       action:
         description: 'submit = submit a build for App Review; store-metadata = fill the App Store listing'
         type: choice
-        options: [submit, store-metadata]
+        options: [submit, store-metadata, store-screenshots, age-rating]
         default: submit
       version:
         description: 'submit: version, e.g. 0.3.1 (CFBundleShortVersionString). store-metadata: the App Store version to fill (empty = the editable one)'
@@ -39,6 +39,18 @@ on:
         description: 'store-metadata: path of listing.json in that ref (review-notes.txt is read from the same folder)'
         type: string
         default: 'briefs/2026-11-08__summit-app-store/store/listing.json'
+      screens_run:
+        description: 'store-screenshots: id of the Screens run whose artifact appstore-screens-<sha>-promptugal to upload'
+        type: string
+        default: ''
+      screens_ids:
+        description: 'store-screenshots: screen ids to upload, in store order (their position becomes 01, 02, ...)'
+        type: string
+        default: '01-now,02-team.schedule,03-explore,06-explore.people'
+      age_set:
+        description: 'age-rating: field=value pairs, space-separated (empty = only show the declaration)'
+        type: string
+        default: ''
       set_version_string:
         description: 'store-metadata: change the App Store version string to this (the build version, e.g. 0.4.31). Empty = leave it.'
         type: string
@@ -142,3 +154,47 @@ jobs:
                 --review-notes "$(dirname "$LISTING")/review-notes.txt")
           [ -n "$VERSION_STRING" ] && args+=(--set-version-string "$VERSION_STRING")
           python3 scripts/release/asc.py store-metadata "${args[@]}" ${{ inputs.confirm && '--yes' || '' }}
+
+  extras:
+    name: ${{ inputs.action }} (${{ inputs.confirm && 'apply' || 'dry run' }})
+    if: inputs.action == 'store-screenshots' || inputs.action == 'age-rating'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: testflight
+    permissions:
+      contents: read
+      actions: read   # download the screenshots artifact of another run
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download the screenshots
+        if: inputs.action == 'store-screenshots'
+        uses: actions/download-artifact@v5
+        with:
+          run-id: ${{ inputs.screens_run }}
+          github-token: ${{ github.token }}
+          pattern: appstore-screens-*-promptugal
+          merge-multiple: true
+          path: shots
+
+      - name: Run
+        env:
+          AGE_SET: ${{ inputs.age_set }}
+          IDS: ${{ inputs.screens_ids }}
+          VERSION_NAME: ${{ inputs.version }}
+        run: |
+          if [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$ASC_KEY_P8_BASE64" ]; then
+            echo "- ⏭️ skipped: ASC secrets missing" >> "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
+          yes_flag=${{ inputs.confirm && '--yes' || '' }}
+          if [ "${{ inputs.action }}" = store-screenshots ]; then
+            find shots -maxdepth 3 | head -20
+            python3 scripts/release/asc.py store-screenshots --dir shots --ids "$IDS" --also en-GB=en-US --version "$VERSION_NAME" $yes_flag
+          else
+            args=(); for kv in $AGE_SET; do args+=(--set "$kv"); done
+            python3 scripts/release/asc.py age-rating "${args[@]}" $yes_flag
+          fi
