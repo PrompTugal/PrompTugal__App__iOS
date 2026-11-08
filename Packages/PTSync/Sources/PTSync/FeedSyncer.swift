@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 public struct FeedRefreshReport: Sendable, Equatable {
     /// Feeds whose items were fetched and kept.

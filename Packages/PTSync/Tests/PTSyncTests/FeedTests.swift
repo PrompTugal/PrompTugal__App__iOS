@@ -285,16 +285,20 @@ final class FakeFeeds: SyncTransport, @unchecked Sendable {
     private var statuses: [URL: Int] = [:]
     private var failing: Set<URL> = []
     private var log: [URL] = []
+    private var slowDown = false
 
     func serve(_ url: URL, _ body: Data, etag: String? = nil) {
         lock.withLock { bodies[url] = body; etags[url] = etag }
     }
+    /// Each download takes a moment, so a second request can arrive while the first is still running.
+    func slow() { lock.withLock { slowDown = true } }
     func status(_ url: URL, _ code: Int) { lock.withLock { statuses[url] = code } }
     func fail(_ url: URL) { lock.withLock { _ = failing.insert(url) } }
     func requests(_ url: URL) -> Int { lock.withLock { log.filter { $0 == url }.count } }
     var totalRequests: Int { lock.withLock { log.count } }
 
     func download(_ url: URL, ifNoneMatch: String?, into directory: URL) async throws -> SyncDownload {
+        if lock.withLock({ slowDown }) { try await Task.sleep(nanoseconds: 200_000_000) }
         let outcome: (Int, Data?, String?) = try lock.withLock {
             log.append(url)
             if failing.contains(url) { throw URLError(.notConnectedToInternet) }
@@ -408,6 +412,7 @@ struct FeedSyncerTests {
         defer { dir.cleanup() }
         let site = FakeFeeds()
         site.serve(articles.url, items([("g1", "One")]), etag: "\"v1\"")
+        site.slow()
         let syncer = FeedSyncer(store: FeedStore(directory: dir.url), feeds: [articles], transport: site)
         async let first = syncer.refresh()
         async let second = syncer.refresh()

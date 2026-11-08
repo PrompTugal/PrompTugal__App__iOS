@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 public enum FeedFormat: String, Codable, Sendable, Hashable {
     /// RSS 2.0 (`<rss><channel><item>`), with `media:content` or an image `enclosure` for the picture.
