@@ -8,7 +8,7 @@ private func pickEvent(_ slug: String, _ time: String, day: String = "2026-11-10
           page: "events/\(slug)/index.html")
 }
 
-private func pickStore() -> ScheduleStore {
+@MainActor private func pickStore() -> ScheduleStore {
     ScheduleStore(directory: FileManager.default.temporaryDirectory.appendingPathComponent("pick-\(UUID().uuidString)"))
 }
 
