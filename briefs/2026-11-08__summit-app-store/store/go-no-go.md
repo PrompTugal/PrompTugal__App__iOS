@@ -239,3 +239,18 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 15:40: release #104 (3125e3e) is still archiving PrompTugal. Open: build number and processing VALID, attached to 0.4.23; Dinis's hand steps; G4.
 
 16:03: **uploaded: PrompTugal 0.4.23 (204)** from iOS release #104 (v0.4.23, 3125e3e; app code = 535e9ba). An ios-submit dry run (submit, 0.4.23, build 204, confirm=false) is running: wait-build, compliance, submit plan. Open: processing VALID (G1), the dry-run plan, Dinis's hand steps (M6, M9), G4.
+
+## FINAL: GO for PrompTugal 0.4.23 (204), conditional on Dinis's three hand steps (16:05 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| G1 | 0.4.23 (204) processed VALID, no ITMS; export compliance usesNonExemptEncryption = false; version 0.4.23 PREPARE_FOR_SUBMISSION | GO |
+| G2, G3, G6, G7, G8, G9 | Purpose strings (5, each in en, pt-PT, pt-BR); no debug UI in Release; Ask reachable with the review key; Vault absent; no trademark on screen except the independence note | GO (runs 2 to 10) |
+| G4 | Airplane-mode fresh install: accepted on code evidence (seed wired in `PrompTugalApp.init`, `ReaderStore` falls back to it when the cache is empty, `PrompTugalTests` checks it decodes). Dinis should still confirm it on the TestFlight build. | GO (evidence) |
+| G5 | Run 398 on 535e9ba: 28/28; 3125e3e has identical app code | GO |
+| M1–M5, M7, M8, M10 | Listings in four locales applied; 12 screenshot sets × 4; URLs live; age rating 4+ read back; review notes (two hosts, demo key, step 4); content rights; categories | GO |
+| M6 | App Privacy: Other User Content, App Functionality, not linked, no tracking; every other type not collected; tracking No | **condition: Dinis** |
+| M9 | Mac (Apple silicon) and Vision Pro availability unticked; IDFA question: No | **condition: Dinis** |
+| P1 | No open "stuck" persona finding on the submitted screens | GO |
+
+**Verdict:** submit 0.4.23 (204) for App Review as soon as Dinis confirms M6 and M9. The same build and the same review notes are GO for the TestFlight public link (Beta App Review).
