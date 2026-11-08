@@ -5,4 +5,4 @@
 CODE_SIGN_ENTITLEMENTS = $(PT_WIDGET_ENTITLEMENTS)
 PT_WIDGET_ENTITLEMENTS = Config/PrompTugalWidgets.entitlements
 
-#include? "Local.xcconfig"
+#include? "../../../Config/Local.xcconfig"
