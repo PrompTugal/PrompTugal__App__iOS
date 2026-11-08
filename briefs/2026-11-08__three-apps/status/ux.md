@@ -177,3 +177,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 11:55 UTC: code review of split/design 49a9fa8 sent: countdown items (registration + Opening Night), no registration in On now/Up next, `.noAgenda` state, smaller clock so For you is above the fold, Practical rows, story title, gear label.
 - 12:15 UTC: split/design 1b5a0a7 checked: 5 of 7 fixes done. Open for team (NowModel): NOW-M-1 countdown items (registration + Opening Night), NOW-M-2 no registration in On now / Up next / Tomorrow. No public-app Screens run yet today.
 - 12:45 UTC: rc2 (3de45dd) UX review by code: 2 blockers sent (agenda seed not wired; Talks list strings read the app bundle, English in pt). Follow-ups in next-version.md.
+- 12:45 UTC: rc4 (ce58c5e) re-check: B2 pass; B1 not wired (AgendaSeed defined, AgendaHub.seedAgenda never assigned), one-line fix sent for apps.
