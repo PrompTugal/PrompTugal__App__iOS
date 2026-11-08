@@ -2,6 +2,7 @@ import PTAgenda
 import PTAsk
 import PTCore
 import PTDeck
+import PTExplore
 import PTNews
 import PTVaultUI
 import PTWeb
@@ -18,11 +19,28 @@ enum PublicDestinations {
         tabs + more + routable + debugOnlyScreens + debug
     }
 
-    /// Old ids that still open something sensible: the screen moved into another one.
+    /// Old and extra ids that still open something sensible: the screen moved into another one.
     static let aliases: [String: String] = [
         "reader.agenda": "explore",      // the agenda is the Talks list in Explore
-        "news.graph": "explore",         // the graph lives in Explore
+        "news.graph": "explore",         // the graph is opened from Explore
         "team.planner": "team.schedule", // the planner is a section of My program
+        "explore.people": "explore",
+        "explore.companies": "explore",
+        "explore.places": "explore",
+        "explore.talk": "explore",
+        "explore.graph": "explore",
+    ]
+
+    /// Where Explore opens for each id that leads there (the App Store screenshots use these ids).
+    static let exploreStarts: [String: ExploreStart] = [
+        "explore": .talks,
+        "reader.agenda": .talks,
+        "explore.people": .speakers,
+        "explore.companies": .companies,
+        "explore.places": .places,
+        "explore.talk": .talk(ref: nil),
+        "explore.graph": .graph,
+        "news.graph": .graph,
     ]
 
     /// The id a link or a launch argument means, after the aliases.
@@ -55,7 +73,9 @@ enum PublicDestinations {
         ShellDestination(id: "team.schedule", title: "My program", symbol: "star", group: "Tabs", kind: .hybrid,
                          summary: "The talks you picked, clashes and free time", phoneTab: 1) { AnyView(MyDayView()) },
         ShellDestination(id: "explore", title: "Explore", symbol: "magnifyingglass", group: "Tabs",
-                         summary: "Talks, speakers, companies and places", phoneTab: 2) { AnyView(ExploreView()) },
+                         summary: "Talks, speakers, companies and places", phoneTab: 2, wrapsStack: false) {
+            AnyView(ExploreView())
+        },
         ShellDestination(id: "news.home", title: "News", symbol: "newspaper", group: "Tabs",
                          summary: "Latest, newsletter, stories", phoneTab: 3) { AnyView(NewsHomeView()) },
     ]

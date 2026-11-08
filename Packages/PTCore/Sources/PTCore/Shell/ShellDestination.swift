@@ -19,13 +19,15 @@ public struct ShellDestination: Identifiable {
     /// The screen has its own NavigationSplitView or NavigationStack. The shell then does not wrap it
     /// in a stack: on iPad it hides the shell's sidebar, on iPhone it opens full screen.
     public var ownsNavigation: Bool
+    /// False: the screen brings its own NavigationStack, so the shell does not wrap it in one (the sidebar stays).
+    public var wrapsStack: Bool
     /// False: the screen can be opened by id (links, other screens) but is not in the tabs, the sidebar or a list.
     public var listed: Bool
     public let view: @MainActor () -> AnyView
 
     public init(id: String, title: String, symbol: String, group: String, kind: SurfaceKind = .native,
                 summary: String = "", phoneTab: Int? = nil, tabTitle: String? = nil,
-                debugOnly: Bool = false, ownsNavigation: Bool = false, listed: Bool = true,
+                debugOnly: Bool = false, ownsNavigation: Bool = false, wrapsStack: Bool = true, listed: Bool = true,
                 view: @escaping @MainActor () -> AnyView) {
         self.id = id
         self.title = title
@@ -37,6 +39,7 @@ public struct ShellDestination: Identifiable {
         self.tabTitle = tabTitle
         self.debugOnly = debugOnly
         self.ownsNavigation = ownsNavigation
+        self.wrapsStack = wrapsStack
         self.listed = listed
         self.view = view
     }

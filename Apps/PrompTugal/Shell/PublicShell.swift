@@ -1,5 +1,6 @@
 import PTAgenda
 import PTCore
+import PTExplore
 import PTNews
 import PTWeb
 import SwiftUI
@@ -24,6 +25,8 @@ struct PublicShell: View {
     @State private var linkedPage: LinkedPage?
     /// A screen that is not a tab, opened over the iPhone shell (Settings from the gear, a link to Ask).
     @State private var presented: PresentedScreen?
+    /// Where Explore opens (a link such as explore.people picks a segment).
+    @State private var exploreStart: ExploreStart = .talks
 
     var body: some View {
         Group {
@@ -37,6 +40,7 @@ struct PublicShell: View {
         .environment(\.newsSource, reader)
         .environment(newsFeeds)
         .environment(\.openDestination, { open($0) })
+        .environment(\.exploreStart, exploreStart)
         .publicFeatures(features)
         .tint(Palette.red)
         .task { await reader.refresh() }
@@ -74,7 +78,8 @@ struct PublicShell: View {
             PublicSidebar(selection: $selection, debug: debug)
                 .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
         } detail: {
-            if let destination = PublicDestinations.openable(selection, debug: debug), destination.ownsNavigation {
+            if let destination = PublicDestinations.openable(selection, debug: debug),
+               destination.ownsNavigation || !destination.wrapsStack {
                 // The screen brings its own columns; the sidebar steps aside (the system button brings it back).
                 destination.view().destinationID(destination.id).id(destination.id)
             } else {
@@ -98,6 +103,7 @@ struct PublicShell: View {
 
     /// Opens a screen by id: a tab selects the tab, any other screen is a sheet on iPhone and the detail on iPad.
     private func open(_ id: String) {
+        if let start = PublicDestinations.exploreStarts[id] { exploreStart = start }
         guard let destination = PublicDestinations.openable(id, debug: debug) else { return }
         selection = destination.id
         if destination.phoneTab != nil {
@@ -216,16 +222,21 @@ private struct PublicPhoneShell: View {
         TabView(selection: $tab) {
             ForEach(tabs) { destination in
                 Tab(destination.tabTitle ?? destination.title, systemImage: destination.symbol, value: destination.id) {
-                    NavigationStack {
-                        destination.view().destinationID(destination.id).surfaceKind(destination.kind)
-                            .toolbar {
-                                if hasGear(destination.id) {
-                                    ToolbarItem(placement: .topBarTrailing) {
-                                        Button(action: openSettings) { Image(systemName: "gearshape") }
-                                            .accessibilityLabel("Settings")
+                    if destination.wrapsStack {
+                        NavigationStack {
+                            destination.view().destinationID(destination.id).surfaceKind(destination.kind)
+                                .toolbar {
+                                    if hasGear(destination.id) {
+                                        ToolbarItem(placement: .topBarTrailing) {
+                                            Button(action: openSettings) { Image(systemName: "gearshape") }
+                                                .accessibilityLabel("Settings")
+                                        }
                                     }
                                 }
-                            }
+                        }
+                    } else {
+                        // The screen has its own navigation stack (Explore).
+                        destination.view().destinationID(destination.id)
                     }
                 }
             }
