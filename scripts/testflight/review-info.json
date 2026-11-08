@@ -1,0 +1,9 @@
+{
+  "_comment": "Beta App Review contact. Dinis fills the four contact fields. No credentials here: the demo keys come from secrets/variables when the workflow runs (see review-notes.txt placeholders).",
+  "contactFirstName": "",
+  "contactLastName": "",
+  "contactEmail": "",
+  "contactPhone": "",
+  "demoAccountRequired": false,
+  "notesFile": "review-notes.txt"
+}
