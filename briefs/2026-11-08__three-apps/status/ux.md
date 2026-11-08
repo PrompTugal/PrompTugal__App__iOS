@@ -174,3 +174,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 11:35 UTC: conductor ruling applied: Ask leaves the tab bar; four tabs; new NOW-1h Ask card on Now; Ask first row in Settings and in the iPad More section.
 - 11:45 UTC: §11 App Store screenshot list for release.
 - 11:40 UTC: NOW-1e Practical items and links final; iPad two-column Now cut; Settings Ask label follows design ("Ask, with your own AI key").
+- 11:55 UTC: code review of split/design 49a9fa8 sent: countdown items (registration + Opening Night), no registration in On now/Up next, `.noAgenda` state, smaller clock so For you is above the fold, Practical rows, story title, gear label.
