@@ -1,6 +1,6 @@
 # Review status
 
-> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". The checklist, the store listing in three languages, the App Privacy and age-rating answers, the review notes and the go/no-go list are in [summit-app-store/store](../../2026-11-08__summit-app-store/store/README.md). Five blockers went to the conductor at 11:30 UTC. The persona walk-through below covers the code on `dev` (66089cd); there are no screenshots yet.
+> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". **FINAL GO at 16:05 UTC for 0.4.23 (204)**, conditional on Dinis's App Privacy, Mac and Vision Pro, and IDFA steps (see [go-no-go.md](../../2026-11-08__summit-app-store/store/go-no-go.md)). The store pack is in [summit-app-store/store](../../2026-11-08__summit-app-store/store/README.md); next-version items are in [next-version.md](../../2026-11-08__summit-app-store/next-version.md).
 
 ## Done
 - 11:30 UTC: App Review checklist ([checklist.md](../../2026-11-08__summit-app-store/store/checklist.md)): 5 blockers, 11 risks, the rest OK. Blockers B1 to B5 sent to the conductor.
