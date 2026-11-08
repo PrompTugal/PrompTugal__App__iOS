@@ -474,25 +474,25 @@
         }
       }
     },
-    "Independent coverage from Lisbon, in every form: the feed, the editions, the stories being made, and the graph.": {
+    "Independent coverage from Lisbon: the latest, the newsletter and the stories being made.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Independent coverage from Lisbon, in every form: the feed, the editions, the stories being made, and the graph."
+            "value": "Independent coverage from Lisbon: the latest, the newsletter and the stories being made."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cobertura independente de Lisboa, em todos os formatos: o feed, as edições, as reportagens em andamento e o grafo."
+            "value": "Cobertura independente de Lisboa: as mais recentes, a newsletter e as reportagens em andamento."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cobertura independente a partir de Lisboa, em todos os formatos: o feed, as edições, as histórias em curso e o grafo."
+            "value": "Cobertura independente a partir de Lisboa: as mais recentes, a newsletter e as histórias em curso."
           }
         }
       }

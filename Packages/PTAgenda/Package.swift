@@ -4,7 +4,6 @@ import PackageDescription
 
 let package = Package(
     name: "PTAgenda",
-    defaultLocalization: "en",
     platforms: [.iOS(.v18)],
     products: [
         .library(name: "PTAgenda", targets: ["PTAgenda"]),
@@ -12,11 +11,16 @@ let package = Package(
     dependencies: [
         .package(path: "../PTCore"),
         .package(path: "../PTWeb"),
+        .package(path: "../PTNowNext"),
     ],
     targets: [
         .target(
             name: "PTAgenda",
-            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "PTWeb", package: "PTWeb")],
+            dependencies: [
+                .product(name: "PTCore", package: "PTCore"),
+                .product(name: "PTWeb", package: "PTWeb"),
+                .product(name: "PTNowNext", package: "PTNowNext"),
+            ],
             resources: [.process("Resources")]
         ),
         .testTarget(

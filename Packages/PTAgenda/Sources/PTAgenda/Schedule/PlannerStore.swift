@@ -28,7 +28,7 @@ public final class PlannerStore {
         self.schedule = schedule
         self.team = team
         self.identity = identity
-        let today = Lisbon.day(.now)
+        let today = Lisbon.day(AgendaClock.now)
         day = Self.summitDays.contains(today) ? today : Self.summitDays[1]
     }
 

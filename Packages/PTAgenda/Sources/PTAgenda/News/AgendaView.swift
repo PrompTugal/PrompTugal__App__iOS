@@ -10,14 +10,27 @@ import PTWeb
 /// times are worked out once per change into `AgendaModel`, not in `body`; rows are small views
 /// with stable ids; each row is one accessibility element with a short label and two actions.
 public struct AgendaView: View {
-    public init() {}
+    /// `openSession`: the app's native session detail (works offline). Without it a row opens the session's web page.
+    public init(openSession: ((Event) -> Void)? = nil) {
+        self.openSession = openSession
+        _day = State(initialValue: Self.initialDay(now: AgendaClock.now))
+    }
+
+    private let openSession: ((Event) -> Void)?
+
+    /// During the summit the agenda opens on today (Lisbon time); otherwise on all days.
+    static func initialDay(now: Date) -> String {
+        let today = Lisbon.day(now)
+        return ProgramModel.summitDays.contains(today) ? today : "all"
+    }
 
     @Environment(ReaderStore.self) private var store
     @Environment(ScheduleStore.self) private var schedule
-    @State private var day = "all"
+    @Environment(PickFeedback.self) private var feedback: PickFeedback?
+    @State private var day: String
     @State private var query = ""
     @State private var picksOnly = false
-    @State private var now = Date.now
+    @State private var now = AgendaClock.now
     @State private var model = AgendaModel.empty
     @State private var opened: Event?
 
@@ -32,15 +45,15 @@ public struct AgendaView: View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: Space.s) {
-                    Kicker("Web Summit Lisbon · 9–12 Nov")
+                    Kicker(String(localized: "Lisbon · 9–12 Nov", bundle: .module))
                     Text(String(localized: "Lisbon time · \(model.clock)", bundle: .module)).font(Typo.data).foregroundStyle(Palette.muted)
                     FreshnessLabel(updated: store.agendaUpdated, staleAfter: 3600)
                 }
-                Picker(String(localized: "Day", bundle: .module), selection: $day) {
+                Picker("Day", selection: $day) {
                     Text(String(localized: "All days", bundle: .module)).tag("all")
                     ForEach(model.days) { Text($0.label).tag($0.id) }
                 }
-                Toggle(String(localized: "My picks only", bundle: .module), isOn: $picksOnly)
+                Toggle("My picks only", isOn: $picksOnly)
             }
             if !model.running.isEmpty {
                 Section(String(localized: "Happening now", bundle: .module)) {
@@ -53,16 +66,16 @@ public struct AgendaView: View {
                 }
             }
             if store.agenda.isEmpty {
-                StateView(phase: store.agendaUnavailable ? .failed(String(localized: "The agenda could not be reached.", bundle: .module)) : .loading,
+                StateView(phase: store.agendaUnavailable ? .failed("The agenda could not be reached.") : .loading,
                           hasData: false, title: "agenda") { Task { await store.refresh() } }
             } else if model.isEmpty {
-                ContentUnavailableView(String(localized: "No matching sessions", bundle: .module), systemImage: "magnifyingglass",
+                ContentUnavailableView("No matching sessions", systemImage: "magnifyingglass",
                                        description: Text(String(localized: "Try another day, filter or search.", bundle: .module)))
             }
         }
         .listStyle(.insetGrouped)
-        .searchable(text: $query, prompt: String(localized: "Sessions or venues", bundle: .module))
-        .navigationTitle(String(localized: "Agenda", bundle: .module))
+        .searchable(text: $query, prompt: "Sessions or venues")
+        .navigationTitle("Agenda")
         .navigationDestination(item: $opened) { event in
             if let url = event.url { WebPage(url: url, title: "Session") }
         }
@@ -75,16 +88,21 @@ public struct AgendaView: View {
             // One tick a minute moves String(localized: "Happening now", bundle: .module) along, without redrawing per second.
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(60))
-                now = .now
+                now = AgendaClock.now
             }
         }
         .refreshable { await store.refresh() }
-        .webTwin(FeedClient.fullAgenda, title: String(localized: "Agenda", bundle: .module))
+        .webTwin(FeedClient.fullAgenda, title: "Agenda")
     }
 
     private func rowView(_ row: AgendaModel.Row) -> some View {
         AgendaRow(row: row, picked: schedule.isPicked(row.event),
-                  open: { opened = row.event }, toggle: { schedule.toggle(row.event) })
+                  open: { if let openSession { openSession(row.event) } else { opened = row.event } }, toggle: { togglePick(row.event) })
+    }
+
+    /// Picks or un-picks with the star's feedback (a toast, a clash warning) when the app shows toasts.
+    private func togglePick(_ event: Event) {
+        if let feedback { feedback.toggle(event, in: schedule) } else { schedule.toggle(event) }
     }
 }
 
@@ -116,10 +134,10 @@ private struct AgendaRow: View {
         // One element for VoiceOver and UI tests: a short label, open by default, pick as an action.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(row.accessibilityLabel)
-        .accessibilityValue(picked ? String(localized: "In my schedule", bundle: .module) : "")
+        .accessibilityValue(picked ? String(localized: "In my program", bundle: .module) : "")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { open() }
-        .accessibilityAction(named: picked ? String(localized: "Remove from my schedule", bundle: .module) : String(localized: "Add to my schedule", bundle: .module), toggle)
+        .accessibilityAction(named: picked ? String(localized: "Remove from my program", bundle: .module) : String(localized: "Add to my program", bundle: .module), toggle)
     }
 }
 
@@ -211,7 +229,7 @@ public struct AgendaModel {
         }
 
         func row(_ event: Event) -> Row {
-            let kind = event.official ? String(localized: "Official programme", bundle: .module) : String(localized: "Side event", bundle: .module)
+            let kind = event.official ? "Official programme" : "Side event"
             let detail = event.place.isEmpty ? kind : "\(event.place) · \(kind)"
             return Row(event: event, detail: detail,
                        accessibilityLabel: "\(labels[event.date] ?? event.date), \(event.time). \(event.title). \(event.place)")

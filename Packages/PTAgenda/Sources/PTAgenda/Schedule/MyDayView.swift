@@ -15,7 +15,7 @@ public struct MyDayView: View {
     @Environment(ScheduleVaultLink.self) private var vaultLink
     @Environment(\.openURL) private var openURL
     @State private var calendarMessage: String?
-    @State private var timelineDay = Lisbon.day(.now)
+    @State private var timelineDay = Lisbon.day(AgendaClock.now)
     @Environment(\.horizontalSizeClass) private var width
 
     private struct Row: Identifiable {
@@ -42,7 +42,7 @@ public struct MyDayView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     Task {
-                        let upcoming = schedule.picks.filter { ($0.start ?? .distantPast) > .now }
+                        let upcoming = schedule.picks.filter { ($0.start ?? .distantPast) > AgendaClock.now }
                         switch await CalendarExport.add(upcoming) {
                         case .added(let count): calendarMessage = "\(count) sessions added to your calendar."
                         case .denied: calendarMessage = "Calendar access was not given. You can allow it in Settings."
@@ -65,7 +65,7 @@ public struct MyDayView: View {
 
     /// iPad: the chosen day as a time line, picks and stand-ups as blocks.
     private var timeline: some View {
-        let now = Date.now
+        let now = AgendaClock.now
         let days = Array(Set(rowsByDay(now: now).map(\.0).filter { !$0.isEmpty } + [Lisbon.day(now)])).sorted()
         let day = days.contains(timelineDay) ? timelineDay : (days.first ?? timelineDay)
         let items: [DayPlanner.Item] = rowsByDay(now: now).first { $0.0 == day }?.1.compactMap { row in
@@ -81,7 +81,7 @@ public struct MyDayView: View {
             .pickerStyle(.segmented)
             .padding()
             DayTimelineView(day: day, items: items) { item in
-                if let row = rowsByDay(now: .now).flatMap(\.1).first(where: { $0.id == item.id }), let url = row.url {
+                if let row = rowsByDay(now: AgendaClock.now).flatMap(\.1).first(where: { $0.id == item.id }), let url = row.url {
                     openURL(url)
                 }
             }

@@ -431,25 +431,25 @@
         }
       }
     },
-    "Add to my schedule": {
+    "Add to my program": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Add to my schedule"
+            "value": "Add to my program"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Adicionar ao meu dia"
+            "value": "Adicionar ao meu programa"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Adicionar ao meu dia"
+            "value": "Adicionar ao meu programa"
           }
         }
       }
@@ -822,25 +822,25 @@
         }
       }
     },
-    "In my schedule": {
+    "In my program": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "In my schedule"
+            "value": "In my program"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "No meu dia"
+            "value": "No meu programa"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "No meu dia"
+            "value": "No meu programa"
           }
         }
       }
@@ -956,6 +956,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hora de Lisboa. O seu briefing está pronto."
+          }
+        }
+      }
+    },
+    "Lisbon · 9–12 Nov": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisbon · 9–12 Nov"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisboa · 9–12 nov."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisboa · 9–12 nov."
           }
         }
       }
@@ -1653,25 +1676,25 @@
         }
       }
     },
-    "Remove from my schedule": {
+    "Remove from my program": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remove from my schedule"
+            "value": "Remove from my program"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remover do meu dia"
+            "value": "Remover do meu programa"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remover do meu dia"
+            "value": "Remover do meu programa"
           }
         }
       }

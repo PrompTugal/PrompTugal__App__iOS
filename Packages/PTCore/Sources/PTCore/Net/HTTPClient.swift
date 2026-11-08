@@ -85,6 +85,10 @@ public final class HTTPClient: Sendable {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 30
         configuration.httpAdditionalHeaders = ["User-Agent": userAgent]
+        // No cookies: nothing the app fetches relies on them, and the shared cookie store would carry them across requests.
+        configuration.httpCookieStorage = nil
+        configuration.httpShouldSetCookies = false
+        configuration.httpCookieAcceptPolicy = .never
         return URLSession(configuration: configuration)
     }
 
