@@ -59,8 +59,8 @@ private struct TalkCalendarButton: View {
         guard let slug = ScheduleID.fromPage(event.page) else { return }
         let pick = SchedulePick(id: slug, at: .now, event: event)
         switch await CalendarExport.add([pick]) {
-        case .added(let count): message = count == 0 ? "This talk has no time yet." : "Added to your calendar."
-        case .denied: message = "Calendar access is off. Allow it in Settings to add talks."
+        case .added(let count): message = count == 0 ? String(localized: "This talk has no time yet.") : String(localized: "Added to your calendar.")
+        case .denied: message = String(localized: "Calendar access is off. Allow it in Settings to add talks.")
         case .failed(let text): message = text
         }
     }

@@ -1,6 +1,29 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "Next · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next · %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em seguida · %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A seguir · %@"
+          }
+        }
+      }
+    },
     "No sessions coming up": {
       "extractionState": "manual",
       "localizations": {
@@ -20,6 +43,75 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sem sessões a seguir"
+          }
+        }
+      }
+    },
+    "Now and next": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now and next"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora e em seguida"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora e a seguir"
+          }
+        }
+      }
+    },
+    "Open PrompTugal to load the agenda.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open PrompTugal to load the agenda."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abra o PrompTugal para carregar a agenda."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abra o PrompTugal para carregar a agenda."
+          }
+        }
+      }
+    },
+    "The session happening now and what comes next, in Lisbon time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The session happening now and what comes next, in Lisbon time."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sessão acontecendo agora e a próxima, no horário de Lisboa."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sessão a decorrer agora e a seguinte, em hora de Lisboa."
           }
         }
       }

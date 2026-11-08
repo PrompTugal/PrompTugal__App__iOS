@@ -116,6 +116,29 @@
         }
       }
     },
+    "Add to Calendar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Calendar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar ao Calendário"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar ao Calendário"
+          }
+        }
+      }
+    },
     "Add to my program": {
       "extractionState": "manual",
       "localizations": {
@@ -158,6 +181,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Adicionado ao meu programa"
+          }
+        }
+      }
+    },
+    "Added to your calendar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added to your calendar."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionada ao seu calendário."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionada ao seu calendário."
           }
         }
       }
@@ -323,6 +369,29 @@
         }
       }
     },
+    "Ask about the summit, with your own AI key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask about the summit, with your own AI key"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunte sobre o evento, com sua própria chave de IA"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunte sobre a cimeira, com a sua própria chave de IA"
+          }
+        }
+      }
+    },
     "Ask uses your own OpenRouter key": {
       "extractionState": "manual",
       "localizations": {
@@ -342,6 +411,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "O Perguntar usa a sua própria chave OpenRouter"
+          }
+        }
+      }
+    },
+    "Ask, with your own AI key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask, with your own AI key"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perguntar, com sua própria chave de IA"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perguntar, com a sua própria chave de IA"
           }
         }
       }
@@ -388,6 +480,98 @@
           "stringUnit": {
             "state": "translated",
             "value": "Versão"
+          }
+        }
+      }
+    },
+    "Buses": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buses"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ônibus"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autocarros"
+          }
+        }
+      }
+    },
+    "Calendar access is off. Allow it in Settings to add talks.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar access is off. Allow it in Settings to add talks."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O acesso ao calendário está desativado. Permita-o nos Ajustes para adicionar palestras."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O acesso ao calendário está desativado. Permita-o nas Definições para adicionar palestras."
+          }
+        }
+      }
+    },
+    "Call 112.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Call 112."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligue 112."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligue 112."
+          }
+        }
+      }
+    },
+    "Carris runs extra buses to Oriente during the summit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carris runs extra buses to Oriente during the summit."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Carris opera ônibus extras para Oriente durante o evento."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A Carris tem autocarros extra para o Oriente durante a cimeira."
           }
         }
       }
@@ -530,6 +714,29 @@
         }
       }
     },
+    "Collect your badge at Airport Terminal 1 (9–10 Nov) or Pavilhão de Portugal (9–12 Nov). Bring your ticket QR and photo ID.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collect your badge at Airport Terminal 1 (9–10 Nov) or Pavilhão de Portugal (9–12 Nov). Bring your ticket QR and photo ID."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retire seu crachá no Aeroporto, Terminal 1 (9–10 nov.), ou no Pavilhão de Portugal (9–12 nov.). Leve o QR code do ingresso e um documento de identidade com foto."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Levante a sua credencial no Aeroporto, Terminal 1 (9–10 nov.), ou no Pavilhão de Portugal (9–12 nov.). Leve o QR do bilhete e um documento de identificação com fotografia."
+          }
+        }
+      }
+    },
     "Collect your lanyard: Airport T1 (9–10 Nov) or Pavilhão de Portugal (9–12 Nov). Bring your ticket QR and photo ID.": {
       "extractionState": "manual",
       "localizations": {
@@ -576,6 +783,29 @@
         }
       }
     },
+    "Companies, people and events": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Companies, people and events"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empresas, pessoas e eventos"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empresas, pessoas e eventos"
+          }
+        }
+      }
+    },
     "Connect to load more": {
       "extractionState": "manual",
       "localizations": {
@@ -595,6 +825,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ligue-se para carregar mais"
+          }
+        }
+      }
+    },
+    "Connect to load this talk's times and add it to your program.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect to load this talk's times and add it to your program."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conecte-se para carregar os horários desta palestra e adicioná-la ao seu programa."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ligue-se para carregar o horário desta palestra e a adicionar ao seu programa."
           }
         }
       }
@@ -691,6 +944,52 @@
         }
       }
     },
+    "Decks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decks"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apresentações"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apresentações"
+          }
+        }
+      }
+    },
+    "Decks and presenter mode, offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Decks and presenter mode, offline"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apresentações e modo de apresentador, offline"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apresentações e modo de apresentador, offline"
+          }
+        }
+      }
+    },
     "Done": {
       "extractionState": "manual",
       "localizations": {
@@ -733,6 +1032,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Descarregado"
+          }
+        }
+      }
+    },
+    "Emergency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emergency"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emergência"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emergência"
           }
         }
       }
@@ -802,6 +1124,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Explorar o grafo da cimeira"
+          }
+        }
+      }
+    },
+    "FIL, MEO Arena and Pavilhão de Portugal, with what is on in each.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FIL, MEO Arena and Pavilhão de Portugal, with what is on in each."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FIL, MEO Arena e Pavilhão de Portugal, com a programação de cada um."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FIL, MEO Arena e Pavilhão de Portugal, com o que há em cada um."
           }
         }
       }
@@ -967,6 +1312,29 @@
         }
       }
     },
+    "In my program": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In my program"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meu programa"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meu programa"
+          }
+        }
+      }
+    },
     "Keep this one": {
       "extractionState": "manual",
       "localizations": {
@@ -1059,6 +1427,52 @@
         }
       }
     },
+    "Latest, newsletter, stories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest, newsletter, stories"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mais recentes, newsletter, reportagens"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mais recentes, newsletter, histórias"
+          }
+        }
+      }
+    },
+    "Lisbon · %@ · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisbon · %@ · %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisboa · %@ · %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisboa · %@ · %@"
+          }
+        }
+      }
+    },
     "Lisbon · 9–12 Nov": {
       "extractionState": "manual",
       "localizations": {
@@ -1078,6 +1492,75 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lisboa · 9–12 nov."
+          }
+        }
+      }
+    },
+    "Lisbon, %@ at %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisbon, %@ at %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisboa, %@ às %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisboa, %@ às %@"
+          }
+        }
+      }
+    },
+    "Loading the news…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading the news…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregando as notícias…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A carregar as notícias…"
+          }
+        }
+      }
+    },
+    "Metro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metro"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metrô"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Metro"
           }
         }
       }
@@ -1335,6 +1818,29 @@
         }
       }
     },
+    "Next in your program": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next in your program"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em seguida no seu programa"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A seguir no seu programa"
+          }
+        }
+      }
+    },
     "No requests yet.": {
       "extractionState": "manual",
       "localizations": {
@@ -1423,6 +1929,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Offline · da app"
+          }
+        }
+      }
+    },
+    "On now": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On now"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A decorrer"
           }
         }
       }
@@ -1680,6 +2209,29 @@
         }
       }
     },
+    "Red line to Oriente, next to the venue. A summit transport pass is on sale.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Red line to Oriente, next to the venue. A summit transport pass is on sale."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linha vermelha até Oriente, ao lado do local. Há um passe de transporte do evento à venda."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linha vermelha até ao Oriente, junto ao recinto. Está à venda um passe de transporte para a cimeira."
+          }
+        }
+      }
+    },
     "Registration": {
       "extractionState": "manual",
       "localizations": {
@@ -1745,6 +2297,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lembretes"
+          }
+        }
+      }
+    },
+    "Reminders, Ask, about, privacy, support": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders, Ask, about, privacy, support"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lembretes, Perguntar, sobre, privacidade, suporte"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lembretes, Perguntar, sobre, privacidade, apoio"
           }
         }
       }
@@ -1818,6 +2393,29 @@
         }
       }
     },
+    "Roads around Parque das Nações are restricted 9–12 Nov.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roads around Parque das Nações are restricted 9–12 Nov."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As vias no entorno do Parque das Nações têm restrições de 9 a 12 nov."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estradas à volta do Parque das Nações com restrições de 9 a 12 nov."
+          }
+        }
+      }
+    },
     "Saved details not available offline yet": {
       "extractionState": "manual",
       "localizations": {
@@ -1860,6 +2458,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ver tudo"
+          }
+        }
+      }
+    },
+    "See all (%lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See all (%lld)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver tudo (%lld)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver tudo (%lld)"
           }
         }
       }
@@ -2025,6 +2646,29 @@
         }
       }
     },
+    "Start your program": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start your program"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comece seu programa"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comece o seu programa"
+          }
+        }
+      }
+    },
     "Stories": {
       "extractionState": "manual",
       "localizations": {
@@ -2140,6 +2784,29 @@
         }
       }
     },
+    "Talks, speakers, companies and places": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Talks, speakers, companies and places"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palestras, palestrantes, empresas e locais"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palestras, oradores, empresas e locais"
+          }
+        }
+      }
+    },
     "Thanks for coming": {
       "extractionState": "manual",
       "localizations": {
@@ -2159,6 +2826,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "Obrigado por participar"
+          }
+        }
+      }
+    },
+    "The agenda could not be loaded.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The agenda could not be loaded."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar a agenda."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar a agenda."
+          }
+        }
+      }
+    },
+    "The news could not be loaded. Pull down to try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The news could not be loaded. Pull down to try again."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar as notícias. Arraste para baixo para tentar de novo."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível carregar as notícias. Puxe para baixo para tentar novamente."
           }
         }
       }
@@ -2209,6 +2922,213 @@
         }
       }
     },
+    "The summit is over. The news and the agenda stay on this phone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit is over. The news and the agenda stay on this phone."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento terminou. As notícias e a agenda ficam neste celular."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira terminou. As notícias e a agenda ficam neste telemóvel."
+          }
+        }
+      }
+    },
+    "The summit starts in %lld days": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit starts in %lld days"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento começa em %lld dias"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira começa daqui a %lld dias"
+          }
+        }
+      }
+    },
+    "The summit starts in %lld hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit starts in %lld hours"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento começa em %lld horas"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira começa daqui a %lld horas"
+          }
+        }
+      }
+    },
+    "The summit starts in %lld minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit starts in %lld minutes"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento começa em %lld minutos"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira começa daqui a %lld minutos"
+          }
+        }
+      }
+    },
+    "The summit starts in 1 day": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit starts in 1 day"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento começa em 1 dia"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira começa daqui a 1 dia"
+          }
+        }
+      }
+    },
+    "The summit starts in 1 hour": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit starts in 1 hour"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento começa em 1 hora"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira começa daqui a 1 hora"
+          }
+        }
+      }
+    },
+    "The summit starts in 1 minute": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit starts in 1 minute"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento começa em 1 minuto"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira começa daqui a 1 minuto"
+          }
+        }
+      }
+    },
+    "The summit starts soon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The summit starts soon"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O evento começa em breve"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cimeira começa em breve"
+          }
+        }
+      }
+    },
+    "The talks you picked, clashes and free time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The talks you picked, clashes and free time"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As palestras que você escolheu, conflitos e tempo livre"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As palestras que escolheu, sobreposições e tempo livre"
+          }
+        }
+      }
+    },
     "The website shell, with its shortcuts": {
       "extractionState": "manual",
       "localizations": {
@@ -2228,6 +3148,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "O site, com os seus atalhos"
+          }
+        }
+      }
+    },
+    "This talk has no time yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This talk has no time yet."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta palestra ainda não tem horário."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta palestra ainda não tem hora."
           }
         }
       }
@@ -2416,6 +3359,29 @@
         }
       }
     },
+    "Venue map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Venue map"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa do local"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa do recinto"
+          }
+        }
+      }
+    },
     "Version": {
       "extractionState": "manual",
       "localizations": {
@@ -2504,6 +3470,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sites"
+          }
+        }
+      }
+    },
+    "What is on now, what is next for you, what is new": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What is on now, what is next for you, what is new"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que está acontecendo, o que vem a seguir para você, o que há de novo"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que está a decorrer, o que vem a seguir para si, o que há de novo"
           }
         }
       }
@@ -2669,6 +3658,52 @@
         }
       }
     },
+    "You picked %lld talks. The news and the agenda stay on this phone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You picked %lld talks. The news and the agenda stay on this phone."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você escolheu %lld palestras. As notícias e a agenda ficam neste celular."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolheu %lld palestras. As notícias e a agenda ficam neste telemóvel."
+          }
+        }
+      }
+    },
+    "You picked 1 talk. The news and the agenda stay on this phone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You picked 1 talk. The news and the agenda stay on this phone."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você escolheu 1 palestra. As notícias e a agenda ficam neste celular."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolheu 1 palestra. As notícias e a agenda ficam neste telemóvel."
+          }
+        }
+      }
+    },
     "Your own program, clashes marked": {
       "extractionState": "manual",
       "localizations": {
@@ -2711,6 +3746,121 @@
           "stringUnit": {
             "state": "translated",
             "value": "O seu programa está vazio"
+          }
+        }
+      }
+    },
+    "in %lld h": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "in %lld h"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "em %lld h"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "daqui a %lld h"
+          }
+        }
+      }
+    },
+    "in %lld min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "in %lld min"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "em %lld min"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "daqui a %lld min"
+          }
+        }
+      }
+    },
+    "starting now": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "starting now"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "começa agora"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "começa agora"
+          }
+        }
+      }
+    },
+    "the agenda": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the agenda"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a agenda"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a agenda"
+          }
+        }
+      }
+    },
+    "until %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "until %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "até às %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "até às %@"
           }
         }
       }

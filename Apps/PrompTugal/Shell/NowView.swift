@@ -64,8 +64,8 @@ struct NowView: View {
 
     private func header(now: Date) -> some View {
         VStack(alignment: .leading, spacing: Space.xs) {
-            Kicker("Lisbon · " + now.formatted(Self.dayStyle) + " · " + Lisbon.timeLabel(now))
-                .accessibilityLabel("Lisbon, " + now.formatted(Self.dayStyle) + ", " + Lisbon.timeLabel(now))
+            Kicker(String(localized: "Lisbon · \(now.formatted(Self.dayStyle)) · \(Lisbon.timeLabel(now))"))
+                .accessibilityLabel(String(localized: "Lisbon, \(now.formatted(Self.dayStyle)) at \(Lisbon.timeLabel(now))"))
             FreshnessLabel(updated: reader.agendaUpdated ?? reader.newsUpdated,
                            failed: reader.agendaUnavailable || reader.newsUnavailable)
         }
@@ -80,13 +80,13 @@ struct NowView: View {
     /// No agenda yet (the first launch offline, or still loading): a loading or failed state with "Try again", never a blank screen.
     private var agendaMissing: some View {
         StateView(phase: reader.agendaUnavailable ? .failed(String(localized: "The agenda could not be loaded.")) : .loading,
-                  hasData: false, title: "agenda") { Task { await reader.refresh() } }
+                  hasData: false, title: String(localized: "the agenda")) { Task { await reader.refresh() } }
     }
 
     // MARK: State A, before the summit
 
     private func countdown(_ model: NowModel) -> some View {
-        TitledCard(Self.countdownTitle(model.countdown), kicker: "Lisbon · 9–12 Nov") {
+        TitledCard(Self.countdownTitle(model.countdown), kicker: String(localized: "Lisbon · 9–12 Nov")) {
             VStack(alignment: .leading, spacing: Space.m) {
                 ForEach(model.firstItems) { entry in
                     EntryLink(entry: entry) {
@@ -199,7 +199,7 @@ struct NowView: View {
     // MARK: State C, after the summit
 
     private func thanks(count: Int) -> some View {
-        TitledCard(String(localized: "Thanks for coming"), kicker: "Lisbon · 9–12 Nov") {
+        TitledCard(String(localized: "Thanks for coming"), kicker: String(localized: "Lisbon · 9–12 Nov")) {
             Text(count == 0 ? String(localized: "The summit is over. The news and the agenda stay on this phone.")
                  : count == 1 ? String(localized: "You picked 1 talk. The news and the agenda stay on this phone.")
                  : String(localized: "You picked \(count) talks. The news and the agenda stay on this phone."))
@@ -438,7 +438,7 @@ struct PracticalCard: View {
     @Environment(\.openDestination) private var open
 
     var body: some View {
-        TitledCard(String(localized: "Practical"), kicker: "Lisbon · 9–12 Nov") {
+        TitledCard(String(localized: "Practical"), kicker: String(localized: "Lisbon · 9–12 Nov")) {
             VStack(alignment: .leading, spacing: Space.m) {
                 ForEach(rows) { row in
                     if let link = row.link {

@@ -98,7 +98,7 @@ struct NowNextView: View {
                 .foregroundStyle(.red)
             if entry.now.isEmpty && entry.next.isEmpty {
                 Spacer(minLength: 0)
-                Text(entry.updatedAt == nil ? "Open PrompTugal to load the agenda." : "No sessions coming up.")
+                Text(entry.updatedAt == nil ? "Open PrompTugal to load the agenda." : "No sessions coming up")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 Spacer(minLength: 0)
