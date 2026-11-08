@@ -140,7 +140,7 @@ struct PublicShell: View {
         guard PublicDestinations.openable(id, debug: debug) != nil else { return }
         open(id)
         // A reminder names the session (?session=<slug>): open its page over the shell.
-        linkedPage = ShellLink.page(in: url, isBlocked: CheckoutPolicy.isBlocked)
+        linkedPage = ShellLink.page(in: url, hosts: ShellLink.publicHosts, isBlocked: CheckoutPolicy.isBlocked)
     }
 }
 

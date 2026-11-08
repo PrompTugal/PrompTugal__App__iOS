@@ -42,19 +42,24 @@ public struct LinkedPage: Identifiable, Equatable {
 }
 
 /// Reads the page out of a `<scheme>://open/<id>` link: `session=<event slug>` becomes that event's
-/// page on promptugal.news; `url=<https page>` is opened only on our own two sites.
+/// page on promptugal.news; `url=<https page>` is opened only on the hosts the app allows.
 public enum ShellLink {
+    /// The hosts the Team app opens (its own two sites). The public app passes `publicHosts` instead: it has no team site.
     public static let allowedHosts: Set<String> = ["promptugal.news", "web-summit.sgit.ai"]
+    /// The public app's hosts: PrompTugal.news only.
+    public static let publicHosts: Set<String> = ["promptugal.news"]
 
-    /// - Parameter isBlocked: the app's checkout rule (`CheckoutPolicy.isBlocked` from PTWeb); PTCore cannot see PTWeb.
-    public static func page(in link: URL, isBlocked: (URL) -> Bool) -> LinkedPage? {
+    /// - Parameters:
+    ///   - isBlocked: the app's checkout rule (`CheckoutPolicy.isBlocked` from PTWeb); PTCore cannot see PTWeb.
+    ///   - hosts: the hosts a `url=` link may open; defaults to the Team app's set.
+    public static func page(in link: URL, hosts: Set<String> = allowedHosts, isBlocked: (URL) -> Bool) -> LinkedPage? {
         let items = URLComponents(url: link, resolvingAgainstBaseURL: false)?.queryItems ?? []
         if let slug = items.first(where: { $0.name == "session" })?.value,
            !slug.isEmpty, slug.range(of: #"^[a-z0-9][a-z0-9-]*$"#, options: .regularExpression) != nil {
             return LinkedPage(url: FeedClient.site.appendingPathComponent("events/\(slug)/index.html"), title: String(localized: "Session", bundle: .module))
         }
         if let text = items.first(where: { $0.name == "url" })?.value, let url = URL(string: text),
-           url.scheme == "https", let host = url.host()?.lowercased(), allowedHosts.contains(host),
+           url.scheme == "https", let host = url.host()?.lowercased(), hosts.contains(host),
            !isBlocked(url) {
             return LinkedPage(url: url, title: String(localized: "Briefing", bundle: .module))
         }
