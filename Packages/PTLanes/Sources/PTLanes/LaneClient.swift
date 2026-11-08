@@ -1,5 +1,6 @@
 import Foundation
 import Security
+import PTCore
 
 /// The append-lane API (sgit.ai `/api/append-lanes`), through the shared `HTTPClient` so each call shows in
 /// Debug → Network. `HTTPClient` keeps no bodies or headers, so the append token (in the body) and the enum key
@@ -178,7 +179,7 @@ struct LaneClient: Sendable {
 
 /// This device's lane identity: an RSA-4096 key pair made in the Keychain (this device only). Its public half
 /// goes into the descriptor I hand to senders; the private half decrypts my inbox and never leaves the device.
-enum LaneIdentity {
+public enum LaneIdentity {
     static let tag = Data("news.promptugal.reader.lanes.identity".utf8)
 
     static func privateKey() -> SecKey? {
@@ -191,7 +192,7 @@ enum LaneIdentity {
         return (item as! SecKey)
     }
 
-    static var exists: Bool { privateKey() != nil }
+    public static var exists: Bool { privateKey() != nil }
 
     @discardableResult
     static func create() throws -> SecKey {
