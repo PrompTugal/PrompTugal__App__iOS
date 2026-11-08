@@ -181,3 +181,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 12:40 UTC: B1 pass on rc4 d8a5020 (seed wired in PrompTugalApp.init). No UX blockers left on rc4. Next: store screenshot review.
 - 13:16 UTC: Screens run 33 (rc5 706b153, store) in progress; its screens test matches §11 (7 ids in order, seeded picks, 11:00 Tue clock, debug off, store images hide events and news naming the third-party trademark). Review at 13:39.
 - 13:40 UTC: Screens run 33 failed (no artifacts); release re-ran as run 34 (rc5 7766e2a, queued 13:38). Review when it finishes.
+- 14:20 UTC: Screens run 34 reviewed: only 01-now usable (02–07 covered by the notification alert; run 35 fixes). NOW-1 good; fix sent: en-US time column wraps "11:05 A/M" (64 pt column) in NowView, ExploreScreens, NextHoursCard.
