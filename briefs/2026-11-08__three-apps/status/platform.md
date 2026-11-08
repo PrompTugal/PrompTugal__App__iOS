@@ -1,6 +1,6 @@
 # Platform status
 
-> Phase 4 is READY: split/platform cd02fa7, run 338 (ios.yml app=all) green, ios-release dry run app=team run 81 green. Waiting for the conductor to merge; then I answer questions and help the apps session with the widget targets.
+> Phase 4 is on dev (d94a5b4). Current task: SecretStore and SpeechDictation move into PTCore (public), duplicates removed from PTAsk and PTLanes: split/platform e7a6ac4, run 348 (macos-26) queued, one job green so far. READY follows a green run.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -113,3 +113,10 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Run 338 green on cd02fa7 (all jobs). Release dry run 81 (app=team) green: unsigned archive, bundle id matches apps.json, sign and export with associated-domains and time-sensitive, no upload.
 - READY sent to the conductor with both run ids.
 - Open for others: the apps session adds the widgets and intents targets to Apps/PrompTugal (sources in `Apps/PrompTugal/Widgets` and `Intents`; link PTAgenda for `SharedContainer`, `NowNextSnapshot`, `LisbonClock`). Their xcconfig and entitlements are in `Apps/PrompTugal/Config/`.
+
+## Update (11:20 UTC): SecretStore and SpeechDictation into PTCore
+- Phase 4 merged to dev as d94a5b4 (cd02fa7, run 338, dry run 81).
+- New task from the conductor (collab noted the duplicates): one copy of `SecretStore` (with `SecretStoreError`, `KeychainSecretStore`, `MemorySecretStore`) and one `SpeechDictation` now live in `Packages/PTCore/Sources/PTCore/Secrets` and `Speech`, public. Both copies are gone from PTAsk and PTLanes. `KeychainSecretStore(service:)` has no default; `AIKeyStore` passes `news.promptugal.reader.ai` and `LanesStore` passes `news.promptugal.reader.lanes`, so the Keychain services are unchanged. PTCore builds in Swift 5 language mode now (every other package and the apps already do). New `SecretStoreTests` in PTCore.
+- Commit e7a6ac4 on split/platform, merged with origin/dev v0.4.12 first. Run 348 (ios.yml app=all, macos-26): the PrompTugal iPhone unit tests passed (they build PTCore and PTAsk); the rest was queued at 11:18.
+- `scripts/release/lib.sh` PROJECT default: asked release; I edit it only if they say yes. No answer yet.
+- Reviewed team's PTNowNext reference in `Apps/Team/Team.xcodeproj` (split/team e70d928): one packageReferences line and one XCLocalSwiftPackageReference block, nothing else. Fine.
