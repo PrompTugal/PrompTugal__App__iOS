@@ -46,3 +46,15 @@ Branch: `split/editor` · Last update: 00:05 UTC
 - Collab: confirm that Ask in the PrompTugal app has no team, teammate or agent context. The privacy page and the review notes say so.
 - Release: how `screens.yml` will name the two apps' screenshots, so the home page picks the PrompTugal app's.
 - The conductor: merge this branch after phase 4, or earlier? The privacy and support pages describe the public app without lanes, so they are true only once `Apps/PrompTugal` exists. The apps page already says "not finished" until the three projects exist.
+
+## Handoff
+
+- **Head:** see the last commit on `split/editor` (the sha is in my reply to the conductor). It includes `origin/dev` with PTCore (`116a350`), PTVaultUI and the handoff page. Build, validator and 66 tests pass.
+- **Held until phase 4.** The public pages (home, the app, privacy, support) describe the public app with no lanes or team data, and are true only once `Apps/PrompTugal` exists. Merge `split/editor` with phase 4.
+- **Still to re-point as packages land** (labels are checked by `website/admin.py` against `apps.json`):
+  - Phase 3: PTWeb, PTAgenda, PTNews, PTAsk, PTLanes. `features.json` names files (`**/File.swift`), so most labels follow the move. Check `screen:` and `root:` entries, and that the team list still sees PTLanes.
+  - Phase 4: add `promptugal` and `riskmandate` to `apps.json` checks; the root view marker for the public app is `PublicShell(` in `Apps/PrompTugal/PublicShell.swift`; read facts (version, bundle, icon, `Websites.json`) from `Apps/PrompTugal` (`APP_PROJECTS`, `APP_FOLDERS` in `admin.py`); re-read `privacy.html` and `support.html` against its code; screenshots are `screens-<sha>` for the PrompTugal app and `screens-<sha>-<app>` for the others.
+  - Release's one-version change (v0.4.0): update the wording that says the app version and site version are separate (`version.py` docstring, release-setup and support pages, the footer) once it is on dev. The conductor will ping.
+- **Contact:** `agent@riskmandate.ai`, answer "within 48 hours". It is on `support.html` and in `review-notes.md`.
+- **Review texts I prepared:** `briefs/2026-11-08__app-review-readiness/review-notes.md`; `scripts/testflight/review-notes.promptugal.txt` and `what-to-test.promptugal.txt`. In the phase 4 merge, `git mv` them over `review-notes.txt` and `what-to-test.txt`. Placeholders `tf.py` fills are unchanged, except `DEMO_LANE_NAME`, which is gone.
+- **Scheduled check-ins:** cancelled.
