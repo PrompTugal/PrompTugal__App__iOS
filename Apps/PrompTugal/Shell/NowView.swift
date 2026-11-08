@@ -47,8 +47,8 @@ struct NowView: View {
                     thanks
                 }
                 LatestNewsCard()
-                askCard
                 PracticalCard()
+                askCard
             }
         }
         .background(Palette.paper.ignoresSafeArea())
@@ -214,33 +214,49 @@ struct NowView: View {
         }
     }
 
-    // MARK: Ask
+    // MARK: Ask (NOW-1h), the last card in every state
 
     private var askCard: some View {
-        NavigationLink {
-            AskView().destinationID("collab.ai")
-        } label: {
-            Card {
-                HStack(spacing: Space.m) {
-                    Image(systemName: "sparkles").font(.title3).foregroundStyle(Palette.red).accessibilityHidden(true)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Ask about the summit").font(Typo.headline).foregroundStyle(Palette.ink)
-                        Text("What's on now, what's next in your program, what's new. Uses your own OpenRouter key.")
-                            .font(.footnote).foregroundStyle(Palette.muted)
-                            .multilineTextAlignment(.leading)
-                    }
-                    Spacer(minLength: Space.s)
-                    Image(systemName: "chevron.right").font(.footnote).foregroundStyle(Palette.muted)
-                        .accessibilityHidden(true)
-                }
-            }
-        }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("pt.now.ask")
+        AskCard()
     }
 }
 
 // MARK: - Pieces
+
+/// NOW-1h: Ask about the summit. iPhone pushes Ask; iPad selects the sidebar's Ask row.
+private struct AskCard: View {
+    @Environment(\.horizontalSizeClass) private var width
+    @Environment(\.openDestination) private var open
+
+    var body: some View {
+        Card {
+            VStack(alignment: .leading, spacing: Space.m) {
+                HStack(spacing: Space.m) {
+                    Image(systemName: "sparkles").font(.title3).foregroundStyle(Palette.red).accessibilityHidden(true)
+                    Text("Ask about the summit").font(Typo.headline).foregroundStyle(Palette.ink)
+                        .accessibilityAddTraits(.isHeader)
+                }
+                Text("What's on now, what clashes in my program, what's new today. Uses your own OpenRouter key.")
+                    .font(.footnote).foregroundStyle(Palette.muted)
+                if width == .compact {
+                    NavigationLink {
+                        AskView().destinationID("collab.ai")
+                    } label: {
+                        Text("Ask").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .accessibilityIdentifier("pt.now.ask")
+                } else {
+                    Button { open("collab.ai") } label: {
+                        Text("Ask").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .accessibilityIdentifier("pt.now.ask")
+                }
+            }
+        }
+    }
+}
 
 /// "Choose talks" and similar buttons that open Explore.
 private struct SeeAllButton: View {

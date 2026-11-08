@@ -63,6 +63,8 @@ enum PublicDestinations {
     // MARK: More (the iPad sidebar; on iPhone Settings opens from the gear)
 
     static let more: [ShellDestination] = [
+        ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "More",
+                         summary: "Ask about the summit, with your own AI key") { AnyView(AskView()) },
         ShellDestination(id: "settings", title: "Settings", symbol: "gearshape", group: "More",
                          summary: "Reminders, Ask, about, privacy, support") { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: "Reminders", symbol: "bell.badge", group: "More",
@@ -72,8 +74,6 @@ enum PublicDestinations {
     // MARK: Opened by id or from another screen, never in a tab or the sidebar
 
     static let routable: [ShellDestination] = [
-        ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "More",
-                         summary: "Ask about the agenda, your picks and the news", listed: false) { AnyView(AskView()) },
         // Not in the first App Store build.
         ShellDestination(id: "decks", title: "Decks", symbol: "rectangle.on.rectangle.angled", group: "More",
                          summary: "Decks and presenter mode, offline", ownsNavigation: true, listed: false) {

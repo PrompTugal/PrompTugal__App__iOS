@@ -13,14 +13,17 @@ struct PublicSettingsView: View {
         Form {
             Section {
                 NavigationLink {
+                    AskView()
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Label("Ask about the summit", systemImage: "sparkles")
+                        Text("With your own AI key").font(.caption).foregroundStyle(Palette.muted)
+                    }
+                }
+                NavigationLink {
                     ReminderSettingsView()
                 } label: {
                     Label("Reminders", systemImage: "bell.badge")
-                }
-                NavigationLink {
-                    AskView()
-                } label: {
-                    Label("Ask, with your own AI key", systemImage: "sparkles")
                 }
             }
             Section {
