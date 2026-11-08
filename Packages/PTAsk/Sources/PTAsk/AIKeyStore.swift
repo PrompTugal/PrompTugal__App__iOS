@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import Security
+import PTCore
 
 /// Where one secret string lives. The Keychain in the app; memory in tests.
 protocol SecretStore: Sendable {
@@ -106,17 +107,17 @@ final class MemorySecretStore: SecretStore, @unchecked Sendable {
 /// The user's OpenRouter key (contracts §9): entered once, kept in the Keychain, read only to make a request,
 /// sent only to openrouter.ai. The UI and the debug panel see `hasKey` and a masked hint, never the value.
 @MainActor @Observable
-final class AIKeyStore {
-    static let shared = AIKeyStore()
+public final class AIKeyStore {
+    public static let shared = AIKeyStore()
     static let account = "openrouter.key"
     /// The vault file the key can be copied to (contracts §9).
     static let vaultPath = "apps/ai/openrouter.json"
 
-    private(set) var hasKey = false
+    public private(set) var hasKey = false
     /// e.g. "sk-or-…3f9a": the first six and last four characters, for "which key is this?". Never more.
     private(set) var hint: String?
     private(set) var lastError: String?
-    private(set) var savedToVaultAt: Date?
+    public private(set) var savedToVaultAt: Date?
 
     @ObservationIgnored private let store: SecretStore
     @ObservationIgnored private let defaults: UserDefaults

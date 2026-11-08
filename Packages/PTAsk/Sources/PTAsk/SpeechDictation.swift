@@ -1,4 +1,4 @@
-// A copy of PTLanes's SpeechDictation: PTAsk and PTLanes both use it and neither may depend on the other. It moves into PTAsk with AI/.
+// PTAsk keeps its own copy of the dictation helper: PTLanes has one too, and neither package may depend on the other.
 import AVFoundation
 import Foundation
 import Observation
