@@ -180,3 +180,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 12:45 UTC: rc4 (ce58c5e) re-check: B2 pass; B1 not wired (AgendaSeed defined, AgendaHub.seedAgenda never assigned), one-line fix sent for apps.
 - 12:40 UTC: B1 pass on rc4 d8a5020 (seed wired in PrompTugalApp.init). No UX blockers left on rc4. Next: store screenshot review.
 - 13:16 UTC: Screens run 33 (rc5 706b153, store) in progress; its screens test matches §11 (7 ids in order, seeded picks, 11:00 Tue clock, debug off, store images hide events and news naming the third-party trademark). Review at 13:39.
+- 13:40 UTC: Screens run 33 failed (no artifacts); release re-ran as run 34 (rc5 7766e2a, queued 13:38). Review when it finishes.
