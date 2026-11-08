@@ -4,8 +4,10 @@
 <dict>
 	<!-- Merged with the generated Info.plist (GENERATE_INFOPLIST_FILE = YES).
 	     Only keys the INFOPLIST_KEY_ build settings cannot express live here.
-	     No NFC, no speech or microphone (the public app has no Lanes or dictation).
-	     The camera string (in the project) is for vault QR codes only. -->
+	     No NFC (the public app has no Lanes). Purpose strings live in the project's INFOPLIST_KEY_ settings:
+	     camera (vault QR), Face ID (vault keys), microphone and speech recognition (Ask dictation, PTAsk),
+	     calendar write-only (add picks to the calendar). Every framework the linked code uses that needs a
+	     purpose string must have one, or App Store Connect fails processing (ITMS-90683). -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>news.promptugal.reader.refresh</string>
