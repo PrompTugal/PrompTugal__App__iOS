@@ -106,3 +106,9 @@ Handed off at 01:40 UTC (8 Nov) to the session under conductor.B. I dispatch no 
 - Live proof (run 42457176898, v0.4.4): Team and RiskMandate uploaded 0.4.4 (178), guard passed, no certificate error.
 - Standing by for phase 4: check `targets.sh`, the guard and defaults against `Apps/Team` and `Apps/PrompTugal`.
 - Open: cancel the rest of a manual split run when its Debug build fails (conductor's ask); not done.
+
+## Release.B update (8 Nov, ~09:45 UTC)
+
+- Phase 4 proven live: iOS release run 42465358592 (dev, v0.4.7): Team (`Apps/Team`, news.promptugal.team) and RiskMandate signed with the codesign path, entitlement guard passed, both uploaded 0.4.7 (182). PrompTugal built unsigned; `testflight` is still false for it in `apps.json`.
+- No certificate errors since the signing fix.
+- Nothing blocking. When PrompTugal gets `testflight: true`, dry-run `app=promptugal` first to check the guard against its app, widgets and intents entitlements.
