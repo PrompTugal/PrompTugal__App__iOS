@@ -62,12 +62,8 @@ struct NowView: View {
 
     private func header(now: Date) -> some View {
         VStack(alignment: .leading, spacing: Space.xs) {
-            Kicker("Lisbon · " + now.formatted(Self.dayStyle))
-            Text(Lisbon.timeLabel(now))
-                .font(Typo.title)
-                .foregroundStyle(Palette.ink)
-                .monospacedDigit()
-                .accessibilityLabel("Time in Lisbon, " + Lisbon.timeLabel(now))
+            Kicker("Lisbon · " + now.formatted(Self.dayStyle) + " · " + Lisbon.timeLabel(now))
+                .accessibilityLabel("Lisbon, " + now.formatted(Self.dayStyle) + ", " + Lisbon.timeLabel(now))
             FreshnessLabel(updated: reader.agendaUpdated ?? reader.newsUpdated,
                            failed: reader.agendaUnavailable || reader.newsUnavailable)
         }
@@ -79,25 +75,22 @@ struct NowView: View {
         return style
     }()
 
-    /// No agenda yet: nothing to count down to or to list, so the screen says so instead of showing empty cards.
+    /// No agenda yet (the first launch offline, or still loading): a loading or failed state with "Try again", never a blank screen.
     private var agendaMissing: some View {
-        TitledCard(String(localized: "Agenda")) {
-            Text(reader.agendaUnavailable
-                 ? LocalizedStringKey("The agenda could not be loaded. Pull down to try again.")
-                 : LocalizedStringKey("Loading the agenda…"))
-                .font(.footnote).foregroundStyle(Palette.muted)
-        }
+        StateView(phase: reader.agendaUnavailable ? .failed(String(localized: "The agenda could not be loaded.")) : .loading,
+                  hasData: false, title: "agenda") { Task { await reader.refresh() } }
     }
 
     // MARK: State A, before the summit
 
-    /// The first two official items: registration and Opening Night (the first two sessions when they are not in the agenda).
+    /// The first two official items: the first registration item and the first summit item (Opening Night). When the agenda
+    /// does not carry those kinds, the first two sessions.
     private var firstItems: [Event] {
         let timed = reader.agenda.filter { $0.start != nil }
             .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
-        let registration = timed.first { $0.title.localizedCaseInsensitiveContains("registration") }
-        let opening = timed.first { $0.title.localizedCaseInsensitiveContains("opening night") }
-        let named = [registration, opening].compactMap { $0 }
+        let registration = timed.first { $0.kind == "registration" }
+        let summit = timed.first { $0.kind == "summit" }
+        let named = [registration, summit].compactMap { $0 }
         return named.isEmpty ? Array(timed.prefix(2)) : named
     }
 
@@ -155,9 +148,10 @@ struct NowView: View {
 
     // MARK: State B, during the summit
 
-    /// Registration is not a talk: it never fills On now or Up next.
-    private static func isRegistration(_ entry: NowBoard.Entry) -> Bool {
-        entry.title.localizedCaseInsensitiveContains("registration")
+    /// Registration is not a talk: it never fills On now, Up next or Tomorrow. The board's entries carry the schedule slug,
+    /// so the kind comes from the agenda's copy of the session.
+    private func isRegistration(_ entry: NowBoard.Entry) -> Bool {
+        reader.agenda.contains { $0.kind == "registration" && ScheduleID.fromPage($0.page) == entry.id }
     }
 
     /// NOW-1c: my current pick, or my next one.
@@ -175,7 +169,7 @@ struct NowView: View {
 
     /// NOW-1f: up to five sessions running now, Centre Stage first.
     @ViewBuilder private func onNow(board: NowBoard.Snapshot, now: Date) -> some View {
-        let running = board.venueNow.filter { !Self.isRegistration($0) }.sorted { lhs, rhs in
+        let running = board.venueNow.filter { !isRegistration($0) }.sorted { lhs, rhs in
             let l = Self.isCentreStage(lhs.place), r = Self.isCentreStage(rhs.place)
             if l != r { return l }
             return lhs.start < rhs.start
@@ -199,7 +193,7 @@ struct NowView: View {
 
     /// NOW-1g: up to five sessions starting in the next 60 minutes.
     @ViewBuilder private func upNext(board: NowBoard.Snapshot, now: Date) -> some View {
-        let soon = board.venueNext.filter { $0.start <= now.addingTimeInterval(3600) && !Self.isRegistration($0) }
+        let soon = board.venueNext.filter { $0.start <= now.addingTimeInterval(3600) && !isRegistration($0) }
         if !soon.isEmpty {
             TitledCard(String(localized: "Up next"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
                 ForEach(soon.prefix(5)) { entry in
@@ -214,7 +208,7 @@ struct NowView: View {
         let day = Lisbon.day(next)
         let first = reader.agenda.filter { event in
             guard let start = event.start else { return false }
-            return Lisbon.day(start) == day && start > now && !event.title.localizedCaseInsensitiveContains("registration")
+            return Lisbon.day(start) == day && start > now && event.kind != "registration"
         }.sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }.prefix(3)
         if !first.isEmpty {
             TitledCard(String(localized: "Tomorrow"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
