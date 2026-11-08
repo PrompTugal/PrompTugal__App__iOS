@@ -176,3 +176,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 11:40 UTC: NOW-1e Practical items and links final; iPad two-column Now cut; Settings Ask label follows design ("Ask, with your own AI key").
 - 11:55 UTC: code review of split/design 49a9fa8 sent: countdown items (registration + Opening Night), no registration in On now/Up next, `.noAgenda` state, smaller clock so For you is above the fold, Practical rows, story title, gear label.
 - 12:15 UTC: split/design 1b5a0a7 checked: 5 of 7 fixes done. Open for team (NowModel): NOW-M-1 countdown items (registration + Opening Night), NOW-M-2 no registration in On now / Up next / Tomorrow. No public-app Screens run yet today.
+- 12:45 UTC: rc2 (3de45dd) UX review by code: 2 blockers sent (agenda seed not wired; Talks list strings read the app bundle, English in pt). Follow-ups in next-version.md.
