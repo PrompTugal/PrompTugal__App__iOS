@@ -72,7 +72,10 @@ final class ScreensTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = Self.launchArguments(destination: id, environment: ProcessInfo.processInfo.environment)
         app.launch()
+        Self.dismissSystemAlert()
         sleep(3)
+        // The reminders ask for notification permission once picks are seeded; the alert can appear late.
+        Self.dismissSystemAlert(timeout: 1)
         // The whole screen, not app.screenshot(): in landscape on iPad the app element's capture crops the portrait
         // framebuffer and leaves black areas.
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
@@ -80,5 +83,17 @@ final class ScreensTests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
         app.terminate()
+    }
+
+    /// A system permission alert (notifications) sits in SpringBoard above every later launch and would be in every
+    /// screenshot. Tap its first button, "Don't Allow" in every language, so the shots show the app.
+    @MainActor
+    private static func dismissSystemAlert(timeout: TimeInterval = 5) {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let alert = springboard.alerts.firstMatch
+        if alert.waitForExistence(timeout: timeout), alert.buttons.count > 0 {
+            alert.buttons.element(boundBy: 0).tap()
+            sleep(1)
+        }
     }
 }
