@@ -14,10 +14,18 @@ public struct AskView: View {
     @FocusState private var composerFocused: Bool
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
-    public init() {}
-    init(store: ChatStore, compact: Bool) {
+    /// A question to start with. With a key it is sent at once; without one it is left in the draft and the
+    /// "no key" card shows, so nothing is lost and nothing broken is offered.
+    var initialQuestion: String?
+    @State private var initialHandled = false
+
+    public init(initialQuestion: String? = nil) {
+        self.initialQuestion = initialQuestion
+    }
+    init(store: ChatStore, compact: Bool, initialQuestion: String? = nil) {
         self.store = store
         self.compact = compact
+        self.initialQuestion = initialQuestion
     }
 
     public var body: some View {
@@ -32,7 +40,7 @@ public struct AskView: View {
                         Label("Ask is off: you chose not to send questions to OpenRouter. Change it in Key and settings.", systemImage: "hand.raised")
                             .font(.subheadline).foregroundStyle(.secondary)
                     }
-                    if store.turns.isEmpty {
+                    if store.turns.isEmpty && store.keys.hasKey {
                         AskStarters(store: store)
                     }
                     ForEach(store.turns) { turn in
@@ -82,7 +90,20 @@ public struct AskView: View {
             NavigationStack { AskSettingsView(store: store) }
                 .presentationDetents([.medium, .large])
         }
-        .task { await store.refreshPreview() }
+        .task {
+            await store.refreshPreview()
+            handleInitialQuestion()
+        }
+    }
+
+    private func handleInitialQuestion() {
+        guard !initialHandled, let q = initialQuestion?.trimmingCharacters(in: .whitespacesAndNewlines), !q.isEmpty else { return }
+        initialHandled = true
+        if store.keys.hasKey, store.consent != .declined {
+            store.send(q)
+        } else {
+            store.draft = q
+        }
     }
 }
 
@@ -92,8 +113,8 @@ private struct AskKeyCallout: View {
     let open: () -> Void
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Add your OpenRouter key", systemImage: "key.fill").font(.headline)
-            Text("Ask uses your own OpenRouter key. It is kept in this device's Keychain and sent only to openrouter.ai, with each question. You pay OpenRouter for what you ask.")
+            Label(String(localized: "Ask needs your own OpenRouter key", bundle: .module), systemImage: "key.fill").font(.headline)
+            Text(String(localized: "Ask is an optional extra. It sends your question to OpenRouter, an AI service, and needs a key from your own OpenRouter account. The key stays in this device's Keychain, and you pay OpenRouter for what you ask. The rest of the app works without it.", bundle: .module))
                 .font(.subheadline).foregroundStyle(.secondary)
             Button("Add key", action: open).buttonStyle(.borderedProminent)
         }
@@ -107,7 +128,7 @@ private struct AskStarters: View {
     let store: ChatStore
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Ask about the summit, your day and the team. Choose below what Ask may see.")
+            Text(AskEnvironment.provider.askIntro)
                 .font(.subheadline).foregroundStyle(.secondary)
             ForEach(AIPrompts.starters(for: AskEnvironment.provider)) { starter in
                 Button {
@@ -302,6 +323,8 @@ private struct AskComposer: View {
     @Bindable var store: ChatStore
     var focused: FocusState<Bool>.Binding
     @State private var dictation = SpeechDictation()
+    /// Whether dictation runs on this device or at Apple (nil: not known or not available).
+    @State private var dictationOnDevice: Bool?
 
     var body: some View {
         VStack(spacing: 8) {
@@ -326,6 +349,10 @@ private struct AskComposer: View {
             if let error = dictation.error {
                 Text(error).font(.caption).foregroundStyle(.orange).padding(.horizontal)
             }
+            if let onDevice = dictationOnDevice {
+                Text(onDevice ? "Dictation runs on this device." : "Dictation sends your voice to Apple to turn it into text.")
+                    .font(.caption2).foregroundStyle(.secondary).padding(.horizontal)
+            }
             HStack(alignment: .bottom, spacing: 8) {
                 Image(systemName: dictation.isRecording ? "waveform.circle.fill" : "mic.circle")
                     .font(.title)
@@ -335,7 +362,7 @@ private struct AskComposer: View {
                         .onEnded { _ in dictation.stop() })
                     .accessibilityLabel("Hold to dictate")
                     .accessibilityAddTraits(.isButton)
-                TextField(dictation.isRecording ? "Listening…" : "Ask about today, your picks, the team…",
+                TextField(dictation.isRecording ? "Listening…" : AskEnvironment.provider.askPlaceholder,
                           text: $store.draft, axis: .vertical)
                     .lineLimit(1...6)
                     .textFieldStyle(.plain)
@@ -364,6 +391,7 @@ private struct AskComposer: View {
         .padding(.vertical, 8)
         .background(.bar)
         .onChange(of: dictation.transcript) { _, text in if !text.isEmpty { store.draft = text } }
+        .task { dictationOnDevice = SpeechDictation.supportsOnDevice() }
     }
 
     private func chipTitle(_ kind: AIContextKind) -> String {
@@ -417,6 +445,7 @@ struct AskSettingsView: View {
                 Text("Kept in this device's Keychain, never synced, sent only to openrouter.ai. Not in logs or debug panels.")
             }
 
+            if AskEnvironment.provider.offersVaultKeyCopy {
             Section {
                 Button("Save key to my vault") { Task { await vault(save: true) } }
                     .disabled(!keys.hasKey || !(CollabHooks.vault?.canWrite ?? false) || working)
@@ -431,6 +460,7 @@ struct AskSettingsView: View {
                 Text(CollabHooks.vault == nil
                      ? "Vault copies need the vault on this build. The file is \(AIKeyStore.vaultPath), encrypted in your vault."
                      : "Writes \(AIKeyStore.vaultPath), encrypted in your vault, so your other devices can take it.")
+            }
             }
 
             Section {
