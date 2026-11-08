@@ -23,12 +23,12 @@ Open it at the venue and within seconds you know what is on now, what is next fo
 
 AGENDA, OFFLINE
 • The whole program in Lisbon time, built into the app and refreshed when you are online
-• Search by title or place, and open any session for its details
+• Search talks, speakers, companies and places, and open any talk for its details
 • Works with no network, so a crowded hall's Wi-Fi does not stop you
 
 YOUR OWN PROGRAM
-• Pick the talks you want; My day shows them in one list
-• Plan my day finds free slots and walking times between your picks
+• Pick the talks you want; My program shows them in time order
+• Clashes are marked so you can keep one, and free time between talks is shown
 • A reminder before each pick, if you turn reminders on
 • Add a session to your calendar with one tap (the app cannot read your calendar)
 • A Home Screen widget with what is next, and Siri: "What's next in PrompTugal"
