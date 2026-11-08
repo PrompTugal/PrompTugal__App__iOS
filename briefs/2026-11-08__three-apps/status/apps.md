@@ -37,11 +37,10 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (09:30 UTC)
-- 340 promptugal, a53e3cc (phase 4, macos-26): green, full run (Debug, Release, iPhone, iPad, all packages, result job).
-- ios-release run 83, df1baa1, app=promptugal dry_run internal_only: success, but only the unsigned archive job ran (bundle id matches, widgets and intents embedded per the build log). The TestFlight job, which has the entitlement guard, was skipped because promptugal testflight is false. Not yet proven: the guard. Asked the conductor whether to flip testflight for one dry run.
-- Head df1baa1 = a53e3cc + origin/dev (only Apps/Team/Tests/AppReviewTests.swift and VERSION differ).
-- READY sent to the conductor. testflight false.
+## Last CI run (09:50 UTC)
+- 340 promptugal on a53e3cc: green, merged to dev by the conductor (a84a277).
+- ios-release run 84 on 42d2aab (promptugal testflight true on that commit only; dry run, internal only): success. Archive and export succeeded, upload skipped. Entitlements printed by the guard: app (app group group.news.promptugal.reader, associated-domains webcredentials:promptugal.news, time-sensitive), widgets and intents (app group group.news.promptugal.reader). One warning: ValidateEmbeddedBinary says the intents extension path is odd (../../../BuildProductsPath/.../Extensions); not an error.
+- Head 49c80c7: promptugal testflight false again. Conductor flips it after design's PublicShell is on dev.
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.
