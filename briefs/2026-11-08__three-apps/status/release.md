@@ -22,8 +22,8 @@
 
 ## In progress
 
-- Merged `origin/dev` (phase 1) at `b15d34f`: workflows now use platform's `affected.py` (apps and packages) and `check_apps.py`/`test_apps.py`.
-- Waiting for macOS runners: iOS push run 271 and iOS release dry run 50 (both `b15d34f`) are queued. Earlier push runs 267 and 269 were green (changes job and plan worked); manual run 268 was cancelled (not by me).
+- Green on `b15d34f`: iOS push run 271 and iOS release dry run 50. Reported to the conductor.
+- Waiting for phase 4 (the Apps/ projects) to test the multi-app paths.
 
 ## Next
 
@@ -43,4 +43,4 @@
 
 ## Last CI run
 
-- iOS 267 and 269: success (before the dev merge). iOS 271 and iOS release 50 on `b15d34f`: queued. Updated 00:10 UTC.
+- iOS run 271 (push) and iOS release run 50 (dry run) on `b15d34f`: success. Updated 00:55 UTC.
