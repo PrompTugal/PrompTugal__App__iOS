@@ -283,3 +283,5 @@ Dinis's decision: no Ask (OpenRouter) in the App Store app, and the label reads 
 | M4 (iPhone 6.9") | The #36 sets already uploaded contain no Ask (it was never a tab, and the Now card is below the fold); #37's 6.9" set is still running | GO to keep #36; check #37 if it is swapped in |
 | Code, texts | rc8 GO (run 16); dev v0.4.24 has the same app code as 4f58965; scripts/testflight texts match store/ (no Ask); ASC listing and review notes re-applied without Ask (42526747980) | GO |
 | Open for the final GO on 0.4.24 | Release #105's build processed VALID and attached; Dinis: App Privacy "Data Not Collected", Mac and Vision Pro unticked, IDFA No | pending |
+
+22:20: #37 iPhone 6.9" (1320×2868), 4 ids × 3 locales: clean, no Ask. **All three sizes from screens #37 are GO** to upload together (en-GB = en-US).
