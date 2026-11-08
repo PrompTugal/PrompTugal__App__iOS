@@ -185,3 +185,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 14:20 UTC: time-column fix verified on rc7 535e9ba (NowView sized to "88:88 AM"; Explore rows lineLimit(1)+fixedSize). Final screens come from rc7.
 - 14:50 UTC: Screens run 36 (rc7) reviewed: 01, 02, 05, 06 good, pt translated. Sent: 04 talk detail opens the registration item (trademark, unpickable) → open first seeded pick or drop; drop 07 (full graph, trademark URL label, caption untrue); 03 title "Agenda" on iPhone; 02 day picker truncates in en; 05 description mentions the trademark (review decides).
 - 15:20 UTC: no Screens run after 36; UX PASS for the upload set 01, 02, 03, 06 (run 36). 05 good if review accepts the description; 04 and 07 out. Cosmetic leftovers for next version: 03 title on iPhone, 02 day labels in en-US.
+- 16:00 UTC: freeze. No build or Screens run after rc7 / run 36. Remaining UX items added to next-version.md.

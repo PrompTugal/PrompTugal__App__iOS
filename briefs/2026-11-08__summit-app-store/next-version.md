@@ -87,3 +87,13 @@ Not blockers for today's submission; for the next build.
 - **NOW-1 iPad:** two columns (For you, On now, Up next | News, Practical), cut today.
 - **NOW-1e Practical:** move the rows to `api/v1/practical.json` so the newsroom can update them during the summit without a build.
 - **Old My day screen:** `MyDayView` (team stand-ups, vault, planner) is no longer reached in the public app; keep it for the Team app only.
+
+## UX follow-ups from the store screenshots (ux, 8 Nov, 16:00 UTC)
+
+- **PROG-1 day picker:** in en-US the segments read "Nov 10, 20…". Use short labels: "Mon 9 · Tue 10 · Wed 11 · Thu 12" (abbreviated weekday and day, Lisbon time).
+- **EXP-1 title on iPhone:** still "Agenda" inside Explore (iPad is right); see the rc2 item above.
+- **EXP-D talk detail for screenshots:** `explore.talk` falls back to the first item of 10 Nov, the registration notice. Prefer a picked talk, else the first `session`; then put the talk detail back in the store set.
+- **EXP-G graph:** the full graph shows site URLs and date nodes as labels, overlapping. Scope it to the picks' neighbourhood and hide URL and date labels before it returns to the store set.
+- **Strings in pt-PT/pt-BR:** "Official programme" in the Talks rows and the kind badge ("Registration") in the talk detail are English.
+- **NextHoursCard:** same 64 pt time column that wrapped 12-hour times on Now; apply the one-line fix if the card is used again.
+- **Screenshot filter:** `-PTHideTerm` checks titles and places, not news descriptions; extend it to descriptions so the News image is clean.
