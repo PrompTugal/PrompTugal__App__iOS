@@ -36,6 +36,7 @@ struct PublicShell: View {
         .environment(reader)
         .environment(\.newsSource, reader)
         .environment(newsFeeds)
+        .environment(\.openDestination, { open($0) })
         .publicFeatures(features)
         .tint(Palette.red)
         .task { await reader.refresh() }
@@ -259,6 +260,17 @@ private struct PublicKeyboardShortcuts: View {
 /// Launch arguments for screenshots and UI tests: `-PTDestination now` opens that screen.
 /// DEBUG builds only: in a Release build every option reads as absent.
 enum PublicLaunch {
+    /// `-PTNow 2026-11-10T14:05:00Z` fixes the time the Now screen works from, so every phase can be photographed.
+    static var now: Date? {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-PTNow"), index + 1 < arguments.count else { return nil }
+        return ISO8601DateFormatter().date(from: arguments[index + 1])
+        #else
+        nil
+        #endif
+    }
+
     static var destination: String? {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments
