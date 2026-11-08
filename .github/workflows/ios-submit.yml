@@ -60,6 +60,10 @@ on:
         type: choice
         options: ['', after_approval, manual]
         default: ''
+      copyright:
+        description: 'store-metadata: the version copyright line (empty = listing.json copyright, else leave)'
+        type: string
+        default: ''
       set_version_string:
         description: 'store-metadata: change the App Store version string to this (the build version, e.g. 0.4.31). Empty = leave it.'
         type: string
@@ -155,6 +159,7 @@ jobs:
           LISTING: listing-src/${{ inputs.listing_path }}
           VERSION_STRING: ${{ inputs.set_version_string }}
           RELEASE_TYPE: ${{ inputs.release_type }}
+          COPYRIGHT: ${{ inputs.copyright }}
         run: |
           # The app's primary locale is en-GB: it gets the en-US texts. What's New is not accepted on a
           # first version. Content rights and categories as decided (store/README.md, age-rating.md).
@@ -164,6 +169,7 @@ jobs:
                 --review-notes "$(dirname "$LISTING")/review-notes.txt")
           [ -n "$VERSION_STRING" ] && args+=(--set-version-string "$VERSION_STRING")
           [ -n "$RELEASE_TYPE" ] && args+=(--release-type "$RELEASE_TYPE")
+          [ -n "$COPYRIGHT" ] && args+=(--copyright "$COPYRIGHT")
           python3 scripts/release/asc.py store-metadata "${args[@]}" ${{ inputs.confirm && '--yes' || '' }}
 
   extras:

@@ -252,8 +252,24 @@ def diff_fields(current, wanted, fields):
     return {f: wanted[f] for f in fields if f in wanted and (current or {}).get(f) != wanted[f]}
 
 
+def read_availability(app):
+    """Text describing the app's territory availability, trying both API shapes."""
+    for path in (f"/v1/apps/{app}/appAvailabilityV2", f"/v1/apps/{app}/appAvailability"):
+        r = get_opt(path)
+        d = (r or {}).get("data")
+        if d:
+            attrs = d.get("attributes", {})
+            terr = get_opt(f"/v2/appAvailabilities/{d['id']}/territoryAvailabilities?limit=200") if "V2" in path else \
+                get_opt(f"/v1/appAvailabilities/{d['id']}/availableTerritories?limit=200")
+            n = len((terr or {}).get("data", []))
+            return f"set ({n} territory record(s) on the first page; available in new territories: {attrs.get('availableInNewTerritories')}) via `{path.split('/')[-1]}`"
+    return "NOT SET or not readable (no appAvailability on either endpoint)"
+
+
 def cmd_store_metadata(a):
-    listing = json.load(open(a.listing))["locales"]
+    listing_doc = json.load(open(a.listing))
+    listing = listing_doc["locales"]
+    copyright_text = a.copyright or listing_doc.get("copyright") or ""
     for spec in a.also:
         dst, src = spec.split("=")
         listing[dst] = dict(listing[src])
@@ -310,6 +326,15 @@ def cmd_store_metadata(a):
             body = {"data": {"type": "appStoreVersionLocalizations", "attributes": dict(d, locale=loc),
                              "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}}
             changes.append((f"{loc} version (new locale)", "POST", "/v1/appStoreVersionLocalizations", body))
+    say(f"- Copyright now: `{version['attributes'].get('copyright')}`")
+    if copyright_text and version["attributes"].get("copyright") != copyright_text:
+        say(f"| | version | copyright | {version['attributes'].get('copyright')} | {copyright_text} |")
+        changes.append(("copyright", "PATCH", f"/v1/appStoreVersions/{vid}",
+                        {"data": {"type": "appStoreVersions", "id": vid, "attributes": {"copyright": copyright_text}}}))
+    elif not version["attributes"].get("copyright"):
+        say("- ⚠️ No copyright on the version and none given: App Store Connect requires it to submit (add `copyright` to listing.json or pass --copyright).")
+    av = read_availability(app)
+    say(f"- Availability (territories): {av}")
     say(f"- Release type now: `{version['attributes'].get('releaseType')}` (AFTER_APPROVAL = goes live automatically when approved, MANUAL = you release it)")
     if a.release_type:
         want_rt = a.release_type.upper()
@@ -629,6 +654,7 @@ def cmd_preflight(a):
     say("| | Check | Result |")
     say("| --- | --- | --- |")
     row("Version", True, f"{va['versionString']} · state `{va.get('appStoreState')}` · release type `{va.get('releaseType')}`")
+    row("Copyright", bool(va.get("copyright")), str(va.get("copyright")) if va.get("copyright") else "missing: App Store Connect requires it (ENTITY_ERROR.ATTRIBUTE.REQUIRED)")
     b = get_opt(f"/v1/appStoreVersions/{vid}/build")
     bd = (b or {}).get("data")
     row("Build attached", bool(bd), (f"build `{bd['attributes'].get('version')}` {bd['attributes'].get('processingState')}, "
@@ -667,8 +693,8 @@ def cmd_preflight(a):
             f"{'texts ok' if not miss else 'missing ' + ', '.join(miss)}; screenshot sets: {', '.join(sorted(kinds)) or 'none'}")
     price = get_opt(f"/v1/apps/{app}/appPriceSchedule")
     row("Price schedule", bool(price and price.get("data")), "set" if price and price.get("data") else "not set (Free must be chosen in App Store Connect or via appPriceSchedules)")
-    avail = get_opt(f"/v1/apps/{app}/appAvailability")
-    row("Availability (territories)", bool(avail and avail.get("data")), "set" if avail and avail.get("data") else "not readable or not set")
+    av = read_availability(app)
+    row("Availability (territories)", av.startswith("set"), av)
     say("- App Privacy answers (\"Data not collected\" etc.) and the privacy policy publish state cannot be read through the API: check in App Store Connect > App Privacy.")
     subs = call("GET", f"/v1/apps/{app}/reviewSubmissions?filter[platform]=IOS&limit=20")["data"]
     for sub in subs:
@@ -703,6 +729,7 @@ def main():
     sm.add_argument("--categories", default="", help="PRIMARY,SECONDARY category ids, e.g. NEWS,BUSINESS")
     sm.add_argument("--review-notes", default="")
     sm.add_argument("--set-version-string", default="")
+    sm.add_argument("--copyright", default="", help="version copyright line; default: listing.json top-level 'copyright' if present")
     sm.add_argument("--release-type", default="", choices=["", "after_approval", "manual", "scheduled"],
                     help="how the approved version goes live (AFTER_APPROVAL = automatic, MANUAL, SCHEDULED)")
     sm.add_argument("--yes", action="store_true")
