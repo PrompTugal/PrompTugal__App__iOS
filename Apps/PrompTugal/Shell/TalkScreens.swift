@@ -13,7 +13,7 @@ enum AppTalks {
 }
 
 /// The agenda's copy of a talk, matched by the page's slug.
-private func agendaEvent(for talk: TalkRef, in reader: ReaderStore) -> Event? {
+@MainActor private func agendaEvent(for talk: TalkRef, in reader: ReaderStore) -> Event? {
     reader.agenda.first { ScheduleID.fromPage($0.page) == talk.slug }
 }
 
