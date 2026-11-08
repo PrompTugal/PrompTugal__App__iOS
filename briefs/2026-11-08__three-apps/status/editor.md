@@ -16,6 +16,8 @@ Branch: `split/editor` · Last update: 00:05 UTC
 
 ## In progress
 
+- 00:05 UTC: merged phase 1 (`9220d7e`). `apps.json` has only a `team` entry on the root project, so the PrompTugal app has no entry and counts as the one app: labels unchanged (13 of 13 public, same team count). Build, validator and 66 tests green. Pushed.
+
 - Conductor: hold `split/editor` and merge after phase 4. Keep merging `origin/dev` in. Answers received: the public shell is `PublicShell(` in `Apps/PrompTugal/PublicShell.swift`; shared screen ids are unchanged; Ask there has no team context; screenshots are `screens-<sha>` for the PrompTugal app and `screens-<sha>-<app>` for the others. Screens check now accepts `PublicShell(`.
 
 - Waiting for the conductor's word that phase 1 (scaffold) is on `dev`.
