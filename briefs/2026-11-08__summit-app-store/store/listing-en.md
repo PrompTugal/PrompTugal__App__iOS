@@ -74,18 +74,7 @@ The first App Store version: the summit agenda offline, your own program with re
 
 ## TestFlight: what to test (4000)
 
-```
-PrompTugal for the Lisbon summit, 9–12 November.
-
-Please try:
-- Agenda: search, open a session and pick it.
-- My day: your picks in one list; Plan my day for gaps and walks.
-- Turn on reminders, add a pick to your calendar, and add the widget.
-- News: read a story, then try it in airplane mode.
-- Settings > About: privacy and support.
-
-Tell us what is confusing or broken, with Send Beta Feedback.
-```
+The final text is [what-to-test.txt](what-to-test.txt) (1,105 characters), also in `scripts/release/notes/promptugal.txt`, release's intro for every public build (1,500 at most). It follows the four tabs on `split/design` 3f24dcc.
 
 ## TestFlight: beta app description (4000)
 
