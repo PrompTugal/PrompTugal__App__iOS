@@ -41,7 +41,7 @@ struct OnboardingView: View {
                 .controlSize(.large)
                 .accessibilityIdentifier("pt.onboarding.choose")
                 Button { finish(false) } label: {
-                    Text("Not now").frame(maxWidth: .infinity)
+                    Text("Not Now").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(Palette.muted)

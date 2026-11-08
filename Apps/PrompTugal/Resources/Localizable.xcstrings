@@ -1312,6 +1312,29 @@
         }
       }
     },
+    "How PrompTugal works": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How PrompTugal works"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como o PrompTugal funciona"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como funciona o PrompTugal"
+          }
+        }
+      }
+    },
     "In my program": {
       "extractionState": "manual",
       "localizations": {
@@ -1703,6 +1726,29 @@
         }
       }
     },
+    "My program puts your talks in order, marks the ones that clash and shows the gaps between them. A reminder comes before each one.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My program puts your talks in order, marks the ones that clash and shows the gaps between them. A reminder comes before each one."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meu programa coloca suas palestras em ordem, marca as que conflitam e mostra os intervalos entre elas. Um lembrete chega antes de cada uma."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O programa ordena as suas sessões por hora, assinala as que se sobrepõem e mostra os intervalos entre elas. Recebe um lembrete antes de cada uma."
+          }
+        }
+      }
+    },
     "Network": {
       "extractionState": "manual",
       "localizations": {
@@ -2067,6 +2113,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Escolha as sessões que quer. Avisamos das sobreposições e lembramos antes de cada uma."
+          }
+        }
+      }
+    },
+    "Pick your talks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick your talks"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha suas palestras"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha as suas sessões"
           }
         }
       }
@@ -2508,6 +2577,29 @@
         }
       }
     },
+    "See clashes and free time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See clashes and free time"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veja os conflitos e o tempo livre"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veja as sobreposições e o tempo livre"
+          }
+        }
+      }
+    },
     "Settings": {
       "extractionState": "manual",
       "localizations": {
@@ -2830,6 +2922,29 @@
         }
       }
     },
+    "Tap the star on any talk, in Explore or on Now. It goes into My program.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the star on any talk, in Explore or on Now. It goes into My program."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque na estrela em qualquer palestra, em Explorar ou em Agora. Ela vai para Meu programa."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque na estrela em qualquer sessão, em Explorar ou em Agora. Entra no seu programa."
+          }
+        }
+      }
+    },
     "Thanks for coming": {
       "extractionState": "manual",
       "localizations": {
@@ -2849,6 +2964,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Obrigado por participar"
+          }
+        }
+      }
+    },
+    "The agenda and the news are saved here and work with no signal. Your picks never leave your phone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The agenda and the news are saved here and work with no signal. Your picks never leave your phone."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A agenda e as notícias ficam salvas aqui e funcionam sem sinal. Suas escolhas nunca saem do seu celular."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A agenda e as notícias ficam guardadas aqui e funcionam sem rede. As suas escolhas nunca saem do telemóvel."
           }
         }
       }
@@ -3681,6 +3819,29 @@
         }
       }
     },
+    "Works offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Works offline"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona offline"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona offline"
+          }
+        }
+      }
+    },
     "You picked %lld talks. The news and the agenda stay on this phone.": {
       "extractionState": "manual",
       "localizations": {
@@ -3769,6 +3930,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "O seu programa está vazio"
+          }
+        }
+      }
+    },
+    "Your summit, on your phone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your summit, on your phone"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seu evento, no seu celular"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua cimeira, no seu telemóvel"
           }
         }
       }
