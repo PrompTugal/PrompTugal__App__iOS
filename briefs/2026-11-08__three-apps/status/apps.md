@@ -23,6 +23,8 @@
 
 6. (conductor, from editor) Copy the website shortcut images (`Shortcut*.imageset`) from `PrompTugal/App/Resources/Assets.xcassets` into `Apps/PrompTugal/Resources/Assets.xcassets`, so the PrompTugal sidebar has icons. Team keeps its copy. Phase 4.
 
+7. (team, split/team d599843, not on dev yet) NowNext moves into PTAgenda: `NowNextSnapshot`, `SharedContainer`, `LisbonClock`, public `NowNextPublisher`. Once it is on dev: widgets and intents targets link PTAgenda; their three Swift files need `import PTAgenda`; in PrompTugalApp.swift set `AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }` and call it from agendaDidLoad with the schedule's picks, as TeamFeatures does.
+
 ## RiskMandate upload
 - Dinis: same Apple account. Set `testflight: true` after the first green CI run. Upload waits for the App Store Connect record; release must skip with a clear line until then (conductor to confirm with release).
 
