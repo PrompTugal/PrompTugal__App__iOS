@@ -73,6 +73,9 @@ else
     adhoc)        # ad-hoc signature that carries the entitlements; the export re-signs
       settings+=(CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=NO PROVISIONING_PROFILE_SPECIFIER=)
       summary "- Archive signed ad hoc with its entitlements; the export signs it for distribution." ;;
+    codesign)     # unsigned archive, then each bundle is signed ad hoc with the codesign tool and its entitlements
+      settings+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=)
+      summary "- Archive built unsigned; bundles signed ad hoc with their entitlements before the export." ;;
     unsigned)     # no entitlements in the archive; the export adds only the basics
       settings+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=)
       summary "- Archive built unsigned." ;;
@@ -88,6 +91,28 @@ run_logged "Archive (signed)" "$LOGS/archive-signed.log" -- \
     ${extra[@]+"${extra[@]}"} "${settings[@]}"
 
 app=$(find "$archive/Products/Applications" -maxdepth 1 -name '*.app' | head -1)
+
+if [ "$MODE" = automatic ] && [ "${AUTO_ARCHIVE:-distribution}" = codesign ]; then
+  # xcodebuild refuses ad-hoc signing on this SDK, so use the codesign tool: innermost first
+  # (frameworks, then each extension, then the app), each with its own entitlements file.
+  "$(dirname "$0")/targets.sh" > "$OUT/targets-archive.tsv"
+  sign_adhoc() {  # sign_adhoc <bundle>
+    local b=$1 bid ent
+    bid=$(plist_get "$b/Info.plist" CFBundleIdentifier)
+    ent=$(awk -F'\t' -v x="$bid" '$2==x && $4!=""{print $4; exit}' "$OUT/targets-archive.tsv")
+    if [ -n "$ent" ]; then
+      [ -f "$(dirname "$PROJECT")/$ent" ] && ent="$(dirname "$PROJECT")/$ent"
+      echo "codesign (ad hoc) $(basename "$b") with $ent"
+      codesign --force --sign - --entitlements "$ent" "$b"
+    else
+      echo "codesign (ad hoc) $(basename "$b") without entitlements"
+      codesign --force --sign - "$b"
+    fi
+  }
+  while IFS= read -r f; do sign_adhoc "$f"; done < <(find "$app" -name '*.framework' -type d -prune)
+  while IFS= read -r x; do sign_adhoc "$x"; done < <(find "$app/PlugIns" "$app/Extensions" -maxdepth 1 -name '*.appex' -type d 2>/dev/null)
+  sign_adhoc "$app"
+fi
 # Never upload to the wrong App Store record: the archive must be the app apps.json names.
 built=$(plist_get "$app/Info.plist" CFBundleIdentifier)
 if [ "$built" != "$EXPECTED_BUNDLE" ]; then

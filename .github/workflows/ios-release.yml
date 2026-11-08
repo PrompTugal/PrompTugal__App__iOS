@@ -78,7 +78,7 @@ on:
       archive_signing:
         description: 'Automatic signing: how the archive is signed (distribution = no Apple Development certificate; development = old behaviour)'
         type: choice
-        options: [distribution, adhoc, unsigned, development]
+        options: [distribution, adhoc, codesign, unsigned, development]
         default: distribution
       source_ref:
         description: 'Build another branch (e.g. night/platform) with these release scripts'
