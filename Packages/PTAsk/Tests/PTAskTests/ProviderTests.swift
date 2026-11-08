@@ -37,6 +37,7 @@ struct ProviderTests {
         let prompt = AIContextAssembler.systemPrompt(parts: [], now: now, person: publicApp.personName,
                                                      audience: publicApp.askAudience, unknownPerson: publicApp.unknownPersonLine)
         #expect(!prompt.lowercased().contains("team"))
+        #expect(!prompt.contains("Web Summit"), "no trademark in the public prompt")
         #expect(DefaultTextProvider().offersVaultKeyCopy)
     }
 

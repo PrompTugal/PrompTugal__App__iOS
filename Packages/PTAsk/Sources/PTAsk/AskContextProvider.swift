@@ -38,7 +38,7 @@ public extension AskContextProvider {
     /// The Team app's text (what the app said before there was a public app).
     var askIntro: String { "Ask about the summit, your day and the team. Choose below what Ask may see." }
     var askPlaceholder: String { "Ask about today, your picks, the team…" }
-    var askAudience: String { "the PrompTugal team" }
+    var askAudience: String { "the PrompTugal team at Web Summit Lisbon (9–12 November 2026)" }
     var unknownPersonLine: String { "You do not know which team member you are talking to." }
     var offersVaultKeyCopy: Bool { true }
 }

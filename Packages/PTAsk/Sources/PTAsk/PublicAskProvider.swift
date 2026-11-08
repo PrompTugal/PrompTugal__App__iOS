@@ -15,7 +15,7 @@ public final class PublicAskProvider: AskContextProvider {
     /// The public app has no team context, so the text says nothing about a team.
     public var askIntro: String { String(localized: "Ask about the summit and your day. Choose below what Ask may see.", bundle: .module) }
     public var askPlaceholder: String { String(localized: "Ask about today and your picks…", bundle: .module) }
-    public var askAudience: String { "visitors to Web Summit Lisbon" }
+    public var askAudience: String { "visitors to the Lisbon summit (9–12 November)" }
     public var unknownPersonLine: String { "You do not know who you are talking to." }
     public var offersVaultKeyCopy: Bool { false }
 
