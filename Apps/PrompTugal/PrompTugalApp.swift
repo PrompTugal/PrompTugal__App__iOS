@@ -2,6 +2,7 @@ import SwiftUI
 import PTCore
 import PTAgenda
 import PTDeck
+import PTSync
 import PTWeb
 
 /// Entry point of the public PrompTugal app (news.promptugal.reader).
@@ -9,6 +10,8 @@ import PTWeb
 /// This app has no team and no lanes: it never calls the Team app's wiring.
 @main @MainActor
 struct PrompTugalApp: App {
+    @Environment(\.scenePhase) private var scenePhase
+
     init() {
         // The app's own URL scheme, before any view reads it (reminder links, deep links).
         AppLinks.scheme = "promptugal"
@@ -22,11 +25,17 @@ struct PrompTugalApp: App {
         // Presenter mode's second screen: Info.plist names PTDeck.ExternalDisplaySceneDelegate, which nothing else
         // references, so mention the type here to keep the linker from dropping it.
         _ = ExternalDisplaySceneDelegate.self
+        // Live news from promptugal.news only; registers the background refresh before launch finishes.
+        PublicLive.start()
     }
 
     var body: some Scene {
         WindowGroup {
             PublicShell()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { PublicLive.foreground() }
+            if phase == .background { SyncBackground.schedule() }
         }
     }
 }

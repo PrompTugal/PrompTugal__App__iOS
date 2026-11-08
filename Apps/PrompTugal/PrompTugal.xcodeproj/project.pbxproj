@@ -17,6 +17,7 @@
 		FA989053DC0B7A670553676E /* PrompTugalIntents.appex in Embed */ = {isa = PBXBuildFile; fileRef = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BDF15758967827341EB8892C /* PTNowNext in Frameworks */ = {isa = PBXBuildFile; productRef = 96AD954C7DFBE4B782BD54D8 /* PTNowNext */; };
 		E61982BA70FD0A0841506D63 /* PTDeck in Frameworks */ = {isa = PBXBuildFile; productRef = BA97653A6021BA60AD1358C3 /* PTDeck */; };
+		41F3140167275E1411C25A46 /* PTSync in Frameworks */ = {isa = PBXBuildFile; productRef = 25F7334D79311F8220A3AB98 /* PTSync */; };
 		96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */ = {isa = PBXBuildFile; productRef = F72F20E84309FB59E1978852 /* PTExplore */; };
 /* End PBXBuildFile section */
 
@@ -113,6 +114,11 @@
 			path = Shell;
 			sourceTree = "<group>";
 		};
+		523E7C8792792EE86478AF95 /* App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = App;
+			sourceTree = "<group>";
+		};
 		BC4E976463CB6D4FC1A867C6 /* Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Resources;
@@ -156,6 +162,7 @@
 				6F535B60419336268D50532F /* PTAgenda in Frameworks */,
 				5B2719121FAAE433CDC36721 /* PTNews in Frameworks */,
 				E61982BA70FD0A0841506D63 /* PTDeck in Frameworks */,
+				41F3140167275E1411C25A46 /* PTSync in Frameworks */,
 				96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -201,6 +208,7 @@
 				C49BA95E746809D084900CB4 /* Info.plist */,
 				333310F24A95B1462843FAB0 /* PrompTugal.entitlements */,
 				E9107D2D073DF2248736FA42 /* Shell */,
+				523E7C8792792EE86478AF95 /* App */,
 				BC4E976463CB6D4FC1A867C6 /* Resources */,
 				6CFE3E6C214F9403F25A558B /* Widgets */,
 				284FAE64B7A9293CC58C7F3A /* Intents */,
@@ -253,6 +261,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				E9107D2D073DF2248736FA42 /* Shell */,
+				523E7C8792792EE86478AF95 /* App */,
 				BC4E976463CB6D4FC1A867C6 /* Resources */,
 			);
 			name = PrompTugal;
@@ -262,6 +271,7 @@
 				5B2A64C666B79D74E8E76CBC /* PTAgenda */,
 				8CA679B880DAE215C2AF5ED5 /* PTNews */,
 				BA97653A6021BA60AD1358C3 /* PTDeck */,
+				25F7334D79311F8220A3AB98 /* PTSync */,
 				F72F20E84309FB59E1978852 /* PTExplore */,
 			);
 			productName = PrompTugal;
@@ -407,6 +417,7 @@
 				689CF41318B6542F4B8EB9FE /* XCLocalSwiftPackageReference "../../Packages/PTNews" */,
 				DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */,
 				6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */,
+				68F21D0D111DF6468DFC0904 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */,
 				74304D6E9A5485D46D560243 /* XCLocalSwiftPackageReference "../../Packages/PTExplore" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -844,6 +855,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTDeck;
 		};
+		68F21D0D111DF6468DFC0904 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTSync;
+		};
 		DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTNowNext;
@@ -889,6 +904,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */;
 			productName = PTDeck;
+		};
+		25F7334D79311F8220A3AB98 /* PTSync */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68F21D0D111DF6468DFC0904 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */;
+			productName = PTSync;
 		};
 		F72F20E84309FB59E1978852 /* PTExplore */ = {
 			isa = XCSwiftPackageProductDependency;
