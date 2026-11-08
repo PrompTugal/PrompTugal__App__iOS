@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 07:50 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 08:05 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,9 @@ Branch: `split/editor` · Last update: 07:50 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 08:05 UTC: started the privacy and support re-read against `Apps/PrompTugal` (dev) and its widgets and intents (`split/platform`). Privacy: added the widget and Siri answers (they read a small on-device copy of now and next from the App Group, no network, no vault) and the camera (VisionKit reads a vault QR code on the device, nothing saved or sent). Support: added how to add the widget and ask Siri. Dev has no new commits since v0.4.6.
+- **Found in `Apps/PrompTugal`: no file sharing.** The old project had `INFOPLIST_KEY_UIFileSharingEnabled = YES` and `INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES`; the new project has neither. The support page tells people to edit `Websites.json` in the Files app, which only works with them. See "Needs from others".
 
 - 07:50 UTC: the conductor applied my two build patches to dev (`cf4f548`, `b17edc3`); the patch folder stays out of dev. Merged `origin/dev` (v0.4.6) into `split/editor`: conflicts in `admin.py`, `build.py` and `validate.py` because both sides had the same changes; kept `split/editor`'s versions (they also carry the page and feature scope code). Checked on two layouts: today's dev layout, and `split/editor` merged with the real `origin/split/platform` (`f0c53a9`, no root `PrompTugal/`). Both: build, validator, 68 tests green, and the same labels (Team 23 in the beta, 2 debug only, 1 coming; public 4 in the beta, 9 coming).
 - Next: read `Apps/PrompTugal` (widgets, intents, config now there) for the privacy and support pages.
@@ -75,6 +78,8 @@ Branch: `split/editor` · Last update: 07:50 UTC (editor.B took over from accoun
 - Nothing yet.
 
 ## Needs from others
+
+- Apps (or conductor): add `INFOPLIST_KEY_UIFileSharingEnabled = YES;` and `INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;` to both configurations of the PrompTugal app target in `Apps/PrompTugal/PrompTugal.xcodeproj`, as the root project has. Otherwise the support page's "edit the website shortcuts in Files" section is false for the public app, and I will have to remove it before READY.
 
 - Platform/apps (phase 4): the sidebar artwork (`Shortcut*.imageset`, for example `ShortcutPrompTugal`) has to be in `Apps/PrompTugal/Resources/Assets.xcassets` or in a package resource, or the new app's sidebar will have no icons. The site is fine either way.
 
