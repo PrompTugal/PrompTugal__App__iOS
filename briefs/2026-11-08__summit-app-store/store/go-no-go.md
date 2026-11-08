@@ -273,3 +273,13 @@ Dinis's decision: no Ask (OpenRouter) in the App Store app, and the label reads 
 | M4 | Screens #36: the **iPad** images list **"Ask"** in the sidebar's More group (all 4 ids, all locales). The iPhone images show no Ask: the Now card is below the fold, and Ask was never a tab. | **re-run screens on rc8** (iPad at least), then re-upload the iPad sets |
 | Site | privacy.html still describes Ask. True for the app's DEBUG builds and the TestFlight build 204, but it will confuse a reviewer next to "Data Not Collected". | editor: say Ask is not in the App Store version |
 | TestFlight | Build 204, already in Beta App Review, still has Ask (with the demo key in its notes). Fine for the beta. | note |
+
+## Run 17: screens #37 on rc8 4f58965 (22:16 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| M4 (iPad 13") | The sidebar is Now, My program, Explore, News; More: Settings, Reminders. **No Ask** in en-US, pt-PT or pt-BR. All 4 ids clean: no alert, no debug UI, no "Web Summit", times on one line. | **GO**: replace the iPad sets |
+| M4 (iPhone 6.5") | 4 ids × 3 locales clean, no Ask | GO |
+| M4 (iPhone 6.9") | The #36 sets already uploaded contain no Ask (it was never a tab, and the Now card is below the fold); #37's 6.9" set is still running | GO to keep #36; check #37 if it is swapped in |
+| Code, texts | rc8 GO (run 16); dev v0.4.24 has the same app code as 4f58965; scripts/testflight texts match store/ (no Ask); ASC listing and review notes re-applied without Ask (42526747980) | GO |
+| Open for the final GO on 0.4.24 | Release #105's build processed VALID and attached; Dinis: App Privacy "Data Not Collected", Mac and Vision Pro unticked, IDFA No | pending |
