@@ -16,6 +16,8 @@ Branch: `split/editor` · Last update: 00:05 UTC
 
 ## In progress
 
+- 01:05 UTC: the conductor gave me `scripts/testflight/review-notes.txt` and `what-to-test.txt` (text files only). The PrompTugal versions are written next to them as `review-notes.promptugal.txt` and `what-to-test.promptugal.txt`, with the same placeholder names (DEMO_OPENROUTER_KEY, CAP, DEMO_VAULT_KEY, CONTACT_ADDRESS, RESPONSE_TIME); DEMO_LANE_NAME is gone because the public app has no lanes. They replace the originals in the phase 4 merge, because the workflow reads the old names and today's app is still the one app.
+
 - 01:00 UTC: merged `dev` to v0.1.67 (TestFlight ops, release). Green, pushed. `scripts/testflight/review-notes.txt` and `what-to-test.txt` still describe the one app (sample data, Who are you); they are not mine. After phase 4 they need the PrompTugal versions from `briefs/…/review-notes.md`.
 
 - 00:45 UTC: merged PTVaultUI (`e5328ff`). Vault, Face ID and trusted-signer labels follow the moved files (`**/VaultKeychain.swift`, `**/VaultViews.swift`): all three still in the beta. Green, pushed.

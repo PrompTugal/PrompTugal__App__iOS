@@ -1,0 +1,9 @@
+PrompTugal for Web Summit Lisbon.
+
+Please try:
+- Agenda: open a session and add it to your schedule. My schedule shows it.
+- News: read the feed and open the graph.
+- Ask: needs your consent before the first message.
+- Settings > About: Privacy and Support links.
+
+Tell us what is confusing or broken.
