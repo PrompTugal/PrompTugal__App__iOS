@@ -8,6 +8,9 @@ struct PublicSettingsView: View {
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     #endif
 
+    @State private var showHow = false
+    @Environment(\.openDestination) private var open
+
     var body: some View {
         Form {
             Section {
@@ -15,6 +18,9 @@ struct PublicSettingsView: View {
                     ReminderSettingsView()
                 } label: {
                     Label("Reminders", systemImage: "bell.badge")
+                }
+                Button { showHow = true } label: {
+                    Label("How PrompTugal works", systemImage: "questionmark.circle")
                 }
             }
             Section {
@@ -40,6 +46,12 @@ struct PublicSettingsView: View {
             #endif
         }
         .navigationTitle("Settings")
+        .sheet(isPresented: $showHow) {
+            OnboardingView { chooseTalks in
+                showHow = false
+                if chooseTalks { open("explore") }
+            }
+        }
     }
 
     @ViewBuilder private var versionText: some View {

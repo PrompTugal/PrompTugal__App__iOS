@@ -11,11 +11,14 @@ import PTWeb
 /// with stable ids; each row is one accessibility element with a short label and two actions.
 public struct AgendaView: View {
     /// `openSession`: the app's native session detail (works offline). Without it a row opens the session's web page.
-    public init(openSession: ((Event) -> Void)? = nil) {
+    /// `title`: the navigation title; the app gives its own when the list sits inside another screen (Explore).
+    public init(title: String? = nil, openSession: ((Event) -> Void)? = nil) {
+        self.title = title
         self.openSession = openSession
         _day = State(initialValue: Self.initialDay(now: AgendaClock.now))
     }
 
+    private let title: String?
     private let openSession: ((Event) -> Void)?
 
     /// During the summit the agenda opens on today (Lisbon time); otherwise on all days.
@@ -75,7 +78,7 @@ public struct AgendaView: View {
         }
         .listStyle(.insetGrouped)
         .searchable(text: $query, prompt: String(localized: "Sessions or venues", bundle: .module))
-        .navigationTitle(String(localized: "Agenda", bundle: .module))
+        .navigationTitle(title ?? String(localized: "Agenda", bundle: .module))
         .navigationDestination(item: $opened) { event in
             if let url = event.url { WebPage(url: url, title: String(localized: "Session", bundle: .module)) }
         }
