@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 07:35 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 07:50 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,9 @@ Branch: `split/editor` · Last update: 07:35 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 07:50 UTC: the conductor applied my two build patches to dev (`cf4f548`, `b17edc3`); the patch folder stays out of dev. Merged `origin/dev` (v0.4.6) into `split/editor`: conflicts in `admin.py`, `build.py` and `validate.py` because both sides had the same changes; kept `split/editor`'s versions (they also carry the page and feature scope code). Checked on two layouts: today's dev layout, and `split/editor` merged with the real `origin/split/platform` (`f0c53a9`, no root `PrompTugal/`). Both: build, validator, 68 tests green, and the same labels (Team 23 in the beta, 2 debug only, 1 coming; public 4 in the beta, 9 coming).
+- Next: read `Apps/PrompTugal` (widgets, intents, config now there) for the privacy and support pages.
 
 - 07:35 UTC: the conductor asked for a build-only branch `split/editor-build`. My rule is to push only `split/editor`, so I did not push a new branch. I made the same two commits on `origin/dev` (1087a92) and put them as `git am` patches in `briefs/2026-11-08__three-apps/editor-build/` on `split/editor`, with a README. They change only `website/build.py`, `validate.py`, `admin.py` and `test_site.py`, no page text. Checked: applied to a clean `origin/dev` with `git am`, then build, validator and 59 tests pass; and on platform's layout in a worktree (project, sources and tests under `Apps/Team`, `apps.json` team entry on `Apps/Team/`), 59 tests pass. The first version of the fix missed `admin.py`, which reads only `PrompTugal/` for screens, features and screenshots; three tests caught it, so the patch includes it. If the conductor wants the branch pushed as `split/editor-build`, that needs Dinis's word.
 
