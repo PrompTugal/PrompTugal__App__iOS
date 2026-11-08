@@ -1,6 +1,6 @@
 # Vault: PTVaultUI
 
-> Vault/ is moved into PTVaultUI and green in CI (run #272, commit e5328ff). The background task id is now a parameter. Still to do: move VaultCollabAccess once collab's protocol is in PTCore.
+> (8 Nov, B) VaultCollabAccess checked against collab-seams 11acc2e: matches; waiting for CollabSeams on dev before dispatching CI. Vault/ is moved into PTVaultUI and green in CI (run #272, commit e5328ff). The background task id is now a parameter. Still to do: move VaultCollabAccess once collab's protocol is in PTCore.
 
 **Branch:** `split/vault` (from origin/dev 45284d0) · **Phase:** 3 (move done, green) · **Updated:** 8 Nov, 01:05 UTC
 
@@ -91,3 +91,7 @@ Handed off to the session on account B. Do not dispatch CI from the old session.
 - **Next steps:** when CollabSeams is on dev, merge origin/dev, check the file against the real protocol, dispatch ios.yml on split/vault (pushes to split/** do not trigger it), fix what CI shows, report to the conductor.
 - **Background task id:** `VaultBackground.register(taskIdentifier:)`. `PrompTugalApp.init` passes `news.promptugal.reader.vault-refresh`. Each app passes its own id and lists it in `BGTaskSchedulerPermittedIdentifiers`.
 - **Keychain note for the Team app (release notes):** Keychain items are scoped to team ID + bundle ID. The Team app (`news.promptugal.team`) will not see vault keys saved by the public app (`news.promptugal.reader`). Teammates re-import their key in the Team app. No keychain-sharing group tonight.
+
+## Account B (8 Nov)
+
+- Checked `VaultCollabAccess` against `CollabSeams.swift` on `split/collab-seams` (11acc2e): all 12 protocol members and `HookError` cases match. Fixed a comment (role is "teammate") and an unused-result warning. No CI dispatched; waiting for the conductor to say CollabSeams is on dev.

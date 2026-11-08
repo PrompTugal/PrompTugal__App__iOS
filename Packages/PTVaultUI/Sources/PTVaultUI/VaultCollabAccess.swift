@@ -15,7 +15,7 @@ public final class VaultCollabAccess: CollabVaultAccess {
     public var isOpen: Bool { !session.isLocked }
 
     /// The account's own vault: the reader vault opened by passkey, recovery code or stored as "reader".
-    /// An imported key (role "imported", e.g. a teammate's read key) is never mine.
+    /// An imported key (role "teammate", e.g. a teammate's read key) is never mine.
     private var own: VaultSession.OpenVault? {
         session.vaults.first { $0.vaultId == session.readerVaultId } ?? session.vaults.first { $0.role == "reader" }
     }
@@ -72,6 +72,6 @@ public final class VaultCollabAccess: CollabVaultAccess {
         } else {
             laneId = try await session.importKey(laneKey, label: "Newsroom notes lane").vaultId
         }
-        try await session.update(path, vaultId: laneId, message: "A note from the PrompTugal app") { _ in data }
+        _ = try await session.update(path, vaultId: laneId, message: "A note from the PrompTugal app") { _ in data }
     }
 }
