@@ -217,3 +217,13 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 | M6, M9 | Dinis's hand steps: App Privacy (Other User Content, not linked, no tracking), Mac and Vision Pro unticked, IDFA No | pending |
 | G5 | Run 398 | queued |
 | G1, G4 | The rc7 build is uploaded and processed; airplane-mode fresh install | pending |
+
+## Run 15: dev = rc7 535e9ba (15:07 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| G5 | Run 398 on 535e9ba: 28 of 28 green; dev is 535e9ba (release v0.4.22) | **GO** |
+| M4 | Screenshots applied in ASC: 12 sets (4 locales × 3 sizes) × 4 images (ios-submit 42491790589) | **GO** |
+| M8 | `scripts/testflight/review-notes.txt` on dev still has the old step 4 ("asked only then"). Since rc7, the first pick asks too. | **fix**: copy store/review-notes.txt; re-apply the ASC review notes if they were set from the old copy |
+| G1, G4 | Build number, processing, version string, airplane-mode fresh install | pending |
+| M6, M9 | Dinis: App Privacy, Mac and Vision Pro, IDFA | pending (pinged) |
