@@ -124,3 +124,14 @@ The conductor's decision: the binary is **rc4 d8a5020**. rc5 differs from it onl
 | Binary | `git diff d8a5020 56a630e -- Apps Packages` touches only `PTExploreTests`, `PTWebTests` and the PTExplore **test target's** dependency in `Package.swift`. The product code is byte-identical to d8a5020, so runs 2 to 6 still apply. | GO in the repository |
 | G5 | Run 393: every app build and app test green; two package test targets did not compile (fixed in 56a630e). Run 394 (42484035275) on 56a630e: pending at 13:16. | pending |
 | Screenshots | rc5 3e6cd9f = 706b153 plus rc4's test fixes | as run 6 |
+
+## Run 8: status at 13:58 UTC
+
+| # | Check | State |
+| --- | --- | --- |
+| G5 | Run 394 on rc4 56a630e: 22 of 28 jobs green, including the PrompTugal Release build, the Debug build, and the unit tests on iPhone and iPad. PTVaultUI, PTNews, PTAsk, PTWeb and PTAgenda package tests are running; nothing has failed. | in progress |
+| ASC plan | release.md on rc5 7766e2a has review's corrections: content rights `USES_THIRD_PARTY_CONTENT`, IDFA No, Mac and Vision Pro availability unticked by hand (15b), texts from store/. | GO (plan) |
+| ASC dry run | Not run yet | pending |
+| M4 | Screens on rc5: not run yet. release.md plans about 15:40 on dev. | pending (see note) |
+
+Note: screenshots at 15:40 plus about 25 minutes leaves little room before the 16:00 freeze, if an image needs a fix. Run `screens.yml` on rc5 7766e2a now. It has the debug-off fix and the `hide_term` filter, and its product code matches the binary.
