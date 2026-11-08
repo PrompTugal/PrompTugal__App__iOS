@@ -1,6 +1,6 @@
 # Team session: PTWeb and PTAgenda
 
-> PTWeb and PTAgenda are on dev (17a160c, merged as 7863ae2, run 307 green). Follow-up in progress: reminder links use AppLinks.scheme, and the StoreKit test no longer waits 60 s. CI run on macos-26 queued; READY comes after it is green.
+> PTWeb and PTAgenda are on dev (7863ae2). The follow-up (reminders from AppLinks.scheme, bounded StoreKit test) is green: run 313, commit 3899bb1, all 15 jobs. READY sent to the conductor. Nothing open for team.
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
 
@@ -14,6 +14,8 @@
 - **02:20 UTC:** Run 293 failed (cancelled by the conductor after the Debug build, iPhone and iPad tests, PTWeb and PTAsk failed). The log has one real error, twice: `BridgeScripts.swift` used `ScheduleDocument.storageKey` and `.changeEvent`, and PTWeb cannot see PTAgenda. PTWeb now owns both strings (`BridgeScripts.scheduleKey`, `scheduleChangeEvent`) and `ScheduleDocument` reads them. PTAsk failed through PTWeb, so the same fix should clear it. `ReminderDelegate` now accepts `promptugal` and `ptteam` links. Pushed as 115ba30; run 296 (app=all) queued. PTAgenda itself has not compiled yet.
 
 - **03:20 UTC:** 17a160c merged to dev as 7863ae2. Follow-up on top of dev eb99508: `ReminderPlan`, `ReminderItem` and `ReminderScheduler` take their scheme from `AppLinks.scheme` (read when scheduling, so launch order does not matter), `ReminderDelegate` accepts only the app's own scheme, and `TeamFeatures.urlScheme` is gone. `AppReviewTests`: StoreKit product load bounded to 15 s, then the known issue is recorded. Not yet compiled.
+
+- **04:15 UTC:** Run 313 (macos-26, app=all) on 3899bb1 green, all 15 jobs. READY sent to the conductor.
 
 ## Handoff
 
