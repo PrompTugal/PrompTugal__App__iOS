@@ -19,6 +19,7 @@ set +x
 . "$(dirname "$0")/lib.sh"
 mkdir -p "$OUT" "$LOGS"
 : "${MODE:?MODE must be manual or automatic}"
+: "${EXPECTED_BUNDLE:?EXPECTED_BUNDLE is the bundle id of the app in apps.json}"
 
 # --- API key ---------------------------------------------------------------
 keydir=$RUNNER_TEMP/asc
@@ -77,6 +78,11 @@ for slot in APP WIDGETS INTENTS SHARE; do
   team=$(plist_get "$pl" TeamIdentifier:0)
   appid=$(plist_get "$pl" Entitlements:application-identifier)
   bundle=${appid#*.}
+  # A profile of another app must never be installed for this one.
+  case "$bundle" in
+    "$EXPECTED_BUNDLE"|"$EXPECTED_BUNDLE".*|"*") ;;
+    *) echo "::error::$var is for $bundle, but this job signs $EXPECTED_BUNDLE. Wrong secret for this app."; exit 1 ;;
+  esac
   expires=$(plist_get "$pl" ExpirationDate)
   if /usr/libexec/PlistBuddy -c "Print :ProvisionedDevices" "$pl" >/dev/null 2>&1; then
     echo "::error::$var is a development or ad hoc profile (it lists devices). Use an App Store profile."
@@ -92,8 +98,8 @@ done
 
 if [ "$MODE" = manual ]; then
   [ -s "$OUT/profiles.tsv" ] || { echo "::error::manual signing needs IOS_PROFILE_APP_BASE64"; exit 1; }
-  grep -q "^news\.promptugal\.reader	" "$OUT/profiles.tsv" || \
-    { echo "::error::no installed profile is for news.promptugal.reader"; exit 1; }
+  grep -qF "$EXPECTED_BUNDLE	" "$OUT/profiles.tsv" || \
+    { echo "::error::no installed profile is for $EXPECTED_BUNDLE"; exit 1; }
   if [ -z "${APPLE_TEAM_ID:-}" ]; then
     echo "APPLE_TEAM_ID=$(head -1 "$OUT/profiles.tsv" | cut -f4)" >> "$GITHUB_ENV"
   fi
