@@ -4,7 +4,7 @@ import PTWeb
 
 /// One local notification to schedule.
 public struct ReminderItem: Identifiable, Hashable, Sendable {
-    public init(id: String, kind: Kind, title: String, body: String, fire: Date, start: Date, url: URL?, scheme: String = "promptugal") {
+    public init(id: String, kind: Kind, title: String, body: String, fire: Date, start: Date, url: URL?, scheme: String = AppLinks.scheme) {
         self.id = id
         self.kind = kind
         self.title = title
@@ -24,8 +24,8 @@ public struct ReminderItem: Identifiable, Hashable, Sendable {
     public let fire: Date
     public let start: Date
     public let url: URL?
-    /// The URL scheme of the app that schedules it: `promptugal` for the public app, `ptteam` for the Team app.
-    public var scheme = "promptugal"
+    /// The URL scheme of the app that schedules it (`AppLinks.scheme`: `promptugal` for the public app, `ptteam` for the Team app).
+    public var scheme: String
 
     /// The link a tap opens inside the app, through the shell's `<scheme>://open/<destination>` route. It lands on
     /// My day today; the query names the session or briefing so the shell can open it directly.
@@ -52,7 +52,7 @@ public enum ReminderPlan {
 
     public static func items(picks: [SchedulePick], standups: [TeamStandup], person: String?, leadMinutes: Int,
                       now: Date, includePicks: Bool = true, includeStandups: Bool = true,
-                      scheme: String = "promptugal", limit: Int = ReminderPlan.limit) -> [ReminderItem] {
+                      scheme: String = AppLinks.scheme, limit: Int = ReminderPlan.limit) -> [ReminderItem] {
         let lead = TimeInterval(max(0, leadMinutes) * 60)
         var items: [ReminderItem] = []
         if includePicks {
