@@ -104,7 +104,7 @@ def plan_review_detail(detail_id, attrs):
 def builds_query(app, number=None, limit=25):
     q = f"/v1/builds?filter[app]={app}&sort=-uploadedDate&limit={limit}"
     q += "&include=preReleaseVersion,buildBetaDetail,betaAppReviewSubmission"
-    q += "&fields[builds]=version,uploadedDate,processingState,expired,expirationDate,usesNonExemptEncryption,minOsVersion"
+    q += "&fields[builds]=version,uploadedDate,processingState,expired,expirationDate,usesNonExemptEncryption,minOsVersion,preReleaseVersion,buildBetaDetail,betaAppReviewSubmission"
     if number:
         q += f"&filter[version]={number}"
     return q
