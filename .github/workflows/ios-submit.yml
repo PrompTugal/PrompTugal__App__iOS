@@ -51,6 +51,11 @@ on:
         description: 'age-rating: field=value pairs, space-separated (empty = only show the declaration)'
         type: string
         default: ''
+      release_type:
+        description: 'store-metadata: how the approved version goes live: after_approval (automatic), manual, or empty = leave as is'
+        type: choice
+        options: ['', after_approval, manual]
+        default: ''
       set_version_string:
         description: 'store-metadata: change the App Store version string to this (the build version, e.g. 0.4.31). Empty = leave it.'
         type: string
@@ -145,6 +150,7 @@ jobs:
         env:
           LISTING: listing-src/${{ inputs.listing_path }}
           VERSION_STRING: ${{ inputs.set_version_string }}
+          RELEASE_TYPE: ${{ inputs.release_type }}
         run: |
           # The app's primary locale is en-GB: it gets the en-US texts. What's New is not accepted on a
           # first version. Content rights and categories as decided (store/README.md, age-rating.md).
@@ -153,6 +159,7 @@ jobs:
                 --content-rights USES_THIRD_PARTY_CONTENT --categories NEWS,BUSINESS
                 --review-notes "$(dirname "$LISTING")/review-notes.txt")
           [ -n "$VERSION_STRING" ] && args+=(--set-version-string "$VERSION_STRING")
+          [ -n "$RELEASE_TYPE" ] && args+=(--release-type "$RELEASE_TYPE")
           python3 scripts/release/asc.py store-metadata "${args[@]}" ${{ inputs.confirm && '--yes' || '' }}
 
   extras:

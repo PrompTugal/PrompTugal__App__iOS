@@ -13,7 +13,7 @@ runs on any GitHub runner without installing anything.
     asc.py age-rating   [--set key=value ...] [--yes]       # shows the declaration; sets only what --set names
     asc.py store-metadata --listing store/listing.json [--version 0.4.n] [--also en-GB=en-US]
                         [--skip whatsNew] [--content-rights USES_THIRD_PARTY_CONTENT] [--categories NEWS,BUSINESS]
-                        [--review-notes review-notes.txt] [--set-version-string 0.4.n] [--yes]
+                        [--review-notes review-notes.txt] [--set-version-string 0.4.n] [--release-type after_approval|manual] [--yes]
                         # App Store listing; dry run unless --yes. Review contact from REVIEW_CONTACT_* and the
                         # notes placeholder <DEMO_OPENROUTER_KEY> from the environment: never printed.
 
@@ -183,12 +183,12 @@ def cmd_submit(a):
     if not b or b["attributes"]["processingState"] != "VALID":
         sys.exit("::error::build not found or not processed yet; run wait-build first")
     versions = call("GET", f"/v1/apps/{app}/appStoreVersions?filter[platform]=IOS&filter[versionString]={a.version}"
-                           f"&fields[appStoreVersions]=versionString,appStoreState")["data"]
+                           f"&fields[appStoreVersions]=versionString,appStoreState,releaseType")["data"]
     say(f"### App Store submission plan for {a.version} ({a.build})")
     say("")
     if versions:
         v = versions[0]
-        say(f"- App Store version {a.version} exists, state `{v['attributes']['appStoreState']}`.")
+        say(f"- App Store version {a.version} exists, state `{v['attributes']['appStoreState']}`, release type `{v['attributes'].get('releaseType')}`.")
     else:
         v = None
         say(f"- App Store version {a.version} does not exist; it will be created (metadata stays manual).")
@@ -302,6 +302,13 @@ def cmd_store_metadata(a):
             body = {"data": {"type": "appStoreVersionLocalizations", "attributes": dict(d, locale=loc),
                              "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}}
             changes.append((f"{loc} version (new locale)", "POST", "/v1/appStoreVersionLocalizations", body))
+    say(f"- Release type now: `{version['attributes'].get('releaseType')}` (AFTER_APPROVAL = goes live automatically when approved, MANUAL = you release it)")
+    if a.release_type:
+        want_rt = a.release_type.upper()
+        if version["attributes"].get("releaseType") != want_rt:
+            say(f"| | version | releaseType | {version['attributes'].get('releaseType')} | {want_rt} |")
+            changes.append(("release type", "PATCH", f"/v1/appStoreVersions/{vid}",
+                            {"data": {"type": "appStoreVersions", "id": vid, "attributes": {"releaseType": want_rt}}}))
     # Extras: version string, content rights, categories, App Review details
     if a.set_version_string and version["attributes"]["versionString"] != a.set_version_string:
         say(f"| | version | versionString | {version['attributes']['versionString']} | {a.set_version_string} |")
@@ -598,6 +605,8 @@ def main():
     sm.add_argument("--categories", default="", help="PRIMARY,SECONDARY category ids, e.g. NEWS,BUSINESS")
     sm.add_argument("--review-notes", default="")
     sm.add_argument("--set-version-string", default="")
+    sm.add_argument("--release-type", default="", choices=["", "after_approval", "manual", "scheduled"],
+                    help="how the approved version goes live (AFTER_APPROVAL = automatic, MANUAL, SCHEDULED)")
     sm.add_argument("--yes", action="store_true")
     for name in ("wait-build", "compliance", "whats-new", "submit"):
         s = sub.add_parser(name)
