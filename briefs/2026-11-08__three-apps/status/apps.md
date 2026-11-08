@@ -1,6 +1,6 @@
 # Apps status
 
-> RiskMandate and PrompTugal both build in CI (PrompTugal: all four app jobs green on 3a63963). RiskMandate's Release build and iPad tests are still queued; READY goes to the conductor when run 290 finishes.
+> RiskMandate is green and on dev. PrompTugal run 316 is nearly done with no failures; I report to the conductor when it finishes.
 
 ## Done
 - `Apps/RiskMandate/RiskMandate.xcodeproj`: bundle ai.riskmandate.app, version 0.4.0, one screen, privacy manifest, placeholder icon, one unit test, scheme "RiskMandate". Links PTCore.
@@ -9,7 +9,7 @@
 - `apps.json`: entries "promptugal" and "riskmandate", both testflight false. `check_apps.py` and its tests pass on Linux.
 
 ## In progress
-- Waiting for run 290 (riskmandate) to finish.
+- Waiting for run 316 (promptugal) to finish.
 
 ## Next
 - Fix whatever CI finds. Add packages to PrompTugal as they land (PTLanes is not in it by design).
@@ -34,11 +34,10 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (02:50 UTC)
-- 303 (riskmandate, self-hosted, eaeacbc = origin/dev merged + testflight flip): Debug build, PTAgenda, PTAsk, PTCore and SGitVault green; iPhone tests running; Release build, iPad tests, PTWeb, PTNews, PTVaultUI and PTLanes queued on the three self-hosted runners.
-- 289 (promptugal, 3a63963, GitHub-hosted): Debug, Release, iPhone and iPad all green; its package jobs were replaced by the per-job concurrency rule, so the run shows failure. Not a code failure.
-- 285, 290: cancelled (superseded).
-- Next: when 303 is green, send READY (riskmandate), then dispatch app=promptugal runner=self-hosted.
+## Last CI run (04:25 UTC)
+- 305 (riskmandate, cceddbf): green, merged to dev by the conductor as fef81e2.
+- 316 (promptugal, 6775d65 = dev at v0.1.82, macos-26): Release build, iPhone and iPad tests, PTNews, PTWeb, SGitVault, PTAsk green; PTAgenda, PTLanes, PTVaultUI running; Debug build and PTCore queued. No failures so far.
+- Runs must use runner=macos-26 (the laptop runner is offline).
 - apps.json: riskmandate testflight true; promptugal false until phase 4.
 
 ## Handoff
