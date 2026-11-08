@@ -7,7 +7,7 @@
 - Searched every call site of `URLSession`, `HTTPClient`, `URLRequest`, `httpMethod`, uploads, telemetry, analytics, MetricKit and crash APIs in the linked code, then followed each to its host.
 - Swift package dependencies: no `Package.swift` declares a remote package, and the project has no `XCRemoteSwiftPackageReference`. So there is no third-party code at all.
 - The promptugal.news site, checked live at 11:45 UTC: hosted on GitHub Pages. It sets no `Set-Cookie`. The home, events and articles pages load no external scripts, images, fonts or trackers; links to other sites are plain links that open in Safari.
-- The open branches add no new hosts (only test hosts in collab's tests).
+- The open branches add no new hosts the app fetches (only test hosts in collab's tests). Recheck at 12:16 UTC: `split/design`'s Now practical card (`NowView.swift`) links to metrolisboa.pt, jf-parquedasnacoes.pt and carris.pt with SwiftUI `Link`, which opens Safari. Those are not app traffic.
 
 ## What leaves the device
 
