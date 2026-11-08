@@ -372,7 +372,41 @@ def cmd_store_metadata(a):
         say("")
         say("Dry run: nothing changed. Run with **confirm** ticked to apply these changes.")
         return
+    loc_lists = {"/v1/appInfoLocalizations": (f"/v1/appInfos/{info['id']}/appInfoLocalizations?limit=50", "appInfoLocalizations"),
+                 "/v1/appStoreVersionLocalizations": (f"/v1/appStoreVersions/{vid}/appStoreVersionLocalizations?limit=50",
+                                                      "appStoreVersionLocalizations")}
+
+    def existing_localization(path, locale):
+        listing_path, _ = loc_lists[path]
+        return next((l for l in call("GET", listing_path)["data"] if l["attributes"]["locale"] == locale), None)
+
+    def patch_localization(path, existing, attrs):
+        _, typ = loc_lists[path]
+        attrs = {k: v for k, v in attrs.items() if k != "locale"}
+        call("PATCH", f"{path}/{existing['id']}", {"data": {"type": typ, "id": existing["id"], "attributes": attrs}})
+
     for what, method, path, body in changes:
+        if method == "POST" and path in loc_lists:
+            # Idempotent create: Apple makes the version localization when the app-info one is created, and a
+            # rerun finds what an earlier run made. Look first; a 409 on create means "it exists: update it".
+            attrs = body["data"]["attributes"]
+            found = existing_localization(path, attrs["locale"])
+            if found:
+                patch_localization(path, found, attrs)
+                say(f"- ✅ {what}: already existed, PATCH done")
+                continue
+            try:
+                call(method, path, body)
+                say(f"- ✅ {what}: POST done")
+            except SystemExit as e:
+                if "-> 409" not in str(e.code):
+                    raise
+                found = existing_localization(path, attrs["locale"])
+                if not found:
+                    raise
+                patch_localization(path, found, attrs)
+                say(f"- ✅ {what}: 409 on create, found it and PATCH done")
+            continue
         call(method, path, body)
         say(f"- ✅ {what}: {method} done")
 
