@@ -53,9 +53,9 @@ The app today has 30 screens: 17 native, 3 hybrid, 10 web pages (the team site's
    │ orgs · companies ·    │ │   nights, procurement    │ │   the news graph engine) │
    │ places (venue map)    │ │ ★ CRM: companies 111 ·   │ │ stories (10) · articles  │
    │ stories · articles ·  │ │   xray 42 · investors 15 │ │ business cases (21)      │
-   │ the brief · newsletter│ │ observability (17 pages) │ │ ★ booth mode: iPad on a  │
-   │ topics · days         │ │ personal briefs · inbox  │ │   stand, attract loop,   │
-   │                       │ │ keys · pki · vaults      │ │   guided demo, videos    │
+   │ the brief · newsletter│ │ observability (17 pages) │ │ ★ booth demo mode (iPad, │
+   │ topics · days         │ │ personal briefs · inbox  │ │   attended, full screen) │
+   │                       │ │ keys · pki · vaults      │ │   videos offline         │
    ├───────────────────────┤ ├──────────────────────────┤ ├──────────────────────────┤
    │ STAYS ON THE WEB      │ │ STAYS ON THE WEB         │ │ STAYS ON THE WEB         │
    │ account · billing ·   │ │ admin · site review ·    │ │ pricing · paid tiers ·   │
@@ -131,9 +131,9 @@ The Macs: the TestFlight groups have "Test iPhone and iPad apps on Apple Silicon
 5. **Offline search** in PrompTugal, using the published index.
 6. **Logistics and CRM** in Team.
 
-## Questions for Dinis
+## Answers from Dinis (8 Nov)
 
-1. **Decks:** which ones first? The investor decks (41 pages, in pt/fr/es too), or also the team's and RiskMandate's?
-2. **Booth:** will the RiskMandate iPad stand unattended at a booth? If so, use Guided Access with an attract loop.
-3. **Team data on the iPhone:** which stats matter at a glance? These could become widgets, or Live Activities for builds and stand-ups.
-4. **Team site manifest:** should the team site's builder publish one tonight, or after the summit?
+1. **Decks are done.** The investor decks exist on promptugal.news in four languages. The app brings the existing decks in: offline reading and full-screen presenting from an iPad, including to a TV or projector. It writes no new content. The same presenter shows the team's and RiskMandate's decks too.
+2. **The booth iPad is always attended.** There is no kiosk lock-down, attract loop or Guided Access, only a simple full-screen demo mode that a person starts and stops.
+3. **Stats stay inside the app, behind sign-in** (Team app). No widgets, no Live Activities, no extra permission prompts: keep the permissions asked for to a minimum.
+4. **Manifest on the team site and riskmandate.ai.** Each site's build also writes a `manifest.json` in the same format as promptugal.news (path, size, SHA-256 per data file), so the apps download only what changed. Still to schedule.
