@@ -3,7 +3,9 @@ import PTCore
 
 /// The JavaScript the app injects. Kept in one place so the Debug panel can show it and the website team can read it.
 public enum BridgeScripts {
-    public static let scheduleKey = ScheduleDocument.storageKey          // nr.schedule.v1
+    public static let scheduleKey = "nr.schedule.v1"
+    /// The page's own event, fired after the app writes the schedule.
+    public static let scheduleChangeEvent = "nr:schedule"
     public static let meterKey = "web-summit.newsroom.meter.v1"
 
     /// Page world, document start: `window.ptApp = { version, ops, call(op, args) }`.
@@ -160,7 +162,7 @@ public enum BridgeScripts {
     const changed = []
     for (const id of now) if (!had.has(id)) changed.push([id, true])
     for (const id of had) if (id && !now.has(id)) changed.push([id, false])
-    for (const [id, picked] of changed) window.dispatchEvent(new CustomEvent('\(ScheduleDocument.changeEvent)', { detail: { id, picked, source: 'app' } }))
+    for (const [id, picked] of changed) window.dispatchEvent(new CustomEvent('\(scheduleChangeEvent)', { detail: { id, picked, source: 'app' } }))
     return changed.length
     """
 

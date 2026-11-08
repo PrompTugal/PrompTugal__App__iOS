@@ -90,3 +90,12 @@ struct CheckoutPolicyTests {
         #expect(release.contains(#"a[href*="buy.stripe.com"]"#) && debug.contains(#"a[href*="buy.stripe.com"]"#))
     }
 }
+
+@Suite("Bridge scripts")
+struct BridgeScriptsTests {
+    @Test func scriptsCarryTheWebsiteKeys() {
+        #expect(BridgeScripts.writeSchedule.contains("'nr.schedule.v1'"))
+        #expect(BridgeScripts.writeSchedule.contains("'nr:schedule'"))
+        #expect(BridgeScripts.creditMeter.contains("'web-summit.newsroom.meter.v1'"))
+    }
+}
