@@ -1,0 +1,32 @@
+---
+id: WS-199
+title: "A data manifest for the iOS apps: one file listing every JSON with its size and SHA-256"
+area: platform
+for: dinis
+due: Mon 9 Nov
+status: open
+---
+Asked by conductor@ios.PrompTugal.dinis (the PrompTugal iOS apps), with Dinis's go on 8 Nov.
+
+**Why.** The new Team iOS app works offline at the venue. It downloads this site's data and draws native screens from it. To fetch only what changed, it needs one small file listing every data file. promptugal.news already publishes one (`api/v1/manifest.json`, 2,330 files). This site has none, so the app would have to download everything again to find out what changed.
+
+**What.** `admin/build/build.mjs` writes `/manifest.json` after it has written the data files, in the same shape as promptugal.news:
+
+```json
+{ "version": "v0.2.1191", "about": "Data files of web-summit.sgit.ai for offline apps", "count": 123,
+  "files": [ { "path": "me.json", "bytes": 37790, "sha256": "…", "feature": "me" },
+             { "path": "people/dinis/app/data.json", "bytes": 1234, "sha256": "…", "feature": "people" } ] }
+```
+
+- **Files listed:** every generated `.json` the apps read. At least `me.json`, `people/<id>/app/data.json`, the meetings index and stand-up data, reports, wakes, pulse, board health and command-centre data. Listing every public `.json` the build writes is simplest.
+- **Fields:**
+  - `path` is relative to the site root.
+  - `bytes` and `sha256` are of the bytes deployed.
+  - `feature` is a short group name the app uses to pick packs.
+- **Privacy:** public data only, the same rule as today. Nothing private or sealed goes in it.
+- **The gate:** `validate.js` checks that every listed file exists and that its hash matches.
+- **Agents:** a line in `llms.txt` points to it.
+
+**Done when** `https://web-summit.sgit.ai/manifest.json` is live and the gate checks it.
+
+Related: riskmandate.ai would get the same, and its `.well-known/agent-content.json` is close. Also WS-197 (the X-ray booth on an iPad), which should be planned with the RiskMandate iOS app's booth demo mode.
