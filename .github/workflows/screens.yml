@@ -34,6 +34,10 @@ on:
         description: 'Store screenshots: pick ids to seed into "my program" (comma-separated). Passed to the screens test as PT_SEED_PICKS (TEST_RUNNER_PT_SEED_PICKS); the test adds the launch argument -PTSeedPicks <value>. Empty = none.'
         type: string
         default: 'events/has-europe-s-tech-moment-arrived/index.html,events/double-agents-are-your-employees-ai-agents-working-for-or/index.html,events/ai-your-new-news-editor/index.html,events/the-agentic-internet-who-controls-the-web/index.html,events/trust-issues-letting-ai-agents-into-production-safely/index.html'
+      hide_term:
+        description: 'Store screenshots: hide every agenda event and news item whose title or place contains this text (no third-party trademarks in store images). Passed to the screens test as PT_HIDE_TERM (TEST_RUNNER_PT_HIDE_TERM); the test adds the DEBUG-only launch argument -PTHideTerm <text>. Empty = hide nothing.'
+        type: string
+        default: 'Web Summit'
       now:
         description: 'Store screenshots: pretend the time is this ISO date (e.g. 2026-11-10T11:00:00Z). Passed to the screens test as the environment variable PT_NOW (TEST_RUNNER_PT_NOW); the test adds the launch argument -PTNow <date>. Empty = real time.'
         type: string
@@ -200,6 +204,7 @@ jobs:
       IDS_REQUIRED: ${{ inputs.ids_required }}
       TEST_RUNNER_PT_NOW: ${{ inputs.now }}
       TEST_RUNNER_PT_SEED_PICKS: ${{ inputs.seed_picks }}
+      TEST_RUNNER_PT_HIDE_TERM: ${{ inputs.hide_term }}
     steps:
       - uses: actions/checkout@v5
         with:
