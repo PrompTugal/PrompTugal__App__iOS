@@ -8,7 +8,7 @@ import Observation
 /// vault session and remembers here only which vault id belongs to which person (never a key).
 @MainActor @Observable
 final class CoordinationStore {
-    static let shared = CoordinationStore()
+    static let shared: CoordinationStore = { TeamLanesWiring.install(); return CoordinationStore() }()
     static let picksPath = "apps/agenda/picks.json"
 
     struct Person: Identifiable, Equatable, Sendable {

@@ -1,6 +1,6 @@
 # Team session: PTWeb and PTAgenda
 
-> Run 293 failed on one PTWeb compile error (BridgeScripts used PTAgenda's ScheduleDocument); fixed in 115ba30. Run 296 (app=all) on 115ba30 is queued. Waiting on AppLinks.scheme on dev for the last step.
+> PTWeb and PTAgenda are on dev (17a160c, merged as 7863ae2, run 307 green). Follow-up in progress: reminder links use AppLinks.scheme, and the StoreKit test no longer waits 60 s. CI run on macos-26 queued; READY comes after it is green.
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
 
@@ -12,6 +12,8 @@
 - `AppLinks` is not on dev yet (platform ce3602e, run 292 queued).
 
 - **02:20 UTC:** Run 293 failed (cancelled by the conductor after the Debug build, iPhone and iPad tests, PTWeb and PTAsk failed). The log has one real error, twice: `BridgeScripts.swift` used `ScheduleDocument.storageKey` and `.changeEvent`, and PTWeb cannot see PTAgenda. PTWeb now owns both strings (`BridgeScripts.scheduleKey`, `scheduleChangeEvent`) and `ScheduleDocument` reads them. PTAsk failed through PTWeb, so the same fix should clear it. `ReminderDelegate` now accepts `promptugal` and `ptteam` links. Pushed as 115ba30; run 296 (app=all) queued. PTAgenda itself has not compiled yet.
+
+- **03:20 UTC:** 17a160c merged to dev as 7863ae2. Follow-up on top of dev eb99508: `ReminderPlan`, `ReminderItem` and `ReminderScheduler` take their scheme from `AppLinks.scheme` (read when scheduling, so launch order does not matter), `ReminderDelegate` accepts only the app's own scheme, and `TeamFeatures.urlScheme` is gone. `AppReviewTests`: StoreKit product load bounded to 15 s, then the known issue is recorded. Not yet compiled.
 
 ## Handoff
 
@@ -125,6 +127,8 @@ Waiting for phase 2 (PTCore on dev).
 Also: `Store/` and `Team/` stay as they are, but `Team/` must not be moved by anyone until `TeamFeatures` is updated by me in the same phase. I will edit `Team/TeamFeatures.swift`, `Team/TeamStore.swift` conformances and `Store/` only for `public`/conformance lines.
 
 ## Needs from others
+
+- design or platform: `Shell/AppShell.swift:97` accepts only `url.scheme == "promptugal"`. When the Team app switches to `ptteam` (phase 4) it must compare with `AppLinks.scheme`, or reminder taps and deep links stop opening.
 
 - platform: `Event`, `FeedClient.site`, `Lisbon`, `HTTPClient` public in PTCore (question 2). PTWeb and PTAgenda `Package.swift` with `resources:` for PTWeb.
 - design: review `WebPage.swift` and `WebsiteView.swift` after the move (only `public`, `import`, and `WebBridgeHub` changes).

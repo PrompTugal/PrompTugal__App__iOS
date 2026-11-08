@@ -31,6 +31,12 @@ on:
         value: ${{ jobs.changes.outputs.apps }}
       has_apps:
         value: ${{ jobs.changes.outputs.has_apps }}
+      ref:
+        description: 'Commit to build (the release commit, for a release run); empty: the default checkout'
+        value: ${{ jobs.changes.outputs.ref }}
+      tag:
+        description: 'The v* release tag of that commit'
+        value: ${{ jobs.changes.outputs.tag }}
       upload:
         description: 'JSON list of apps to sign and upload'
         value: ${{ jobs.changes.outputs.upload }}
@@ -49,6 +55,7 @@ on:
 
 permissions:
   contents: read
+  actions: read   # the release run looks up the commit each app was last built from
 
 jobs:
   changes:
@@ -56,6 +63,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
+      ref: ${{ steps.plan.outputs.ref }}
+      tag: ${{ steps.plan.outputs.tag }}
       apps: ${{ steps.plan.outputs.apps }}
       has_apps: ${{ steps.plan.outputs.has_apps }}
       upload: ${{ steps.plan.outputs.upload }}
@@ -67,7 +76,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          fetch-depth: 0
+          # A release run (workflow_run) has the default branch checked out unless told; plan on dev.
+          ref: ${{ github.event.workflow_run.head_branch || github.ref }}
+          fetch-depth: 0   # tags and history for the diff
 
       - name: Use another branch's tree (source_ref)
         if: inputs.source_ref != ''
@@ -95,4 +106,6 @@ jobs:
           INPUT_UPLOAD: ${{ inputs.upload }}
           INPUT_DRY_RUN: ${{ inputs.dry_run }}
           VARS_JSON: ${{ toJSON(vars) }}
+          RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          GH_TOKEN: ${{ github.token }}
         run: python3 "${PLAN_SCRIPT:-scripts/release/apps.py}" plan
