@@ -20,7 +20,7 @@ on:
         description: What to do
         type: choice
         required: true
-        options: [status, certificates, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
+        options: [status, certificates, set-whats-new, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
       build:
         description: Build number (as in TestFlight). Not needed for status.
         type: string
@@ -30,6 +30,11 @@ on:
         type: string
         required: false
         default: news.promptugal.reader
+      text_file:
+        description: Text file for set-whats-new (default scripts/testflight/what-to-test.txt)
+        type: string
+        required: false
+        default: scripts/testflight/what-to-test.txt
       group:
         description: Beta group name, for add-to-group and remove-from-group
         type: string
@@ -67,6 +72,7 @@ jobs:
       RESPONSE_TIME: ${{ vars.REVIEW_RESPONSE_TIME }}
       ACTION: ${{ inputs.action }}
       BUILD: ${{ inputs.build }}
+      TEXT_FILE: ${{ inputs.text_file }}
       GROUP: ${{ inputs.group }}
       CONFIRM: ${{ inputs.confirm }}
     steps:
@@ -83,6 +89,10 @@ jobs:
           case "$ACTION" in
             status) args=(status) ;;
             certificates) args=(certificates) ;;
+            set-whats-new)
+              [ -n "$BUILD" ] || { echo "::error::build is required"; exit 1; }
+              case "$TEXT_FILE" in scripts/testflight/*.txt) ;; *) echo "::error::text_file must be scripts/testflight/*.txt"; exit 1;; esac
+              args=(set-test-info --build "$BUILD" --whats-new "$TEXT_FILE" "${flag[@]}") ;;
             add-to-group|remove-from-group)
               [ -n "$BUILD" ] && [ -n "$GROUP" ] || { echo "::error::build and group are required"; exit 1; }
               args=("$ACTION" --build "$BUILD" --group "$GROUP" "${flag[@]}") ;;
