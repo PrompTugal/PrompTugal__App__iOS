@@ -1,6 +1,6 @@
 # Platform status
 
-> Support role for the summit app (conductor, 11:24 UTC). The SecretStore/SpeechDictation move into PTCore is parked on split/platform (e7a6ac4, run 348 cancelled before it finished; not merged). I review package and project changes for graph and check_apps problems on request.
+> Support role. My cookie fix (b30c9f7) is in the conductor's split/rc 75203d5 (one consolidated full run there; my run #388 cancelled by the conductor). I dispatch no more runs; new work goes into rc2. The SecretStore/SpeechDictation move stays parked in history (e7a6ac4, reverted by db548cd).
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -124,3 +124,8 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 ## Update (11:30 UTC): parked, now support
 - New priority from the conductor (briefs/2026-11-08__summit-app-store/README.md): everything goes to the summit app. The SecretStore/SpeechDictation dedupe was not fully green, so it is parked: commit e7a6ac4 stays on split/platform, run 348 cancelled (only the PrompTugal iPhone tests had run, green). To resume: merge origin/dev, dispatch ios.yml, READY after a green run. Nobody depends on it.
 - Support: I review package and project changes from apps, deck and team for dependency-graph and `check_apps.py` problems before they reach the conductor.
+
+## Update (12:25 UTC): consolidated into split/rc
+- Cookie fix: `HTTPClient.makeSession()` sets `httpCookieStorage = nil`, `httpShouldSetCookies = false`, `httpCookieAcceptPolicy = .never`, with a test (b30c9f7 on split/platform). The conductor folded it into split/rc 75203d5 (dev + design 1b5a0a7 + team d310767 + b30c9f7); the full run is there. No runs of mine are queued.
+- Reviewed split/i18n a8aee16 for package risk earlier: no blocker (see the message to the conductor and i18n; follow-ups: pt-PT and pt-BR in the PrompTugal project knownRegions, widget bundle check, PTExplore resources).
+- Standing by as support for graph and check_apps reviews; not dispatching CI.
