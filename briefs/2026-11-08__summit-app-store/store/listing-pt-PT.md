@@ -25,12 +25,12 @@ Abra-a no recinto e, em segundos, fica a saber o que está a decorrer, o que vem
 
 AGENDA, SEM REDE
 • O programa completo na hora de Lisboa, incluído na app e atualizado quando tem rede
-• Pesquise por título ou local e abra qualquer sessão para ver os detalhes
+• Pesquise sessões, oradores, empresas e locais, e abra qualquer sessão para ver os detalhes
 • Funciona sem rede, para que o Wi-Fi de um pavilhão cheio não o trave
 
 O SEU PROGRAMA
-• Escolha as sessões que quer; O meu dia mostra-as numa só lista
-• Planear o meu dia encontra intervalos livres e o tempo a pé entre as suas escolhas
+• Escolha as sessões que quer; O meu programa mostra-as por ordem de hora
+• As sobreposições ficam assinaladas para escolher uma, e vê o tempo livre entre sessões
 • Um lembrete antes de cada escolha, se ativar os lembretes
 • Adicione uma sessão ao calendário com um toque (a app não lê o seu calendário)
 • Um widget no ecrã principal com o que vem a seguir, e a Siri: "What's next in PrompTugal"
@@ -81,7 +81,7 @@ PrompTugal para a cimeira de Lisboa, de 9 a 12 de novembro.
 
 Experimente:
 - Agenda: pesquise, abra uma sessão e escolha-a.
-- O meu dia: as suas escolhas numa lista; Planear o meu dia para intervalos e percursos a pé.
+- O meu programa: as suas escolhas por ordem de hora, sobreposições e tempo livre.
 - Ative os lembretes, adicione uma escolha ao calendário e o widget.
 - Notícias: leia uma notícia e depois experimente em modo de voo.
 - Definições > Acerca: privacidade e suporte.
@@ -89,4 +89,4 @@ Experimente:
 Diga-nos o que é confuso ou não funciona, em Enviar feedback da beta.
 ```
 
-Note for i18n: the screen names here (O meu dia, Planear o meu dia, Definições > Acerca) must match the app's pt-PT strings. If i18n picks other names, the listing follows the app.
+Note for i18n: the screen names here (O meu programa, Explorar, Definições) must match the app's pt-PT strings. If i18n picks other names, the listing follows the app.

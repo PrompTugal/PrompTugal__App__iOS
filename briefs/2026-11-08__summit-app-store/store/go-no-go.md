@@ -167,3 +167,13 @@ The delta from rc4 56a630e is the rc5 parts already passed (screenshot filter, d
 rc7 moved to **0279acc** (14:06): the only change from 7f961a0 is `Packages/PTAgenda/Tests/PTAgendaTests/PickTests.swift` (`@MainActor`, test only). Run 10 holds. The full run is now 397 (42488067819).
 
 rc7 moved to **535e9ba** (14:17), the last product change before the freeze. `PTExplore/ExploreScreens.swift` row time: `lineLimit(1)`, `fixedSize()` and `minWidth: 64` replace the fixed 64 pt width. Layout only, so time ranges and 12-hour times no longer wrap. Run 10 holds; check Explore rows in the next screens run. The full run is now 398 (42488960402).
+
+## Run 11: metadata against rc7 535e9ba (14:35 UTC)
+
+| # | Check | State |
+| --- | --- | --- |
+| M2 | The descriptions promised "Plan my day … walking times" and named "My day". rc7 has no planner in the public app (PlannerView is reachable only from the Team app's MyDayView), and the tab is My program. The three descriptions and the pt What to Test lines now say My program, time order, clashes marked and free time, and search across talks, speakers, companies and places, which matches ExploreScreens' search prompt. | fixed in store/ |
+| M1 | `store/listing.json`: the three locales with ASC field names, generated and checked (limits, keyword bytes, no markers, no trademark) | GO, for release |
+| G5 | Run 398 on 535e9ba: queued (the runners are busy with screens #36) | pending |
+| M4 | Screens #36 on rc7 535e9ba: three size jobs in progress | pending |
+| ASC dry run | No output yet in release.md | pending |
