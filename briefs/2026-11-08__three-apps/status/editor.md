@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 09:45 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 10:05 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,9 @@ Branch: `split/editor` · Last update: 09:45 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 10:05 UTC: merged `origin/dev` (v0.4.10) with design's `PublicShell` (`105ca49`). No conflict. Two label problems on my side, both fixed: (1) `parse_destinations` in `website/admin.py` read `Destination(` and `AppDestination(` but the public shell registers screens as `ShellDestination(`, so it saw none (now read, with a test); (2) "Website and app talk to each other" and "Reminders before sessions" needed the root marker `.teamFeatures()`, which only the Team app has; the public app starts them with `.publicFeatures(` in `PublicShell.swift`, so they now check `text:**/PublicShell.swift::.publicFeatures(`. Result: public page 13 of 13 in the beta (the real shell registers every screen they name); Team page unchanged (23 in the beta, 2 debug only, 1 coming). 69 tests green.
+- Answer to the conductor on the review texts: `ios-release.yml` does not read `what-to-test.txt` or `review-notes.txt`; it sets What to Test for every app from `scripts/release/release-notes.sh` (git log). Only `testflight-ops.yml` (manual) reads them, and it has `BUNDLE_ID: news.promptugal.reader` fixed, so they only reach the PrompTugal app. Team and RiskMandate are not affected.
 
 - 09:45 UTC: **phase 4 is on dev** (v0.4.8): Team moved to `Apps/Team`, widgets and intents and file sharing are in `Apps/PrompTugal`. Merged `origin/dev` with no conflict. Site facts now come from `Apps/PrompTugal` (version 0.4.8 from `VERSION`, bundle `news.promptugal.reader`, icon and `Websites.json` from the app and `Packages/PTWeb`). Privacy and support re-read against that code: widget, Siri answers and camera are on privacy; file sharing is in the project, so the Files section of support stays. Review texts swapped: `review-notes.promptugal.txt` and `what-to-test.promptugal.txt` now are `scripts/testflight/review-notes.txt` and `what-to-test.txt` (`DEMO_LANE_NAME` is gone from the notes; `tf.py` treats it as optional; its 12 tests pass). Version wording on the admin index and releases pages now says every app's version is the release version. Labels: Team 23 in the beta (2 debug only, 1 coming); public 4 in the beta, 9 coming, because design's `PublicShell` screens are not on dev yet (I saw 5 in the beta in my preview with `split/design`).
 

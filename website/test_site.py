@@ -71,6 +71,20 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(build.app_version('v0.4.0', '0.4.0'), '0.4.0')
         self.assertEqual(build.app_version('v0.1.75', '0.3.1'), '0.3.1')
 
+    def test_shell_destination_registrations_are_read(self):
+        source = (
+            'static let all: [ShellDestination] = [\n'
+            '    ShellDestination(id: "news.home", title: "News", symbol: "newspaper", group: "News",\n'
+            '                     summary: "News") { AnyView(NewsHomeView()) },\n'
+            '    ShellDestination(id: "vault", title: "Vault", symbol: "lock", group: "Personal",\n'
+            '                     summary: "Keys") { AnyView(PendingFeatureView()) },\n'
+            ']\n')
+        found = {d['id']: d for d in admin.parse_destinations(source)}
+        self.assertEqual(sorted(found), ['news.home', 'vault'])
+        self.assertFalse(found['news.home']['pending'])
+        self.assertTrue(found['vault']['pending'])
+        self.assertIn('NewsHomeView', found['news.home']['views'])
+
     def test_every_page_has_a_twin_without_markup(self):
         for page in self.clean.glob('*.html'):
             twin = (self.clean / (page.stem + '.md')).read_text()

@@ -52,7 +52,7 @@
       "what": "A small, fixed set of messages between the website and the app, checked against a list of allowed sites. No message ever returns a key.",
       "evidence": [
         "**/AppBridge.swift",
-        "root:.teamFeatures()"
+        "text:**/PublicShell.swift::.publicFeatures("
       ]
     },
     {
@@ -63,7 +63,7 @@
       "what": "A notification before each picked session, with the venue, in Lisbon time.",
       "evidence": [
         "**/ReminderScheduler.swift",
-        "root:.teamFeatures()"
+        "text:**/PublicShell.swift::.publicFeatures("
       ]
     },
     {

@@ -545,7 +545,7 @@ def parse_destinations(source, file=''):
     if True:
         text = re.sub(r'/\*.*?\*/', '', source, flags=re.S)
         text = re.sub(r'(?m)^\s*//.*$', '', text)
-        for m in re.finditer(r'\b(?:App)?Destination\((?=\s*id:\s*")', text):
+        for m in re.finditer(r'\b(?:App|Shell)?Destination\((?=\s*id:\s*")', text):
             end = _balanced(text, m.end() - 1)
             closure = re.match(r'\s*\{', text[end:])
             if closure:
