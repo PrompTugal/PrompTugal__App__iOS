@@ -1,8 +1,15 @@
 # Team session: PTWeb and PTAgenda
 
-> Phase 3 moves for PTWeb and PTAgenda are pushed (6cccf88), CI run 293 queued, not yet read. Handed off to the session on account B at 01:35 UTC; see "Handoff".
+> Phase 3 moves for PTWeb and PTAgenda are pushed (6cccf88). Run 293 is still queued (7th in line). Account B read all of PTWeb and the PTAgenda seams and found no compile error by eye. See "Account B notes".
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
+
+## Account B notes (8 Nov, about 01:50 UTC)
+
+- Merged origin/dev (docs only). Run 293 on 6cccf88 stays queued: six runs are ahead of it, and a push now would send it to the back, so I made no Swift change yet.
+- Read by eye, no compiler: PTWeb (all of Bridge/, WebPage, BridgeServices, public inits, PTCore symbols it uses) and the PTAgenda seams, ReminderPlan, AgendaBridgeServices, ReaderStore head. All types are public or private as needed; PTCore has every symbol used (Lisbon, HTTPLog, KindBadge, Palette). Nothing to fix before the first compile.
+- One behaviour bug to fix with the `AppLinks.scheme` change: `ReminderDelegate` (ReminderScheduler.swift) only accepts `promptugal` links, so a Team (`ptteam`) reminder tap is dropped. It will check `AppLinks.scheme`.
+- `AppLinks` is not on dev yet (platform ce3602e, run 292 queued).
 
 ## Handoff
 
