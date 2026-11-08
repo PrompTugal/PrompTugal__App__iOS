@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 03:50 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 04:15 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 03:50 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 04:15 UTC: merged `origin/dev` (v0.4.1): reminder links use `AppLinks.scheme`, StoreKit test bound. Swift changes only, no label or site change. Checks green (68 tests). Still waiting for PTNews, PTLanes, PTAsk and the phase 4 word.
 
 - 03:50 UTC: merged `origin/dev` (v0.4.0): release's one-version change, the `Apps/PrompTugal` and `Apps/RiskMandate` projects and their `apps.json` entries. Merged without conflict, but the build stopped twice, and I fixed both in `website/build.py`:
   1. The new project's build configurations carry `baseConfigurationReference` before `buildSettings`, which my parser did not accept, so it saw no bundle id. It does now.
