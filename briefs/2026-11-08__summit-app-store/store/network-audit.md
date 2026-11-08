@@ -66,3 +66,7 @@ git grep -nohE "https://[a-z0-9.-]+" -- Packages/*/Sources Apps/PrompTugal | sor
 
 - **N4 fixed.** `WebPage.swift` now cancels main-frame navigations to another site and opens a tapped link in Safari: `leavesSite(_:from:)` compares the host with the page's own host, allowing subdomains. The same check covers `createWebViewWith` (target=_blank and window.open). Tests are in `PTWebTests/WebPageHostTests.swift`. Every web view starts on promptugal.news, so only promptugal.news loads inside the app.
 - N1 and N3 are still done, and N2 is accepted. **After rc3 the public build talks to two hosts: promptugal.news and openrouter.ai (Ask, own key, after consent).** That matches the review notes, the App Privacy label and the age-rating answer.
+
+## rc8 4f58965: Ask is DEBUG-only (21:45 UTC)
+
+Ask (rows 4 and 5 above) and dictation (row 6) are not reachable in a Release build. The Ask destination exists only `#if DEBUG` with `debugOnly: true`; the Now card and the Settings row exist only `#if DEBUG` with debug mode on; there is no `askAnywhere` in the shell; and `promptugal://open/collab.ai` resolves to nothing in Release. **The public Release build now talks to one host: promptugal.news.** The App Privacy answer is "Data Not Collected", and the review notes say "one host only". PTAsk stays linked (dead code in Release), so the microphone and speech purpose strings stay: harmless, and removing them would need a rebuild of the target's settings.

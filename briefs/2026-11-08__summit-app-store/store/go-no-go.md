@@ -258,3 +258,18 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 16:05, dry run 42497866805: (a) 204 VALID, no ITMS lines in the job log (testflight is checking the email); (b) usesNonExemptEncryption already false; (c) the confirm run attaches 204, then creates and submits the review submission; (d) no blocking items beyond the plan. asc.py cannot see App Privacy, IDFA or Mac and Vision Pro: those rest on Dinis. If one is missing, Apple refuses the submit with a clear error, and nothing is lost. The final GO stands.
 
 16:11: **TestFlight external SUBMITTED** for Beta App Review (run 42498490708). 0.4.23 (204) is in "PrompTugal External Users"; What to Test is 1,104 characters (store/what-to-test.txt); the notes are 3,470 characters (store/review-notes.txt, 3,418, plus the demo key). The App Store submit waits on Dinis's three steps and his release-type choice.
+
+## Run 16: rc8 4f58965, Ask removed from the App Store build (21:50 UTC)
+
+Dinis's decision: no Ask (OpenRouter) in the App Store app, and the label reads "Data Not Collected".
+
+| # | Check | State |
+| --- | --- | --- |
+| Code | `origin/dev...origin/split/rc8` has 5 files. The Ask destination is `#if DEBUG` with `debugOnly`; the Now card and the Settings row are `#if DEBUG` and only with debug mode on; the Settings summary has no "Ask" in Release; `askAnywhere` is gone from the shell; `PrivacyInfo.xcprivacy` has `NSPrivacyCollectedDataTypes` empty. The new string "Reminders, about, privacy, support" is in en, pt-PT and pt-BR. | **GO** |
+| Hosts | Release talks to one host, promptugal.news (network-audit.md, rc8 section) | GO |
+| M6 | App Privacy: **"No, we do not collect data from this app"** (app-privacy.md) | Dinis |
+| M1, M2 | Listings: the Ask section is removed in all four locales; "AI" and "IA" are out of the keywords; the description's newsroom line says "independent newsroom in Portugal"; the privacy line says "No data collected". listing.json regenerated and checked. | GO; release re-applies |
+| M8 | review-notes.txt: the Ask step, the demo key, dictation and the openrouter line are removed; "one host only: promptugal.news" (2,450 characters, no placeholders left). what-to-test.txt: the Ask line is removed. | GO; testflight recopies, release re-applies the review details |
+| M4 | Screens #36: the **iPad** images list **"Ask"** in the sidebar's More group (all 4 ids, all locales). The iPhone images show no Ask: the Now card is below the fold, and Ask was never a tab. | **re-run screens on rc8** (iPad at least), then re-upload the iPad sets |
+| Site | privacy.html still describes Ask. True for the app's DEBUG builds and the TestFlight build 204, but it will confuse a reviewer next to "Data Not Collected". | editor: say Ask is not in the App Store version |
+| TestFlight | Build 204, already in Beta App Review, still has Ask (with the demo key in its notes). Fine for the beta. | note |
