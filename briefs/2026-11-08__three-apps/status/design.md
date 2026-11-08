@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 09:35 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 10:20 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -224,3 +224,7 @@ None. Nothing moved yet.
 - Full run 342 (id 42463232061, app=all, macos-26) on d7c728e: success. d7c728e is code b8716f4 plus this page.
 - READY sent to the conductor.
 - Open items for others: widgets and "Now and next" for the public app (platform, `NowNextPublisher`); the public app's offline reader (`WebBridgeHub.offlineReader` is nil); the Team app's `TeamFeatures` url scheme (team).
+
+## Update (8 Nov, 10:20 UTC, design.B): on dev
+- The conductor merged d7c728e to dev as 105ca49. Dev run 345 on it concluded success: PublicShell, the apps' entry point and the widgets build and test together.
+- Nothing is open on split/design. Still open for others: the public app's offline reader (`WebBridgeHub.offlineReader` is nil) and the Team app's `TeamFeatures` url scheme (team).
