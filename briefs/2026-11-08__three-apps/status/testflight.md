@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 09:45 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 10:27 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 10:27 UTC: conductor asked for tester guidance for the Team app. Draft "What to Test" for PT Team is in `scripts/testflight/what-to-test-team.txt` (vault key must be imported again, team tools live in PT Team, PrompTugal.news becomes the public app). New testflight-ops action `set-whats-new` (inputs bundle, build, text_file, confirm): plan run 42471333246 on Team build 182 changed nothing. Applying needs confirm=true and the conductor's or Dinis's go. Run 89 (v0.4.12, dev `7d83217`, first with the public app's TestFlight job) is in its TestFlight jobs, queued.
 - 09:45 UTC: first build on the Team record: 0.4.7 (182) from run 82 (dev `cd81f2d`), VALID, "PrompTugal Team Internal". RiskMandate 0.4.7 (182) VALID too. The reader record gets no new build until the public PrompTugal app's testflight is on. Cheap way to read runs: `gh api repos/PrompTugal/PrompTugal__App__iOS/actions/runs/<id>/jobs`.
 - 08:48 UTC: dev unchanged since v0.4.6 (`67e6281`); no new release run, no new upload. Latest builds: reader 0.4.6 (180), RiskMandate 0.4.4 (178), Team none.
 - 08:20 UTC: run 80 (v0.4.6, dev `67e6281`) uploaded 0.4.6 (180) to the reader record: VALID, PrompTugal Internal Users only; exported app keeps associated-domains, time-sensitive and app group `group.news.promptugal.reader`, widgets and intents carry the app group. RiskMandate unchanged at 0.4.4 (178); Team record still empty.
