@@ -56,7 +56,7 @@
 
 Handed off at 01:40 UTC (8 Nov) to the session under conductor.B. I dispatch no more CI and have cancelled my own scheduled check-ins.
 
-**Head:** `split/release`, see `git log -1` (the last code commit is `0ed75bc`; the handoff commit only adds this section and a merge of `origin/dev`).
+**Head:** `split/release` at `c66bcdb` (last code commit `0ed75bc`; later commits are the status page and a merge of `origin/dev`). `VERSION` on this branch is `v0.4`; the merge with dev's `v0.1.74` conflicted, and the branch keeps `v0.4`. A conflict marker briefly reached the branch in `b5805a9` and was removed in `c66bcdb`.
 
 **Last runs (all on `d0ad4d6`, same code as the head apart from `0ed75bc`):**
 
