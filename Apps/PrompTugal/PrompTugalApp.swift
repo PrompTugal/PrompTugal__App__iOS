@@ -17,7 +17,12 @@ struct PrompTugalApp: App {
         // The one schedule. PTAsk's PublicAskProvider reads its picks from here.
         let schedule = ScheduleStore()
         AgendaHub.schedule = schedule
-        AgendaHub.agendaDidLoad = { events in schedule.updateEvents(events) }
+        // The widgets' "Now and next": the agenda, with the schedule's picks as the saved sessions.
+        AgendaHub.agendaDidLoad = { events in
+            schedule.updateEvents(events)
+            NowNextPublisher.publish(agenda: events, saved: schedule.picks.compactMap(\.event))
+        }
+        AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }
         // Background tasks must be registered before the app finishes launching.
         VaultBackground.register(taskIdentifier: "news.promptugal.reader.vault-refresh")
     }

@@ -3,6 +3,7 @@
 > RiskMandate is green and on dev. PrompTugal run 316 is nearly done with no failures; I report to the conductor when it finishes.
 
 ## Done
+- Phase 4 (07:45 UTC): merged split/platform; widgets and intents targets added to PrompTugal.xcodeproj (news.promptugal.reader.widgets and .intents, app group, embed phases, link PTAgenda); shortcut images copied; file-sharing and open-in-place keys set; PrompTugalApp wires AppLinks, schedule, NowNextPublisher and the vault task id. Not yet built: run dispatched next.
 - `Apps/RiskMandate/RiskMandate.xcodeproj`: bundle ai.riskmandate.app, version 0.4.0, one screen, privacy manifest, placeholder icon, one unit test, scheme "RiskMandate". Links PTCore.
 - `Apps/PrompTugal/PrompTugal.xcodeproj`: bundle news.promptugal.reader, version 0.4.0, `PrompTugalApp` and placeholder `PublicShell`, schemes "PrompTugal" and "PrompTugalScreens", unit and UI test targets. Links PTAsk and its closure (PTCore, PTWeb, PTAgenda, PTNews, PTVaultUI, SGitVault).
 - Info: scheme `promptugal`, two background task ids, WKAppBoundDomains promptugal.news only, camera for vault QR only, no NFC, no speech.
