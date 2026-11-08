@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 03:15 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 03:32 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 03:32 UTC: build 163 (run 63, dev `5500c02`) uploaded and processed. Run 64 (dev `d597b8f`) pending; dev has since moved to v0.1.81 (`c0d3455`), more runs will follow.
 - 03:15 UTC: run 63 (dev `5500c02`, AppLinks.scheme, tag v0.1.78) is in its TestFlight job; run 64 (dev `d597b8f`, CollabSeams, v0.1.79) is pending. Will report builds once processed.
 - 02:45 UTC: run 61 (dev `36508b6`) uploaded build 161. The job was named "TestFlight (team)" (APP_KEY=team) but still built PrompTugal.xcodeproj with bundle news.promptugal.reader, so it went to the reader record. Expected until phase 4 switches apps.json. Still 0.3.x.
 - 02:08 UTC: no new iOS release run since run 60 (cancelled). dev has only docs commits (tag v0.1.76), which do not upload. Conductor: signing is automatic for Team and RiskMandate; both records and internal groups exist. If a first signed build fails for lack of a profile, read the log and tell the conductor.
@@ -51,6 +52,7 @@ During the summit everything runs on internal testers only. The external swap pl
 |---|---|---|---|---|
 | 0.3.1 | 152 | `e5328ff` | yes, 00:59 UTC | PrompTugal Internal Users |
 | 0.3.1 | 161 | `36508b6` (run 61) | yes, VALID (status run 7, 02:40 UTC) | PrompTugal Internal Users only |
+| 0.3.1 | 163 | `5500c02` (run 63) | yes, VALID (status run 8, 03:28 UTC) | PrompTugal Internal Users only |
 
 ## Needs from others
 
