@@ -14,7 +14,7 @@
 - Waiting for the first screenshot set from release and the merges of B3, B5, R1 and Vault hidden.
 
 ## 12:16 UTC check
-- Only the briefs and B5 (microphone and speech strings) are on dev. Every other fix is on a branch: B3, R1 and F3 on team; B1, B2 and F4 on design; the privacy manifest on apps; N1 on platform. The table is in [checklist.md](../../2026-11-08__summit-app-store/store/checklist.md#where-each-fix-is-1216-utc).
+- Only the briefs and B5 (microphone and speech strings) are on dev. Every other fix is on a branch: B3, R1 and F3 on team; B1, B2 and F4 on design; the privacy manifest on apps; N1 on platform. The table is in [checklist.md](../../2026-11-08__summit-app-store/store/checklist.md#where-each-fix-is-12-16-utc).
 - Not started: N2 (vault background task) and N3 (Ask's "Save key to my vault").
 - testflight holds an older copy of the review notes.
 - i18n's catalogs have pt-PT and pt-BR, but the project's `knownRegions` does not list them.
