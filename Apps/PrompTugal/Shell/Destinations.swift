@@ -7,98 +7,99 @@ import PTVaultUI
 import PTWeb
 import SwiftUI
 
-/// The public app's screens. The ids are the Team app's ids, so `promptugal://open/<id>` links and reminders
-/// keep working. Nothing here reads team data, and nothing here uses the vault or Ask unless the reader opens it.
+/// The public app's screens (ux spec: four tabs, no More tab). The ids are the Team app's ids where a screen is the
+/// same, so `promptugal://open/<id>` links and reminders keep working; the ids of screens that moved are aliases.
 @MainActor
 enum PublicDestinations {
-    static let groups = ["Summit", "News", "Ask", "Web", "Personal", "Settings", "Debug"]
+    /// Internal group names. "Tabs" has no heading in the iPad sidebar.
+    static let groups = ["Tabs", "More", "Debug"]
 
     static var all: [ShellDestination] {
-        summit + news + ask + web + personal + settings + debug
+        tabs + more + routable + debugOnlyScreens + debug
+    }
+
+    /// Old ids that still open something sensible: the screen moved into another one.
+    static let aliases: [String: String] = [
+        "reader.agenda": "explore",      // the agenda is the Talks list in Explore
+        "news.graph": "explore",         // the graph lives in Explore
+        "team.planner": "team.schedule", // the planner is a section of My program
+    ]
+
+    /// The id a link or a launch argument means, after the aliases.
+    static func resolve(_ id: String?) -> String? {
+        guard let id else { return nil }
+        return aliases[id] ?? id
     }
 
     static func destination(_ id: String?) -> ShellDestination? {
-        guard let id else { return nil }
+        guard let id = resolve(id) else { return nil }
         return all.first { $0.id == id }
     }
 
-    /// A destination that may be opened now: the debug screen only in a DEBUG build with debug mode on.
+    /// A destination that may be opened now: the debug screens only in a DEBUG build with debug mode on.
     static func openable(_ id: String?, debug: Bool) -> ShellDestination? {
         guard let destination = destination(id) else { return nil }
         return destination.debugOnly && !debug ? nil : destination
     }
 
-    static func group(_ name: String) -> [ShellDestination] {
-        all.filter { $0.group == name }
+    /// The rows a list (the iPad sidebar) shows for a group.
+    static func listed(_ group: String, debug: Bool) -> [ShellDestination] {
+        all.filter { $0.group == group && $0.listed && (debug || !$0.debugOnly) }
     }
 
-    // MARK: Summit
+    // MARK: The four tabs
 
-    static let summit: [ShellDestination] = [
-        ShellDestination(id: "reader.agenda", title: "Agenda", symbol: "clock", group: "Summit",
-                         summary: "The summit agenda, offline, with picks", phoneTab: 0) { AnyView(AgendaView()) },
-        ShellDestination(id: "team.schedule", title: "My day", symbol: "calendar", group: "Summit", kind: .hybrid,
-                         summary: "Picks from the website and the app, one list", phoneTab: 1) { AnyView(MyDayView()) },
-        ShellDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", group: "Summit",
-                         summary: "Free slots and walking times between picks") { AnyView(PlannerView()) },
-        // DeckScreen brings its own NavigationStack, so the shell does not wrap it.
-        ShellDestination(id: "decks", title: "Decks", symbol: "rectangle.on.rectangle.angled", group: "Summit",
-                         summary: "Decks and presenter mode, offline", ownsNavigation: true) { AnyView(DeckScreen()) },
+    static let tabs: [ShellDestination] = [
+        ShellDestination(id: "now", title: "Now", symbol: "dot.radiowaves.left.and.right", group: "Tabs",
+                         summary: "What is on now, what is next for you, what is new", phoneTab: 0) { AnyView(NowView()) },
+        ShellDestination(id: "team.schedule", title: "My program", symbol: "star", group: "Tabs", kind: .hybrid,
+                         summary: "The talks you picked, clashes and free time", phoneTab: 1) { AnyView(MyDayView()) },
+        ShellDestination(id: "explore", title: "Explore", symbol: "magnifyingglass", group: "Tabs",
+                         summary: "Talks, speakers, companies and places", phoneTab: 2) { AnyView(ExploreView()) },
+        ShellDestination(id: "news.home", title: "News", symbol: "newspaper", group: "Tabs",
+                         summary: "Latest, newsletter, stories", phoneTab: 3) { AnyView(NewsHomeView()) },
     ]
 
-    // MARK: News
+    // MARK: More (the iPad sidebar; on iPhone Settings opens from the gear)
 
-    static let news: [ShellDestination] = [
-        ShellDestination(id: "news.home", title: "News", symbol: "newspaper", group: "News",
-                         summary: "Feed, newsletter, stories, graph", phoneTab: 2) { AnyView(NewsHomeView()) },
-        ShellDestination(id: "news.graph", title: "Graph", symbol: "point.3.connected.trianglepath.dotted", group: "News",
-                         summary: "1,688 nodes, drawn natively") { AnyView(GraphExplorerView()) },
+    static let more: [ShellDestination] = [
+        ShellDestination(id: "settings", title: "Settings", symbol: "gearshape", group: "More",
+                         summary: "Reminders, Ask, about, privacy, support") { AnyView(PublicSettingsView()) },
+        ShellDestination(id: "settings.reminders", title: "Reminders", symbol: "bell.badge", group: "More",
+                         summary: "Before each pick") { AnyView(ReminderSettingsView()) },
     ]
 
-    // MARK: Ask
+    // MARK: Opened by id or from another screen, never in a tab or the sidebar
 
-    static let ask: [ShellDestination] = [
-        ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "Ask",
-                         summary: "Ask about the agenda, your picks and the news") { AnyView(AskView()) },
+    static let routable: [ShellDestination] = [
+        ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "More",
+                         summary: "Ask about the agenda, your picks and the news", listed: false) { AnyView(AskView()) },
+        // Not in the first App Store build.
+        ShellDestination(id: "decks", title: "Decks", symbol: "rectangle.on.rectangle.angled", group: "More",
+                         summary: "Decks and presenter mode, offline", ownsNavigation: true, listed: false) {
+            AnyView(DeckScreen())
+        },
+        ShellDestination(id: "web.promptugal", title: "PrompTugal.news", symbol: "newspaper.fill", group: "More",
+                         kind: .web(FeedClient.site), listed: false) {
+            AnyView(WebPage(url: FeedClient.site, title: "PrompTugal.news"))
+        },
     ]
 
-    // MARK: Web
+    // MARK: DEBUG builds only
 
-    static var web: [ShellDestination] {
-        var rows = [
-            ShellDestination(id: "web.promptugal", title: "PrompTugal.news", symbol: "newspaper.fill", group: "Web",
-                             kind: .web(FeedClient.site)) { AnyView(WebPage(url: FeedClient.site, title: "PrompTugal.news")) },
+    /// The vault is a dead end without a key, and the website list still names the team site: neither is in a Release build.
+    static var debugOnlyScreens: [ShellDestination] {
+        #if DEBUG
+        [
+            ShellDestination(id: "vault", title: "Vault", symbol: "lock.shield", group: "More",
+                             summary: "My encrypted vault, read in Swift", ownsNavigation: true) { AnyView(VaultHomeView()) },
+            ShellDestination(id: "web.all", title: "All websites", symbol: "safari", group: "More", kind: .web(FeedClient.site),
+                             summary: "The website shell, with its shortcuts") { AnyView(WebsiteView()) },
         ]
-        // The website list still names the team site: DEBUG builds only until the public app has its own list.
-        #if DEBUG
-        rows.append(ShellDestination(id: "web.all", title: "All websites", symbol: "safari", group: "Web",
-                                     kind: .web(FeedClient.site), summary: "The website shell, with its shortcuts") {
-            AnyView(WebsiteView())
-        })
-        #endif
-        return rows
-    }
-
-    // MARK: Personal
-
-    /// The vault is a dead end without a key and is not in the first App Store build: DEBUG builds only.
-    static var personal: [ShellDestination] {
-        #if DEBUG
-        [ShellDestination(id: "vault", title: "Vault", symbol: "lock.shield", group: "Personal",
-                          summary: "My encrypted vault, read in Swift", ownsNavigation: true) { AnyView(VaultHomeView()) }]
         #else
         []
         #endif
     }
-
-    // MARK: Settings and debug
-
-    static let settings: [ShellDestination] = [
-        ShellDestination(id: "settings", title: "Settings", symbol: "gearshape", group: "Settings",
-                         summary: "About, privacy, support") { AnyView(PublicSettingsView()) },
-        ShellDestination(id: "settings.reminders", title: "Reminders", symbol: "bell.badge", group: "Settings",
-                         summary: "Before each pick") { AnyView(ReminderSettingsView()) },
-    ]
 
     /// The debug screen exists only in DEBUG builds: a Release build has no debug panel and no switch.
     static var debug: [ShellDestination] {

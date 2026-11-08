@@ -1,13 +1,13 @@
 import PTAgenda
-import PTAsk
 import PTCore
 import PTNews
 import PTWeb
 import SwiftUI
 
-/// Root view of the public app. On iPad a sidebar with every group; on iPhone tabs and a "More" list.
-/// Every screen comes from `PublicDestinations`. No team names, no lanes, no sample data, and no debug
-/// screen in a Release build.
+/// Root view of the public app. iPhone: four tabs (Now, My program, Explore, News) and no More tab; iPad: a sidebar
+/// with the same four, then Settings and Reminders. Settings opens from a gear on Now and My program. Ask is reached
+/// from a card on Now and from Settings, not from a tab. Every screen comes from `PublicDestinations`. No team names,
+/// no lanes, no sample data, and no debug screen in a Release build.
 struct PublicShell: View {
     // Created in this order: the features register the hubs the reader store reads.
     @State private var features = PublicFeatures.shared
@@ -16,17 +16,19 @@ struct PublicShell: View {
 
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
-    @SceneStorage("shell.selection") private var selection = "reader.agenda"
-    @SceneStorage("shell.tab") private var tab = "reader.agenda"
+    @SceneStorage("shell.selection") private var selection = "now"
+    @SceneStorage("shell.tab") private var tab = "now"
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     @State private var columns: NavigationSplitViewVisibility = .all
     /// A page opened by a link (a reminder's session), shown over the shell.
     @State private var linkedPage: LinkedPage?
+    /// A screen that is not a tab, opened over the iPhone shell (Settings from the gear, a link to Ask).
+    @State private var presented: PresentedScreen?
 
     var body: some View {
         Group {
             if width == .compact {
-                PublicPhoneShell(tab: $tab, debug: debug)
+                PublicPhoneShell(tab: $tab, openSettings: { open("settings") })
             } else {
                 splitView
             }
@@ -50,11 +52,18 @@ struct PublicShell: View {
                     }
             }
         }
-        .onAppear {
-            if let id = PublicLaunch.destination, let destination = PublicDestinations.openable(id, debug: debug) {
-                selection = id
-                tab = destination.phoneTab != nil ? id : "more"
+        .sheet(item: $presented) { screen in
+            if let destination = PublicDestinations.destination(screen.id) {
+                PresentedScreenView(destination: destination) { presented = nil }
             }
+        }
+        .onAppear {
+            // A restored selection from an older build may name a screen that moved or no longer exists.
+            if PublicDestinations.openable(selection, debug: debug) == nil { selection = "now" }
+            selection = PublicDestinations.resolve(selection) ?? "now"
+            if PublicDestinations.destination(tab)?.phoneTab == nil { tab = "now" }
+            tab = PublicDestinations.resolve(tab) ?? "now"
+            if let id = PublicLaunch.destination { open(id) }
         }
         .accessibilityIdentifier("public-shell")
     }
@@ -73,8 +82,6 @@ struct PublicShell: View {
                         destination.view().destinationID(destination.id)
                             .id(destination.id)
                             .surfaceKind(destination.kind)
-                            // Ask beside any screen: a toolbar button, ⌘K and a side panel.
-                            .askAnywhere(enabled: destination.id != "collab.ai")
                     } else {
                         ContentUnavailableView("Choose a screen", systemImage: "sidebar.left")
                     }
@@ -88,15 +95,57 @@ struct PublicShell: View {
         .background(PublicKeyboardShortcuts(selection: $selection))
     }
 
-    /// <scheme>://open/<destination id>, e.g. <scheme>://open/reader.agenda
+    /// Opens a screen by id: a tab selects the tab, any other screen is a sheet on iPhone and the detail on iPad.
+    private func open(_ id: String) {
+        guard let destination = PublicDestinations.openable(id, debug: debug) else { return }
+        selection = destination.id
+        if destination.phoneTab != nil {
+            tab = destination.id
+            presented = nil
+        } else if width == .compact {
+            presented = PresentedScreen(id: destination.id)
+        }
+    }
+
+    /// <scheme>://open/<destination id>, e.g. <scheme>://open/team.schedule. Old ids still land somewhere sensible.
     private func route(_ url: URL) {
         guard url.scheme == AppLinks.scheme, url.host == "open" else { return }
         let id = url.pathComponents.dropFirst().joined(separator: "/")
-        guard let destination = PublicDestinations.openable(id, debug: debug) else { return }
-        selection = id
-        tab = destination.phoneTab != nil ? id : "more"
+        guard PublicDestinations.openable(id, debug: debug) != nil else { return }
+        open(id)
         // A reminder names the session (?session=<slug>): open its page over the shell.
         linkedPage = ShellLink.page(in: url, isBlocked: CheckoutPolicy.isBlocked)
+    }
+}
+
+/// A screen opened over the iPhone shell.
+private struct PresentedScreen: Identifiable {
+    let id: String
+}
+
+private struct PresentedScreenView: View {
+    let destination: ShellDestination
+    let close: () -> Void
+
+    var body: some View {
+        if destination.ownsNavigation {
+            // The screen has its own navigation stack: a close button floats over it.
+            destination.view().destinationID(destination.id)
+                .overlay(alignment: .topTrailing) {
+                    Button(action: close) {
+                        Image(systemName: "xmark.circle.fill").font(.title2).symbolRenderingMode(.hierarchical)
+                    }
+                    .padding(Space.m)
+                    .accessibilityLabel("Close \(destination.title)")
+                }
+        } else {
+            NavigationStack {
+                destination.view().destinationID(destination.id).surfaceKind(destination.kind)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) { Button("Done", action: close) }
+                    }
+            }
+        }
     }
 }
 
@@ -110,18 +159,24 @@ private struct PublicSidebar: View {
         List(selection: Binding<String?>(get: { selection }, set: { if let id = $0 { selection = id } })) {
             Section { header }
             ForEach(PublicDestinations.groups, id: \.self) { group in
-                let rows = PublicDestinations.group(group).filter { debug || !$0.debugOnly }
+                let rows = PublicDestinations.listed(group, debug: debug)
                 if !rows.isEmpty {
-                    Section(group) {
-                        ForEach(rows) { destination in
-                            ShellSidebarRow(destination: destination, debug: debug).tag(destination.id)
-                        }
+                    if group == "Tabs" {
+                        Section { rowViews(rows) }
+                    } else {
+                        Section(group) { rowViews(rows) }
                     }
                 }
             }
         }
         .listStyle(.sidebar)
         .navigationTitle("PrompTugal")
+    }
+
+    @ViewBuilder private func rowViews(_ rows: [ShellDestination]) -> some View {
+        ForEach(rows) { destination in
+            ShellSidebarRow(destination: destination, debug: debug).tag(destination.id)
+        }
     }
 
     private var header: some View {
@@ -143,15 +198,18 @@ private struct PublicSidebar: View {
     }
 }
 
-// MARK: - iPhone tabs and More
+// MARK: - iPhone tabs
 
 private struct PublicPhoneShell: View {
     @Binding var tab: String
-    let debug: Bool
+    let openSettings: () -> Void
 
     private var tabs: [ShellDestination] {
         PublicDestinations.all.filter { $0.phoneTab != nil }.sorted { ($0.phoneTab ?? 0) < ($1.phoneTab ?? 0) }
     }
+
+    /// The gear sits on the two screens a participant lives in.
+    private func hasGear(_ id: String) -> Bool { id == "now" || id == "team.schedule" }
 
     var body: some View {
         TabView(selection: $tab) {
@@ -159,74 +217,33 @@ private struct PublicPhoneShell: View {
                 Tab(destination.tabTitle ?? destination.title, systemImage: destination.symbol, value: destination.id) {
                     NavigationStack {
                         destination.view().destinationID(destination.id).surfaceKind(destination.kind)
-                    }
-                }
-            }
-            Tab("More", systemImage: "ellipsis.circle", value: "more") {
-                NavigationStack { PublicMoreList(debug: debug) }
-            }
-        }
-    }
-}
-
-private struct PublicMoreList: View {
-    let debug: Bool
-    @State private var fullScreen: String?
-
-    var body: some View {
-        List {
-            ForEach(PublicDestinations.groups, id: \.self) { group in
-                let rows = PublicDestinations.group(group).filter { $0.phoneTab == nil && (debug || !$0.debugOnly) }
-                if !rows.isEmpty {
-                    Section(group) {
-                        ForEach(rows) { destination in
-                            if destination.ownsNavigation {
-                                Button { fullScreen = destination.id } label: { ShellMoreRow(destination: destination) }
-                                    .foregroundStyle(Palette.ink)
-                            } else {
-                                NavigationLink {
-                                    destination.view().destinationID(destination.id).surfaceKind(destination.kind)
-                                } label: {
-                                    ShellMoreRow(destination: destination)
+                            .toolbar {
+                                if hasGear(destination.id) {
+                                    ToolbarItem(placement: .topBarTrailing) {
+                                        Button(action: openSettings) { Image(systemName: "gearshape") }
+                                            .accessibilityLabel("Settings")
+                                    }
                                 }
                             }
-                        }
                     }
                 }
             }
         }
-        .navigationTitle("More")
-        .fullScreenCover(item: Binding(get: { fullScreen.map(FullScreenID.init) }, set: { fullScreen = $0?.id })) { item in
-            if let destination = PublicDestinations.destination(item.id) {
-                destination.view().destinationID(destination.id)
-                    .overlay(alignment: .topTrailing) {
-                        Button { fullScreen = nil } label: {
-                            Image(systemName: "xmark.circle.fill").font(.title2).symbolRenderingMode(.hierarchical)
-                        }
-                        .padding(Space.m)
-                        .accessibilityLabel("Close \(destination.title)")
-                    }
-            }
-        }
     }
 }
-
-private struct FullScreenID: Identifiable { let id: String }
 
 // MARK: - Keyboard shortcuts (iPad with a keyboard)
 
-/// ⌘1–⌘5 jump to the first screen of each group; ⌘, opens Settings.
+/// ⌘1–⌘4 jump to the four tabs; ⌘, opens Settings.
 private struct PublicKeyboardShortcuts: View {
     @Binding var selection: String
 
     var body: some View {
-        let groups = PublicDestinations.groups.filter { $0 != "Settings" && $0 != "Debug" && !PublicDestinations.group($0).isEmpty }
+        let tabs = PublicDestinations.listed("Tabs", debug: false)
         ZStack {
-            ForEach(Array(groups.prefix(9).enumerated()), id: \.offset) { index, group in
-                if let first = PublicDestinations.group(group).first {
-                    Button(group) { selection = first.id }
-                        .keyboardShortcut(KeyEquivalent(Character("\(index + 1)")), modifiers: .command)
-                }
+            ForEach(Array(tabs.prefix(9).enumerated()), id: \.offset) { index, destination in
+                Button(destination.title) { selection = destination.id }
+                    .keyboardShortcut(KeyEquivalent(Character("\(index + 1)")), modifiers: .command)
             }
             Button("Settings") { selection = "settings" }.keyboardShortcut(",", modifiers: .command)
             #if DEBUG
@@ -239,7 +256,7 @@ private struct PublicKeyboardShortcuts: View {
     }
 }
 
-/// Launch arguments for screenshots and UI tests: `-PTDestination reader.agenda` opens that screen.
+/// Launch arguments for screenshots and UI tests: `-PTDestination now` opens that screen.
 /// DEBUG builds only: in a Release build every option reads as absent.
 enum PublicLaunch {
     static var destination: String? {
