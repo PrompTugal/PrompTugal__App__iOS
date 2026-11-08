@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyLists-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Merged with the generated Info.plist (GENERATE_INFOPLIST_FILE = YES).
+	     Only keys the INFOPLIST_KEY_ build settings cannot express live here. -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>news.promptugal.team.refresh</string>
+		<string>news.promptugal.team.vault-refresh</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>news.promptugal.team</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ptteam</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+	<key>WKAppBoundDomains</key>
+	<array>
+		<string>promptugal.news</string>
+		<string>web-summit.sgit.ai</string>
+	</array>
+</dict>
+</plist>

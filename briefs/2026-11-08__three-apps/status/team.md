@@ -1,6 +1,6 @@
 # Team session: PTWeb and PTAgenda
 
-> PTWeb and PTAgenda are on dev (17a160c, merged as 7863ae2, run 307 green). Follow-up in progress: reminder links use AppLinks.scheme, and the StoreKit test no longer waits 60 s. CI run on macos-26 queued; READY comes after it is green.
+> PTWeb and PTAgenda are on dev (7863ae2). The follow-up (reminders from AppLinks.scheme, bounded StoreKit test) is green: run 313, commit 3899bb1, all 15 jobs. READY sent to the conductor. Nothing open for team.
 
 **Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
 
@@ -14,6 +14,12 @@
 - **02:20 UTC:** Run 293 failed (cancelled by the conductor after the Debug build, iPhone and iPad tests, PTWeb and PTAsk failed). The log has one real error, twice: `BridgeScripts.swift` used `ScheduleDocument.storageKey` and `.changeEvent`, and PTWeb cannot see PTAgenda. PTWeb now owns both strings (`BridgeScripts.scheduleKey`, `scheduleChangeEvent`) and `ScheduleDocument` reads them. PTAsk failed through PTWeb, so the same fix should clear it. `ReminderDelegate` now accepts `promptugal` and `ptteam` links. Pushed as 115ba30; run 296 (app=all) queued. PTAgenda itself has not compiled yet.
 
 - **03:20 UTC:** 17a160c merged to dev as 7863ae2. Follow-up on top of dev eb99508: `ReminderPlan`, `ReminderItem` and `ReminderScheduler` take their scheme from `AppLinks.scheme` (read when scheduling, so launch order does not matter), `ReminderDelegate` accepts only the app's own scheme, and `TeamFeatures.urlScheme` is gone. `AppReviewTests`: StoreKit product load bounded to 15 s, then the known issue is recorded. Not yet compiled.
+
+- **04:15 UTC:** Run 313 (macos-26, app=all) on 3899bb1 green, all 15 jobs. READY sent to the conductor.
+
+- **07:15 UTC, phase 4 review:** Read platform's plan against my folders and sent platform and the conductor the findings: module rename breaks 10 `@testable import PrompTugal` files; InfoPlistTests expects the old BGTask ids; NowNext is not in PTAgenda yet, so the Team project must keep the Shared group and `NowNextPublisher` (or I delete the publisher calls); design's `AppShell.swift:97` must compare with `AppLinks.scheme`. My own fixes are on split/team (dcca18e, not CI-tested): `ReadingCreditView` link from `AppLinks.open`, StoreKit file found in either layout, reminder tests pass their scheme. Waiting for platform's move to review it.
+
+- **07:25 UTC, NowNext moved (conductor ruling):** `Shared/NowNext.swift` is now `Packages/PTAgenda/Sources/PTAgenda/NowNext.swift` (public `NowNextSnapshot`, `SharedContainer`, `LisbonClock`), `App/NowNextPublisher.swift` is `Packages/PTAgenda/Sources/PTAgenda/NowNextPublisher.swift` (public, no team dependency), and `NowNextTests.swift` is in `Packages/PTAgenda/Tests/PTAgendaTests/`. `SharedContainer.appGroup` is now a settable static (default `group.news.promptugal.reader`; an app with its own group sets it at launch). The widget and intents sources (`PrompTugalWidgets/`, `PrompTugalIntents/`) now need `import PTAgenda`, and their targets must link PTAgenda: platform and apps. Not CI-tested.
 
 ## Handoff
 

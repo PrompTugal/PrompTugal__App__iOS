@@ -1,15 +1,16 @@
 # Apps status
 
-> RiskMandate and PrompTugal both build in CI (PrompTugal: all four app jobs green on 3a63963). RiskMandate's Release build and iPad tests are still queued; READY goes to the conductor when run 290 finishes.
+> RiskMandate is green and on dev. PrompTugal run 316 is nearly done with no failures; I report to the conductor when it finishes.
 
 ## Done
+- Phase 4 (07:45 UTC): merged split/platform; widgets and intents targets added to PrompTugal.xcodeproj (news.promptugal.reader.widgets and .intents, app group, embed phases, link PTAgenda); shortcut images copied; file-sharing and open-in-place keys set; PrompTugalApp wires AppLinks, schedule, NowNextPublisher and the vault task id. Not yet built: run dispatched next.
 - `Apps/RiskMandate/RiskMandate.xcodeproj`: bundle ai.riskmandate.app, version 0.4.0, one screen, privacy manifest, placeholder icon, one unit test, scheme "RiskMandate". Links PTCore.
 - `Apps/PrompTugal/PrompTugal.xcodeproj`: bundle news.promptugal.reader, version 0.4.0, `PrompTugalApp` and placeholder `PublicShell`, schemes "PrompTugal" and "PrompTugalScreens", unit and UI test targets. Links PTAsk and its closure (PTCore, PTWeb, PTAgenda, PTNews, PTVaultUI, SGitVault).
 - Info: scheme `promptugal`, two background task ids, WKAppBoundDomains promptugal.news only, camera for vault QR only, no NFC, no speech.
 - `apps.json`: entries "promptugal" and "riskmandate", both testflight false. `check_apps.py` and its tests pass on Linux.
 
 ## In progress
-- Waiting for run 290 (riskmandate) to finish.
+- Waiting for run 316 (promptugal) to finish.
 
 ## Next
 - Fix whatever CI finds. Add packages to PrompTugal as they land (PTLanes is not in it by design).
@@ -20,6 +21,10 @@
 3. Embed widgets in "Embed Foundation Extensions" and intents in "Embed ExtensionKit Extensions", as the root project does. Add target dependencies.
 4. Run check_apps.py (PTAgenda is already in the closure), dispatch app=promptugal, and check `scripts/release/check-embedded.sh` passes.
 5. Then set promptugal testflight true when the conductor switches.
+
+6. (conductor, from editor) Copy the website shortcut images (`Shortcut*.imageset`) from `PrompTugal/App/Resources/Assets.xcassets` into `Apps/PrompTugal/Resources/Assets.xcassets`, so the PrompTugal sidebar has icons. Team keeps its copy. Phase 4.
+
+7. (team, split/team d599843, not on dev yet) NowNext moves into PTAgenda: `NowNextSnapshot`, `SharedContainer`, `LisbonClock`, public `NowNextPublisher`. Once it is on dev: widgets and intents targets link PTAgenda; their three Swift files need `import PTAgenda`; in PrompTugalApp.swift set `AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }` and call it from agendaDidLoad with the schedule's picks, as TeamFeatures does.
 
 ## RiskMandate upload
 - Dinis: same Apple account. Set `testflight: true` after the first green CI run. Upload waits for the App Store Connect record; release must skip with a clear line until then (conductor to confirm with release).
@@ -32,11 +37,10 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (02:50 UTC)
-- 303 (riskmandate, self-hosted, eaeacbc = origin/dev merged + testflight flip): Debug build, PTAgenda, PTAsk, PTCore and SGitVault green; iPhone tests running; Release build, iPad tests, PTWeb, PTNews, PTVaultUI and PTLanes queued on the three self-hosted runners.
-- 289 (promptugal, 3a63963, GitHub-hosted): Debug, Release, iPhone and iPad all green; its package jobs were replaced by the per-job concurrency rule, so the run shows failure. Not a code failure.
-- 285, 290: cancelled (superseded).
-- Next: when 303 is green, send READY (riskmandate), then dispatch app=promptugal runner=self-hosted.
+## Last CI run (04:25 UTC)
+- 305 (riskmandate, cceddbf): green, merged to dev by the conductor as fef81e2.
+- 316 (promptugal, 6775d65 = dev at v0.1.82, macos-26): Release build, iPhone and iPad tests, PTNews, PTWeb, SGitVault, PTAsk green; PTAgenda, PTLanes, PTVaultUI running; Debug build and PTCore queued. No failures so far.
+- Runs must use runner=macos-26 (the laptop runner is offline).
 - apps.json: riskmandate testflight true; promptugal false until phase 4.
 
 ## Handoff
