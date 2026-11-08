@@ -14,10 +14,18 @@ public struct AskView: View {
     @FocusState private var composerFocused: Bool
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
 
-    public init() {}
-    init(store: ChatStore, compact: Bool) {
+    /// A question to start with. With a key it is sent at once; without one it is left in the draft and the
+    /// "no key" card shows, so nothing is lost and nothing broken is offered.
+    var initialQuestion: String?
+    @State private var initialHandled = false
+
+    public init(initialQuestion: String? = nil) {
+        self.initialQuestion = initialQuestion
+    }
+    init(store: ChatStore, compact: Bool, initialQuestion: String? = nil) {
         self.store = store
         self.compact = compact
+        self.initialQuestion = initialQuestion
     }
 
     public var body: some View {
@@ -32,7 +40,7 @@ public struct AskView: View {
                         Label("Ask is off: you chose not to send questions to OpenRouter. Change it in Key and settings.", systemImage: "hand.raised")
                             .font(.subheadline).foregroundStyle(.secondary)
                     }
-                    if store.turns.isEmpty {
+                    if store.turns.isEmpty && store.keys.hasKey {
                         AskStarters(store: store)
                     }
                     ForEach(store.turns) { turn in
@@ -82,7 +90,20 @@ public struct AskView: View {
             NavigationStack { AskSettingsView(store: store) }
                 .presentationDetents([.medium, .large])
         }
-        .task { await store.refreshPreview() }
+        .task {
+            await store.refreshPreview()
+            handleInitialQuestion()
+        }
+    }
+
+    private func handleInitialQuestion() {
+        guard !initialHandled, let q = initialQuestion?.trimmingCharacters(in: .whitespacesAndNewlines), !q.isEmpty else { return }
+        initialHandled = true
+        if store.keys.hasKey, store.consent != .declined {
+            store.send(q)
+        } else {
+            store.draft = q
+        }
     }
 }
 
@@ -92,8 +113,8 @@ private struct AskKeyCallout: View {
     let open: () -> Void
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Add your OpenRouter key", systemImage: "key.fill").font(.headline)
-            Text("Ask uses your own OpenRouter key. It is kept in this device's Keychain and sent only to openrouter.ai, with each question. You pay OpenRouter for what you ask.")
+            Label("Ask needs your own OpenRouter key", systemImage: "key.fill").font(.headline)
+            Text("Ask is an optional extra. It sends your question to OpenRouter, an AI service, and needs a key from your own OpenRouter account. The key stays in this device's Keychain, and you pay OpenRouter for what you ask. The rest of the app works without it.")
                 .font(.subheadline).foregroundStyle(.secondary)
             Button("Add key", action: open).buttonStyle(.borderedProminent)
         }
