@@ -135,3 +135,19 @@ The conductor's decision: the binary is **rc4 d8a5020**. rc5 differs from it onl
 | M4 | Screens on rc5: not run yet. release.md plans about 15:40 on dev. | pending (see note) |
 
 Note: screenshots at 15:40 plus about 25 minutes leaves little room before the 16:00 freeze, if an image needs a fix. Run `screens.yml` on rc5 7766e2a now. It has the debug-off fix and the `hide_term` filter, and its product code matches the binary.
+
+## Run 9: screenshots, screens #34 on rc5 7766e2a (14:05 UTC): NO-GO
+
+Artifact `appstore-screens-7766e2a…-promptugal`: 63 images (7 screens, 3 sizes, en-US, pt-PT, pt-BR).
+
+| # | Finding | Owner | State |
+| --- | --- | --- | --- |
+| S1 | The system alert "PrompTugal Would Like to Send You Notifications" covers 60 of 63 images. Only en-US `01-now` (3 sizes) is clean. | team (product), release (test) | **blocker** |
+| S1a | Cause in the product: `MyProgramView.swift:84-86` asks for notification permission in `.task(id: picksOn)` (`picksOn` is true by default) whenever My program is built, with no tap. The TabView builds it at launch. That contradicts the review notes, the privacy page and `askOnceWhenUseful` (ask on the first pick). | team | **fix in the binary**: keep `currentAuthorization()` and `reschedule()`, drop `requestAuthorization()` |
+| S1b | Cause in the test: `-PTSeedPicks` fires `askOnceWhenUseful`. ScreensTests must tap the springboard's **Allow** before each screenshot. | release | fix |
+| S2 | The en-US 12-hour time column wraps ("11:05 A" / "M") on Now, iPhone and iPad | design | fix: `lineLimit(1)` and a wider column, or 24-hour Lisbon time |
+| S3 | iPad sidebar: Now, My program, Explore, News; More: Ask, Settings, Reminders. No Vault, All websites, Debug or badges. | | GO |
+| S4 | No "Web Summit" in the clean images | | GO so far (pt not visible) |
+| S5 | pt-PT and pt-BR UI language: cannot be checked, because every pt image is covered | | pending the re-run |
+
+Review notes step 4 now says the permission is asked on the first pick or from the Reminders toggle (store/review-notes.txt). testflight copies it again.
