@@ -33,7 +33,9 @@
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
 ## Last CI run
-- None yet.
+- 285 (riskmandate, 7d28094): Debug, Release and iPhone tests green; iPad tests queued.
+- 290 = riskmandate and 289 = promptugal, both on 3a63963, queued behind other runs.
+- apps.json: riskmandate testflight true (CI does not read the flag).
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.

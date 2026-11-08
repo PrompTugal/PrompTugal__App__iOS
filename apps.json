@@ -16,7 +16,7 @@
     "promptugal": {"project": "Apps/PrompTugal/PrompTugal.xcodeproj", "scheme": "PrompTugal", "bundle": "news.promptugal.reader",
                    "paths": ["Apps/PrompTugal/"], "packages": ["PTAsk"], "testflight": false},
     "riskmandate": {"project": "Apps/RiskMandate/RiskMandate.xcodeproj", "scheme": "RiskMandate", "bundle": "ai.riskmandate.app",
-                    "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": false}
+                    "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": true}
   },
   "all": [".github/workflows/ios.yml", ".github/workflows/ios-release.yml", "apps.json", "scripts/release/", "Config/Shared/", ".github/scripts/"]
 }
