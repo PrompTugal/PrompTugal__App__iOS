@@ -497,6 +497,29 @@
         }
       }
     },
+    "Latest": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mais recentes"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mais recentes"
+          }
+        }
+      }
+    },
     "Laying out %lld nodes…": {
       "extractionState": "manual",
       "localizations": {
@@ -539,6 +562,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Notícias"
+          }
+        }
+      }
+    },
+    "Newsletter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Newsletter"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Newsletter"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Newsletter"
           }
         }
       }
@@ -1085,29 +1131,6 @@
         }
       }
     },
-    "newsletter": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "newsletter"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "newsletter"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "newsletter"
-          }
-        }
-      }
-    },
     "shown": {
       "extractionState": "manual",
       "localizations": {
@@ -1127,6 +1150,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "visível"
+          }
+        }
+      }
+    },
+    "the newsletter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the newsletter"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a newsletter"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a newsletter"
           }
         }
       }

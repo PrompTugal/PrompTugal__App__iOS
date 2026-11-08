@@ -310,6 +310,20 @@ public struct ExploreDetailView: View {
 
 /// Dates and times in Lisbon time, which is how the site publishes them.
 enum ExploreFormat {
+    /// The site's event kinds ("session", "registration", ...) in the person's language. Unknown kinds show as the site wrote them.
+    static func kindTitle(_ raw: String) -> String {
+        switch raw.lowercased() {
+        case "session": String(localized: "Session", bundle: .module)
+        case "registration": String(localized: "Registration", bundle: .module)
+        case "announcement": String(localized: "Announcement", bundle: .module)
+        case "night-summit": String(localized: "Night summit", bundle: .module)
+        case "pitch": String(localized: "Pitch", bundle: .module)
+        case "side-event": String(localized: "Side event", bundle: .module)
+        case "summit": String(localized: "Summit", bundle: .module)
+        default: raw.prefix(1).uppercased() + raw.dropFirst()
+        }
+    }
+
     static let lisbon = TimeZone(identifier: "Europe/Lisbon") ?? .gmt
 
     static func day(_ day: String) -> String {

@@ -981,7 +981,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escolher palestras"
+            "value": "Escolher sessões"
           }
         }
       }
@@ -2180,7 +2180,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lembrar-me antes de cada palestra"
+            "value": "Lembrar-me antes de cada sessão"
           }
         }
       }
@@ -2548,7 +2548,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Marque palestras com a estrela em Explorar ou em Agora. Aparecem aqui por ordem de hora, com as sobreposições assinaladas."
+            "value": "Marque sessões com a estrela em Explorar ou em Agora. Aparecem aqui por ordem de hora, com as sobreposições assinaladas."
           }
         }
       }
