@@ -504,8 +504,10 @@ def cmd_store_screenshots(a):
                 have = call("GET", f"/v1/appScreenshotSets/{sets[disp]['id']}/appScreenshots?limit=50")["data"]
             names_now = [h["attributes"].get("fileName") for h in have]
             names_want = [f"{i + 1:02d}-{os.path.basename(p).split('-', 1)[-1]}" for i, p in enumerate(files)]
-            same = names_now == names_want and all(h["attributes"].get("assetDeliveryState", {}).get("state") == "COMPLETE" for h in have)
-            say(f"| {loc} | {disp} | {len(have)} image(s) | {'same, skipped' if same else str(len(files)) + ' image(s): ' + ', '.join(names_want)} |")
+            states = [(h["attributes"].get("assetDeliveryState") or {}).get("state") for h in have]
+            same = names_now == names_want and all(st in ("COMPLETE", "UPLOAD_COMPLETE") for st in states)
+            now_txt = f"{len(have)} image(s)" + (f" ({', '.join(sorted(set(str(x) for x in states)))}; {', '.join(str(n) for n in names_now)})" if have and not same else "")
+            say(f"| {loc} | {disp} | {now_txt} | {'same, skipped' if same else str(len(files)) + ' image(s): ' + ', '.join(names_want)} |")
             if not same:
                 todo.append((loc, l["id"], disp, sets.get(disp), have, files, names_want))
     say("")
