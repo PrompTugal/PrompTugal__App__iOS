@@ -1,6 +1,7 @@
 import SwiftUI
 import PTCore
 import PTAgenda
+import PTDeck
 import PTVaultUI
 
 /// Entry point of the public PrompTugal app (news.promptugal.reader).
@@ -23,6 +24,9 @@ struct PrompTugalApp: App {
             NowNextPublisher.publish(agenda: events, saved: schedule.picks.compactMap(\.event))
         }
         AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }
+        // Presenter mode's second screen: Info.plist names PTDeck.ExternalDisplaySceneDelegate, which nothing else
+        // references, so mention the type here to keep the linker from dropping it.
+        _ = ExternalDisplaySceneDelegate.self
         // Background tasks must be registered before the app finishes launching.
         VaultBackground.register(taskIdentifier: "news.promptugal.reader.vault-refresh")
     }
