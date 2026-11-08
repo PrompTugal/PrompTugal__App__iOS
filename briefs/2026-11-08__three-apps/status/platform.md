@@ -58,3 +58,23 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 
 ## Last CI run
 - Run 278, commit f1be270: green (all 7 jobs).
+
+## Handoff (01:35 UTC, 8 Nov)
+
+- **Branch head:** `split/platform`. The last code commit is ce3602e (`AppLinks.scheme` in PTCore). A status-page commit follows it. Everything is pushed; nothing is local.
+- **Last CI run:** run 292 (id 42433932986), commit ce3602e, dispatched at 01:21 UTC. It was still queued when I stopped; I did not read a result. Read it, and merge ce3602e into dev if green. Before that: run 278, commit f1be270, green (7 of 7 jobs), and it is on dev (116a350).
+- **Not half-done:** nothing is half-done. No file has been moved for phase 4.
+- **Check-ins:** I deleted my three pending send_later reminders. I will dispatch no more CI.
+- **Exact next step:** read run 292. If red, fix the failure in `Packages/PTCore/Sources/PTCore/Feed/AppLinks.swift` or `Packages/PTCore/Tests/PTCoreTests/AppLinksTests.swift`. The code uses `nonisolated(unsafe) static var`; if Swift 6 rejects it, use an `OSAllocatedUnfairLock` or a `@MainActor` property and tell team and design. If green, tell the conductor so ce3602e is merged. Then phase 4, following the nine steps in "Phase 4 plan" above, once the phase 3 packages are on dev.
+- **Rules to remember:**
+  - Pushes to `split/**` do not start `ios.yml`. Start it with workflow_dispatch on the branch.
+  - Merge `origin/dev`; never rebase or force-push.
+  - Team Xcode scheme is "Team" (+ "TeamScreens"); `ptteam` is only the URL scheme.
+  - `MARKETING_VERSION = 0.4.0` in all projects; CI sets the real one from the tag.
+  - `apps.json` entries for "promptugal" and "riskmandate" are edited by the apps session; I keep "team", "packages" and "all". Until phase 4 the "team" entry keeps bundle `news.promptugal.reader` and project `PrompTugal.xcodeproj`; change both in the commit that moves the project.
+  - The Team entry point calls `TeamLanesWiring.install()` and `VaultBackground.register(taskIdentifier: "news.promptugal.team.vault-refresh")`, and sets `AppLinks.scheme = "ptteam"` before any view reads it.
+  - Widgets and Intents move to `Apps/PrompTugal/Widgets` and `Apps/PrompTugal/Intents` with `git mv`; the apps session adds the targets to its own project, and I remove them from the Team project.
+- **Open questions:**
+  - The `promptugal://` strings in AppShell.swift, Destinations.swift, ReminderPlan.swift and ReminderScheduler.swift must read `AppLinks.scheme`. Design and team were told. Check it before phase 4 step 5.
+  - The rest of `Dashboards/WireModels.swift` (Wire.Me, Person and so on) is still in the app; design decides where it goes.
+  - Keychain service names (`news.promptugal.reader.ai`, `.lanes`, `.lanes.identity`) keep the old prefix; the ruling says teammates import their key again.
