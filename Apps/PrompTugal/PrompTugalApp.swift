@@ -18,28 +18,27 @@ struct PrompTugalApp: App {
         AppLinks.scheme = "promptugal"
         // The public list of websites (PrompTugal.news only, no team site), before any view reads it.
         WebsiteSources.resource = "WebsitesPublic"
-        // The one schedule. PTAsk's PublicAskProvider reads its picks from here.
-        let schedule = ScheduleStore()
-        AgendaHub.schedule = schedule
-        // The widgets' "Now and next": the agenda, with the schedule's picks as the saved sessions.
-        AgendaHub.agendaDidLoad = { events in
-            schedule.updateEvents(events)
-            NowNextPublisher.publish(agenda: events, saved: schedule.picks.compactMap(\.event))
-        }
+        // The one schedule (AgendaHub.schedule) and agendaDidLoad are set by PublicFeatures (Shell/, design), when the
+        // first screen appears. Here only the widgets' "Now and next" publisher, which PublicFeatures does not set.
         AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }
         // Presenter mode's second screen: Info.plist names PTDeck.ExternalDisplaySceneDelegate, which nothing else
         // references, so mention the type here to keep the linker from dropping it.
         _ = ExternalDisplaySceneDelegate.self
+        #if DEBUG
+        // The vault is hidden in the public Release build, so its background refresh exists only in DEBUG.
         // Background tasks must be registered before the app finishes launching.
         VaultBackground.register(taskIdentifier: "news.promptugal.reader.vault-refresh")
+        #endif
     }
 
     var body: some Scene {
         WindowGroup {
             PublicShell()
         }
+        #if DEBUG
         .onChange(of: scenePhase) { _, phase in
             if phase == .background { VaultBackground.schedule() }
         }
+        #endif
     }
 }
