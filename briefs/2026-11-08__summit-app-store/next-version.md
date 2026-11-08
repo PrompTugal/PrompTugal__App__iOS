@@ -123,8 +123,7 @@ Found while preparing the first submission. None of these blocks it.
 
 1. Kicker `Lisbon · 9–12 Nov` (`Kicker`), title in `Typo.display`.
 2. Three rows: SF Symbol in a 44 pt circle (`Palette.paper2` fill, `Palette.red` symbol), then a headline (`Typo.headline`) and one or two lines of body (`Typo.body`, `Palette.muted`).
-3. Fine print (`Typo.meta`, muted).
-4. Primary button (`.borderedProminent`, full width), secondary button below it (`.plain`).
+3. Primary button (`.borderedProminent`, full width), secondary button below it (`.plain`).
 
 **Copy (en, final):**
 
@@ -134,26 +133,24 @@ Found while preparing the first submission. None of these blocks it.
 | Title | Your summit, on your phone |
 | Row 1 · `star` | **Pick your talks** · Tap the star on any talk, in Explore or on Now. It goes into My program. |
 | Row 2 · `calendar.badge.exclamationmark` | **See clashes and free time** · My program puts your talks in order, marks the ones that clash and shows the gaps between them. A reminder comes before each one. |
-| Row 3 · `wifi.slash` | **Works offline, stays on your phone** · The agenda and the news are saved here and work with no signal. Your picks stay on this phone: no account, no tracking. |
-| Fine print | Ask is optional. It uses your own AI key, and only what you ask is sent. |
+| Row 3 · `wifi.slash` | **Works offline** · The agenda and the news are saved here and work with no signal. Your picks never leave your phone. |
 | Primary | Choose talks |
 | Secondary | Not now |
 
 - **Choose talks** closes the screen and opens Explore on Talks, today (or 10 Nov before the summit). **Not now** closes it on Now. Both set `onboarding.seen`.
-- **Accuracy (review):** do not write "nothing leaves your phone". The app downloads the agenda and news (no personal data in those requests), and Ask sends questions when the person uses it. Row 3 and the fine print say exactly that.
+- **Accuracy:** Ask is no longer in the public app (conductor, 23:26 UTC). The app only downloads the public agenda and news, with no personal data in those requests, so "Your picks never leave your phone" is true. If anything that sends user data comes back (Ask, sync), this line changes first.
 - **VoiceOver:** each row is one element ("Pick your talks. Tap the star…"); the symbols are hidden. The title is a header.
 - **Dynamic Type:** at the largest sizes the screen scrolls; the buttons stay at the bottom (`safeAreaInset`).
 
 **Notes for i18n (pt-PT, pt-BR):**
 
-- Use the app's existing names for the tabs and features: "O meu programa" (pt-PT) and "Meu programa" (pt-BR) for My program; "Explorar"; "Agora"; the existing translation of "Ask".
+- Use the app's existing names for the tabs and features: "O meu programa" (pt-PT) and "Meu programa" (pt-BR) for My program; "Explorar"; "Agora".
 - "Talk": pt-PT **sessão**, pt-BR **palestra** (review's note: "palestra" reads Brazilian).
 - Address: pt-BR **você**; pt-PT avoids "você": use the imperative or the possessive ("Toque na estrela", "o seu telemóvel"). "Phone": pt-PT **telemóvel**, pt-BR **celular**.
 - "Your summit, on your phone": translate the idea, not the words. Keep it under 30 characters; it sits in `Typo.display`.
 - Portuguese runs about 20 to 30% longer. Nothing may truncate: rows wrap and the screen scrolls.
 - "A reminder comes before each one": do not hard-code a number; the lead time is a setting (5, 10 or 15 min).
 - "Lisbon · 9–12 Nov": use the same strings as the Now and Agenda kickers ("Lisboa · 9–12 nov.").
-- The fine print names no service. "AI key": pt-PT "chave de IA", pt-BR "chave de IA".
 
 ## Modes and personas (ux spec for the next-next version)
 
@@ -169,7 +166,7 @@ Found while preparing the first submission. None of these blocks it.
 | Press | `mic` | Press conferences, announcements and the main stage. |
 
 - **Where:** a second step after ONB-1 ("What brings you to Lisbon?", with "Skip"), and a row in Settings, "I'm here as", which shows the current mode. Changing it takes effect at once; no restart.
-- **Storage:** one value in `UserDefaults` (`mode`), never in the vault sync, never in a request, never in an Ask prompt unless the person types it. The App Privacy label does not change.
+- **Storage:** one value in `UserDefaults` (`mode`), never in the vault sync, never in a request. The App Privacy label does not change.
 - **Rules ship as data, not code:** a small JSON in the app (`modes.json`), later also in the content pack (`api/v1/modes.json`), downloaded by everyone alike, so the download says nothing about the person. The app applies the rules locally.
 
 **What each mode changes (rules use fields the agenda and news already have: `kind`, `place`/track, title words, news `category`/topic):**

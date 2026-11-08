@@ -187,3 +187,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 15:20 UTC: no Screens run after 36; UX PASS for the upload set 01, 02, 03, 06 (run 36). 05 good if review accepts the description; 04 and 07 out. Cosmetic leftovers for next version: 03 title on iPhone, 02 day labels in en-US.
 - 16:00 UTC: freeze. No build or Screens run after rc7 / run 36. Remaining UX items added to next-version.md.
 - 23:30 UTC: onboarding (ONB-1) copy and layout, and the modes spec (MODE-1), in next-version.md.
+- 23:30 UTC: ONB-1 corrected: Ask removed from the public app, so no fine print; row 3 "Works offline · … Your picks never leave your phone."
