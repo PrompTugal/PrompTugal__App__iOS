@@ -4,8 +4,12 @@
 #
 #   manual     the imported Apple Distribution certificate and the installed
 #              App Store profiles; ExportOptions signingStyle manual.
-#   automatic  Xcode signs with the API key (-allowProvisioningUpdates); export
-#              uses a cloud-managed distribution certificate (key role Admin).
+#   automatic  The archive is built unsigned (CODE_SIGNING_ALLOWED=NO) and
+#              -exportArchive signs it with a cloud-managed distribution certificate
+#              (-allowProvisioningUpdates + API key, key role Admin). No Apple
+#              Development certificate is created, so runs do not use up the
+#              account's certificate limit. AUTO_ARCHIVE=development restores the
+#              old behaviour (Xcode signs the archive itself).
 #
 # Upload: xcodebuild -exportArchive with destination upload and the API key
 # (UPLOAD_TOOL=xcodebuild, default) or xcrun altool (UPLOAD_TOOL=altool).
@@ -58,8 +62,14 @@ if [ "$MODE" = manual ]; then
   fi
   extra+=(-xcconfig "$xc")
 else
-  extra+=(-allowProvisioningUpdates "${auth[@]}")
-  settings+=(CODE_SIGN_STYLE=Automatic)
+  if [ "${AUTO_ARCHIVE:-unsigned}" = development ]; then
+    extra+=(-allowProvisioningUpdates "${auth[@]}")
+    settings+=(CODE_SIGN_STYLE=Automatic)
+  else
+    # Unsigned archive; the export step does the signing (see the header).
+    settings+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= CODE_SIGN_ENTITLEMENTS=)
+    summary "- Archive built unsigned; export signs with the cloud-managed distribution certificate."
+  fi
 fi
 
 run_logged "Archive (signed)" "$LOGS/archive-signed.log" -- \
@@ -113,7 +123,10 @@ mv "$ipa" "$export_dir/$ARTIFACT_BASE-appstore.ipa"; ipa=$export_dir/$ARTIFACT_B
 ipa_bundle=$(unzip -p "$ipa" 'Payload/*.app/Info.plist' | plutil -extract CFBundleIdentifier raw -o - -)
 [ "$ipa_bundle" = "$EXPECTED_BUNDLE" ] || { echo "::error::the .ipa is $ipa_bundle, expected $EXPECTED_BUNDLE. Nothing uploaded."; exit 1; }
 "$(dirname "$0")/report.sh" "$app" "$ipa"
-codesign -dvv "$app" 2>&1 | grep -E '^(Authority|TeamIdentifier|Identifier)=' | head -4 | sed 's/^/    /'
+# Show who signed the exported app (the archive itself may be unsigned).
+tmp=$(mktemp -d); unzip -q "$ipa" 'Payload/*' -d "$tmp"
+codesign -dvv "$tmp"/Payload/*.app 2>&1 | grep -E '^(Authority|TeamIdentifier|Identifier)=' | head -4 | sed 's/^/    /' || true
+rm -rf "$tmp"
 
 if [ "${SKIP_UPLOAD:-false}" = true ]; then
   note "- Upload skipped (SKIP_UPLOAD=true). The signed .ipa is an artifact."
