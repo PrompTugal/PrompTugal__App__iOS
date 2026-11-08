@@ -12,8 +12,8 @@ import PTWeb
 ///   so both are accepted when reading. The app always writes the website's ISO form.
 /// - The website ignores any other key, and keeps unknown keys when it rewrites the document.
 public struct ScheduleDocument: Codable, Equatable, Sendable {
-    public static let storageKey = "nr.schedule.v1"
-    public static let changeEvent = "nr:schedule"
+    public static let storageKey = BridgeScripts.scheduleKey
+    public static let changeEvent = BridgeScripts.scheduleChangeEvent
 
     public var v: Int = 1
     public var picks: [WirePick]

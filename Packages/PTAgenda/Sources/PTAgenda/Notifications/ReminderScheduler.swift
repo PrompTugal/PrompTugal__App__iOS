@@ -207,7 +207,7 @@ public final class ReminderDelegate: NSObject, UNUserNotificationCenterDelegate,
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         let info = response.notification.request.content.userInfo
-        guard let text = info["open"] as? String, let url = URL(string: text), url.scheme == "promptugal" else { return }
+        guard let text = info["open"] as? String, let url = URL(string: text), ["promptugal", "ptteam"].contains(url.scheme ?? "") else { return }
         await MainActor.run { ReminderInbox.receive(url) }
     }
 }
