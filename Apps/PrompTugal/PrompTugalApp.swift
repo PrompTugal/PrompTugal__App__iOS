@@ -20,6 +20,8 @@ struct PrompTugalApp: App {
         WebsiteSources.resource = "WebsitesPublic"
         // The one schedule (AgendaHub.schedule) and agendaDidLoad are set by PublicFeatures (Shell/, design), when the
         // first screen appears. Here only the widgets' "Now and next" publisher, which PublicFeatures does not set.
+        // The agenda built into the app, read by ReaderStore when nothing is cached (offline first launch).
+        AgendaHub.seedAgenda = { AgendaSeed.events() }
         AgendaHub.publishNowNext = { agenda, saved in NowNextPublisher.publish(agenda: agenda, saved: saved) }
         // Presenter mode's second screen: Info.plist names PTDeck.ExternalDisplaySceneDelegate, which nothing else
         // references, so mention the type here to keep the linker from dropping it.
