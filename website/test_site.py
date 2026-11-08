@@ -71,6 +71,20 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(build.app_version('v0.4.0', '0.4.0'), '0.4.0')
         self.assertEqual(build.app_version('v0.1.75', '0.3.1'), '0.3.1')
 
+    def test_shell_destination_registrations_are_read(self):
+        source = (
+            'static let all: [ShellDestination] = [\n'
+            '    ShellDestination(id: "news.home", title: "News", symbol: "newspaper", group: "News",\n'
+            '                     summary: "News") { AnyView(NewsHomeView()) },\n'
+            '    ShellDestination(id: "vault", title: "Vault", symbol: "lock", group: "Personal",\n'
+            '                     summary: "Keys") { AnyView(PendingFeatureView()) },\n'
+            ']\n')
+        found = {d['id']: d for d in admin.parse_destinations(source)}
+        self.assertEqual(sorted(found), ['news.home', 'vault'])
+        self.assertFalse(found['news.home']['pending'])
+        self.assertTrue(found['vault']['pending'])
+        self.assertIn('NewsHomeView', found['news.home']['views'])
+
     def test_every_page_has_a_twin_without_markup(self):
         for page in self.clean.glob('*.html'):
             twin = (self.clean / (page.stem + '.md')).read_text()
@@ -196,13 +210,13 @@ class SiteTest(unittest.TestCase):
             validate.OTHER_BRANDS = saved
 
     def test_teams_page_credits_agent_behaviour_policies(self):
-        text = (self.clean / 'teams.html').read_text()
+        text = (self.clean / 'admin' / 'team-app.html').read_text()
         self.assertIn('id="abp"', text)
         self.assertIn('Agent Behaviour Policy', text)
         self.assertIn('href="https://riskmandate.ai/abp.html"', text)
 
     def test_powered_by_riskmandate_in_every_footer(self):
-        for page in ('index.html', 'overnight.html', 'readers.html'):
+        for page in ('index.html', 'admin/overnight.html', 'readers.html'):
             text = (self.clean / page).read_text()
             self.assertIn('href="https://riskmandate.ai/">RiskMandate</a>', text, page)
             self.assertIn('href="https://sgit.ai/">sgit</a>', text, page)
@@ -211,7 +225,7 @@ class SiteTest(unittest.TestCase):
     def test_allows_sgit_on_product_pages(self):
         out = self.tmp / 'sgit-ok'
         shutil.copytree(self.clean, out)
-        page = out / 'overnight.html'
+        page = out / 'admin' / 'overnight.html'
         page.write_text(page.read_text().replace('</main>', '<p>Vaults are made with sgit.</p></main>'))
         self.assertEqual(validate.validate(out), [])
 
@@ -239,7 +253,7 @@ class SiteTest(unittest.TestCase):
             coming = next(f for f in admin.features() if f['id'] == 'not-built')
             self.assertFalse(coming['shipped'])
             self.assertEqual(validate.validate(out), [])
-            page = out / 'teams.html'
+            page = out / 'admin' / 'team-app.html'
             text = page.read_text()
             start = text.index('id="f-not-built"')
             end = text.index('</li>', start)
@@ -251,7 +265,7 @@ class SiteTest(unittest.TestCase):
 
     def test_refuses_shipped_feature_labelled_coming(self):
         shipped = next(f for f in admin.features() if f['shipped'])
-        page = f"{shipped['platform']}.html"
+        page = admin.PLATFORM_PAGE[shipped['platform']]
         def hide(text):
             start = text.index(f'id="f-{shipped["id"]}"')
             end = text.index('</li>', start)
@@ -260,7 +274,7 @@ class SiteTest(unittest.TestCase):
 
     def test_refuses_missing_feature(self):
         first = admin.features()[0]
-        page = f"{first['platform']}.html"
+        page = admin.PLATFORM_PAGE[first['platform']]
         self.assertRefused(self.broken(page, lambda t: t.replace(f'id="f-{first["id"]}"', 'id="f-gone"')),
                            f"feature {first['id']} from features.json is missing")
 
@@ -430,7 +444,7 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(admin.overnight_hero(found, 'today'), '')
 
     def test_overnight_without_screenshots_is_a_notice(self):
-        page = (self.clean / 'overnight.html').read_text()
+        page = (self.clean / 'admin' / 'overnight.html').read_text()
         self.assertIn('No screenshots in this site build', page)
         self.assertNotIn('screens/ipad-', page)
 
@@ -566,6 +580,111 @@ class SiteTest(unittest.TestCase):
     def test_refuses_insecure_link(self):
         self.assertRefused(self.broken('privacy.html', lambda t: t.replace('https://promptugal.news/', 'http://promptugal.news/', 1)),
                            'insecure link')
+
+    # --- the split into three apps ---------------------------------------------
+
+    def _split_repo(self, name):
+        """A throwaway repository with two apps and two packages, and one feature in each app."""
+        root = self.tmp / name
+        (root / 'website').mkdir(parents=True)
+        for path, text in (('Packages/PTAsk/Sources/Ask.swift', '// ask'), ('Packages/PTLanes/Sources/Lanes.swift', '// lanes'),
+                           ('Apps/PrompTugal/App.swift', '// public'), ('Apps/Team/App.swift', '// team'),
+                           ('Packages/PTLanes/Tests/LanesTests/OnlyATest.swift', '// test')):
+            (root / path).parent.mkdir(parents=True, exist_ok=True)
+            (root / path).write_text(text)
+        (root / 'apps.json').write_text(json.dumps({
+            'packages': {'PTCore': {'path': 'Packages/PTCore', 'deps': []},
+                         'PTAsk': {'path': 'Packages/PTAsk', 'deps': ['PTCore']},
+                         'PTLanes': {'path': 'Packages/PTLanes', 'deps': ['PTCore']}},
+            'apps': {'team': {'paths': ['Apps/Team/'], 'packages': ['PTAsk', 'PTLanes']},
+                     'promptugal': {'paths': ['Apps/PrompTugal/'], 'packages': ['PTAsk']}}}))
+        (root / 'Packages' / 'PTCore').mkdir()
+        (root / 'website' / 'features.json').write_text(json.dumps({'features': [
+            {'id': 'ask', 'platform': 'readers', 'name': 'Ask', 'kind': 'native', 'what': 'x', 'evidence': ['**/Ask.swift']},
+            {'id': 'lanes-in-public', 'platform': 'readers', 'name': 'L', 'kind': 'native', 'what': 'x', 'evidence': ['**/Lanes.swift']},
+            {'id': 'lanes', 'platform': 'teams', 'name': 'Lanes', 'kind': 'native', 'what': 'x', 'evidence': ['**/Lanes.swift']},
+            {'id': 'only-a-test', 'platform': 'teams', 'name': 'T', 'kind': 'native', 'what': 'x', 'evidence': ['**/OnlyATest.swift']}]}))
+        return root
+
+    def test_a_feature_is_in_an_app_only_if_the_app_links_its_package(self):
+        shipped = {f['id']: f['shipped'] for f in admin.features(self._split_repo('split-scope'))}
+        self.assertTrue(shipped['ask'])                      # PTAsk is in the PrompTugal app
+        self.assertFalse(shipped['lanes-in-public'])         # PTLanes is not
+        self.assertTrue(shipped['lanes'])                    # but the Team app links it
+        self.assertFalse(shipped['only-a-test'], 'a test file is not a feature')
+
+    def test_package_closure_follows_deps(self):
+        config = {'packages': {'A': {'deps': ['B']}, 'B': {'deps': ['C']}, 'C': {'deps': []}, 'D': {'deps': []}}}
+        self.assertEqual(admin.package_closure(config, ['A']), ['A', 'B', 'C'])
+
+    def test_before_the_split_the_old_app_folder_is_the_app(self):
+        root = self._split_repo('split-before')
+        shutil.rmtree(root / 'Apps' / 'PrompTugal')
+        (root / 'PrompTugal').mkdir()
+        (root / 'PrompTugal' / 'Old.swift').write_text('// the one app')
+        (root / 'website' / 'features.json').write_text(json.dumps({'features': [
+            {'id': 'old', 'platform': 'readers', 'name': 'Old', 'kind': 'native', 'what': 'x', 'evidence': ['**/Old.swift']}]}))
+        self.assertTrue(admin.features(root)[0]['shipped'])
+
+    def test_no_apps_json_means_one_app(self):
+        root = self._split_repo('split-none')
+        (root / 'apps.json').unlink()
+        self.assertTrue(all(f['shipped'] for f in admin.features(root) if f['id'] != 'only-a-test'))
+
+    def test_apps_page_says_the_split_is_unfinished_until_the_projects_exist(self):
+        root = self._split_repo('split-state')
+        self.assertIn('not finished', admin.split_tokens(root)['apps_lede'])
+        for app in ('Team', 'PrompTugal', 'RiskMandate'):
+            (root / 'Apps' / app).mkdir(parents=True, exist_ok=True)
+            (root / 'Apps' / app / f'{app}.xcodeproj').mkdir()
+        tokens = admin.split_tokens(root)
+        self.assertNotIn('not finished', tokens['apps_lede'])
+        self.assertIn('empty app with a working build', tokens['riskmandate_today'])
+
+    def test_riskmandate_is_coming_after_the_summit(self):
+        text = (self.clean / 'apps.html').read_text()
+        self.assertIn('Coming after the summit', text)
+        self.assertNotIn('Team', (self.clean / 'index.html').read_text().split('id="three"')[0])
+
+    def test_public_pages_hold_no_team_features(self):
+        for page in ('index.html', 'readers.html', 'features.html', 'privacy.html', 'support.html'):
+            visible = re.sub(r'<[^>]+>', ' ', (self.clean / page).read_text()).lower()
+            for word in ('lane', 'teammate', 'debug panel', 'web-summit.sgit.ai', 'sample data', 'report…'):
+                self.assertNotIn(word, visible, f'{page} mentions "{word}"')
+
+    def test_team_pages_are_in_the_admin_area_and_out_of_the_sitemap(self):
+        sitemap = (self.clean / 'sitemap.xml').read_text()
+        for page in ('team-app', 'team-privacy', 'overnight'):
+            self.assertIn('noindex', (self.clean / 'admin' / f'{page}.html').read_text())
+            self.assertNotIn(f'/{page}.html', sitemap)
+            self.assertFalse((self.clean / f'{page}.html').exists())
+        self.assertFalse((self.clean / 'teams.html').exists())
+
+    def test_push_dashboard_reads_split_branches(self):
+        import subprocess
+        repo = self.tmp / 'branch-repo'
+        status = repo / 'briefs' / '2026-11-08__three-apps' / 'status'
+        status.mkdir(parents=True)
+        (repo / 'briefs' / '2026-11-08__three-apps' / 'README.md').write_text('# Three apps\n\n> x\n')
+        page = status / 'editor.md'
+        def run(*a, when='2026-11-08T01:00:00+00:00'):
+            subprocess.run(['git', *a], cwd=repo, check=True, capture_output=True,
+                           env={'GIT_AUTHOR_NAME': 'x', 'GIT_AUTHOR_EMAIL': 'x@x', 'GIT_COMMITTER_NAME': 'x',
+                                'GIT_COMMITTER_EMAIL': 'x@x', 'GIT_COMMITTER_DATE': when, 'GIT_AUTHOR_DATE': when,
+                                'PATH': '/usr/bin:/bin'})
+        run('init', '-q', '-b', 'dev')
+        page.write_text('# Status · Editor\n\n> on dev\n\n## Done\n\n- one\n')
+        run('add', '.')
+        run('commit', '-q', '-m', 'dev')
+        run('checkout', '-q', '-b', 'split/editor')
+        page.write_text('# Status · Editor\n\n> on the branch\n\n## Done\n\n- one\n- two\n')
+        run('commit', '-q', '-am', 'branch', when='2026-11-08T02:00:00+00:00')
+        run('update-ref', 'refs/remotes/origin/split/editor', 'HEAD')
+        run('checkout', '-q', 'dev')
+        found = admin.push_status(repo)
+        self.assertEqual([(s['slug'], s['summary'], s['source']) for s in found],
+                         [('editor', 'on the branch', 'split/editor')])
+        self.assertEqual(len(found[0]['sections']['Done']), 2)
 
 
 if __name__ == '__main__':
