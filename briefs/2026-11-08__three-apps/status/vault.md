@@ -95,3 +95,4 @@ Handed off to the session on account B. Do not dispatch CI from the old session.
 ## Account B (8 Nov)
 
 - Checked `VaultCollabAccess` against `CollabSeams.swift` on `split/collab-seams` (11acc2e): all 12 protocol members and `HookError` cases match. Fixed a comment (role is "teammate") and an unused-result warning. No CI dispatched; waiting for the conductor to say CollabSeams is on dev.
+- 02:40 UTC: CollabSeams still not on dev (head d519d14). Waiting. Conductor note: when told, merge origin/dev, then dispatch ios.yml with app=all, runner=self-hosted.
