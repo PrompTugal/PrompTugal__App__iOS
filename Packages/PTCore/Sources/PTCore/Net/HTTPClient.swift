@@ -5,40 +5,53 @@ import Observation
 ///
 /// The URL is redacted before it is stored: no user or password, no fragment,
 /// and every query value replaced with "…". Headers and bodies are never kept.
-struct HTTPRequestRecord: Identifiable, Sendable, Hashable {
-    let id: UUID
-    let startedAt: Date
-    let method: String
+public struct HTTPRequestRecord: Identifiable, Sendable, Hashable {
+    public let id: UUID
+    public let startedAt: Date
+    public let method: String
     /// Redacted, see `HTTPClient.redact(_:)`.
-    let url: String
-    let host: String
+    public let url: String
+    public let host: String
     /// Who asked, e.g. "feed.agenda". Free text, never a secret.
-    let label: String?
-    var status: Int?
-    var bytes: Int
-    var durationMs: Double
-    var error: String?
+    public let label: String?
+    public var status: Int?
+    public var bytes: Int
+    public var durationMs: Double
+    public var error: String?
 
-    var succeeded: Bool { error == nil && (status.map { (200..<300).contains($0) } ?? false) }
+    public init(id: UUID, startedAt: Date, method: String, url: String, host: String, label: String?, status: Int? = nil, bytes: Int, durationMs: Double, error: String? = nil) {
+        self.id = id
+        self.startedAt = startedAt
+        self.method = method
+        self.url = url
+        self.host = host
+        self.label = label
+        self.status = status
+        self.bytes = bytes
+        self.durationMs = durationMs
+        self.error = error
+    }
+
+    public var succeeded: Bool { error == nil && (status.map { (200..<300).contains($0) } ?? false) }
 }
 
 /// The request log behind Debug → Network. Newest first, capped.
 @MainActor @Observable
-final class HTTPLog {
-    nonisolated static let shared = HTTPLog()
+public final class HTTPLog {
+    public nonisolated static let shared = HTTPLog()
 
-    let capacity: Int
-    private(set) var records: [HTTPRequestRecord] = []
+    public let capacity: Int
+    public private(set) var records: [HTTPRequestRecord] = []
     /// Totals since launch (or since `clear()`), including records dropped by the cap.
-    private(set) var totalRequests = 0
-    private(set) var totalBytes = 0
-    private(set) var totalFailures = 0
+    public private(set) var totalRequests = 0
+    public private(set) var totalBytes = 0
+    public private(set) var totalFailures = 0
 
-    nonisolated init(capacity: Int = 1_000) {
+    public nonisolated init(capacity: Int = 1_000) {
         self.capacity = capacity
     }
 
-    func append(_ record: HTTPRequestRecord) {
+    public func append(_ record: HTTPRequestRecord) {
         records.insert(record, at: 0)
         if records.count > capacity { records.removeLast(records.count - capacity) }
         totalRequests += 1
@@ -46,7 +59,7 @@ final class HTTPLog {
         if !record.succeeded { totalFailures += 1 }
     }
 
-    func clear() {
+    public func clear() {
         records.removeAll()
         totalRequests = 0
         totalBytes = 0
@@ -57,25 +70,25 @@ final class HTTPLog {
 /// The one shared HTTP client. Every `URLSession` request the app makes goes
 /// through here, so Debug → Network can show it. Features call `get`,
 /// `decode` or `data(for:)`; the vault package keeps its own traffic log.
-final class HTTPClient: Sendable {
-    static let shared = HTTPClient()
+public final class HTTPClient: Sendable {
+    public static let shared = HTTPClient()
 
-    let session: URLSession
-    let log: HTTPLog
+    public let session: URLSession
+    public let log: HTTPLog
 
-    init(session: URLSession = HTTPClient.makeSession(), log: HTTPLog = .shared) {
+    public init(session: URLSession = HTTPClient.makeSession(), log: HTTPLog = .shared) {
         self.session = session
         self.log = log
     }
 
-    static func makeSession() -> URLSession {
+    public static func makeSession() -> URLSession {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 30
         configuration.httpAdditionalHeaders = ["User-Agent": userAgent]
         return URLSession(configuration: configuration)
     }
 
-    static let userAgent: String = {
+    public static let userAgent: String = {
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
         return "PrompTugal/\(version) (\(build); iOS)"
@@ -83,19 +96,23 @@ final class HTTPClient: Sendable {
 
     /// The largest body any call accepts unless it asks for more: 10 MB. The app's feeds are well under
     /// 1 MB; this stops a broken or hostile server from filling memory.
-    static let defaultMaxBytes = 10 * 1024 * 1024
+    public static let defaultMaxBytes = 10 * 1024 * 1024
 
     /// Thrown when a response body is larger than the call's `maxBytes`.
-    struct ResponseTooLarge: LocalizedError, Equatable {
-        let limit: Int
-        var errorDescription: String? { "The response was larger than \(ByteCountFormatter.string(fromByteCount: Int64(limit), countStyle: .file))." }
+    public struct ResponseTooLarge: LocalizedError, Equatable {
+        public let limit: Int
+
+        public init(limit: Int) {
+            self.limit = limit
+        }
+        public var errorDescription: String? { "The response was larger than \(ByteCountFormatter.string(fromByteCount: Int64(limit), countStyle: .file))." }
     }
 
     /// Sends a request, logs it, and returns the body and the HTTP response.
     /// Does not check the status code; `get` and `decode` do.
     /// Throws `ResponseTooLarge` as soon as the body passes `maxBytes` (or at once if the server's
     /// Content-Length already says so), without reading the rest.
-    func data(for request: URLRequest, label: String? = nil,
+    public func data(for request: URLRequest, label: String? = nil,
               maxBytes: Int = HTTPClient.defaultMaxBytes) async throws -> (Data, HTTPURLResponse) {
         let started = Date()
         let clock = ContinuousClock.now
@@ -139,7 +156,7 @@ final class HTTPClient: Sendable {
     }
 
     /// GET a URL and return the body. Throws `URLError(.badServerResponse)` for a non-2xx status.
-    func get(_ url: URL, timeout: TimeInterval = 15, label: String? = nil,
+    public func get(_ url: URL, timeout: TimeInterval = 15, label: String? = nil,
              maxBytes: Int = HTTPClient.defaultMaxBytes) async throws -> Data {
         let (data, response) = try await data(for: URLRequest(url: url, timeoutInterval: timeout), label: label,
                                               maxBytes: maxBytes)
@@ -148,14 +165,14 @@ final class HTTPClient: Sendable {
     }
 
     /// GET a URL and decode its JSON body.
-    func decode<Value: Decodable>(_ type: Value.Type, from url: URL, timeout: TimeInterval = 15,
+    public func decode<Value: Decodable>(_ type: Value.Type, from url: URL, timeout: TimeInterval = 15,
                                   label: String? = nil, maxBytes: Int = HTTPClient.defaultMaxBytes,
                                   decoder: JSONDecoder = JSONDecoder()) async throws -> Value {
         try decoder.decode(type, from: await get(url, timeout: timeout, label: label, maxBytes: maxBytes))
     }
 
     /// A URL safe to show and log: no user, password or fragment, and query values replaced with "…".
-    static func redact(_ url: URL) -> String {
+    public static func redact(_ url: URL) -> String {
         guard var parts = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return "(unparseable URL)" }
         parts.user = nil
         parts.password = nil

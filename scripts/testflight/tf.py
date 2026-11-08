@@ -72,20 +72,34 @@ def plan_whats_new(build_id, existing_loc_id, locale, text):
                       "relationships": {"build": {"data": ref("builds", build_id)}}}})
 
 
+# Placeholders whose line is dropped from the notes when the value is not set.
+OPTIONAL_PLACEHOLDERS = ("DEMO_VAULT_KEY", "DEMO_LANE_NAME")
+# Contact details are personal and this repository is public: they come from secrets only.
+CONTACT_ENV = {"contactFirstName": "REVIEW_CONTACT_FIRST_NAME", "contactLastName": "REVIEW_CONTACT_LAST_NAME",
+               "contactEmail": "REVIEW_CONTACT_EMAIL", "contactPhone": "REVIEW_CONTACT_PHONE"}
+
+
 def fill_placeholders(text, env):
-    """Replace <NAME> with env[NAME] where set. Returns (text, names still unfilled)."""
-    def sub(m):
-        return env.get(m.group(1)) or m.group(0)
-    out = PLACEHOLDER.sub(sub, text)
+    """Replace <NAME> with env[NAME]. A line with an unset optional placeholder is dropped.
+    Returns (text, names of required placeholders still unfilled)."""
+    lines = []
+    for line in text.split("\n"):
+        names = PLACEHOLDER.findall(line)
+        if any(n in OPTIONAL_PLACEHOLDERS and not env.get(n) for n in names):
+            continue
+        lines.append(PLACEHOLDER.sub(lambda m: env.get(m.group(1)) or m.group(0), line))
+    out = "\n".join(lines)
     return out, sorted(set(PLACEHOLDER.findall(out)))
 
 
 def review_attributes(info, notes_text, env):
-    """Attributes for PATCH betaAppReviewDetails, and the list of what is still missing."""
-    missing = [f for f in REVIEW_FIELDS if not (info.get(f) or "").strip()]
+    """Attributes for PATCH betaAppReviewDetails, and the list of what is still missing.
+    The four contact fields come from env (secrets), never from the file."""
+    contact = {f: (env.get(v) or "").strip() for f, v in CONTACT_ENV.items()}
+    missing = [CONTACT_ENV[f] for f in REVIEW_FIELDS if not contact[f]]
     notes, unfilled = fill_placeholders(notes_text, env)
     missing += [f"notes placeholder <{n}>" for n in unfilled]
-    attrs = {f: info[f].strip() for f in REVIEW_FIELDS if (info.get(f) or "").strip()}
+    attrs = {f: v for f, v in contact.items() if v}
     attrs["demoAccountRequired"] = bool(info.get("demoAccountRequired", False))
     for f in ("demoAccountName", "demoAccountPassword"):
         if (info.get(f) or "").strip():
@@ -309,7 +323,7 @@ def cmd_set_info(a, app, name):
         attrs, missing = review_attributes(info, open(notes_path).read(), os.environ)
         detail_id = call("GET", f"/v1/apps/{app}/betaAppReviewDetail")["data"]["id"]
         steps.append(plan_review_detail(detail_id, attrs))
-        shown = {k: ("(set)" if k == "demoAccountPassword" else v) for k, v in attrs.items() if k != "notes"}
+        shown = {k: ("(set)" if k in CONTACT_ENV or k == "demoAccountPassword" else v) for k, v in attrs.items() if k != "notes"}
         lines.append(f"Set the Beta App Review details (app level): {json.dumps(shown)}; notes {len(attrs['notes'])} characters from {os.path.basename(notes_path)}.")
         if missing:
             lines.append("**Still missing:** " + "; ".join(missing))
