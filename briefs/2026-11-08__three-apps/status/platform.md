@@ -1,6 +1,6 @@
 # Platform status
 
-> Phase 4 is on dev (d94a5b4). Current task: SecretStore and SpeechDictation move into PTCore (public), duplicates removed from PTAsk and PTLanes: split/platform e7a6ac4, run 348 (macos-26) queued, one job green so far. READY follows a green run.
+> Support role for the summit app (conductor, 11:24 UTC). The SecretStore/SpeechDictation move into PTCore is parked on split/platform (e7a6ac4, run 348 cancelled before it finished; not merged). I review package and project changes for graph and check_apps problems on request.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -120,3 +120,7 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Commit e7a6ac4 on split/platform, merged with origin/dev v0.4.12 first. Run 348 (ios.yml app=all, macos-26): the PrompTugal iPhone unit tests passed (they build PTCore and PTAsk); the rest was queued at 11:18.
 - `scripts/release/lib.sh` PROJECT default: asked release; I edit it only if they say yes. No answer yet.
 - Reviewed team's PTNowNext reference in `Apps/Team/Team.xcodeproj` (split/team e70d928): one packageReferences line and one XCLocalSwiftPackageReference block, nothing else. Fine.
+
+## Update (11:30 UTC): parked, now support
+- New priority from the conductor (briefs/2026-11-08__summit-app-store/README.md): everything goes to the summit app. The SecretStore/SpeechDictation dedupe was not fully green, so it is parked: commit e7a6ac4 stays on split/platform, run 348 cancelled (only the PrompTugal iPhone tests had run, green). To resume: merge origin/dev, dispatch ios.yml, READY after a green run. Nobody depends on it.
+- Support: I review package and project changes from apps, deck and team for dependency-graph and `check_apps.py` problems before they reach the conductor.
