@@ -67,7 +67,7 @@ else
     settings+=(CODE_SIGN_STYLE=Automatic)
   else
     # Unsigned archive; the export step does the signing (see the header).
-    settings+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= CODE_SIGN_ENTITLEMENTS=)
+    settings+=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=)
     summary "- Archive built unsigned; export signs with the cloud-managed distribution certificate."
   fi
 fi
@@ -126,6 +126,17 @@ ipa_bundle=$(unzip -p "$ipa" 'Payload/*.app/Info.plist' | plutil -extract CFBund
 # Show who signed the exported app (the archive itself may be unsigned).
 tmp=$(mktemp -d); unzip -q "$ipa" 'Payload/*' -d "$tmp"
 codesign -dvv "$tmp"/Payload/*.app 2>&1 | grep -E '^(Authority|TeamIdentifier|Identifier)=' | head -4 | sed 's/^/    /' || true
+# Entitlements of the exported app and every extension: an unsigned archive must come out
+# of the export with its entitlements (app group, keychain groups) re-applied.
+summary "#### Entitlements in the exported .ipa"
+for b in "$tmp"/Payload/*.app "$tmp"/Payload/*.app/PlugIns/*.appex "$tmp"/Payload/*.app/Extensions/*.appex; do
+  [ -e "$b" ] || continue
+  echo "== entitlements: $(basename "$b")"; codesign -d --entitlements :- "$b" 2>/dev/null | plutil -convert xml1 -o - - 2>/dev/null | grep -E '<key>|<string>|<true/>|<false/>' || echo "(none)"
+  summary "**$(basename "$b")**"
+  summary '```'
+  codesign -d --entitlements :- "$b" 2>/dev/null | plutil -convert xml1 -o - - 2>/dev/null | grep -E '<key>|<string>|<true/>|<false/>' | sed 's/^[[:space:]]*//' | while IFS= read -r l; do summary "$l"; done || true
+  summary '```'
+done
 rm -rf "$tmp"
 
 if [ "${SKIP_UPLOAD:-false}" = true ]; then
