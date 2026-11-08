@@ -483,6 +483,29 @@
           }
         }
       }
+    },
+    "Websites.json is invalid. The default shortcuts are shown.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Websites.json is invalid. The default shortcuts are shown."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O arquivo Websites.json é inválido. Os atalhos padrão são mostrados."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O ficheiro Websites.json é inválido. São mostrados os atalhos predefinidos."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

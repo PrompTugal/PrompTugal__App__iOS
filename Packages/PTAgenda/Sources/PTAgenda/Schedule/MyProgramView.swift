@@ -2,7 +2,7 @@ import SwiftUI
 import PTCore
 
 /// My program (spec PROG-1): the person's picks for one day in time order, clashes marked, free time shown, with
-/// reminders and "Add to Calendar". The model does the work; this draws it.
+/// reminders and String(localized: "Add to Calendar", bundle: .module). The model does the work; this draws it.
 public struct MyProgramView: View {
     public init(chooseTalks: @escaping () -> Void = {}, open: @escaping (URL) -> Void = { _ in }) {
         self.chooseTalks = chooseTalks
@@ -24,9 +24,9 @@ public struct MyProgramView: View {
             let model = ProgramModel(picks: schedule.picks, day: selected)
             content(model)
         }
-        .navigationTitle("My program")
-        .alert("Calendar", isPresented: Binding(get: { calendarMessage != nil }, set: { if !$0 { calendarMessage = nil } })) {
-            Button("OK", role: .cancel) {}
+        .navigationTitle(String(localized: "My program", bundle: .module))
+        .alert(String(localized: "Calendar", bundle: .module), isPresented: Binding(get: { calendarMessage != nil }, set: { if !$0 { calendarMessage = nil } })) {
+            Button(String(localized: "OK", bundle: .module), role: .cancel) {}
         } message: { Text(calendarMessage ?? "") }
     }
 
@@ -34,30 +34,30 @@ public struct MyProgramView: View {
     private func content(_ model: ProgramModel) -> some View {
         if model.isEmpty {
             ContentUnavailableView {
-                Label("Your program is empty", systemImage: "star")
+                Label(String(localized: "Your program is empty", bundle: .module), systemImage: "star")
             } description: {
-                Text("Star talks in Explore or on Now. They appear here in time order, with clashes marked.")
+                Text(String(localized: "Star talks in Explore or on Now. They appear here in time order, with clashes marked.", bundle: .module))
             } actions: {
-                Button("Choose talks", action: chooseTalks).buttonStyle(.borderedProminent)
+                Button(String(localized: "Choose talks", bundle: .module), action: chooseTalks).buttonStyle(.borderedProminent)
             }
         } else {
             List {
                 Section {
-                    Picker("Day", selection: Binding(get: { model.day }, set: { day = $0 })) {
+                    Picker(String(localized: "Day", bundle: .module), selection: Binding(get: { model.day }, set: { day = $0 })) {
                         ForEach(model.days) { Text($0.label).tag($0.id) }
                     }
                     .pickerStyle(.segmented)
                     reminderRow
                 }
                 if model.rows.isEmpty {
-                    Section { Text("Nothing picked for this day.").foregroundStyle(Palette.muted) }
+                    Section { Text(String(localized: "Nothing picked for this day.", bundle: .module)).foregroundStyle(Palette.muted) }
                 }
                 ForEach(model.rows) { row in rowView(row) }
             }
             .listStyle(.insetGrouped)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Add to Calendar") { addToCalendar(model) }
+                    Button(String(localized: "Add to Calendar", bundle: .module)) { addToCalendar(model) }
                         .disabled(model.dayEntries.isEmpty)
                 }
             }
@@ -67,15 +67,15 @@ public struct MyProgramView: View {
     private var reminderRow: some View {
         @Bindable var reminders = reminders
         return VStack(alignment: .leading, spacing: Space.s) {
-            Toggle("Remind me before each talk", isOn: $reminders.picksOn)
+            Toggle(String(localized: "Remind me before each talk", bundle: .module), isOn: $reminders.picksOn)
             if reminders.picksOn {
-                Picker("Lead time", selection: $reminders.leadMinutes) {
+                Picker(String(localized: "Lead time", bundle: .module), selection: $reminders.leadMinutes) {
                     ForEach(ReminderScheduler.leadChoices, id: \.self) { minutes in
-                        Text(minutes == 0 ? "At start" : "\(minutes) min before").tag(minutes)
+                        Text(minutes == 0 ? String(localized: "At start", bundle: .module) : String(localized: "\(minutes) min before", bundle: .module)).tag(minutes)
                     }
                 }
                 if reminders.authorization == .denied {
-                    Text("Notifications are off for this app. Turn them on in Settings to get reminders.")
+                    Text(String(localized: "Notifications are off for this app. Turn them on in Settings to get reminders.", bundle: .module))
                         .font(.caption).foregroundStyle(Palette.amber)
                 }
             }
@@ -97,14 +97,14 @@ public struct MyProgramView: View {
                 ForEach(group.entries) { entry in
                     sessionRow(entry)
                         .swipeActions(edge: .trailing) {
-                            Button("Keep this one") { keep(entry, in: group) }.tint(Palette.red)
+                            Button(String(localized: "Keep this one", bundle: .module)) { keep(entry, in: group) }.tint(Palette.red)
                         }
                 }
             } header: {
-                Label("Clash · choose one", systemImage: "exclamationmark.triangle.fill").foregroundStyle(Palette.amber)
+                Label(String(localized: "Clash · choose one", bundle: .module), systemImage: "exclamationmark.triangle.fill").foregroundStyle(Palette.amber)
             }
         case .free(let start, let end):
-            Text("Free · \(Int(end.timeIntervalSince(start) / 60)) min")
+            Text(String(localized: "Free · \(Int(end.timeIntervalSince(start) / 60)) min", bundle: .module))
                 .font(.caption).foregroundStyle(Palette.muted)
                 .listRowBackground(Color.clear)
         }
@@ -139,7 +139,7 @@ public struct MyProgramView: View {
         if let feedback { feedback.toggle(event, in: schedule) } else { schedule.toggle(event) }
     }
 
-    /// "Keep this one": the other picks in the clash are removed.
+    /// String(localized: "Keep this one", bundle: .module): the other picks in the clash are removed.
     private func keep(_ entry: NowModel.Entry, in group: ProgramModel.ClashGroup) {
         for id in group.others(than: entry.id) {
             if let event = schedule.picks.first(where: { $0.id == id })?.event { schedule.toggle(event) }
@@ -151,8 +151,8 @@ public struct MyProgramView: View {
         let picks = schedule.picks.filter { ids.contains($0.id) }
         Task {
             switch await CalendarExport.add(picks) {
-            case .added(let count): calendarMessage = "Added \(count) to your calendar."
-            case .denied: calendarMessage = "Calendar access is off for this app. Turn it on in Settings."
+            case .added(let count): calendarMessage = String(localized: "Added \(count) to your calendar.", bundle: .module)
+            case .denied: calendarMessage = String(localized: "Calendar access is off for this app. Turn it on in Settings.", bundle: .module)
             case .failed(let reason): calendarMessage = reason
             }
         }

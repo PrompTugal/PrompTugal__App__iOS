@@ -543,6 +543,29 @@
         }
       }
     },
+    "Offline · saved %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline · saved %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline · salvo às %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline · guardado às %@"
+          }
+        }
+      }
+    },
     "Open it on the web with the button at the top.": {
       "extractionState": "manual",
       "localizations": {
@@ -667,6 +690,29 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Share %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartilhar %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partilhar %@"
           }
         }
       }

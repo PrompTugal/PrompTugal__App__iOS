@@ -25,8 +25,8 @@ public struct ReminderSettingsView: View {
                     .disabled(identity?.currentID == nil)
             } footer: {
                 Text(identity?.currentID == nil
-                     ? "Stand-up reminders need a team identity (Team → Who are you?)."
-                     : "Stand-ups come from the team site, with a link to your briefing.")
+                     ? String(localized: "Stand-up reminders need a team identity (Team → Who are you?).", bundle: .module)
+                     : String(localized: "Stand-ups come from the team site, with a link to your briefing.", bundle: .module))
             }
 
             Section {

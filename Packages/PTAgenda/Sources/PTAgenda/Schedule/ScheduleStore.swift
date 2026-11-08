@@ -197,7 +197,7 @@ public final class ScheduleStore {
             let data = try JSONEncoder().encode(persisted)
             try data.write(to: fileURL, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
         } catch {
-            storageMessage = "Your schedule couldn’t be saved on this device."
+            storageMessage = String(localized: "Your schedule couldn’t be saved on this device.", bundle: .module)
         }
     }
 

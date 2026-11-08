@@ -44,8 +44,8 @@ public struct MyDayView: View {
                     Task {
                         let upcoming = schedule.picks.filter { ($0.start ?? .distantPast) > AgendaClock.now }
                         switch await CalendarExport.add(upcoming) {
-                        case .added(let count): calendarMessage = "\(count) sessions added to your calendar."
-                        case .denied: calendarMessage = "Calendar access was not given. You can allow it in Settings."
+                        case .added(let count): calendarMessage = String(localized: "\(count) sessions added to your calendar.", bundle: .module)
+                        case .denied: calendarMessage = String(localized: "Calendar access was not given. You can allow it in Settings.", bundle: .module)
                         case .failed(let message): calendarMessage = message
                         }
                     }
@@ -128,8 +128,8 @@ public struct MyDayView: View {
                         Text(String(localized: "Your vault", bundle: .module))
                     } footer: {
                         Text(vaultLink.canSave
-                             ? "Picks are read from your vault when it opens. Saving asks for Face ID and puts them where the website reads them."
-                             : "Picks are read from your vault. To save, open it with its vault key and set an access token.")
+                             ? String(localized: "Picks are read from your vault when it opens. Saving asks for Face ID and puts them where the website reads them.", bundle: .module)
+                             : String(localized: "Picks are read from your vault. To save, open it with its vault key and set an access token.", bundle: .module))
                     }
                 }
                 Section {

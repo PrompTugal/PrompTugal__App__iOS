@@ -34,7 +34,7 @@ public enum CalendarExport {
             event.timeZone = Lisbon.zone
             event.location = pick.event?.place
             event.url = pick.url
-            event.notes = ["From PrompTugal · Lisbon 2026", pick.url?.absoluteString ?? ""]
+            event.notes = [String(localized: "From PrompTugal · Lisbon 2026", bundle: .module), pick.url?.absoluteString ?? ""]
                 .filter { !$0.isEmpty }.joined(separator: "\n")
             do {
                 try store.save(event, span: .thisEvent, commit: false)

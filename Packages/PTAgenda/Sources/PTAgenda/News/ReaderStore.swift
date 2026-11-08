@@ -178,7 +178,7 @@ public final class ReaderStore {
         do {
             try write(cache, to: "content.json")
         } catch {
-            storageMessage = "The latest content couldn’t be stored for offline use."
+            storageMessage = String(localized: "The latest content couldn’t be stored for offline use.", bundle: .module)
         }
     }
 

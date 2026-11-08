@@ -34,8 +34,8 @@ public struct PlannerView: View {
                     ForEach(plan.clashes, id: \.self) { clash in
                         Label {
                             Text(clash.travel
-                                 ? "\(clash.first.title) → \(clash.second.title): \(clash.minutes) min short to walk between them"
-                                 : "\(clash.first.title) and \(clash.second.title) overlap by \(clash.minutes) min")
+                                 ? String(localized: "\(clash.first.title) → \(clash.second.title): \(clash.minutes) min short to walk between them", bundle: .module)
+                                 : String(localized: "\(clash.first.title) and \(clash.second.title) overlap by \(clash.minutes) min", bundle: .module))
                         } icon: {
                             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                         }

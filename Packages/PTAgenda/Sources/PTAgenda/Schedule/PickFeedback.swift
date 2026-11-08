@@ -139,7 +139,7 @@ private struct PickToastHost: ViewModifier {
             .animation(.snappy, value: feedback.toast)
     }
 
-    /// "View" opens My program on the clashing pick: `<scheme>://open/team.schedule?session=<id>`.
+    /// String(localized: "View", bundle: .module) opens My program on the clashing pick: `<scheme>://open/team.schedule?session=<id>`.
     private func showProgram(for toast: PickFeedback.Toast) {
         guard case .clash(_, let pickID) = toast.kind,
               let base = AppLinks.open("team.schedule"),
@@ -160,13 +160,13 @@ struct PickToastView: View {
                 .foregroundStyle(toast.isClash ? Palette.amber : Palette.red)
             switch toast.kind {
             case .added(let when):
-                Text("Added to My program · \(when)")
+                Text(String(localized: "Added to My program · \(when)", bundle: .module))
             case .clash(let title, _):
-                Text("Added · clashes with \(title)").lineLimit(2)
+                Text(String(localized: "Added · clashes with \(title)", bundle: .module)).lineLimit(2)
             }
             Spacer(minLength: 0)
             if toast.isClash {
-                Button("View", action: view).font(.subheadline.bold())
+                Button(String(localized: "View", bundle: .module), action: view).font(.subheadline.bold())
             }
         }
         .font(.subheadline)

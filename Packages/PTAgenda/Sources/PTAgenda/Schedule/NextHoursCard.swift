@@ -97,9 +97,9 @@ public struct NextHoursCard: View {
     }
 
     private func countdown(_ item: Item, now: Date) -> String {
-        if item.start <= now { return "now" }
+        if item.start <= now { return String(localized: "now", bundle: .module) }
         let minutes = Int(item.start.timeIntervalSince(now) / 60)
-        return minutes < 60 ? "in \(max(1, minutes)) min" : "in \(minutes / 60) h \(minutes % 60)"
+        return minutes < 60 ? String(localized: "in \(max(1, minutes)) min", bundle: .module) : String(localized: "in \(minutes / 60) h \(minutes % 60)", bundle: .module)
     }
 
     public func upcomingMine(now: Date) -> [Item] {

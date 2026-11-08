@@ -77,7 +77,7 @@ public struct WebsiteDirectory {
                 if let data = try? Data(contentsOf: url) { custom = decode(data) }
             }
             guard coordinationError == nil, let custom else {
-                return Self(shortcuts: defaults, notice: "Websites.json is invalid. The default shortcuts are shown.")
+                return Self(shortcuts: defaults, notice: String(localized: "Websites.json is invalid. The default shortcuts are shown.", bundle: .module))
             }
             return Self(shortcuts: custom.map { applyingDefaults(to: $0, from: defaults) }, notice: nil)
         }

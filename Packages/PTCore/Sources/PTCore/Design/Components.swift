@@ -346,8 +346,8 @@ public struct FreshnessLabel: View {
                 let updated = min(raw, context.date)
                 let stale = context.date.timeIntervalSince(updated) > staleAfter
                 Label {
-                    Text(failed ? "Offline · updated " : "Updated ")
-                        + Text(updated, format: .relative(presentation: .named, unitsStyle: .abbreviated))
+                    Text(failed ? String(localized: "Offline · updated", bundle: .module) : String(localized: "Updated", bundle: .module))
+                        + Text(" ") + Text(updated, format: .relative(presentation: .named, unitsStyle: .abbreviated))
                 } icon: {
                     Image(systemName: failed ? "wifi.slash" : (stale ? "clock.badge.exclamationmark" : "clock"))
                 }

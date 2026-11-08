@@ -313,6 +313,29 @@
         }
       }
     },
+    "Offline · updated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline · updated"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline · atualizado"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline · atualizado"
+          }
+        }
+      }
+    },
     "Open your own vault first. A teammate's vault is never used as yours.": {
       "extractionState": "manual",
       "localizations": {
@@ -355,6 +378,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abra primeiro o seu cofre (Cofre na barra lateral)."
+          }
+        }
+      }
+    },
+    "PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by Web Summit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by Web Summit."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PrompTugal é independente. Não é afiliado, apoiado nem patrocinado pela Web Summit."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PrompTugal é independente. Não é afiliado, apoiado nem patrocinado pela Web Summit."
           }
         }
       }
@@ -654,6 +700,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tentar novamente"
+          }
+        }
+      }
+    },
+    "Updated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updated"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizado"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizado"
           }
         }
       }

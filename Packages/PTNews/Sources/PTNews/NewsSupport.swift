@@ -94,7 +94,7 @@ struct NewsFreshness: View {
 
     var body: some View {
         if failed, let updated {
-            Label("Offline · saved \(Lisbon.timeLabel(updated))", systemImage: "wifi.slash")
+            Label(String(localized: "Offline · saved \(Lisbon.timeLabel(updated))", bundle: .module), systemImage: "wifi.slash")
                 .font(.caption)
                 .foregroundStyle(Palette.amber)
                 .accessibilityIdentifier("pt.news.offline")
@@ -116,6 +116,6 @@ struct StoryShare: View {
                 .foregroundStyle(Palette.muted)
                 .frame(width: 44, height: 44)
         }
-        .accessibilityLabel("Share \(title)")
+        .accessibilityLabel(String(localized: "Share \(title)", bundle: .module))
     }
 }
