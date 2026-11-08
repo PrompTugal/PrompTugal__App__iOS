@@ -1,6 +1,6 @@
 # Platform status
 
-> Phases 1 and 2 and AppLinks.scheme are on dev (439ad32 merged as 5500c02, run 301 green). Phase 4 is prepared and not started; I move no file until the conductor says phase 4 has started.
+> Phase 4 (Team project move) is pushed on split/platform at 09623bd, not yet compiled: an ios.yml run (app=all, macos-26) is queued. READY follows a green run and an ios-release dry run for app=team.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -87,3 +87,17 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 ## Update (02:57 UTC)
 - Run 301 green on 439ad32; the conductor merged it to dev as 5500c02.
 - Waiting for phase 3 on dev (PTWeb/PTAgenda, PTNews, CollabSeams/VaultCollabAccess, PTLanes, PTAsk). Then phase 4 per the nine steps above.
+
+## Update (07:12 UTC): phase 4 pushed, proof pending
+- Commit 09623bd. Merged origin/dev (02f3624, v0.4.5) first, no conflicts. Done in one branch:
+  - Layout: `Apps/Team/Team.xcodeproj`, `Sources/`, `Tests/`, `UITests/`, `Config/` (Team.xcconfig, Team.entitlements, Team-Basic.entitlements, Team-Info.plist). `git mv`, so history follows.
+  - Identity: bundle `news.promptugal.team` (`.tests`, `.uitests`), 0.4.0, "PT Team", URL scheme `ptteam`, BGTask ids `news.promptugal.team.refresh` and `.vault-refresh`. Schemes `Team` and `TeamScreens`. Module name `Team` (tests use `@testable import Team`).
+  - `TeamApp.swift`: sets `AppLinks.scheme = "ptteam"`, calls `TeamLanesWiring.install()`, registers `news.promptugal.team.vault-refresh`.
+  - Entitlements kept: `com.apple.developer.associated-domains` (`webcredentials:promptugal.news`, read by the vault passkey in PTVaultUI) and `usernotifications.time-sensitive` (ReminderScheduler uses `.timeSensitive`). Dropped: the App Group. Only NowNext read the group container, and the Team app has no widgets, so `group.news.promptugal.team` is not declared.
+  - Widgets and Intents: `git mv` to `Apps/PrompTugal/Widgets` and `Apps/PrompTugal/Intents`, removed from the Team project. Their xcconfig and entitlements moved to `Apps/PrompTugal/Config/`. The apps session adds the targets.
+  - NowNext: `Shared/NowNext.swift`, `NowNextPublisher` and its test moved into PTAgenda (`NowNext/`) with `public` API, so the widgets link PTAgenda. In the Team app the App Group is absent, so `publish` returns without writing.
+  - `apps.json` "team": project `Apps/Team/Team.xcodeproj`, scheme `Team`, bundle `news.promptugal.team`, paths `Apps/Team/`, packages PTLanes, PTAsk. `check_apps.py` OK. Workspace points at the new project.
+  - Tests: BGTask ids and the reminder scheme (`ptteam`) updated; the StoreKit file path is `Sources/Store/PrompTugal.storekit`.
+- Left as is: `Schedule/ScheduleIntents.swift` stays in the Team app (it reads `TeamFeatures.shared`, so it cannot move to the public app unchanged). StoreKit product ids and Keychain service names keep the `reader` prefix.
+- For other roles: `website/build.py`, `validate.py` and `test_site.py` on dev read `PrompTugal.xcodeproj` and `PrompTugal/Store/...`. Editor's branch (admin.public_project) already handles the moved layout; merge editor with this branch. `scripts/release/lib.sh` still defaults PROJECT to `PrompTugal.xcodeproj` (release's file; the workflows pass the project from apps.json).
+- Next: read the ios.yml run, fix, then the ios-release dry run (app=team) and READY.
