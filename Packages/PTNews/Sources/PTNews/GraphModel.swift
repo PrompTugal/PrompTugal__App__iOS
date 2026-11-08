@@ -54,7 +54,20 @@ public struct GraphExplorer: Decodable, Sendable {
         let x: Double?
         let y: Double?
 
-        var title: String { label ?? id }
+        /// The label, or the id when there is none. A web address (some source nodes are named by their URL) shows as
+        /// its site, "websummit.com", not as the raw "https://www.websummit.com/path/…".
+        var title: String { Self.readable(label ?? id) }
+
+        static func readable(_ text: String) -> String {
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.contains(" "), trimmed.contains("."),
+                  trimmed.hasPrefix("http") || trimmed.contains("/") else { return trimmed }
+            var site = trimmed
+            if let scheme = site.range(of: "://") { site = String(site[scheme.upperBound...]) }
+            site = String(site.prefix { $0 != "/" && $0 != "?" && $0 != "#" })
+            if site.hasPrefix("www.") { site.removeFirst(4) }
+            return site.isEmpty ? trimmed : site
+        }
         var url: URL? { page.flatMap { URL(string: $0, relativeTo: FeedClient.site)?.absoluteURL } }
     }
 }
