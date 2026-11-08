@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 01:12 UTC
+**Branch:** `split/testflight` · **Updated:** 8 Nov 01:25 UTC
 
 ## Done
 
@@ -25,19 +25,29 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
-- Waiting for Dinis's go and the missing review details (see below).
+- Watching each automatic upload: it must land in the right record and its internal group. One line per build below.
+
+## Decision (Dinis, 01:22 UTC)
+
+During the summit everything runs on internal testers only. The external swap plan is shelved: no set-test-info, no external group changes, no Beta App Review submissions. Build 4 stays as it is (Apple approved it for external testing at 01:19 UTC; it is older than the review fixes).
 
 ## Next
 
-- Plan to move external review from build 4 to the newest CI build (not executed without Dinis's go).
+- When Team and RiskMandate have records, check their builds reach their internal groups.
 
 ## Blocked
 
 - Nothing.
 
+## Uploads seen
+
+| Version | Build | Commit | Processed | Group |
+|---|---|---|---|---|
+| 0.3.1 | 152 | `e5328ff` | yes, 00:59 UTC | PrompTugal Internal Users |
+
 ## Needs from others
 
-- Dinis, for the review notes: contact first name, last name, email and phone; contact address for the support page; response time promise; demo OpenRouter key and its cap; demo vault key; demo lane name.
+- Only if the external plan comes back: Dinis, for the review notes (REVIEW_CONTACT_PHONE is the one not set): contact first name, last name, email and phone; contact address for the support page; response time promise; demo OpenRouter key and its cap; demo vault key; demo lane name.
 
 ## Last CI run
 
