@@ -103,3 +103,16 @@ rc5 is rc4 plus release's screenshot filter (`-PTHideTerm`, DEBUG only, a no-op 
 | ASC plan step 15 | Advertising identifier: **No** (the app reads no IDFA). Any "uses encryption" prompt: no, already in the build. | answer ready |
 | Availability | The plan has no step for Mac (Apple silicon) and Vision Pro availability. [age-rating.md](age-rating.md) says untick both. | add a step (by hand if the API has none) (release) |
 | G5 | Run 393 on rc4 d8a5020 | check |
+
+## Run 6: the binary is rc4 d8a5020, the screenshots come from rc5 706b153 (13:05 UTC)
+
+The conductor's decision: the binary is **rc4 d8a5020**. rc5 differs from it only in DEBUG code, test code and the ReaderStore pass-through, which is a no-op in Release. The screenshots are taken from **rc5 706b153**.
+
+| # | Check | State |
+| --- | --- | --- |
+| M4 | 706b153: the screens test passes `-debug.enabled NO` (the `DebugMode.key` UserDefaults key, read by `@AppStorage`), so there are no toolbar badges and no Debug row. Vault and All websites are `debugOnly: true`, so the same switch hides them. In a Release binary they do not exist at all (`#if DEBUG`). | GO in code; one iPad sidebar image to check when screens run on 706b153 |
+| M4 | `-PTSampleData` is ignored by the public app (no sample source), so the images show the real program from promptugal.news, minus the rows that contain "Web Summit" | GO |
+| Binary | rc4 d8a5020: runs 2 to 4 GO; no user-visible difference from rc5 | GO in the repository |
+| G5 | Run 393 on d8a5020 | **queued at 13:05** (not started) |
+| G1, G4 | Processing; a fresh install in airplane mode on the uploaded build | pending |
+| M1–M10 | release applies the ASC corrections (content rights, IDFA No, Mac and Vision Pro unticked, texts from store/) | pending: check release's dry-run output |
