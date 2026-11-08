@@ -285,3 +285,20 @@ Dinis's decision: no Ask (OpenRouter) in the App Store app, and the label reads 
 | Open for the final GO on 0.4.24 | Release #105's build processed VALID and attached; Dinis: App Privacy "Data Not Collected", Mac and Vision Pro unticked, IDFA No | pending |
 
 22:20: #37 iPhone 6.9" (1320×2868), 4 ids × 3 locales: clean, no Ask. **All three sizes from screens #37 are GO** to upload together (en-GB = en-US).
+
+## FINAL: GO for PrompTugal 0.4.24 (205), conditional on Dinis's three hand steps (22:25 UTC)
+
+Replaces the 16:05 GO for 0.4.23 (204), which was never submitted to the App Store. Build 204 stays in Beta App Review for TestFlight.
+
+| # | Check | State |
+| --- | --- | --- |
+| G1 | 0.4.24 (205) VALID; usesNonExemptEncryption = false; version 0.4.24 PREPARE_FOR_SUBMISSION; release type AFTER_APPROVAL (automatic, as recommended for the summit) | GO |
+| Code | rc8 4f58965 = rc7 plus Ask DEBUG-only and an empty PrivacyInfo collected types list (run 16); full run 42526421784 green; dev v0.4.24 has the same app code | GO |
+| G4 | Airplane check: code evidence, as for 204 (the seed path is unchanged in rc8) | GO (evidence) |
+| M1, M2, M8 | Listing (4 locales) and review notes re-applied without Ask (42526747980): one host, no data collected | GO |
+| M4 | Screenshots from #37 (rc8): 12 sets × 4, the iPad sets without Ask (42529518751) | GO |
+| M7 | Age rating 4+ (unchanged; no generated content now) | GO |
+| M6 | App Privacy: **"No, we do not collect data from this app"**, so the label reads Data Not Collected | **condition: Dinis** |
+| M9 | Mac (Apple silicon) and Vision Pro unticked; IDFA: No | **condition: Dinis** |
+
+**Verdict:** submit 0.4.24 (205) as soon as Dinis confirms M6 and M9.
