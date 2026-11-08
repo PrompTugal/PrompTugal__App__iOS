@@ -229,3 +229,5 @@ The 6.5" and iPad 13" artifacts get the same check when they land.
 | M6, M9 | Dinis: App Privacy, Mac and Vision Pro, IDFA | pending (pinged) |
 
 15:09: the ASC version string is **0.4.22** (ios-submit 42493272621). dev is tagged v0.4.22 = 535e9ba plus the version commit. iOS release #103 (42493212548) is building and uploading. Open: build number and processing, airplane check, review-notes step 4 on dev, Dinis's hand steps.
+
+15:10: **M8**: the ASC App Review notes were applied from store/review-notes.txt at 5d64ad7 (step 4 is new) and confirmed equal at 15:08. testflight 56b60f0 has the recopied file, merged to dev after release #103 uploads, and Beta App Review uses the same file. **GO** once merged. **G4** (airplane-mode fresh install) goes to Dinis on a device. If that cannot happen before 17:30, review accepts it on the code evidence: `AgendaHub.seedAgenda` is set in `PrompTugalApp.init`, `ReaderStore` reads the seed when the cache is empty, and `PrompTugalTests` checks that the bundled seed decodes (more than 150 events).
