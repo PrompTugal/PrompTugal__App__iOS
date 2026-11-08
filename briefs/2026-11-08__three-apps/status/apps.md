@@ -32,11 +32,12 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (02:25 UTC)
-- 289 (promptugal, 3a63963): Debug build, Release build, iPhone tests and iPad tests all green. The six package jobs (PTCore, PTWeb, PTNews, PTVaultUI, SGitVault, PTAsk, PTLanes) were cancelled at 01:20:55 by something other than me, so "iOS result" shows failure. No code failure found.
-- 290 (riskmandate, 3a63963): Debug build green; iPhone tests running; Release build and iPad tests queued.
-- 285 was cancelled by the conductor (superseded).
-- apps.json: riskmandate testflight true (CI does not read the flag); promptugal stays false until phase 4.
+## Last CI run (02:50 UTC)
+- 303 (riskmandate, self-hosted, eaeacbc = origin/dev merged + testflight flip): Debug build, PTAgenda, PTAsk, PTCore and SGitVault green; iPhone tests running; Release build, iPad tests, PTWeb, PTNews, PTVaultUI and PTLanes queued on the three self-hosted runners.
+- 289 (promptugal, 3a63963, GitHub-hosted): Debug, Release, iPhone and iPad all green; its package jobs were replaced by the per-job concurrency rule, so the run shows failure. Not a code failure.
+- 285, 290: cancelled (superseded).
+- Next: when 303 is green, send READY (riskmandate), then dispatch app=promptugal runner=self-hosted.
+- apps.json: riskmandate testflight true; promptugal false until phase 4.
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.
