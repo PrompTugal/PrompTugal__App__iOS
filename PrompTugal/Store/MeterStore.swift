@@ -1,11 +1,6 @@
 import Foundation
 import Observation
 
-extension Notification.Name {
-    /// Posted when App Store credit is waiting to be written into the website's meter.
-    static let meterHasPendingCredit = Notification.Name("PrompTugal.meterHasPendingCredit")
-}
-
 /// The website's reading meter (`localStorage['web-summit.newsroom.meter.v1']` on promptugal.news, sg-meter v1.5,
 /// state v3), shown natively. The balance lives in the page's storage, as on the web; the app reads a summary
 /// through the bridge and writes App Store credit back through the website's own `credit()` rule.
