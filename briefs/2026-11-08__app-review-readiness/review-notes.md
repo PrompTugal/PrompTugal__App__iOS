@@ -17,7 +17,7 @@
 | Ask offers no team, teammate or agent context | contracts §1 (PTAsk does not depend on the team) | collab | **to confirm** |
 | Privacy and Support links, and the non-affiliation line, in Settings → About of the PrompTugal app | R3 | design | to confirm in `Apps/PrompTugal` |
 | The privacy page on the site matches the code | R3 | editor | page written for the public app; re-check against `Apps/PrompTugal` when it lands |
-| A contact address on the support page | R4 | Dinis | **no**: GitHub issues for now |
+| A contact address on the support page | R4 | Dinis | yes, `agent@riskmandate.ai`, answer within 48 hours (on `split/editor`) |
 | Demo OpenRouter key with a spending cap, made for the reviewer only (optional) | decision 6 | Dinis | the key is Dinis's |
 | Demo vault, made for the reviewer only (optional) | decision 6 | Dinis, vault | vault's script is on dev; the vault is Dinis's |
 
@@ -47,7 +47,7 @@ PrompTugal is the companion app of PrompTugal.news, an independent newsroom cove
 - "Add to Calendar" writes one session to the calendar when the user asks, with write-only access.
 - There is no tracking, no analytics, no advertising and no third-party SDK.
 
-**User-generated content (guideline 1.2).** The app has no user-generated content: no posts, no messages between people, no comments. Everything it shows comes from PrompTugal.news or from the websites it opens. Reports about the content reach us through `<CONTACT_ADDRESS>` and GitHub issues, and we act on them within `<RESPONSE_TIME>`.
+**User-generated content (guideline 1.2).** The app has no user-generated content: no posts, no messages between people, no comments. Everything it shows comes from PrompTugal.news or from the websites it opens. Reports about the content reach us through `agent@riskmandate.ai` and GitHub issues, and we act on them within 48 hours.
 
 **In-app purchases.** None. The app has no purchase, no subscription and no credit. Payment pages on websites are not opened inside the app.
 

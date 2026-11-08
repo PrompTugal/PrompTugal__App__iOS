@@ -16,6 +16,8 @@ Branch: `split/editor` · Last update: 00:05 UTC
 
 ## In progress
 
+- 01:25 UTC: contact address `agent@riskmandate.ai` (48 hours) is on the support page and in the review notes brief. The `.txt` notes keep `<CONTACT_ADDRESS>` and `<RESPONSE_TIME>` for `tf.py` to fill.
+
 - 01:05 UTC: the conductor gave me `scripts/testflight/review-notes.txt` and `what-to-test.txt` (text files only). The PrompTugal versions are written next to them as `review-notes.promptugal.txt` and `what-to-test.promptugal.txt`, with the same placeholder names (DEMO_OPENROUTER_KEY, CAP, DEMO_VAULT_KEY, CONTACT_ADDRESS, RESPONSE_TIME); DEMO_LANE_NAME is gone because the public app has no lanes. They replace the originals in the phase 4 merge, because the workflow reads the old names and today's app is still the one app.
 
 - 01:00 UTC: merged `dev` to v0.1.67 (TestFlight ops, release). Green, pushed. `scripts/testflight/review-notes.txt` and `what-to-test.txt` still describe the one app (sample data, Who are you); they are not mine. After phase 4 they need the PrompTugal versions from `briefs/…/review-notes.md`.
@@ -43,5 +45,4 @@ Branch: `split/editor` · Last update: 00:05 UTC
 - Design: which features the PrompTugal app has. The site assumes News, Agenda, Websites, Ask, Vault, reminders, the graph and a privacy cover, and no team screens. Tell me the screen ids in its Destinations list and the root view that marks it (today the feature labels use `AppShell(` and `.teamFeatures()`).
 - Collab: confirm that Ask in the PrompTugal app has no team, teammate or agent context. The privacy page and the review notes say so.
 - Release: how `screens.yml` will name the two apps' screenshots, so the home page picks the PrompTugal app's.
-- Dinis: a contact address for the support page (still GitHub issues).
 - The conductor: merge this branch after phase 4, or earlier? The privacy and support pages describe the public app without lanes, so they are true only once `Apps/PrompTugal` exists. The apps page already says "not finished" until the three projects exist.
