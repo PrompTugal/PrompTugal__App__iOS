@@ -12,9 +12,9 @@
 
 | Record | Builds tonight | State at 09:40 |
 | --- | --- | --- |
-| **RiskMandate** (`ai.riskmandate.app`) | 0.4.0 (167), 0.4.4 (178) | **First builds ever.** In "RiskMandate Internal". |
+| **RiskMandate** (`ai.riskmandate.app`) | 0.4.0 (167), 0.4.4 (178), 0.4.7 (182) | **First builds ever.** In "RiskMandate Internal". |
 | **PrompTugal.news** (`news.promptugal.reader`) | 0.3.1 (161, 163, 165), 0.4.0 (167), 0.4.1 (168), 0.4.4 (178), 0.4.6 (180) | Builds of the old single app (the Team app's code) until the move. Next: the new public app, once its uploads are switched on. |
-| **PrompTugal Team** (`news.promptugal.team`) | first build in progress | The project moved at 08:58 (`d94a5b4`); its release dry run signed it with the right entitlements. |
+| **PrompTugal Team** (`news.promptugal.team`) | 0.4.7 (182) | **First build ever**, uploaded 09:38, processed. In "PrompTugal Team Internal". |
 
 Every app now has one version: the repository's release tag (v0.4.n).
 
