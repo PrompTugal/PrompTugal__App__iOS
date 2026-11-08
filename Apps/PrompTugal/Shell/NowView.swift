@@ -19,7 +19,8 @@ extension EnvironmentValues {
 
 /// Now (ux spec NOW-1): the first screen. It changes with the summit's phase, worked out from Lisbon time and the
 /// agenda (`NowBoard`, PTAgenda): before the summit a countdown, during it For you, On now and Up next, between days
-/// Tomorrow, after it a thank you. The latest news, the Ask card and the practical card are in every phase.
+/// Tomorrow, after it a thank you. The latest news, the practical card and the Ask card are in every phase.
+/// Every user-facing string is written exactly as in the ux spec, so the String Catalog keys match.
 struct NowView: View {
     @Environment(ReaderStore.self) private var reader
 
@@ -28,11 +29,11 @@ struct NowView: View {
         TimelineView(.everyMinute) { context in
             let now = PublicLaunch.now ?? context.date
             let board = reader.nowBoard(at: now)
-            Page(maxWidth: 900) {
+            Page(maxWidth: Space.readable) {
                 header(now: now)
                 switch board.phase {
                 case .noAgenda:
-                    EmptyView()
+                    agendaMissing
                 case .before(let start):
                     countdown(to: start, from: now)
                     startProgram(board: board, now: now)
@@ -48,7 +49,7 @@ struct NowView: View {
                 }
                 LatestNewsCard()
                 PracticalCard()
-                askCard
+                AskCard()
             }
         }
         .background(Palette.paper.ignoresSafeArea())
@@ -60,10 +61,10 @@ struct NowView: View {
     // MARK: Header: the date and the time in Lisbon, then how fresh the data is
 
     private func header(now: Date) -> some View {
-        VStack(alignment: .leading, spacing: Space.s) {
+        VStack(alignment: .leading, spacing: Space.xs) {
             Kicker("Lisbon · " + now.formatted(Self.dayStyle))
             Text(Lisbon.timeLabel(now))
-                .font(Typo.display)
+                .font(Typo.title)
                 .foregroundStyle(Palette.ink)
                 .monospacedDigit()
                 .accessibilityLabel("Time in Lisbon, " + Lisbon.timeLabel(now))
@@ -78,14 +79,32 @@ struct NowView: View {
         return style
     }()
 
+    /// No agenda yet: nothing to count down to or to list, so the screen says so instead of showing empty cards.
+    private var agendaMissing: some View {
+        TitledCard(String(localized: "Agenda")) {
+            Text(reader.agendaUnavailable
+                 ? LocalizedStringKey("The agenda could not be loaded. Pull down to try again.")
+                 : LocalizedStringKey("Loading the agenda…"))
+                .font(.footnote).foregroundStyle(Palette.muted)
+        }
+    }
+
     // MARK: State A, before the summit
 
+    /// The first two official items: registration and Opening Night (the first two sessions when they are not in the agenda).
+    private var firstItems: [Event] {
+        let timed = reader.agenda.filter { $0.start != nil }
+            .sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
+        let registration = timed.first { $0.title.localizedCaseInsensitiveContains("registration") }
+        let opening = timed.first { $0.title.localizedCaseInsensitiveContains("opening night") }
+        let named = [registration, opening].compactMap { $0 }
+        return named.isEmpty ? Array(timed.prefix(2)) : named
+    }
+
     private func countdown(to start: Date, from now: Date) -> some View {
-        let first = reader.agenda.filter { $0.start != nil }.sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }
-            .prefix(2)
-        return TitledCard("The summit starts in " + Self.countdownText(to: start, from: now), kicker: "Lisbon · 9–12 Nov") {
+        TitledCard(Self.countdownTitle(to: start, from: now), kicker: "Lisbon · 9–12 Nov") {
             VStack(alignment: .leading, spacing: Space.m) {
-                ForEach(Array(first), id: \.id) { event in
+                ForEach(firstItems, id: \.id) { event in
                     EventLink(event: event) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(event.title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
@@ -98,15 +117,18 @@ struct NowView: View {
         }
     }
 
-    /// "1 day", "5 hours", "20 minutes": the whole unit that fits.
-    static func countdownText(to start: Date, from now: Date) -> String {
+    /// "The summit starts in 1 day" (or 5 hours, 20 minutes): the whole unit that fits.
+    static func countdownTitle(to start: Date, from now: Date) -> String {
         let minutes = max(0, Int(start.timeIntervalSince(now) / 60))
         switch minutes {
-        case 2 * 1440...: return "\(minutes / 1440) days"
-        case 1440...: return "1 day"
-        case 120...: return "\(minutes / 60) hours"
-        case 60...: return "1 hour"
-        default: return minutes <= 1 ? "1 minute" : "\(minutes) minutes"
+        case 2 * 1440...: let days = minutes / 1440; return String(localized: "The summit starts in \(days) days")
+        case 1440...: return String(localized: "The summit starts in 1 day")
+        case 120...: let hours = minutes / 60; return String(localized: "The summit starts in \(hours) hours")
+        case 60...: return String(localized: "The summit starts in 1 hour")
+        default:
+            let count = max(1, minutes)
+            return count == 1 ? String(localized: "The summit starts in 1 minute")
+                : String(localized: "The summit starts in \(count) minutes")
         }
     }
 
@@ -133,11 +155,17 @@ struct NowView: View {
 
     // MARK: State B, during the summit
 
+    /// Registration is not a talk: it never fills On now or Up next.
+    private static func isRegistration(_ entry: NowBoard.Entry) -> Bool {
+        entry.title.localizedCaseInsensitiveContains("registration")
+    }
+
     /// NOW-1c: my current pick, or my next one.
     @ViewBuilder private func forYou(board: NowBoard.Snapshot, now: Date) -> some View {
         if let entry = board.mineNow.first ?? board.nextMine {
             let clash = board.clashes.contains { $0.first.eventID == entry.id || $0.second.eventID == entry.id }
-            TitledCard("For you", kicker: board.mineNow.first != nil ? "On now" : "Next in your program") {
+            TitledCard(String(localized: "For you"),
+                       kicker: board.mineNow.first != nil ? String(localized: "On now") : String(localized: "Next in your program")) {
                 SessionRow(entry: entry, now: now, style: .forYou, clash: clash)
             }
         } else if board.phase == .live {
@@ -147,15 +175,15 @@ struct NowView: View {
 
     /// NOW-1f: up to five sessions running now, Centre Stage first.
     @ViewBuilder private func onNow(board: NowBoard.Snapshot, now: Date) -> some View {
-        let running = board.venueNow.sorted { lhs, rhs in
+        let running = board.venueNow.filter { !Self.isRegistration($0) }.sorted { lhs, rhs in
             let l = Self.isCentreStage(lhs.place), r = Self.isCentreStage(rhs.place)
             if l != r { return l }
             return lhs.start < rhs.start
         }
         if !running.isEmpty {
-            TitledCard("On now at the venue", accessory: {
+            TitledCard(String(localized: "On now at the venue"), accessory: {
                 if running.count > 5 {
-                    SeeAllButton(title: "See all (\(running.count))")
+                    SeeAllButton(title: String(localized: "See all (\(running.count))"))
                 }
             }, content: {
                 ForEach(running.prefix(5)) { entry in
@@ -171,9 +199,9 @@ struct NowView: View {
 
     /// NOW-1g: up to five sessions starting in the next 60 minutes.
     @ViewBuilder private func upNext(board: NowBoard.Snapshot, now: Date) -> some View {
-        let soon = board.venueNext.filter { $0.start <= now.addingTimeInterval(3600) }
+        let soon = board.venueNext.filter { $0.start <= now.addingTimeInterval(3600) && !Self.isRegistration($0) }
         if !soon.isEmpty {
-            TitledCard("Up next", accessory: { SeeAllButton(title: "Full agenda") }, content: {
+            TitledCard(String(localized: "Up next"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
                 ForEach(soon.prefix(5)) { entry in
                     SessionRow(entry: entry, now: now, style: .upNext, clash: false)
                 }
@@ -186,13 +214,14 @@ struct NowView: View {
         let day = Lisbon.day(next)
         let first = reader.agenda.filter { event in
             guard let start = event.start else { return false }
-            return Lisbon.day(start) == day && start > now
+            return Lisbon.day(start) == day && start > now && !event.title.localizedCaseInsensitiveContains("registration")
         }.sorted { ($0.start ?? .distantFuture) < ($1.start ?? .distantFuture) }.prefix(3)
         if !first.isEmpty {
-            TitledCard("Tomorrow", accessory: { SeeAllButton(title: "Full agenda") }, content: {
+            TitledCard(String(localized: "Tomorrow"), accessory: { SeeAllButton(title: String(localized: "Full agenda")) }, content: {
                 ForEach(Array(first), id: \.id) { event in
                     if let start = event.start {
-                        SessionRow(entry: NowBoard.Entry(id: ScheduleID.fromPage(event.page) ?? event.page, title: event.title, place: event.place, start: start,
+                        SessionRow(entry: NowBoard.Entry(id: ScheduleID.fromPage(event.page) ?? event.page, title: event.title,
+                                                         place: event.place, start: start,
                                                          end: event.end ?? start.addingTimeInterval(1800),
                                                          mine: reader.isSaved(event), url: event.url),
                                    now: now, style: .upNext, clash: false)
@@ -206,24 +235,47 @@ struct NowView: View {
 
     private var thanks: some View {
         let count = reader.saved.count
-        return TitledCard("Thanks for coming", kicker: "Lisbon · 9–12 Nov") {
-            Text(count == 0 ? "The summit is over. The news and the agenda stay on this phone."
-                 : count == 1 ? "You picked 1 talk. The news and the agenda stay on this phone."
-                 : "You picked \(count) talks. The news and the agenda stay on this phone.")
+        return TitledCard(String(localized: "Thanks for coming"), kicker: "Lisbon · 9–12 Nov") {
+            Text(count == 0 ? String(localized: "The summit is over. The news and the agenda stay on this phone.")
+                 : count == 1 ? String(localized: "You picked 1 talk. The news and the agenda stay on this phone.")
+                 : String(localized: "You picked \(count) talks. The news and the agenda stay on this phone."))
                 .font(.subheadline).foregroundStyle(Palette.muted)
         }
-    }
-
-    // MARK: Ask (NOW-1h), the last card in every state
-
-    private var askCard: some View {
-        AskCard()
     }
 }
 
 // MARK: - Pieces
 
-/// NOW-1h: Ask about the summit. iPhone pushes Ask; iPad selects the sidebar's Ask row.
+/// "Full agenda", "See all" and similar buttons that open Explore.
+private struct SeeAllButton: View {
+    let title: String
+    @Environment(\.openDestination) private var open
+
+    var body: some View {
+        Button(title) { open("explore") }.font(.subheadline)
+    }
+}
+
+/// NOW-1b: with no picks yet.
+private struct StartProgramCard: View {
+    @Environment(\.openDestination) private var open
+
+    var body: some View {
+        TitledCard(String(localized: "Start your program")) {
+            VStack(alignment: .leading, spacing: Space.m) {
+                Text("Pick the talks you want. We'll warn you about clashes and remind you before each one.")
+                    .font(.subheadline).foregroundStyle(Palette.muted)
+                Button { open("explore") } label: {
+                    Label("Choose talks", systemImage: "magnifyingglass")
+                }
+                .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("pt.now.chooseTalks")
+            }
+        }
+    }
+}
+
+/// NOW-1h: Ask about the summit, the last card in every state. iPhone pushes Ask; iPad selects the sidebar's Ask row.
 private struct AskCard: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openDestination) private var open
@@ -253,35 +305,6 @@ private struct AskCard: View {
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("pt.now.ask")
                 }
-            }
-        }
-    }
-}
-
-/// "Choose talks" and similar buttons that open Explore.
-private struct SeeAllButton: View {
-    let title: String
-    @Environment(\.openDestination) private var open
-
-    var body: some View {
-        Button(title) { open("explore") }.font(.subheadline)
-    }
-}
-
-/// NOW-1b: with no picks yet.
-private struct StartProgramCard: View {
-    @Environment(\.openDestination) private var open
-
-    var body: some View {
-        TitledCard("Start your program") {
-            VStack(alignment: .leading, spacing: Space.m) {
-                Text("Pick the talks you want. We'll warn you about clashes and remind you before each one.")
-                    .font(.subheadline).foregroundStyle(Palette.muted)
-                Button { open("explore") } label: {
-                    Label("Choose talks", systemImage: "magnifyingglass")
-                }
-                .buttonStyle(.borderedProminent)
-                .accessibilityIdentifier("pt.now.chooseTalks")
             }
         }
     }
@@ -326,7 +349,7 @@ private struct SessionRow: View {
                     .frame(minWidth: 44, minHeight: 44)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(entry.mine ? "Remove from my program" : "Add to my program")
+            .accessibilityLabel(entry.mine ? LocalizedStringKey("Remove from my program") : LocalizedStringKey("Add to my program"))
         }
         .accessibilityElement(children: .contain)
     }
@@ -334,21 +357,29 @@ private struct SessionRow: View {
     private var detail: String {
         var parts: [String] = []
         if entry.isLive(at: now) {
-            parts.append("until " + Lisbon.timeLabel(entry.end))
+            let end = Lisbon.timeLabel(entry.end)
+            parts.append(String(localized: "until \(end)"))
         } else {
             let minutes = entry.minutesUntilStart(from: now)
-            parts.append(minutes < 1 ? "starting now" : minutes < 90 ? "in \(minutes) min" : "in \(minutes / 60) h")
+            if minutes < 1 {
+                parts.append(String(localized: "starting now"))
+            } else if minutes < 90 {
+                parts.append(String(localized: "in \(minutes) min"))
+            } else {
+                let hours = minutes / 60
+                parts.append(String(localized: "in \(hours) h"))
+            }
         }
         if !entry.place.isEmpty { parts.append(entry.place) }
         return parts.joined(separator: " · ")
     }
 
-    @ViewBuilder private func link<Label: View>(@ViewBuilder _ label: () -> Label) -> some View {
+    @ViewBuilder private func link<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
         if let url = entry.url {
-            NavigationLink { WebPage(url: url, title: entry.title) } label: { label().frame(maxWidth: .infinity, alignment: .leading) }
+            NavigationLink { WebPage(url: url, title: entry.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
                 .buttonStyle(.plain)
         } else {
-            label().frame(maxWidth: .infinity, alignment: .leading)
+            content().frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -363,16 +394,16 @@ private struct SessionRow: View {
 }
 
 /// A row that opens an event's page on the site.
-private struct EventLink<Label: View>: View {
+private struct EventLink<Content: View>: View {
     let event: Event
-    @ViewBuilder let label: () -> Label
+    @ViewBuilder let content: () -> Content
 
     var body: some View {
         if let url = event.url {
-            NavigationLink { WebPage(url: url, title: event.title) } label: { label().frame(maxWidth: .infinity, alignment: .leading) }
+            NavigationLink { WebPage(url: url, title: event.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
                 .buttonStyle(.plain)
         } else {
-            label().frame(maxWidth: .infinity, alignment: .leading)
+            content().frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
@@ -383,15 +414,17 @@ private struct LatestNewsCard: View {
 
     var body: some View {
         let stories = Array(reader.news.prefix(3))
-        TitledCard("Latest news", accessory: {
+        TitledCard(String(localized: "Latest news"), accessory: {
             NavigationLink("All news") { NewsHomeView() }.font(.subheadline)
         }, content: {
             if stories.isEmpty {
-                Text(reader.newsUnavailable ? "The news could not be loaded. Pull down to try again." : "Loading the news…")
+                Text(reader.newsUnavailable
+                     ? LocalizedStringKey("The news could not be loaded. Pull down to try again.")
+                     : LocalizedStringKey("Loading the news…"))
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
             ForEach(stories) { story in
-                NavigationLink { WebPage(url: story.url, title: "Story") } label: {
+                NavigationLink { WebPage(url: story.url, title: story.title) } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink)
                             .multilineTextAlignment(.leading)
@@ -412,32 +445,65 @@ private struct LatestNewsCard: View {
     }
 }
 
-/// The practical card (NOW-1e): fixed text shipped in the app. Source links are added when ux confirms them.
+/// The practical card (NOW-1e): a fixed list shipped in the app, final copy from the ux spec. Each row with a link opens
+/// it in Safari; the registration row opens Explore.
 struct PracticalCard: View {
-    private let rows: [(symbol: String, title: String, text: String)] = [
-        ("person.text.rectangle", "Registration",
-         "Collect your lanyard: Airport T1 (9–10 Nov) or Pavilhão de Portugal (9–12 Nov). Bring your ticket QR and photo ID."),
-        ("tram.fill", "Getting there", "Metro: red line to Oriente."),
-        ("car.fill", "Traffic", "Road closures around Parque das Nações, 9–12 Nov."),
-        ("bus.fill", "Shuttle", "Carris shuttle for participants."),
+    private struct Row: Identifiable {
+        let symbol: String
+        let title: LocalizedStringKey
+        let line: LocalizedStringKey
+        let link: URL?
+        var id: String { symbol }
+    }
+
+    private let rows: [Row] = [
+        Row(symbol: "person.text.rectangle", title: "Registration",
+            line: "Collect your badge at Airport Terminal 1 (9–10 Nov) or Pavilhão de Portugal (9–12 Nov). Bring your ticket QR and photo ID.",
+            link: nil),
+        Row(symbol: "tram.fill", title: "Metro", line: "Red line to Oriente, next to the venue. A summit transport pass is on sale.",
+            link: URL(string: "https://www.metrolisboa.pt/2026/11/02/passe-de-transporte-para-web-summit/")),
+        Row(symbol: "car.fill", title: "Traffic", line: "Roads around Parque das Nações are restricted 9–12 Nov.",
+            link: URL(string: "https://www.jf-parquedasnacoes.pt/autarquia/noticias/web-summit-condicionamentos-de-transito-entre-9-e-12-de-novembro")),
+        Row(symbol: "bus.fill", title: "Buses", line: "Carris runs extra buses to Oriente during the summit.",
+            link: URL(string: "https://www.carris.pt/")),
+        Row(symbol: "map", title: "Venue map", line: "FIL, MEO Arena and Pavilhão de Portugal, with what is on in each.",
+            link: URL(string: "https://promptugal.news/summit/venue/index.html")),
+        Row(symbol: "phone.fill", title: "Emergency", line: "Call 112.", link: URL(string: "tel:112")),
     ]
 
+    @Environment(\.openDestination) private var open
+
     var body: some View {
-        TitledCard("Practical", kicker: "Lisbon · 9–12 Nov") {
+        TitledCard(String(localized: "Practical"), kicker: "Lisbon · 9–12 Nov") {
             VStack(alignment: .leading, spacing: Space.m) {
-                ForEach(rows, id: \.title) { row in
-                    HStack(alignment: .top, spacing: Space.m) {
-                        Image(systemName: row.symbol).foregroundStyle(Palette.muted).frame(width: 24)
-                            .accessibilityHidden(true)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(row.title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
-                            Text(row.text).font(.footnote).foregroundStyle(Palette.muted)
-                        }
+                ForEach(rows) { row in
+                    if let link = row.link {
+                        Link(destination: link) { content(row, chevron: true) }
+                            .buttonStyle(.plain)
+                    } else {
+                        Button { open("explore") } label: { content(row, chevron: true) }
+                            .buttonStyle(.plain)
                     }
-                    .accessibilityElement(children: .combine)
                 }
             }
         }
+    }
+
+    private func content(_ row: Row, chevron: Bool) -> some View {
+        HStack(alignment: .top, spacing: Space.m) {
+            Image(systemName: row.symbol).foregroundStyle(Palette.muted).frame(width: 24)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(row.title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                Text(row.line).font(.footnote).foregroundStyle(Palette.muted).multilineTextAlignment(.leading)
+            }
+            Spacer(minLength: Space.xs)
+            if chevron {
+                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(Palette.muted).accessibilityHidden(true)
+            }
+        }
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
     }
 }
 

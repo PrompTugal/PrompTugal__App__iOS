@@ -15,10 +15,7 @@ struct PublicSettingsView: View {
                 NavigationLink {
                     AskView()
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Label("Ask about the summit", systemImage: "sparkles")
-                        Text("With your own AI key").font(.caption).foregroundStyle(Palette.muted)
-                    }
+                    Label("Ask, with your own AI key", systemImage: "sparkles")
                 }
                 NavigationLink {
                     ReminderSettingsView()

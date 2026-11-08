@@ -17,7 +17,15 @@ public struct NewsHomeView: View {
         case feed = "Feed", editions = "Editions", stories = "Stories"
         var id: Self { self }
         /// What the segmented control shows. The raw values stay as they are: they are the saved selection.
-        var label: String {
+        var label: LocalizedStringKey {
+            switch self {
+            case .feed: "Latest"
+            case .editions: "Newsletter"
+            case .stories: "Stories"
+            }
+        }
+        /// The English name, for the web twin's title.
+        var title: String {
             switch self {
             case .feed: "Latest"
             case .editions: "Newsletter"
@@ -50,7 +58,7 @@ public struct NewsHomeView: View {
             await data.newsletter.load()
             await data.board.load()
         }
-        .webTwin(twinURL, title: form.label)
+        .webTwin(twinURL, title: form.title)
     }
 
     private var twinURL: URL {
@@ -70,7 +78,7 @@ public struct NewsHomeView: View {
                       hasData: false, title: "news") { Task { await store.refresh() } }
         }
         if let lead = store.news.first {
-            NavigationLink { WebPage(url: lead.url, title: "Story") } label: {
+            NavigationLink { WebPage(url: lead.url, title: lead.title) } label: {
                 Card(padding: Space.xl) {
                     if !lead.category.isEmpty { Kicker(lead.category) }
                     Text(lead.title).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
@@ -85,7 +93,7 @@ public struct NewsHomeView: View {
         }
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Space.m)], spacing: Space.m) {
             ForEach(store.news.dropFirst()) { story in
-                NavigationLink { WebPage(url: story.url, title: "Story") } label: {
+                NavigationLink { WebPage(url: story.url, title: story.title) } label: {
                     Card {
                         if !story.category.isEmpty { Kicker(story.category) }
                         Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
