@@ -28,31 +28,58 @@ REPO_URL = 'https://github.com/PrompTugal/PrompTugal__App__iOS'
 
 WEBSITE = Path(__file__).resolve().parent
 ROOT = WEBSITE.parent
-APP = ROOT / 'PrompTugal'
-PROJECT = ROOT / 'PrompTugal.xcodeproj' / 'project.pbxproj'
+# Where the PrompTugal app lives: its own folder once the split has landed, the root project before.
+APP_PROJECTS = ('Apps/PrompTugal/PrompTugal.xcodeproj', 'PrompTugal.xcodeproj')
+APP_FOLDERS = ('Apps/PrompTugal', 'Packages/PTWeb', 'PrompTugal')
 
 
-def _one(pattern):
-    """The single file in the app matching a name, wherever the project layout puts it.
+def public_project(root=ROOT):
+    """The Xcode project of the PrompTugal app (the public one)."""
+    for candidate in APP_PROJECTS:
+        if (root / candidate).is_dir():
+            return root / candidate
+    raise SystemExit('build: no Xcode project for the PrompTugal app, looked in ' + ', '.join(APP_PROJECTS))
 
-    The app folder first, then the Swift packages (files move there during the split)."""
-    for base in (APP, ROOT / 'Packages'):
+
+def find_in_app(pattern, root=ROOT, prefer=None):
+    """The one file or folder matching a name in the PrompTugal app or the packages it uses.
+
+    The first folder of APP_FOLDERS with a match wins. Where it has several, the one that contains
+    `prefer` is taken, so a second asset catalog (a widget's) is not mistaken for the app's."""
+    for place in APP_FOLDERS:
+        base = root / place
         found = sorted(p for p in base.rglob(pattern) if '.build' not in p.parts) if base.is_dir() else []
-        if len(found) > 1:
-            raise SystemExit(f'build: expected one {pattern} under {base.name}/, found {[str(f) for f in found]}')
-        if found:
+        if prefer and len(found) > 1:
+            found = [p for p in found if (p / prefer).exists()] or found
+        if len(found) == 1:
             return found[0]
-    raise SystemExit(f'build: no {pattern} under PrompTugal/ or Packages/')
+        if found:
+            raise SystemExit(f'build: expected one {pattern} under {place}/, found {[str(f) for f in found]}')
+    raise SystemExit(f'build: no {pattern} in {", ".join(APP_FOLDERS)}')
 
 
-ASSETS = _one('Assets.xcassets')
-WEBSITES_JSON = _one('Websites.json')
+PROJECT = public_project() / 'project.pbxproj'
+ASSETS = find_in_app('Assets.xcassets', prefer='AppIcon.appiconset')
+WEBSITES_JSON = find_in_app('Websites.json')
 
 # Published path -> source file in the Xcode asset catalog (artwork exists once).
 # Every Shortcut*.imageset is published, so a removed shortcut leaves no dangling image.
 IMAGES = {'assets/app-icon.png': ASSETS / 'AppIcon.appiconset' / 'AppIcon.png'}
-IMAGES.update({f'assets/shortcut-{d.stem}.png': next(d.glob('*.png'))
-               for d in sorted(ASSETS.glob('Shortcut*.imageset')) if any(d.glob('*.png'))})
+def _shortcut_images():
+    """Shortcut*.imageset from every asset catalog the app is built from (the app's own first).
+
+    While files move during the split, the sidebar artwork can sit in another catalog than the app icon."""
+    found = {}
+    for place in (*APP_FOLDERS, 'Apps', 'Packages'):      # the app's folders first, then anywhere the artwork moved to
+        base = ROOT / place
+        for catalog in sorted(base.rglob('Assets.xcassets')) if base.is_dir() else []:
+            for d in sorted(catalog.glob('Shortcut*.imageset')):
+                if any(d.glob('*.png')):
+                    found.setdefault(d.stem, d)
+    return found
+
+
+IMAGES.update({f'assets/shortcut-{name}.png': next(d.glob('*.png')) for name, d in _shortcut_images().items()})
 
 # Websites.json colour names -> CSS colours close to the iOS system tints.
 TINTS = {'red': '#d93a33', 'orange': '#e8870e', 'green': '#2f9e44', 'teal': '#2a9fb0',
@@ -62,7 +89,7 @@ TINTS = {'red': '#d93a33', 'orange': '#e8870e', 'green': '#2f9e44', 'teal': '#2a
 def build_configurations(text):
     """Each XCBuildConfiguration's buildSettings as a dict of raw values."""
     blocks = []
-    for body in re.findall(r'isa = XCBuildConfiguration;\s*buildSettings = \{(.*?)\n\t\t\t\};', text, re.S):
+    for body in re.findall(r'isa = XCBuildConfiguration;[^{}]*?buildSettings = \{(.*?)\n\t\t\t\};', text, re.S):
         blocks.append(dict((k, v.strip('"')) for k, v in re.findall(r'^\s*([A-Z_][A-Z0-9_]*) = (.+?);$', body, re.M)))
     return blocks
 
@@ -95,11 +122,11 @@ def swift_sources():
 
 
 def code_areas(files):
-    """Swift files and lines per folder: PrompTugal/<area>, Packages/<name>, or another target's folder."""
+    """Swift files and lines per folder: PrompTugal/<area>, Packages/<name>, Apps/<app>, or another target's folder."""
     areas = {}
     for f in files:
         rel = f.relative_to(ROOT).parts
-        if rel[0] in ('PrompTugal', 'Packages'):
+        if rel[0] in ('PrompTugal', 'Packages', 'Apps'):
             area = '/'.join(rel[:2]) if len(rel) > 2 else rel[0] + ' (top level)'
         else:
             area = rel[0]
@@ -108,12 +135,19 @@ def code_areas(files):
     return areas
 
 
+def app_version(release, marketing):
+    """The app version: the release number from v0.4 on (v0.4.7 is 0.4.7), else the project's MARKETING_VERSION."""
+    major, minor = (int(x) for x in re.match(r'v(\d+)\.(\d+)', release).groups())
+    return release[1:] if (major, minor) >= (0, 4) else marketing
+
+
 def app_facts():
     swift = swift_sources()
     websites = json.loads(WEBSITES_JSON.read_text())
     tests = [f for f in swift if any(p.endswith('Tests') for p in f.relative_to(ROOT).parts)]
+    release = version.read()
     return {
-        'version': project_setting('MARKETING_VERSION'),
+        'version': app_version(release, project_setting('MARKETING_VERSION')),
         'build': project_setting('CURRENT_PROJECT_VERSION'),
         'min_ios': project_setting('IPHONEOS_DEPLOYMENT_TARGET'),
         'bundle_id': project_setting('PRODUCT_BUNDLE_IDENTIFIER'),
@@ -123,7 +157,7 @@ def app_facts():
         'site_count': str(len(websites)),
         'websites': websites,
         'areas': code_areas(swift),
-        'release': version.read(),
+        'release': release,
         'site_commit': os.environ.get('SITE_COMMIT', '')[:7],
     }
 
@@ -422,7 +456,7 @@ def build(out):
                   releases=admin.releases_html(admin.releases(), REPO_URL),
                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
                   workflow_count=str(len(admin.workflows())),
-                  screens=admin.screens_html(admin.destinations(), facts['websites']),
+                  screens=admin.screens_html(admin.destinations(), facts['websites'], WEBSITES_JSON.relative_to(ROOT).as_posix()),
                   branch_screens=admin.branch_screens_html(admin.branch_destinations()),
                   shell_root_note=('<p class="notice">The app shows the shell at launch (<code>AppShell</code> is the root view), so these screens are reachable.</p>'
                                    if 'AppShell(' in admin.root_scene() else
