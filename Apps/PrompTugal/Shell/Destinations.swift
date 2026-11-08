@@ -59,7 +59,7 @@ enum PublicDestinations {
 
     static let ask: [ShellDestination] = [
         ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "Ask",
-                         summary: "Ask about the agenda, your picks and the news", phoneTab: 3) { AnyView(AskView()) },
+                         summary: "Ask about the agenda, your picks and the news") { AnyView(AskView()) },
     ]
 
     // MARK: Web
