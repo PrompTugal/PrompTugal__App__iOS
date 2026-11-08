@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 02:52 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 03:00 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -173,3 +173,8 @@ None. Nothing moved yet.
 - Still holding. Team's run 300 on 1bf25c5 is queued, so split/team is not green. AppLinks.scheme is not on dev (dev d519d14).
 - Conductor ruling (02:25): when split/team is green, merge origin/dev and split/team into split/design, then dispatch ios.yml once with app=all, runner=self-hosted.
 - Nothing pushed to split/design except this page. PublicShell is not started.
+
+## Update (8 Nov, 03:00 UTC, design.B)
+- Merged origin/dev (AppLinks.scheme, 5500c02). `AppShell` now checks `url.scheme == AppLinks.scheme`; the other hard-coded schemes in `Shell/` were only in comments and now say `<scheme>`. Not compiled yet.
+- Still waiting for team's PTWeb to be green before I dispatch (conductor will say).
+- Needs from team: `PrompTugal/Team/TeamFeatures.swift:20` still has `static let urlScheme = "promptugal"` for the reminder scheduler; it should read `AppLinks.scheme`.

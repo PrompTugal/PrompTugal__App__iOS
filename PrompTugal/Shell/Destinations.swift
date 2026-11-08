@@ -58,7 +58,7 @@ enum Destinations {
     }
 
     /// A destination that may be opened now: debug-only screens only while debug mode is on.
-    /// Used for links (promptugal://open/<id>), launch arguments and restored selections.
+    /// Used for links (<scheme>://open/<id>), launch arguments and restored selections.
     static func openable(_ id: String?, debug: Bool) -> AppDestination? {
         guard let destination = destination(id) else { return nil }
         return destination.debugOnly && !debug ? nil : destination

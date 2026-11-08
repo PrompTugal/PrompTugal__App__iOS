@@ -93,9 +93,9 @@ struct AppShell: View {
         .background(ShellKeyboardShortcuts(selection: $selection))
     }
 
-    /// promptugal://open/<destination id>, e.g. promptugal://open/team.people
+    /// <scheme>://open/<destination id>, e.g. <scheme>://open/team.people
     private func route(_ url: URL) {
-        guard url.scheme == "promptugal", url.host == "open" else { return }
+        guard url.scheme == AppLinks.scheme, url.host == "open" else { return }
         let id = url.pathComponents.dropFirst().joined(separator: "/")
         // Debug-only screens (Debug) open from a link only while debug mode is on.
         guard let destination = Destinations.openable(id, debug: debug) else { return }
@@ -119,7 +119,7 @@ struct LinkedPage: Identifiable, Equatable {
     var id: URL { url }
 }
 
-/// Reads the page out of a promptugal://open/<id> link: `session=<event slug>` becomes that event's
+/// Reads the page out of a <scheme>://open/<id> link: `session=<event slug>` becomes that event's
 /// page on promptugal.news; `url=<https page>` is opened only on our own two sites.
 enum ShellLink {
     static let allowedHosts: Set<String> = ["promptugal.news", "web-summit.sgit.ai"]
