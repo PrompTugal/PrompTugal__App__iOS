@@ -20,6 +20,12 @@
 - i18n's catalogs have pt-PT and pt-BR, but the project's `knownRegions` does not list them.
 - No screenshot set yet.
 
+## 13:00 UTC check
+- Candidates rc2 to rc5 reviewed (go/no-go runs 1 to 5 in [go-no-go.md](../../2026-11-08__summit-app-store/store/go-no-go.md)). The app code is GO from rc4 d8a5020 on.
+- Release's screenshot pipeline photographs a Debug build with debug mode on: kind badges, plus Debug, Vault and All websites in the iPad sidebar. Fix: `-debug.enabled NO` plus `debugOnly` on those rows.
+- In the ASC plan, the content rights answer must be "uses third-party content".
+- No screenshot set yet, so the persona walk-through of images waits. The code walk-through findings F3, F4, F11 and F14 are fixed in rc4 (opens on today, native talk detail, Vault and All websites hidden, no vault copy in Ask). F10 (share on news) and F6 (Graph copy) are not checked yet.
+
 ## Next
 - Walk the personas through each screenshot set and each new build (Now, Explore, pt strings).
 - Fill in [go-no-go.md](../../2026-11-08__summit-app-store/store/go-no-go.md) for the build chosen for each submission, then send "GO <build>" or the open items.

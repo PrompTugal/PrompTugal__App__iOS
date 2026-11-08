@@ -88,3 +88,18 @@
 | Everything else | As in runs 2 and 3 | GO |
 | G5 | Full run 393 (42481160021) on d8a5020 | pending (started 12:37) |
 | G1, M1–M10, P1, P2 | Processing, screenshots (watch the "Web Summit" program titles), App Store Connect entries, the conductor's go | pending |
+
+## Run 5: `split/rc5` bea15bb, release's screenshot pipeline and App Store Connect plan (13:00 UTC)
+
+rc5 is rc4 plus release's screenshot filter (`-PTHideTerm`, DEBUG only, a no-op in Release, with tests) and a seed decode test. The app code a user runs is the same as rc4 d8a5020.
+
+| # | Check | State |
+| --- | --- | --- |
+| M4, 2.3.3 | `screens.yml` builds the **Debug** configuration, where `DebugMode.defaultOn` is true (`PTCore/Design/Components.swift:293`). Every screen therefore gets the native, web or hybrid badge in its toolbar (`surfaceKind`, `PublicShell.swift:91`, `:151`, `:228`). The iPad sidebar lists **Debug**, and also **Vault** and **All websites**, because `debugOnlyScreens` exist in every DEBUG build and are not marked `debugOnly`. Store images would show screens and badges that are not in the submitted build. | **must-fix before screenshots**: (1) the screens test adds `-debug.enabled NO` (a UserDefaults launch argument; DebugMode reads that key); (2) design marks Vault and All websites `debugOnly: true`, so the switch hides them too. Then check one iPad image for the sidebar. (release, design) |
+| M4 | `-PTHideTerm "Web Summit"` drops program rows and news that contain the term, only in DEBUG. The images show real content minus a few rows, which is acceptable under 2.3.3. | GO |
+| Content rights (ASC plan step 10) | The plan says "no third-party content". The app shows the summit's public program (third-party content, republished by our newsroom), and Ask shows answers from third-party AI models. | **change**: answer `USES_THIRD_PARTY_CONTENT` (and that we have the rights to show it) (release) |
+| ASC plan steps 5, 6, 13 | They read review's files. The files to read are `store/listing-*.md` (the fenced blocks), `store/review-notes.txt` and `store/what-to-test.txt`. The Ask and Languages lines now stay in all three languages, because Ask ships and the pt-PT and pt-BR strings are in the build. | GO |
+| ASC plan step 9 | Answers as in [age-rating.md](age-rating.md). "Unrestricted web access: No" is now true (N4 fixed). | GO |
+| ASC plan step 15 | Advertising identifier: **No** (the app reads no IDFA). Any "uses encryption" prompt: no, already in the build. | answer ready |
+| Availability | The plan has no step for Mac (Apple silicon) and Vision Pro availability. [age-rating.md](age-rating.md) says untick both. | add a step (by hand if the API has none) (release) |
+| G5 | Run 393 on rc4 d8a5020 | check |
