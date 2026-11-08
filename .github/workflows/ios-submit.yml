@@ -36,9 +36,13 @@ on:
         type: string
         default: 'split/review'
       listing_path:
-        description: 'store-metadata: path of listing.json in that ref'
+        description: 'store-metadata: path of listing.json in that ref (review-notes.txt is read from the same folder)'
         type: string
         default: 'briefs/2026-11-08__summit-app-store/store/listing.json'
+      set_version_string:
+        description: 'store-metadata: change the App Store version string to this (the build version, e.g. 0.4.31). Empty = leave it.'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -94,6 +98,12 @@ jobs:
       ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
       ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+      # App Review contact and the demo key for the notes: secrets only (public repository), never printed.
+      REVIEW_CONTACT_FIRST_NAME: ${{ secrets.REVIEW_CONTACT_FIRST_NAME }}
+      REVIEW_CONTACT_LAST_NAME: ${{ secrets.REVIEW_CONTACT_LAST_NAME }}
+      REVIEW_CONTACT_EMAIL: ${{ secrets.REVIEW_CONTACT_EMAIL }}
+      REVIEW_CONTACT_PHONE: ${{ secrets.REVIEW_CONTACT_PHONE }}
+      DEMO_OPENROUTER_KEY: ${{ secrets.DEMO_OPENROUTER_KEY }}
     steps:
       - uses: actions/checkout@v5
 
@@ -120,4 +130,15 @@ jobs:
 
       - name: Store metadata
         if: steps.gate.outputs.ready == 'true'
-        run: python3 scripts/release/asc.py store-metadata --listing "listing-src/${{ inputs.listing_path }}" --version "${{ inputs.version }}" ${{ inputs.confirm && '--yes' || '' }}
+        env:
+          LISTING: listing-src/${{ inputs.listing_path }}
+          VERSION_STRING: ${{ inputs.set_version_string }}
+        run: |
+          # The app's primary locale is en-GB: it gets the en-US texts. What's New is not accepted on a
+          # first version. Content rights and categories as decided (store/README.md, age-rating.md).
+          args=(--listing "$LISTING" --version "${{ inputs.version }}"
+                --also en-GB=en-US --skip whatsNew
+                --content-rights USES_THIRD_PARTY_CONTENT --categories NEWS,BUSINESS
+                --review-notes "$(dirname "$LISTING")/review-notes.txt")
+          [ -n "$VERSION_STRING" ] && args+=(--set-version-string "$VERSION_STRING")
+          python3 scripts/release/asc.py store-metadata "${args[@]}" ${{ inputs.confirm && '--yes' || '' }}

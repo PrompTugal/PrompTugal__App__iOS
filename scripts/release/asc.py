@@ -8,8 +8,11 @@ runs on any GitHub runner without installing anything.
     asc.py compliance   --version 0.3.1 --build 123        # usesNonExemptEncryption = false
     asc.py whats-new    --version 0.3.1 --build 123 --file notes.txt
     asc.py submit       --version 0.3.1 --build 123 [--yes] # App Store review
-    asc.py store-metadata --listing store/listing.json [--version 0.4.n] [--yes]
-                        # App Store name, subtitle, texts and URLs per locale; dry run unless --yes
+    asc.py store-metadata --listing store/listing.json [--version 0.4.n] [--also en-GB=en-US]
+                        [--skip whatsNew] [--content-rights USES_THIRD_PARTY_CONTENT] [--categories NEWS,BUSINESS]
+                        [--review-notes review-notes.txt] [--set-version-string 0.4.n] [--yes]
+                        # App Store listing; dry run unless --yes. Review contact from REVIEW_CONTACT_* and the
+                        # notes placeholder <DEMO_OPENROUTER_KEY> from the environment: never printed.
 
 Environment: ASC_KEY_ID, ASC_ISSUER_ID and either ASC_KEY_PATH (a .p8 file) or
 ASC_KEY_P8_BASE64. BUNDLE_ID defaults to news.promptugal.reader.
@@ -240,6 +243,9 @@ def diff_fields(current, wanted, fields):
 
 def cmd_store_metadata(a):
     listing = json.load(open(a.listing))["locales"]
+    for spec in a.also:
+        dst, src = spec.split("=")
+        listing[dst] = dict(listing[src])
     app = app_id()
     attrs = call("GET", f"/v1/apps/{app}")["data"]["attributes"]
     say(f"### App Store listing for `{BUNDLE_ID}`: {'APPLY' if a.yes else 'dry run, nothing is changed'}")
@@ -283,7 +289,7 @@ def cmd_store_metadata(a):
                              "relationships": {"appInfo": {"data": {"type": "appInfos", "id": info["id"]}}}}}
             changes.append((f"{loc} app info (new locale)", "POST", "/v1/appInfoLocalizations", body))
         cur = ver_locs.get(loc)
-        d = diff_fields(cur["attributes"] if cur else None, want, VERSION_FIELDS)
+        d = diff_fields(cur["attributes"] if cur else None, want, [f for f in VERSION_FIELDS if f not in a.skip])
         for f, val in d.items():
             say(f"| {loc} | version | {f} | {short(cur['attributes'].get(f)) if cur else '(no localization)'} | {short(val)} |")
         if d and cur:
@@ -293,6 +299,58 @@ def cmd_store_metadata(a):
             body = {"data": {"type": "appStoreVersionLocalizations", "attributes": dict(d, locale=loc),
                              "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}}
             changes.append((f"{loc} version (new locale)", "POST", "/v1/appStoreVersionLocalizations", body))
+    # Extras: version string, content rights, categories, App Review details
+    if a.set_version_string and version["attributes"]["versionString"] != a.set_version_string:
+        say(f"| | version | versionString | {version['attributes']['versionString']} | {a.set_version_string} |")
+        changes.append(("version string", "PATCH", f"/v1/appStoreVersions/{vid}",
+                        {"data": {"type": "appStoreVersions", "id": vid,
+                                  "attributes": {"versionString": a.set_version_string}}}))
+    if a.content_rights and attrs.get("contentRightsDeclaration") != a.content_rights:
+        say(f"| | app | contentRightsDeclaration | {attrs.get('contentRightsDeclaration')} | {a.content_rights} |")
+        changes.append(("content rights", "PATCH", f"/v1/apps/{app}",
+                        {"data": {"type": "apps", "id": app, "attributes": {"contentRightsDeclaration": a.content_rights}}}))
+    if a.categories:
+        want_cat = dict(zip(("primaryCategory", "secondaryCategory"), a.categories.split(",")))
+        inc = get_opt(f"/v1/appInfos/{info['id']}?include=primaryCategory,secondaryCategory") or {}
+        rel = (inc.get("data") or {}).get("relationships", {})
+        now_cat = {k: ((rel.get(k) or {}).get("data") or {}).get("id") for k in want_cat}
+        todo = {k: v for k, v in want_cat.items() if now_cat.get(k) != v}
+        for k, v in todo.items():
+            say(f"| | app info | {k} | {now_cat.get(k)} | {v} |")
+        if todo:
+            rels = {k: {"data": {"type": "appCategories", "id": v}} for k, v in todo.items()}
+            changes.append(("categories", "PATCH", f"/v1/appInfos/{info['id']}",
+                            {"data": {"type": "appInfos", "id": info["id"], "relationships": rels}}))
+    if a.review_notes:
+        env_for = {"contactFirstName": "REVIEW_CONTACT_FIRST_NAME", "contactLastName": "REVIEW_CONTACT_LAST_NAME",
+                   "contactEmail": "REVIEW_CONTACT_EMAIL", "contactPhone": "REVIEW_CONTACT_PHONE"}
+        contact = {f: (os.environ.get(v) or "").strip() for f, v in env_for.items()}
+        notes = open(a.review_notes).read()
+        import re
+        names = sorted(set(re.findall(r"<([A-Z][A-Z_]+)>", notes)))
+        unfilled = [n for n in names if not os.environ.get(n)]
+        for n in names:
+            if os.environ.get(n):
+                notes = notes.replace(f"<{n}>", os.environ[n])
+        detail = get_opt(f"/v1/appStoreVersions/{vid}/appStoreReviewDetail")
+        cur = ((detail or {}).get("data") or {})
+        cur_attrs = cur.get("attributes", {})
+        want_attrs = {f: v for f, v in contact.items() if v}
+        want_attrs["demoAccountRequired"] = False
+        want_attrs["notes"] = notes[:4000]
+        diff = [f for f, v in want_attrs.items() if cur_attrs.get(f) != v]
+        missing = [env_for[f] for f, v in contact.items() if not v] + [f"<{n}>" for n in unfilled]
+        say(f"| | review details | fields to set | {', '.join(sorted(cur_attrs)) or '(none)'} | {', '.join(diff) or 'already equal'} (values not shown) |")
+        if missing:
+            say(f"- ⚠️ App Review details: missing from the environment: {', '.join(missing)}. Nothing is set for the review details until they exist.")
+        elif diff:
+            if cur.get("id"):
+                changes.append(("review details", "PATCH", f"/v1/appStoreReviewDetails/{cur['id']}",
+                                {"data": {"type": "appStoreReviewDetails", "id": cur["id"], "attributes": want_attrs}}))
+            else:
+                changes.append(("review details (new)", "POST", "/v1/appStoreReviewDetails",
+                                {"data": {"type": "appStoreReviewDetails", "attributes": want_attrs,
+                                          "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": vid}}}}}))
     if not changes:
         say("| | | | nothing differs | |")
     say("")
@@ -326,6 +384,12 @@ def main():
     sm = sub.add_parser("store-metadata")
     sm.add_argument("--listing", required=True)
     sm.add_argument("--version", default="")
+    sm.add_argument("--also", action="append", default=[], help="LOCALE=SOURCE: copy a listing locale (en-GB=en-US)")
+    sm.add_argument("--skip", action="append", default=[], help="a version field not to set (whatsNew on a first version)")
+    sm.add_argument("--content-rights", default="")
+    sm.add_argument("--categories", default="", help="PRIMARY,SECONDARY category ids, e.g. NEWS,BUSINESS")
+    sm.add_argument("--review-notes", default="")
+    sm.add_argument("--set-version-string", default="")
     sm.add_argument("--yes", action="store_true")
     for name in ("wait-build", "compliance", "whats-new", "submit"):
         s = sub.add_parser(name)
