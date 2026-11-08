@@ -19,11 +19,13 @@
 - Artifact `appstore-screens-<sha>-promptugal`: `<locale>/<display type>/<NN>-<screen id>.jpg`. The order of the files is the order on the store page.
 - Locales come from the app's own strings: the job passes `-testLanguage` and `-testRegion` to the screens test, so pt-PT and pt-BR show once i18n has landed.
 - **Needs from others:** the PrompTugal project's `PrompTugalScreens` scheme must run a screens test that attaches one screenshot per destination (like Team's `ScreensTests`); apps or design own it. Apple takes at most 10 screenshots per set: ux picks the ten and the order; until then the artifact has every destination.
-- **Inputs:** `ids` (ux's list, in store order: `now,team.schedule,explore,explore.talk,news.home,explore.people,explore.graph`), `ids_required` (default `now,team.schedule,explore,news.home`: a missing one fails the job, any other missing id is skipped with a warning), `seed_picks` (the five pick ids ux chose, comma-separated; reaches the test as `PT_SEED_PICKS`, which the test adds as `-PTSeedPicks <value>` when not empty) and `now` (default `2026-11-10T11:00:00Z`: the pretend time). `now` reaches the screens test as the environment variable `PT_NOW` (set through `TEST_RUNNER_PT_NOW`); the test must pass it on as a launch argument, an empty value meaning real time:
+- **Inputs:** `ids` (ux's list, in store order: `now,team.schedule,explore,explore.talk,news.home,explore.people,explore.graph`), `ids_required` (default `now,team.schedule,explore,news.home`: a missing one fails the job, any other missing id is skipped with a warning), `hide_term` (default `Web Summit`; reaches the test as `PT_HIDE_TERM`, which the test adds as the DEBUG-only `-PTHideTerm <text>` when not empty: the app hides every agenda event and news item whose title or place contains it, so no third-party trademark is in a store image), `seed_picks` (the five pick ids ux chose, comma-separated; reaches the test as `PT_SEED_PICKS`, which the test adds as `-PTSeedPicks <value>` when not empty) and `now` (default `2026-11-10T11:00:00Z`: the pretend time). `now` reaches the screens test as the environment variable `PT_NOW` (set through `TEST_RUNNER_PT_NOW`); the test must pass it on as a launch argument, an empty value meaning real time:
 
 ```swift
 var args = ["-PTDestination", id, "-PTSampleData"]
 if let now = ProcessInfo.processInfo.environment["PT_NOW"], !now.isEmpty { args += ["-PTNow", now] }
+if let t = ProcessInfo.processInfo.environment["PT_HIDE_TERM"], !t.isEmpty { args += ["-PTHideTerm", t] }
+if let p = ProcessInfo.processInfo.environment["PT_SEED_PICKS"], !p.isEmpty { args += ["-PTSeedPicks", p] }
 app.launchArguments = args
 ```
 
@@ -45,18 +47,19 @@ Everything uses the existing key and `scripts/release/asc.py` (it already has `h
 | 7 | Screenshots | `POST /v1/appScreenshotSets` per locale and display type, then `POST /v1/appScreenshots` (reserve), upload the file parts to the returned URLs, `PATCH` with `uploaded=true` and the MD5 | Yes. Ten per set, in file order |
 | 8 | Categories (primary, secondary) | `PATCH /v1/appInfos/{id}` relationships | Yes |
 | 9 | Age rating answers | `PATCH /v1/ageRatingDeclarations/{id}` | Yes (review prepares the answers) |
-| 10 | Content rights declaration (no third-party content) | `PATCH /v1/apps/{id}` `contentRightsDeclaration` | Yes |
+| 10 | Content rights declaration: the app shows third-party content, so `USES_THIRD_PARTY_CONTENT` | `PATCH /v1/apps/{id}` `contentRightsDeclaration` | Yes |
 | 11 | Price: free, and territories | `POST /v1/appPriceSchedules`, territory availability | Yes |
 | 12 | Copyright line | `PATCH /v1/appStoreVersions/{id}` `copyright` | Yes |
 | 13 | Review contact, notes for the reviewer, demo account (none) | `POST/PATCH /v1/appStoreReviewDetails` | Yes. The phone number comes from the secret `REVIEW_CONTACT_PHONE`, never from git |
 | 14 | **App Privacy answers** (data types collected, tracking) | none in the public API | **No: Dinis, by hand, in App Store Connect** (review prepares every answer) |
-| 15 | Advertising identifier question and similar prompts shown at submission | not in the API; they come back as errors on submit if unanswered | **Maybe by hand**: we find out on the dry run of step 16 |
+| 15 | Advertising identifier question (answer: **No**) and similar prompts shown at submission | not in the public API; they come back as errors on submit if unanswered | **Maybe by hand**: we find out on the dry run of step 16 |
+| 15b | Untick **Mac (Apple silicon)** and **Apple Vision Pro** availability (iPhone and iPad only) | none in the public API (only territory availability is) | **By hand** (review passes it to Dinis) |
 | 16 | Submit for review | `POST /v1/reviewSubmissions`, `POST /v1/reviewSubmissionItems`, `PATCH ... submitted=true` | Yes (`submit`, with `confirm`). Apple refuses it with a list of what is missing, which tells us if step 14 or 15 is open |
 | 17 | Release after approval (manual or automatic) | `PATCH /v1/appStoreVersions/{id}` `releaseType`; `POST /v1/appStoreVersionReleaseRequests` | Yes |
 
 Order and checks:
 
-- Steps 3 to 13 can run as soon as the build exists; steps 5, 6 and 13 read their text from review's files in git, so the store page matches what review approved. Every step first reads what is already there and changes only what differs, so it can be run again.
+- Steps 3 to 13 can run as soon as the build exists; steps 5, 6 and 13 read their text from review's files in git (`store/listing-<locale>.md`, `review-notes.txt`, `what-to-test.txt`), so the store page matches what review approved; the Languages and Ask lines stay in all three languages. Every step first reads what is already there and changes only what differs, so it can be run again.
 - A dry run prints what each step would change. The first real run is steps 3 to 13 with the conductor's go; the submit (16) is a separate go.
 - A new build number after the submission starts needs steps 1, 2 and 4 again, and a new submission.
 - The public TestFlight link (testflight's part) is separate: external group, `betaAppReviewSubmissions`, `betaGroups.publicLinkEnabled`. Not in this plan.
@@ -64,5 +67,6 @@ Order and checks:
 ## What only Dinis can do by hand
 
 - **App Privacy answers** (step 14).
+- **Mac (Apple silicon) and Vision Pro availability** (step 15b).
 - Anything Apple refuses over the API: most likely the name if "PrompTugal: Lisbon Summit" is taken (step 5), and any submission prompt that the API cannot answer (step 15).
 - The `REVIEW_CONTACT_PHONE` secret.

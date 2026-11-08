@@ -7,7 +7,6 @@ Please try, at the venue if you can:
 - Reminders: turn them on in Settings (the gear on Now). You get a notification before each pick.
 - News: read a story, then try the app in airplane mode. The program, your picks and saved news should still work.
 - The widget and Siri: add the PrompTugal widget, or ask "What's next in PrompTugal".
-- Ask (optional, card on Now): questions about the program, with your own OpenRouter key. Nothing is sent until you allow it.
 
 Tell us with Send Beta Feedback (take a screenshot in the app, or open TestFlight): what was confusing, what was missing, and anything that broke. Please include what you were trying to do.
 

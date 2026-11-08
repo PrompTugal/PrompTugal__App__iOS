@@ -65,11 +65,17 @@ public struct MyProgramView: View {
     }
 
     private var reminderRow: some View {
-        @Bindable var reminders = reminders
+        @Bindable var bindable = reminders
         return VStack(alignment: .leading, spacing: Space.s) {
-            Toggle(String(localized: "Remind me before each talk", bundle: .module), isOn: $reminders.picksOn)
+            Toggle(String(localized: "Remind me before each talk", bundle: .module), isOn: Binding(
+                get: { reminders.picksOn },
+                set: { on in
+                    reminders.picksOn = on
+                    // The tap on the toggle is the moment to ask (the first pick asks too, in the scheduler).
+                    if on { Task { _ = await reminders.requestAuthorization(); _ = await reminders.reschedule() } }
+                }))
             if reminders.picksOn {
-                Picker(String(localized: "Lead time", bundle: .module), selection: $reminders.leadMinutes) {
+                Picker(String(localized: "Lead time", bundle: .module), selection: $bindable.leadMinutes) {
                     ForEach(ReminderScheduler.leadChoices, id: \.self) { minutes in
                         Text(minutes == 0 ? String(localized: "At start", bundle: .module) : String(localized: "\(minutes) min before", bundle: .module)).tag(minutes)
                     }
@@ -82,7 +88,7 @@ public struct MyProgramView: View {
         }
         .task(id: reminders.picksOn) {
             _ = await reminders.currentAuthorization()
-            if reminders.picksOn { _ = await reminders.requestAuthorization() }
+            // No permission prompt here: this runs when the screen is built, not when the person acts.
             _ = await reminders.reschedule()
         }
     }

@@ -82,11 +82,9 @@ enum PublicDestinations {
 
     // MARK: More (the iPad sidebar; on iPhone Settings opens from the gear)
 
-    static let more: [ShellDestination] = [
-        ShellDestination(id: "collab.ai", title: String(localized: "Ask"), symbol: "sparkles", group: "More",
-                         summary: String(localized: "Ask about the summit, with your own AI key")) { AnyView(AskView()) },
+    static let more: [ShellDestination] = askScreens + [
         ShellDestination(id: "settings", title: String(localized: "Settings"), symbol: "gearshape", group: "More",
-                         summary: String(localized: "Reminders, Ask, about, privacy, support")) { AnyView(PublicSettingsView()) },
+                         summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",
                          summary: String(localized: "Before each pick")) { AnyView(ReminderSettingsView()) },
     ]
@@ -105,6 +103,27 @@ enum PublicDestinations {
         },
     ]
 
+    // MARK: Ask (DEBUG builds only)
+
+    /// Ask needs the user's own OpenRouter key, which attendees will not have, and it is the only feature that sends
+    /// user data to a third party. The App Store build leaves it out, so the app collects no data at all.
+    static var askScreens: [ShellDestination] {
+        #if DEBUG
+        [ShellDestination(id: "collab.ai", title: String(localized: "Ask"), symbol: "sparkles", group: "More",
+                          summary: String(localized: "Ask about the summit, with your own AI key"), debugOnly: true) { AnyView(AskView()) }]
+        #else
+        []
+        #endif
+    }
+
+    static var settingsSummary: String {
+        #if DEBUG
+        String(localized: "Reminders, Ask, about, privacy, support")
+        #else
+        String(localized: "Reminders, about, privacy, support")
+        #endif
+    }
+
     // MARK: DEBUG builds only
 
     /// The vault is a dead end without a key, and the website list still names the team site: neither is in a Release build.
@@ -112,9 +131,9 @@ enum PublicDestinations {
         #if DEBUG
         [
             ShellDestination(id: "vault", title: String(localized: "Vault"), symbol: "lock.shield", group: "More",
-                             summary: String(localized: "My encrypted vault, read in Swift"), ownsNavigation: true) { AnyView(VaultHomeView()) },
+                             summary: String(localized: "My encrypted vault, read in Swift"), debugOnly: true, ownsNavigation: true) { AnyView(VaultHomeView()) },
             ShellDestination(id: "web.all", title: String(localized: "All websites"), symbol: "safari", group: "More", kind: .web(FeedClient.site),
-                             summary: String(localized: "The website shell, with its shortcuts")) { AnyView(WebsiteView()) },
+                             summary: String(localized: "The website shell, with its shortcuts"), debugOnly: true) { AnyView(WebsiteView()) },
         ]
         #else
         []

@@ -34,6 +34,10 @@ on:
         description: 'Store screenshots: pick ids to seed into "my program" (comma-separated). Passed to the screens test as PT_SEED_PICKS (TEST_RUNNER_PT_SEED_PICKS); the test adds the launch argument -PTSeedPicks <value>. Empty = none.'
         type: string
         default: 'events/has-europe-s-tech-moment-arrived/index.html,events/double-agents-are-your-employees-ai-agents-working-for-or/index.html,events/ai-your-new-news-editor/index.html,events/the-agentic-internet-who-controls-the-web/index.html,events/trust-issues-letting-ai-agents-into-production-safely/index.html'
+      hide_term:
+        description: 'Store screenshots: hide every agenda event and news item whose title or place contains this text (no third-party trademarks in store images). Passed to the screens test as PT_HIDE_TERM (TEST_RUNNER_PT_HIDE_TERM); the test adds the DEBUG-only launch argument -PTHideTerm <text>. Empty = hide nothing.'
+        type: string
+        default: 'Web Summit'
       now:
         description: 'Store screenshots: pretend the time is this ISO date (e.g. 2026-11-10T11:00:00Z). Passed to the screens test as the environment variable PT_NOW (TEST_RUNNER_PT_NOW); the test adds the launch argument -PTNow <date>. Empty = real time.'
         type: string
@@ -200,6 +204,7 @@ jobs:
       IDS_REQUIRED: ${{ inputs.ids_required }}
       TEST_RUNNER_PT_NOW: ${{ inputs.now }}
       TEST_RUNNER_PT_SEED_PICKS: ${{ inputs.seed_picks }}
+      TEST_RUNNER_PT_HIDE_TERM: ${{ inputs.hide_term }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -240,10 +245,18 @@ jobs:
                 -destination "id=${{ steps.sim.outputs.udid }}" \
                 -derivedDataPath "$RUNNER_TEMP/dd" \
                 -resultBundlePath "$result" \
+                -only-testing:PrompTugalUITests/ScreensTests \
                 -testLanguage "$lang" -testRegion "$region" \
                 -parallel-testing-enabled NO \
                 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO || true
             .github/scripts/export-screens.py "$result" "$RUNNER_TEMP/store/$loc" "${{ matrix.size.label }}" || true
+            # The screens test names its attachments with a store-order prefix ("01-now"); the ids input
+            # uses the plain id ("now"), so drop the prefix: iphone-01-now.png -> iphone-now.png.
+            for f in "$RUNNER_TEMP/store/$loc/"*.png; do
+              [ -e "$f" ] || continue
+              b=$(basename "$f"); n=$(echo "$b" | sed -E 's/^(iphone|ipad)-[0-9]+-/\1-/')
+              [ "$b" = "$n" ] || mv "$f" "$(dirname "$f")/$n"
+            done
           done
 
       - name: Normalise, check sizes, convert to JPEG
@@ -260,7 +273,7 @@ jobs:
               IFS=',' read -r -a want <<< "$IDS"
               for id in "${want[@]}"; do
                 id=$(echo "$id" | tr -d ' ')
-                f="$dir${{ matrix.size.label }}-$id.png"
+                f="${dir}${{ matrix.size.label }}-$id.png"
                 if [ -e "$f" ]; then files+=("$f")
                 elif [[ ",${IDS_REQUIRED// /}," == *",$id,"* ]]; then echo "::error::$loc: no screenshot for required id '$id' ($f)"; bad=1
                 else echo "::warning::$loc: no screenshot for id '$id', skipped"; fi
@@ -277,7 +290,11 @@ jobs:
               sips -s format jpeg -s formatOptions 100 "$f" --out "$dir$(printf '%02d' $n)-$id.jpg" >/dev/null
             done
             rm -f "$dir"*.png
-            python3 .github/scripts/store-check.py "${{ matrix.size.kind }}" "$dir"*.jpg || bad=1
+            if ls "$dir"*.jpg >/dev/null 2>&1; then
+              python3 .github/scripts/store-check.py "${{ matrix.size.kind }}" "$dir"*.jpg || bad=1
+            else
+              echo "::error::$loc: no screenshots to check for ${{ matrix.size.kind }}"; bad=1
+            fi
             echo "- $loc: $n screenshots (${{ matrix.size.kind }})" >> "$GITHUB_STEP_SUMMARY"
           done
           [ "$bad" = 0 ] || { echo "::error::a screenshot has a size App Store Connect does not take for ${{ matrix.size.kind }}"; exit 1; }

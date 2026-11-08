@@ -38,7 +38,8 @@ final class ScreensTests: XCTestCase {
 
     /// The launch arguments for one screen: pure, so a unit test can check them.
     static func launchArguments(destination: String, environment: [String: String]) -> [String] {
-        var args = ["-PTDestination", destination, "-PTSampleData"]
+        // Debug mode off, as in the Release build: no surface badges, no debug-only screens in the sidebar.
+        var args = ["-PTDestination", destination, "-PTSampleData", "-debug.enabled", "NO"]
         if let now = environment["PT_NOW"], !now.isEmpty { args += ["-PTNow", now] }
         if let term = environment["PT_HIDE_TERM"], !term.isEmpty { args += ["-PTHideTerm", term] }
         if let picks = environment["PT_SEED_PICKS"], !picks.isEmpty { args += ["-PTSeedPicks", picks] }
@@ -47,18 +48,18 @@ final class ScreensTests: XCTestCase {
 
     func testLaunchArgumentsForwardTheClockAndThePicks() {
         XCTAssertEqual(Self.launchArguments(destination: "now", environment: [:]),
-                       ["-PTDestination", "now", "-PTSampleData"])
+                       ["-PTDestination", "now", "-PTSampleData", "-debug.enabled", "NO"])
         XCTAssertEqual(Self.launchArguments(destination: "now", environment: ["PT_NOW": "", "PT_SEED_PICKS": ""]),
-                       ["-PTDestination", "now", "-PTSampleData"])
+                       ["-PTDestination", "now", "-PTSampleData", "-debug.enabled", "NO"])
         XCTAssertEqual(
             Self.launchArguments(destination: "explore",
                                  environment: ["PT_NOW": "2026-11-10T11:00:00Z", "PT_SEED_PICKS": "a,b"]),
-            ["-PTDestination", "explore", "-PTSampleData", "-PTNow", "2026-11-10T11:00:00Z", "-PTSeedPicks", "a,b"])
+            ["-PTDestination", "explore", "-PTSampleData", "-debug.enabled", "NO", "-PTNow", "2026-11-10T11:00:00Z", "-PTSeedPicks", "a,b"])
         XCTAssertEqual(
             Self.launchArguments(destination: "now", environment: ["PT_HIDE_TERM": "Web Summit", "PT_SEED_PICKS": "a"]),
-            ["-PTDestination", "now", "-PTSampleData", "-PTHideTerm", "Web Summit", "-PTSeedPicks", "a"])
+            ["-PTDestination", "now", "-PTSampleData", "-debug.enabled", "NO", "-PTHideTerm", "Web Summit", "-PTSeedPicks", "a"])
         XCTAssertEqual(Self.launchArguments(destination: "now", environment: ["PT_HIDE_TERM": ""]),
-                       ["-PTDestination", "now", "-PTSampleData"])
+                       ["-PTDestination", "now", "-PTSampleData", "-debug.enabled", "NO"])
     }
 
     @MainActor
@@ -71,7 +72,10 @@ final class ScreensTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = Self.launchArguments(destination: id, environment: ProcessInfo.processInfo.environment)
         app.launch()
+        Self.dismissSystemAlert()
         sleep(3)
+        // The reminders ask for notification permission once picks are seeded; the alert can appear late.
+        Self.dismissSystemAlert(timeout: 1)
         // The whole screen, not app.screenshot(): in landscape on iPad the app element's capture crops the portrait
         // framebuffer and leaves black areas.
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
@@ -79,5 +83,18 @@ final class ScreensTests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
         app.terminate()
+    }
+
+    /// A system permission alert (notifications) sits in SpringBoard above every later launch and would be in every
+    /// screenshot. Tap its last button, "Allow" in every language, so the shots show the app and My program shows
+    /// no "notifications are off" warning.
+    @MainActor
+    private static func dismissSystemAlert(timeout: TimeInterval = 5) {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let alert = springboard.alerts.firstMatch
+        if alert.waitForExistence(timeout: timeout), alert.buttons.count > 0 {
+            alert.buttons.element(boundBy: alert.buttons.count - 1).tap()
+            sleep(1)
+        }
     }
 }

@@ -3,6 +3,7 @@ import Testing
 @testable import PTWeb
 
 @Suite("Web page stays on its own site")
+@MainActor
 struct WebPageHostTests {
     private let home = URL(string: "https://promptugal.news/")!
 

@@ -56,7 +56,7 @@ git grep -nohE "https://[a-z0-9.-]+" -- Packages/*/Sources Apps/PrompTugal | sor
 | Item | State on rc2 |
 | --- | --- |
 | N1 cookies off in `HTTPClient` | done (`HTTPClient.swift:89-91`) |
-| N2 vault background task | still at `PrompTugalApp.swift:30` and `:40`. **Accepted for this version** (conductor, 12:32): with no vault keys, `backgroundRefresh` returns at once, so it makes no network calls and shows no prompt or UI. |
+| N2 vault background task | **Done on rc4 d8a5020**: `#if DEBUG` only. (Earlier: accepted for this version) (conductor, 12:32): with no vault keys, `backgroundRefresh` returns at once, so it makes no network calls and shows no prompt or UI. |
 | N3 "Save key to my vault" | done: `PublicAskProvider.offersVaultKeyCopy` is false |
 | N4 `WebPage` loads linked sites in the app | **open, blocker** (team). **Fixed on `split/rc3` 98767dd** (team ae618cf): see below. |
 | New native sources | PTExplore (`ExploreSource.swift`: promptugal.news only); PTNowNext makes no network calls; PTSync is not linked |
@@ -66,3 +66,7 @@ git grep -nohE "https://[a-z0-9.-]+" -- Packages/*/Sources Apps/PrompTugal | sor
 
 - **N4 fixed.** `WebPage.swift` now cancels main-frame navigations to another site and opens a tapped link in Safari: `leavesSite(_:from:)` compares the host with the page's own host, allowing subdomains. The same check covers `createWebViewWith` (target=_blank and window.open). Tests are in `PTWebTests/WebPageHostTests.swift`. Every web view starts on promptugal.news, so only promptugal.news loads inside the app.
 - N1 and N3 are still done, and N2 is accepted. **After rc3 the public build talks to two hosts: promptugal.news and openrouter.ai (Ask, own key, after consent).** That matches the review notes, the App Privacy label and the age-rating answer.
+
+## rc8 4f58965: Ask is DEBUG-only (21:45 UTC)
+
+Ask (rows 4 and 5 above) and dictation (row 6) are not reachable in a Release build. The Ask destination exists only `#if DEBUG` with `debugOnly: true`; the Now card and the Settings row exist only `#if DEBUG` with debug mode on; there is no `askAnywhere` in the shell; and `promptugal://open/collab.ai` resolves to nothing in Release. **The public Release build now talks to one host: promptugal.news.** The App Privacy answer is "Data Not Collected", and the review notes say "one host only". PTAsk stays linked (dead code in Release), so the microphone and speech purpose strings stay: harmless, and removing them would need a rebuild of the target's settings.

@@ -29,7 +29,9 @@ changes=$(git log --no-merges --format='%s' "$range" \
   | awk '!seen[$0]++' | sed 's/^/- /')
 count=$(printf '%s\n' "$changes" | grep -c '^- ' || true)
 
-{
+# Build the whole text first, then cut it: piping a long text into `head -c` closes the pipe early, and
+# with pipefail the writer's SIGPIPE ("printf: write error: Broken pipe") would fail the release step.
+notes=$({
   echo "${APP_NAME:-PrompTugal} ${MARKETING_VERSION:-} (${BUILD_NUMBER:-}) · tag ${RELEASE_TAG:-none} · commit $(git rev-parse --short "$to")"
   echo "Test on iPhone and iPad. Report problems to the team channel with the build number."
   intro="$(dirname "$0")/notes/${APP_KEY:-}.txt"
@@ -37,4 +39,5 @@ count=$(printf '%s\n' "$changes" | grep -c '^- ' || true)
   if [ -n "$status" ]; then echo; echo "What each session changed:"; printf '%s\n' "$status"; fi
   echo; echo "Commits $since: $count"
   printf '%s\n' "$changes"
-} | head -c 3900
+})
+printf '%s\n' "${notes:0:3900}"

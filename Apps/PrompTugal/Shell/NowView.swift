@@ -23,6 +23,9 @@ extension EnvironmentValues {
 /// Every user-facing string is written exactly as in the ux spec, so the String Catalog keys match.
 struct NowView: View {
     @Environment(ReaderStore.self) private var reader
+    #if DEBUG
+    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
+    #endif
 
     var body: some View {
         // One minute at a time: the clock, the model and the countdowns follow it. `-PTNow` fixes the time in DEBUG builds.
@@ -51,7 +54,10 @@ struct NowView: View {
                 }
                 LatestNewsCard()
                 PracticalCard()
-                AskCard()
+                #if DEBUG
+                // Ask is DEBUG-only (and only with debug mode on): the App Store build collects no data.
+                if debug { AskCard() }
+                #endif
             }
         }
         .background(Palette.paper.ignoresSafeArea())
@@ -309,9 +315,13 @@ private struct SessionRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: Space.m) {
-            Text(Lisbon.timeLabel(entry.start))
-                .font(Typo.data).foregroundStyle(Palette.ink)
-                .frame(width: 64, alignment: .leading)
+            // The column is as wide as "88:88 AM" (12-hour locales), so a time never wraps and the rows line up.
+            Text(verbatim: "88:88 AM").font(Typo.data).lineLimit(1).fixedSize(horizontal: true, vertical: false).hidden()
+                .overlay(alignment: .leading) {
+                    Text(Lisbon.timeLabel(entry.start))
+                        .font(Typo.data).foregroundStyle(Palette.ink)
+                        .lineLimit(1).fixedSize(horizontal: true, vertical: false)
+                }
             link {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: Space.xs) {
