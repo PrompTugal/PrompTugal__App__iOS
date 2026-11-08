@@ -14,7 +14,7 @@
 | **riskmandate.ai live demos** | RiskGraph Explorer, Licence to Operate (13 MB), the field demo, Browser Isolation, File security, Permission games. Each opens a vault from another site at runtime; the read keys are published in the pages | No. Pre-fetch with the native sgit reader and give the page a stand-in for its vault calls |
 | **Team site** | Angelo's **"ABPs you can watch"** prototype (with and without, 3 levels, one HTML file plus 22 KB of data); Angelo's live graph of agents talking; Vicky's Live AI Office (pixel art, 19 agents); the X-ray (13 subjects, mandate ring); **documented near misses** (the in-action page) | Yes, from a snapshot. The live views need a replay mode |
 | **UX** (ux.sgit.ai) | A register of 63 UX findings, no animations | n/a |
-| **"uv.sgit.ai"** | Most likely **ruv.sgit.ai** (`SGit-AI__Website__Ruv`). The player and the studio ports came from there. It is not visible to this account and this session's network refuses it | Not checked: may hold more pieces |
+| **ruv.sgit.ai** (`SGit-AI__Website__Ruv`, the "uv" site) | **The studio: 7 animations made by a Ruflo hive** (v1 a diagram that builds, v2 messages in flight, v3 vault lanes, **v4 the Policy Gate**, **v5 the Isometric Office**, **v6 the Hive in 3D**, v7 the city of vaults), **each also as an MP4** (11 MB). Also "one action's journey", "in layers", "the equation", "in motion"; the 15 Oct talk as **single-file offline builds with narration** (`site/talk/offline-5.html`, `offline-10.html`); 11 talk slides. **The ABP schema and the capability vocabulary** (`abp/`: `verb.object.reach`, 23 primitives, each with the undo class of its effect) | Yes. Libraries are stored locally (three.js r128, mermaid, marked); the MP4s play natively |
 
 ## The first playlist (a proposal for the vote)
 
@@ -99,9 +99,10 @@ What you asked for: which agents reach my Gmail and Drive, which can start other
 5. **The vault demos**, pre-fetched with the native reader.
 6. **Native rebuilds** of the pieces the vote picks.
 
-## Questions for Dinis
+## Answers from Dinis (8 Nov)
 
-1. **Angelo's "ABPs you can watch"** is marked "an experiment; nothing public". Ask Angelo to show it at the booth?
-2. **ruv.sgit.ai:** is that the "uv" site? Its repo isn't visible to this account, so add it to the session or confirm that the Presentation copies cover it.
-3. **The agents and capabilities JSON:** who builds it on the team site, and can measuring the 75 unknown agents happen this week?
-4. **Book images:** fine to use in the app, given the Leanpub edition?
+1. **Angelo's "ABPs you can watch" can be shown.** It goes into the first playlist.
+2. **ruv.sgit.ai is the "uv" site.** Its repo is public and was read (above). Add the studio v4, v5 and v6 and the offline talk to the playlist.
+3. **The iOS dev agents build the agents-and-capabilities data**, using the ABP schema and the capability vocabulary from `SGit-AI__Website__Ruv/abp/` (`verb.object.reach`). Then "which agents can send email, which can start agents, what can't be undone" are queries over one file.
+4. **The book's images can be used.**
+5. **Licences:** everything we publish on these sites is open source (Apache-2.0) or CC BY 4.0. Copying it into the apps is fine; keep the notices and credit the source.
