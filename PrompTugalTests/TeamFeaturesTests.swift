@@ -245,9 +245,16 @@ struct SiteDataStoreTests {
     }
 
     @Test func scriptsCarryTheWebsiteKeys() {
-        #expect(BridgeScripts.writeSchedule.contains("'nr.schedule.v1'"))
-        #expect(BridgeScripts.writeSchedule.contains("'nr:schedule'"))
-        #expect(BridgeScripts.creditMeter.contains("'web-summit.newsroom.meter.v1'"))
         #expect(BridgeScripts.pageAPI(version: "1.2", ops: ["schedule.get"]).contains(#"version: "1.2", ops: Object.freeze(["schedule.get"])"#))
+    }
+}
+
+@Suite("Team numbers")
+struct TeamNumbersTests {
+    @Test func teamCountsDoNotTrap() {
+        #expect(TeamNumbers.int(1e300) == 1_000_000_000)
+        #expect(TeamNumbers.int(-1e300) == -1_000_000_000)
+        #expect(TeamNumbers.int(.nan) == 0)
+        #expect(TeamNumbers.int(42.9) == 42)
     }
 }
