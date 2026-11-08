@@ -1,8 +1,8 @@
-# Status · Deck (decks and presenter mode)
+# Status · Deck (PTDeck, then PTExplore)
 
-> PTDeck is written and pushed on `split/deck`: model, loader (published JSON, with a fallback that reads the site's pages today), disk cache, deck list, reader, iPad presenter and external display. It has not compiled yet; CI run comes next. Two things wait on others: the Xcode package reference (apps) and the external-display scene entry (apps).
+> PTDeck merges as is (via design's run). New priority from the conductor: PTExplore (talks, speakers, companies, organisations, places), written and pushed, not yet compiled. Both packages are on `split/deck`; one CI run next.
 
-Branch: `split/deck` · Last update: 8 Nov, 10:50 UTC · Last CI run: none yet
+Branch: `split/deck` · Last update: 8 Nov, 12:00 UTC · Last CI run: none yet
 
 ## What the site publishes today
 - The decks are HTML pages (`investors/decks/<id>/index.html`, and `.../<lang>/index.html` for pt, fr, es), each with a Markdown twin (`index.md`). There is no deck JSON and no speaker notes. Images are on the page only.
@@ -26,3 +26,10 @@ Branch: `split/deck` · Last update: 8 Nov, 10:50 UTC · Last CI run: none yet
 1. Dispatch CI on `split/deck` (promptugal, macos-26, quick).
 2. Fix compile errors, one run at a time.
 3. One full run, then READY.
+
+## PTExplore (summit app, 8 Nov)
+- Data: one file, `api/v1/search-docs.json` (talks, speakers, companies, organisations; 468 KB), plus `api/v1/places.json` (labels only). A talk's day, times and place are read from its search line. No ContentSource seam exists on `dev` yet, so `PublishedExploreSource` fetches and caches on disk (injected `ExploreSource` protocol; swap later).
+- Detail page: `api/v1/<events|people|companies|organisations|places>/<slug>.json`, read when an entry opens and cached. It shows facts and connections that link to other entries.
+- Search: accent and case blind, every word must match, title matches rank first; kind picker (Talks, Speakers, Companies, Organisations, Places); talks grouped by Lisbon day.
+- Screen for design: id `explore`, view `ExploreScreen()` (own NavigationStack, `ownsNavigation: true`), `import PTExplore`. apps: package reference and `PTExplore` in the promptugal packages list.
+- Strings are plain SwiftUI literals, so i18n's catalogs pick them up.
