@@ -1,6 +1,6 @@
 # Release status
 
-> CI now plans per app: a Linux `changes` job picks the affected apps and packages, and ios.yml, ios-release.yml and screens.yml run matrices over them. Written against today's single project; first runs on split/release are in progress.
+> Handed off to conductor.B at 01:40 UTC. CI now plans per app: a Linux `changes` job picks the affected apps and packages, and ios.yml, ios-release.yml and screens.yml run matrices over them. Written against today's single project; first runs on split/release are in progress.
 
 **Branch:** `split/release` · **Updated:** 8 Nov 00:55 Lisbon (23:55 UTC, 7 Nov)
 
@@ -50,4 +50,36 @@
 
 ## Last CI run
 
-- iOS run 271 (push) and iOS release run 50 (dry run) on `b15d34f`: success. Updated 00:55 UTC.
+- iOS run 271 (push) and iOS release run 50 (dry run) on `b15d34f`: success. Newer proof runs 287 and 59 on `d0ad4d6` pending (see Handoff). Updated 01:40 UTC.
+
+## Handoff
+
+Handed off at 01:40 UTC (8 Nov) to the session under conductor.B. I dispatch no more CI and have cancelled my own scheduled check-ins.
+
+**Head:** `split/release`, see `git log -1` (the last code commit is `0ed75bc`; the handoff commit only adds this section and a merge of `origin/dev`).
+
+**Last runs (all on `d0ad4d6`, same code as the head apart from `0ed75bc`):**
+
+- iOS run 287 (`ios.yml`, `quick=true`, `app=all`): queued at 01:31 UTC, no result yet.
+- iOS release run 59 (dry run, `app=all`): in progress at 01:31 UTC, no result yet.
+- Earlier startup failures (runs 282, 283, release 57) were the `changes` call asking for `actions: read` that the caller did not grant. Fixed in `d0ad4d6`.
+- Last fully green runs: iOS 271 and iOS release 50 on `b15d34f` (before the one-version and quick work).
+
+**Still to prove**
+
+1. **Quick mode** (`ios.yml` `quick=true`): expect Debug build only, iPhone tests only, package tests for what the branch changed. Run 287.
+2. **One version, dispatch path:** in run 59's unsigned package log, `MARKETING_VERSION=0.4.0`, `tag none` (not a release commit), summary line `0.4.0 (build) · tag none · commit <sha>`, and the Info.plist table shows version `0.4.0`.
+3. **One version, `workflow_run` path:** cannot run before merge, because `workflow_run` only fires from the default branch. After the merge, watch the first dev push: "Release and deploy" makes tag `v0.4.0`, then "iOS release" starts, builds that commit, and the app version is `0.4.0`. Check the `Changes` job summary line "release `v0.4.0` (…): `team` since never built" or since the last build, and that each app uses its own `build-info-<app>` commit as the base.
+4. **Record-missing skip:** only runs with signing secrets. Reviewed and syntax-checked only. Expect `asc.py has-record` to exit 3 for a bundle with no record: the job is green with "skipped: no App Store Connect record", and no archive happens.
+5. **`app=riskmandate` and `app=promptugal` dispatch:** works once `apps.json` has them and their projects exist (today the plan prints "not in apps.json").
+
+**Merge condition (conductor's):** a green `quick=true` run plus a green ios-release dry run. Then merge `43207a8`, `6c26a23`, `279dbca` and the later fixes (`d0ad4d6`, `0ed75bc`) together, and run the site checks first, since `VERSION` is now `v0.4` and `website/version.py` and `website/test_site.py` changed.
+
+**Next steps**
+
+1. Read runs 287 and 59. If red, `get_job_logs` with failed only, fix on `split/release`, re-dispatch.
+2. When both are green, send the conductor the head sha and the two run numbers.
+3. After the merge, watch the first dev push end to end (point 3 above). If `workflow_run` does not fire, check that the default branch is the one holding `ios-release.yml` and that "Release and deploy" is the exact workflow name.
+4. Phase 4: `apps.json` "team" must switch bundle to `news.promptugal.team` in the same commit that moves the project, or the upload guard fails. Ask platform to add `.github/scripts/` to `all`.
+5. The editor should read the app version from `VERSION` (the site's `build.py` still reads the project's `MARKETING_VERSION`, 0.3.1).
+6. Risk to know: if "Release and deploy" fails for a push (for example the site validator), that push is not built; the next successful release builds everything since each app's last build.

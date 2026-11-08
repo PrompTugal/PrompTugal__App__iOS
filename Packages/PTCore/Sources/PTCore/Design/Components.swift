@@ -3,11 +3,16 @@ import SwiftUI
 // MARK: - Cards
 
 /// The basic surface: a rounded card on the paper background.
-struct Card<Content: View>: View {
-    var padding: CGFloat = Space.l
-    @ViewBuilder var content: Content
+public struct Card<Content: View>: View {
+    public var padding: CGFloat = Space.l
+    @ViewBuilder public var content: Content
 
-    var body: some View {
+    public init(padding: CGFloat = Space.l, @ViewBuilder content: () -> Content) {
+        self.padding = padding
+        self.content = content()
+    }
+
+    public var body: some View {
         VStack(alignment: .leading, spacing: Space.s) { content }
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -18,13 +23,13 @@ struct Card<Content: View>: View {
 }
 
 /// A card with a small uppercase kicker, a serif title and an optional trailing accessory.
-struct TitledCard<Content: View, Accessory: View>: View {
-    let kicker: String?
-    let title: String
-    @ViewBuilder var accessory: Accessory
-    @ViewBuilder var content: Content
+public struct TitledCard<Content: View, Accessory: View>: View {
+    public let kicker: String?
+    public let title: String
+    @ViewBuilder public var accessory: Accessory
+    @ViewBuilder public var content: Content
 
-    init(_ title: String, kicker: String? = nil,
+    public init(_ title: String, kicker: String? = nil,
          @ViewBuilder accessory: () -> Accessory,
          @ViewBuilder content: () -> Content) {
         self.title = title
@@ -33,7 +38,7 @@ struct TitledCard<Content: View, Accessory: View>: View {
         self.content = content()
     }
 
-    var body: some View {
+    public var body: some View {
         Card {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -50,18 +55,18 @@ struct TitledCard<Content: View, Accessory: View>: View {
 }
 
 extension TitledCard where Accessory == EmptyView {
-    init(_ title: String, kicker: String? = nil, @ViewBuilder content: () -> Content) {
+    public init(_ title: String, kicker: String? = nil, @ViewBuilder content: () -> Content) {
         self.init(title, kicker: kicker, accessory: { EmptyView() }, content: content)
     }
 }
 
 /// The small red uppercase label the website uses above headlines.
-struct Kicker: View {
-    let text: String
-    var color: Color = Palette.red
-    init(_ text: String, color: Color = Palette.red) { self.text = text; self.color = color }
+public struct Kicker: View {
+    public let text: String
+    public var color: Color = Palette.red
+    public init(_ text: String, color: Color = Palette.red) { self.text = text; self.color = color }
 
-    var body: some View {
+    public var body: some View {
         Text(text.uppercased())
             .font(Typo.kicker)
             .tracking(1.4)
@@ -70,12 +75,18 @@ struct Kicker: View {
 }
 
 /// A screen header: kicker, serif display title and a one-line summary.
-struct ScreenHeader: View {
-    let kicker: String
-    let title: String
-    var summary: String?
+public struct ScreenHeader: View {
+    public let kicker: String
+    public let title: String
+    public var summary: String?
 
-    var body: some View {
+    public init(kicker: String, title: String, summary: String? = nil) {
+        self.kicker = kicker
+        self.title = title
+        self.summary = summary
+    }
+
+    public var body: some View {
         VStack(alignment: .leading, spacing: Space.xs) {
             Kicker(kicker)
             Text(title).font(Typo.display).foregroundStyle(Palette.ink)
@@ -91,14 +102,22 @@ struct ScreenHeader: View {
 // MARK: - Stat tiles
 
 /// One number with a label, an optional trend line and a tone.
-struct StatTile: View {
-    enum Tone { case neutral, good, warn, bad }
+public struct StatTile: View {
+    public enum Tone { case neutral, good, warn, bad }
 
-    let label: String
-    let value: String
-    var detail: String?
-    var tone: Tone = .neutral
-    var trend: [Double] = []
+    public let label: String
+    public let value: String
+    public var detail: String?
+    public var tone: Tone = .neutral
+    public var trend: [Double] = []
+
+    public init(label: String, value: String, detail: String? = nil, tone: Tone = .neutral, trend: [Double] = []) {
+        self.label = label
+        self.value = value
+        self.detail = detail
+        self.tone = tone
+        self.trend = trend
+    }
 
     private var color: Color {
         switch tone {
@@ -109,7 +128,7 @@ struct StatTile: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         Card(padding: Space.m) {
             Text(label).font(.caption.weight(.medium)).foregroundStyle(Palette.muted).lineLimit(2)
             Text(value).font(Typo.number).foregroundStyle(color).minimumScaleFactor(0.6).lineLimit(1)
@@ -126,11 +145,16 @@ struct StatTile: View {
 }
 
 /// A row of stat tiles that wraps on narrow widths.
-struct StatGrid<Content: View>: View {
-    var minimum: CGFloat = 140
-    @ViewBuilder var content: Content
+public struct StatGrid<Content: View>: View {
+    public var minimum: CGFloat = 140
+    @ViewBuilder public var content: Content
 
-    var body: some View {
+    public init(minimum: CGFloat = 140, @ViewBuilder content: () -> Content) {
+        self.minimum = minimum
+        self.content = content()
+    }
+
+    public var body: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: minimum), spacing: Space.m)], spacing: Space.m) {
             content
         }
@@ -138,11 +162,16 @@ struct StatGrid<Content: View>: View {
 }
 
 /// A tiny line chart drawn with a Path, for tiles and rows.
-struct Sparkline: View {
-    let values: [Double]
-    var color: Color = Palette.red
+public struct Sparkline: View {
+    public let values: [Double]
+    public var color: Color = Palette.red
 
-    var body: some View {
+    public init(values: [Double], color: Color = Palette.red) {
+        self.values = values
+        self.color = color
+    }
+
+    public var body: some View {
         GeometryReader { geo in
             let maxValue = max(values.max() ?? 1, 1)
             let step = values.count > 1 ? geo.size.width / CGFloat(values.count - 1) : 0
@@ -160,12 +189,18 @@ struct Sparkline: View {
 }
 
 /// A count in a capsule, used for "only you", "decide" and "overdue".
-struct CountPill: View {
-    let count: Int
-    let label: String
-    var color: Color = Palette.red
+public struct CountPill: View {
+    public let count: Int
+    public let label: String
+    public var color: Color = Palette.red
 
-    var body: some View {
+    public init(count: Int, label: String, color: Color = Palette.red) {
+        self.count = count
+        self.label = label
+        self.color = color
+    }
+
+    public var body: some View {
         HStack(spacing: 3) {
             Text("\(count)").font(.caption.weight(.bold).monospacedDigit())
             Text(label).font(.caption2)
@@ -180,12 +215,12 @@ struct CountPill: View {
 
 // MARK: - Native / web / hybrid badge
 
-enum SurfaceKind: Hashable, Sendable {
+public enum SurfaceKind: Hashable, Sendable {
     case native
     case web(URL)
     case hybrid
 
-    var label: String {
+    public var label: String {
         switch self {
         case .native: "Native"
         case .web: "Web"
@@ -193,7 +228,7 @@ enum SurfaceKind: Hashable, Sendable {
         }
     }
 
-    var symbol: String {
+    public var symbol: String {
         switch self {
         case .native: "swift"
         case .web: "globe"
@@ -201,7 +236,7 @@ enum SurfaceKind: Hashable, Sendable {
         }
     }
 
-    var color: Color {
+    public var color: Color {
         switch self {
         case .native: Palette.green
         case .web: Palette.blue
@@ -211,10 +246,14 @@ enum SurfaceKind: Hashable, Sendable {
 }
 
 /// The small "native / web / hybrid" badge. Shown on every screen in debug mode.
-struct KindBadge: View {
-    let kind: SurfaceKind
+public struct KindBadge: View {
+    public let kind: SurfaceKind
 
-    var body: some View {
+    public init(kind: SurfaceKind) {
+        self.kind = kind
+    }
+
+    public var body: some View {
         Label(kind.label, systemImage: kind.symbol)
             .font(.caption2.weight(.semibold))
             .labelStyle(.titleAndIcon)
@@ -229,7 +268,7 @@ struct KindBadge: View {
 
 extension View {
     /// Adds the kind badge to the toolbar when debug mode is on.
-    func surfaceKind(_ kind: SurfaceKind) -> some View { modifier(KindBadgeModifier(kind: kind)) }
+    public func surfaceKind(_ kind: SurfaceKind) -> some View { modifier(KindBadgeModifier(kind: kind)) }
 }
 
 private struct KindBadgeModifier: ViewModifier {
@@ -246,33 +285,33 @@ private struct KindBadgeModifier: ViewModifier {
 }
 
 /// The one switch for debug mode, shared by Settings, the shell and the badges.
-enum DebugMode {
-    static let key = "debug.enabled"
+public enum DebugMode {
+    public static let key = "debug.enabled"
     /// On in debug builds, where the team wants to see the app's working. Off in release builds:
     /// App Review and attendees see no debug panels unless they turn them on in Settings.
     #if DEBUG
-    static let defaultOn = true
+    public static let defaultOn = true
     #else
-    static let defaultOn = false
+    public static let defaultOn = false
     #endif
 }
 
 // MARK: - Previews on both devices
 
 /// Every screen is previewed at iPhone and iPad sizes, with the size class each really has.
-enum PreviewDevice {
-    static let phone = CGSize(width: 393, height: 852)
-    static let pad = CGSize(width: 1180, height: 820)
+public enum PreviewDevice {
+    public static let phone = CGSize(width: 393, height: 852)
+    public static let pad = CGSize(width: 1180, height: 820)
 }
 
 extension View {
     /// The compact (iPhone) layout of a screen, for previews.
-    func phonePreview() -> some View {
+    public func phonePreview() -> some View {
         environment(\.horizontalSizeClass, .compact).frame(width: PreviewDevice.phone.width, height: PreviewDevice.phone.height)
     }
 
     /// The regular (iPad landscape) layout of a screen, for previews.
-    func padPreview() -> some View {
+    public func padPreview() -> some View {
         environment(\.horizontalSizeClass, .regular).frame(width: PreviewDevice.pad.width, height: PreviewDevice.pad.height)
     }
 }
@@ -280,7 +319,7 @@ extension View {
 // MARK: - Load states
 
 /// What a screen knows about its data.
-enum LoadPhase: Equatable, Sendable {
+public enum LoadPhase: Equatable, Sendable {
     case idle
     case loading
     case loaded
@@ -288,12 +327,19 @@ enum LoadPhase: Equatable, Sendable {
 }
 
 /// "Updated 4 min ago", in amber once the data is older than `staleAfter`.
-struct FreshnessLabel: View {
-    let updated: Date?
-    var staleAfter: TimeInterval = 30 * 60
-    var failed = false
+public struct FreshnessLabel: View {
+    public let updated: Date?
+    public var staleAfter: TimeInterval = 30 * 60
 
-    var body: some View {
+    public var failed = false
+
+    public init(updated: Date?, staleAfter: TimeInterval = 30 * 60, failed: Bool = false) {
+        self.updated = updated
+        self.staleAfter = staleAfter
+        self.failed = failed
+    }
+
+    public var body: some View {
         TimelineView(.periodic(from: .now, by: 30)) { context in
             if let raw = updated {
                 // A time stamp in the future (a clock ahead, or sample data) reads as now.
@@ -315,13 +361,20 @@ struct FreshnessLabel: View {
 }
 
 /// The standard empty, loading and error states, so every screen says the same thing the same way.
-struct StateView: View {
-    let phase: LoadPhase
-    let hasData: Bool
-    var title = "data"
-    var retry: (() -> Void)?
+public struct StateView: View {
+    public let phase: LoadPhase
+    public let hasData: Bool
+    public var title = "data"
+    public var retry: (() -> Void)?
 
-    var body: some View {
+    public init(phase: LoadPhase, hasData: Bool, title: String = "data", retry: (() -> Void)? = nil) {
+        self.phase = phase
+        self.hasData = hasData
+        self.title = title
+        self.retry = retry
+    }
+
+    public var body: some View {
         if !hasData {
             switch phase {
             case .idle, .loading:
@@ -347,11 +400,16 @@ struct StateView: View {
 }
 
 /// A plain note that says what the app cannot show, and why. Used for honest gaps.
-struct GapNote: View {
-    let title: String
-    let text: String
+public struct GapNote: View {
+    public let title: String
+    public let text: String
 
-    var body: some View {
+    public init(title: String, text: String) {
+        self.title = title
+        self.text = text
+    }
+
+    public var body: some View {
         HStack(alignment: .top, spacing: Space.m) {
             Image(systemName: "eye.slash").foregroundStyle(Palette.amber).font(.title3)
             VStack(alignment: .leading, spacing: Space.xs) {
@@ -369,11 +427,16 @@ struct GapNote: View {
 // MARK: - Layout helpers
 
 /// The paper-coloured scroll page every dashboard uses.
-struct Page<Content: View>: View {
-    var maxWidth: CGFloat = 1200
-    @ViewBuilder var content: Content
+public struct Page<Content: View>: View {
+    public var maxWidth: CGFloat = 1200
+    @ViewBuilder public var content: Content
 
-    var body: some View {
+    public init(maxWidth: CGFloat = 1200, @ViewBuilder content: () -> Content) {
+        self.maxWidth = maxWidth
+        self.content = content()
+    }
+
+    public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Space.l) { content }
                 .padding(Space.l)
@@ -385,12 +448,17 @@ struct Page<Content: View>: View {
 }
 
 /// Two columns on a wide screen, one on a narrow one.
-struct Columns<Leading: View, Trailing: View>: View {
+public struct Columns<Leading: View, Trailing: View>: View {
     @Environment(\.horizontalSizeClass) private var width
-    @ViewBuilder var leading: Leading
-    @ViewBuilder var trailing: Trailing
+    @ViewBuilder public var leading: Leading
+    @ViewBuilder public var trailing: Trailing
 
-    var body: some View {
+    public init(@ViewBuilder leading: () -> Leading, @ViewBuilder trailing: () -> Trailing) {
+        self.leading = leading()
+        self.trailing = trailing()
+    }
+
+    public var body: some View {
         if width == .regular {
             HStack(alignment: .top, spacing: Space.l) {
                 VStack(alignment: .leading, spacing: Space.l) { leading }.frame(maxWidth: .infinity)
@@ -406,8 +474,8 @@ struct Columns<Leading: View, Trailing: View>: View {
 }
 
 /// Formats a byte count the same way everywhere.
-enum Bytes {
-    static func format(_ count: Int) -> String {
+public enum Bytes {
+    public static func format(_ count: Int) -> String {
         ByteCountFormatter.string(fromByteCount: Int64(count), countStyle: .file)
     }
 }
