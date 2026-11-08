@@ -1,6 +1,6 @@
 # Platform status
 
-> Phase 1 is on dev. Phase 2 (PTCore) is green on split/platform: run 278, commit f1be270. Waiting for the conductor to merge, then phase 4.
+> Phase 1 and 2 are on dev. AppLinks.scheme (ce3602e) is merged with origin/dev into 439ad32; run 301 (self-hosted) is queued. Phase 4 prepared, not started.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -78,3 +78,8 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
   - The `promptugal://` strings in AppShell.swift, Destinations.swift, ReminderPlan.swift and ReminderScheduler.swift must read `AppLinks.scheme`. Design and team were told. Check it before phase 4 step 5.
   - The rest of `Dashboards/WireModels.swift` (Wire.Me, Person and so on) is still in the app; design decides where it goes.
   - Keychain service names (`news.promptugal.reader.ai`, `.lanes`, `.lanes.identity`) keep the old prefix; the ruling says teammates import their key again.
+
+## Update (02:40 UTC, 8 Nov, account B)
+- Merged origin/dev (36508b6 runner choice) into split/platform: 439ad32, no conflicts.
+- Cancelled run 292 (GitHub-hosted, ce3602e). Dispatched run 301 on 439ad32 with runner=self-hosted. Waiting for it, then READY to the conductor.
+- Phase 4: no file moved. Waiting for the conductor's go.
