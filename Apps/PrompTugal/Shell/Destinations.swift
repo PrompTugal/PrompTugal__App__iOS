@@ -112,9 +112,9 @@ enum PublicDestinations {
         #if DEBUG
         [
             ShellDestination(id: "vault", title: String(localized: "Vault"), symbol: "lock.shield", group: "More",
-                             summary: String(localized: "My encrypted vault, read in Swift"), ownsNavigation: true) { AnyView(VaultHomeView()) },
+                             summary: String(localized: "My encrypted vault, read in Swift"), debugOnly: true, ownsNavigation: true) { AnyView(VaultHomeView()) },
             ShellDestination(id: "web.all", title: String(localized: "All websites"), symbol: "safari", group: "More", kind: .web(FeedClient.site),
-                             summary: String(localized: "The website shell, with its shortcuts")) { AnyView(WebsiteView()) },
+                             summary: String(localized: "The website shell, with its shortcuts"), debugOnly: true) { AnyView(WebsiteView()) },
         ]
         #else
         []

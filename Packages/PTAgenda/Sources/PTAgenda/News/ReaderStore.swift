@@ -31,8 +31,9 @@ public final class ReaderStore {
     public private(set) var agendaSource: AgendaSource = .none
     public var storageMessage: String?
 
-    public var agenda: [Event] { cache.agenda }
-    public var news: [Story] { cache.news }
+    // Both go through the screenshot filter (-PTHideTerm, Debug builds only; a no-op in Release).
+    public var agenda: [Event] { ScreenshotFilter.events(cache.agenda) }
+    public var news: [Story] { ScreenshotFilter.stories(cache.news) }
     public var agendaUpdated: Date? { cache.agendaUpdated }
     public var newsUpdated: Date? { cache.newsUpdated }
     public var saved: [Event] { (schedule?.picks ?? []).compactMap(\.event).sorted(by: Event.earlier) }
@@ -105,7 +106,7 @@ public final class ReaderStore {
         if cache.agenda.isEmpty {
             AgendaHub.publishNowNext([], saved)
         } else {
-            AgendaHub.agendaDidLoad(cache.agenda)
+            AgendaHub.agendaDidLoad(agenda)
         }
     }
 

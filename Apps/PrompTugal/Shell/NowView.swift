@@ -309,9 +309,13 @@ private struct SessionRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: Space.m) {
-            Text(Lisbon.timeLabel(entry.start))
-                .font(Typo.data).foregroundStyle(Palette.ink)
-                .frame(width: 64, alignment: .leading)
+            // The column is as wide as "88:88 AM" (12-hour locales), so a time never wraps and the rows line up.
+            Text(verbatim: "88:88 AM").font(Typo.data).lineLimit(1).fixedSize(horizontal: true, vertical: false).hidden()
+                .overlay(alignment: .leading) {
+                    Text(Lisbon.timeLabel(entry.start))
+                        .font(Typo.data).foregroundStyle(Palette.ink)
+                        .lineLimit(1).fixedSize(horizontal: true, vertical: false)
+                }
             link {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: Space.xs) {
