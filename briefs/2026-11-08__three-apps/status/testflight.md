@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 04:50 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 05:18 UTC (account B session watching)
 
 ## Done
 
@@ -26,6 +26,7 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 ## In progress
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
+- 05:18 UTC: dev unchanged since v0.4.1 (`a0c8bde`), no new release run, no new upload. Waiting for phase 4 (first Team build, promptugal TestFlight job).
 - 04:50 UTC: run 68 (dev `a0c8bde`, v0.4.1) uploaded 0.4.1 (168) to the reader record, VALID, internal group only. RiskMandate not rebuilt (unaffected), still 0.4.0 (167). Team record still empty until phase 4.
 - 04:20 UTC: run 67 done. Reader record has 0.4.0 (167) VALID in PrompTugal Internal Users, plus 0.3.1 (165) from run 65. RiskMandate 0.4.0 (167) VALID in RiskMandate Internal. Team record news.promptugal.team (group "PrompTugal Team Internal") has no builds yet: expected until phase 4 points apps.json team at it.
 - 04:05 UTC: first 0.4.0 build: RiskMandate 167 from run 67 (`d525706`), VALID, in RiskMandate Internal. Team and PrompTugal jobs of run 67 still running. Added a `bundle` input to `testflight-ops.yml` on this branch so status can read other records (read-only; dispatch with ref split/testflight).
