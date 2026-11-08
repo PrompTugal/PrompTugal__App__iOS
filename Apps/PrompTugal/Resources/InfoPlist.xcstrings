@@ -92,6 +92,52 @@
           }
         }
       }
+    },
+    "NSMicrophoneUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal uses the microphone while you hold the dictation button, to turn what you say into text for a question or a message. The audio is not kept."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PrompTugal usa o microfone enquanto você mantém o botão de ditado pressionado, para transformar o que você diz em texto para uma pergunta ou uma mensagem. O áudio não é salvo."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PrompTugal usa o microfone enquanto mantém premido o botão de ditado, para transformar o que diz em texto para uma pergunta ou uma mensagem. O áudio não é guardado."
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal turns your dictation into text. It does this on your device when your language allows it; otherwise your audio is sent to Apple to be transcribed."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PrompTugal transforma seu ditado em texto. Isso é feito no seu aparelho quando o seu idioma permite; caso contrário, o áudio é enviado à Apple para ser transcrito."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PrompTugal transforma o seu ditado em texto. Fá-lo no seu dispositivo quando o seu idioma o permite; caso contrário, o áudio é enviado à Apple para ser transcrito."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
