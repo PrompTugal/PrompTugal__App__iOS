@@ -1,6 +1,6 @@
 # Listing: English (U.S.)
 
-> The App Store text in English. It is also used for English (U.K.) if release adds that locale. Lengths are checked against Apple's limits (in brackets). Lines marked *only if merged* describe features that are not on `dev` at 12:30 UTC. Release deletes them unless the feature is in the build being submitted (checklist R4).
+> The App Store text in English. It is also used for English (U.K.) if release adds that locale. Lengths are checked against Apple's limits (in brackets). Lines marked *only if merged* describe features that are not on `dev` at 11:30 UTC. Release deletes them unless the feature is in the build being submitted (checklist R4).
 
 ## Name (30)
 

@@ -1,6 +1,6 @@
 # App Review checklist: PrompTugal: Lisbon Summit
 
-> Every guideline App Review is likely to test this app against, checked against the code on `dev` (66089cd) and the open branches `split/apps`, `split/editor`, `split/collab` and `split/design` at 12:30 UTC, 8 Nov. **BLOCKER** means Apple would very likely reject the app, or a reviewer would hit a dead end. **RISK** means a possible rejection or a weak first impression. **OK** means checked and fine. Blockers went to the conductor at 12:35 UTC.
+> Every guideline App Review is likely to test this app against, checked against the code on `dev` (66089cd) and the open branches `split/apps`, `split/editor`, `split/collab` and `split/design` at 11:30 UTC, 8 Nov. **BLOCKER** means Apple would very likely reject the app, or a reviewer would hit a dead end. **RISK** means a possible rejection or a weak first impression. **OK** means checked and fine. Blockers went to the conductor at 11:30 UTC.
 
 ## Blockers
 

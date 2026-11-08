@@ -1,9 +1,9 @@
 # Review status
 
-> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". The checklist, the store listing in three languages, the App Privacy and age-rating answers, the review notes and the go/no-go list are in [summit-app-store/store](../../2026-11-08__summit-app-store/store/README.md). Five blockers went to the conductor at 12:35 UTC. The persona walk-through below covers the code on `dev` (66089cd); there are no screenshots yet.
+> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". The checklist, the store listing in three languages, the App Privacy and age-rating answers, the review notes and the go/no-go list are in [summit-app-store/store](../../2026-11-08__summit-app-store/store/README.md). Five blockers went to the conductor at 11:30 UTC. The persona walk-through below covers the code on `dev` (66089cd); there are no screenshots yet.
 
 ## Done
-- 12:35 UTC: App Review checklist ([checklist.md](../../2026-11-08__summit-app-store/store/checklist.md)): 5 blockers, 11 risks, the rest OK. Blockers B1 to B5 sent to the conductor.
+- 11:30 UTC: App Review checklist ([checklist.md](../../2026-11-08__summit-app-store/store/checklist.md)): 5 blockers, 11 risks, the rest OK. Blockers B1 to B5 sent to the conductor.
 - Store listing in English, pt-PT and pt-BR, within Apple's limits. The pt keywords are measured in bytes too, so the accents fit.
 - App Privacy answers from the code: one data type (Other User Content, for Ask) or Data Not Collected if Ask is hidden. Age rating answers (4+), category, price and availability.
 - Review notes for both paths, with the Ask and Vault paragraphs to pick once B1 and B2 are decided. Go/no-go list.
@@ -28,7 +28,7 @@
 
 Severity: **stuck** (cannot do the task), **confusing** (gets there, but slowly or unsure), **missing** (the app does not offer it), **polish**.
 
-## Walk-through 1: code on dev 66089cd (12:50 UTC)
+## Walk-through 1: code on dev 66089cd (11:30 UTC)
 
 | # | Persona | Screen id | Problem | Fix | Owner | Severity |
 | --- | --- | --- | --- | --- | --- | --- |

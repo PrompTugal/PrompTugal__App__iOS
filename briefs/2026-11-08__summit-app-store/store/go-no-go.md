@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | G1 | The upload passed processing: no ITMS-90683 (purpose strings) and no ITMS-91053 (privacy manifests) | App Store Connect build status "Ready to Submit"; testflight's `tf.py status` | pending |
 | G2 | The built Info.plist has NSCameraUsageDescription, NSFaceIDUsageDescription, NSCalendarsWriteOnlyAccessUsageDescription, NSMicrophoneUsageDescription and NSSpeechRecognitionUsageDescription | `plutil -p` on the archive's Info.plist (release) | pending |
-| G3 | Release build: no Debug screen, no debug switch, no launch arguments | `#if DEBUG` in Destinations, PublicSettingsView, PublicShell (checked at 12:30 on dev) | pending |
+| G3 | Release build: no Debug screen, no debug switch, no launch arguments | `#if DEBUG` in Destinations, PublicSettingsView, PublicShell (checked at 11:30 on dev) | pending |
 | G4 | Cold launch with no network: the agenda and My day show content within 10 s; no spinner forever and no raw error text | release, on a simulator in airplane mode | pending |
 | G5 | Full CI run green on iPhone and iPad for this commit | the run's link | pending |
 | G6 | Ask: a working demo key in the notes, **or** Ask is absent from the Release build (B1) | the screen list in the build, plus the secret set | pending |

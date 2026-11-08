@@ -1,6 +1,6 @@
 # Store pack: PrompTugal: Lisbon Summit
 
-> Everything Apple sees besides the binary: the App Review checklist, the listing in three languages, the App Privacy and age-rating answers, the review notes, and the final go/no-go. Written by review.B from the code on `dev` (66089cd) plus `split/apps` and `split/editor` at 12:30 UTC, 8 Nov. Release and testflight copy these texts into App Store Connect on the conductor's go. Nothing here has been entered in App Store Connect yet.
+> Everything Apple sees besides the binary: the App Review checklist, the listing in three languages, the App Privacy and age-rating answers, the review notes, and the final go/no-go. Written by review.B from the code on `dev` (66089cd) plus `split/apps` and `split/editor` at 11:30 UTC, 8 Nov. Release and testflight copy these texts into App Store Connect on the conductor's go. Nothing here has been entered in App Store Connect yet.
 
 | File | What it holds |
 | --- | --- |
