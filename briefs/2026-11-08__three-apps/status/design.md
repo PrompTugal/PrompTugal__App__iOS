@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 03:00 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 03:32 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -178,3 +178,10 @@ None. Nothing moved yet.
 - Merged origin/dev (AppLinks.scheme, 5500c02). `AppShell` now checks `url.scheme == AppLinks.scheme`; the other hard-coded schemes in `Shell/` were only in comments and now say `<scheme>`. Not compiled yet.
 - Still waiting for team's PTWeb to be green before I dispatch (conductor will say).
 - Needs from team: `PrompTugal/Team/TeamFeatures.swift:20` still has `static let urlScheme = "promptugal"` for the reminder scheduler; it should read `AppLinks.scheme`.
+
+## Update (8 Nov, 03:32 UTC, design.B)
+- Team's PTWeb and PTAgenda are on dev (run 307 green). Merged origin/dev (eb99508) into split/design with no conflicts; team's files on my branch equal dev's.
+- Added `import PTAgenda` to `PrompTugal/App/ReaderStore+News.swift`. Head: b1ef07a.
+- Dispatched ios.yml app=all, runner=macos-26 on b1ef07a: run 312 (id 42441902683), queued at 03:32. Rule from the conductor: runner=macos-26 only; the self-hosted Mac is offline.
+- AppLinks.scheme switch is in (AppShell). PTNews has still never compiled; I fix PTNews errors only.
+- PublicShell not started; waits for the conductor's phase 4 word.
