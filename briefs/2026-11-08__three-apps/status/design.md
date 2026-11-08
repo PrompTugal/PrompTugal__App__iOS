@@ -1,8 +1,8 @@
 # Status · Design (three apps)
 
-> Plan approved by the conductor; waiting for phase 2 (PTCore) on dev. PTNews cannot move as the contract says: News/ pulls in ReaderStore, DashboardData and ScheduleStore, which sit above it. Proposed fixes below need a yes from the conductor. The PrompTugal app's shell is drafted.
+> Handed off to account B at the head below. PTNews is moved and pushed, waiting for its first CI result (iOS run 294, queued). PublicShell is not started. Read the Handoff section first.
 
-Branch: `split/design` (merged dev b845004 and split/apps 7d28094) · Last update: 8 Nov, 01:13 UTC, waiting for PTCore (platform run 278) · Last CI run: none yet (no code moved)
+Branch: `split/design` · Last update: 8 Nov, 01:35 UTC (handoff) · Last CI run: iOS run 294 on 4430e67, queued, no result yet
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -126,3 +126,39 @@ I need a yes from the conductor to put those parts in PTCore (platform owns it).
 
 ## Last CI run
 None. Nothing moved yet.
+
+## Handoff (8 Nov, 01:35 UTC)
+
+**Head:** `split/design` at the commit named in the handoff message to the conductor (this page's own commit on top of `4430e67`). `4430e67` is the last code commit.
+
+**Last CI run:** iOS run 294 (id 42434478548), `workflow_dispatch`, app=all, on `4430e67`. Status when I stopped: queued. Read it first: `mcp__github__actions_list list_workflow_runs` for `ios.yml`, branch `split/design`. Do not cancel it. If it fails, read `get_job_logs` with `failed_only`.
+
+**Done**
+- Merged `origin/dev` (PTCore, phase 2), `split/apps` (7d28094) and team's PTWeb (6cccf88) into `split/design`.
+- PTNews moved with `git mv`: `NewsHomeView`, `GraphExplorerView`, `GraphModel` are in `Packages/PTNews/Sources/PTNews/`.
+- New in PTNews: `NewsSupport.swift` (`NewsSource` protocol with the `newsSource` environment key, `EmptyNewsSource`, `NewsroomAPI`, `NewsFeeds` with newsletter, board, graph) and `NewsWire.swift` (`Wire.StoryBoard`, `Column`, `BoardStory`, `Newsletter`, `Edition`, all public; cut from `Dashboards/WireModels.swift`).
+- `DashboardData` now owns `let news = NewsFeeds()` and forwards `board`, `newsletter`, `graph` to it. `NewsroomAPI` moved out of `DashboardData.swift`.
+- App side: `PrompTugal/App/ReaderStore+News.swift` (`extension ReaderStore: NewsSource {}`), `PrompTugalApp` sets `.environment(\.newsSource, store)`, `AppShell` sets `.environment(data.news)`.
+- Graph tests (`GraphIndexSafetyTests`, graph layout test) moved from `PrompTugalTests/DesignReviewTests.swift` to `Packages/PTNews/Tests/PTNewsTests/GraphTests.swift`.
+- `Package.swift` of PTNews has `swiftLanguageModes: [.v5]`, like team's packages.
+- One behaviour change: pull-to-refresh on News now reloads only the newsletter and the story board (`NewsFeeds.refresh`), not the team and newsroom feeds.
+
+**Half-done / not done**
+- PTNews has not been built. It needs `WebPage` and `.webTwin` from PTWeb (merged, public in `Packages/PTWeb/Sources/PTWeb/Web/WebPage.swift`), but team's own CI for 6cccf88 was not green yet when I stopped. Expect compile errors to fix from run 294 (public API, missing `import`s).
+- `AgendaView` and `ReaderStore` are still in the app; team moves them to PTAgenda. When they move, check `NewsHomeView` still sees `ReaderStore: NewsSource` (the extension file must stay with the app or go with `ReaderStore`, but PTAgenda must not import PTNews).
+- `AppShell.swift:98` still has `url.scheme == "promptugal"`. Platform is adding `enum AppLinks { public static var scheme }` to PTCore (commit ce3602e on `split/platform`). When it is on dev, change it and every other hard-coded scheme in `Shell/AppShell.swift` and `Shell/Destinations.swift` to `AppLinks.scheme`.
+- `PublicShell` is not started (still the apps session's placeholder).
+
+**Exact next steps**
+1. Read run 294. Fix PTNews until green. Then dispatch again (`app=all`), and when green send `@parent` the branch, commit and run number.
+2. Merge `origin/dev` again when team's PTWeb/PTAgenda land there; fix anything that moves.
+3. Switch the link scheme to `AppLinks.scheme` once it is on dev.
+4. Phase 4: build `Apps/PrompTugal/Shell/PublicShell.swift`, `Destinations.swift` and `PublicSettingsView.swift`, on top of `split/apps` (project and entry point are the apps session's; `Shell/` is a synchronized folder, so new files need no project edit). Shared shell UI parts go in `Packages/PTCore/Sources/PTCore/Shell/` (mine, per the conductor's ruling). Plan: sections 3 and 4 of this page.
+
+**What I gave the editor (the conductor passed it on)**
+- Root marker: `PublicShell` (search `PublicShell(`). Team keeps `AppShell(` and `.teamFeatures()`.
+- Destination ids, same as Team's: `reader.agenda`, `team.schedule`, `team.planner`, `news.home`, `news.graph`, `collab.ai`, `web.promptugal`, `web.all`, `vault`, `settings`, `settings.reminders`, `debug` (DEBUG builds only).
+
+**Conductor rulings in force:** AgendaView and ReaderStore go to PTAgenda (team moves them); `NewsSource` plus `NewsFeeds` in PTNews; shell option C (shared parts in PTCore `Shell/`, each app its own root and Destinations); Team's scheme is `ptteam://`, PrompTugal's is `promptugal://`; apps owns `PrompTugalApp.swift` and Config, design owns `Apps/PrompTugal/Shell/`.
+
+**Scheduled triggers:** all three of mine are deleted.
