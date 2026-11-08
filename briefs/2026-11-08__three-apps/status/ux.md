@@ -21,7 +21,7 @@ iPhone: four tabs, no "More" tab. iPad: the same four as the sidebar's top secti
 | 3 | EXP-1 | Explore | `magnifyingglass` | ExploreView (new, PTExplore) | `explore` |
 | 4 | NEWS-1 | News | `newspaper` | NewsHomeView | `news.home` |
 
-- **Settings** (SET-1) opens from a gear button in the toolbar of NOW-1 and PROG-1 (iPhone), and from the sidebar's More section (iPad). It holds: Ask (ASK-1, first row: "Ask about the summit", subtitle "With your own AI key"), Reminders (SET-2), Language (opens iOS Settings for the app), Websites (`web.all`), About, Privacy, Support, Acknowledgements.
+- **Settings** (SET-1) opens from a gear button in the toolbar of NOW-1 and PROG-1 (iPhone), and from the sidebar's More section (iPad). It holds: Ask (ASK-1, first row, label "Ask, with your own AI key" as design built it), Reminders (SET-2), Language (opens iOS Settings for the app), Websites (`web.all`), About, Privacy, Support, Acknowledgements.
 - **Removed from the tab bar and sidebar:** `reader.agenda` as a tab (it becomes the Talks list inside Explore), `team.planner` (becomes a section inside PROG-1), `news.graph` (moves into Explore, EXP-G), `web.promptugal` (the site is one tap away from every detail screen), `vault` (a participant does not need it today: hide the destination in the public build; keep the code). All old ids stay routable for `promptugal://open/<id>` so old links still land somewhere sensible: `reader.agenda` opens EXP-1 on Talks, `news.graph` opens EXP-1, `team.planner` opens PROG-1.
 - Default tab on first launch: **Now**. `@SceneStorage` default changes from `reader.agenda` to `now`.
 - The sidebar header text "Lisbon · 9–12 Nov" stays. No "Web Summit" in titles we control (Apple 5.2). Venue names from the data stay as they are.
@@ -48,12 +48,19 @@ One scrolling `Page`, cards in this order. The screen changes with the summit's 
 
 **NOW-1d · Latest news:** the three newest items from `feed.xml` (title, one-line description, "2 h ago"). "All news" opens NEWS-1. From the saved feed when offline.
 
-**NOW-1e · Practical:** a small fixed card list shipped in the app (no feed exists for this today), each with a source link:
-- Registration: "Collect your lanyard: Airport T1 (9–10 Nov) or Pavilhão de Portugal (9–12 Nov). Bring your ticket QR and photo ID." Times come from the agenda's `registration` items for today, so they stay right.
-- Getting there: "Metro: red line to Oriente." Link: Metro de Lisboa summit service (source in our evidence `v-metro-web-summit-service`).
-- Traffic: "Road closures around Parque das Nações, 9–12 Nov." Link: the Junta de Freguesia notice (evidence `v-parque-das-nacoes-traffic`).
-- Shuttle: "Carris shuttle for participants." Link: evidence `v-carris-web-summit-shuttle` source.
-Copy is final in en here; i18n writes pt-PT and pt-BR. design builds it as a static `PracticalInfo` list in `Apps/PrompTugal/Shell/`. If a source link fails review, drop the row, never the card.
+**NOW-1e · Practical:** a fixed list shipped in the app (no feed today; collab may read an optional `api/v1/practical.json` later, same fields). Final en copy; i18n writes pt-PT and pt-BR. Each row: SF Symbol, title, one line, and a link that opens in Safari (the row's chevron). Official sources and our own pages only.
+
+| # | Symbol | Title | Line | Link |
+| --- | --- | --- | --- | --- |
+| 1 | `person.text.rectangle` | Registration | Collect your badge at Airport Terminal 1 (9–10 Nov) or Pavilhão de Portugal (9–12 Nov). Bring your ticket QR and photo ID. | none (opens EXP-1 Talks filtered to today's registration items) |
+| 2 | `tram.fill` | Metro | Red line to Oriente, next to the venue. A summit transport pass is on sale. | https://www.metrolisboa.pt/2026/11/02/passe-de-transporte-para-web-summit/ |
+| 3 | `car.fill` | Traffic | Roads around Parque das Nações are restricted 9–12 Nov. | https://www.jf-parquedasnacoes.pt/autarquia/noticias/web-summit-condicionamentos-de-transito-entre-9-e-12-de-novembro |
+| 4 | `bus.fill` | Buses | Carris runs extra buses to Oriente during the summit. | https://www.carris.pt/ |
+| 5 | `map` | Venue map | FIL, MEO Arena and Pavilhão de Portugal, with what is on in each. | https://promptugal.news/summit/venue/index.html |
+| 6 | `phone.fill` | Emergency | Call 112. | `tel:112` |
+
+- The Metro and Traffic pages are in Portuguese; that is fine (official sources). All links checked 200 at 11:40 UTC.
+- If review objects to any link, drop that row's link and keep the text.
 
 **NOW-1h · Ask card (last card, all states):** `sparkles` icon, title "Ask about the summit", body "What's on now, what clashes in my program, what's new today. Uses your own OpenRouter key." Button "Ask" opens ASK-1 (pushed on iPhone, the sidebar's Ask row on iPad). If a key is already saved, the body becomes three tappable questions ("What's on now?", "Which talks clash in my program?", "What's new today?"); a tap opens ASK-1 with that question sent. Owner: design (card), collab (opening AskView with a question).
 
@@ -113,7 +120,7 @@ Copy is final in en here; i18n writes pt-PT and pt-BR. design builds it as a sta
 - **Colour:** paper background, `Palette.card` cards, ink text. **Red** = live and mine (the "Now" dot, filled star, tint). **Amber** = clash, stale, offline. **Green** = only "Updated just now". No blue except links to the web.
 - **Spacing:** `Space.l` (16) screen margins and between cards, `Space.m` (12) inside cards, `Space.radius` (14) corners. Max readable width `Space.readable` on iPad.
 - **Rows:** time first, in mono, left-aligned in a fixed 64 pt column, so the eye runs down the times.
-- **iPad:** NOW-1 in two columns (`Columns`): left For you, On now, Up next; right News, Practical.
+- **iPad:** one column for today (two columns is cut, confirmed 11:40 UTC), centred at `Space.readable`.
 - **Dark mode:** the palette already pairs; screenshots in light only.
 
 ## 9. Owners and order
@@ -166,3 +173,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 11:30 UTC: spec v1 written from the briefs, the public app's code on `dev` (66089cd) and the live API (agenda 201 items, people 275, companies 120, places 83, `feed.xml`).
 - 11:35 UTC: conductor ruling applied: Ask leaves the tab bar; four tabs; new NOW-1h Ask card on Now; Ask first row in Settings and in the iPad More section.
 - 11:45 UTC: §11 App Store screenshot list for release.
+- 11:40 UTC: NOW-1e Practical items and links final; iPad two-column Now cut; Settings Ask label follows design ("Ask, with your own AI key").
