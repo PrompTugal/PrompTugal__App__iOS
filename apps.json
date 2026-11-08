@@ -7,14 +7,15 @@
     "PTNews": {"path": "Packages/PTNews", "deps": ["PTCore", "PTWeb"]},
     "PTVaultUI": {"path": "Packages/PTVaultUI", "deps": ["PTCore", "SGitVault"]},
     "PTAsk": {"path": "Packages/PTAsk", "deps": ["PTCore", "PTAgenda", "PTNews", "PTVaultUI"]},
-    "PTLanes": {"path": "Packages/PTLanes", "deps": ["PTCore", "PTVaultUI"]}
+    "PTLanes": {"path": "Packages/PTLanes", "deps": ["PTCore", "PTVaultUI"]},
+    "PTDeck": {"path": "Packages/PTDeck", "deps": ["PTCore"]}
   },
   "apps": {
     "team": {"project": "Apps/Team/Team.xcodeproj", "scheme": "Team", "bundle": "news.promptugal.team",
              "paths": ["Apps/Team/"],
              "packages": ["PTLanes", "PTAsk"], "testflight": true},
     "promptugal": {"project": "Apps/PrompTugal/PrompTugal.xcodeproj", "scheme": "PrompTugal", "bundle": "news.promptugal.reader",
-                   "paths": ["Apps/PrompTugal/"], "packages": ["PTAsk"], "testflight": false},
+                   "paths": ["Apps/PrompTugal/"], "packages": ["PTAsk"], "testflight": true},
     "riskmandate": {"project": "Apps/RiskMandate/RiskMandate.xcodeproj", "scheme": "RiskMandate", "bundle": "ai.riskmandate.app",
                     "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": true}
   },

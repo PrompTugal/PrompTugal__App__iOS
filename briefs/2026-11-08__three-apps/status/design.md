@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 04:22 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 07:40 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -195,3 +195,26 @@ None. Nothing moved yet.
 - Plan from the conductor: after a green quick run, one full run (quick off, macos-26) on the same sha, then READY.
 - `AppShell.swift:98` compares `url.scheme == AppLinks.scheme` (so the Team app's ptteam links work once its entry point sets the scheme).
 - PublicShell not started; waits for phase 4.
+
+## Update (8 Nov, 05:22 UTC, design.B): READY
+- Quick run 319 on 83f761f: green. Full run 323 (id 42447845511, app=all, macos-26) on bb50751: green. Debug and Release builds of all three apps, iPhone and iPad tests, packages PTNews and PTAsk.
+- bb50751 is 83f761f plus this status page only.
+- READY sent to the conductor. PTNews merges to dev now that team's PTWeb is there.
+- Next: wait for the conductor's phase 4 word, then PublicShell in Apps/PrompTugal/Shell/ (drafting allowed locally on a separate branch, not pushed to split/design).
+
+## Update (8 Nov, 06:00 UTC, design.B): PTNews on dev, PublicShell drafted locally
+- Conductor merged bb50751 to dev as d3cb173 (run 323 green). PTNews is done.
+- PublicShell draft (not pushed; waits for the conductor's phase 4 word) is one commit on a local branch `local/public-shell` from origin/dev:
+  - `Packages/PTCore/Sources/PTCore/Shell/`: `ShellDestination` (group as text), `ShellSidebarRow`, `ShellMoreRow`, `PrivacyCover`, `LinkedPage`, `ShellLink` (checkout rule passed in), `SupportLinks`, `destinationID`.
+  - Team app: the same-named types leave `Shell/AppShell.swift` and `SettingsView.swift`; `ShellLink.page(in:)` stays as a one-line Team extension that passes `CheckoutPolicy.isBlocked`. Team's `AppDestination` and rows are unchanged for now.
+  - `Apps/PrompTugal/Shell/`: `PublicShell` (iPad sidebar, iPhone tabs + More, link routing, privacy cover), `Destinations.swift` (`PublicDestinations`, same ids as Team's), `PublicSettingsView` (no team picker; debug switch only in DEBUG), `PublicDebugView` (DEBUG only), `PublicFeatures` (schedule, planner, reminders, bridge, vault picks with no team and no identity).
+  - Not compiled yet when written. Ask waited for PTAsk, which is on dev now and wired in.
+- Needs from others:
+  - **Apps/platform:** `PrompTugalApp.swift` can stay `PublicShell()`; the shell makes its own `ReaderStore`, `NewsFeeds` and `PublicFeatures`. Background task registration (refresh, vault-refresh) is still the entry point's job.
+  - **Platform (widgets, phase 4):** `NowNextPublisher` is not in a package, so the public app does not publish "Now and next" yet (`AgendaHub.publishNowNext` is left at its default).
+  - **Team:** `TeamFeatures.swift:20` `urlScheme`.
+  - **Offline reader:** `WebBridgeHub.offlineReader` is nil in the public app until a reader view moves out of the Team app's `PrompTugalApp.swift`.
+
+## Update (8 Nov, 07:40 UTC, design.B): phase 4, PublicShell pushed
+- Conductor started phase 4 at 07:07 UTC. Pushed PublicShell on top of origin/dev (02f3624 era): `Apps/PrompTugal/Shell/` (PublicShell, Destinations, PublicSettingsView, PublicDebugView, PublicFeatures) and `Packages/PTCore/Sources/PTCore/Shell/` (shared parts). Ask is in (iPhone tab 4; `askAnywhere` on iPad). Offline reader stays nil in the public app.
+- Head c025f83. Full run 333 (id 42457549551, app=all, macos-26), dispatched 07:08. At 07:40: Debug build (team), Debug build (riskmandate), riskmandate iPad tests and Package PTAsk passed; no failure; the rest queued behind the runner queue. The Debug build (promptugal) is the first compile of PublicShell.
