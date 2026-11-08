@@ -106,7 +106,7 @@ public final class ReaderStore {
         if cache.agenda.isEmpty {
             AgendaHub.publishNowNext([], saved)
         } else {
-            AgendaHub.agendaDidLoad(cache.agenda)
+            AgendaHub.agendaDidLoad(agenda)
         }
     }
 
