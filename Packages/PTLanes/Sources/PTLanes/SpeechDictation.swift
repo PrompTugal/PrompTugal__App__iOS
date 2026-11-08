@@ -2,6 +2,7 @@ import AVFoundation
 import Foundation
 import Observation
 import Speech
+import PTCore
 
 /// Hold-to-talk dictation for notes, transcribed on the device when the language allows it
 /// (`requiresOnDeviceRecognition`). Audio is not kept.

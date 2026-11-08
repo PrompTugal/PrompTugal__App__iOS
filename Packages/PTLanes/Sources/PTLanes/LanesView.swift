@@ -1,13 +1,16 @@
 import SwiftUI
+import PTCore
 
 /// Messages: notes to the newsroom, messages to teammates' lanes, my inbox. Entry view for `collab.lanes`.
-struct LanesView: View {
+public struct LanesView: View {
     var store: LanesStore = .shared
     @State private var composing: Compose?
     @State private var addingLane = false
     @State private var showInboxSetup = false
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     @Environment(\.horizontalSizeClass) private var width
+
+    public init(store: LanesStore = .shared) { self.store = store }
 
     enum Compose: Identifiable {
         case newsroom
@@ -228,9 +231,10 @@ struct ReportBlockMenu: View {
     }
 }
 
-struct LaneEventRow: View {
+public struct LaneEventRow: View {
     let event: LaneEvent
-    var body: some View {
+    public init(event: LaneEvent) { self.event = event }
+    public var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
                 Text(event.kind.rawValue).font(.caption.bold().monospaced())

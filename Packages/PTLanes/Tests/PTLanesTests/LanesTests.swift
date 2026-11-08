@@ -2,7 +2,8 @@ import CryptoKit
 import Foundation
 import Security
 import Testing
-@testable import PrompTugal
+@testable import PTLanes
+import PTCore
 
 /// sgit.ai's published subscribe key (public, from /.well-known/sgit-subscribe.json, 7 Nov 2026). Its fingerprint,
 /// recomputed with sgit's own method in Python, is sha256:d85b358000612e4e.

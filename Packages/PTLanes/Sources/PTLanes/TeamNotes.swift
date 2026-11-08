@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import SwiftUI
+import PTCore
 
 /// Team notes through vaults: each person appends notes to `lanes/team/` in their own vault (one new file per
 /// note, signed by the device that wrote it, so devices never conflict), and reads the same folder in the vaults
@@ -64,7 +65,7 @@ final class TeamNotesStore {
     /// Files read per vault, newest names first (names start with the UTC time).
     let perVault = 40
 
-    func load(coordination: CoordinationStore = .shared, log: LanesLog = .shared) async {
+    func load(linkedVaults: [String: String] = LanesEnvironment.linkedVaults(), log: LanesLog = .shared) async {
         guard let vault = CollabHooks.vault, vault.isOpen else {
             message = CollabHooks.HookError.noVault.localizedDescription
             return
@@ -73,7 +74,7 @@ final class TeamNotesStore {
         defer { loading = false }
         var collected: [TeamNote] = []
         var sources: [(label: String, vaultId: String?)] = [("me", nil)]
-        sources += coordination.linkedVaults.sorted { $0.key < $1.key }.map { (label: $0.key, vaultId: Optional($0.value)) }
+        sources += linkedVaults.sorted { $0.key < $1.key }.map { (label: $0.key, vaultId: Optional($0.value)) }
         for source in sources {
             do {
                 let paths = try await vault.files(in: TeamNote.folder, vaultId: source.vaultId).sorted(by: >).prefix(perVault)

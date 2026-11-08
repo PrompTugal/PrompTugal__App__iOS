@@ -1,11 +1,12 @@
 import Foundation
 import Security
 import Observation
+import PTCore
 
 /// Lanes I can write to, my own inbox lane, and notes to the newsroom.
 @MainActor @Observable
-final class LanesStore {
-    static let shared = LanesStore()
+public final class LanesStore {
+    public static let shared = LanesStore()
 
     struct Sent: Codable, Identifiable, Hashable {
         var id = UUID()
@@ -43,7 +44,7 @@ final class LanesStore {
     /// My inbox lane: the descriptor I hand to senders (public), stored as JSON.
     private(set) var myLane: LaneAddress? { didSet { persist() } }
 
-    @ObservationIgnored let log: LanesLog
+    @ObservationIgnored public let log: LanesLog
     @ObservationIgnored private let client: LaneClient
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let secrets: SecretStore
@@ -164,7 +165,8 @@ final class LanesStore {
 
     var hasIdentity: Bool { LaneIdentity.exists }
 
-    var hasEnumKey: Bool { ((try? secrets.read(Self.enumKeyAccount)) ?? nil) != nil }
+    public var laneCount: Int { lanes.count }
+    public var hasEnumKey: Bool { ((try? secrets.read(Self.enumKeyAccount)) ?? nil) != nil }
 
     func setEnumKey(_ key: String) {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)

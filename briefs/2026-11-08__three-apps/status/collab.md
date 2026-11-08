@@ -2,7 +2,7 @@
 
 > Collab moves AI/ into PTAsk and Lanes/ into PTLanes. Coordination/ stays in the Team app. Phase 0 (mapping and plan) is done. Waiting for team, design and vault packages on dev. No code moved yet.
 
-**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed) · **Updated:** 00:10 UTC
+**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed) · **Updated:** 00:55 UTC
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
@@ -22,9 +22,13 @@ PublicAskProvider uses `ScheduleStore` for `myPickIds`, `isPicked` and `togglePi
 - Designed the provider split (below).
 
 ## In progress
-- Merged origin/dev (phase 1, 9220d7e) into split/collab at 00:05 UTC. PTCore, PTAgenda, PTNews and PTVaultUI are still empty on dev (phase 2 and vault not landed). Waiting for the conductor's ping.
+- Merged origin/dev (PTVaultUI e5328ff) at 00:41 UTC.
+- `CollabSeams.swift` written for PTCore (committed locally, not pushed: PTCore phase 2 is not on dev yet). It holds `CollabVaultAccess`, `CollabHooks` (vault nil by default, `me`, `currentPage`, `HookError`), `PageContext`, `CollabIdentity`, `CollabErrorText`, `collabJS`. Protocol text sent to the conductor for vault.
+- PTLanes move prepared locally, not pushed: 9 files `git mv`'d, `import PTCore`, `public` only where outside code needs it (`LanesView`, `LaneEventRow`, `LaneEvent`, `LanesLog`, `LanesStore.shared/log/laneCount/hasEnumKey`, `LaneIdentity.exists`), `LanesEnvironment.linkedVaults` replaces `CoordinationStore` in team notes, `LanesTests` moved to the package. Team side: `TeamLanesWiring.install()` (Coordination/), called from `CoordinationStore.shared`.
+- Risk: `LanesView` uses `DebugMode` (Debug/). If it is not in PTCore after phase 2, I need it moved or injected.
 
 ## Next
+0. Push the prepared commits when the conductor says PTCore is on dev; read CI and fix. Original `Coordination/CollabHooks.swift` and `CollabErrorText.swift` lose the moved parts then (Team keeps agenda/myPickIds/dayPlan as a `CollabHooks` extension).
 1. When PTCore, PTAgenda, PTNews, PTVaultUI are on dev: merge `origin/dev`, then step 1 to 5 below.
 
 ## Blocked / needs from others

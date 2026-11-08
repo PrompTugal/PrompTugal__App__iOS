@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 /// Where to send: a vault's append lane and the recipient's public key. Everything here is public by design
 /// (sgit.ai `/.well-known/sgit-subscribe.json`): the token can only write.

@@ -43,6 +43,6 @@ struct CollabDebugPanel: View {
          ("Lane inbox key (RSA-4096)", LaneIdentity.exists ? "present · Keychain, this device" : "absent"),
          ("Lane enumeration key", lanes.hasEnumKey ? "present · Keychain, this device" : "absent"),
          ("Account inbox key", lanes.websiteInbox == nil ? "not open" : "in memory, from the master vault"),
-         ("Lanes I can write to", "\(lanes.lanes.count) (tokens are write-only)")]
+         ("Lanes I can write to", "\(lanes.laneCount) (tokens are write-only)")]
     }
 }
