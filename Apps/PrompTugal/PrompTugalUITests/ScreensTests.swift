@@ -11,6 +11,7 @@ import XCTest
 ///   -PTSampleData         sample data instead of the network (ignored where not supported)
 ///   -PTNow <ISO date>     the app's "now" clock, from the environment variable PT_NOW when it is not empty
 ///                         (screens.yml sets TEST_RUNNER_PT_NOW); empty means real time
+///   -PTHideTerm <text>    hides events and news containing the text (Debug only), from PT_HIDE_TERM when not empty
 ///   -PTSeedPicks <ids>    seeded picks, from the environment variable PT_SEED_PICKS when it is not empty
 ///
 /// The ids come from ux. A destination that does not exist yet opens whatever the shell shows by default, so a
@@ -39,6 +40,7 @@ final class ScreensTests: XCTestCase {
     static func launchArguments(destination: String, environment: [String: String]) -> [String] {
         var args = ["-PTDestination", destination, "-PTSampleData"]
         if let now = environment["PT_NOW"], !now.isEmpty { args += ["-PTNow", now] }
+        if let term = environment["PT_HIDE_TERM"], !term.isEmpty { args += ["-PTHideTerm", term] }
         if let picks = environment["PT_SEED_PICKS"], !picks.isEmpty { args += ["-PTSeedPicks", picks] }
         return args
     }
@@ -52,6 +54,11 @@ final class ScreensTests: XCTestCase {
             Self.launchArguments(destination: "explore",
                                  environment: ["PT_NOW": "2026-11-10T11:00:00Z", "PT_SEED_PICKS": "a,b"]),
             ["-PTDestination", "explore", "-PTSampleData", "-PTNow", "2026-11-10T11:00:00Z", "-PTSeedPicks", "a,b"])
+        XCTAssertEqual(
+            Self.launchArguments(destination: "now", environment: ["PT_HIDE_TERM": "Web Summit", "PT_SEED_PICKS": "a"]),
+            ["-PTDestination", "now", "-PTSampleData", "-PTHideTerm", "Web Summit", "-PTSeedPicks", "a"])
+        XCTAssertEqual(Self.launchArguments(destination: "now", environment: ["PT_HIDE_TERM": ""]),
+                       ["-PTDestination", "now", "-PTSampleData"])
     }
 
     @MainActor
