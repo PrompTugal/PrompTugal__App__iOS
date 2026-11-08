@@ -45,7 +45,7 @@ order: 10
       <dt>Site release</dt>
       <dd>{{release}}, from the <code>VERSION</code> file. CI bumps it, tags it and pushes it on every push to <code>dev</code>, then deploys and checks the live <a href="../version.json"><code>version.json</code></a>.</dd>
       <dt>App version</dt>
-      <dd>The PrompTugal app is {{version}} (build {{build}}), from <code>MARKETING_VERSION</code> and <code>CURRENT_PROJECT_VERSION</code> in its Xcode project. Bumped by hand before each TestFlight upload.</dd>
+      <dd>The PrompTugal app is {{version}}: from v0.4 on every app’s version is the release version, and CI passes it to the build. The version in the Xcode project is only a placeholder for local builds. Build numbers go up with every upload.</dd>
       <dt>The app’s code</dt>
       <dd>{{swift_lines}} lines of Swift in {{swift_files}} files ({{swift_test_files}} of them tests), with no third-party packages, on <a href="{{repo_url}}">GitHub</a>. <a href="screens.html#code">Lines per folder</a>.</dd>
     </dl>
