@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 07:40 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 09:35 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -218,3 +218,9 @@ None. Nothing moved yet.
 ## Update (8 Nov, 07:40 UTC, design.B): phase 4, PublicShell pushed
 - Conductor started phase 4 at 07:07 UTC. Pushed PublicShell on top of origin/dev (02f3624 era): `Apps/PrompTugal/Shell/` (PublicShell, Destinations, PublicSettingsView, PublicDebugView, PublicFeatures) and `Packages/PTCore/Sources/PTCore/Shell/` (shared parts). Ask is in (iPhone tab 4; `askAnywhere` on iPad). Offline reader stays nil in the public app.
 - Head c025f83. Full run 333 (id 42457549551, app=all, macos-26), dispatched 07:08. At 07:40: Debug build (team), Debug build (riskmandate), riskmandate iPad tests and Package PTAsk passed; no failure; the rest queued behind the runner queue. The Debug build (promptugal) is the first compile of PublicShell.
+
+## Update (8 Nov, 09:35 UTC, design.B): phase 4 ready
+- Two compile errors on the first PublicShell builds, both mine, both fixed: the argument order in the debug destination, and the public app needed its own `ReaderStore: NewsSource` extension.
+- Full run 342 (id 42463232061, app=all, macos-26) on d7c728e: success. d7c728e is code b8716f4 plus this page.
+- READY sent to the conductor.
+- Open items for others: widgets and "Now and next" for the public app (platform, `NowNextPublisher`); the public app's offline reader (`WebBridgeHub.offlineReader` is nil); the Team app's `TeamFeatures` url scheme (team).
