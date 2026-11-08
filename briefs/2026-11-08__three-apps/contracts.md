@@ -143,3 +143,4 @@ These replace the matching rows above.
   - iOS release builds the release commit, so the build and the tag match.
   - Build numbers still go up with every upload.
 - **Runner load:** Screens runs by hand only during the split.
+- **RiskMandate publishes from the same Apple account (Dinis, 01:25 UTC).** It uses bundle `ai.riskmandate.app` and gets `testflight: true` once it builds. Uploads skip cleanly until Dinis creates its App Store Connect record, as for Team.
