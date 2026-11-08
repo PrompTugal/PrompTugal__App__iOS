@@ -370,10 +370,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera only to scan the QR code of a vault key, when you choose to scan one.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -402,10 +404,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera only to scan the QR code of a vault key, when you choose to scan one.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
