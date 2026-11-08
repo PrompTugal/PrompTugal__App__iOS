@@ -183,3 +183,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 - 13:40 UTC: Screens run 33 failed (no artifacts); release re-ran as run 34 (rc5 7766e2a, queued 13:38). Review when it finishes.
 - 14:20 UTC: Screens run 34 reviewed: only 01-now usable (02–07 covered by the notification alert; run 35 fixes). NOW-1 good; fix sent: en-US time column wraps "11:05 A/M" (64 pt column) in NowView, ExploreScreens, NextHoursCard.
 - 14:20 UTC: time-column fix verified on rc7 535e9ba (NowView sized to "88:88 AM"; Explore rows lineLimit(1)+fixedSize). Final screens come from rc7.
+- 14:50 UTC: Screens run 36 (rc7) reviewed: 01, 02, 05, 06 good, pt translated. Sent: 04 talk detail opens the registration item (trademark, unpickable) → open first seeded pick or drop; drop 07 (full graph, trademark URL label, caption untrue); 03 title "Agenda" on iPhone; 02 day picker truncates in en; 05 description mentions the trademark (review decides).
