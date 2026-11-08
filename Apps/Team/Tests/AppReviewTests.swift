@@ -2,7 +2,7 @@ import Foundation
 import StoreKit
 import StoreKitTest
 import Testing
-@testable import PrompTugal
+@testable import Team
 
 // App Review readiness, team session: the meter and
 // StoreKit (Q3, R5), reminders (Q6, Q10), the planner store (Q10) and TeamStore's requests (Q8).
