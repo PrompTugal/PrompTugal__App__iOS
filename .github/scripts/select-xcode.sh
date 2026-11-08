@@ -11,7 +11,14 @@ fi
 
 echo "Installed: $(ls -d /Applications/Xcode*.app | xargs -n1 basename | tr '\n' ' ')"
 echo "Selecting $XCODE_APP"
-sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+if sudo -n true 2>/dev/null; then
+  sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+else
+  # A self-hosted Mac without passwordless sudo: select Xcode for this job only.
+  export DEVELOPER_DIR="$XCODE_APP/Contents/Developer"
+  echo "DEVELOPER_DIR=$DEVELOPER_DIR" >> "${GITHUB_ENV:-/dev/null}"
+  echo "No passwordless sudo: using DEVELOPER_DIR"
+fi
 xcodebuild -version
 swift --version
 {
