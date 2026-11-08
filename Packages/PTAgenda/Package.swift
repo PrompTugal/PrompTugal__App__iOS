@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "PTAgenda",
+    defaultLocalization: "en",
     platforms: [.iOS(.v18)],
     products: [
         .library(name: "PTAgenda", targets: ["PTAgenda"]),
