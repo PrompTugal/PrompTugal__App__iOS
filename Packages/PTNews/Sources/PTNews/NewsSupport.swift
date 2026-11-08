@@ -85,3 +85,21 @@ struct NewsRow: View {
         .accessibilityElement(children: .combine)
     }
 }
+
+/// How fresh the news is. When a refresh failed but a saved copy is on screen, an amber pill says so with the
+/// time the copy was saved, in Lisbon time ("Offline · saved 08:10"); otherwise the standard freshness label.
+struct NewsFreshness: View {
+    let updated: Date?
+    let failed: Bool
+
+    var body: some View {
+        if failed, let updated {
+            Label("Offline · saved \(Lisbon.timeLabel(updated))", systemImage: "wifi.slash")
+                .font(.caption)
+                .foregroundStyle(Palette.amber)
+                .accessibilityIdentifier("pt.news.offline")
+        } else {
+            FreshnessLabel(updated: updated, failed: failed)
+        }
+    }
+}
