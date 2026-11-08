@@ -1,46 +1,56 @@
 import Foundation
 
-struct Event: Codable, Identifiable, Hashable {
-    let date: String
-    let time: String
-    let title: String
-    let place: String
-    let kind: String
-    let official: Bool
-    let page: String
+public struct Event: Codable, Identifiable, Hashable {
+    public let date: String
+    public let time: String
+    public let title: String
+    public let place: String
+    public let kind: String
+    public let official: Bool
+    public let page: String
 
-    var id: String { page }
-    var url: URL? { URL(string: page, relativeTo: FeedClient.site)?.absoluteURL }
-    var detailURL: URL? {
+    public init(date: String, time: String, title: String, place: String, kind: String, official: Bool, page: String) {
+        self.date = date
+        self.time = time
+        self.title = title
+        self.place = place
+        self.kind = kind
+        self.official = official
+        self.page = page
+    }
+
+    public var id: String { page }
+    public var url: URL? { URL(string: page, relativeTo: FeedClient.site)?.absoluteURL }
+    public var detailURL: URL? {
         let parts = page.split(separator: "/")
         guard parts.count == 3, parts[0] == "events", parts[2] == "index.html" else { return nil }
         return FeedClient.site.appendingPathComponent("api/v1/events/\(parts[1]).json")
     }
 
-    var start: Date? { Lisbon.instant(day: date, clock: String(time.prefix(5))) }
-    var end: Date? {
+    public var start: Date? { Lisbon.instant(day: date, clock: String(time.prefix(5))) }
+    public var end: Date? {
         let parts = time.split(separator: "-")
         guard parts.count == 2, let start,
               let end = Lisbon.instant(day: date, clock: String(parts[1])) else { return nil }
         return end < start ? Lisbon.calendar.date(byAdding: .day, value: 1, to: end) : end
     }
 
-    static func earlier(_ lhs: Event, _ rhs: Event) -> Bool {
+    public static func earlier(_ lhs: Event, _ rhs: Event) -> Bool {
         if lhs.date != rhs.date { return lhs.date < rhs.date }
         if lhs.time != rhs.time { return lhs.time < rhs.time }
         return lhs.title.localizedStandardCompare(rhs.title) == .orderedAscending
     }
 }
 
-enum Lisbon {
-    static let zone = TimeZone(identifier: "Europe/Lisbon")!
-    static let calendar: Calendar = {
+public enum Lisbon {
+    public static let zone = TimeZone(identifier: "Europe/Lisbon")!
+    public static let calendar: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = zone
         return calendar
     }()
 
-    static func instant(day: String, clock: String = "12:00") -> Date? {
+    public static func instant(day: String, clock: String = "12:00") -> Date? {
         let date = day.split(separator: "-").compactMap { Int($0) }
         let time = clock.split(separator: ":").compactMap { Int($0) }
         guard date.count == 3, time.count == 2,
@@ -49,12 +59,12 @@ enum Lisbon {
                                                   hour: time[0], minute: time[1]))
     }
 
-    static func dayLabel(_ day: String) -> String {
+    public static func dayLabel(_ day: String) -> String {
         guard let date = instant(day: day) else { return day }
         return DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .none, in: zone)
     }
 
-    static func timeLabel(_ date: Date) -> String {
+    public static func timeLabel(_ date: Date) -> String {
         DateFormatter.localizedString(from: date, dateStyle: .none, timeStyle: .short, in: zone)
     }
 }
@@ -69,20 +79,27 @@ private extension DateFormatter {
     }
 }
 
-struct EventDetail: Codable {
-    let sourceURL: URL?
-    let sessionURL: URL?
-    let readAt: String?
-    let whereText: String?
+public struct EventDetail: Codable {
+    public let sourceURL: URL?
+    public let sessionURL: URL?
+    public let readAt: String?
+    public let whereText: String?
 
-    enum CodingKeys: String, CodingKey {
+    public init(sourceURL: URL?, sessionURL: URL?, readAt: String?, whereText: String?) {
+        self.sourceURL = sourceURL
+        self.sessionURL = sessionURL
+        self.readAt = readAt
+        self.whereText = whereText
+    }
+
+    public enum CodingKeys: String, CodingKey {
         case sourceURL = "source_url"
         case sessionURL = "session_url"
         case readAt = "read_at"
         case whereText = "where"
     }
 
-    var checkedOn: Date? {
+    public var checkedOn: Date? {
         guard let readAt else { return nil }
         return ISO8601DateFormatter().date(from: readAt)
             ?? ISO8601DateFormatter().date(from: readAt.replacingOccurrences(
@@ -91,35 +108,44 @@ struct EventDetail: Codable {
     }
 }
 
-struct Story: Codable, Identifiable, Hashable {
-    let id: String
-    let title: String
-    let summary: String
-    let category: String
-    let published: Date?
-    let url: URL
+public struct Story: Codable, Identifiable, Hashable {
+    public let id: String
+    public let title: String
+    public let summary: String
+    public let category: String
+    public let published: Date?
+    public let url: URL
+
+    public init(id: String, title: String, summary: String, category: String, published: Date?, url: URL) {
+        self.id = id
+        self.title = title
+        self.summary = summary
+        self.category = category
+        self.published = published
+        self.url = url
+    }
 }
 
-enum FeedClient {
-    static let site = URL(string: "https://promptugal.news/")!
-    static let fullAgenda = site.appendingPathComponent("events/index.html")
-    static let articleIndex = site.appendingPathComponent("articles/index.html")
-    static let disclosure = site.appendingPathComponent("about/participant.html")
+public enum FeedClient {
+    public static let site = URL(string: "https://promptugal.news/")!
+    public static let fullAgenda = site.appendingPathComponent("events/index.html")
+    public static let articleIndex = site.appendingPathComponent("articles/index.html")
+    public static let disclosure = site.appendingPathComponent("about/participant.html")
 
     private struct AgendaFeed: Decodable { let items: [Event] }
     private struct EventEnvelope: Decodable { let data: EventDetail }
 
-    static func agenda() async throws -> [Event] {
+    public static func agenda() async throws -> [Event] {
         let data = try await get(site.appendingPathComponent("api/v1/live/agenda.json"), label: "feed.agenda")
         return try JSONDecoder().decode(AgendaFeed.self, from: data).items.sorted(by: Event.earlier)
     }
 
-    static func news() async throws -> [Story] {
+    public static func news() async throws -> [Story] {
         let data = try await get(site.appendingPathComponent("feed.xml"), label: "feed.news")
         return try RSSReader().read(data)
     }
 
-    static func detail(for event: Event) async throws -> EventDetail {
+    public static func detail(for event: Event) async throws -> EventDetail {
         guard let url = event.detailURL else { throw URLError(.badURL) }
         return try JSONDecoder().decode(EventEnvelope.self, from: await get(url, label: "feed.event")).data
     }

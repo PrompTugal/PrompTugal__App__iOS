@@ -5,27 +5,46 @@ import SwiftUI
 // ActivityKit add only the timeline and the activity attributes around them).
 
 /// What a widget needs, read from the App Group store. No vault data, no keys.
-struct NextUpEntry: Sendable {
-    struct Item: Identifiable, Sendable {
-        let id: String
-        let title: String
-        let place: String
-        let start: Date
-        let end: Date?
-        let kind: Kind
-        enum Kind: Sendable { case session, standup, meeting }
+public struct NextUpEntry: Sendable {
+    public struct Item: Identifiable, Sendable {
+        public let id: String
+        public let title: String
+        public let place: String
+        public let start: Date
+        public let end: Date?
+        public let kind: Kind
+
+        public init(id: String, title: String, place: String, start: Date, end: Date?, kind: Kind) {
+            self.id = id
+            self.title = title
+            self.place = place
+            self.start = start
+            self.end = end
+            self.kind = kind
+        }
+        public enum Kind: Sendable { case session, standup, meeting }
     }
 
-    let now: Date
-    let items: [Item]
-    let attention: Int       // only you + decide + overdue, from me.json
+    public let now: Date
+    public let items: [Item]
+    public let attention: Int       // only you + decide + overdue, from me.json
+
+    public init(now: Date, items: [Item], attention: Int       // only you + decide + overdue, from me.json) {
+        self.now = now
+        self.items = items
+        self.attention = attention
+    }
 }
 
 /// Small widget: the very next thing, how long until it starts, and my attention count.
-struct NextUpSmallWidget: View {
-    let entry: NextUpEntry
+public struct NextUpSmallWidget: View {
+    public let entry: NextUpEntry
 
-    var body: some View {
+    public init(entry: NextUpEntry) {
+        self.entry = entry
+    }
+
+    public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 Kicker("Next")
@@ -54,10 +73,14 @@ struct NextUpSmallWidget: View {
 }
 
 /// Medium widget: now and next, two items with a time rail.
-struct NextUpMediumWidget: View {
-    let entry: NextUpEntry
+public struct NextUpMediumWidget: View {
+    public let entry: NextUpEntry
 
-    var body: some View {
+    public init(entry: NextUpEntry) {
+        self.entry = entry
+    }
+
+    public var body: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Kicker("PrompTugal")
@@ -101,11 +124,16 @@ struct NextUpMediumWidget: View {
 }
 
 /// Lock Screen Live Activity: from ten minutes before an item until it ends.
-struct SessionLiveActivityView: View {
-    let item: NextUpEntry.Item
-    let now: Date
+public struct SessionLiveActivityView: View {
+    public let item: NextUpEntry.Item
+    public let now: Date
 
-    var body: some View {
+    public init(item: NextUpEntry.Item, now: Date) {
+        self.item = item
+        self.now = now
+    }
+
+    public var body: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
                 Kicker(item.kind == .standup ? "Stand-up" : (now < item.start ? "Starting soon" : "Now"),
@@ -130,8 +158,8 @@ struct SessionLiveActivityView: View {
     }
 }
 
-enum WidgetSamples {
-    static var entry: NextUpEntry {
+public enum WidgetSamples {
+    public static var entry: NextUpEntry {
         let now = Date.now
         return NextUpEntry(now: now, items: [
             .init(id: "1", title: "AI: your new news editor?", place: "Centre Stage", start: now.addingTimeInterval(1_500),
