@@ -58,6 +58,11 @@ git grep -nohE "https://[a-z0-9.-]+" -- Packages/*/Sources Apps/PrompTugal | sor
 | N1 cookies off in `HTTPClient` | done (`HTTPClient.swift:89-91`) |
 | N2 vault background task | still at `PrompTugalApp.swift:30` and `:40`. **Accepted for this version** (conductor, 12:32): with no vault keys, `backgroundRefresh` returns at once, so it makes no network calls and shows no prompt or UI. |
 | N3 "Save key to my vault" | done: `PublicAskProvider.offersVaultKeyCopy` is false |
-| N4 `WebPage` loads linked sites in the app | **open, blocker** (team) |
+| N4 `WebPage` loads linked sites in the app | **open, blocker** (team). **Fixed on `split/rc3` 98767dd** (team ae618cf): see below. |
 | New native sources | PTExplore (`ExploreSource.swift`: promptugal.news only); PTNowNext makes no network calls; PTSync is not linked |
 | Links on Now (metro, traffic, Carris) and in Explore and talk details | SwiftUI `Link` and `openURL`, which open Safari: not app traffic |
+
+## Recheck on `split/rc3` 98767dd (12:40 UTC)
+
+- **N4 fixed.** `WebPage.swift` now cancels main-frame navigations to another site and opens a tapped link in Safari: `leavesSite(_:from:)` compares the host with the page's own host, allowing subdomains. The same check covers `createWebViewWith` (target=_blank and window.open). Tests are in `PTWebTests/WebPageHostTests.swift`. Every web view starts on promptugal.news, so only promptugal.news loads inside the app.
+- N1 and N3 are still done, and N2 is accepted. **After rc3 the public build talks to two hosts: promptugal.news and openrouter.ai (Ask, own key, after consent).** That matches the review notes, the App Privacy label and the age-rating answer.
