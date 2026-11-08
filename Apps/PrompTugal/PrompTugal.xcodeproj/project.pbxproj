@@ -16,9 +16,9 @@
 		FA561A52534BBBD0C4E9F720 /* PTAsk in Frameworks */ = {isa = PBXBuildFile; productRef = FC463707B728B9D5A483F362 /* PTAsk */; };
 		62C152B82B7782691901FDE6 /* PTVaultUI in Frameworks */ = {isa = PBXBuildFile; productRef = 00CAC9EBB3D202E3D0898BB2 /* PTVaultUI */; };
 		AD62C18680AF9EC5A07E5B5A /* PrompTugalWidgets.appex in Embed */ = {isa = PBXBuildFile; fileRef = 0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		A3DB1CA94FAE24CD2F779D42 /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 32154EC416734B3A20FF1516 /* PTAgenda */; };
+		A3DB1CA94FAE24CD2F779D42 /* PTNowNext in Frameworks */ = {isa = PBXBuildFile; productRef = 32154EC416734B3A20FF1516 /* PTNowNext */; };
 		FA989053DC0B7A670553676E /* PrompTugalIntents.appex in Embed */ = {isa = PBXBuildFile; fileRef = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BDF15758967827341EB8892C /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 96AD954C7DFBE4B782BD54D8 /* PTAgenda */; };
+		BDF15758967827341EB8892C /* PTNowNext in Frameworks */ = {isa = PBXBuildFile; productRef = 96AD954C7DFBE4B782BD54D8 /* PTNowNext */; };
 		E61982BA70FD0A0841506D63 /* PTDeck in Frameworks */ = {isa = PBXBuildFile; productRef = BA97653A6021BA60AD1358C3 /* PTDeck */; };
 /* End PBXBuildFile section */
 
@@ -182,7 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A3DB1CA94FAE24CD2F779D42 /* PTAgenda in Frameworks */,
+				A3DB1CA94FAE24CD2F779D42 /* PTNowNext in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,7 +190,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BDF15758967827341EB8892C /* PTAgenda in Frameworks */,
+				BDF15758967827341EB8892C /* PTNowNext in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,7 +337,7 @@
 			);
 			name = PrompTugalWidgets;
 			packageProductDependencies = (
-				32154EC416734B3A20FF1516 /* PTAgenda */,
+				32154EC416734B3A20FF1516 /* PTNowNext */,
 			);
 			productName = PrompTugalWidgets;
 			productReference = 0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */;
@@ -360,7 +360,7 @@
 			);
 			name = PrompTugalIntents;
 			packageProductDependencies = (
-				96AD954C7DFBE4B782BD54D8 /* PTAgenda */,
+				96AD954C7DFBE4B782BD54D8 /* PTNowNext */,
 			);
 			productName = PrompTugalIntents;
 			productReference = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */;
@@ -412,6 +412,7 @@
 				689CF41318B6542F4B8EB9FE /* XCLocalSwiftPackageReference "../../Packages/PTNews" */,
 				020358F86EADE19098D947DA /* XCLocalSwiftPackageReference "../../Packages/PTAsk" */,
 				5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */,
+				DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */,
 				6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -583,7 +584,7 @@
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal uses the microphone while you hold the dictation button, to turn what you say into text for a question or a message. The audio is not kept.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal turns your dictation into text. It does this on your device when your language allows it; otherwise your audio is sent to Apple to be transcribed.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -619,7 +620,7 @@
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal uses the microphone while you hold the dictation button, to turn what you say into text for a question or a message. The audio is not kept.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal turns your dictation into text. It does this on your device when your language allows it; otherwise your audio is sent to Apple to be transcribed.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -869,6 +870,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTDeck;
 		};
+		DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTNowNext;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -907,15 +912,15 @@
 			package = 5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */;
 			productName = PTVaultUI;
 		};
-		32154EC416734B3A20FF1516 /* PTAgenda */ = {
+		32154EC416734B3A20FF1516 /* PTNowNext */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E0A0E149DD8F39A2BD3E95E5 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
-			productName = PTAgenda;
+			package = DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */;
+			productName = PTNowNext;
 		};
-		96AD954C7DFBE4B782BD54D8 /* PTAgenda */ = {
+		96AD954C7DFBE4B782BD54D8 /* PTNowNext */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E0A0E149DD8F39A2BD3E95E5 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
-			productName = PTAgenda;
+			package = DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */;
+			productName = PTNowNext;
 		};
 		BA97653A6021BA60AD1358C3 /* PTDeck */ = {
 			isa = XCSwiftPackageProductDependency;

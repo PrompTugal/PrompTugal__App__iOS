@@ -3,6 +3,7 @@ import PTCore
 import PTAgenda
 import PTDeck
 import PTVaultUI
+import PTWeb
 
 /// Entry point of the public PrompTugal app (news.promptugal.reader).
 /// Background task ids for this app: news.promptugal.reader.refresh and
@@ -15,6 +16,8 @@ struct PrompTugalApp: App {
     init() {
         // The app's own URL scheme, before any view reads it (reminder links, deep links).
         AppLinks.scheme = "promptugal"
+        // The public list of websites (PrompTugal.news only, no team site), before any view reads it.
+        WebsiteSources.resource = "WebsitesPublic"
         // The one schedule. PTAsk's PublicAskProvider reads its picks from here.
         let schedule = ScheduleStore()
         AgendaHub.schedule = schedule
