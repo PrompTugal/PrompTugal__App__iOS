@@ -11,11 +11,16 @@ let package = Package(
     dependencies: [
         .package(path: "../PTCore"),
         .package(path: "../PTWeb"),
+        .package(path: "../PTNowNext"),
     ],
     targets: [
         .target(
             name: "PTAgenda",
-            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "PTWeb", package: "PTWeb")]
+            dependencies: [
+                .product(name: "PTCore", package: "PTCore"),
+                .product(name: "PTWeb", package: "PTWeb"),
+                .product(name: "PTNowNext", package: "PTNowNext"),
+            ]
         ),
         .testTarget(
             name: "PTAgendaTests",
