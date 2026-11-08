@@ -249,6 +249,13 @@ jobs:
                 -parallel-testing-enabled NO \
                 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO || true
             .github/scripts/export-screens.py "$result" "$RUNNER_TEMP/store/$loc" "${{ matrix.size.label }}" || true
+            # The screens test names its attachments with a store-order prefix ("01-now"); the ids input
+            # uses the plain id ("now"), so drop the prefix: iphone-01-now.png -> iphone-now.png.
+            for f in "$RUNNER_TEMP/store/$loc/"*.png; do
+              [ -e "$f" ] || continue
+              b=$(basename "$f"); n=$(echo "$b" | sed -E 's/^(iphone|ipad)-[0-9]+-/\1-/')
+              [ "$b" = "$n" ] || mv "$f" "$(dirname "$f")/$n"
+            done
           done
 
       - name: Normalise, check sizes, convert to JPEG
