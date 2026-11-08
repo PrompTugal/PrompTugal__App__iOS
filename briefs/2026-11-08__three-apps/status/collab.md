@@ -2,7 +2,7 @@
 
 > Collab moves AI/ into PTAsk and Lanes/ into PTLanes. Coordination/ stays in the Team app. Phase 0 (mapping and plan) is done. Waiting for team, design and vault packages on dev. No code moved yet.
 
-**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed) · **Updated:** 01:45 UTC (handoff)
+**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet on this branch. Run 291 (split/collab-seams 11acc2e) is still queued · **Updated:** 02:10 UTC (collab.B took over)
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
