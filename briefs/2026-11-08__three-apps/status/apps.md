@@ -37,11 +37,10 @@
 - Design: `Apps/PrompTugal/Shell/` (PublicShell, Destinations, settings) is a folder-synchronized group, so new files there need no project edit.
 - Phase 4: widgets and intents extensions go into `Apps/PrompTugal/` with platform. Not created tonight.
 
-## Last CI run (04:25 UTC)
-- 305 (riskmandate, cceddbf): green, merged to dev by the conductor as fef81e2.
-- 316 (promptugal, 6775d65 = dev at v0.1.82, macos-26): Release build, iPhone and iPad tests, PTNews, PTWeb, SGitVault, PTAsk green; PTAgenda, PTLanes, PTVaultUI running; Debug build and PTCore queued. No failures so far.
-- Runs must use runner=macos-26 (the laptop runner is offline).
-- apps.json: riskmandate testflight true; promptugal false until phase 4.
+## Last CI run (09:50 UTC)
+- 340 promptugal on a53e3cc: green, merged to dev by the conductor (a84a277).
+- ios-release run 84 on 42d2aab (promptugal testflight true on that commit only; dry run, internal only): success. Archive and export succeeded, upload skipped. Entitlements printed by the guard: app (app group group.news.promptugal.reader, associated-domains webcredentials:promptugal.news, time-sensitive), widgets and intents (app group group.news.promptugal.reader). One warning: ValidateEmbeddedBinary says the intents extension path is odd (../../../BuildProductsPath/.../Extensions); not an error.
+- Head 49c80c7: promptugal testflight false again. Conductor flips it after design's PublicShell is on dev.
 
 ## Handoff
 Handed to a new session (account B) at the conductor's request, 01:3x UTC. Branch split/apps.
