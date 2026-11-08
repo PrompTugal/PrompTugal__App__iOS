@@ -143,16 +143,36 @@ public final class WebPageModel: NSObject, WKNavigationDelegate, WKUIDelegate {
             decisionHandler(.cancel)
             return
         }
+        // A link out of this site (main frame only; subframes such as embeds are left alone) opens in the browser,
+        // never inside the app: the app browses its own site and nothing else.
+        if let url = action.request.url, action.targetFrame?.isMainFrame != false, Self.leavesSite(url, from: homeURL) {
+            decisionHandler(.cancel)
+            if action.navigationType == .linkActivated { UIApplication.shared.open(url) }
+            return
+        }
         decisionHandler(.allow)
     }
 
     /// Links that ask for a new window (target=_blank, window.open) load in this page, with the same checks.
     public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
                  for action: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        if let url = action.request.url, !Self.refuses(url) {
+        guard let url = action.request.url, !Self.refuses(url) else { return nil }
+        if Self.leavesSite(url, from: homeURL) {
+            if action.navigationType == .linkActivated { UIApplication.shared.open(url) }
+        } else {
             webView.load(action.request)
         }
         return nil
+    }
+
+    /// True for an http(s) address on another site than `home`: its host is neither the home host nor a subdomain of
+    /// it (a leading "www." on the home host is ignored). Other schemes (about:, blob:, data:) are not "leaving".
+    public static func leavesSite(_ url: URL, from home: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased(), scheme == "https" || scheme == "http" else { return false }
+        guard var base = home.host()?.lowercased() else { return true }
+        if base.hasPrefix("www.") { base.removeFirst(4) }
+        guard let host = url.host()?.lowercased() else { return true }
+        return !(host == base || host.hasSuffix("." + base))
     }
 
     /// True for a URL this page must not load: a checkout (CheckoutPolicy) or a page the bridge handles natively.
