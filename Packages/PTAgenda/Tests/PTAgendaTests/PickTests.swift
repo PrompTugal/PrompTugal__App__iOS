@@ -169,3 +169,14 @@ struct AgendaOpeningDayTests {
         #expect(AgendaView.initialDay(now: Lisbon.instant(day: "2026-11-13", clock: "08:00")!) == "all")
     }
 }
+
+@Suite("Agenda clock", .serialized)
+struct AgendaClockTests {
+    @Test func overrideReplacesTheRealTimeUntilCleared() {
+        let pretend = Lisbon.instant(day: "2026-11-10", clock: "14:05")!
+        AgendaClock.override = pretend
+        #expect(AgendaClock.now == pretend)
+        AgendaClock.override = nil
+        #expect(abs(AgendaClock.now.timeIntervalSinceNow) < 5)
+    }
+}

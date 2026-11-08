@@ -13,7 +13,7 @@ public struct AgendaView: View {
     /// `openSession`: the app's native session detail (works offline). Without it a row opens the session's web page.
     public init(openSession: ((Event) -> Void)? = nil) {
         self.openSession = openSession
-        _day = State(initialValue: Self.initialDay(now: .now))
+        _day = State(initialValue: Self.initialDay(now: AgendaClock.now))
     }
 
     private let openSession: ((Event) -> Void)?
@@ -30,7 +30,7 @@ public struct AgendaView: View {
     @State private var day: String
     @State private var query = ""
     @State private var picksOnly = false
-    @State private var now = Date.now
+    @State private var now = AgendaClock.now
     @State private var model = AgendaModel.empty
     @State private var opened: Event?
 
@@ -88,7 +88,7 @@ public struct AgendaView: View {
             // One tick a minute moves "Happening now" along, without redrawing per second.
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(60))
-                now = .now
+                now = AgendaClock.now
             }
         }
         .refreshable { await store.refresh() }

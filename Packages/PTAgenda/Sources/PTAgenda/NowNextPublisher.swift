@@ -12,7 +12,7 @@ import PTNowNext
 public enum NowNextPublisher {
     private static var lastWritten: NowNextSnapshot?
 
-    public static func publish(agenda: [Event], saved: [Event], now: Date = .now) {
+    public static func publish(agenda: [Event], saved: [Event], now: Date = AgendaClock.now) {
         let snapshot = makeSnapshot(agenda: agenda, saved: saved, now: now)
         guard snapshot.items != lastWritten?.items else { return }
         do {

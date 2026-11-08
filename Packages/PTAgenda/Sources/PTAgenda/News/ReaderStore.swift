@@ -110,7 +110,7 @@ public final class ReaderStore {
     }
 
     /// What the Now screen shows at `now`: the phase, what is next for the person, what is on, what starts soon.
-    public func nowModel(at now: Date = .now) -> NowModel {
+    public func nowModel(at now: Date = AgendaClock.now) -> NowModel {
         NowModel(events: cache.agenda, picks: schedule?.picks ?? [], now: now)
     }
 

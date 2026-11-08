@@ -19,8 +19,8 @@ public struct MyProgramView: View {
     @State private var calendarMessage: String?
 
     public var body: some View {
-        TimelineView(.everyMinute) { context in
-            let selected = day ?? ProgramModel.defaultDay(picks: schedule.picks, now: context.date)
+        TimelineView(.everyMinute) { _ in
+            let selected = day ?? ProgramModel.defaultDay(picks: schedule.picks, now: AgendaClock.now)
             let model = ProgramModel(picks: schedule.picks, day: selected)
             content(model)
         }
