@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 04:15 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 05:20 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 04:15 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 05:20 UTC: dev has had no new commits since v0.4.1 (merged at 04:15). Nothing to merge. Holding for PTNews, PTLanes, PTAsk and the phase 4 word. Checks last green at 04:15 (68 tests).
 
 - 04:15 UTC: merged `origin/dev` (v0.4.1): reminder links use `AppLinks.scheme`, StoreKit test bound. Swift changes only, no label or site change. Checks green (68 tests). Still waiting for PTNews, PTLanes, PTAsk and the phase 4 word.
 
