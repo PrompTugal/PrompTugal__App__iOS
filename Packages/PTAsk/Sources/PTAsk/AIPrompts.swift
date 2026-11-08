@@ -1,13 +1,18 @@
 import Foundation
+import PTCore
 
 /// Prepared questions over the team's data (brief item 4). Each adds the context it needs for that question only,
 /// and the prompt and context show in the answer's "How this was asked" disclosure.
-struct AIStarter: Identifiable, Sendable {
-    let id: String
-    let title: String
-    let symbol: String
-    let prompt: String
-    let include: Set<AIContextKind>
+public struct AIStarter: Identifiable, Sendable {
+    public let id: String
+    public let title: String
+    public let symbol: String
+    public let prompt: String
+    public let include: Set<AIContextKind>
+
+    public init(id: String, title: String, symbol: String, prompt: String, include: Set<AIContextKind>) {
+        self.id = id; self.title = title; self.symbol = symbol; self.prompt = prompt; self.include = include
+    }
 
     @MainActor func run(_ store: ChatStore) {
         store.ask(prompt, showing: title, include: include)
@@ -46,7 +51,12 @@ enum AIPrompts {
         prompt: """
         Using where_is_everyone for today (and my picks), tell me: which sessions two or more of us are at, where and when we could meet in person (right after a shared session, or in a free window that keeps the 13:00 and 18:00 stand-ups free), and any clash in my own picks. If no teammate has shared a plan, say so and tell me how to link one (Where is everyone → Add key).
         """,
-        include: [.picks])
+        include: [.picks, .teammates])
 
     static let starters: [AIStarter] = [briefMe, planMyDay, whereToMeet, myAgents]
+
+    /// The prepared questions this app can answer: those whose context the app offers, then the app's own.
+    @MainActor static func starters(for provider: any AskContextProvider) -> [AIStarter] {
+        starters.filter { $0.include.isSubset(of: provider.supportedKinds) } + provider.extraStarters
+    }
 }

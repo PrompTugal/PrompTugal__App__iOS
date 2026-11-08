@@ -1,4 +1,5 @@
 import Foundation
+import PTCore
 
 /// Sends a chat to OpenRouter and streams the answer back.
 ///

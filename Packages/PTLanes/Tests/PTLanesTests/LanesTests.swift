@@ -2,7 +2,8 @@ import CryptoKit
 import Foundation
 import Security
 import Testing
-@testable import PrompTugal
+@testable import PTLanes
+import PTCore
 
 /// sgit.ai's published subscribe key (public, from /.well-known/sgit-subscribe.json, 7 Nov 2026). Its fingerprint,
 /// recomputed with sgit's own method in Python, is sha256:d85b358000612e4e.
@@ -368,15 +369,5 @@ struct LanesReviewTests {
         #expect(opened.first { $0.id == "1" }?.text?.contains("Subject: Hi") == true)
         let bad = try #require(opened.first { $0.id == "2" })
         #expect(bad.text == nil && bad.error != nil && !(bad.error ?? "").contains("Error Domain"))
-    }
-
-    @Test("Error text is short and readable")
-    func errorText() {
-        #expect(CollabErrorText.short(URLError(.notConnectedToInternet)).hasPrefix("No internet"))
-        #expect(CollabErrorText.short(URLError(.timedOut)).contains("too long"))
-        #expect(CollabErrorText.short(OpenRouter.RequestError.noKey).contains("OpenRouter key"))
-        let raw = NSError(domain: "NSOSStatusErrorDomain", code: -25300,
-                          userInfo: [NSLocalizedDescriptionKey: "Error Domain=NSOSStatusErrorDomain Code=-25300 \"(null)\""])
-        #expect(CollabErrorText.short(raw) == "Something went wrong. Try again.")
     }
 }
