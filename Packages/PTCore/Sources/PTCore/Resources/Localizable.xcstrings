@@ -83,6 +83,29 @@
         }
       }
     },
+    "Briefing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Briefing"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Briefing"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Briefing"
+          }
+        }
+      }
+    },
     "Can't reach the server. Try again later.": {
       "extractionState": "manual",
       "localizations": {
@@ -401,6 +424,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "O PrompTugal é independente. Não é afiliado, apoiado nem patrocinado pela Web Summit."
+          }
+        }
+      }
+    },
+    "Session": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão"
           }
         }
       }

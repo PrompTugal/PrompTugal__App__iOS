@@ -75,7 +75,7 @@ public struct MyDayView: View {
                                    start: start, end: end, place: row.pick?.event?.place ?? "", eventID: row.pick?.id)
         } ?? []
         return VStack(spacing: 0) {
-            Picker("Day", selection: $timelineDay) {
+            Picker(String(localized: "Day", bundle: .module), selection: $timelineDay) {
                 ForEach(days, id: \.self) { Text(Lisbon.dayLabel($0)).tag($0) }
             }
             .pickerStyle(.segmented)

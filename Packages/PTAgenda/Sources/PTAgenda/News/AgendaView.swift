@@ -49,11 +49,11 @@ public struct AgendaView: View {
                     Text(String(localized: "Lisbon time · \(model.clock)", bundle: .module)).font(Typo.data).foregroundStyle(Palette.muted)
                     FreshnessLabel(updated: store.agendaUpdated, staleAfter: 3600)
                 }
-                Picker("Day", selection: $day) {
+                Picker(String(localized: "Day", bundle: .module), selection: $day) {
                     Text(String(localized: "All days", bundle: .module)).tag("all")
                     ForEach(model.days) { Text($0.label).tag($0.id) }
                 }
-                Toggle("My picks only", isOn: $picksOnly)
+                Toggle(String(localized: "My picks only", bundle: .module), isOn: $picksOnly)
             }
             if !model.running.isEmpty {
                 Section(String(localized: "Happening now", bundle: .module)) {
@@ -66,18 +66,18 @@ public struct AgendaView: View {
                 }
             }
             if store.agenda.isEmpty {
-                StateView(phase: store.agendaUnavailable ? .failed("The agenda could not be reached.") : .loading,
-                          hasData: false, title: "agenda") { Task { await store.refresh() } }
+                StateView(phase: store.agendaUnavailable ? .failed(String(localized: "The agenda could not be reached.", bundle: .module)) : .loading,
+                          hasData: false, title: String(localized: "the agenda", bundle: .module)) { Task { await store.refresh() } }
             } else if model.isEmpty {
-                ContentUnavailableView("No matching sessions", systemImage: "magnifyingglass",
+                ContentUnavailableView(String(localized: "No matching sessions", bundle: .module), systemImage: "magnifyingglass",
                                        description: Text(String(localized: "Try another day, filter or search.", bundle: .module)))
             }
         }
         .listStyle(.insetGrouped)
-        .searchable(text: $query, prompt: "Sessions or venues")
-        .navigationTitle("Agenda")
+        .searchable(text: $query, prompt: String(localized: "Sessions or venues", bundle: .module))
+        .navigationTitle(String(localized: "Agenda", bundle: .module))
         .navigationDestination(item: $opened) { event in
-            if let url = event.url { WebPage(url: url, title: "Session") }
+            if let url = event.url { WebPage(url: url, title: String(localized: "Session", bundle: .module)) }
         }
         .onChange(of: inputs, initial: true) { _, _ in
             model = AgendaModel(events: store.agenda, day: day, query: query, picksOnly: picksOnly,
@@ -92,7 +92,7 @@ public struct AgendaView: View {
             }
         }
         .refreshable { await store.refresh() }
-        .webTwin(FeedClient.fullAgenda, title: "Agenda")
+        .webTwin(FeedClient.fullAgenda, title: String(localized: "Agenda", bundle: .module))
     }
 
     private func rowView(_ row: AgendaModel.Row) -> some View {
