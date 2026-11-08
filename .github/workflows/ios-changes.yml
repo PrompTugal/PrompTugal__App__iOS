@@ -1,0 +1,98 @@
+name: iOS changes
+
+# Reusable. Decides which apps and Swift packages a run has to build, test and
+# upload, from apps.json and the diff (contracts section 4 and 5). Ubuntu only,
+# so it costs no macOS runner. Called by ios.yml and ios-release.yml.
+#
+# Before the split lands there is no apps.json: scripts/release/apps.py then
+# describes today's single app (the root project). An app whose project does not
+# exist yet is skipped, with a line in the run summary.
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        description: 'all, or one app key from apps.json (manual runs)'
+        type: string
+        default: 'all'
+      upload:
+        type: string
+        default: 'false'
+      dry_run:
+        type: string
+        default: 'false'
+      source_ref:
+        description: 'Plan for another branch (manual runs)'
+        type: string
+        default: ''
+    outputs:
+      apps:
+        description: 'JSON list of apps to build and test'
+        value: ${{ jobs.changes.outputs.apps }}
+      has_apps:
+        value: ${{ jobs.changes.outputs.has_apps }}
+      upload:
+        description: 'JSON list of apps to sign and upload'
+        value: ${{ jobs.changes.outputs.upload }}
+      has_upload:
+        value: ${{ jobs.changes.outputs.has_upload }}
+      screens:
+        description: 'JSON list of apps to photograph'
+        value: ${{ jobs.changes.outputs.screens }}
+      has_screens:
+        value: ${{ jobs.changes.outputs.has_screens }}
+      packages:
+        description: 'JSON list of Swift packages to test'
+        value: ${{ jobs.changes.outputs.packages }}
+      has_packages:
+        value: ${{ jobs.changes.outputs.has_packages }}
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      apps: ${{ steps.plan.outputs.apps }}
+      has_apps: ${{ steps.plan.outputs.has_apps }}
+      upload: ${{ steps.plan.outputs.upload }}
+      has_upload: ${{ steps.plan.outputs.has_upload }}
+      screens: ${{ steps.plan.outputs.screens }}
+      has_screens: ${{ steps.plan.outputs.has_screens }}
+      packages: ${{ steps.plan.outputs.packages }}
+      has_packages: ${{ steps.plan.outputs.has_packages }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Use another branch's tree (source_ref)
+        if: inputs.source_ref != ''
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          # Plan against the branch that will be built, with these scripts.
+          cp -R scripts/release "$RUNNER_TEMP/release-scripts"
+          git fetch --no-tags origin "$SOURCE_REF"
+          git checkout --detach FETCH_HEAD
+          echo "PLAN_SCRIPT=$RUNNER_TEMP/release-scripts/apps.py" >> "$GITHUB_ENV"
+
+      - name: Rules self-test
+        run: python3 -I "${PLAN_SCRIPT:-scripts/release/apps.py}" --self-test
+
+      - name: Plan
+        id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          SHA: ${{ github.sha }}
+          BEFORE: ${{ github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          INPUT_APP: ${{ inputs.app }}
+          INPUT_UPLOAD: ${{ inputs.upload }}
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+          VARS_JSON: ${{ toJSON(vars) }}
+        run: python3 "${PLAN_SCRIPT:-scripts/release/apps.py}" plan

@@ -1,0 +1,9 @@
+PrompTugal for Web Summit Lisbon.
+
+Please try:
+- Today: tap "Try with sample data", or "I am not on the team" to read the agenda and news.
+- Agenda: open a session and add it to your schedule.
+- Ask: needs consent before the first message.
+- Settings > About: Privacy and Support links.
+
+Tell us what is confusing or broken.
