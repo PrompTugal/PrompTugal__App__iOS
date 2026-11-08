@@ -83,3 +83,9 @@ Handed off at 01:40 UTC (8 Nov) to the session under conductor.B. I dispatch no 
 4. Phase 4: `apps.json` "team" must switch bundle to `news.promptugal.team` in the same commit that moves the project, or the upload guard fails. Ask platform to add `.github/scripts/` to `all`.
 5. The editor should read the app version from `VERSION` (the site's `build.py` still reads the project's `MARKETING_VERSION`, 0.3.1).
 6. Risk to know: if "Release and deploy" fails for a push (for example the site validator), that push is not built; the next successful release builds everything since each app's last build.
+
+## Release.B update (8 Nov, ~02:00 UTC)
+
+- Took over. Merged origin/dev (7b621f5), VERSION kept at `v0.4`. No workflow or release-script changes came with the merge.
+- Site checks and `check_apps.py` pass on 7b621f5.
+- Runs 287 (ios, queued) and 59 (ios-release dry run, in progress) on d0ad4d6 still pending.
