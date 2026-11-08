@@ -26,17 +26,17 @@ public struct WebPage: View {
                             ProgressView(value: model.progress)
                                 .progressViewStyle(.linear)
                                 .tint(Palette.red)
-                                .accessibilityLabel("Loading page")
+                                .accessibilityLabel(String(localized: "Loading page", bundle: .module))
                         }
                     }
                     .overlay {
                         if let failure = model.failure {
                             ContentUnavailableView {
-                                Label("Page unavailable", systemImage: "wifi.slash")
+                                Label(String(localized: "Page unavailable", bundle: .module), systemImage: "wifi.slash")
                             } description: {
                                 Text(failure)
                             } actions: {
-                                Button("Try again") { model.reload() }.buttonStyle(.borderedProminent)
+                                Button(String(localized: "Try again", bundle: .module)) { model.reload() }.buttonStyle(.borderedProminent)
                             }
                             .background(Palette.paper)
                         }
@@ -44,12 +44,12 @@ public struct WebPage: View {
                     .toolbar {
                         if showsToolbar {
                             ToolbarItemGroup(placement: .topBarTrailing) {
-                                Button { model.webView.goBack() } label: { Label("Back", systemImage: "chevron.left") }
+                                Button { model.webView.goBack() } label: { Label(String(localized: "Back", bundle: .module), systemImage: "chevron.left") }
                                     .disabled(!model.canGoBack)
-                                Button { model.reload() } label: { Label("Reload", systemImage: "arrow.clockwise") }
+                                Button { model.reload() } label: { Label(String(localized: "Reload", bundle: .module), systemImage: "arrow.clockwise") }
                                 if let current = model.currentURL {
-                                    ShareLink(item: current) { Label("Share", systemImage: "square.and.arrow.up") }
-                                    Link(destination: current) { Label("Open in Safari", systemImage: "safari") }
+                                    ShareLink(item: current) { Label(String(localized: "Share", bundle: .module), systemImage: "square.and.arrow.up") }
+                                    Link(destination: current) { Label(String(localized: "Open in Safari", bundle: .module), systemImage: "safari") }
                                 }
                             }
                         }
@@ -178,7 +178,7 @@ public final class WebPageModel: NSObject, WKNavigationDelegate, WKUIDelegate {
     private func fail(_ error: Error) {
         let error = error as NSError
         guard !(error.domain == NSURLErrorDomain && error.code == NSURLErrorCancelled) else { return }
-        failure = "Check your connection and try again."
+        failure = String(localized: "Check your connection and try again.", bundle: .module)
         log(webView.url ?? homeURL, error: "Navigation failed (\(error.code))")
     }
 }
@@ -197,7 +197,7 @@ extension WebPageModel {
 // MARK: - The web twin
 
 extension View {
-    /// Adds a "Web original" button. On iPad the page opens beside the native screen
+    /// Adds a String(localized: "Web original", bundle: .module) button. On iPad the page opens beside the native screen
     /// (an inspector column), so the two can be compared; on iPhone it opens as a sheet.
     public func webTwin(_ url: URL, title: String) -> some View { modifier(WebTwinModifier(url: url, title: title)) }
 }
@@ -213,9 +213,9 @@ private struct WebTwinModifier: ViewModifier {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { shown.toggle() } label: {
-                        Label(shown ? "Hide web original" : "Web original", systemImage: "square.split.2x1")
+                        Label(shown ? String(localized: "Hide web original", bundle: .module) : String(localized: "Web original", bundle: .module), systemImage: "square.split.2x1")
                     }
-                    .help("Compare with the web page this screen is built from")
+                    .help(String(localized: "Compare with the web page this screen is built from", bundle: .module))
                 }
             }
         if width == .regular {
@@ -238,7 +238,7 @@ private struct WebTwinModifier: ViewModifier {
                     KindBadge(kind: .web(url))
                     Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
                     Spacer()
-                    Button("Done") { shown = false }
+                    Button(String(localized: "Done", bundle: .module)) { shown = false }
                 }
                 .padding(.horizontal, Space.l)
                 .padding(.vertical, Space.s)

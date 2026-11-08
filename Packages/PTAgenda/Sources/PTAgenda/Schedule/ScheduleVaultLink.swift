@@ -64,11 +64,11 @@ public final class ScheduleVaultLink {
                 try await vault.loadPicks().map { String(decoding: $0, as: UTF8.self) }
             }
             lastPull = .now
-            state = .done(result.found ? "\(result.added) added from your vault" : "No picks in your vault yet")
+            state = .done(result.found ? String(localized: "\(result.added) added from your vault", bundle: .module) : String(localized: "No picks in your vault yet", bundle: .module))
             log.record(host: "vault", .app, op: "schedule.vault.pull",
                        detail: result.found ? "+\(result.added) −\(result.removed)" : "no picks file")
         } catch {
-            state = .failed("Your vault could not be read.")
+            state = .failed(String(localized: "Your vault could not be read.", bundle: .module))
             log.record(host: "vault", .app, op: "schedule.vault.pull", detail: String(describing: type(of: error)),
                        outcome: .failed)
         }
@@ -78,7 +78,7 @@ public final class ScheduleVaultLink {
     public func save() async {
         guard let vault, vault.hasVault else { state = .noVault; return }
         guard canSave else {
-            state = .failed("Saving needs your vault opened with its vault key and an access token.")
+            state = .failed(String(localized: "Saving needs your vault opened with its vault key and an access token.", bundle: .module))
             return
         }
         state = .working
@@ -90,7 +90,7 @@ public final class ScheduleVaultLink {
             log.record(host: "vault", .app, op: "schedule.vault.save",
                        detail: "\(schedule.document.picks.count) picks, +\(result.added) from the vault")
         } catch {
-            state = .failed("Your picks could not be saved to the vault.")
+            state = .failed(String(localized: "Your picks could not be saved to the vault.", bundle: .module))
             log.record(host: "vault", .app, op: "schedule.vault.save", detail: String(describing: type(of: error)),
                        outcome: .failed)
         }

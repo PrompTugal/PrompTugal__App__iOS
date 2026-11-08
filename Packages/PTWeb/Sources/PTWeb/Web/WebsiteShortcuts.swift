@@ -54,13 +54,13 @@ public struct WebsiteDirectory {
 
     public static func load() -> Self {
         let filename = "Websites.json"
-        guard let bundled = Bundle.module.url(forResource: "Websites", withExtension: "json"),
+        guard let bundled = Bundle.module.url(forResource: String(localized: "Websites", bundle: .module), withExtension: "json"),
               let data = try? Data(contentsOf: bundled),
               let defaults = decode(data) else {
             return Self(shortcuts: [
                 WebsiteShortcut(id: "promptugal", name: "PrompTugal.news", url: FeedClient.site,
                                 icon: "newspaper.fill", color: "red", iconAsset: nil, iconText: nil)
-            ], notice: "The bundled shortcuts file is unavailable.")
+            ], notice: String(localized: "The bundled shortcuts file is unavailable.", bundle: .module))
         }
 
         let override = URL.documentsDirectory.appendingPathComponent(filename)
@@ -80,7 +80,7 @@ public struct WebsiteDirectory {
             try data.write(to: override, options: .withoutOverwriting)
             return Self(shortcuts: defaults, notice: nil)
         } catch {
-            return Self(shortcuts: defaults, notice: "The shortcuts file could not be copied to Files.")
+            return Self(shortcuts: defaults, notice: String(localized: "The shortcuts file could not be copied to Files.", bundle: .module))
         }
     }
 
@@ -141,7 +141,7 @@ public struct WebsiteSidebar: View {
                     .accessibilityAddTraits(selected ? .isSelected : [])
                 }
             } header: {
-                Text("Websites").font(.headline).accessibilityAddTraits(.isHeader)
+                Text(String(localized: "Websites", bundle: .module)).font(.headline).accessibilityAddTraits(.isHeader)
             } footer: {
                 if let notice = directory.notice {
                     Text(notice)

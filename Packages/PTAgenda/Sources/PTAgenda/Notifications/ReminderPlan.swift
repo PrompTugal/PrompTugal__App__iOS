@@ -63,7 +63,7 @@ public enum ReminderPlan {
                 let place = pick.event?.place ?? ""
                 items.append(ReminderItem(
                     id: "\(prefix)pick.\(pick.id)", kind: .pick, title: pick.title,
-                    body: ["Starts \(Lisbon.timeLabel(start)) Lisbon time", place].filter { !$0.isEmpty }.joined(separator: " · "),
+                    body: [String(localized: "Starts \(Lisbon.timeLabel(start)) Lisbon time", bundle: .module), place].filter { !$0.isEmpty }.joined(separator: " · "),
                     fire: fire, start: start, url: pick.url, scheme: scheme))
             }
         }
@@ -72,8 +72,8 @@ public enum ReminderPlan {
                 let fire = standup.at.addingTimeInterval(-lead)
                 guard fire > now else { continue }
                 items.append(ReminderItem(
-                    id: "\(prefix)standup.\(standup.slot)", kind: .standup, title: "Stand-up at \(Lisbon.timeLabel(standup.at))",
-                    body: "Lisbon time. Your briefing is ready.", fire: fire, start: standup.at,
+                    id: "\(prefix)standup.\(standup.slot)", kind: .standup, title: String(localized: "Stand-up at \(Lisbon.timeLabel(standup.at))", bundle: .module),
+                    body: String(localized: "Lisbon time. Your briefing is ready.", bundle: .module), fire: fire, start: standup.at,
                     url: standup.briefingURL(for: person), scheme: scheme))
             }
         }

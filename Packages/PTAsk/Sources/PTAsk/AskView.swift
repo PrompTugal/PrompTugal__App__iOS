@@ -54,22 +54,22 @@ public struct AskView: View {
                 AskComposer(store: store, focused: $composerFocused)
             }
         }
-        .navigationTitle(compact ? "" : "Ask")
+        .navigationTitle(compact ? "" : String(localized: "Ask", bundle: .module))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
-                    Picker("Model", selection: $store.model) {
+                    Picker(String(localized: "Model", bundle: .module), selection: $store.model) {
                         ForEach(OpenRouter.models) { Text($0.label).tag($0.id) }
                         if !OpenRouter.models.contains(where: { $0.id == store.model }) {
                             Text(store.model).tag(store.model)
                         }
                     }
                     Divider()
-                    Button("New conversation", systemImage: "square.and.pencil") { store.clear() }
+                    Button(String(localized: "New conversation", bundle: .module), systemImage: "square.and.pencil") { store.clear() }
                         .disabled(store.turns.isEmpty)
-                    Button("Key and settings", systemImage: "key") { showSettings = true }
+                    Button(String(localized: "Key and settings", bundle: .module), systemImage: "key") { showSettings = true }
                 } label: {
-                    Label("Ask settings", systemImage: "ellipsis.circle")
+                    Label(String(localized: "Ask settings", bundle: .module), systemImage: "ellipsis.circle")
                 }
             }
         }
@@ -92,10 +92,10 @@ private struct AskKeyCallout: View {
     let open: () -> Void
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Add your OpenRouter key", systemImage: "key.fill").font(.headline)
-            Text("Ask uses your own OpenRouter key. It is kept in this device's Keychain and sent only to openrouter.ai, with each question. You pay OpenRouter for what you ask.")
+            Label(String(localized: "Add your OpenRouter key", bundle: .module), systemImage: "key.fill").font(.headline)
+            Text(String(localized: "Ask uses your own OpenRouter key. It is kept in this device's Keychain and sent only to openrouter.ai, with each question. You pay OpenRouter for what you ask.", bundle: .module))
                 .font(.subheadline).foregroundStyle(.secondary)
-            Button("Add key", action: open).buttonStyle(.borderedProminent)
+            Button(String(localized: "Add key", bundle: .module), action: open).buttonStyle(.borderedProminent)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -107,7 +107,7 @@ private struct AskStarters: View {
     let store: ChatStore
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Ask about the summit, your day and the team. Choose below what Ask may see.")
+            Text(String(localized: "Ask about the summit, your day and the team. Choose below what Ask may see.", bundle: .module))
                 .font(.subheadline).foregroundStyle(.secondary)
             ForEach(AIPrompts.starters(for: AskEnvironment.provider)) { starter in
                 Button {
@@ -139,11 +139,11 @@ struct AskTurnView: View {
                     .padding(10)
                     .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 14))
                     .textSelection(.enabled)
-                    .accessibilityLabel("You: \(turn.text)")
+                    .accessibilityLabel(String(localized: "You: \(turn.text)", bundle: .module))
             }
         case .tool:
             Label(turn.text, systemImage: "wrench.and.screwdriver")
-                .accessibilityLabel("Ask read: \(turn.text)")
+                .accessibilityLabel(String(localized: "Ask read: \(turn.text)", bundle: .module))
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
@@ -156,7 +156,7 @@ struct AskTurnView: View {
                 if turn.text.isEmpty && turn.streaming {
                     HStack(spacing: 6) {
                         ProgressView().controlSize(.small)
-                        Text("Thinking…").font(.subheadline).foregroundStyle(.secondary)
+                        Text(String(localized: "Thinking…", bundle: .module)).font(.subheadline).foregroundStyle(.secondary)
                     }
                 } else {
                     Text(AIMarkdown.render(turn.text))
@@ -164,25 +164,25 @@ struct AskTurnView: View {
                             pendingLink = url
                             return .handled
                         })
-                        .confirmationDialog("Open this link?", isPresented: Binding(get: { pendingLink != nil },
+                        .confirmationDialog(String(localized: "Open this link?", bundle: .module), isPresented: Binding(get: { pendingLink != nil },
                                                                                  set: { if !$0 { pendingLink = nil } }),
                                             titleVisibility: .visible, presenting: pendingLink) { url in
                             if AskLinks.canOpen(url) {
-                                Button("Open") { openURL(url) }
+                                Button(String(localized: "Open", bundle: .module)) { openURL(url) }
                             }
-                            Button("Copy link") { AskClipboard.copy(url.absoluteString) }
+                            Button(String(localized: "Copy link", bundle: .module)) { AskClipboard.copy(url.absoluteString) }
                         } message: { url in
-                            Text("The answer links to:\n\(url.absoluteString)\n\nIt was written by the AI model; check it before you open it.")
+                            Text(String(localized: "The answer links to:\n\(url.absoluteString)\n\nIt was written by the AI model; check it before you open it.", bundle: .module))
                         }
                         .textSelection(.enabled)
                         .contextMenu {
-                            Button("Copy", systemImage: "doc.on.doc") { AskClipboard.copy(turn.text) }
-                            ShareLink(item: turn.text) { Label("Share", systemImage: "square.and.arrow.up") }
+                            Button(String(localized: "Copy", bundle: .module), systemImage: "doc.on.doc") { AskClipboard.copy(turn.text) }
+                            ShareLink(item: turn.text) { Label(String(localized: "Share", bundle: .module), systemImage: "square.and.arrow.up") }
                         }
                 }
                 HStack(spacing: 8) {
                     Text(OpenRouter.label(for: turn.model ?? ""))
-                    if let usage = turn.usage, let total = usage.totalTokens { Text("\(total) tokens") }
+                    if let usage = turn.usage, let total = usage.totalTokens { Text(String(localized: "\(total) tokens", bundle: .module)) }
                     if let cost = turn.usage?.cost { Text(String(format: "$%.4f", cost)) }
                 }
                 .font(.caption2).foregroundStyle(.secondary)
@@ -213,7 +213,7 @@ struct AskMentions: View {
                         Image(systemName: picked ? "star.fill" : "star")
                     }
                     .buttonStyle(.borderless)
-                    .accessibilityLabel(picked ? "Remove \(event.title) from my picks" : "Pick \(event.title)")
+                    .accessibilityLabel(picked ? String(localized: "Remove \(event.title) from my picks", bundle: .module) : String(localized: "Pick \(event.title)", bundle: .module))
                     VStack(alignment: .leading, spacing: 1) {
                         Text(event.title).font(.caption.bold()).lineLimit(1)
                         Text("\(Lisbon.dayLabel(event.date)) \(event.time) · \(event.place)").font(.caption2).foregroundStyle(.secondary)
@@ -221,7 +221,7 @@ struct AskMentions: View {
                     Spacer(minLength: 0)
                     if let url = event.url {
                         Link(destination: url) { Image(systemName: "arrow.up.right.square") }
-                            .accessibilityLabel("Open \(event.title)")
+                            .accessibilityLabel(String(localized: "Open \(event.title)", bundle: .module))
                     }
                 }
             }
@@ -238,8 +238,8 @@ struct AskConsentSheet: View {
     var body: some View {
         Form {
             Section {
-                Text("To answer, Ask sends your question and this conversation to **OpenRouter** (openrouter.ai), a service that passes them to **\(OpenRouter.provider(of: store.model))**, the maker of the model you chose (\(OpenRouter.label(for: store.model))). They are sent with your own OpenRouter key; OpenRouter's and the provider's terms apply.")
-                Text("Nothing is sent until you allow it. You can change this at any time in Ask → Key and settings.")
+                Text(String(localized: "To answer, Ask sends your question and this conversation to **OpenRouter** (openrouter.ai), a service that passes them to **\(OpenRouter.provider(of: store.model))**, the maker of the model you chose (\(OpenRouter.label(for: store.model))). They are sent with your own OpenRouter key; OpenRouter's and the provider's terms apply.", bundle: .module))
+                Text(String(localized: "Nothing is sent until you allow it. You can change this at any time in Ask → Key and settings.", bundle: .module))
                     .font(.footnote).foregroundStyle(.secondary)
             }
             Section {
@@ -252,17 +252,17 @@ struct AskConsentSheet: View {
                     }
                 }
             } header: {
-                Text("Also send, with each question")
+                Text(String(localized: "Also send, with each question", bundle: .module))
             } footer: {
-                Text("Only what is switched on is sent. The public agenda is on by default; everything else is off.")
+                Text(String(localized: "Only what is switched on is sent. The public agenda is on by default; everything else is off.", bundle: .module))
             }
             Section {
-                Button("Allow") { store.grantConsent() }
+                Button(String(localized: "Allow", bundle: .module)) { store.grantConsent() }
                     .bold()
-                Button("Don't allow", role: .cancel) { store.declineConsent() }
+                Button(String(localized: "Don't allow", bundle: .module), role: .cancel) { store.declineConsent() }
             }
         }
-        .navigationTitle("Send to OpenRouter?")
+        .navigationTitle(String(localized: "Send to OpenRouter?", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -274,26 +274,26 @@ struct AskDebugDisclosure: View {
     var body: some View {
         DisclosureGroup {
             VStack(alignment: .leading, spacing: 6) {
-                LabeledContent("Model", value: request.model)
+                LabeledContent(String(localized: "Model", bundle: .module), value: request.model)
                 LabeledContent("Messages", value: "\(request.messageCount)")
                 LabeledContent("Request", value: ByteCountFormatter.string(fromByteCount: Int64(request.requestBytes), countStyle: .file))
-                if let first = request.firstTokenMs { LabeledContent("First text", value: "\(Int(first)) ms") }
-                if let total = request.totalMs { LabeledContent("Whole answer", value: "\(Int(total)) ms") }
+                if let first = request.firstTokenMs { LabeledContent(String(localized: "First text", bundle: .module), value: "\(Int(first)) ms") }
+                if let total = request.totalMs { LabeledContent(String(localized: "Whole answer", bundle: .module), value: "\(Int(total)) ms") }
                 if let reason = request.finishReason { LabeledContent("Finish", value: reason) }
-                if !request.toolCalls.isEmpty { LabeledContent("Asked for", value: request.toolCalls.joined(separator: ", ")) }
+                if !request.toolCalls.isEmpty { LabeledContent(String(localized: "Asked for", bundle: .module), value: request.toolCalls.joined(separator: ", ")) }
                 ForEach(request.parts) { part in
                     LabeledContent(part.kind.title, value: part.body.isEmpty ? "empty, left out" : "\(part.body.count) chars")
                 }
-                Text("System prompt").font(.caption.bold()).padding(.top, 4)
+                Text(String(localized: "System prompt", bundle: .module)).font(.caption.bold()).padding(.top, 4)
                 Text(request.systemPrompt)
                     .font(.caption.monospaced())
                     .textSelection(.enabled)
-                Text("The key is sent in one header to openrouter.ai and is not shown here.")
+                Text(String(localized: "The key is sent in one header to openrouter.ai and is not shown here.", bundle: .module))
                     .font(.caption2).foregroundStyle(.secondary)
             }
             .font(.caption)
         } label: {
-            Label("How this was asked", systemImage: "ladybug").font(.caption)
+            Label(String(localized: "How this was asked", bundle: .module), systemImage: "ladybug").font(.caption)
         }
     }
 }
@@ -318,7 +318,7 @@ private struct AskComposer: View {
                         }
                         .buttonStyle(.bordered)
                         .tint(on ? Color.accentColor : Color.secondary)
-                        .accessibilityValue(on ? "shared with Ask" : "not shared")
+                        .accessibilityValue(on ? String(localized: "shared with Ask", bundle: .module) : String(localized: "not shared", bundle: .module))
                     }
                 }
                 .padding(.horizontal)
@@ -333,9 +333,9 @@ private struct AskComposer: View {
                     .gesture(DragGesture(minimumDistance: 0)
                         .onChanged { _ in if !dictation.isRecording { Task { await dictation.start() } } }
                         .onEnded { _ in dictation.stop() })
-                    .accessibilityLabel("Hold to dictate")
+                    .accessibilityLabel(String(localized: "Hold to dictate", bundle: .module))
                     .accessibilityAddTraits(.isButton)
-                TextField(dictation.isRecording ? "Listening…" : "Ask about today, your picks, the team…",
+                TextField(dictation.isRecording ? String(localized: "Listening…", bundle: .module) : String(localized: "Ask about today, your picks, the team…", bundle: .module),
                           text: $store.draft, axis: .vertical)
                     .lineLimit(1...6)
                     .textFieldStyle(.plain)
@@ -349,13 +349,13 @@ private struct AskComposer: View {
                     Button { store.stop() } label: {
                         Image(systemName: "stop.circle.fill").font(.title)
                     }
-                    .accessibilityLabel("Stop")
+                    .accessibilityLabel(String(localized: "Stop", bundle: .module))
                 } else {
                     Button { store.send() } label: {
                         Image(systemName: "arrow.up.circle.fill").font(.title)
                     }
                     .disabled(store.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !store.keys.hasKey)
-                    .accessibilityLabel("Send")
+                    .accessibilityLabel(String(localized: "Send", bundle: .module))
                     .keyboardShortcut(.return, modifiers: [.command])
                 }
             }
@@ -387,7 +387,7 @@ struct AskSettingsView: View {
             Section {
                 if keys.hasKey {
                     LabeledContent("Key", value: keys.hint ?? "saved")
-                    Button(working ? "Checking…" : "Check key") {
+                    Button(working ? String(localized: "Checking…", bundle: .module) : String(localized: "Check key", bundle: .module)) {
                         working = true
                         Task {
                             do { message = try await keys.check().summary } catch { message = CollabErrorText.short(error) }
@@ -395,71 +395,71 @@ struct AskSettingsView: View {
                         }
                     }
                     .disabled(working)
-                    Button("Forget key", role: .destructive) { keys.forget(); message = "Key removed from this device." }
+                    Button(String(localized: "Forget key", bundle: .module), role: .destructive) { keys.forget(); message = String(localized: "Key removed from this device.", bundle: .module) }
                 } else {
                     SecureField("sk-or-…", text: $entry)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .textContentType(.password)
                     if !entry.isEmpty && !OpenRouter.looksLikeOpenRouterKey(entry) {
-                        Text("OpenRouter keys usually start with sk-or-.").font(.caption).foregroundStyle(.orange)
+                        Text(String(localized: "OpenRouter keys usually start with sk-or-.", bundle: .module)).font(.caption).foregroundStyle(.orange)
                     }
-                    Button("Save key") {
-                        do { try keys.save(entry); entry = ""; message = "Saved in the Keychain on this device." }
+                    Button(String(localized: "Save key", bundle: .module)) {
+                        do { try keys.save(entry); entry = ""; message = String(localized: "Saved in the Keychain on this device.", bundle: .module) }
                         catch { message = CollabErrorText.short(error) }
                     }
                     .disabled(entry.isEmpty)
-                    Link("Get a key at openrouter.ai/keys", destination: URL(string: "https://openrouter.ai/keys")!)
+                    Link(String(localized: "Get a key at openrouter.ai/keys", bundle: .module), destination: URL(string: "https://openrouter.ai/keys")!)
                 }
             } header: {
-                Text("OpenRouter key")
+                Text(String(localized: "OpenRouter key", bundle: .module))
             } footer: {
-                Text("Kept in this device's Keychain, never synced, sent only to openrouter.ai. Not in logs or debug panels.")
+                Text(String(localized: "Kept in this device's Keychain, never synced, sent only to openrouter.ai. Not in logs or debug panels.", bundle: .module))
             }
 
             Section {
-                Button("Save key to my vault") { Task { await vault(save: true) } }
+                Button(String(localized: "Save key to my vault", bundle: .module)) { Task { await vault(save: true) } }
                     .disabled(!keys.hasKey || !(CollabHooks.vault?.canWrite ?? false) || working)
-                Button("Take key from my vault") { Task { await vault(save: false) } }
+                Button(String(localized: "Take key from my vault", bundle: .module)) { Task { await vault(save: false) } }
                     .disabled(!(CollabHooks.vault?.isOpen ?? false) || working)
                 if let at = keys.savedToVaultAt {
-                    LabeledContent("Saved to vault", value: at.formatted(date: .abbreviated, time: .shortened))
+                    LabeledContent(String(localized: "Saved to vault", bundle: .module), value: at.formatted(date: .abbreviated, time: .shortened))
                 }
             } header: {
-                Text("Vault")
+                Text(String(localized: "Vault", bundle: .module))
             } footer: {
                 Text(CollabHooks.vault == nil
-                     ? "Vault copies need the vault on this build. The file is \(AIKeyStore.vaultPath), encrypted in your vault."
-                     : "Writes \(AIKeyStore.vaultPath), encrypted in your vault, so your other devices can take it.")
+                     ? String(localized: "Vault copies need the vault on this build. The file is \(AIKeyStore.vaultPath), encrypted in your vault.", bundle: .module)
+                     : String(localized: "Writes \(AIKeyStore.vaultPath), encrypted in your vault, so your other devices can take it.", bundle: .module))
             }
 
             Section {
-                Toggle("Keep this conversation on this device", isOn: $store.keepConversation)
+                Toggle(String(localized: "Keep this conversation on this device", bundle: .module), isOn: $store.keepConversation)
             } footer: {
-                Text("Off by default. Keeps only the words of the conversation, in a file locked with the device; never the key or the data sent as context. Turning it off deletes the file.")
+                Text(String(localized: "Off by default. Keeps only the words of the conversation, in a file locked with the device; never the key or the data sent as context. Turning it off deletes the file.", bundle: .module))
             }
 
             Section {
-                Toggle("Let Ask read the app's data with tools", isOn: $store.useTools)
+                Toggle(String(localized: "Let Ask read the app's data with tools", bundle: .module), isOn: $store.useTools)
             } footer: {
-                Text("Read-only: search the agenda, my picks, team status, my agents, teammates' plans. Each call shows in the conversation.")
+                Text(String(localized: "Read-only: search the agenda, my picks, team status, my agents, teammates' plans. Each call shows in the conversation.", bundle: .module))
             }
 
             Section {
                 switch store.consent {
                 case .granted:
-                    LabeledContent("Sending to OpenRouter", value: "Allowed")
-                    Button("Withdraw permission", role: .destructive) { store.revokeConsent() }
+                    LabeledContent(String(localized: "Sending to OpenRouter", bundle: .module), value: String(localized: "Allowed", bundle: .module))
+                    Button(String(localized: "Withdraw permission", bundle: .module), role: .destructive) { store.revokeConsent() }
                 case .declined:
-                    LabeledContent("Sending to OpenRouter", value: "Not allowed")
-                    Button("Ask me again") { store.revokeConsent() }
+                    LabeledContent(String(localized: "Sending to OpenRouter", bundle: .module), value: String(localized: "Not allowed", bundle: .module))
+                    Button(String(localized: "Ask me again", bundle: .module)) { store.revokeConsent() }
                 case .unknown:
-                    LabeledContent("Sending to OpenRouter", value: "Not asked yet")
+                    LabeledContent(String(localized: "Sending to OpenRouter", bundle: .module), value: String(localized: "Not asked yet", bundle: .module))
                 }
             } header: {
-                Text("Permission")
+                Text(String(localized: "Permission", bundle: .module))
             } footer: {
-                Text("Ask sends your question, the conversation and the data you share below to OpenRouter (openrouter.ai), which passes them to \(OpenRouter.provider(of: store.model)) to answer.")
+                Text(String(localized: "Ask sends your question, the conversation and the data you share below to OpenRouter (openrouter.ai), which passes them to \(OpenRouter.provider(of: store.model)) to answer.", bundle: .module))
             }
 
             Section {
@@ -472,13 +472,13 @@ struct AskSettingsView: View {
                     }
                 }
             } header: {
-                Text("What Ask may send")
+                Text(String(localized: "What Ask may send", bundle: .module))
             } footer: {
-                Text("Off unless you switch it on, except the public agenda. Teammates' plans and the current page each need their own switch.")
+                Text(String(localized: "Off unless you switch it on, except the public agenda. Teammates' plans and the current page each need their own switch.", bundle: .module))
             }
 
-            Section("Model") {
-                Picker("Model", selection: $store.model) {
+            Section(String(localized: "Model", bundle: .module)) {
+                Picker(String(localized: "Model", bundle: .module), selection: $store.model) {
                     ForEach(OpenRouter.models) { Text($0.label).tag($0.id) }
                 }
                 .pickerStyle(.inline)
@@ -489,9 +489,9 @@ struct AskSettingsView: View {
                 Section { Text(message).font(.footnote) }
             }
         }
-        .navigationTitle("Ask settings")
+        .navigationTitle(String(localized: "Ask settings", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button(String(localized: "Done", bundle: .module)) { dismiss() } } }
     }
 
     private func vault(save: Bool) async {
@@ -500,12 +500,12 @@ struct AskSettingsView: View {
         do {
             if save {
                 try await store.keys.saveToVault(model: store.model)
-                message = "Saved to \(AIKeyStore.vaultPath) in your vault."
+                message = String(localized: "Saved to \(AIKeyStore.vaultPath) in your vault.", bundle: .module)
             } else if let model = try await store.keys.loadFromVault() {
                 store.model = model
-                message = "Key taken from your vault."
+                message = String(localized: "Key taken from your vault.", bundle: .module)
             } else {
-                message = store.keys.hasKey ? "Key taken from your vault." : "Your vault has no saved key."
+                message = store.keys.hasKey ? String(localized: "Key taken from your vault.", bundle: .module) : String(localized: "Your vault has no saved key.", bundle: .module)
             }
         } catch {
             message = CollabErrorText.short(error)
@@ -521,7 +521,7 @@ extension View {
         inspector(isPresented: isPresented) {
             NavigationStack {
                 AskView(store: store, compact: true)
-                    .navigationTitle("Ask")
+                    .navigationTitle(String(localized: "Ask", bundle: .module))
                     .navigationBarTitleDisplayMode(.inline)
             }
             .inspectorColumnWidth(min: 320, ideal: 400, max: 560)
@@ -561,7 +561,7 @@ struct AskPanelButton: View {
         Button {
             isPresented.toggle()
         } label: {
-            Label("Ask", systemImage: "sparkles")
+            Label(String(localized: "Ask", bundle: .module), systemImage: "sparkles")
         }
         .keyboardShortcut("k", modifiers: [.command])
     }

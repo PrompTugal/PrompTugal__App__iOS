@@ -20,10 +20,10 @@ public struct NewsHomeView: View {
 
     public var body: some View {
         Page(maxWidth: 900) {
-            ScreenHeader(kicker: "PrompTugal.news", title: "The news",
-                         summary: "Independent coverage from Lisbon, in every form: the feed, the editions, the stories being made, and the graph.")
-            Picker("Form", selection: $form) {
-                ForEach(Form.allCases) { Text($0.rawValue).tag($0) }
+            ScreenHeader(kicker: "PrompTugal.news", title: String(localized: "The news", bundle: .module),
+                         summary: String(localized: "Independent coverage from Lisbon, in every form: the feed, the editions, the stories being made, and the graph.", bundle: .module))
+            Picker(String(localized: "Form", bundle: .module), selection: $form) {
+                ForEach(Form.allCases) { Text(String(localized: String.LocalizationValue($0.rawValue), bundle: .module)).tag($0) }
             }
             .pickerStyle(.segmented)
             switch form {
@@ -36,8 +36,8 @@ public struct NewsHomeView: View {
                     HStack(spacing: Space.m) {
                         Image(systemName: "point.3.connected.trianglepath.dotted").font(.title).foregroundStyle(Palette.red)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("The graph").font(Typo.headline).foregroundStyle(Palette.ink)
-                            Text("Every company, event, person and source, and how they connect. Drawn natively.")
+                            Text(String(localized: "The graph", bundle: .module)).font(Typo.headline).foregroundStyle(Palette.ink)
+                            Text(String(localized: "Every company, event, person and source, and how they connect. Drawn natively.", bundle: .module))
                                 .font(.caption).foregroundStyle(Palette.muted)
                         }
                         Spacer()
@@ -47,7 +47,7 @@ public struct NewsHomeView: View {
             }
             .buttonStyle(.plain)
         }
-        .navigationTitle("News")
+        .navigationTitle(String(localized: "News", bundle: .module))
         .refreshable {
             await store.refresh()
             await data.refresh(force: true)
@@ -73,11 +73,11 @@ public struct NewsHomeView: View {
     @ViewBuilder private var feed: some View {
         FreshnessLabel(updated: store.newsUpdated, failed: store.newsUnavailable)
         if store.news.isEmpty {
-            StateView(phase: store.newsUnavailable ? .failed("The feed could not be reached.") : .loading,
-                      hasData: false, title: "news") { Task { await store.refresh() } }
+            StateView(phase: store.newsUnavailable ? .failed(String(localized: "The feed could not be reached.", bundle: .module)) : .loading,
+                      hasData: false, title: String(localized: "news", bundle: .module)) { Task { await store.refresh() } }
         }
         if let lead = store.news.first {
-            NavigationLink { WebPage(url: lead.url, title: "Story") } label: {
+            NavigationLink { WebPage(url: lead.url, title: String(localized: "Story", bundle: .module)) } label: {
                 Card(padding: Space.xl) {
                     if !lead.category.isEmpty { Kicker(lead.category) }
                     Text(lead.title).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
@@ -91,7 +91,7 @@ public struct NewsHomeView: View {
         }
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Space.m)], spacing: Space.m) {
             ForEach(store.news.dropFirst()) { story in
-                NavigationLink { WebPage(url: story.url, title: "Story") } label: {
+                NavigationLink { WebPage(url: story.url, title: String(localized: "Story", bundle: .module)) } label: {
                     Card {
                         if !story.category.isEmpty { Kicker(story.category) }
                         Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
@@ -112,7 +112,7 @@ public struct NewsHomeView: View {
         let list = data.newsletter.value?.editions ?? []
         FreshnessLabel(updated: data.newsletter.updated, failed: data.newsletter.failed)
         if list.isEmpty {
-            StateView(phase: data.newsletter.phase, hasData: false, title: "newsletter") {
+            StateView(phase: data.newsletter.phase, hasData: false, title: String(localized: "newsletter", bundle: .module)) {
                 Task { await data.newsletter.load(force: true) }
             }
         }
@@ -123,10 +123,10 @@ public struct NewsHomeView: View {
                         Kicker(edition.edition ?? "edition", color: edition.edition == "evening" ? Palette.blue : Palette.red)
                         Spacer()
                         if edition.authored == false {
-                            Text("assembled from data").font(.caption2).foregroundStyle(Palette.muted)
+                            Text(String(localized: "assembled from data", bundle: .module)).font(.caption2).foregroundStyle(Palette.muted)
                         }
                     }
-                    Text(edition.title ?? "Edition").font(Typo.title).foregroundStyle(Palette.ink)
+                    Text(edition.title ?? String(localized: "Edition", bundle: .module)).font(Typo.title).foregroundStyle(Palette.ink)
                     if let summary = edition.summary { Text(summary).font(.subheadline).foregroundStyle(Palette.muted) }
                 }
             }
@@ -145,7 +145,7 @@ public struct NewsHomeView: View {
                     TitledCard(column.name ?? column.id, kicker: "\(items.count) stories") {
                         ForEach(items) { story in
                             if let url = story.url {
-                                NavigationLink { WebPage(url: url, title: "Story") } label: {
+                                NavigationLink { WebPage(url: url, title: String(localized: "Story", bundle: .module)) } label: {
                                     NewsRow(title: story.title ?? story.id, detail: story.next, symbol: "doc.text",
                                             tint: Palette.stable(column.id))
                                 }
@@ -158,7 +158,7 @@ public struct NewsHomeView: View {
                 }
             }
         } else {
-            StateView(phase: data.board.phase, hasData: false, title: "stories") { Task { await data.board.load(force: true) } }
+            StateView(phase: data.board.phase, hasData: false, title: String(localized: "stories", bundle: .module)) { Task { await data.board.load(force: true) } }
         }
     }
 }
@@ -171,10 +171,10 @@ struct EditionReader: View {
 
     var body: some View {
         Page(maxWidth: Space.readable) {
-            Kicker(edition.edition ?? "Edition")
+            Kicker(edition.edition ?? String(localized: "Edition", bundle: .module))
             Text(edition.title ?? "").font(Typo.display)
             if failed {
-                GapNote(title: "This edition could not be loaded", text: "Open it on the web with the button at the top.")
+                GapNote(title: String(localized: "This edition could not be loaded", bundle: .module), text: String(localized: "Open it on the web with the button at the top.", bundle: .module))
             } else if blocks.isEmpty {
                 ProgressView().frame(maxWidth: .infinity)
             }
@@ -192,10 +192,10 @@ struct EditionReader: View {
                 }
             }
         }
-        .navigationTitle("Edition")
+        .navigationTitle(String(localized: "Edition", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
         .task { await load() }
-        .webTwin(edition.pageURL ?? FeedClient.site, title: "Edition")
+        .webTwin(edition.pageURL ?? FeedClient.site, title: String(localized: "Edition", bundle: .module))
     }
 
     private func load() async {

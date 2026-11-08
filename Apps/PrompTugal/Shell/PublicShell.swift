@@ -112,7 +112,7 @@ private struct PublicSidebar: View {
             ForEach(PublicDestinations.groups, id: \.self) { group in
                 let rows = PublicDestinations.group(group).filter { debug || !$0.debugOnly }
                 if !rows.isEmpty {
-                    Section(group) {
+                    Section(LocalizedStringKey(group)) {
                         ForEach(rows) { destination in
                             ShellSidebarRow(destination: destination, debug: debug).tag(destination.id)
                         }
@@ -178,7 +178,7 @@ private struct PublicMoreList: View {
             ForEach(PublicDestinations.groups, id: \.self) { group in
                 let rows = PublicDestinations.group(group).filter { $0.phoneTab == nil && (debug || !$0.debugOnly) }
                 if !rows.isEmpty {
-                    Section(group) {
+                    Section(LocalizedStringKey(group)) {
                         ForEach(rows) { destination in
                             if destination.ownsNavigation {
                                 Button { fullScreen = destination.id } label: { ShellMoreRow(destination: destination) }
@@ -224,7 +224,7 @@ private struct PublicKeyboardShortcuts: View {
         ZStack {
             ForEach(Array(groups.prefix(9).enumerated()), id: \.offset) { index, group in
                 if let first = PublicDestinations.group(group).first {
-                    Button(group) { selection = first.id }
+                    Button(LocalizedStringKey(group)) { selection = first.id }
                         .keyboardShortcut(KeyEquivalent(Character("\(index + 1)")), modifiers: .command)
                 }
             }

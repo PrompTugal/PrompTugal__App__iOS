@@ -35,7 +35,7 @@ public struct DayTimelineView: View {
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Time line for \(Lisbon.dayLabel(day))")
+        .accessibilityLabel(String(localized: "Time line for \(Lisbon.dayLabel(day))", bundle: .module))
     }
 
     private var gutter: CGFloat { 52 }
@@ -78,7 +78,7 @@ public struct DayTimelineView: View {
             onTap?(item)
         } label: {
             VStack(alignment: .leading, spacing: 1) {
-                Text("\(Lisbon.timeLabel(item.start)) \(item.kind == .proposal ? "· proposed" : "")")
+                Text("\(Lisbon.timeLabel(item.start)) \(item.kind == .proposal ? String(localized: "· proposed", bundle: .module) : "")")
                     .font(.caption2.monospacedDigit())
                 Text(item.title).font(.caption.weight(.semibold)).lineLimit(2)
                 if !item.place.isEmpty { Text(item.place).font(.caption2).lineLimit(1) }
@@ -96,7 +96,7 @@ public struct DayTimelineView: View {
             )
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(item.title), \(Lisbon.timeLabel(item.start)) to \(Lisbon.timeLabel(item.end))")
+        .accessibilityLabel(String(localized: "\(item.title), \(Lisbon.timeLabel(item.start)) to \(Lisbon.timeLabel(item.end))", bundle: .module))
     }
 
     @ViewBuilder private func nowLine(_ now: Date) -> some View {

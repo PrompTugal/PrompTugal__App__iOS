@@ -36,25 +36,25 @@ public struct GraphExplorerView: View {
                 explorer(index)
             } else {
                 Page {
-                    ScreenHeader(kicker: "News", title: "The graph",
-                                 summary: "Every company, event, person, place and source the newsroom knows, and how they connect.")
+                    ScreenHeader(kicker: String(localized: "News", bundle: .module), title: String(localized: "The graph", bundle: .module),
+                                 summary: String(localized: "Every company, event, person, place and source the newsroom knows, and how they connect.", bundle: .module))
                     if indexing {
-                        ProgressView("Laying out \(feed.value?.nodes.count ?? 0) nodes…").frame(maxWidth: .infinity, minHeight: 200)
+                        ProgressView(String(localized: "Laying out \(feed.value?.nodes.count ?? 0) nodes…", bundle: .module)).frame(maxWidth: .infinity, minHeight: 200)
                     } else {
-                        StateView(phase: feed.phase, hasData: false, title: "graph") { Task { await feed.load(force: true) } }
+                        StateView(phase: feed.phase, hasData: false, title: String(localized: "graph", bundle: .module)) { Task { await feed.load(force: true) } }
                     }
                 }
             }
         }
-        .navigationTitle("Graph")
-        .searchable(text: $query, prompt: "Find a node")
+        .navigationTitle(String(localized: "Graph", bundle: .module))
+        .searchable(text: $query, prompt: String(localized: "Find a node", bundle: .module))
         .searchSuggestions { suggestions }
         .task {
             await feed.load()
             await buildIndex()
         }
         .onChange(of: feed.updated) { _, _ in Task { await buildIndex() } }
-        .webTwin(webURL, title: "Graph explorer")
+        .webTwin(webURL, title: String(localized: "Graph explorer", bundle: .module))
     }
 
     private var webURL: URL {
@@ -129,7 +129,7 @@ public struct GraphExplorerView: View {
             Button {
                 withAnimation(.snappy) { legendOpen = !open }
             } label: {
-                Label(open ? "Worlds" : "\(index.graph.nodes.count.formatted()) nodes",
+                Label(open ? String(localized: "Worlds", bundle: .module) : String(localized: "\(index.graph.nodes.count.formatted()) nodes", bundle: .module),
                       systemImage: open ? "chevron.up" : "line.3.horizontal.decrease.circle")
                     .font(.caption.weight(.semibold))
             }
@@ -148,12 +148,12 @@ public struct GraphExplorerView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("\(world.label ?? world.id), \(hiddenWorlds.contains(world.id) ? "hidden" : "shown")")
+                .accessibilityLabel("\(world.label ?? world.id), \(hiddenWorlds.contains(world.id) ? String(localized: "hidden", bundle: .module) : String(localized: "shown", bundle: .module))")
             }
-            Text("\(index.graph.nodes.count.formatted()) nodes · \(index.edges.count.formatted()) edges")
+            Text(String(localized: "\(index.graph.nodes.count.formatted()) nodes · \(index.edges.count.formatted()) edges", bundle: .module))
                 .font(.caption2).foregroundStyle(Palette.muted)
             if pathStart != nil {
-                Label("Tap a second node for the path", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+                Label(String(localized: "Tap a second node for the path", bundle: .module), systemImage: "point.topleft.down.to.point.bottomright.curvepath")
                     .font(.caption).foregroundStyle(Palette.green)
             }
             }
@@ -166,11 +166,11 @@ public struct GraphExplorerView: View {
     private var zoomControls: some View {
         HStack(spacing: 0) {
             Button { zoom = max(zoom / 1.5, 0.5) } label: { Image(systemName: "minus").frame(width: 40, height: 40) }
-                .accessibilityLabel("Zoom out")
+                .accessibilityLabel(String(localized: "Zoom out", bundle: .module))
             Button { zoom = 1; pan = .zero } label: { Image(systemName: "arrow.up.left.and.down.right.magnifyingglass").frame(width: 40, height: 40) }
-                .accessibilityLabel("Fit the whole graph")
+                .accessibilityLabel(String(localized: "Fit the whole graph", bundle: .module))
             Button { zoom = min(zoom * 1.5, 40) } label: { Image(systemName: "plus").frame(width: 40, height: 40) }
-                .accessibilityLabel("Zoom in")
+                .accessibilityLabel(String(localized: "Zoom in", bundle: .module))
         }
         .background(.regularMaterial, in: Capsule())
         .padding(Space.m)
@@ -218,37 +218,37 @@ public struct GraphExplorerView: View {
                             Kicker(node.type, color: GraphColors.world(index.world(of: node)))
                             Text(node.title).font(Typo.title)
                             HStack(spacing: Space.m) {
-                                Text("\(node.deg ?? 0) links")
-                                Text("PageRank \((node.pr ?? 0).formatted(.number.precision(.fractionLength(2))))")
-                                Text("Betweenness \((node.bc ?? 0).formatted(.number.precision(.fractionLength(0))))")
+                                Text(String(localized: "\(node.deg ?? 0) links", bundle: .module))
+                                Text(String(localized: "PageRank \((node.pr ?? 0).formatted(.number.precision(.fractionLength(2))))", bundle: .module))
+                                Text(String(localized: "Betweenness \((node.bc ?? 0).formatted(.number.precision(.fractionLength(0))))", bundle: .module))
                             }
                             .font(Typo.dataSmall).foregroundStyle(Palette.muted)
                         }
                         if let url = node.url {
                             NavigationLink { WebPage(url: url, title: node.title) } label: {
-                                Label("Open its page", systemImage: "doc.richtext")
+                                Label(String(localized: "Open its page", bundle: .module), systemImage: "doc.richtext")
                             }
                         }
                         Button {
                             pathStart = selected
                             path = []
                         } label: {
-                            Label("Find a path from here", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+                            Label(String(localized: "Find a path from here", bundle: .module), systemImage: "point.topleft.down.to.point.bottomright.curvepath")
                         }
-                        Button { focus(on: selected, in: index) } label: { Label("Zoom to it", systemImage: "scope") }
+                        Button { focus(on: selected, in: index) } label: { Label(String(localized: "Zoom to it", bundle: .module), systemImage: "scope") }
                     }
                     if path.count > 1, path.allSatisfy({ index.contains($0) }) {
-                        Section("Path, \(path.count - 1) steps") {
+                        Section(String(localized: "Path, \(path.count - 1) steps", bundle: .module)) {
                             ForEach(Array(zip(path, path.dropFirst())), id: \.0) { from, to in
                                 if let edge = index.neighbours[from].map({ index.edges[$0] })
                                     .first(where: { ($0.from == from && $0.to == to) || ($0.from == to && $0.to == from) }) {
                                     Text(index.sentence(edge)).font(.footnote)
                                 }
                             }
-                            Button("Clear path") { path = [] }
+                            Button(String(localized: "Clear path", bundle: .module)) { path = [] }
                         }
                     }
-                    Section("Connections (\(index.neighbours[selected].count))") {
+                    Section(String(localized: "Connections (\(index.neighbours[selected].count))", bundle: .module)) {
                         ForEach(index.neighbours[selected].prefix(80), id: \.self) { edgeIndex in
                             let edge = index.edges[edgeIndex]
                             let other = edge.from == selected ? edge.to : edge.from
@@ -261,7 +261,7 @@ public struct GraphExplorerView: View {
                 .listStyle(.insetGrouped)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Close") { self.selected = nil; showsDetail = false }
+                        Button(String(localized: "Close", bundle: .module)) { self.selected = nil; showsDetail = false }
                     }
                 }
             }
@@ -382,7 +382,7 @@ struct GraphCanvas: View {
                 select(best?.0)
             })
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Graph of \(index.graph.nodes.count) nodes. Use search to find a node.")
+            .accessibilityLabel(String(localized: "Graph of \(index.graph.nodes.count) nodes. Use search to find a node.", bundle: .module))
         }
     }
 }

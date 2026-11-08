@@ -36,7 +36,7 @@ public struct MyDayView: View {
                 timeline
             }
         }
-        .navigationTitle("My day")
+        .navigationTitle(String(localized: "My day", bundle: .module))
         .refreshable { await team?.refresh(person: identity?.currentID) }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -50,14 +50,14 @@ public struct MyDayView: View {
                         }
                     }
                 } label: {
-                    Label("Add to Calendar", systemImage: "calendar.badge.plus")
+                    Label(String(localized: "Add to Calendar", bundle: .module), systemImage: "calendar.badge.plus")
                 }
                 .disabled(schedule.picks.isEmpty)
             }
         }
-        .alert("Calendar", isPresented: Binding(get: { calendarMessage != nil },
+        .alert(String(localized: "Calendar", bundle: .module), isPresented: Binding(get: { calendarMessage != nil },
                                                 set: { if !$0 { calendarMessage = nil } })) {
-            Button("OK") { calendarMessage = nil }
+            Button(String(localized: "OK", bundle: .module)) { calendarMessage = nil }
         } message: {
             Text(calendarMessage ?? "")
         }
@@ -97,16 +97,16 @@ public struct MyDayView: View {
                 let days = rowsByDay(now: context.date)
                 if days.isEmpty {
                     ContentUnavailableView {
-                        Label("Nothing in your day yet", systemImage: "star")
+                        Label(String(localized: "Nothing in your day yet", bundle: .module), systemImage: "star")
                     } description: {
-                        Text("Add sessions from the agenda here or with “Add to my day” on promptugal.news. Both make one list.")
+                        Text(String(localized: "Add sessions from the agenda here or with “Add to my day” on promptugal.news. Both make one list.", bundle: .module))
                     } actions: {
-                        NavigationLink("Help me plan my day") { PlannerView() }
+                        NavigationLink(String(localized: "Help me plan my day", bundle: .module)) { PlannerView() }
                             .buttonStyle(.borderedProminent)
                     }
                 }
                 ForEach(days, id: \.0) { day, rows in
-                    Section(day == "" ? "No time yet" : Lisbon.dayLabel(day)) {
+                    Section(day == "" ? String(localized: "No time yet", bundle: .module) : Lisbon.dayLabel(day)) {
                         ForEach(rows) { row in rowView(row, now: context.date) }
                     }
                 }
@@ -115,7 +115,7 @@ public struct MyDayView: View {
                         Button {
                             Task { await vaultLink.save() }
                         } label: {
-                            Label("Save my day to the vault", systemImage: "lock.doc")
+                            Label(String(localized: "Save my day to the vault", bundle: .module), systemImage: "lock.doc")
                         }
                         .disabled(vaultLink.state == .working || !vaultLink.canSave)
                         switch vaultLink.state {
@@ -125,7 +125,7 @@ public struct MyDayView: View {
                         default: EmptyView()
                         }
                     } header: {
-                        Text("Your vault")
+                        Text(String(localized: "Your vault", bundle: .module))
                     } footer: {
                         Text(vaultLink.canSave
                              ? "Picks are read from your vault when it opens. Saving asks for Face ID and puts them where the website reads them."
@@ -134,10 +134,10 @@ public struct MyDayView: View {
                 }
                 Section {
                     NavigationLink { PlannerView() } label: {
-                        Label("Help me plan my presence", systemImage: "wand.and.stars")
+                        Label(String(localized: "Help me plan my presence", bundle: .module), systemImage: "wand.and.stars")
                     }
                     NavigationLink { ReminderSettingsView() } label: {
-                        Label("Reminders", systemImage: "bell")
+                        Label(String(localized: "Reminders", bundle: .module), systemImage: "bell")
                             .badge(reminders.planned.count)
                     }
                 } footer: {
@@ -151,16 +151,16 @@ public struct MyDayView: View {
     @ViewBuilder private func header(now: Date) -> some View {
         Section {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Lisbon time · \(Lisbon.timeLabel(now))")
+                Text(String(localized: "Lisbon time · \(Lisbon.timeLabel(now))", bundle: .module))
                     .font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
                 if let next = nextRow(now: now) {
-                    Text("Next: \(next.title)").font(.headline)
+                    Text(String(localized: "Next: \(next.title)", bundle: .module)).font(.headline)
                     if let start = next.start {
-                        Text("\(Lisbon.timeLabel(start)) · in \(minutesText(start.timeIntervalSince(now)))")
+                        Text(String(localized: "\(Lisbon.timeLabel(start)) · in \(minutesText(start.timeIntervalSince(now)))", bundle: .module))
                             .font(.subheadline).foregroundStyle(Color.accentColor)
                     }
                 } else {
-                    Text("\(schedule.picks.count) picks").font(.headline)
+                    Text(String(localized: "\(schedule.picks.count) picks", bundle: .module)).font(.headline)
                 }
             }
             .padding(.vertical, 4)
@@ -173,7 +173,7 @@ public struct MyDayView: View {
             if let url = row.url { openURL(url) }
         } label: {
             VStack(alignment: .leading, spacing: 3) {
-                Text(row.start.map(Lisbon.timeLabel) ?? "Time not known")
+                Text(row.start.map(Lisbon.timeLabel) ?? String(localized: "Time not known", bundle: .module))
                     .font(.caption.monospacedDigit()).foregroundStyle(Color.accentColor)
                 Text(row.title).font(.headline).foregroundStyle(.primary)
                 if !row.detail.isEmpty {
@@ -184,10 +184,10 @@ public struct MyDayView: View {
         }
         .swipeActions {
             if let pick = row.pick {
-                Button("Remove", role: .destructive) { schedule.toggle(pick.id) }
+                Button(String(localized: "Remove", bundle: .module), role: .destructive) { schedule.toggle(pick.id) }
             }
         }
-        .accessibilityHint(row.pick == nil ? "Opens your briefing" : "Opens the session")
+        .accessibilityHint(row.pick == nil ? String(localized: "Opens your briefing", bundle: .module) : String(localized: "Opens the session", bundle: .module))
     }
 
     private func rowsByDay(now: Date) -> [(String, [Row])] {
@@ -199,7 +199,7 @@ public struct MyDayView: View {
         }
         if let me = identity?.currentID {
             rows += (team?.upcomingStandups(after: now.addingTimeInterval(-12 * 3600)) ?? []).map {
-                Row(id: "standup.\($0.slot)", start: $0.at, title: "Team stand-up", detail: "Your briefing",
+                Row(id: "standup.\($0.slot)", start: $0.at, title: String(localized: "Team stand-up", bundle: .module), detail: String(localized: "Your briefing", bundle: .module),
                     url: $0.briefingURL(for: me), pick: nil)
             }
         }
@@ -215,13 +215,13 @@ public struct MyDayView: View {
 
     private func minutesText(_ seconds: TimeInterval) -> String {
         let minutes = Int(seconds / 60)
-        return minutes < 60 ? "\(max(1, minutes)) min" : "\(minutes / 60) h \(minutes % 60) min"
+        return minutes < 60 ? String(localized: "\(max(1, minutes)) min", bundle: .module) : String(localized: "\(minutes / 60) h \(minutes % 60) min", bundle: .module)
     }
 
     private var footer: String {
-        var parts = ["Kept on this device in the website’s format (nr.schedule.v1), and synced with promptugal.news when you open it in the app."]
+        var parts = [String(localized: "Kept on this device in the website’s format (nr.schedule.v1), and synced with promptugal.news when you open it in the app.", bundle: .module)]
         if let last = bridge.lastScheduleSync {
-            parts.append("Last synced with the website at \(Lisbon.timeLabel(last)).")
+            parts.append(String(localized: "Last synced with the website at \(Lisbon.timeLabel(last)).", bundle: .module))
         }
         return parts.joined(separator: " ")
     }

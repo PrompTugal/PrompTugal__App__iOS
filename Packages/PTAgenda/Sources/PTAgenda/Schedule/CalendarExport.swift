@@ -22,7 +22,7 @@ public enum CalendarExport {
         } catch {
             return .denied
         }
-        guard let calendar = store.defaultCalendarForNewEvents else { return .failed("No calendar to add to.") }
+        guard let calendar = store.defaultCalendarForNewEvents else { return .failed(String(localized: "No calendar to add to.", bundle: .module)) }
         var added = 0
         for pick in timed {
             guard let start = pick.start else { continue }
@@ -46,7 +46,7 @@ public enum CalendarExport {
         do {
             try store.commit()
         } catch {
-            return .failed("The calendar did not save.")
+            return .failed(String(localized: "The calendar did not save.", bundle: .module))
         }
         return .added(added)
     }

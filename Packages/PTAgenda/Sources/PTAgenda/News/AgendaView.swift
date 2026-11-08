@@ -33,17 +33,17 @@ public struct AgendaView: View {
             Section {
                 VStack(alignment: .leading, spacing: Space.s) {
                     Kicker("Web Summit Lisbon · 9–12 Nov")
-                    Text("Lisbon time \(model.clock)").font(Typo.data).foregroundStyle(Palette.muted)
+                    Text(String(localized: "Lisbon time \(model.clock)", bundle: .module)).font(Typo.data).foregroundStyle(Palette.muted)
                     FreshnessLabel(updated: store.agendaUpdated, staleAfter: 3600)
                 }
-                Picker("Day", selection: $day) {
-                    Text("All days").tag("all")
+                Picker(String(localized: "Day", bundle: .module), selection: $day) {
+                    Text(String(localized: "All days", bundle: .module)).tag("all")
                     ForEach(model.days) { Text($0.label).tag($0.id) }
                 }
-                Toggle("My picks only", isOn: $picksOnly)
+                Toggle(String(localized: "My picks only", bundle: .module), isOn: $picksOnly)
             }
             if !model.running.isEmpty {
-                Section("Happening now") {
+                Section(String(localized: "Happening now", bundle: .module)) {
                     ForEach(model.running) { row in rowView(row) }
                 }
             }
@@ -53,16 +53,16 @@ public struct AgendaView: View {
                 }
             }
             if store.agenda.isEmpty {
-                StateView(phase: store.agendaUnavailable ? .failed("The agenda could not be reached.") : .loading,
+                StateView(phase: store.agendaUnavailable ? .failed(String(localized: "The agenda could not be reached.", bundle: .module)) : .loading,
                           hasData: false, title: "agenda") { Task { await store.refresh() } }
             } else if model.isEmpty {
-                ContentUnavailableView("No matching sessions", systemImage: "magnifyingglass",
-                                       description: Text("Try another day, filter or search."))
+                ContentUnavailableView(String(localized: "No matching sessions", bundle: .module), systemImage: "magnifyingglass",
+                                       description: Text(String(localized: "Try another day, filter or search.", bundle: .module)))
             }
         }
         .listStyle(.insetGrouped)
-        .searchable(text: $query, prompt: "Sessions or venues")
-        .navigationTitle("Agenda")
+        .searchable(text: $query, prompt: String(localized: "Sessions or venues", bundle: .module))
+        .navigationTitle(String(localized: "Agenda", bundle: .module))
         .navigationDestination(item: $opened) { event in
             if let url = event.url { WebPage(url: url, title: "Session") }
         }
@@ -72,14 +72,14 @@ public struct AgendaView: View {
         }
         .task {
             await store.refresh()
-            // One tick a minute moves "Happening now" along, without redrawing per second.
+            // One tick a minute moves String(localized: "Happening now", bundle: .module) along, without redrawing per second.
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(60))
                 now = .now
             }
         }
         .refreshable { await store.refresh() }
-        .webTwin(FeedClient.fullAgenda, title: "Agenda")
+        .webTwin(FeedClient.fullAgenda, title: String(localized: "Agenda", bundle: .module))
     }
 
     private func rowView(_ row: AgendaModel.Row) -> some View {
@@ -116,10 +116,10 @@ private struct AgendaRow: View {
         // One element for VoiceOver and UI tests: a short label, open by default, pick as an action.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(row.accessibilityLabel)
-        .accessibilityValue(picked ? "In my schedule" : "")
+        .accessibilityValue(picked ? String(localized: "In my schedule", bundle: .module) : "")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { open() }
-        .accessibilityAction(named: picked ? "Remove from my schedule" : "Add to my schedule", toggle)
+        .accessibilityAction(named: picked ? String(localized: "Remove from my schedule", bundle: .module) : String(localized: "Add to my schedule", bundle: .module), toggle)
     }
 }
 
@@ -211,7 +211,7 @@ public struct AgendaModel {
         }
 
         func row(_ event: Event) -> Row {
-            let kind = event.official ? "Official programme" : "Side event"
+            let kind = event.official ? String(localized: "Official programme", bundle: .module) : String(localized: "Side event", bundle: .module)
             let detail = event.place.isEmpty ? kind : "\(event.place) · \(kind)"
             return Row(event: event, detail: detail,
                        accessibilityLabel: "\(labels[event.date] ?? event.date), \(event.time). \(event.title). \(event.place)")

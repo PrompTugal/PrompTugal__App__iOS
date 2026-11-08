@@ -220,12 +220,12 @@ public enum DayPlanner {
         if let why = preferences.suggested[id] { score += 5; reasons.append(why) }
         if let names = preferences.teammates[id], !names.isEmpty {
             score += 2 + Double(names.count) * 0.5
-            reasons.append("Also going: \(names.joined(separator: ", "))")
+            reasons.append(String(localized: "Also going: \(names.joined(separator: ", "))", bundle: .module))
         }
         let overlap = (known ?? keywords([event.title])).intersection(interests)
         if !overlap.isEmpty {
             score += Double(min(overlap.count, 3))
-            reasons.append("Like your picks: \(overlap.sorted().prefix(3).joined(separator: ", "))")
+            reasons.append(String(localized: "Like your picks: \(overlap.sorted().prefix(3).joined(separator: ", "))", bundle: .module))
         }
         if event.place == "Centre Stage" { score += 1; reasons.append("Centre Stage") }
         if event.official { score += 0.5 }

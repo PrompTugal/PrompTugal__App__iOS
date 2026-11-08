@@ -56,10 +56,10 @@ final class VaultKeychain {
         }
         var errorDescription: String? {
             switch self {
-            case .status: "The key could not be stored on this device. Try again."
-            case .notFound: "No vault key is stored on this device yet."
-            case .cancelled: "Face ID was cancelled."
-            case .noProtection: "Set a passcode on this device to keep vault keys on it. Keys are never stored without Face ID or a passcode."
+            case .status: String(localized: "The key could not be stored on this device. Try again.", bundle: .module)
+            case .notFound: String(localized: "No vault key is stored on this device yet.", bundle: .module)
+            case .cancelled: String(localized: "Face ID was cancelled.", bundle: .module)
+            case .noProtection: String(localized: "Set a passcode on this device to keep vault keys on it. Keys are never stored without Face ID or a passcode.", bundle: .module)
             }
         }
     }

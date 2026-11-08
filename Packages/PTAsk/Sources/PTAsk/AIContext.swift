@@ -35,25 +35,25 @@ public enum AIContextKind: String, CaseIterable, Identifiable, Codable, Sendable
     /// What each kind sends, for the consent sheet.
     var detail: String {
         switch self {
-        case .agenda: "the public summit agenda for the day"
-        case .picks: "the sessions you picked"
-        case .team: "your team status: counts, urgent items, decisions waiting on you, your agents' recent work"
-        case .teammates: "teammates' plans that they shared with you through their vaults"
-        case .page: "the title, address and text of the page on screen"
-        case .plan: "your day plan from the planner"
-        case .agents: "your agents' recent commits and reports"
+        case .agenda: String(localized: "the public summit agenda for the day", bundle: .module)
+        case .picks: String(localized: "the sessions you picked", bundle: .module)
+        case .team: String(localized: "your team status: counts, urgent items, decisions waiting on you, your agents' recent work", bundle: .module)
+        case .teammates: String(localized: "teammates' plans that they shared with you through their vaults", bundle: .module)
+        case .page: String(localized: "the title, address and text of the page on screen", bundle: .module)
+        case .plan: String(localized: "your day plan from the planner", bundle: .module)
+        case .agents: String(localized: "your agents' recent commits and reports", bundle: .module)
         }
     }
 
     var title: String {
         switch self {
-        case .agenda: "Today's agenda"
-        case .picks: "My picks"
-        case .team: "My team status"
-        case .teammates: "Teammates' plans"
-        case .page: "Current page"
-        case .plan: "Day plan"
-        case .agents: "My agents"
+        case .agenda: String(localized: "Today's agenda", bundle: .module)
+        case .picks: String(localized: "My picks", bundle: .module)
+        case .team: String(localized: "My team status", bundle: .module)
+        case .teammates: String(localized: "Teammates' plans", bundle: .module)
+        case .page: String(localized: "Current page", bundle: .module)
+        case .plan: String(localized: "Day plan", bundle: .module)
+        case .agents: String(localized: "My agents", bundle: .module)
         }
     }
 
@@ -144,7 +144,7 @@ enum AIContextAssembler {
         let today = Lisbon.day(now)
         let days = Set(events.map(\.date)).sorted()
         guard let day = days.contains(today) ? today : days.first(where: { $0 > today }) else {
-            return AIContextPart(kind: .agenda, summary: "No sessions ahead", body: "", source: "promptugal.news agenda")
+            return AIContextPart(kind: .agenda, summary: String(localized: "No sessions ahead", bundle: .module), body: "", source: "promptugal.news agenda")
         }
         let list = events.filter { $0.date == day }.sorted(by: Event.earlier)
         var lines = [day == today ? "Sessions today, \(Lisbon.dayLabel(day)):" : "No sessions today. The next day with sessions is \(Lisbon.dayLabel(day)):"]
@@ -152,13 +152,13 @@ enum AIContextAssembler {
             let star = picked.contains(PickId.of(event)) ? " [picked]" : ""
             lines.append("- \(event.time) · \(event.title) · \(event.place)\(event.official ? "" : " (side event)")\(star)")
         }
-        return AIContextPart(kind: .agenda, summary: "\(list.count) sessions on \(Lisbon.dayLabel(day))",
+        return AIContextPart(kind: .agenda, summary: String(localized: "\(list.count) sessions on \(Lisbon.dayLabel(day))", bundle: .module),
                              body: lines.joined(separator: "\n"), source: "promptugal.news /api/v1/live/agenda.json")
     }
 
     static func picksPart(ids: [String], events: [Event], now: Date) -> AIContextPart {
         guard !ids.isEmpty else {
-            return AIContextPart(kind: .picks, summary: "No picks yet", body: "", source: "this device")
+            return AIContextPart(kind: .picks, summary: String(localized: "No picks yet", bundle: .module), body: "", source: "this device")
         }
         let byId = Dictionary(events.map { (PickId.of($0), $0) }, uniquingKeysWith: { first, _ in first })
         let ids = ids.map(PickId.normalise)
@@ -171,13 +171,13 @@ enum AIContextAssembler {
         }
         let unknown = ids.filter { byId[$0] == nil }
         if !unknown.isEmpty { lines.append("Picks not in the agenda: \(unknown.joined(separator: ", "))") }
-        return AIContextPart(kind: .picks, summary: "\(ids.count) picks, \(upcoming.count) ahead",
+        return AIContextPart(kind: .picks, summary: String(localized: "\(ids.count) picks, \(upcoming.count) ahead", bundle: .module),
                              body: lines.joined(separator: "\n"), source: "my schedule (nr.schedule.v1)")
     }
 
     static func pagePart(_ page: PageContext?) -> AIContextPart {
         guard let page else {
-            return AIContextPart(kind: .page, summary: "No page open", body: "", source: "app")
+            return AIContextPart(kind: .page, summary: String(localized: "No page open", bundle: .module), body: "", source: "app")
         }
         var lines = ["Title: \(page.title)"]
         if let url = page.url { lines.append("Address: \(HTTPClient.redact(url))") }

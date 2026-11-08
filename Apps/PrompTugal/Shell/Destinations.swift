@@ -34,28 +34,28 @@ enum PublicDestinations {
     // MARK: Summit
 
     static let summit: [ShellDestination] = [
-        ShellDestination(id: "reader.agenda", title: "Agenda", symbol: "clock", group: "Summit",
-                         summary: "The summit agenda, offline, with picks", phoneTab: 0) { AnyView(AgendaView()) },
-        ShellDestination(id: "team.schedule", title: "My day", symbol: "calendar", group: "Summit", kind: .hybrid,
-                         summary: "Picks from the website and the app, one list", phoneTab: 1) { AnyView(MyDayView()) },
-        ShellDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", group: "Summit",
-                         summary: "Free slots and walking times between picks") { AnyView(PlannerView()) },
+        ShellDestination(id: "reader.agenda", title: String(localized: "Agenda"), symbol: "clock", group: "Summit",
+                         summary: String(localized: "The summit agenda, offline, with picks"), phoneTab: 0) { AnyView(AgendaView()) },
+        ShellDestination(id: "team.schedule", title: String(localized: "My day"), symbol: "calendar", group: "Summit", kind: .hybrid,
+                         summary: String(localized: "Picks from the website and the app, one list"), phoneTab: 1) { AnyView(MyDayView()) },
+        ShellDestination(id: "team.planner", title: String(localized: "Plan my day"), symbol: "calendar.day.timeline.left", group: "Summit",
+                         summary: String(localized: "Free slots and walking times between picks")) { AnyView(PlannerView()) },
     ]
 
     // MARK: News
 
     static let news: [ShellDestination] = [
-        ShellDestination(id: "news.home", title: "News", symbol: "newspaper", group: "News",
-                         summary: "Feed, newsletter, stories, graph", phoneTab: 2) { AnyView(NewsHomeView()) },
-        ShellDestination(id: "news.graph", title: "Graph", symbol: "point.3.connected.trianglepath.dotted", group: "News",
-                         summary: "1,688 nodes, drawn natively") { AnyView(GraphExplorerView()) },
+        ShellDestination(id: "news.home", title: String(localized: "News"), symbol: "newspaper", group: "News",
+                         summary: String(localized: "Feed, newsletter, stories, graph"), phoneTab: 2) { AnyView(NewsHomeView()) },
+        ShellDestination(id: "news.graph", title: String(localized: "Graph"), symbol: "point.3.connected.trianglepath.dotted", group: "News",
+                         summary: String(localized: "1,688 nodes, drawn natively")) { AnyView(GraphExplorerView()) },
     ]
 
     // MARK: Ask
 
     static let ask: [ShellDestination] = [
-        ShellDestination(id: "collab.ai", title: "Ask", symbol: "sparkles", group: "Ask",
-                         summary: "Ask about the agenda, your picks and the news", phoneTab: 3) { AnyView(AskView()) },
+        ShellDestination(id: "collab.ai", title: String(localized: "Ask"), symbol: "sparkles", group: "Ask",
+                         summary: String(localized: "Ask about the agenda, your picks and the news"), phoneTab: 3) { AnyView(AskView()) },
     ]
 
     // MARK: Web
@@ -63,31 +63,31 @@ enum PublicDestinations {
     static let web: [ShellDestination] = [
         ShellDestination(id: "web.promptugal", title: "PrompTugal.news", symbol: "newspaper.fill", group: "Web",
                          kind: .web(FeedClient.site)) { AnyView(WebPage(url: FeedClient.site, title: "PrompTugal.news")) },
-        ShellDestination(id: "web.all", title: "All websites", symbol: "safari", group: "Web", kind: .web(FeedClient.site),
-                         summary: "The website shell, with its shortcuts") { AnyView(WebsiteView()) },
+        ShellDestination(id: "web.all", title: String(localized: "All websites"), symbol: "safari", group: "Web", kind: .web(FeedClient.site),
+                         summary: String(localized: "The website shell, with its shortcuts")) { AnyView(WebsiteView()) },
     ]
 
     // MARK: Personal
 
     static let personal: [ShellDestination] = [
-        ShellDestination(id: "vault", title: "Vault", symbol: "lock.shield", group: "Personal",
-                         summary: "My encrypted vault, read in Swift", ownsNavigation: true) { AnyView(VaultHomeView()) },
+        ShellDestination(id: "vault", title: String(localized: "Vault"), symbol: "lock.shield", group: "Personal",
+                         summary: String(localized: "My encrypted vault, read in Swift"), ownsNavigation: true) { AnyView(VaultHomeView()) },
     ]
 
     // MARK: Settings and debug
 
     static let settings: [ShellDestination] = [
-        ShellDestination(id: "settings", title: "Settings", symbol: "gearshape", group: "Settings",
-                         summary: "About, privacy, support") { AnyView(PublicSettingsView()) },
-        ShellDestination(id: "settings.reminders", title: "Reminders", symbol: "bell.badge", group: "Settings",
-                         summary: "Before each pick") { AnyView(ReminderSettingsView()) },
+        ShellDestination(id: "settings", title: String(localized: "Settings"), symbol: "gearshape", group: "Settings",
+                         summary: String(localized: "About, privacy, support")) { AnyView(PublicSettingsView()) },
+        ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "Settings",
+                         summary: String(localized: "Before each pick")) { AnyView(ReminderSettingsView()) },
     ]
 
     /// The debug screen exists only in DEBUG builds: a Release build has no debug panel and no switch.
     static var debug: [ShellDestination] {
         #if DEBUG
-        [ShellDestination(id: "debug", title: "Debug", symbol: "ladybug", group: "Debug",
-                          summary: "Network and build", debugOnly: true) { AnyView(PublicDebugView()) }]
+        [ShellDestination(id: "debug", title: String(localized: "Debug"), symbol: "ladybug", group: "Debug",
+                          summary: String(localized: "Network and build"), debugOnly: true) { AnyView(PublicDebugView()) }]
         #else
         []
         #endif

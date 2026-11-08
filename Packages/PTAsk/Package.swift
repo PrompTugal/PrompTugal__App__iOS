@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "PTAsk",
+    defaultLocalization: "en",
     platforms: [.iOS(.v18)],
     products: [
         .library(name: "PTAsk", targets: ["PTAsk"]),
@@ -17,7 +18,8 @@ let package = Package(
     targets: [
         .target(
             name: "PTAsk",
-            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "PTAgenda", package: "PTAgenda"), .product(name: "PTNews", package: "PTNews"), .product(name: "PTVaultUI", package: "PTVaultUI")]
+            dependencies: [.product(name: "PTCore", package: "PTCore"), .product(name: "PTAgenda", package: "PTAgenda"), .product(name: "PTNews", package: "PTNews"), .product(name: "PTVaultUI", package: "PTVaultUI")],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "PTAskTests",

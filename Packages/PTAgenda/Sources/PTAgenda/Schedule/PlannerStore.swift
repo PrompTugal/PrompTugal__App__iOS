@@ -121,8 +121,8 @@ public final class PlannerStore {
         for session in team?.centreSessions() ?? [] {
             guard let id = byTitle[Self.normalize(session.title)] else { continue }
             if session.person == me {
-                suggested[id] = session.whyRelevant.isEmpty ? "Picked for you by the team"
-                    : "For you: \(session.whyRelevant.prefix(90))"
+                suggested[id] = session.whyRelevant.isEmpty ? String(localized: "Picked for you by the team", bundle: .module)
+                    : String(localized: "For you: \(session.whyRelevant.prefix(90))", bundle: .module)
             } else if !(teammates[id]?.contains(session.name) ?? false) {
                 teammates[id, default: []].append(session.name)
             }

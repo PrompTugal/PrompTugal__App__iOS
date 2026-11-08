@@ -354,7 +354,7 @@ public struct FreshnessLabel: View {
                 .font(.caption)
                 .foregroundStyle(failed || stale ? Palette.amber : Palette.muted)
             } else if failed {
-                Label("Not loaded", systemImage: "wifi.slash").font(.caption).foregroundStyle(Palette.amber)
+                Label(String(localized: "Not loaded", bundle: .module), systemImage: "wifi.slash").font(.caption).foregroundStyle(Palette.amber)
             }
         }
     }
@@ -380,20 +380,20 @@ public struct StateView: View {
             case .idle, .loading:
                 VStack(spacing: Space.m) {
                     ProgressView()
-                    Text("Loading \(title)…").font(.footnote).foregroundStyle(Palette.muted)
+                    Text(String(localized: "Loading \(title)…", bundle: .module)).font(.footnote).foregroundStyle(Palette.muted)
                 }
                 .frame(maxWidth: .infinity, minHeight: 180)
             case .failed(let message):
                 ContentUnavailableView {
-                    Label("\(title.capitalized) unavailable", systemImage: "wifi.slash")
+                    Label(String(localized: "\(title.capitalized) unavailable", bundle: .module), systemImage: "wifi.slash")
                 } description: {
                     Text(message)
                 } actions: {
-                    if let retry { Button("Try again", action: retry).buttonStyle(.borderedProminent) }
+                    if let retry { Button(String(localized: "Try again", bundle: .module), action: retry).buttonStyle(.borderedProminent) }
                 }
             case .loaded:
-                ContentUnavailableView("Nothing here yet", systemImage: "tray",
-                                       description: Text("The \(title) is empty."))
+                ContentUnavailableView(String(localized: "Nothing here yet", bundle: .module), systemImage: "tray",
+                                       description: Text(String(localized: "The \(title) is empty.", bundle: .module)))
             }
         }
     }
