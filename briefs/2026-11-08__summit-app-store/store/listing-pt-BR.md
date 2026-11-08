@@ -23,12 +23,12 @@ Abra o app no evento e, em segundos, você sabe o que está acontecendo agora, o
 
 AGENDA OFFLINE
 • A programação completa no horário de Lisboa, já dentro do app e atualizada quando você está online
-• Busque por título ou local e abra qualquer palestra para ver os detalhes
+• Busque palestras, palestrantes, empresas e locais, e abra qualquer palestra para ver os detalhes
 • Funciona sem internet, então o Wi-Fi lotado do pavilhão não te atrapalha
 
 SUA PROGRAMAÇÃO
-• Escolha as palestras que você quer; Meu dia mostra tudo em uma lista
-• Planejar meu dia encontra horários livres e o tempo de caminhada entre suas escolhas
+• Escolha as palestras que você quer; Meu programa mostra tudo em ordem de horário
+• Conflitos de horário ficam marcados para você escolher uma, e o tempo livre entre palestras aparece
 • Um lembrete antes de cada escolha, se você ativar os lembretes
 • Adicione uma palestra ao calendário com um toque (o app não lê seu calendário)
 • Um widget na tela de início com o que vem a seguir, e a Siri: "What's next in PrompTugal"
@@ -44,7 +44,7 @@ PRIVACIDADE EM PRIMEIRO LUGAR
 • Sem conta, sem cadastro, sem rastreamento, sem anúncios
 • Suas escolhas e configurações ficam no seu aparelho
 
-IDIOMAS (somente se integrado)
+IDIOMAS
 • Inglês, português (Portugal) e português (Brasil)
 
 PrompTugal é independente. Não é afiliado, endossado nem patrocinado pelos organizadores do evento.
@@ -79,7 +79,7 @@ PrompTugal para o evento de tecnologia de Lisboa, de 9 a 12 de novembro.
 
 Experimente:
 - Agenda: busque, abra uma palestra e escolha.
-- Meu dia: suas escolhas em uma lista; Planejar meu dia para horários livres e caminhadas.
+- Meu programa: suas escolhas em ordem de horário, conflitos e tempo livre.
 - Ative os lembretes, adicione uma escolha ao calendário e o widget.
 - Notícias: leia uma matéria e depois teste no modo avião.
 - Ajustes > Sobre: privacidade e suporte.
@@ -87,4 +87,4 @@ Experimente:
 Conte para a gente o que está confuso ou quebrado, em Enviar feedback da beta.
 ```
 
-Note for i18n: Meu dia, Planejar meu dia and Ajustes > Sobre must match the app's pt-BR strings; the listing follows the app.
+Note for i18n: Meu programa, Explorar and Ajustes must match the app's pt-BR strings; the listing follows the app.
