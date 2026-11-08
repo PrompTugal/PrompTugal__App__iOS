@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 10:15 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 10:40 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 10:15 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 10:40 UTC: merged `origin/dev` (v0.4.13): `apps.json` now uploads the public PrompTugal app to TestFlight; contracts §8 (next round: PTSync, decks, Team native). No site change needed; checks green (69 tests, `check_apps.py` OK). Public page 13 of 13 in the beta. Waiting for the conductor to merge `split/editor`. For §8: when `PTSync` or `PTDeck` land and the PrompTugal app lists them in `apps.json`, I add feature entries (offline sync, decks and presenter mode) with evidence from their files; I will not label them before they are built.
 
 - 10:15 UTC: merged `origin/dev` (v0.4.11: README outcome note, first Team build 0.4.7 in TestFlight). No site change. Checks green (69 tests); public page still 13 of 13 in the beta. READY stands, new head below.
 
