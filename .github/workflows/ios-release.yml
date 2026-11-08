@@ -100,6 +100,9 @@ jobs:
     name: Changes
     # After a push to dev only when website.yml succeeded (it made the release commit and tag).
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    permissions:
+      contents: read
+      actions: read   # the called workflow reads earlier runs
     uses: ./.github/workflows/ios-changes.yml
     with:
       app: ${{ inputs.app || 'all' }}

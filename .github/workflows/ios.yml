@@ -76,6 +76,9 @@ jobs:
 
   changes:
     name: Changes
+    permissions:
+      contents: read
+      actions: read   # the called workflow reads earlier runs
     uses: ./.github/workflows/ios-changes.yml
     with:
       app: ${{ inputs.app || 'all' }}
