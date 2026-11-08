@@ -33,11 +33,16 @@ PROJECT = ROOT / 'PrompTugal.xcodeproj' / 'project.pbxproj'
 
 
 def _one(pattern):
-    """The single file in the app matching a name, wherever the project layout puts it."""
-    found = sorted(p for p in APP.rglob(pattern) if '.build' not in p.parts)
-    if len(found) != 1:
-        raise SystemExit(f'build: expected one {pattern} under PrompTugal/, found {[str(f) for f in found]}')
-    return found[0]
+    """The single file in the app matching a name, wherever the project layout puts it.
+
+    The app folder first, then the Swift packages (files move there during the split)."""
+    for base in (APP, ROOT / 'Packages'):
+        found = sorted(p for p in base.rglob(pattern) if '.build' not in p.parts) if base.is_dir() else []
+        if len(found) > 1:
+            raise SystemExit(f'build: expected one {pattern} under {base.name}/, found {[str(f) for f in found]}')
+        if found:
+            return found[0]
+    raise SystemExit(f'build: no {pattern} under PrompTugal/ or Packages/')
 
 
 ASSETS = _one('Assets.xcassets')
