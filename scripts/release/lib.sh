@@ -4,9 +4,10 @@
 # and never on a command line that `set -x` or a log would show.
 
 SUMMARY=${GITHUB_STEP_SUMMARY:-/dev/null}
-PROJECT=${PROJECT:-PrompTugal.xcodeproj}
-SCHEME=${SCHEME:-PrompTugal}
-APP_NAME=${APP_NAME:-PrompTugal}
+# The app being built comes from apps.json (the workflows pass these; APP_NAME is required by the scripts that name files). No defaults: the
+# project moved to Apps/Team, and a stale default would build or sign the wrong app.
+: "${PROJECT:?PROJECT is not set (project of the app, from apps.json)}"
+: "${SCHEME:?SCHEME is not set (scheme of the app, from apps.json)}"
 OUT=${OUT:-${RUNNER_TEMP:-$PWD/build}/release}
 LOGS=${LOGS:-$OUT/logs}
 

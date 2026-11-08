@@ -16,6 +16,7 @@
 # Writes them to $GITHUB_ENV and $GITHUB_OUTPUT when those exist.
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
+: "${APP_NAME:?APP_NAME is not set (name of the app, from apps.json)}"
 
 offset=${IOS_BUILD_OFFSET:-100}
 run=${GITHUB_RUN_NUMBER:-0}

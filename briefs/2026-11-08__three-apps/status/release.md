@@ -97,3 +97,18 @@ Handed off at 01:40 UTC (8 Nov) to the session under conductor.B. I dispatch no 
 - Quick run on 2aa2059: conductor moved it to GitHub runners (run 306). Green = merge condition met. I dispatch nothing more unless it fails.
 - Run 287 (d0ad4d6) failed only in Package PTAgenda: runner fault (no matching device).
 - Open: cancel the rest of a manual split/** run when its Debug build fails (conductor's ask), in a later push.
+
+## Release.B update (8 Nov, ~07:40 UTC)
+
+- On dev: one version for every app (v0.4.n), quick mode, record-missing skip (merged 588551a), and the signing fix (d36d147).
+- First dev push proven (iOS release 42443116589, v0.4.0): tag, versions 0.4.0 / build 167, per-app bases, RiskMandate and Team uploads.
+- Signing: automatic signing created an Apple Development certificate per run and hit the account limit. `testflight.sh` now builds an unsigned archive, signs each bundle with `codesign` and its entitlements file, and the export cloud-signs with the distribution identity. A guard fails the run if a declared entitlement is missing from the export. `archive_signing` input on `ios-release.yml`: codesign (default), unsigned, development; distribution and adhoc are refused by xcodebuild on this SDK.
+- Live proof (run 42457176898, v0.4.4): Team and RiskMandate uploaded 0.4.4 (178), guard passed, no certificate error.
+- Standing by for phase 4: check `targets.sh`, the guard and defaults against `Apps/Team` and `Apps/PrompTugal`.
+- Open: cancel the rest of a manual split run when its Debug build fails (conductor's ask); not done.
+
+## Release.B update (8 Nov, ~09:45 UTC)
+
+- Phase 4 proven live: iOS release run 42465358592 (dev, v0.4.7): Team (`Apps/Team`, news.promptugal.team) and RiskMandate signed with the codesign path, entitlement guard passed, both uploaded 0.4.7 (182). PrompTugal built unsigned; `testflight` is still false for it in `apps.json`.
+- No certificate errors since the signing fix.
+- Nothing blocking. When PrompTugal gets `testflight: true`, dry-run `app=promptugal` first to check the guard against its app, widgets and intents entitlements.
