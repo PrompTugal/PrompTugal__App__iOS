@@ -343,14 +343,28 @@ jobs:
           MODE: ${{ steps.gate.outputs.mode }}
         run: scripts/release/signing-setup.sh
 
+      - name: App Store Connect record exists?
+        # An app without a record (Team, RiskMandate, until Dinis creates them) is skipped, green,
+        # before the expensive archive. A dry run does not upload, so it goes on.
+        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true'
+        run: |
+          rc=0
+          python3 scripts/release/asc.py has-record || rc=$?
+          if [ "$rc" = 3 ]; then
+            echo "RECORD_MISSING=true" >> "$GITHUB_ENV"
+            echo "- ⏭️ skipped: no App Store Connect record for \`$EXPECTED_BUNDLE\`. Create it by hand; nothing was archived or uploaded." >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$rc" != 0 ]; then
+            exit "$rc"
+          fi
+
       - name: Archive, sign, export and upload
-        if: steps.gate.outputs.ready == 'true'
+        if: steps.gate.outputs.ready == 'true' && env.RECORD_MISSING != 'true'
         env:
           MODE: ${{ steps.gate.outputs.mode }}
         run: scripts/release/testflight.sh
 
       - name: Wait for processing, answer export compliance, set What to Test
-        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true'
+        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true' && env.RECORD_MISSING != 'true'
         continue-on-error: true   # the upload is done; these are conveniences
         run: |
           scripts/release/release-notes.sh > "$RUNNER_TEMP/release/notes.txt"
