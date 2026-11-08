@@ -53,7 +53,9 @@ class SiteTest(unittest.TestCase):
 
     def test_facts_come_from_the_project(self):
         pbxproj = build.PROJECT.read_text()
-        self.assertIn(f"MARKETING_VERSION = {self.facts['version']};", pbxproj)
+        self.assertEqual(self.facts['version'], build.app_version(version.read(), build.project_setting('MARKETING_VERSION')))
+        if self.facts['version'] == build.project_setting('MARKETING_VERSION'):
+            self.assertIn(f"MARKETING_VERSION = {self.facts['version']};", pbxproj)
         self.assertEqual(int(self.facts['site_count']), len(self.facts['websites']))
         import subprocess
         tracked = subprocess.run(['git', 'ls-files', '*.swift'], cwd=build.ROOT, capture_output=True, text=True).stdout.split()
@@ -62,6 +64,12 @@ class SiteTest(unittest.TestCase):
         lines = sum(len(f.read_text().splitlines()) for f in files)
         self.assertEqual(self.facts['swift_lines'], f'{lines:,}')
         self.assertIn(f">{self.facts['swift_lines']}<", (self.clean / 'index.html').read_text())
+
+    def test_app_version_follows_release_from_v0_4(self):
+        self.assertEqual(build.app_version('v0.4.0', '0.3.1'), '0.4.0')
+        self.assertEqual(build.app_version('v0.4.12', '0.3.1'), '0.4.12')
+        self.assertEqual(build.app_version('v0.4.0', '0.4.0'), '0.4.0')
+        self.assertEqual(build.app_version('v0.1.75', '0.3.1'), '0.3.1')
 
     def test_every_page_has_a_twin_without_markup(self):
         for page in self.clean.glob('*.html'):

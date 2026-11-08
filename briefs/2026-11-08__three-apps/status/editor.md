@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 00:05 UTC
+Branch: `split/editor` · Last update: 02:00 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,9 @@ Branch: `split/editor` · Last update: 00:05 UTC
 - Build log checkpoint 13.
 
 ## In progress
+
+- 02:00 UTC: merged `origin/dev` (v0.1.75, handoff page). The site's app version now comes from `app_version()` in `website/build.py`: from v0.4 on it is the release number (v0.4.7 gives 0.4.7), before that the project's MARKETING_VERSION (0.3.1 today). The validator and tests use the same function. I did not touch `website/version.py` or its tests, which `split/release` also changes (they will merge without conflict). Build, validator and 67 tests green.
+- Still to do once release is on dev: reword `version.py` docstring, release-setup and support pages that say the app and site versions are separate (release's branch already rewrites the docstring and release-setup).
 
 - 01:25 UTC: contact address `agent@riskmandate.ai` (48 hours) is on the support page and in the review notes brief. The `.txt` notes keep `<CONTACT_ADDRESS>` and `<RESPONSE_TIME>` for `tf.py` to fill.
 

@@ -93,12 +93,19 @@ def code_areas(files):
     return areas
 
 
+def app_version(release, marketing):
+    """The app version: the release number from v0.4 on (v0.4.7 is 0.4.7), else the project's MARKETING_VERSION."""
+    major, minor = (int(x) for x in re.match(r'v(\d+)\.(\d+)', release).groups())
+    return release[1:] if (major, minor) >= (0, 4) else marketing
+
+
 def app_facts():
     swift = swift_sources()
     websites = json.loads(WEBSITES_JSON.read_text())
     tests = [f for f in swift if any(p.endswith('Tests') for p in f.relative_to(ROOT).parts)]
+    release = version.read()
     return {
-        'version': project_setting('MARKETING_VERSION'),
+        'version': app_version(release, project_setting('MARKETING_VERSION')),
         'build': project_setting('CURRENT_PROJECT_VERSION'),
         'min_ios': project_setting('IPHONEOS_DEPLOYMENT_TARGET'),
         'bundle_id': project_setting('PRODUCT_BUNDLE_IDENTIFIER'),
@@ -108,7 +115,7 @@ def app_facts():
         'site_count': str(len(websites)),
         'websites': websites,
         'areas': code_areas(swift),
-        'release': version.read(),
+        'release': release,
         'site_commit': os.environ.get('SITE_COMMIT', '')[:7],
     }
 
