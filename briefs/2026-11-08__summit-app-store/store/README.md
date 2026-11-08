@@ -13,6 +13,8 @@
 | [age-rating.md](age-rating.md) | Age rating answers, plus category, price and availability |
 | [review-notes.md](review-notes.md), [review-notes.txt](review-notes.txt) | App Review and Beta App Review notes for the public app: settings and checks, and the final text |
 | [network-audit.md](network-audit.md) | What the public build sends, host by host (Dinis's privacy check for today) |
+| [app-review-replies.md](app-review-replies.md) | Ready replies to the questions App Review is likely to ask, with the fix and owner for each |
+| [acceptance-0.4.25.md](acceptance-0.4.25.md) | Privacy-first acceptance rules for the next version: one host, no identifiers, Data Not Collected, no permission without a tap |
 | [go-no-go.md](go-no-go.md) | The final list, checked before each submission |
 
 The persona walk-throughs (synthetic users) are in [status/review.md](../../2026-11-08__three-apps/status/review.md).

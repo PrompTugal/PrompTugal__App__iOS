@@ -1,6 +1,6 @@
 # Review status
 
-> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". **FINAL GO at 16:05 UTC for 0.4.23 (204)**, conditional on Dinis's App Privacy, Mac and Vision Pro, and IDFA steps (see [go-no-go.md](../../2026-11-08__summit-app-store/store/go-no-go.md)). The store pack is in [summit-app-store/store](../../2026-11-08__summit-app-store/store/README.md); next-version items are in [next-version.md](../../2026-11-08__summit-app-store/next-version.md).
+> review.B (App Review and synthetic users) for "PrompTugal: Lisbon Summit". **Submitted at 23:20 UTC: 0.4.24 (205) is in App Review** (automatic release after approval). TestFlight 0.4.23 (204) has been in Beta App Review since 16:11. Replies to likely App Review questions are in [app-review-replies.md](../../2026-11-08__summit-app-store/store/app-review-replies.md); next-version items are in [next-version.md](../../2026-11-08__summit-app-store/next-version.md).
 
 ## Done
 - 11:30 UTC: App Review checklist ([checklist.md](../../2026-11-08__summit-app-store/store/checklist.md)): 5 blockers, 11 risks, the rest OK. Blockers B1 to B5 sent to the conductor.
