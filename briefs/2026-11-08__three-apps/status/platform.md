@@ -1,6 +1,6 @@
 # Platform status
 
-> Phase 4 (Team project move) is pushed on split/platform at cd02fa7. Run 338 (ios.yml, app=all, macos-26) is partly done and green so far (Team Debug, Team iPad tests, PrompTugal, packages); the ios-release dry run for app=team (run 81) is queued. READY follows when both are green.
+> Phase 4 is READY: split/platform cd02fa7, run 338 (ios.yml app=all) green, ios-release dry run app=team run 81 green. Waiting for the conductor to merge; then I answer questions and help the apps session with the widget targets.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -108,3 +108,8 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Run 338 (cd02fa7), so far green: apps.json check, Debug and Release builds (Team, PrompTugal, RiskMandate where run), Team iPad tests, PrompTugal iPhone tests, PTAsk, PTNews, PTLanes. Still queued: Team iPhone tests, remaining package tests, RiskMandate tests.
 - ios-release dry run, app=team, run 81 (id 42461685105), dispatched at 08:09, queued.
 - Team entry point also sets `SharedContainer.appGroup = "group.news.promptugal.team"` so the Now/Next snapshot can never go to the PrompTugal group (Team declares no group, so nothing is written).
+
+## Update (09:02 UTC): READY sent
+- Run 338 green on cd02fa7 (all jobs). Release dry run 81 (app=team) green: unsigned archive, bundle id matches apps.json, sign and export with associated-domains and time-sensitive, no upload.
+- READY sent to the conductor with both run ids.
+- Open for others: the apps session adds the widgets and intents targets to Apps/PrompTugal (sources in `Apps/PrompTugal/Widgets` and `Intents`; link PTAgenda for `SharedContainer`, `NowNextSnapshot`, `LisbonClock`). Their xcconfig and entitlements are in `Apps/PrompTugal/Config/`.
