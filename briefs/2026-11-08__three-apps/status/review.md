@@ -10,7 +10,8 @@
 - Persona walk-through 1 (code on dev, before screenshots): below.
 
 ## In progress
-- Waiting for the conductor's decisions on B1 (Ask) and B2 (Vault), and for the first screenshot set from release.
+- Rulings received at 11:25 UTC (B1 option a, B2 hide Vault, B3 to B5 and R1 as proposed). The pack is updated: final [review-notes.txt](../../2026-11-08__summit-app-store/store/review-notes.txt), the App Privacy label with Ask (Other User Content), `/pt/` URLs, and the Ask lines in the listings marked optional (own key).
+- Waiting for the first screenshot set from release and the merges of B3, B5, R1 and Vault hidden.
 
 ## Next
 - Walk the personas through each screenshot set and each new build (Now, Explore, pt strings).
@@ -32,7 +33,8 @@ Severity: **stuck** (cannot do the task), **confusing** (gets there, but slowly 
 
 | # | Persona | Screen id | Problem | Fix | Owner | Severity |
 | --- | --- | --- | --- | --- | --- | --- |
-| F1 | all | `collab.ai` (tab 4) | Ask opens on "No OpenRouter key". No participant has one. | B1: a review key and Ask in More, or Ask hidden in this build | collab, design | stuck |
+| F1 | all | `collab.ai` (tab 4) | Ask opens on "Add your OpenRouter key". No participant has one. | Ruled: Ask moves to More, and the reviewer gets a key. For participants it stays a bring-your-own-key extra: the listing says so. | collab, design | stuck (for participants without a key) |
+| F14 | all | `collab.ai` → Key and settings | "Save key to my vault" (`AskView.swift:421`) with Vault hidden; the intro says "Ask about the summit, your day and the team" | Hide the vault button in the public app; the intro is fixed on `split/collab` 38c85cc | collab | confusing |
 | F2 | P1, P2, P4 | every screen | The app is English only (`knownRegions` en, Base), so Ana and Rui read English and dates in English | i18n's String Catalogs (pt-PT, pt-BR) | i18n | missing |
 | F3 | P1, P5 | `reader.agenda` | Opens on "All days": hundreds of rows. "Happening now" is there, but under the day picker, and only when a session is live | During 9–12 Nov, default the day to today in Lisbon; put "Now / Next" first (ux's Now screen) | team, ux | confusing |
 | F4 | P1, P3 | `reader.agenda` → session | Tapping a session opens a web page (`WebPage(url: event.url)`). Offline, or on bad Wi-Fi, it fails. The detail she needs is time, room and speakers | A native session detail from the agenda data, with the star and Add to Calendar, and the web page as a link | team (PTAgenda), deck (PTExplore) | stuck when offline |
