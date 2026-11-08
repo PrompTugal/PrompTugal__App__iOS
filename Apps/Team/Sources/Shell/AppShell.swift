@@ -112,31 +112,9 @@ extension AppShell {
     }
 }
 
-/// A page a link asks to open over the shell.
-struct LinkedPage: Identifiable, Equatable {
-    let url: URL
-    let title: String
-    var id: URL { url }
-}
-
-/// Reads the page out of a <scheme>://open/<id> link: `session=<event slug>` becomes that event's
-/// page on promptugal.news; `url=<https page>` is opened only on our own two sites.
-enum ShellLink {
-    static let allowedHosts: Set<String> = ["promptugal.news", "web-summit.sgit.ai"]
-
-    static func page(in link: URL) -> LinkedPage? {
-        let items = URLComponents(url: link, resolvingAgainstBaseURL: false)?.queryItems ?? []
-        if let slug = items.first(where: { $0.name == "session" })?.value,
-           !slug.isEmpty, slug.range(of: #"^[a-z0-9][a-z0-9-]*$"#, options: .regularExpression) != nil {
-            return LinkedPage(url: FeedClient.site.appendingPathComponent("events/\(slug)/index.html"), title: "Session")
-        }
-        if let text = items.first(where: { $0.name == "url" })?.value, let url = URL(string: text),
-           url.scheme == "https", let host = url.host()?.lowercased(), allowedHosts.contains(host),
-           !CheckoutPolicy.isBlocked(url) {
-            return LinkedPage(url: url, title: "Briefing")
-        }
-        return nil
-    }
+extension ShellLink {
+    /// The Team app's form: checkout pages are blocked by PTWeb's `CheckoutPolicy`.
+    static func page(in link: URL) -> LinkedPage? { page(in: link, isBlocked: CheckoutPolicy.isBlocked) }
 }
 
 /// The banner shown on every screen while sample data is on.
@@ -162,23 +140,6 @@ private struct SampleBanner: View {
         .background(.bar)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("pt.sampleBanner")
-    }
-}
-
-/// Covers the app while it is not active, so the app-switcher snapshot shows no keys, messages or chats.
-struct PrivacyCover: View {
-    var body: some View {
-        ZStack {
-            Palette.paper.ignoresSafeArea()
-            VStack(spacing: Space.m) {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Palette.ink)
-                    .frame(width: 64, height: 64)
-                    .overlay(Text("PT").font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.paper))
-                Text("PrompTugal").font(Typo.title)
-            }
-        }
-        .accessibilityHidden(true)
     }
 }
 
@@ -392,11 +353,4 @@ private struct ShellKeyboardShortcuts: View {
 
 #Preview("Shell · iPad") {
     AppShell().environment(ReaderStore()).teamFeatures().padPreview()
-}
-
-extension View {
-    /// Marks the screen the shell opened, for UI tests and screenshots: "pt.destination.<id>".
-    func destinationID(_ id: String) -> some View {
-        accessibilityElement(children: .contain).accessibilityIdentifier("pt.destination.\(id)")
-    }
 }

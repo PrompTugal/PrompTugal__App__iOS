@@ -72,11 +72,3 @@ struct MyCommandCentreWeb: View {
         }
     }
 }
-
-
-/// The app's own privacy and support pages, and its independence note (guideline 5.1.1, 5.2).
-enum SupportLinks {
-    static let privacy = URL(string: "https://ios.app.promptugal.news/privacy.html")!
-    static let support = URL(string: "https://ios.app.promptugal.news/support.html")!
-    static let independence = "PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by Web Summit."
-}
