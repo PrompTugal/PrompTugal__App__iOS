@@ -1,18 +1,24 @@
+import PTCore
+import PTWeb
 import SwiftUI
 
 /// The news in every form: the feed, the newsletter editions (read natively from their
 /// plain-text email), the stories in progress, and the graph. Each has its web twin.
-struct NewsHomeView: View {
-    @Environment(DashboardData.self) private var data
-    @Environment(ReaderStore.self) private var store
+public struct NewsHomeView: View {
+    @Environment(NewsFeeds.self) private var data
+    @Environment(\.newsSource) private var source
     @SceneStorage("news.form") private var form: Form = .feed
+
+    private var store: any NewsSource { source ?? EmptyNewsSource.shared }
+
+    public init() {}
 
     enum Form: String, CaseIterable, Identifiable {
         case feed = "Feed", editions = "Editions", stories = "Stories"
         var id: Self { self }
     }
 
-    var body: some View {
+    public var body: some View {
         Page(maxWidth: 900) {
             ScreenHeader(kicker: "PrompTugal.news", title: "The news",
                          summary: "Independent coverage from Lisbon, in every form: the feed, the editions, the stories being made, and the graph.")
@@ -44,7 +50,7 @@ struct NewsHomeView: View {
         .navigationTitle("News")
         .refreshable {
             await store.refresh()
-            await data.refreshAll(force: true)
+            await data.refresh(force: true)
         }
         .task {
             await store.refresh()

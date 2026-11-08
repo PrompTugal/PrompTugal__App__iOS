@@ -30,6 +30,7 @@ struct AppShell: View {
             if sampleMode { SampleBanner { leaveSampleMode() } }
         }
         .environment(data)
+        .environment(data.news)
         .environment(vaultLog)
         // .teamFeatures() is applied once, by the app root (PrompTugalApp), outside the shell.
         .identitySync()
