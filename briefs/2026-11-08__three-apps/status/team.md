@@ -17,6 +17,8 @@
 
 - **04:15 UTC:** Run 313 (macos-26, app=all) on 3899bb1 green, all 15 jobs. READY sent to the conductor.
 
+- **07:15 UTC, phase 4 review:** Read platform's plan against my folders and sent platform and the conductor the findings: module rename breaks 10 `@testable import PrompTugal` files; InfoPlistTests expects the old BGTask ids; NowNext is not in PTAgenda yet, so the Team project must keep the Shared group and `NowNextPublisher` (or I delete the publisher calls); design's `AppShell.swift:97` must compare with `AppLinks.scheme`. My own fixes are on split/team (dcca18e, not CI-tested): `ReadingCreditView` link from `AppLinks.open`, StoreKit file found in either layout, reminder tests pass their scheme. Waiting for platform's move to review it.
+
 ## Handoff
 
 **Handed off at 01:35 UTC, 8 Nov, to the session on account B.**
