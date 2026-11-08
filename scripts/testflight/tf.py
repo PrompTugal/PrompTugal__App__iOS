@@ -334,11 +334,27 @@ def cmd_set_info(a, app, name):
     run_plan(a, f"Set test information for build {a.build}", steps, lines)
 
 
+def cmd_certificates(a):
+    """Read-only: how many signing certificates exist, by type. No names or ids are printed."""
+    certs, _ = get_all("/v1/certificates?limit=200&fields[certificates]=certificateType,expirationDate,activated")
+    by = {}
+    for c in certs:
+        at = c["attributes"]
+        by.setdefault(at.get("certificateType", "?"), []).append((at.get("expirationDate") or "?")[:10])
+    say(f"### Signing certificates: {len(certs)} in total")
+    say("")
+    say("| Type | Count | Expiry dates |")
+    say("|---|---|---|")
+    for t in sorted(by):
+        say("| {} | {} | {} |".format(t, len(by[t]), ", ".join(sorted(by[t]))))
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--bundle", default=os.environ.get("BUNDLE_ID", DEFAULT_BUNDLE))
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("status"); s.add_argument("--limit", type=int, default=25)
+    sub.add_parser("certificates")
     for n in ("add-to-group", "remove-from-group"):
         s = sub.add_parser(n); s.add_argument("--build", required=True); s.add_argument("--group", required=True); s.add_argument("--yes", action="store_true")
     for n in ("expire", "submit-beta-review"):
@@ -351,6 +367,8 @@ def main(argv=None):
             sys.exit(f"missing secret {v}")
     if not (os.environ.get("ASC_KEY_PATH") or os.environ.get("ASC_KEY_P8_BASE64")):
         sys.exit("missing secret ASC_KEY_P8_BASE64")
+    if a.cmd == "certificates":
+        return cmd_certificates(a)
     app, name = app_id(a.bundle)
     {"status": cmd_status, "add-to-group": cmd_add, "expire": cmd_expire, "submit-beta-review": cmd_submit,
      "set-test-info": cmd_set_info,

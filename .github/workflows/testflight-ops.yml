@@ -20,7 +20,7 @@ on:
         description: What to do
         type: choice
         required: true
-        options: [status, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
+        options: [status, certificates, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
       build:
         description: Build number (as in TestFlight). Not needed for status.
         type: string
@@ -82,6 +82,7 @@ jobs:
           [ "$CONFIRM" = "true" ] && flag=(--yes) || flag=()
           case "$ACTION" in
             status) args=(status) ;;
+            certificates) args=(certificates) ;;
             add-to-group|remove-from-group)
               [ -n "$BUILD" ] && [ -n "$GROUP" ] || { echo "::error::build and group are required"; exit 1; }
               args=("$ACTION" --build "$BUILD" --group "$GROUP" "${flag[@]}") ;;
