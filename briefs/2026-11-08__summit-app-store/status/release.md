@@ -19,7 +19,7 @@
 - Artifact `appstore-screens-<sha>-promptugal`: `<locale>/<display type>/<NN>-<screen id>.jpg`. The order of the files is the order on the store page.
 - Locales come from the app's own strings: the job passes `-testLanguage` and `-testRegion` to the screens test, so pt-PT and pt-BR show once i18n has landed.
 - **Needs from others:** the PrompTugal project's `PrompTugalScreens` scheme must run a screens test that attaches one screenshot per destination (like Team's `ScreensTests`); apps or design own it. Apple takes at most 10 screenshots per set: ux picks the ten and the order; until then the artifact has every destination.
-- **Inputs:** `ids` (default `now,team.schedule,explore,news.home`: the screens to keep, in store order; a missing id fails the job) and `now` (default `2026-11-10T11:00:00Z`: the pretend time). `now` reaches the screens test as the environment variable `PT_NOW` (set through `TEST_RUNNER_PT_NOW`); the test must pass it on as a launch argument, an empty value meaning real time:
+- **Inputs:** `ids` (ux's list, in store order: `now,team.schedule,explore,explore.talk,news.home,explore.people,explore.graph`), `ids_required` (default `now,team.schedule,explore,news.home`: a missing one fails the job, any other missing id is skipped with a warning), `seed_picks` (the five pick ids ux chose, comma-separated; reaches the test as `PT_SEED_PICKS`, which the test adds as `-PTSeedPicks <value>` when not empty) and `now` (default `2026-11-10T11:00:00Z`: the pretend time). `now` reaches the screens test as the environment variable `PT_NOW` (set through `TEST_RUNNER_PT_NOW`); the test must pass it on as a launch argument, an empty value meaning real time:
 
 ```swift
 var args = ["-PTDestination", id, "-PTSampleData"]
