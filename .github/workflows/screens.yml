@@ -1,16 +1,23 @@
 name: Screens
 
 # Screenshots of every main screen on an iPhone and an iPad simulator, so the
-# team can see the app without a Mac. Only on dev and by hand: macOS runners
-# are shared, and branch CI (ios.yml) stays at three jobs.
+# team can see the app without a Mac. By hand only (workflow_dispatch): macOS runners
+# are shared, and branch CI (ios.yml) stays at a few jobs.
+# Per app: only the apps a change touches, and only apps whose project has a shared
+# "<Scheme>Screens" scheme (optional apps.json keys screensScheme, screensCount).
 # Artifact: screens-<sha>, files <iphone|ipad>-<destination id>.png, longest side
-# 1600 px. The editor publishes them on the site from successful dev runs.
+# 1600 px. The app with bundle news.promptugal.reader keeps that name (the editor
+# publishes it on the site from successful dev runs); the others get screens-<sha>-<app>.
 
 on:
-  push:
-    branches: [dev]
-    paths: ['**', '!briefs/**', '!website/**', '!*.md', '!VERSION']
+  # By hand only: about 26 simulator screenshots per run is most of the macOS queue.
   workflow_dispatch:
+    inputs:
+      app:
+        description: 'Which app to photograph'
+        type: choice
+        options: [all, team, promptugal, riskmandate]
+        default: all
 
 permissions:
   contents: read
@@ -20,16 +27,25 @@ permissions:
 # A job still waiting for a runner is replaced by the newer push's.
 
 jobs:
+  changes:
+    name: Changes
+    uses: ./.github/workflows/ios-changes.yml
+    with:
+      app: ${{ inputs.app || 'all' }}
+
   shoot:
-    name: Screens (${{ matrix.device }})
+    name: Screens (${{ matrix.app.app }}, ${{ matrix.device }})
+    needs: changes
+    if: needs.changes.outputs.has_screens == 'true'
     strategy:
       fail-fast: false
       matrix:
+        app: ${{ fromJSON(needs.changes.outputs.screens) }}
         device: [iPhone, iPad]
     runs-on: macos-26
     timeout-minutes: 40
     concurrency:
-      group: screens-${{ matrix.device }}-${{ github.ref }}
+      group: screens-${{ matrix.app.app }}-${{ matrix.device }}-${{ github.ref }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v5
@@ -54,9 +70,9 @@ jobs:
       - name: Take the screenshots
         timeout-minutes: 25
         run: |
-          .github/scripts/run-and-summarize.sh "Screens (${{ matrix.device }})" "$RUNNER_TEMP/logs/screens.log" -- \
+          .github/scripts/run-and-summarize.sh "Screens (${{ matrix.app.app }}, ${{ matrix.device }})" "$RUNNER_TEMP/logs/screens.log" -- \
             xcodebuild test \
-              -project PrompTugal.xcodeproj -scheme PrompTugalScreens -configuration Debug \
+              -project "${{ matrix.app.project }}" -scheme "${{ matrix.app.screens_scheme }}" -configuration Debug \
               -destination "id=${{ steps.sim.outputs.udid }}" \
               -derivedDataPath "$RUNNER_TEMP/dd" \
               -resultBundlePath "$RUNNER_TEMP/Screens.xcresult" \
@@ -96,8 +112,11 @@ jobs:
           python3 .github/scripts/png-normalize.py $landscape "$RUNNER_TEMP"/screens/*.png || bad=1
           count=$(ls "$RUNNER_TEMP"/screens/*.png | wc -l | tr -d ' ')
           echo "$count screenshots for ${{ matrix.device }}" >> "$GITHUB_STEP_SUMMARY"
-          # One per id in PrompTugalUITests/ScreensTests.swift (13); update both together.
-          if [ "$count" -ne 13 ]; then echo "::error::$count screenshots for ${{ matrix.device }}, expected 13"; bad=1; fi
+          # One per id in the app's ScreensTests.swift (13 for PrompTugal today); update both together.
+          # screens_count is 0 when apps.json does not say: then any number above 0 passes.
+          want=${{ matrix.app.screens_count }}
+          if [ "$want" -gt 0 ] && [ "$count" -ne "$want" ]; then echo "::error::$count screenshots for ${{ matrix.device }}, expected $want"; bad=1; fi
+          if [ "$count" -eq 0 ]; then echo "::error::no screenshots for ${{ matrix.app.app }}"; bad=1; fi
           ls -la "$RUNNER_TEMP/screens"
           ls "$RUNNER_TEMP/screens" | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
           [ "$bad" = 0 ]
@@ -105,19 +124,22 @@ jobs:
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: screens-${{ github.sha }}-${{ matrix.device }}
+          name: screens-${{ github.sha }}-${{ matrix.app.app }}-${{ matrix.device }}
           path: ${{ runner.temp }}/screens/
           if-no-files-found: warn
           retention-days: 14
 
   collect:
-    name: One artifact for both devices
-    needs: shoot
-    if: always()
+    name: One artifact for both devices (${{ matrix.app.app }})
+    needs: [changes, shoot]
+    if: always() && needs.changes.outputs.has_screens == 'true'
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.changes.outputs.screens) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/upload-artifact/merge@v4
         with:
-          name: screens-${{ github.sha }}
-          pattern: screens-${{ github.sha }}-*
+          name: screens-${{ github.sha }}${{ matrix.app.suffix }}
+          pattern: screens-${{ github.sha }}-${{ matrix.app.app }}-*
           delete-merged: true
