@@ -38,7 +38,7 @@ For Dinis. Nothing in the code changes. Do the PrompTugal column first; it has a
 7. **Dry run.** Actions → **iOS release** → Run workflow → branch `dev`, **app** = `promptugal`, tick **dry_run** → Run. In the run's summary, the **Profiles against entitlements** table must be all ✅. A ❌ row names the capability to enable; fix it in step 1, regenerate that profile, update its secret, run again. Repeat with **app** = `team`.
 8. **Upload.** Run again with **upload** ticked (per app, or `all`). App Store Connect processes the build in 5–30 minutes and the group gets it in the TestFlight app.
 
-After that, **every push to `dev` uploads the apps it touched** (pushes that only touch docs, the site or `VERSION` are skipped). Tags and manual runs also work.
+After that, **every push to `dev` uploads the apps it touched**, once the site release for that push has succeeded (pushes that only touch docs, the site or `VERSION` build nothing). If the site release fails, that push is not built; the next successful release builds everything since each app's last build. Tags and manual runs also work.
 
 **Pause.** In **Settings → Secrets and variables → Actions → Variables**:
 
@@ -51,7 +51,7 @@ After that, **every push to `dev` uploads the apps it touched** (pushes that onl
 
 Tags and manual runs ignore the pause variables.
 
-**Tags.** One tag releases one app, whatever else changed:
+**Tags.** One tag builds one app at that commit, whatever else changed:
 
 ```sh
 git tag promptugal-v0.3.2 && git push origin promptugal-v0.3.2
@@ -65,7 +65,7 @@ The old `ios-v*` tag still works and means the app with bundle `news.promptugal.
 
 ## What CI does today, with no keys
 
-Every push to `dev` that changes more than docs or the site (pushes touching only `briefs/`, `website/`, `*.md` or `VERSION` are skipped to save macOS runner time), and every manual run, runs the **package** job of `iOS release` once per affected app on a macOS runner with the newest stable Xcode. Each app produces four artifacts, named `<Scheme>-<version>-<build>-<sha>-…` (for example `PrompTugal-0.3.1-…`):
+Every release of a push to `dev` that changes an app, and every manual run, runs the **package** job of `iOS release` once per affected app on a macOS runner with the newest stable Xcode. Each app produces four artifacts, named `<Scheme>-<version>-<build>-<sha>-…` (for example `PrompTugal-0.3.1-…`):
 
 | Artifact | What it is | Use |
 | --- | --- | --- |
@@ -80,7 +80,19 @@ The **testflight** job runs once per app, on every push to `dev` that builds tha
 
 ## Version and build numbers
 
-- **Version** (`CFBundleShortVersionString`) is `MARKETING_VERSION` in each app's own Xcode project (PrompTugal continues from 0.3.1, Team starts at 0.1.0, RiskMandate at 0.0.1). Change it in Xcode (target → General → Version) when you start a new release. CI never changes it.
+**One version for the repository and every app** (Dinis, 8 Nov). The release version in `/VERSION` (`v0.4.7`) is also each app's version (`0.4.7`, `CFBundleShortVersionString`). It starts at v0.4.0, which is above PrompTugal's 0.3.1, so App Store Connect accepts it.
+
+How a push to dev becomes a build:
+
+1. A push to `dev` starts **Release and deploy** (`website.yml`). It bumps `VERSION`, commits `release: v0.4.n`, tags `v0.4.n` and deploys the site.
+2. When that run succeeds, **iOS release** starts (`workflow_run`). It finds the release commit and tag of the pushed commit and builds that commit, so the app, the tag and the site agree.
+3. For each app it compares the release commit with **the commit that app was last built from** (the `commit` in the app's latest `build-info-<app>` artifact). Docs, the site and `VERSION` do not count. Only apps with changes build and upload. Because the comparison starts at each app's own last build, a run that was replaced by a newer one never loses an app's changes, and the same tag is never built twice.
+4. CI passes `MARKETING_VERSION=0.4.n` to `xcodebuild` for every target. The Xcode project's own `MARKETING_VERSION` is no longer used for CI builds.
+
+The job summary and the TestFlight "What to Test" start with: `0.4.n (build) · tag v0.4.n · commit <sha>`. "What to Test" lists the commits since that app's last build.
+
+Manual runs and `team-v*`, `promptugal-v*`, `riskmandate-v*` tags build the commit they run on and read `VERSION` there. A commit that is not a release commit shows `tag none`. To start a new minor (v0.5), write `v0.5` (no patch) into `VERSION`; the next push releases v0.5.0.
+
 - **Build** (`CFBundleVersion`) is set by CI on the `xcodebuild` command line: `CURRENT_PROJECT_VERSION = <run number of iOS release> + the app's offset`. Each app has its own offset: the variable `IOS_BUILD_OFFSET_<APP>` (for example `IOS_BUILD_OFFSET_PROMPTUGAL`), else `IOS_BUILD_OFFSET`, else `100`. PrompTugal must stay above its manual build 6, and the push builds so far used run number + 100, so keep its offset at 100 or higher; never lower it. Team and RiskMandate start fresh, and 100 is fine for them.
 - The run number only grows, and both jobs of one run use the same number, so the .ipa artifact and the TestFlight build match. The run number is shared by all apps in a run, so an app's numbers skip but still only grow.
 - App Store Connect rejects a build number already used for the same version. If that happens (for example after uploading from Xcode by hand with a higher number), raise that app's offset variable in **Settings → Secrets and variables → Actions → Variables**, or run the workflow by hand with **app** and **build_number** set.

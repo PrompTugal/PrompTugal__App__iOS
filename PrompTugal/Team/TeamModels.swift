@@ -281,35 +281,7 @@ struct CommandCentre: Decodable, Sendable {
     }
 }
 
-// MARK: - Stand-ups  (https://web-summit.sgit.ai/meetings/index.md and /meetings/<slot>/<person>/)
-
-struct TeamStandup: Identifiable, Hashable, Sendable {
-    let slot: String                // "2026-11-07-1200"
-    let at: Date                    // Lisbon time (UTC in November)
-    var id: String { slot }
-    var url: URL { TeamEndpoints.base.appendingPathComponent("meetings/\(slot)/index.html") }
-    func briefingURL(for person: String) -> URL {
-        TeamEndpoints.base.appendingPathComponent("meetings/\(slot)/\(person)/index.html")
-    }
-    /// The stand-ups last about 30 minutes; the site does not say.
-    var end: Date { at.addingTimeInterval(30 * 60) }
-
-    /// - Parameters:
-    ///   - slot: the folder name, "2026-11-05-1300".
-    ///   - label: the list's link text, "2026-11-05 12:00". It wins over the slot: the team moved the
-    ///     13:00 stand-up to 12:00 on 5 November and kept some folder names.
-    init?(slot: String, label: String? = nil) {
-        let parts = slot.split(separator: "-")
-        guard parts.count == 4, parts[3].count == 4 else { return nil }
-        let fromSlot = Lisbon.instant(day: parts[0...2].joined(separator: "-"),
-                                      clock: "\(parts[3].prefix(2)):\(parts[3].suffix(2))")
-        let labelParts = (label ?? "").split(separator: " ")
-        let fromLabel = labelParts.count == 2 ? Lisbon.instant(day: String(labelParts[0]), clock: String(labelParts[1])) : nil
-        guard let at = fromLabel ?? fromSlot else { return nil }
-        self.slot = slot
-        self.at = at
-    }
-}
+// Stand-ups (`TeamStandup`) live in PTAgenda, with the reminders that use them.
 
 // MARK: - Agents: wakes, reports, pulse, log
 // These pages publish no JSON; each has a markdown twin (`index.md`) that the app reads.
@@ -363,7 +335,7 @@ struct SessionLogEntry: Identifiable, Hashable, Sendable {
 // MARK: - The site
 
 enum TeamEndpoints {
-    static let base = URL(string: "https://web-summit.sgit.ai/")!
+    static let base = TeamSite.base
     static let me = base.appendingPathComponent("me.json")
     static let meetings = base.appendingPathComponent("meetings/index.md")
     static let wakes = base.appendingPathComponent("wakes/index.md")

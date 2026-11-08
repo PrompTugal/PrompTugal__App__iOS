@@ -11,6 +11,7 @@ name: iOS
 #             for a device (unsigned), as two matrix legs
 #   test      per affected app, on an iPhone and an iPad simulator: dev, pull requests
 #             and workflow_dispatch only (night/** pushes build only; split/** branches run by workflow_dispatch)
+#   quick     manual runs only: Debug build and iPhone tests, no Release build, no iPad
 #   packages  per affected Swift package with a Tests/ folder
 #   result    one stable check name that is green when everything above is
 #
@@ -34,6 +35,15 @@ on:
         type: choice
         options: [all, team, promptugal, riskmandate]
         default: all
+      quick:
+        description: 'Quick: Debug build and iPhone unit tests of the app, plus the package tests of what the branch changed. No Release build, no iPad. Run once with quick off before a merge to dev.'
+        type: boolean
+        default: false
+      runner:
+        description: 'macOS runner for the build, test and package jobs (self-hosted = the Mac registered to this repository)'
+        type: choice
+        options: [macos-26, self-hosted]
+        default: macos-26
 
 permissions:
   contents: read
@@ -71,6 +81,9 @@ jobs:
 
   changes:
     name: Changes
+    permissions:
+      contents: read
+      actions: read   # the called workflow reads earlier runs
     uses: ./.github/workflows/ios-changes.yml
     with:
       app: ${{ inputs.app || 'all' }}
@@ -104,8 +117,8 @@ jobs:
         app: ${{ fromJSON(needs.changes.outputs.apps) }}
         # Debug for the simulator; Release is what App Store and TestFlight builds use:
         # optimised, DEBUG not defined, so code behind #if DEBUG compiles out cleanly.
-        config: [Debug, Release]
-    runs-on: macos-26
+        config: ${{ fromJSON(inputs.quick && '["Debug"]' || '["Debug","Release"]') }}
+    runs-on: ${{ inputs.runner || 'macos-26' }}
     concurrency:
       group: ios-build-${{ matrix.app.app }}-${{ matrix.config }}-${{ github.ref }}
       cancel-in-progress: false
@@ -157,8 +170,8 @@ jobs:
       matrix:
         app: ${{ fromJSON(needs.changes.outputs.apps) }}
         # The app must work on iPhone and iPad; both run every test.
-        device: [iPhone, iPad]
-    runs-on: macos-26
+        device: ${{ fromJSON(inputs.quick && '["iPhone"]' || '["iPhone","iPad"]') }}
+    runs-on: ${{ inputs.runner || 'macos-26' }}
     timeout-minutes: 45
     concurrency:
       group: ios-test-${{ matrix.app.app }}-${{ matrix.device }}-${{ github.ref }}
@@ -203,6 +216,12 @@ jobs:
               -maximum-test-execution-time-allowance 180 \
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
+      - name: Delete this job's simulator (self-hosted only)
+        if: always() && runner.environment == 'self-hosted' && steps.sim.outputs.udid != ''
+        run: |
+          xcrun simctl shutdown "${{ steps.sim.outputs.udid }}" 2>/dev/null || true
+          xcrun simctl delete "${{ steps.sim.outputs.udid }}" || true
+
       - name: Upload log and results (failures only; the bundle is about 60 MB)
         if: failure()
         uses: actions/upload-artifact@v5
@@ -221,7 +240,7 @@ jobs:
       fail-fast: false
       matrix:
         package: ${{ fromJSON(needs.changes.outputs.packages) }}
-    runs-on: macos-26
+    runs-on: ${{ inputs.runner || 'macos-26' }}
     timeout-minutes: 30
     concurrency:
       group: ios-package-${{ matrix.package.name }}-${{ github.ref }}
@@ -247,6 +266,12 @@ jobs:
 
       - name: Test ${{ matrix.package.name }}
         run: scripts/release/test-package.sh "${{ matrix.package.path }}" "${{ steps.sim.outputs.udid }}"
+
+      - name: Delete this job's simulator (self-hosted only)
+        if: always() && runner.environment == 'self-hosted' && steps.sim.outputs.udid != ''
+        run: |
+          xcrun simctl shutdown "${{ steps.sim.outputs.udid }}" 2>/dev/null || true
+          xcrun simctl delete "${{ steps.sim.outputs.udid }}" || true
 
   # One check name that does not change with the matrix: green when every job that ran is
   # green (skipped jobs do not count against it). Branch protection can require this one.
