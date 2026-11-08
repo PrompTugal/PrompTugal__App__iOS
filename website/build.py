@@ -36,8 +36,21 @@ WEBSITES_JSON = admin.find_in_app('Websites.json')
 # Published path -> source file in the Xcode asset catalog (artwork exists once).
 # Every Shortcut*.imageset is published, so a removed shortcut leaves no dangling image.
 IMAGES = {'assets/app-icon.png': ASSETS / 'AppIcon.appiconset' / 'AppIcon.png'}
-IMAGES.update({f'assets/shortcut-{d.stem}.png': next(d.glob('*.png'))
-               for d in sorted(ASSETS.glob('Shortcut*.imageset')) if any(d.glob('*.png'))})
+def _shortcut_images():
+    """Shortcut*.imageset from every asset catalog the app is built from (the app's own first).
+
+    While files move during the split, the sidebar artwork can sit in another catalog than the app icon."""
+    found = {}
+    for place in admin.APP_FOLDERS:
+        base = ROOT / place
+        for catalog in sorted(base.rglob('Assets.xcassets')) if base.is_dir() else []:
+            for d in sorted(catalog.glob('Shortcut*.imageset')):
+                if any(d.glob('*.png')):
+                    found.setdefault(d.stem, d)
+    return found
+
+
+IMAGES.update({f'assets/shortcut-{name}.png': next(d.glob('*.png')) for name, d in _shortcut_images().items()})
 
 # Websites.json colour names -> CSS colours close to the iOS system tints.
 TINTS = {'red': '#d93a33', 'orange': '#e8870e', 'green': '#2f9e44', 'teal': '#2a9fb0',
@@ -47,7 +60,7 @@ TINTS = {'red': '#d93a33', 'orange': '#e8870e', 'green': '#2f9e44', 'teal': '#2a
 def build_configurations(text):
     """Each XCBuildConfiguration's buildSettings as a dict of raw values."""
     blocks = []
-    for body in re.findall(r'isa = XCBuildConfiguration;\s*buildSettings = \{(.*?)\n\t\t\t\};', text, re.S):
+    for body in re.findall(r'isa = XCBuildConfiguration;[^{}]*?buildSettings = \{(.*?)\n\t\t\t\};', text, re.S):
         blocks.append(dict((k, v.strip('"')) for k, v in re.findall(r'^\s*([A-Z_][A-Z0-9_]*) = (.+?);$', body, re.M)))
     return blocks
 

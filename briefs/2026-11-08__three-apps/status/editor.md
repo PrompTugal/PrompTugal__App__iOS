@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 03:25 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 03:50 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,12 @@ Branch: `split/editor` · Last update: 03:25 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 03:50 UTC: merged `origin/dev` (v0.4.0): release's one-version change, the `Apps/PrompTugal` and `Apps/RiskMandate` projects and their `apps.json` entries. Merged without conflict, but the build stopped twice, and I fixed both in `website/build.py`:
+  1. The new project's build configurations carry `baseConfigurationReference` before `buildSettings`, which my parser did not accept, so it saw no bundle id. It does now.
+  2. `ShortcutPrompTugal` and the other sidebar images are still only in the old catalog (`PrompTugal/App/Resources/Assets.xcassets`), not in `Apps/PrompTugal/Resources/Assets.xcassets`. The site now takes shortcut images from every catalog of the app's folders, the app's own first.
+- The site now reads **0.4.0** from `VERSION` (it matches the new project's MARKETING_VERSION 0.4.0). 68 tests green.
+- Effect on labels: the public app now has its own `apps.json` entry (`Apps/PrompTugal/` plus the PTAsk closure), so `features.html` shows **3 in the beta, 10 coming**. That is true today: the new app is only a shell. The Team page is unchanged (23 in the beta). Labels come back as the app gets its screens.
 
 - 03:25 UTC: merged `origin/dev` (v0.1.80) with PTWeb and PTAgenda (`7863ae2`). Conflict in `website/build.py` with the conductor's `_one()` fix (`11ab789`): kept my `admin.find_in_app`, which already searches `Packages/PTWeb`, and dropped `_one()`. The admin screens page now prints the real path of `Websites.json` (`Packages/PTWeb/Sources/PTWeb/Resources/Websites.json`) instead of the fixed text. Labels checked against the moved files: 13 of 13 public in the beta, Team page unchanged (23 in the beta, 2 debug only, 1 coming). `features.json` names files, so nothing else needed changing. Build, validator and 67 tests green.
 
@@ -52,6 +58,8 @@ Branch: `split/editor` · Last update: 03:25 UTC (editor.B took over from accoun
 - Nothing yet.
 
 ## Needs from others
+
+- Platform/apps (phase 4): the sidebar artwork (`Shortcut*.imageset`, for example `ShortcutPrompTugal`) has to be in `Apps/PrompTugal/Resources/Assets.xcassets` or in a package resource, or the new app's sidebar will have no icons. The site is fine either way.
 
 - Design: which features the PrompTugal app has. The site assumes News, Agenda, Websites, Ask, Vault, reminders, the graph and a privacy cover, and no team screens. Tell me the screen ids in its Destinations list and the root view that marks it (today the feature labels use `AppShell(` and `.teamFeatures()`).
 - Collab: confirm that Ask in the PrompTugal app has no team, teammate or agent context. The privacy page and the review notes say so.
