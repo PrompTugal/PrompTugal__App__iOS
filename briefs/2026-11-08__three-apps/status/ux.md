@@ -144,7 +144,7 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 **One run, one time:** `now = 2026-11-10T11:00:00Z` (Tue 10 Nov, 11:00 Lisbon: Centre Stage, Stages 4, 6, 7, 9, 11, 12 all running or about to start). Same for every locale and size.
 
 **Seeded program** (DEBUG launch argument `-PTSeedPicks <comma-separated event slugs>`, read once at launch, ignored in Release; owner: team, in the screens test: release):
-`has-europe-s-tech-moment-arrived`, `double-agents-are-your-employees-ai-agents-working-for-or-against-your-business`, `ai-your-new-news-editor`, `the-agentic-internet-who-controls-the-web`, `trust-issues-letting-ai-agents-into-production-safely` (use the real slugs from `api/v1/live/agenda.json` `page`). This gives: next pick in 5 min on Centre Stage, one clash at 11:25 (Stage 4 vs Centre Stage), 5 picks so EXP-G shows.
+`has-europe-s-tech-moment-arrived`, `double-agents-are-your-employees-ai-agents-working-for-or`, `ai-your-new-news-editor`, `the-agentic-internet-who-controls-the-web`, `trust-issues-letting-ai-agents-into-production-safely` (slugs checked against `api/v1/live/agenda.json`; the pick id is the `page`, `events/<slug>/index.html`). This gives: next pick in 5 min on Centre Stage, one clash at 11:25 (Stage 4 vs Centre Stage), 5 picks so EXP-G shows.
 
 | # | Screen id (screens test id) | State | Caption idea (en) |
 | --- | --- | --- | --- |
