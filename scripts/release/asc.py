@@ -10,6 +10,7 @@ runs on any GitHub runner without installing anything.
     asc.py submit       --version 0.3.1 --build 123 [--yes] # App Store review
     asc.py store-screenshots --dir shots --ids 01-now,02-team.schedule,03-explore,06-explore.people
                         [--also en-GB=en-US] [--version 0.4.n] [--replace] [--yes]   # dry run unless --yes; a set is skipped only if names and md5 checksums match
+    asc.py preflight    [--version 0.4.n]                    # read-only: what is missing before a submission
     asc.py age-rating   [--set key=value ...] [--yes]       # shows the declaration; sets only what --set names
     asc.py store-metadata --listing store/listing.json [--version 0.4.n] [--also en-GB=en-US]
                         [--skip whatsNew] [--content-rights USES_THIRD_PARTY_CONTENT] [--categories NEWS,BUSINESS]
@@ -96,7 +97,14 @@ def call(method, path, body=None, ok=(200, 201, 204)):
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")
         try:
-            detail = "; ".join(f"{x.get('title')}: {x.get('detail')}" for x in json.loads(detail)["errors"])
+            parts = []
+            for x in json.loads(detail)["errors"]:
+                parts.append(f"{x.get('title')}: {x.get('detail')}")
+                # Apple puts the real reasons of a 409 in meta.associatedErrors: {resource path: [errors]}
+                for where, errs in ((x.get("meta") or {}).get("associatedErrors") or {}).items():
+                    for ae in errs:
+                        parts.append(f"  associated error on {where}: {ae.get('code')}: {ae.get('title')}: {ae.get('detail')}")
+            detail = "\n".join(parts)
         except Exception:
             pass
         sys.exit(f"::error::App Store Connect {method} {path.split('?')[0]} -> {e.code}: {detail}")
@@ -595,6 +603,81 @@ def cmd_age_rating(a):
     say(f"- ✅ Set {', '.join(changed)}; read back: " + ", ".join(f"{k}={back.get(k)}" for k in changed))
 
 
+# ---- Preflight: what is missing before an App Store submission (read-only) ----
+
+def cmd_preflight(a):
+    app = app_id()
+    attrs = call("GET", f"/v1/apps/{app}")["data"]["attributes"]
+    versions = call("GET", f"/v1/apps/{app}/appStoreVersions?filter[platform]=IOS&limit=20")["data"]
+    version = next((v for v in versions if v["attributes"]["versionString"] == a.version), None) if a.version else \
+        next((v for v in versions if v["attributes"].get("appStoreState") in EDITABLE), None)
+    say(f"### Preflight for `{BUNDLE_ID}` (read-only)")
+    say("")
+    if not version:
+        say(f"- ❌ no App Store version {a.version or '(editable)'}; versions: " +
+            ", ".join(f"{v['attributes']['versionString']} {v['attributes'].get('appStoreState')}" for v in versions))
+        sys.exit(1)
+    vid = version["id"]
+    va = version["attributes"]
+    ok_all = True
+
+    def row(label, ok, text):
+        nonlocal ok_all
+        ok_all = ok_all and ok
+        say(f"| {'✅' if ok else '❌'} | {label} | {text} |")
+
+    say("| | Check | Result |")
+    say("| --- | --- | --- |")
+    row("Version", True, f"{va['versionString']} · state `{va.get('appStoreState')}` · release type `{va.get('releaseType')}`")
+    b = get_opt(f"/v1/appStoreVersions/{vid}/build")
+    bd = (b or {}).get("data")
+    row("Build attached", bool(bd), (f"build `{bd['attributes'].get('version')}` {bd['attributes'].get('processingState')}, "
+        f"encryption answer {bd['attributes'].get('usesNonExemptEncryption')}" if bd else "none attached"))
+    row("Content rights", bool(attrs.get("contentRightsDeclaration")), str(attrs.get("contentRightsDeclaration")))
+    infos = call("GET", f"/v1/apps/{app}/appInfos")["data"]
+    info = next((i for i in infos if (i["attributes"].get("appStoreState") or i["attributes"].get("state")) in EDITABLE), infos[0])
+    inc = get_opt(f"/v1/appInfos/{info['id']}?include=primaryCategory,secondaryCategory") or {}
+    rel = (inc.get("data") or {}).get("relationships", {})
+    prim = ((rel.get("primaryCategory") or {}).get("data") or {}).get("id")
+    row("Primary category", bool(prim), f"{prim} (secondary {((rel.get('secondaryCategory') or {}).get('data') or {}).get('id')})")
+    age = (get_opt(f"/v1/appInfos/{info['id']}/ageRatingDeclaration") or {}).get("data")
+    unset = sorted(k for k, v in (age or {}).get("attributes", {}).items()
+                   if v is None and k in ("alcoholTobaccoOrDrugUseOrReferences", "contests", "gamblingSimulated", "gunsOrOtherWeapons",
+                                          "horrorOrFearThemes", "matureOrSuggestiveThemes", "medicalOrTreatmentInformation",
+                                          "profanityOrCrudeHumor", "sexualContentGraphicAndNudity", "sexualContentOrNudity",
+                                          "violenceCartoonOrFantasy", "violenceRealistic", "violenceRealisticProlongedGraphicOrSadistic",
+                                          "advertising", "ageAssurance", "gambling", "healthOrWellnessTopics", "lootBox", "messagingAndChat",
+                                          "parentalControls", "unrestrictedWebAccess", "userGeneratedContent"))
+    row("Age rating answered", bool(age) and not unset, "all answered" if age and not unset else f"unanswered: {', '.join(unset) or 'no declaration'}")
+    rd = (get_opt(f"/v1/appStoreVersions/{vid}/appStoreReviewDetail") or {}).get("data")
+    ra = (rd or {}).get("attributes", {})
+    need = [f for f in ("contactFirstName", "contactLastName", "contactEmail", "contactPhone") if not ra.get(f)]
+    row("App Review details", bool(rd) and not need, "present" if rd and not need else f"missing: {', '.join(need) or 'no record'}")
+    iloc = {l["attributes"]["locale"]: l["attributes"] for l in call("GET", f"/v1/appInfos/{info['id']}/appInfoLocalizations?limit=50")["data"]}
+    vloc = call("GET", f"/v1/appStoreVersions/{vid}/appStoreVersionLocalizations?limit=50")["data"]
+    for l in vloc:
+        loc = l["attributes"]["locale"]
+        miss = [f for f in ("description", "keywords", "supportUrl") if not l["attributes"].get(f)]
+        if not (iloc.get(loc) or {}).get("name"):
+            miss.append("name")
+        sets = (get_opt(f"/v1/appStoreVersionLocalizations/{l['id']}/appScreenshotSets") or {"data": []})["data"]
+        kinds = {s["attributes"]["screenshotDisplayType"] for s in sets}
+        need_sets = {"APP_IPHONE_67", "APP_IPAD_PRO_3GEN_129"}
+        row(f"Locale {loc}", not miss and need_sets <= kinds,
+            f"{'texts ok' if not miss else 'missing ' + ', '.join(miss)}; screenshot sets: {', '.join(sorted(kinds)) or 'none'}")
+    price = get_opt(f"/v1/apps/{app}/appPriceSchedule")
+    row("Price schedule", bool(price and price.get("data")), "set" if price and price.get("data") else "not set (Free must be chosen in App Store Connect or via appPriceSchedules)")
+    avail = get_opt(f"/v1/apps/{app}/appAvailability")
+    row("Availability (territories)", bool(avail and avail.get("data")), "set" if avail and avail.get("data") else "not readable or not set")
+    say("- App Privacy answers (\"Data not collected\" etc.) and the privacy policy publish state cannot be read through the API: check in App Store Connect > App Privacy.")
+    subs = call("GET", f"/v1/apps/{app}/reviewSubmissions?filter[platform]=IOS&limit=20")["data"]
+    for sub in subs:
+        items = (get_opt(f"/v1/reviewSubmissions/{sub['id']}/items") or {"data": []})["data"]
+        say(f"- Review submission `{sub['id']}`: state `{sub['attributes'].get('state')}`, {len(items)} item(s), submitted {sub['attributes'].get('submittedDate')}")
+    say("")
+    say("**All checks passed.**" if ok_all else "**Something above is missing.**")
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -606,6 +689,8 @@ def main():
     ss.add_argument("--version", default="")
     ss.add_argument("--replace", action="store_true", help="delete and rewrite every set, even when names and checksums match")
     ss.add_argument("--yes", action="store_true")
+    pf = sub.add_parser("preflight")
+    pf.add_argument("--version", default="")
     ar = sub.add_parser("age-rating")
     ar.add_argument("--set", action="append", default=[], help="field=value")
     ar.add_argument("--yes", action="store_true")
@@ -640,7 +725,8 @@ def main():
         sys.exit("skipped: secret ASC_KEY_P8_BASE64 missing")
     {"has-record": cmd_has_record, "wait-build": cmd_wait_build, "compliance": cmd_compliance,
      "whats-new": cmd_whats_new, "submit": cmd_submit, "store-metadata": cmd_store_metadata,
-     "store-screenshots": cmd_store_screenshots, "age-rating": cmd_age_rating}[a.cmd](a)
+     "store-screenshots": cmd_store_screenshots, "age-rating": cmd_age_rating,
+     "preflight": cmd_preflight}[a.cmd](a)
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ on:
       action:
         description: 'submit = submit a build for App Review; store-metadata = fill the App Store listing'
         type: choice
-        options: [submit, store-metadata, store-screenshots, age-rating]
+        options: [submit, store-metadata, store-screenshots, age-rating, preflight]
         default: submit
       version:
         description: 'submit: version, e.g. 0.3.1 (CFBundleShortVersionString). store-metadata: the App Store version to fill (empty = the editable one)'
@@ -168,7 +168,7 @@ jobs:
 
   extras:
     name: ${{ inputs.action }} (${{ inputs.confirm && 'apply' || 'dry run' }})
-    if: inputs.action == 'store-screenshots' || inputs.action == 'age-rating'
+    if: inputs.action == 'store-screenshots' || inputs.action == 'age-rating' || inputs.action == 'preflight'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: testflight
@@ -203,7 +203,9 @@ jobs:
             echo "- ⏭️ skipped: ASC secrets missing" >> "$GITHUB_STEP_SUMMARY"; exit 0
           fi
           yes_flag=${{ inputs.confirm && '--yes' || '' }}
-          if [ "${{ inputs.action }}" = store-screenshots ]; then
+          if [ "${{ inputs.action }}" = preflight ]; then
+            python3 scripts/release/asc.py preflight --version "$VERSION_NAME"
+          elif [ "${{ inputs.action }}" = store-screenshots ]; then
             find shots -maxdepth 3 | head -20
             python3 scripts/release/asc.py store-screenshots --dir shots --ids "$IDS" --also en-GB=en-US --version "$VERSION_NAME" $REPLACE $yes_flag
           else
