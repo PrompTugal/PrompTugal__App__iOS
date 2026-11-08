@@ -1,48 +1,89 @@
 # Release setup: from CI build to TestFlight
 
-> What Dinis does once, in the Apple Developer portal, App Store Connect and GitHub, so the `iOS release` workflow signs PrompTugal and uploads it to TestFlight with no code changes. Also covers how to install the unsigned builds CI makes today.
+> What Dinis does once, in the Apple Developer portal, App Store Connect and GitHub, so the `iOS release` workflow signs each app and uploads it to its own TestFlight record. Three apps: PrompTugal (public, existing record), Team (new record) and RiskMandate (builds, never uploads yet). Also covers how to install the unsigned builds CI makes.
 
-**Priority (Dinis):** PrompTugal is an internal app for the team first. The target is **internal TestFlight** (team members as App Store Connect users, no Beta App Review) plus the unsigned CI artifacts. External testers and the App Store come later.
+**Priority (Dinis):** the target is **internal TestFlight** (team members as App Store Connect users, no Beta App Review) plus the unsigned CI artifacts. PrompTugal goes to Beta App Review before Monday 9 Nov; Team never needs App Review.
 
-Owner: release engineering (`night/release`) · Workflow: `.github/workflows/ios-release.yml` · Scripts: `scripts/release/`
+Owner: release engineering (`split/release`) · Workflows: `.github/workflows/ios-release.yml`, `ios.yml`, `screens.yml`, `ios-changes.yml` · Scripts: `scripts/release/` · The apps and their bundle IDs: `apps.json`
 
-## Morning checklist: first internal TestFlight build (about 45 minutes)
+## The three apps
 
-For Dinis. Each step links to the detail further down. Nothing in the code changes.
+| App (`apps.json` key) | Bundle ID | Extensions (own App IDs and profiles) | App Group | App Store Connect record | Uploads |
+| --- | --- | --- | --- | --- | --- |
+| PrompTugal (`promptugal`) | `news.promptugal.reader` | `.widgets`, `.intents` | `group.news.promptugal.reader` | exists ("PrompTugal.news") | yes |
+| Team (`team`) | `news.promptugal.team` | none tonight | `group.news.promptugal.team` if needed | **Dinis creates it by hand** | yes, once the record exists |
+| RiskMandate (`riskmandate`) | `ai.riskmandate.app` | none | none | not yet (publishing account undecided) | no (`testflight: false`) |
 
-1. **App IDs** (developer.apple.com → Certificates, IDs & Profiles → Identifiers). Make sure these three exist as explicit App IDs: `news.promptugal.reader`, `news.promptugal.reader.widgets`, `news.promptugal.reader.intents`. Create the App Group `group.news.promptugal.reader`. Enable on the app ID: **App Groups** (that group), **Associated Domains**, **Time Sensitive Notifications**. Enable on both extension IDs: **App Groups** (same group). (See Step 1 below.)
-2. **Certificate.** Certificates → + → **Apple Distribution**, or reuse one whose private key you have. Export it from Keychain Access as `distribution.p12` with a password.
-3. **Profiles.** Profiles → + → **App Store Connect**, once for each of the three App IDs, all with that certificate. Download the three `.mobileprovision` files.
-4. **App Store Connect** (appstoreconnect.apple.com). Create the app record for `news.promptugal.reader` if it does not exist. Users and Access → Integrations → App Store Connect API → Team Keys → + with role **App Manager**. Download `AuthKey_<KEYID>.p8` and note the **Key ID** and **Issuer ID**. (See Step 2 below.)
-5. **Testers.** TestFlight → Internal Testing → + group "Team", **automatic distribution** on. Add each teammate as an App Store Connect user (any role) and to the group.
-6. **GitHub secrets** (repo → Settings → Secrets and variables → Actions → New repository secret). Paste `base64 -i <file> | pbcopy` output for files:
-   `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` (the .p8), `IOS_DIST_CERT_P12_BASE64` (the .p12), `IOS_DIST_CERT_PASSWORD`, `IOS_PROFILE_APP_BASE64`, `IOS_PROFILE_WIDGETS_BASE64`, `IOS_PROFILE_INTENTS_BASE64`. (See Step 3 below.)
-7. **Dry run.** Actions → **iOS release** → Run workflow → branch `dev` → tick **dry_run** → Run. In the run's summary, the **Profiles against entitlements** table must be all ✅. A ❌ row names the capability to enable; fix it in step 1, regenerate that profile, update its secret, run again.
-8. **Upload.** Run workflow again on `dev` with **upload** ticked. When it is green (about 15–25 minutes, depending on the runner queue), App Store Connect processes the build in 5–30 minutes. The team gets it in the TestFlight app automatically. "What to Test" is filled from the night's status pages and commits.
+Until phase 4 of the split lands, the project at the repository root is still one app with bundle `news.promptugal.reader`, and `apps.json` calls it `team`. CI builds and uploads it as that. After phase 4, `team` is `Apps/Team/` with `news.promptugal.team` and `promptugal` is `Apps/PrompTugal/` with `news.promptugal.reader`. Nothing in the workflows changes.
 
-After that, **every push to `dev` that builds the app uploads to TestFlight by itself** (pushes that only touch docs, the site or `VERSION` are skipped), and the team gets it automatically. A tag or a manual run still works: `git tag ios-v0.4.0 && git push origin ios-v0.4.0`. To pause the push uploads, set the repository variable `TESTFLIGHT_ON_PUSH` to `false` (**Settings → Secrets and variables → Actions → Variables**).
+**How CI chooses.** A change builds, tests and uploads only the apps it touches (`apps.json` `paths`, plus the packages each app is built from, plus anything under `all`). The run summary starts with a table that says which apps ran and why. An app whose project does not exist yet is skipped with a line in that table.
+
+**Nothing uploads to the wrong record.** Before every upload CI checks that (1) the archive and the .ipa have the bundle ID that `apps.json` names for that app, (2) every installed profile belongs to that bundle ID, and (3) App Store Connect has a record for exactly that bundle ID. If (3) fails, the job ends green with "no App Store Connect record for …" and uploads nothing. If (1) or (2) fails, the job fails.
+
+## Morning checklist: first internal TestFlight builds (about 60 minutes)
+
+For Dinis. Nothing in the code changes. Do the PrompTugal column first; it has a record already.
+
+1. **App IDs** (developer.apple.com → Certificates, IDs & Profiles → Identifiers). Make sure these explicit App IDs exist:
+   - PrompTugal: `news.promptugal.reader`, `news.promptugal.reader.widgets`, `news.promptugal.reader.intents`. Create the App Group `group.news.promptugal.reader`. On the app ID enable **App Groups** (that group), **Associated Domains**, **Time Sensitive Notifications**. On both extension IDs enable **App Groups** (same group).
+   - Team: `news.promptugal.team`. Enable the same capabilities the Team app's entitlements file lists (the "Targets to sign" table in a package run's summary names them). Add its App Group if it asks for one.
+   - RiskMandate: not needed yet.
+2. **Certificate.** One **Apple Distribution** certificate serves all apps. Reuse one whose private key you have, or make one. Export it from Keychain Access as `distribution.p12` with a password.
+3. **Profiles.** Profiles → + → **App Store Connect**, one for each App ID above (three for PrompTugal, one for Team), all with that certificate. Download them.
+4. **App Store Connect.**
+   - **Create the Team record by hand:** Apps → + → New App, iOS, bundle ID `news.promptugal.team`, name of your choice (working name "PT Team"), any SKU. The API cannot create apps. Until it exists the Team job skips the upload.
+   - API key: Users and Access → Integrations → App Store Connect API → Team Keys → + with role **App Manager** (manual signing) or **Admin** (automatic). One key serves all apps. Note the **Key ID** and **Issuer ID**.
+5. **Testers.** For each record: TestFlight → Internal Testing → + group "Team", **automatic distribution** on, and add the testers. Move the Team app's testers to the Team record; the old record keeps PrompTugal's.
+6. **GitHub secrets** (repo → Settings → Secrets and variables → Actions → New repository secret). Paste `base64 -i <file> | pbcopy` for files. Shared: `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64`, `IOS_DIST_CERT_P12_BASE64`, `IOS_DIST_CERT_PASSWORD`. Profiles, one set per app (see the table in Step 3). With automatic signing you only need the shared ASC secrets and the variable `APPLE_TEAM_ID`.
+7. **Dry run.** Actions → **iOS release** → Run workflow → branch `dev`, **app** = `promptugal`, tick **dry_run** → Run. In the run's summary, the **Profiles against entitlements** table must be all ✅. A ❌ row names the capability to enable; fix it in step 1, regenerate that profile, update its secret, run again. Repeat with **app** = `team`.
+8. **Upload.** Run again with **upload** ticked (per app, or `all`). App Store Connect processes the build in 5–30 minutes and the group gets it in the TestFlight app.
+
+After that, **every push to `dev` uploads the apps it touched** (pushes that only touch docs, the site or `VERSION` are skipped). Tags and manual runs also work.
+
+**Pause.** In **Settings → Secrets and variables → Actions → Variables**:
+
+| Variable | Effect |
+| --- | --- |
+| `TESTFLIGHT_ON_PUSH=false` | no app uploads on push |
+| `TESTFLIGHT_ON_PUSH_PROMPTUGAL=false` | PrompTugal does not upload on push |
+| `TESTFLIGHT_ON_PUSH_TEAM=false` | Team does not upload on push |
+| `TESTFLIGHT_ON_PUSH_RISKMANDATE=false` | no effect while `testflight` is false in `apps.json` |
+
+Tags and manual runs ignore the pause variables.
+
+**Tags.** One tag releases one app, whatever else changed:
+
+```sh
+git tag promptugal-v0.3.2 && git push origin promptugal-v0.3.2
+git tag team-v0.1.0       && git push origin team-v0.1.0
+git tag riskmandate-v0.0.1 && git push origin riskmandate-v0.0.1   # builds; uploads nothing while testflight is false
+```
+
+The old `ios-v*` tag still works and means the app with bundle `news.promptugal.reader`.
+
+**Manual run.** Actions → **iOS release** → Run workflow. Input **app**: `all` or one app. `all` means every app whose project exists, not only the ones the diff touches.
 
 ## What CI does today, with no keys
 
-Every push to `dev` that changes more than docs or the site (pushes touching only `briefs/`, `website/`, `*.md` or `VERSION` are skipped to save macOS runner time), and every manual run, runs the **package** job of `iOS release` on a macOS runner with the newest stable Xcode. It produces four artifacts, named `PrompTugal-<version>-<build>-<sha>-…`:
+Every push to `dev` that changes more than docs or the site (pushes touching only `briefs/`, `website/`, `*.md` or `VERSION` are skipped to save macOS runner time), and every manual run, runs the **package** job of `iOS release` once per affected app on a macOS runner with the newest stable Xcode. Each app produces four artifacts, named `<Scheme>-<version>-<build>-<sha>-…` (for example `PrompTugal-0.3.1-…`):
 
 | Artifact | What it is | Use |
 | --- | --- | --- |
 | `…-unsigned-ipa` | `Payload/PrompTugal.app`, zipped, not signed | Re-sign and install on a device (below) |
 | `…-simulator-app` | Release build for the iOS Simulator | `xcrun simctl install booted PrompTugal.app` |
 | `…-xcarchive` | The archive, with dSYMs | Re-sign, or symbolicate crash logs |
-| `build-info` | `build-info.json`: version, build, commit, sizes | Size checks and the website |
+| `build-info-<app>` | `build-info.json`: app, version, build, commit, sizes | Size checks and the website |
 
 The job summary lists the Info.plist values (bundle id, version, build, minimum iOS, SDK, device family) and a size breakdown. The job fails if the app is not built for both iPhone and iPad (`UIDeviceFamily` must be `1,2`).
 
-The **testflight** job runs on every push to `dev` that builds (unless the variable `TESTFLIGHT_ON_PUSH` is `false`), on a tag `ios-v*`, and when someone starts it by hand with **upload** or **dry_run** ticked. Without secrets it does nothing and writes one `skipped: secret X missing` line per missing secret, so pushes stay green until the secrets exist. When `dev` gets several pushes close together, one upload runs and only the newest waiting push follows it; the ones in between are skipped.
+The **testflight** job runs once per app, on every push to `dev` that builds that app (unless a pause variable is `false`), on a release tag, and when someone starts it by hand with **upload** or **dry_run** ticked. It only runs for an app whose unsigned package succeeded in the same run. Without secrets it does nothing and writes one `skipped: secret X missing` line per missing secret, so pushes stay green until the secrets exist. When `dev` gets several pushes close together, one upload runs and only the newest waiting push follows it; the ones in between are skipped.
 
 ## Version and build numbers
 
-- **Version** (`CFBundleShortVersionString`) is `MARKETING_VERSION` in the Xcode project. Change it in Xcode (target → General → Version) when you start a new release. CI never changes it.
-- **Build** (`CFBundleVersion`) is set by CI on the `xcodebuild` command line: `CURRENT_PROJECT_VERSION = <run number of iOS release> + IOS_BUILD_OFFSET`. The offset is a repository variable, default `100`, so CI builds sort above the builds uploaded by hand from Xcode (build 4 and earlier).
-- The run number only grows, and both jobs of one run use the same number, so the .ipa artifact and the TestFlight build match.
-- App Store Connect rejects a build number already used for the same version. If that happens (for example after uploading from Xcode by hand with a higher number), raise `IOS_BUILD_OFFSET` in **Settings → Secrets and variables → Actions → Variables**, or run the workflow by hand with **build_number** set.
+- **Version** (`CFBundleShortVersionString`) is `MARKETING_VERSION` in each app's own Xcode project (PrompTugal continues from 0.3.1, Team starts at 0.1.0, RiskMandate at 0.0.1). Change it in Xcode (target → General → Version) when you start a new release. CI never changes it.
+- **Build** (`CFBundleVersion`) is set by CI on the `xcodebuild` command line: `CURRENT_PROJECT_VERSION = <run number of iOS release> + the app's offset`. Each app has its own offset: the variable `IOS_BUILD_OFFSET_<APP>` (for example `IOS_BUILD_OFFSET_PROMPTUGAL`), else `IOS_BUILD_OFFSET`, else `100`. PrompTugal must stay above its manual build 6, and the push builds so far used run number + 100, so keep its offset at 100 or higher; never lower it. Team and RiskMandate start fresh, and 100 is fine for them.
+- The run number only grows, and both jobs of one run use the same number, so the .ipa artifact and the TestFlight build match. The run number is shared by all apps in a run, so an app's numbers skip but still only grow.
+- App Store Connect rejects a build number already used for the same version. If that happens (for example after uploading from Xcode by hand with a higher number), raise that app's offset variable in **Settings → Secrets and variables → Actions → Variables**, or run the workflow by hand with **app** and **build_number** set.
 - The export option `manageAppVersionAndBuildNumber` is `false`, so App Store Connect does not renumber the build.
 
 ## Step 1. Apple Developer portal (developer.apple.com → Certificates, IDs & Profiles)
@@ -82,17 +123,25 @@ Make the base64 on a Mac with `base64 -i <file> | pbcopy` and paste it as the se
 | `ASC_KEY_P8_BASE64` | `base64 -i AuthKey_<KEYID>.p8` | always |
 | `IOS_DIST_CERT_P12_BASE64` | `base64 -i distribution.p12` | manual signing |
 | `IOS_DIST_CERT_PASSWORD` | the .p12 export password | manual signing |
-| `IOS_PROFILE_APP_BASE64` | `base64 -i PrompTugal_App_Store.mobileprovision` | manual signing |
-| `IOS_PROFILE_WIDGETS_BASE64` | widget extension profile | manual signing |
-| `IOS_PROFILE_INTENTS_BASE64` | App Intents extension profile | manual signing |
-| `IOS_PROFILE_SHARE_BASE64` | share extension profile | only if one is added |
+
+Profiles are per app, because each app has its own App IDs. The name is `IOS_PROFILE_<APP>_<PART>_BASE64`, with `<PART>` = `APP` (the app itself), `WIDGETS`, `INTENTS` or `SHARE` (extensions), all for manual signing:
+
+| App | Secrets |
+| --- | --- |
+| PrompTugal | `IOS_PROFILE_PROMPTUGAL_APP_BASE64`, `IOS_PROFILE_PROMPTUGAL_WIDGETS_BASE64`, `IOS_PROFILE_PROMPTUGAL_INTENTS_BASE64` |
+| Team | `IOS_PROFILE_TEAM_APP_BASE64` (and an extension secret if Team gets an extension) |
+| RiskMandate | none (no upload) |
+
+For the app with bundle `news.promptugal.reader` the older names `IOS_PROFILE_APP_BASE64`, `IOS_PROFILE_WIDGETS_BASE64`, `IOS_PROFILE_INTENTS_BASE64` and `IOS_PROFILE_SHARE_BASE64` still work, so secrets you already added keep working. They are only ever read for that bundle, so a PrompTugal profile can never be installed for Team. CI also refuses a profile whose bundle ID is not the app's, and says which secret is wrong.
 
 Variables (not secret), under the **Variables** tab:
 
 | Variable | Value | Needed for |
 | --- | --- | --- |
 | `APPLE_TEAM_ID` | 10-character team ID (Membership page) | automatic signing; manual reads it from the profile |
-| `IOS_BUILD_OFFSET` | default `100` | optional |
+| `IOS_BUILD_OFFSET` | default `100`, for every app | optional |
+| `IOS_BUILD_OFFSET_PROMPTUGAL`, `_TEAM`, `_RISKMANDATE` | build-number offset of one app; wins over `IOS_BUILD_OFFSET` | optional |
+| `TESTFLIGHT_ON_PUSH`, `TESTFLIGHT_ON_PUSH_<APP>` | `false` pauses push uploads (all apps, or one) | optional |
 
 The secrets can live at repository level or in an environment called `testflight`. The job uses that environment, so you can add a required reviewer to it in **Settings → Environments** if you want a human to approve every upload.
 
@@ -102,17 +151,18 @@ The scripts never print a secret value. The keychain password is random per run 
 
 Either:
 
-- **By hand:** Actions → **iOS release** → Run workflow → pick the branch (normally `dev`) → tick **upload** → Run. Leave **signing** on `auto`.
-- **By tag:** `git tag ios-v0.3.1 && git push origin ios-v0.3.1` (on the commit you want). Tags never cancel half way.
+- **By hand:** Actions → **iOS release** → Run workflow → pick the branch (normally `dev`) → choose **app** → tick **upload** → Run. Leave **signing** on `auto`.
+- **By tag:** `git tag promptugal-v0.3.2 && git push origin promptugal-v0.3.2` (on the commit you want). Tags never cancel half way.
 
 Other inputs for a manual run:
 
+- **app:** `all` or one of `team`, `promptugal`, `riskmandate`.
 - **dry_run:** signs, checks every profile against its target's entitlements, and exports the App Store .ipa as an artifact, but does not upload. Use it first, right after adding the secrets. A missing capability shows as a ❌ row naming the entitlement, before the archive starts.
 - **internal_only:** sets `testFlightInternalTestingOnly`. That build can then only go to internal testers, never to external testers or the App Store. Leave it off unless you want that guarantee.
 - **source_ref:** builds another branch (for example `night/platform`) with the release scripts from the branch you run on.
-- **build_number:** overrides the build number.
+- **build_number:** overrides the build number (for every app the run covers; pick one **app** when you use it).
 
-Pushes to branches never upload. After the job is green, App Store Connect processes the build in 5–30 minutes. You get an email, and with automatic distribution the internal group sees it in the TestFlight app.
+Pushes to branches never upload. (A manual run on a branch can.) After the job is green, App Store Connect processes the build in 5–30 minutes. You get an email, and with automatic distribution the internal group sees it in the TestFlight app.
 
 After the upload, the job waits up to 20 minutes for processing, then uses the API key (`scripts/release/asc.py`, Python standard library and `openssl`) to:
 

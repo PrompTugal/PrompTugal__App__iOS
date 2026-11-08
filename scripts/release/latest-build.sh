@@ -8,13 +8,20 @@
 set -euo pipefail
 out=$1; branch=${2:-dev}
 tmp=$(mktemp -d)
-run=$(gh run list --workflow ios-release.yml --branch "$branch" --status success --limit 1 \
-        --json databaseId,url,createdAt,headSha -q '.[0]' 2>/dev/null || true)
-if [ -z "$run" ] || ! gh run download "$(echo "$run" | python3 -c 'import json,sys;print(json.load(sys.stdin)["databaseId"])')" \
-        -n build-info -D "$tmp" >/dev/null 2>&1; then
+# The website shows the public app, so prefer its build-info; then the team app's; then the
+# plain name that runs before the split used. Runs that did not touch an app have no file for it.
+run=""
+for candidate in $(gh run list --workflow ios-release.yml --branch "$branch" --status success --limit 20 \
+        --json databaseId -q '.[].databaseId' 2>/dev/null || true); do
+  for art in build-info-promptugal build-info-team build-info; do
+    if gh run download "$candidate" -n "$art" -D "$tmp" >/dev/null 2>&1; then run=$candidate; break 2; fi
+  done
+done
+if [ -z "$run" ]; then
   echo '{"available": false}' > "$out"; echo "No successful iOS release run on $branch yet."; exit 0
 fi
-id=$(echo "$run" | python3 -c 'import json,sys;print(json.load(sys.stdin)["databaseId"])')
+id=$run
+run=$(gh run view "$id" --json databaseId,url,createdAt,headSha)
 arts=$(gh api "repos/{owner}/{repo}/actions/runs/$id/artifacts" -q '[.artifacts[] | select(.expired|not) | {name, size: .size_in_bytes, expires: .expires_at}]')
 RUN="$run" ARTS="$arts" python3 - "$tmp/build-info.json" "$out" <<'PY'
 import json, os, sys

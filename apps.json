@@ -14,5 +14,5 @@
              "paths": ["PrompTugal/", "PrompTugalTests/", "PrompTugalUITests/", "PrompTugalWidgets/", "PrompTugalIntents/", "Shared/", "PrompTugal.xcodeproj/"],
              "packages": ["PTCore", "PTWeb", "PTAgenda", "PTNews", "PTAsk", "PTLanes", "PTVaultUI", "SGitVault"], "testflight": true}
   },
-  "all": [".github/workflows/ios.yml", ".github/workflows/ios-release.yml", "apps.json", "scripts/release/", "Config/Shared/"]
+  "all": [".github/workflows/ios.yml", ".github/workflows/ios-release.yml", "apps.json", "scripts/release/", "Config/Shared/", ".github/scripts/"]
 }

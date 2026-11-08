@@ -4,29 +4,29 @@ import Observation
 /// One public JSON file: fetched, decoded off the main actor, cached on disk for
 /// offline use. Requests go through the shared `HTTPClient`, so Debug → Network shows them.
 @MainActor @Observable
-final class RemoteFeed<Value: Decodable & Sendable> {
-    let name: String
-    let url: URL
+public final class RemoteFeed<Value: Decodable & Sendable> {
+    public let name: String
+    public let url: URL
     /// How long a load is skipped after a good one, unless forced.
-    var freshFor: TimeInterval = 120
+    public var freshFor: TimeInterval = 120
 
-    private(set) var value: Value?
-    private(set) var updated: Date?
-    private(set) var phase: LoadPhase = .idle
-    private(set) var bytes = 0
+    public private(set) var value: Value?
+    public private(set) var updated: Date?
+    public private(set) var phase: LoadPhase = .idle
+    public private(set) var bytes = 0
     private var cacheLoaded = false
     /// Set by `preview(_:)`: sample data stays as it is and is never replaced from the network.
-    private(set) var pinned = false
+    public private(set) var pinned = false
 
-    init(name: String, url: URL) {
+    public init(name: String, url: URL) {
         self.name = name
         self.url = url
     }
 
-    var failed: Bool { if case .failed = phase { true } else { false } }
+    public var failed: Bool { if case .failed = phase { true } else { false } }
 
     /// Loads the cached copy (once), then the network copy if the cache is older than `freshFor`.
-    func load(force: Bool = false) async {
+    public func load(force: Bool = false) async {
         if pinned { return }
         if !cacheLoaded { await loadCache() }
         if phase == .loading { return }
@@ -49,7 +49,7 @@ final class RemoteFeed<Value: Decodable & Sendable> {
     }
 
     /// Puts a value in without loading, for previews and tests.
-    func preview(_ value: Value, updated: Date = .now) {
+    public func preview(_ value: Value, updated: Date = .now) {
         self.value = value
         self.updated = updated
         cacheLoaded = true
@@ -88,24 +88,24 @@ final class RemoteFeed<Value: Decodable & Sendable> {
 }
 
 /// Raw bytes of each feed, kept in Caches so the dashboards open offline.
-enum FeedCache {
-    static var directory: URL {
+public enum FeedCache {
+    public static var directory: URL {
         URL.cachesDirectory.appendingPathComponent("PrompTugal/feeds", isDirectory: true)
     }
 
-    static func write(_ data: Data, name: String) {
+    public static func write(_ data: Data, name: String) {
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try? data.write(to: file(name), options: .atomic)
     }
 
-    static func read(name: String) -> (data: Data, date: Date)? {
+    public static func read(name: String) -> (data: Data, date: Date)? {
         let url = file(name)
         guard let data = try? Data(contentsOf: url) else { return nil }
         let date = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
         return (data, date)
     }
 
-    static func file(_ name: String) -> URL {
+    public static func file(_ name: String) -> URL {
         directory.appendingPathComponent(name.replacingOccurrences(of: "/", with: "_") + ".json")
     }
 }

@@ -48,6 +48,7 @@ mkdir -p "$OUT/dist"
 cat > "$OUT/dist/build-info.json" <<JSON
 {
   "app": "$(plist_get "$plist" CFBundleIdentifier)",
+  "appKey": "${APP_KEY:-}",
   "version": "$(plist_get "$plist" CFBundleShortVersionString)",
   "build": "$(plist_get "$plist" CFBundleVersion)",
   "commit": "${SOURCE_SHA:-${GITHUB_SHA:-unknown}}",

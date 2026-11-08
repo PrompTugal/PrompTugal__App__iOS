@@ -5,8 +5,12 @@
 
 Prefers a plain "iPhone NN" or "iPad Pro …" so test runs are comparable.
 Creates one if the runner has none.
+
+On a self-hosted runner (RUNNER_ENVIRONMENT=self-hosted) it always creates a fresh device of the
+same type and runtime, named "CI-tmp …", so several runners on one Mac never share a simulator.
+The job deletes it at the end.
 """
-import json, re, subprocess, sys
+import json, os, re, subprocess, sys
 
 FAMILY = sys.argv[1] if len(sys.argv) > 1 else "iPhone"
 PLAIN = r"iPhone \d+" if FAMILY == "iPhone" else r"iPad Pro.*"
@@ -26,6 +30,13 @@ for runtime in ios:
         continue
     plain = [d for d in phones if re.fullmatch(PLAIN, d["name"])]
     pick = (plain or phones)[-1]
+    if os.environ.get("RUNNER_ENVIRONMENT") == "self-hosted":
+        tag = "-".join(os.environ.get(k, "") for k in ("GITHUB_RUN_ID", "GITHUB_JOB", "RUNNER_NAME"))
+        udid = run("xcrun", "simctl", "create", f"CI-tmp {pick['name']} {tag}",
+                   pick["deviceTypeIdentifier"], runtime).strip()
+        print(f"Created CI-tmp {pick['name']} on {runtime.split('.')[-1]} ({udid})", file=sys.stderr)
+        print(udid)
+        sys.exit(0)
     print(f"Using {pick['name']} on {runtime.split('.')[-1]} ({pick['udid']})", file=sys.stderr)
     print(pick["udid"])
     sys.exit(0)
