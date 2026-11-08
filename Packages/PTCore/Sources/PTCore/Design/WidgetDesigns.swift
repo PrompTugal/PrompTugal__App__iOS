@@ -29,7 +29,7 @@ public struct NextUpEntry: Sendable {
     public let items: [Item]
     public let attention: Int       // only you + decide + overdue, from me.json
 
-    public init(now: Date, items: [Item], attention: Int       // only you + decide + overdue, from me.json) {
+    public init(now: Date, items: [Item], attention: Int) {
         self.now = now
         self.items = items
         self.attention = attention
