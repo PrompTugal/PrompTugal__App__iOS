@@ -5,13 +5,12 @@
 	<!-- Merged with the generated Info.plist (GENERATE_INFOPLIST_FILE = YES).
 	     Only keys the INFOPLIST_KEY_ build settings cannot express live here.
 	     No NFC (the public app has no Lanes). Purpose strings live in the project's INFOPLIST_KEY_ settings:
-	     camera (vault QR), Face ID (vault keys), microphone and speech recognition (Ask dictation, PTAsk),
-	     calendar write-only (add picks to the calendar). Every framework the linked code uses that needs a
+	     calendar write-only (add picks to the calendar) is the only one: the public app links no Ask, no vault and no
+	     capture or speech code (PTAsk, PTVaultUI and SGitVault are Team-app only). Every framework the linked code uses that needs a
 	     purpose string must have one, or App Store Connect fails processing (ITMS-90683). -->
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>news.promptugal.reader.refresh</string>
-		<string>news.promptugal.reader.vault-refresh</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>

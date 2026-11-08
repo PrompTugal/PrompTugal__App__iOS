@@ -1,5 +1,4 @@
 import PTAgenda
-import PTAsk
 import PTCore
 import SwiftUI
 
@@ -12,15 +11,6 @@ struct PublicSettingsView: View {
     var body: some View {
         Form {
             Section {
-                #if DEBUG
-                if debug {
-                    NavigationLink {
-                        AskView()
-                    } label: {
-                        Label("Ask, with your own AI key", systemImage: "sparkles")
-                    }
-                }
-                #endif
                 NavigationLink {
                     ReminderSettingsView()
                 } label: {

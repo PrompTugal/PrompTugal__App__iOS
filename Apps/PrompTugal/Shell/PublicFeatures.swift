@@ -1,6 +1,5 @@
 import PTAgenda
 import PTCore
-import PTVaultUI
 import PTWeb
 import SwiftUI
 import UIKit
@@ -45,13 +44,13 @@ final class PublicFeatures {
         bridge = AppBridge(log: bridgeLog, services: AgendaBridgeServices(
             schedule: schedule, reminders: reminders, meter: nil, identity: nil, offersAppTopUp: false))
         planner = PlannerStore(schedule: schedule, team: nil, identity: nil)
-        vaultLink = ScheduleVaultLink(schedule: schedule, log: bridgeLog, vault: PublicVaultPicks())
+        vaultLink = ScheduleVaultLink(schedule: schedule, log: bridgeLog, vault: nil)
     }
 
     /// Tells the packages where the app's one bridge and schedule are. Called once, when `shared` is made.
     private func registerHubs() {
         WebBridgeHub.bridge = bridge
-        // The offline reader stays nil in the public app's first build. Ask reads the page on screen.
+        // The offline reader stays nil in the public app's first build. 
         WebBridgeHub.noteCurrentPage = { title, url in CollabHooks.noteCurrentPage(title: title, url: url) }
         AgendaHub.schedule = schedule
         AgendaHub.agendaDidLoad = { [weak self] agenda in self?.agendaDidLoad(agenda) }
@@ -80,19 +79,6 @@ final class PublicFeatures {
         planner.updateAgenda(events)
         nowNext.agendaDidLoad(events)
     }
-}
-
-/// The reader's vault, for the schedule's "Save my day to the vault".
-@MainActor
-final class PublicVaultPicks: VaultPicksAccess {
-    var hasVault: Bool { VaultSession.shared.reader != nil }
-    var canSave: Bool {
-        guard let reader = VaultSession.shared.reader else { return false }
-        return reader.canWrite && VaultSession.shared.canPush
-    }
-    var openVaultID: String? { VaultSession.shared.reader?.vaultId }
-    func loadPicks() async throws -> Data? { try await VaultSession.shared.loadPicks() }
-    func savePicks(_ local: Data) async throws -> Data { try await VaultSession.shared.savePicks(local) }
 }
 
 extension View {
