@@ -5,21 +5,40 @@ name: iOS App Store submit
 # pricing and the privacy questions stay manual in App Store Connect.
 # Without "confirm" it only prints the plan.
 
+# action=store-metadata fills the App Store listing (name, subtitle, descriptions, keywords, URLs, what's new,
+# per locale) from review's store/listing.json instead of submitting: metadata only, no build, no screenshots,
+# no submission; a dry run unless "confirm". Nothing changes in App Store Connect without the conductor's go.
+
 on:
   workflow_dispatch:
     inputs:
+      action:
+        description: 'submit = submit a build for App Review; store-metadata = fill the App Store listing'
+        type: choice
+        options: [submit, store-metadata]
+        default: submit
       version:
-        description: 'Version, e.g. 0.3.1 (CFBundleShortVersionString)'
-        required: true
+        description: 'submit: version, e.g. 0.3.1 (CFBundleShortVersionString). store-metadata: the App Store version to fill (empty = the editable one)'
+        required: false
+        default: ''
         type: string
       build:
-        description: 'Build number, e.g. 142 (see the iOS release run)'
-        required: true
+        description: 'submit only: build number, e.g. 142 (see the iOS release run)'
+        required: false
+        default: ''
         type: string
       confirm:
-        description: 'Really submit for review (otherwise a dry run)'
+        description: 'Really submit for review / apply the listing (otherwise a dry run)'
         type: boolean
         default: false
+      listing_ref:
+        description: 'store-metadata: branch or commit that holds the listing file (review keeps it on split/review)'
+        type: string
+        default: 'split/review'
+      listing_path:
+        description: 'store-metadata: path of listing.json in that ref'
+        type: string
+        default: 'briefs/2026-11-08__summit-app-store/store/listing.json'
 
 permissions:
   contents: read
@@ -31,6 +50,7 @@ concurrency:
 jobs:
   submit:
     name: Submit for App Review
+    if: inputs.action != 'store-metadata'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     environment: app-store
@@ -63,3 +83,41 @@ jobs:
       - name: Submit
         if: steps.gate.outputs.ready == 'true'
         run: python3 scripts/release/asc.py submit --version "$VERSION" --build "$BUILD" ${{ inputs.confirm && '--yes' || '' }}
+
+  listing:
+    name: App Store listing (${{ inputs.confirm && 'apply' || 'dry run' }})
+    if: inputs.action == 'store-metadata'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: testflight   # the ASC secrets live here or at repo level, as for iOS release
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.listing_ref }}
+          path: listing-src
+
+      - name: Check secrets
+        id: gate
+        run: |
+          missing=0
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64; do
+            if [ -z "${!s}" ]; then echo "skipped: secret $s missing"; echo "- ⏭️ skipped: secret \`$s\` missing" >> "$GITHUB_STEP_SUMMARY"; missing=1; fi
+          done
+          echo "ready=$([ $missing = 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Listing file
+        run: |
+          f="listing-src/${{ inputs.listing_path }}"
+          test -f "$f" || { echo "::error::no $f"; exit 1; }
+          python3 -c "import json,sys; d=json.load(open(sys.argv[1])); print('locales:', ', '.join(d['locales']))" "$f"
+          echo "- Listing from \`${{ inputs.listing_ref }}\` ($(git -C listing-src rev-parse --short HEAD)), \`${{ inputs.listing_path }}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Store metadata
+        if: steps.gate.outputs.ready == 'true'
+        run: python3 scripts/release/asc.py store-metadata --listing "listing-src/${{ inputs.listing_path }}" --version "${{ inputs.version }}" ${{ inputs.confirm && '--yes' || '' }}
