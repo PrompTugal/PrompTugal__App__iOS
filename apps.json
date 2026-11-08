@@ -18,5 +18,5 @@
     "riskmandate": {"project": "Apps/RiskMandate/RiskMandate.xcodeproj", "scheme": "RiskMandate", "bundle": "ai.riskmandate.app",
                     "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": false}
   },
-  "all": [".github/workflows/ios.yml", ".github/workflows/ios-release.yml", "apps.json", "scripts/release/", "Config/Shared/"]
+  "all": [".github/workflows/ios.yml", ".github/workflows/ios-release.yml", "apps.json", "scripts/release/", "Config/Shared/", ".github/scripts/"]
 }
