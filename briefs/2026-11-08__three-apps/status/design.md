@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 10:20 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 11:58 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -228,3 +228,14 @@ None. Nothing moved yet.
 ## Update (8 Nov, 10:20 UTC, design.B): on dev
 - The conductor merged d7c728e to dev as 105ca49. Dev run 345 on it concluded success: PublicShell, the apps' entry point and the widgets build and test together.
 - Nothing is open on split/design. Still open for others: the public app's offline reader (`WebBridgeHub.offlineReader` is nil) and the Team app's `TeamFeatures` url scheme (team).
+
+## Update (8 Nov, 11:58 UTC, design.B): summit build, shell, Now, News
+- On split/design (head 49a9fa8, quick run 370 on d58958c queued, nothing compiled yet since the shell rewrite):
+  - Icons: a Team icon (blue, cream P, gold T, italic "team") and a RiskMandate icon (navy, white "RM", red bar), 1024 px, no alpha.
+  - Review blockers: vault and All websites are DEBUG-only; Ask left the tab bar.
+  - SHELL (ux spec): four tabs Now (default), My program, Explore, News; no More tab; a gear on Now and My program opens Settings; old ids still route (reader.agenda and news.graph open Explore, team.planner opens My program); decks and PrompTugal.news are routable but not listed.
+  - NOW-1: phases from team's `NowBoard` (cherry-picked 1811803 as 6ece567): countdown, For you, On now, Up next, Tomorrow, thank you; latest news; the practical card; Ask as the last card. DEBUG `-PTNow <ISO time>` fixes the time.
+  - NEWS-1: Latest, Newsletter, Stories; "Offline · saved HH:MM"; the graph card left News; a share button on every story (F10).
+  - Ask (ux update): last card on Now, first row in Settings, a row in the iPad sidebar.
+- Waiting: `AskView(question:)` from collab (the three tappable questions with a saved key); PTExplore linked by apps. The Explore wiring (ExploreScreen with agenda talks, native talk detail, graph card, explore.* ids) is written on a local branch and goes on split/design the moment PTExplore is linked.
+- Practical-card source links: ux has not given the URLs; none are invented.
