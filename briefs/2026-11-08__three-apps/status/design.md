@@ -208,7 +208,7 @@ None. Nothing moved yet.
   - `Packages/PTCore/Sources/PTCore/Shell/`: `ShellDestination` (group as text), `ShellSidebarRow`, `ShellMoreRow`, `PrivacyCover`, `LinkedPage`, `ShellLink` (checkout rule passed in), `SupportLinks`, `destinationID`.
   - Team app: the same-named types leave `Shell/AppShell.swift` and `SettingsView.swift`; `ShellLink.page(in:)` stays as a one-line Team extension that passes `CheckoutPolicy.isBlocked`. Team's `AppDestination` and rows are unchanged for now.
   - `Apps/PrompTugal/Shell/`: `PublicShell` (iPad sidebar, iPhone tabs + More, link routing, privacy cover), `Destinations.swift` (`PublicDestinations`, same ids as Team's), `PublicSettingsView` (no team picker; debug switch only in DEBUG), `PublicDebugView` (DEBUG only), `PublicFeatures` (schedule, planner, reminders, bridge, vault picks with no team and no identity).
-  - Not compiled yet. Ask is a marked TODO until PTAsk is on dev.
+  - Not compiled yet when written. Ask waited for PTAsk, which is on dev now and wired in.
 - Needs from others:
   - **Apps/platform:** `PrompTugalApp.swift` can stay `PublicShell()`; the shell makes its own `ReaderStore`, `NewsFeeds` and `PublicFeatures`. Background task registration (refresh, vault-refresh) is still the entry point's job.
   - **Platform (widgets, phase 4):** `NowNextPublisher` is not in a package, so the public app does not publish "Now and next" yet (`AgendaHub.publishNowNext` is left at its default).
