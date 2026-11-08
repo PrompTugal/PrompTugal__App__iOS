@@ -17,7 +17,7 @@ WHAT THE APP SENDS
 - Picks, plans and reminders stay on the device.
 - Ask sends the question and the chosen context to openrouter.ai with the user's own key, only after consent.
 - Dictation is transcribed on the device when the language allows it, otherwise by Apple's speech service. The app does not keep the audio.
-- No tracking, no analytics, no advertising, no third-party SDK.
+- The app talks to two hosts only: promptugal.news (public content) and openrouter.ai (Ask, with the user's own key, after consent). No cookies, no telemetry, no tracking, no analytics, no advertising, no third-party SDK.
 Privacy policy: https://ios.app.promptugal.news/privacy.html (also Settings > About > Privacy). Support: https://ios.app.promptugal.news/support.html (contact address on that page, answered within 48 hours).
 
 AGENDA SOURCE. The program is the summit's public schedule, republished on promptugal.news by our newsroom; each session opens its page there. We are an independent news site covering the event.

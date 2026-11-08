@@ -11,6 +11,7 @@
 | [app-privacy.md](app-privacy.md) | App Privacy (nutrition label) answers, derived from the code |
 | [age-rating.md](age-rating.md) | Age rating answers, plus category, price and availability |
 | [review-notes.md](review-notes.md), [review-notes.txt](review-notes.txt) | App Review and Beta App Review notes for the public app: settings and checks, and the final text |
+| [network-audit.md](network-audit.md) | What the public build sends, host by host (Dinis's privacy check for today) |
 | [go-no-go.md](go-no-go.md) | The final list, checked before each submission |
 
 The persona walk-throughs (synthetic users) are in [status/review.md](../../2026-11-08__three-apps/status/review.md).
