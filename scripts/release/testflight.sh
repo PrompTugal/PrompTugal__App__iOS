@@ -17,6 +17,7 @@
 set -euo pipefail
 set +x
 . "$(dirname "$0")/lib.sh"
+: "${APP_NAME:?APP_NAME is not set (name of the app, from apps.json)}"
 : "${MODE:?}" "${EXPECTED_BUNDLE:?}" "${BUILD_NUMBER:?}" "${ARTIFACT_BASE:?}" "${ASC_KEY_PATH:?}" "${APPLE_TEAM_ID:?}"
 UPLOAD_TOOL=${UPLOAD_TOOL:-xcodebuild}
 DD=$OUT/dd-signed

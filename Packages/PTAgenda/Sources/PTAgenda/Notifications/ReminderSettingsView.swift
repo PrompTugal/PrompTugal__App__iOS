@@ -15,30 +15,30 @@ public struct ReminderSettingsView: View {
         @Bindable var reminders = reminders
         List {
             Section {
-                Picker("Remind me", selection: $reminders.leadMinutes) {
+                Picker(String(localized: "Remind me", bundle: .module), selection: $reminders.leadMinutes) {
                     ForEach(ReminderScheduler.leadChoices, id: \.self) { minutes in
-                        Text(minutes == 0 ? "At the start" : "\(minutes) minutes before").tag(minutes)
+                        Text(minutes == 0 ? String(localized: "At the start", bundle: .module) : String(localized: "\(minutes) minutes before", bundle: .module)).tag(minutes)
                     }
                 }
-                Toggle("Before my picks", isOn: $reminders.picksOn)
-                Toggle("Before team stand-ups", isOn: $reminders.standupsOn)
+                Toggle(String(localized: "Before my picks", bundle: .module), isOn: $reminders.picksOn)
+                Toggle(String(localized: "Before team stand-ups", bundle: .module), isOn: $reminders.standupsOn)
                     .disabled(identity?.currentID == nil)
             } footer: {
                 Text(identity?.currentID == nil
-                     ? "Stand-up reminders need a team identity (Team → Who are you?)."
-                     : "Stand-ups come from the team site, with a link to your briefing.")
+                     ? String(localized: "Stand-up reminders need a team identity (Team → Who are you?).", bundle: .module)
+                     : String(localized: "Stand-ups come from the team site, with a link to your briefing.", bundle: .module))
             }
 
             Section {
                 switch reminders.authorization {
                 case .allowed:
-                    Label("Notifications are on", systemImage: "bell.badge")
+                    Label(String(localized: "Notifications are on", bundle: .module), systemImage: "bell.badge")
                 case .denied:
-                    Button("Turn on notifications in Settings") {
+                    Button(String(localized: "Turn on notifications in Settings", bundle: .module)) {
                         if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                     }
                 case .unknown:
-                    Button("Allow reminders") {
+                    Button(String(localized: "Allow reminders", bundle: .module)) {
                         Task {
                             _ = await reminders.requestAuthorization()
                             await reminders.reschedule()
@@ -49,7 +49,7 @@ public struct ReminderSettingsView: View {
 
             Section {
                 if reminders.planned.isEmpty {
-                    Text("No reminders to schedule.").foregroundStyle(.secondary)
+                    Text(String(localized: "No reminders to schedule.", bundle: .module)).foregroundStyle(.secondary)
                 }
                 ForEach(reminders.planned) { item in
                     VStack(alignment: .leading, spacing: 2) {
@@ -59,13 +59,13 @@ public struct ReminderSettingsView: View {
                     }
                 }
             } header: {
-                Text("Scheduled (\(reminders.planned.count) of at most \(ReminderPlan.limit))")
+                Text(String(localized: "Scheduled (\(reminders.planned.count) of at most \(ReminderPlan.limit))", bundle: .module))
             } footer: {
-                Text("iOS keeps 64 reminders per app; the soonest \(ReminderPlan.limit) are scheduled and the rest follow as these pass. Lisbon time.")
+                Text(String(localized: "iOS keeps 64 reminders per app; the soonest \(ReminderPlan.limit) are scheduled and the rest follow as these pass. Lisbon time.", bundle: .module))
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle("Reminders")
+        .navigationTitle(String(localized: "Reminders", bundle: .module))
         .task { await reminders.reschedule() }
     }
 }

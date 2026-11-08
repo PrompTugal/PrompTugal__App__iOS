@@ -85,3 +85,37 @@ struct NewsRow: View {
         .accessibilityElement(children: .combine)
     }
 }
+
+/// How fresh the news is. When a refresh failed but a saved copy is on screen, an amber pill says so with the
+/// time the copy was saved, in Lisbon time ("Offline · saved 08:10"); otherwise the standard freshness label.
+struct NewsFreshness: View {
+    let updated: Date?
+    let failed: Bool
+
+    var body: some View {
+        if failed, let updated {
+            Label(String(localized: "Offline · saved \(Lisbon.timeLabel(updated))", bundle: .module), systemImage: "wifi.slash")
+                .font(.caption)
+                .foregroundStyle(Palette.amber)
+                .accessibilityIdentifier("pt.news.offline")
+        } else {
+            FreshnessLabel(updated: updated, failed: failed)
+        }
+    }
+}
+
+/// Share a story: the system share sheet with the story's page and title (review finding F10).
+struct StoryShare: View {
+    let url: URL
+    let title: String
+
+    var body: some View {
+        ShareLink(item: url, subject: Text(title), message: Text(title)) {
+            Image(systemName: "square.and.arrow.up")
+                .font(.subheadline)
+                .foregroundStyle(Palette.muted)
+                .frame(width: 44, height: 44)
+        }
+        .accessibilityLabel(String(localized: "Share \(title)", bundle: .module))
+    }
+}

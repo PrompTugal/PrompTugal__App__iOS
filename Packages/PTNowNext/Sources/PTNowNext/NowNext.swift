@@ -4,7 +4,8 @@ import Foundation
 ///
 /// The app writes it to the App Group container; widgets and intents read it
 /// and never touch the vault or the network (brief 05, "Targets").
-/// It lives in PTAgenda, which the app and the widget and intents extensions all link.
+/// It lives in its own package with no dependencies, which the app (through PTAgenda) and the widget and intents
+/// extensions all link, so an extension does not pull in the web bridge or the app's other code.
 public struct NowNextSnapshot: Codable, Sendable, Equatable {
     public struct Item: Codable, Sendable, Hashable, Identifiable {
         public var id: String

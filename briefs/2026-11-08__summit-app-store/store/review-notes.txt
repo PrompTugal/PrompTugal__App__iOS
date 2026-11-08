@@ -4,9 +4,9 @@ NO ACCOUNT IS NEEDED. There is no sign-up and no login. Every main screen works 
 
 THINGS TO TRY
 1. Now (first tab). The date and time in Lisbon, what is on now and next, and the latest news. On iPhone, the gear at the top opens Settings.
-2. Explore (third tab). The full summit program in Lisbon time, built into the app and refreshed from promptugal.news. Search "AI" and tap the star on a session to pick it. Tapping a session opens its page.
+2. Explore (third tab). The full summit program in Lisbon time, built into the app and refreshed from promptugal.news. Search "AI" and tap the star on a session to pick it. Tapping a session opens its details.
 3. My program (second tab). Your picks in one list, with clashes and free time, and Add to Calendar (write-only calendar access; the app cannot read the calendar).
-4. Reminders. Settings > Reminders: turn them on. The notification permission is asked only then. A local notification is scheduled before each pick.
+4. Reminders. The notification permission is asked the first time you pick a talk, or when you turn reminders on in Settings > Reminders. A local notification is scheduled before each pick.
 5. News (fourth tab). Stories and newsletter editions from PrompTugal.news. Turn on airplane mode: the program, your picks and cached news still work.
 6. Widget and Siri. Add the PrompTugal widget for what is next, or ask Siri "What's next in PrompTugal".
 7. Ask (the "Ask about the summit" card on Now, or Settings > Ask, with your own AI key). An optional AI assistant for the program. It uses the user's own OpenRouter key. For review, tap Add key and paste this key, created for review with a spending cap: <DEMO_OPENROUTER_KEY>

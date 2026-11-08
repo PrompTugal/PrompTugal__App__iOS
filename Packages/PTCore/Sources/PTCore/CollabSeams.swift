@@ -42,10 +42,10 @@ public enum CollabHooks {
         case noVault, noWritableVault, noNotesLane, noOwnVault
         public var errorDescription: String? {
             switch self {
-            case .noOwnVault: "Open your own vault first. A teammate's vault is never used as yours."
-            case .noNotesLane: "Your account has no newsroom notes lane yet. The website makes it the first time you send to the newsroom."
-            case .noVault: "Open your vault first (Vault in the sidebar)."
-            case .noWritableVault: "Writing needs your vault opened with its vault key (or passkey), not a read key."
+            case .noOwnVault: String(localized: "Open your own vault first. A teammate's vault is never used as yours.", bundle: .module)
+            case .noNotesLane: String(localized: "Your account has no newsroom notes lane yet. The website makes it the first time you send to the newsroom.", bundle: .module)
+            case .noVault: String(localized: "Open your vault first (Vault in the sidebar).", bundle: .module)
+            case .noWritableVault: String(localized: "Writing needs your vault opened with its vault key (or passkey), not a read key.", bundle: .module)
             }
         }
     }
@@ -112,27 +112,27 @@ public extension ISO8601DateFormatter {
 /// Short, readable error text for people (Q7): no "Error Domain=…", no object paths, no codes they cannot use.
 public enum CollabErrorText {
     public static func short(_ error: Error) -> String {
-        if error is CancellationError { return "Cancelled." }
+        if error is CancellationError { return String(localized: "Cancelled.", bundle: .module) }
         if let url = error as? URLError {
             switch url.code {
-            case .cancelled: return "Cancelled."
+            case .cancelled: return String(localized: "Cancelled.", bundle: .module)
             case .notConnectedToInternet, .networkConnectionLost, .dataNotAllowed:
-                return "No internet connection. Try again when you are online."
-            case .timedOut: return "The server took too long to answer. Try again."
+                return String(localized: "No internet connection. Try again when you are online.", bundle: .module)
+            case .timedOut: return String(localized: "The server took too long to answer. Try again.", bundle: .module)
             case .cannotFindHost, .cannotConnectToHost, .dnsLookupFailed:
-                return "Can't reach the server. Try again later."
+                return String(localized: "Can't reach the server. Try again later.", bundle: .module)
             case .secureConnectionFailed, .serverCertificateUntrusted, .serverCertificateHasBadDate:
-                return "The secure connection failed."
+                return String(localized: "The secure connection failed.", bundle: .module)
             case .badServerResponse, .cannotParseResponse, .zeroByteResource:
-                return "The server sent an answer the app could not read."
-            default: return "The network request failed. Try again."
+                return String(localized: "The server sent an answer the app could not read.", bundle: .module)
+            default: return String(localized: "The network request failed. Try again.", bundle: .module)
             }
         }
         if let described = (error as? LocalizedError)?.errorDescription, readable(described) {
             return described
         }
         let text = (error as NSError).localizedDescription
-        return readable(text) ? text : "Something went wrong. Try again."
+        return readable(text) ? text : String(localized: "Something went wrong. Try again.", bundle: .module)
     }
 
     /// True for text a person can read: not a raw NSError dump, an object path or a very long string.

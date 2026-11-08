@@ -334,11 +334,145 @@ def cmd_set_info(a, app, name):
     run_plan(a, f"Set test information for build {a.build}", steps, lines)
 
 
+def call_soft(path):
+    """GET that returns (json, None) or (None, error text), never exits. Read-only."""
+    if not _tok["v"] or time.time() - _tok["at"] > 600:
+        _tok["v"], _tok["at"] = token(), time.time()
+    req = urllib.request.Request(API + path, method="GET", headers={"Authorization": "Bearer " + _tok["v"]})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            raw = r.read()
+            return (json.loads(raw) if raw else {}), None
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode(errors="replace")
+        try:
+            detail = "; ".join(f"{x.get('title')}: {x.get('detail')}" for x in json.loads(detail)["errors"])
+        except Exception:
+            pass
+        return None, f"HTTP {e.code}: {detail}"
+
+
+def cmd_inspect(a, app, name):
+    """Read-only: everything Apple says about one version, including builds that are not VALID and build uploads."""
+    ver = a.version
+    say(f"### Inspect {name} (`{a.bundle}`), version {ver}")
+    say("")
+    r, err = call_soft(f"/v1/builds?filter[app]={app}&limit=200&sort=-uploadedDate&include=preReleaseVersion"
+                       "&fields[builds]=version,uploadedDate,processingState,expired,minOsVersion,usesNonExemptEncryption"
+                       "&fields[preReleaseVersions]=version")
+    say("**Builds (all processing states, newest first, up to 10):**")
+    if err:
+        say(f"- error: {err}")
+    else:
+        inc = r.get("included", [])
+        say("| Build | Version | Uploaded (UTC) | Processing | Expired |")
+        say("|---|---|---|---|---|")
+        for b in r["data"][:10]:
+            at, rel = b["attributes"], b.get("relationships", {})
+            pre = _incl(inc, "preReleaseVersions", (rel.get("preReleaseVersion", {}).get("data") or {}).get("id"))
+            say("| {} | {} | {} | {} | {} |".format(at.get("version"), pre["attributes"]["version"] if pre else "?",
+                (at.get("uploadedDate") or "?")[:16].replace("T", " "), at.get("processingState"), at.get("expired")))
+        n = [b for b in r["data"] if b["attributes"].get("processingState") != "VALID"]
+        say(f"- builds not VALID: {len(n)}")
+    say("")
+    for st in ("PROCESSING", "FAILED", "INVALID"):
+        r, err = call_soft(f"/v1/builds?filter[app]={app}&filter[processingState]={st}&limit=50&fields[builds]=version,uploadedDate,processingState")
+        say(f"**Builds with processingState {st}:** " + (f"error: {err}" if err else
+            (", ".join(f"{b['attributes']['version']} ({(b['attributes'].get('uploadedDate') or '?')[:16]})" for b in r["data"]) or "none")))
+    say("")
+    r, err = call_soft(f"/v1/preReleaseVersions?filter[app]={app}&filter[version]={ver}&include=builds")
+    say(f"**Pre-release version {ver}:** " + (f"error: {err}" if err else (f"{len(r['data'])} found, builds included: {len(r.get('included', []))}" if r["data"] else "not found")))
+    say("")
+    r, err = call_soft(f"/v1/apps/{app}/buildUploads?limit=20")
+    say("**Build uploads (/v1/apps/{id}/buildUploads):**")
+    if err:
+        say(f"- not readable: {err}")
+    else:
+        rows = r.get("data", [])
+        if not rows:
+            say("- none listed")
+        for u in rows[:20]:
+            at = u.get("attributes", {})
+            say("- " + json.dumps({k: at.get(k) for k in ("cfBundleShortVersionString", "cfBundleVersion", "platform", "createdDate", "state") if k in at}))
+            st = at.get("state") or {}
+            for k in ("errors", "warnings", "infos"):
+                for x in (st.get(k) or []):
+                    say(f"    {k[:-1]}: {x.get('code')}: {x.get('description')}")
+
+
+def plan_public_link(group_id, limit):
+    attrs = {"publicLinkEnabled": True, "feedbackEnabled": True}
+    if limit:
+        attrs.update({"publicLinkLimitEnabled": True, "publicLinkLimit": limit})
+    else:
+        attrs["publicLinkLimitEnabled"] = False
+    return ("PATCH", f"/v1/betaGroups/{group_id}", {"data": {"type": "betaGroups", "id": group_id, "attributes": attrs}})
+
+
+def cmd_groups(a, app, name):
+    """Read-only: beta groups with their settings. The public link itself is never printed."""
+    r, err = call_soft(f"/v1/apps/{app}/betaGroups?limit=100")
+    say(f"### Beta groups: {name} (`{a.bundle}`)")
+    say("")
+    if err:
+        say(f"- error: {err}")
+        return
+    say("| Group | Internal | Public link | Link limit | Feedback | All builds | Created |")
+    say("|---|---|---|---|---|---|---|")
+    for g in r["data"]:
+        at = g["attributes"]
+        lim = at.get("publicLinkLimit") if at.get("publicLinkLimitEnabled") else "none"
+        say("| {} | {} | {} | {} | {} | {} | {} |".format(at.get("name"), at.get("isInternalGroup"),
+            "enabled" if at.get("publicLinkEnabled") else "off", lim, at.get("feedbackEnabled"),
+            at.get("hasAccessToAllBuilds"), (at.get("createdDate") or "?")[:10]))
+    d, err = call_soft(f"/v1/apps/{app}/betaAppReviewDetail")
+    say("")
+    if err:
+        say(f"**Beta App Review details:** error: {err}")
+    else:
+        at = d["data"]["attributes"]
+        have = [f for f in REVIEW_FIELDS if (at.get(f) or "").strip()]
+        miss = [f for f in REVIEW_FIELDS if not (at.get(f) or "").strip()]
+        say(f"**Beta App Review details (app level):** set: {', '.join(have) or 'none'}; empty: {', '.join(miss) or 'none'}; "
+            f"notes {'set' if (at.get('notes') or '').strip() else 'empty'}; demo account required: {at.get('demoAccountRequired')}")
+
+
+def cmd_public_link(a, app, name):
+    g = find_group(app, a.group)
+    if g["attributes"].get("isInternalGroup"):
+        die(f"\"{a.group}\" is an internal group; a public link needs an external group")
+    now = "already enabled" if g["attributes"].get("publicLinkEnabled") else "off"
+    lines = [f"Turn on the public TestFlight link for the external group \"{a.group}\" (now: {now}), tester feedback on,"
+             + (f" limited to {a.limit} testers." if a.limit else " no tester limit."),
+             "Anyone with the link can install builds of this group once Beta App Review approves a build in it.",
+             "The link is not printed here; read it in App Store Connect when it is on."]
+    run_plan(a, f"Public link for \"{a.group}\"", [plan_public_link(g["id"], a.limit)], lines)
+
+
+def cmd_certificates(a):
+    """Read-only: how many signing certificates exist, by type. No names or ids are printed."""
+    certs, _ = get_all("/v1/certificates?limit=200&fields[certificates]=certificateType,expirationDate,activated")
+    by = {}
+    for c in certs:
+        at = c["attributes"]
+        by.setdefault(at.get("certificateType", "?"), []).append((at.get("expirationDate") or "?")[:10])
+    say(f"### Signing certificates: {len(certs)} in total")
+    say("")
+    say("| Type | Count | Expiry dates |")
+    say("|---|---|---|")
+    for t in sorted(by):
+        say("| {} | {} | {} |".format(t, len(by[t]), ", ".join(sorted(by[t]))))
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--bundle", default=os.environ.get("BUNDLE_ID", DEFAULT_BUNDLE))
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("status"); s.add_argument("--limit", type=int, default=25)
+    sub.add_parser("certificates")
+    sub.add_parser("groups")
+    s = sub.add_parser("public-link"); s.add_argument("--group", required=True); s.add_argument("--limit", type=int, default=0); s.add_argument("--yes", action="store_true")
+    s = sub.add_parser("inspect"); s.add_argument("--version", required=True)
     for n in ("add-to-group", "remove-from-group"):
         s = sub.add_parser(n); s.add_argument("--build", required=True); s.add_argument("--group", required=True); s.add_argument("--yes", action="store_true")
     for n in ("expire", "submit-beta-review"):
@@ -351,7 +485,15 @@ def main(argv=None):
             sys.exit(f"missing secret {v}")
     if not (os.environ.get("ASC_KEY_PATH") or os.environ.get("ASC_KEY_P8_BASE64")):
         sys.exit("missing secret ASC_KEY_P8_BASE64")
+    if a.cmd == "certificates":
+        return cmd_certificates(a)
     app, name = app_id(a.bundle)
+    if a.cmd == "inspect":
+        return cmd_inspect(a, app, name)
+    if a.cmd == "groups":
+        return cmd_groups(a, app, name)
+    if a.cmd == "public-link":
+        return cmd_public_link(a, app, name)
     {"status": cmd_status, "add-to-group": cmd_add, "expire": cmd_expire, "submit-beta-review": cmd_submit,
      "set-test-info": cmd_set_info,
      "remove-from-group": lambda a, app, name: cmd_add(a, app, name, remove=True)}[a.cmd](a, app, name)

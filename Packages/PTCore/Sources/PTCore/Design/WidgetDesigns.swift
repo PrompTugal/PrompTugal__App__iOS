@@ -47,13 +47,13 @@ public struct NextUpSmallWidget: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Kicker("Next")
+                Kicker(String(localized: "Next", bundle: .module))
                 Spacer()
                 if entry.attention > 0 {
                     Text("\(entry.attention)").font(.caption.weight(.bold).monospacedDigit())
                         .padding(.horizontal, 6).padding(.vertical, 2)
                         .background(Palette.red, in: Capsule()).foregroundStyle(.white)
-                        .accessibilityLabel("\(entry.attention) things wait on you")
+                        .accessibilityLabel(String(localized: "\(entry.attention) things wait on you", bundle: .module))
                 }
             }
             if let item = entry.items.first {
@@ -63,7 +63,7 @@ public struct NextUpSmallWidget: View {
                 Text(item.place).font(.caption2).foregroundStyle(Palette.muted).lineLimit(1)
             } else {
                 Spacer()
-                Text("Nothing planned").font(.subheadline).foregroundStyle(Palette.muted)
+                Text(String(localized: "Nothing planned", bundle: .module)).font(.subheadline).foregroundStyle(Palette.muted)
             }
         }
         .padding(14)
@@ -88,7 +88,7 @@ public struct NextUpMediumWidget: View {
                     .font(.system(.title2, design: .serif, weight: .bold))
                 Spacer()
                 if entry.attention > 0 {
-                    CountPill(count: entry.attention, label: "for you")
+                    CountPill(count: entry.attention, label: String(localized: "for you", bundle: .module))
                 }
             }
             .frame(width: 90, alignment: .leading)
@@ -105,7 +105,7 @@ public struct NextUpMediumWidget: View {
                     }
                 }
                 if entry.items.isEmpty {
-                    Text("Nothing planned. Add sessions from the agenda.").font(.footnote).foregroundStyle(Palette.muted)
+                    Text(String(localized: "Nothing planned. Add sessions from the agenda.", bundle: .module)).font(.footnote).foregroundStyle(Palette.muted)
                 }
             }
         }
@@ -136,7 +136,7 @@ public struct SessionLiveActivityView: View {
     public var body: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 3) {
-                Kicker(item.kind == .standup ? "Stand-up" : (now < item.start ? "Starting soon" : "Now"),
+                Kicker(item.kind == .standup ? String(localized: "Stand-up", bundle: .module) : (now < item.start ? String(localized: "Starting soon", bundle: .module) : String(localized: "Now", bundle: .module)),
                        color: item.kind == .standup ? Palette.green : Palette.red)
                 Text(item.title).font(.system(.headline, design: .serif)).lineLimit(2)
                 Label(item.place, systemImage: "mappin.and.ellipse").font(.caption).foregroundStyle(Palette.muted)
@@ -149,7 +149,7 @@ public struct SessionLiveActivityView: View {
                 } else if let end = item.end {
                     ProgressView(timerInterval: item.start...end, countsDown: false)
                         .tint(Palette.red).frame(width: 80)
-                    Text("ends \(end.formatted(date: .omitted, time: .shortened))").font(.caption2).foregroundStyle(Palette.muted)
+                    Text(String(localized: "ends \(end.formatted(date: .omitted, time: .shortened))", bundle: .module)).font(.caption2).foregroundStyle(Palette.muted)
                 }
             }
         }

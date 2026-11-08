@@ -10,14 +10,27 @@ import PTWeb
 /// times are worked out once per change into `AgendaModel`, not in `body`; rows are small views
 /// with stable ids; each row is one accessibility element with a short label and two actions.
 public struct AgendaView: View {
-    public init() {}
+    /// `openSession`: the app's native session detail (works offline). Without it a row opens the session's web page.
+    public init(openSession: ((Event) -> Void)? = nil) {
+        self.openSession = openSession
+        _day = State(initialValue: Self.initialDay(now: AgendaClock.now))
+    }
+
+    private let openSession: ((Event) -> Void)?
+
+    /// During the summit the agenda opens on today (Lisbon time); otherwise on all days.
+    static func initialDay(now: Date) -> String {
+        let today = Lisbon.day(now)
+        return ProgramModel.summitDays.contains(today) ? today : "all"
+    }
 
     @Environment(ReaderStore.self) private var store
     @Environment(ScheduleStore.self) private var schedule
-    @State private var day = "all"
+    @Environment(PickFeedback.self) private var feedback: PickFeedback?
+    @State private var day: String
     @State private var query = ""
     @State private var picksOnly = false
-    @State private var now = Date.now
+    @State private var now = AgendaClock.now
     @State private var model = AgendaModel.empty
     @State private var opened: Event?
 
@@ -32,18 +45,18 @@ public struct AgendaView: View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: Space.s) {
-                    Kicker("Web Summit Lisbon · 9–12 Nov")
-                    Text("Lisbon time \(model.clock)").font(Typo.data).foregroundStyle(Palette.muted)
+                    Kicker(String(localized: "Lisbon · 9–12 Nov", bundle: .module))
+                    Text(String(localized: "Lisbon time · \(model.clock)", bundle: .module)).font(Typo.data).foregroundStyle(Palette.muted)
                     FreshnessLabel(updated: store.agendaUpdated, staleAfter: 3600)
                 }
-                Picker("Day", selection: $day) {
-                    Text("All days").tag("all")
+                Picker(String(localized: "Day", bundle: .module), selection: $day) {
+                    Text(String(localized: "All days", bundle: .module)).tag("all")
                     ForEach(model.days) { Text($0.label).tag($0.id) }
                 }
-                Toggle("My picks only", isOn: $picksOnly)
+                Toggle(String(localized: "My picks only", bundle: .module), isOn: $picksOnly)
             }
             if !model.running.isEmpty {
-                Section("Happening now") {
+                Section(String(localized: "Happening now", bundle: .module)) {
                     ForEach(model.running) { row in rowView(row) }
                 }
             }
@@ -53,18 +66,18 @@ public struct AgendaView: View {
                 }
             }
             if store.agenda.isEmpty {
-                StateView(phase: store.agendaUnavailable ? .failed("The agenda could not be reached.") : .loading,
-                          hasData: false, title: "agenda") { Task { await store.refresh() } }
+                StateView(phase: store.agendaUnavailable ? .failed(String(localized: "The agenda could not be reached.", bundle: .module)) : .loading,
+                          hasData: false, title: String(localized: "the agenda", bundle: .module)) { Task { await store.refresh() } }
             } else if model.isEmpty {
-                ContentUnavailableView("No matching sessions", systemImage: "magnifyingglass",
-                                       description: Text("Try another day, filter or search."))
+                ContentUnavailableView(String(localized: "No matching sessions", bundle: .module), systemImage: "magnifyingglass",
+                                       description: Text(String(localized: "Try another day, filter or search.", bundle: .module)))
             }
         }
         .listStyle(.insetGrouped)
-        .searchable(text: $query, prompt: "Sessions or venues")
-        .navigationTitle("Agenda")
+        .searchable(text: $query, prompt: String(localized: "Sessions or venues", bundle: .module))
+        .navigationTitle(String(localized: "Agenda", bundle: .module))
         .navigationDestination(item: $opened) { event in
-            if let url = event.url { WebPage(url: url, title: "Session") }
+            if let url = event.url { WebPage(url: url, title: String(localized: "Session", bundle: .module)) }
         }
         .onChange(of: inputs, initial: true) { _, _ in
             model = AgendaModel(events: store.agenda, day: day, query: query, picksOnly: picksOnly,
@@ -72,19 +85,24 @@ public struct AgendaView: View {
         }
         .task {
             await store.refresh()
-            // One tick a minute moves "Happening now" along, without redrawing per second.
+            // One tick a minute moves String(localized: "Happening now", bundle: .module) along, without redrawing per second.
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(60))
-                now = .now
+                now = AgendaClock.now
             }
         }
         .refreshable { await store.refresh() }
-        .webTwin(FeedClient.fullAgenda, title: "Agenda")
+        .webTwin(FeedClient.fullAgenda, title: String(localized: "Agenda", bundle: .module))
     }
 
     private func rowView(_ row: AgendaModel.Row) -> some View {
         AgendaRow(row: row, picked: schedule.isPicked(row.event),
-                  open: { opened = row.event }, toggle: { schedule.toggle(row.event) })
+                  open: { if let openSession { openSession(row.event) } else { opened = row.event } }, toggle: { togglePick(row.event) })
+    }
+
+    /// Picks or un-picks with the star's feedback (a toast, a clash warning) when the app shows toasts.
+    private func togglePick(_ event: Event) {
+        if let feedback { feedback.toggle(event, in: schedule) } else { schedule.toggle(event) }
     }
 }
 
@@ -116,10 +134,10 @@ private struct AgendaRow: View {
         // One element for VoiceOver and UI tests: a short label, open by default, pick as an action.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(row.accessibilityLabel)
-        .accessibilityValue(picked ? "In my schedule" : "")
+        .accessibilityValue(picked ? String(localized: "In my program", bundle: .module) : "")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction { open() }
-        .accessibilityAction(named: picked ? "Remove from my schedule" : "Add to my schedule", toggle)
+        .accessibilityAction(named: picked ? String(localized: "Remove from my program", bundle: .module) : String(localized: "Add to my program", bundle: .module), toggle)
     }
 }
 

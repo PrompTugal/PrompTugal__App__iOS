@@ -24,10 +24,22 @@ final class PublicFeatures {
     let vaultLink: ScheduleVaultLink
 
     private var started = false
-    private var observers: [NSObjectProtocol] = []
+    /// Republishes the widgets' and Siri's "Now and next" when an agenda loads and when picks change.
+    private let nowNext: NowNextRepublisher
 
     init(directory: URL? = nil) {
+        #if DEBUG
+        // Screenshots and UI tests: `-PTNow <ISO date>` is the one clock of every screen, `-PTSeedPicks a,b` seeds picks.
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-PTNow"), index + 1 < arguments.count {
+            AgendaClock.override = ISO8601DateFormatter().date(from: arguments[index + 1])
+        }
+        #endif
         schedule = ScheduleStore(directory: directory)
+        #if DEBUG
+        schedule.seedPicks(arguments: arguments)
+        #endif
+        nowNext = NowNextRepublisher(schedule: schedule)
         reminders = ReminderScheduler(schedule: schedule, team: nil, identity: nil, urlScheme: AppLinks.scheme)
         bridgeLog = BridgeLog()
         bridge = AppBridge(log: bridgeLog, services: AgendaBridgeServices(
@@ -66,6 +78,7 @@ final class PublicFeatures {
     func agendaDidLoad(_ events: [Event]) {
         schedule.updateEvents(events)
         planner.updateAgenda(events)
+        nowNext.agendaDidLoad(events)
     }
 }
 

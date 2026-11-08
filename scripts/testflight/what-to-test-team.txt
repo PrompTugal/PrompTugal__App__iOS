@@ -1,0 +1,11 @@
+PT Team: the team app for Web Summit Lisbon and RiskMandate.
+
+What changed: the team tools now live here, in PT Team. PrompTugal.news is becoming the public app for the site and the summit tools.
+
+Please try:
+- Import your vault key again: the Keychain is per app, so the key saved in PrompTugal.news does not carry over.
+- Agenda and your picks, then the team screens, lanes and messages you used before.
+- Ask, and any debug panel you rely on.
+- Links to ptteam:// and reminders open PT Team.
+
+Tell us what is missing or different from the old app.

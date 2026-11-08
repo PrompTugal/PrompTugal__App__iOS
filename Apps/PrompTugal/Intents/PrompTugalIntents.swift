@@ -1,6 +1,6 @@
 import AppIntents
 import Foundation
-import PTAgenda
+import PTNowNext
 
 /// App Intents extension: Siri, Shortcuts and Spotlight answers that need
 /// nothing but the App Group snapshot. It never reads the vault or the network.

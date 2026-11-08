@@ -56,3 +56,22 @@
 - R1: a separate websites list for the public app.
 - Languages: the pt listings go in only if i18n merges by 16:00; otherwise English only.
 - Because Ask ships, the App Privacy label declares Other User Content, and `PrivacyInfo.xcprivacy` must declare it too (apps); see [app-privacy.md](app-privacy.md).
+
+## Where each fix is (12:16 UTC)
+
+| Item | On dev? | Where the fix is | Next step |
+| --- | --- | --- | --- |
+| B1 Ask, review key, off the tab bar | no | `split/design` (Ask card on Now, Settings row) | merge design |
+| B2 Vault hidden | no | `split/design` (`debugOnlyScreens`) | merge design |
+| B3 "Web Summit" in AgendaView and CalendarExport | **no: dev still shows it** | `split/team` de9b120 ("Lisbon · 9–12 Nov", "From PrompTugal · Lisbon 2026") | merge team **before release photographs** |
+| B4 review notes | yes (store/review-notes.txt) | `split/testflight` holds an **older copy** (More > Ask, the old tabs, no two-hosts line) | testflight copies store/review-notes.txt again |
+| B5 microphone and speech strings | **yes** (fb7cd76) | | done |
+| R1 public websites list, no Web Summit image | no | `split/team` de9b120 (WebsitesPublic.json), `split/apps` 1ce03c8 | merge team and apps |
+| R3 privacy and support pages | no | `split/editor` | merge editor |
+| R4 languages | no | `split/i18n`: catalogs with pt-PT and pt-BR (118 keys each), but `knownRegions` is still en, Base | i18n adds pt-PT and pt-BR to `knownRegions`; release checks that the built .app has `pt-PT.lproj` and `pt-BR.lproj` |
+| Privacy manifest, Other User Content | no | `split/apps` | merge apps |
+| N1 cookies off | no | `split/platform` (with a test) | merge platform |
+| N2 vault background task | **not started** | dev, apps and design all still register and schedule it | apps |
+| N3 "Save key to my vault" | **not started** | still on `split/collab` (AskView.swift:428) | collab |
+| F3 agenda opens on today | no | `split/team` d0fcabd | merge team |
+| F4 native session detail | no | `split/design` 1b5a0a7 (TalkDetailView) | merge design |

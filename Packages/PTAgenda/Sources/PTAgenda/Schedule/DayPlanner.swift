@@ -120,6 +120,25 @@ public enum DayPlanner {
             .contains { p.contains($0) }
     }
 
+    // MARK: Clashes
+
+    /// Overlaps, and back-to-back items in places too far apart. `items` must be sorted by start.
+    public static func clashes(in items: [Item]) -> [Clash] {
+        var clashes: [Clash] = []
+        for (i, a) in items.enumerated() {
+            for b in items[(i + 1)...] where b.start < a.end.addingTimeInterval(TimeInterval(travelMinutes(from: a.place, to: b.place) * 60)) {
+                let overlap = Int(min(a.end, b.end).timeIntervalSince(b.start) / 60)
+                if overlap > 0 {
+                    clashes.append(Clash(first: a, second: b, minutes: overlap, travel: false))
+                } else {
+                    let short = travelMinutes(from: a.place, to: b.place) - Int(b.start.timeIntervalSince(a.end) / 60)
+                    if short > 0 { clashes.append(Clash(first: a, second: b, minutes: short, travel: true)) }
+                }
+            }
+        }
+        return clashes
+    }
+
     // MARK: Planning
 
     /// - Parameter titleKeywords: each event's title keywords by schedule id, worked out once per agenda load
@@ -134,24 +153,12 @@ public enum DayPlanner {
                         end: event.end ?? start.addingTimeInterval(30 * 60), place: event.place, eventID: pick.id)
         }
         fixed += standups.filter { Lisbon.day($0.at) == day }.map {
-            Item(id: "standup.\($0.slot)", kind: .standup, title: "Team stand-up", start: $0.at, end: $0.end,
+            Item(id: "standup.\($0.slot)", kind: .standup, title: String(localized: "Team stand-up", bundle: .module), start: $0.at, end: $0.end,
                  place: "", eventID: nil)
         }
         fixed.sort { $0.start == $1.start ? $0.id < $1.id : $0.start < $1.start }
 
-        // Clashes: overlaps, and back-to-back items in places too far apart.
-        var clashes: [Clash] = []
-        for (i, a) in fixed.enumerated() {
-            for b in fixed[(i + 1)...] where b.start < a.end.addingTimeInterval(TimeInterval(travelMinutes(from: a.place, to: b.place) * 60)) {
-                let overlap = Int(min(a.end, b.end).timeIntervalSince(b.start) / 60)
-                if overlap > 0 {
-                    clashes.append(Clash(first: a, second: b, minutes: overlap, travel: false))
-                } else {
-                    let short = travelMinutes(from: a.place, to: b.place) - Int(b.start.timeIntervalSince(a.end) / 60)
-                    if short > 0 { clashes.append(Clash(first: a, second: b, minutes: short, travel: true)) }
-                }
-            }
-        }
+        let clashes = Self.clashes(in: fixed)
 
         // Gaps inside the day window, between busy items.
         guard let windowStart = Lisbon.instant(day: day, clock: preferences.dayStart),
@@ -220,12 +227,12 @@ public enum DayPlanner {
         if let why = preferences.suggested[id] { score += 5; reasons.append(why) }
         if let names = preferences.teammates[id], !names.isEmpty {
             score += 2 + Double(names.count) * 0.5
-            reasons.append("Also going: \(names.joined(separator: ", "))")
+            reasons.append(String(localized: "Also going: \(names.joined(separator: ", "))", bundle: .module))
         }
         let overlap = (known ?? keywords([event.title])).intersection(interests)
         if !overlap.isEmpty {
             score += Double(min(overlap.count, 3))
-            reasons.append("Like your picks: \(overlap.sorted().prefix(3).joined(separator: ", "))")
+            reasons.append(String(localized: "Like your picks: \(overlap.sorted().prefix(3).joined(separator: ", "))", bundle: .module))
         }
         if event.place == "Centre Stage" { score += 1; reasons.append("Centre Stage") }
         if event.official { score += 0.5 }

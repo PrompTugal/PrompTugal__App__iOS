@@ -8,6 +8,7 @@
 | [listing-en.md](listing-en.md) | English (U.S.) listing: name, subtitle, promotional text, description, keywords, what's new, URLs |
 | [listing-pt-PT.md](listing-pt-PT.md) | Portuguese (Portugal) listing |
 | [listing-pt-BR.md](listing-pt-BR.md) | Portuguese (Brazil) listing |
+| [listing.json](listing.json) | The three listings as JSON with App Store Connect API field names, for release's `asc.py`. Rebuilt with `python3 make_listing_json.py`, which also checks the limits, the markers and the trademark. |
 | [app-privacy.md](app-privacy.md) | App Privacy (nutrition label) answers, derived from the code |
 | [age-rating.md](age-rating.md) | Age rating answers, plus category, price and availability |
 | [review-notes.md](review-notes.md), [review-notes.txt](review-notes.txt) | App Review and Beta App Review notes for the public app: settings and checks, and the final text |

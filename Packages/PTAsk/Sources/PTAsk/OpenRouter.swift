@@ -102,8 +102,8 @@ enum OpenRouter {
         case keyHasWhitespace
         var errorDescription: String? {
             switch self {
-            case .noKey: "No OpenRouter key. Add yours in Ask → Settings."
-            case .keyHasWhitespace: "The key has spaces or line breaks inside it. Paste it again."
+            case .noKey: String(localized: "No OpenRouter key. Add yours in Ask → Settings.", bundle: .module)
+            case .keyHasWhitespace: String(localized: "The key has spaces or line breaks inside it. Paste it again.", bundle: .module)
             }
         }
     }

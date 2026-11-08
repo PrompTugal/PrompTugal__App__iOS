@@ -1,8 +1,8 @@
 # Team session: PTWeb and PTAgenda
 
-> PTWeb and PTAgenda are on dev (7863ae2). The follow-up (reminders from AppLinks.scheme, bounded StoreKit test) is green: run 313, commit 3899bb1, all 15 jobs. READY sent to the conductor. Nothing open for team.
+> Summit priority (freeze 16:00 UTC): head d310767 is in split/rc 75203d5 (conductor's full run). Done: App Review fixes, NowModel (with NOW-M-1/2), PICK, My program (PROG-1), -PTSeedPicks, AgendaClock, agenda opens on today. Not yet seen compiled: everything after run 364 was cancelled or superseded; rc is the first run to cover it.
 
-**Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 01:10 UTC (waiting for PTCore)
+**Branch:** `split/team` (merged origin/dev b845004, phase 1 + vault) · **Updated:** 8 Nov, 12:25 UTC
 
 ## Account B notes (8 Nov, about 01:50 UTC)
 
@@ -20,6 +20,29 @@
 - **07:15 UTC, phase 4 review:** Read platform's plan against my folders and sent platform and the conductor the findings: module rename breaks 10 `@testable import PrompTugal` files; InfoPlistTests expects the old BGTask ids; NowNext is not in PTAgenda yet, so the Team project must keep the Shared group and `NowNextPublisher` (or I delete the publisher calls); design's `AppShell.swift:97` must compare with `AppLinks.scheme`. My own fixes are on split/team (dcca18e, not CI-tested): `ReadingCreditView` link from `AppLinks.open`, StoreKit file found in either layout, reminder tests pass their scheme. Waiting for platform's move to review it.
 
 - **07:25 UTC, NowNext moved (conductor ruling):** `Shared/NowNext.swift` is now `Packages/PTAgenda/Sources/PTAgenda/NowNext.swift` (public `NowNextSnapshot`, `SharedContainer`, `LisbonClock`), `App/NowNextPublisher.swift` is `Packages/PTAgenda/Sources/PTAgenda/NowNextPublisher.swift` (public, no team dependency), and `NowNextTests.swift` is in `Packages/PTAgenda/Tests/PTAgendaTests/`. `SharedContainer.appGroup` is now a settable static (default `group.news.promptugal.reader`; an app with its own group sets it at launch). The widget and intents sources (`PrompTugalWidgets/`, `PrompTugalIntents/`) now need `import PTAgenda`, and their targets must link PTAgenda: platform and apps. Not CI-tested.
+
+- **11:00 UTC, round 2 (contracts §8): native Team screens.** All in `Apps/Team/Sources/Team/`, read through `TeamStore` from the team site's public data, kept on the device, web page one tap away.
+  - `TeamStandupAgenda.swift` (parsers), `StandupsView.swift` (`StandupsView`, `StandupDetailView`, items): list with open counts, agenda by kind, "only items for me", briefings.
+  - `MyCommandCentreView.swift` (`MyCommandCentreView`, `CentreIssuesView`): decisions, issues with filters, workstreams, agents, activity, messages, sessions.
+  - `TeamPage.swift`, `TeamPageView.swift`: any twin page as native blocks (reports, board health, pulse summary); `ReportsView`, `WakesView`, `PulseView`.
+  - `TeamStore`: `standupSummaries`, `agendas`, `pages`, `refreshAgenda(slot:)`, `refreshPage(_:)`, validated paths, offline cache. Tests: `Apps/Team/Tests/TeamNativeTests.swift`.
+  - **Not registered:** design owns `Shell/Destinations.swift`. Entries to add once green: `team.commandcentre` → `MyCommandCentreView()` (kind native), `team.standups` → `StandupsView()`, `agents.reports` → `ReportsView()`, `agents.wakes` → `WakesView()`, `briefings.pulse` → `PulseView()`, `briefings.board` → `TeamPageView(path: "board-health", title: "Board health")`.
+- **PTNowNext (conductor request):** `Packages/PTNowNext` (no dependencies) holds `NowNextSnapshot`, `SharedContainer`, `LisbonClock`; PTAgenda depends on it and re-exports it; `NowNextPublisher` stays in PTAgenda. In `apps.json` and the workspace. **Exception to the project-ownership rule, approved by the conductor:** I added a reference-only `XCLocalSwiftPackageReference` for `../../Packages/PTNowNext` to `Apps/Team/Team.xcodeproj` (platform told). `PrompTugal.xcodeproj` is apps': its reference and the widgets and intents product links come with their merge.
+
+- **11:30 UTC, summit app (summit-app-store brief):** conductor paused Team-native; my job is PTAgenda for participants.
+  - **`NowBoard`** (`Packages/PTAgenda/Sources/PTAgenda/Schedule/NowBoard.swift`): `NowBoard.snapshot(agenda:picks:now:)` gives venue now/next, my now/next (a day ahead), clashes among my picks (`DayPlanner.clashes(in:)`, extracted from the planner), per-stage now/next, and the summit phase (`noAgenda`, `before`, `live`, `between`, `ended`). My program is built from the picks' own event copies, so it shows even before the agenda loads. `ReaderStore.nowBoard(at:)` feeds it from the screen's one-minute timeline.
+  - **Offline agenda:** `AgendaHub.seedAgenda` (the app sets it from the core pack at launch) is read when nothing is cached; `ReaderStore.agendaSource` (`none`, `seed`, `cache`, `network`) and `agendaUpdated` say where the agenda came from, for "synced 3 min ago".
+  - **Reminders** already work for picks with no team (`ReminderScheduler(team: nil, identity: nil)`); clashes already feed the planner. Tests: `NowBoardTests`, `NowNextSnapshotTests` (PTNowNext).
+  - **Waiting for:** ux's spec with screen ids. Needs from apps: PrompTugal.xcodeproj reference for PTNowNext and the widgets/intents links; from collab: set `AgendaHub.seedAgenda` from the core pack.
+
+- **12:25 UTC, summit app (PTAgenda, all on split/team, uncompiled until rc reports):**
+  - `NowModel` (`Schedule/NowModel.swift`, pure): phase, For you (with clash flag), On now, Up next, Tomorrow, countdown, first items. NOW-M-1: first items are the first `registration` and the first `summit` item (Opening Night); NOW-M-2: registration never takes an On now, Up next or Tomorrow slot. `ReaderStore.nowModel(at:)` feeds it.
+  - PICK: `PickRules`, `PickFeedback` (toast, clash toast with View), `PickStarButton(event:)`, `.pickToasts()`, `NowNextRepublisher(schedule:)`. App wiring (design): `.pickToasts()` at the root, one `ScheduleStore` per app, `PickStarButton` on every session row.
+  - My program (PROG-1): `ProgramModel` (clash groups, free gaps of 30 min or more, day counts, `defaultDay`) and `MyProgramView(chooseTalks:open:)`; needs `ScheduleStore`, `ReminderScheduler` and an optional `PickFeedback` in the environment. Route id `team.schedule` is kept.
+  - `AgendaView(openSession:)`: the app's native session detail (deck's PTExplore detail, per the conductor). The agenda opens on today (Lisbon) during the summit.
+  - `PickSeed` / `ScheduleStore.seedPicks(arguments:)`: DEBUG-only `-PTSeedPicks`, slugs or full ids. `AgendaClock.override` (set from `-PTNow` in DEBUG): the one clock of the agenda screens.
+  - App Review: PTAgenda text has no Web Summit trademark; `WebsiteSources.resource` selects `WebsitesPublic.json` (the public app sets it and removes the old shortcut asset).
+  - Waiting for: i18n's merge, then I switch my new strings to `String(localized:bundle:.module)`; design's registration of the screens; rc results.
 
 ## Handoff
 

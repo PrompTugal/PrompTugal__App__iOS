@@ -1,6 +1,6 @@
 <!--
 title: Features · PrompTugal for iOS
-description: Every PrompTugal feature for readers and for teams, whether it is in the beta or coming, and the files in the source that prove it.
+description: Every feature of the public PrompTugal app, whether it is in the beta or coming, and the files in the source that prove it.
 nav: Features
 order: 4
 -->
@@ -8,16 +8,16 @@ order: 4
   <div class="wrap">
     <p class="kicker">Features</p>
     <h1>What is in the beta, and what is coming</h1>
-    <p class="lede">{{features_shipped}} of {{features_total}} planned features are in the internal beta of PrompTugal {{version}}, used by the team first. The status of each one is not typed by hand: the site checks that the files that implement it exist in the source when the site is built.</p>
+    <p class="lede">{{features_readers_shipped}} of {{features_readers_total}} planned features are in the beta of the PrompTugal app {{version}}. The team’s own app has more; those are listed in the <a href="admin/team-app.html">developer area</a>. The status of each one is not typed by hand: the site checks that the files that implement it exist in the source when the site is built.</p>
   </div>
 </section>
 
 <section class="band band-alt" id="all">
   <div class="wrap">
     <p class="kicker">All features</p>
-    <h2>Readers and teams</h2>
+    <h2>The PrompTugal app</h2>
     {{features_table}}
-    <p class="prose muted">A feature is “in the beta” when every file pattern in the last column matches a file in the repository. The list lives in <a href="{{repo_url}}/blob/dev/website/features.json"><code>website/features.json</code></a>.</p>
+    <p class="prose muted">A feature is “in the beta” when every file pattern in the last column matches a file the PrompTugal app is built from: its own folder or a package it uses. The list lives in <a href="{{repo_url}}/blob/dev/website/features.json"><code>website/features.json</code></a>.</p>
   </div>
 </section>
 
