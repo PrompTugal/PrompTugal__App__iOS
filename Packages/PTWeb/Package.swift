@@ -14,12 +14,14 @@ let package = Package(
     targets: [
         .target(
             name: "PTWeb",
-            dependencies: [.product(name: "PTCore", package: "PTCore")]
+            dependencies: [.product(name: "PTCore", package: "PTCore")],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "PTWebTests",
             dependencies: ["PTWeb"],
             path: "Tests/PTWebTests"
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )

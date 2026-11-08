@@ -416,7 +416,7 @@ def build(out):
                   releases=admin.releases_html(admin.releases(), REPO_URL),
                   workflows=admin.workflows_html(admin.workflows(), REPO_URL),
                   workflow_count=str(len(admin.workflows())),
-                  screens=admin.screens_html(admin.destinations(), facts['websites']),
+                  screens=admin.screens_html(admin.destinations(), facts['websites'], WEBSITES_JSON.relative_to(ROOT).as_posix()),
                   branch_screens=admin.branch_screens_html(admin.branch_destinations()),
                   shell_root_note=('<p class="notice">The app shows the shell at launch (<code>AppShell</code> is the root view), so these screens are reachable.</p>'
                                    if 'AppShell(' in admin.root_scene() else

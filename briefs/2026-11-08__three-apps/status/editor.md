@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 03:15 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 03:25 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 03:15 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 03:25 UTC: merged `origin/dev` (v0.1.80) with PTWeb and PTAgenda (`7863ae2`). Conflict in `website/build.py` with the conductor's `_one()` fix (`11ab789`): kept my `admin.find_in_app`, which already searches `Packages/PTWeb`, and dropped `_one()`. The admin screens page now prints the real path of `Websites.json` (`Packages/PTWeb/Sources/PTWeb/Resources/Websites.json`) instead of the fixed text. Labels checked against the moved files: 13 of 13 public in the beta, Team page unchanged (23 in the beta, 2 debug only, 1 coming). `features.json` names files, so nothing else needed changing. Build, validator and 67 tests green.
 
 - 03:15 UTC: merged `origin/dev` (v0.1.79): PTCore `CollabSeams.swift` and `AppLinks.scheme`, platform status. Both are new PTCore files, so the site's Swift file and line counts moved; build, validator and 67 tests green. No `features.json` change: neither file carries a feature label. Still no PTWeb, PTAgenda, PTNews, PTVaultUI-side, PTLanes or PTAsk move on dev.
 

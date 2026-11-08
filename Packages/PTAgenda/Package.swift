@@ -22,5 +22,6 @@ let package = Package(
             dependencies: ["PTAgenda"],
             path: "Tests/PTAgendaTests"
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )

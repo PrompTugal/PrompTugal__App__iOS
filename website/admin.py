@@ -580,7 +580,7 @@ def branch_screens_html(items):
             '<th scope="col">Branch</th></tr></thead><tbody>' + rows + '</tbody></table></div>')
 
 
-def screens_html(items, websites):
+def screens_html(items, websites, websites_path):
     if items:
         counts = {k: sum(1 for d in items if d['kind'] == k) for k in ('native', 'web', 'hybrid')}
         pending = sum(1 for d in items if d['pending'])
@@ -598,7 +598,7 @@ def screens_html(items, websites):
         table = ('<p class="notice">No <code>Destinations.swift</code> on this branch yet. The app has one native '
                  'screen, the offline reader, and opens websites in the sidebar below.</p>')
     sites = ''.join(f'<tr><td>{esc(s["name"])}</td><td><code>{esc(s["url"])}</code></td></tr>' for s in websites)
-    return (table + '<h3>Websites in the sidebar</h3><p>From <code>PrompTugal/Websites.json</code>, the defaults the '
+    return (table + '<h3>Websites in the sidebar</h3><p>From <code>' + esc(websites_path) + '</code>, the defaults the '
             'app ships with. Users can edit the list in the Files app.</p><div class="table-wrap"><table><thead><tr>'
             '<th scope="col">Name</th><th scope="col">Address</th></tr></thead><tbody>' + sites + '</tbody></table></div>')
 
