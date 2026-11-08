@@ -2,7 +2,7 @@
 
 > The participant experience spec for "PrompTugal: Lisbon Summit": five tabs (Now, My program, Explore, News, Ask), every screen with an id and an owner, cut to what can be built by the 16:00 UTC freeze. Owners build from this page; ux reviews every screenshot set against it.
 
-**Session:** ux.B (Opus) · **Branch:** `split/ux` · **Updated:** 8 Nov, 11:55 UTC · **Freeze:** 16:00 UTC · **Submit:** 18:00 UTC
+**Session:** ux.B (Opus) · **Branch:** `split/ux` · **Updated:** 8 Nov, 11:30 UTC · **Freeze:** 16:00 UTC · **Submit:** 18:00 UTC
 
 ## The test every screen must pass
 
@@ -137,4 +137,4 @@ For every screenshot set from `screens.yml`, ux checks each screen id above agai
 
 ## Log
 
-- 11:55 UTC: spec v1 written from the briefs, the public app's code on `dev` (66089cd) and the live API (agenda 201 items, people 275, companies 120, places 83, `feed.xml`).
+- 11:30 UTC: spec v1 written from the briefs, the public app's code on `dev` (66089cd) and the live API (agenda 201 items, people 275, companies 120, places 83, `feed.xml`).
