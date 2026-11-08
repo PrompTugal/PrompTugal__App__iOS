@@ -151,3 +151,15 @@ Artifact `appstore-screens-7766e2a…-promptugal`: 63 images (7 screens, 3 sizes
 | S5 | pt-PT and pt-BR UI language: cannot be checked, because every pt image is covered | | pending the re-run |
 
 Review notes step 4 now says the permission is asked on the first pick or from the Reminders toggle (store/review-notes.txt). testflight copies it again.
+
+## Run 10: submission candidate `split/rc7` 7f961a0 (14:08 UTC): GO in the repository
+
+The delta from rc4 56a630e is the rc5 parts already passed (screenshot filter, debug-off, `debugOnly` rows, ScreensTests alert dismissal), plus:
+
+| # | Check | State |
+| --- | --- | --- |
+| S1a | `MyProgramView` `.task(id: picksOn)` no longer asks for notification permission; it only reads the authorization and reschedules. Permission is now asked in three places: the "Remind me before each talk" toggle when switched on (a tap), the first pick (`askOnceWhenUseful`, a tap), and the web bridge's native "Turn on reminders?" alert (a tap). That matches review-notes step 4 and the privacy page. | GO |
+| S2 | Now's time column is as wide as a hidden "88:88 AM" (`lineLimit(1)`, `fixedSize`), so the time never wraps and the rows line up | GO in code; check in the next screens run (other screens' time columns too) |
+| Tests | `@MainActor` on `WebPageHostTests` (test only) | GO |
+| G5 | Full run 396 (42487965688) | pending |
+| M4 | Screens on rc7, with the alert answered "Allow" | pending, then the full image and persona pass |
