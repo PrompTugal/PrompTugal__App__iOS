@@ -302,3 +302,7 @@ Replaces the 16:05 GO for 0.4.23 (204), which was never submitted to the App Sto
 | M9 | Mac (Apple silicon) and Vision Pro unticked; IDFA: No | **condition: Dinis** |
 
 **Verdict:** submit 0.4.24 (205) as soon as Dinis confirms M6 and M9.
+
+## SUBMITTED: 0.4.24 (205) in App Review (23:20 UTC)
+
+ios-submit run 42534623695: "Submitted 0.4.24 (205) for App Review", release type AFTER_APPROVAL. The last blocker was the missing copyright line, which Dinis set by hand (README says "2026 PrompTugal"; the plan's step 12 had not been run). TestFlight build 0.4.23 (204) has been in Beta App Review since 16:11. Replies to likely App Review questions are ready in [app-review-replies.md](app-review-replies.md).
