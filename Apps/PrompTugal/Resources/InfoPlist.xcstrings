@@ -7,7 +7,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "CFBundleDisplayName"
+            "value": "PrompTugal"
           }
         },
         "pt-BR": {
@@ -30,7 +30,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NSCalendarsWriteOnlyAccessUsageDescription"
+            "value": "PrompTugal adds the sessions you pick to your calendar when you ask it to."
           }
         },
         "pt-BR": {
@@ -53,7 +53,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NSCameraUsageDescription"
+            "value": "PrompTugal uses the camera only to scan the QR code of a vault key, when you choose to scan one."
           }
         },
         "pt-BR": {
@@ -76,7 +76,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "NSFaceIDUsageDescription"
+            "value": "PrompTugal uses Face ID to unlock your vault keys on this device."
           }
         },
         "pt-BR": {
