@@ -2,7 +2,7 @@
 
 > Plan approved by the conductor; waiting for phase 2 (PTCore) on dev. PTNews cannot move as the contract says: News/ pulls in ReaderStore, DashboardData and ScheduleStore, which sit above it. Proposed fixes below need a yes from the conductor. The PrompTugal app's shell is drafted.
 
-Branch: `split/design` (merged with dev at phase 1, 9220d7e) · Last update: 8 Nov, 00:25 UTC, still waiting for phase 2 · Last CI run: none yet (no code moved)
+Branch: `split/design` (merged with dev 16167e2) · Last update: 8 Nov, 00:46 UTC, still waiting for phase 2 · Last CI run: none yet (no code moved)
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
