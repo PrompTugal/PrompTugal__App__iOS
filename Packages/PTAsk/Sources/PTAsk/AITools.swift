@@ -18,7 +18,7 @@ enum AITools {
 
     static let definitions: [OpenRouter.Tool] = [
         tool("now", "The time in Lisbon, and the summit sessions on now and starting in the next hour.", schema()),
-        tool("search_agenda", "Search the Web Summit Lisbon 2026 agenda by words in the title or place. Optionally one day (YYYY-MM-DD).",
+        tool("search_agenda", "Search the Lisbon summit 2026 agenda by words in the title or place. Optionally one day (YYYY-MM-DD).",
              schema(["query": .object(["type": .string("string"), "description": .string("words to look for")]),
                      "day": .object(["type": .string("string"), "description": .string("YYYY-MM-DD, optional")])],
                     required: ["query"])),

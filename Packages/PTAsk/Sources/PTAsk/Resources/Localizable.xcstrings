@@ -208,6 +208,29 @@
         }
       }
     },
+    "Ask about the summit and your day. Choose below what Ask may see.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask about the summit and your day. Choose below what Ask may see."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunte sobre o evento e seu dia. Escolha abaixo o que o Perguntar pode ver."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunte sobre a cimeira e o seu dia. Escolha abaixo o que o Perguntar pode ver."
+          }
+        }
+      }
+    },
     "Ask about the summit, your day and the team. Choose below what Ask may see.": {
       "extractionState": "manual",
       "localizations": {
@@ -227,6 +250,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pergunte sobre a cimeira, o seu dia e a equipa. Escolha abaixo o que o Perguntar pode ver."
+          }
+        }
+      }
+    },
+    "Ask about today and your picks…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask about today and your picks…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunte sobre hoje e suas escolhas…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunte sobre hoje e as suas escolhas…"
           }
         }
       }
@@ -254,6 +300,52 @@
         }
       }
     },
+    "Ask is an optional extra. It sends your question to OpenRouter, an AI service, and needs a key from your own OpenRouter account. The key stays in this device's Keychain, and you pay OpenRouter for what you ask. The rest of the app works without it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask is an optional extra. It sends your question to OpenRouter, an AI service, and needs a key from your own OpenRouter account. The key stays in this device's Keychain, and you pay OpenRouter for what you ask. The rest of the app works without it."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Perguntar é um extra opcional. Ele envia sua pergunta ao OpenRouter, um serviço de IA, e precisa de uma chave da sua própria conta OpenRouter. A chave fica na Keychain deste aparelho e você paga ao OpenRouter pelo que perguntar. O resto do app funciona sem ele."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Perguntar é um extra opcional. Envia a sua pergunta ao OpenRouter, um serviço de IA, e precisa de uma chave da sua própria conta OpenRouter. A chave fica na Keychain deste dispositivo e paga ao OpenRouter pelo que perguntar. O resto da app funciona sem ele."
+          }
+        }
+      }
+    },
+    "Ask is off: you chose not to send questions to OpenRouter. Change it in Key and settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask is off: you chose not to send questions to OpenRouter. Change it in Key and settings."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Perguntar está desligado: você escolheu não enviar perguntas ao OpenRouter. Mude isso em Chave e ajustes."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Perguntar está desligado: escolheu não enviar perguntas ao OpenRouter. Altere-o em Chave e definições."
+          }
+        }
+      }
+    },
     "Ask me again": {
       "extractionState": "manual",
       "localizations": {
@@ -273,6 +365,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Perguntar de novo"
+          }
+        }
+      }
+    },
+    "Ask needs your own OpenRouter key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask needs your own OpenRouter key"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Perguntar precisa da sua própria chave OpenRouter"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Perguntar precisa da sua própria chave OpenRouter"
           }
         }
       }
@@ -576,6 +691,29 @@
         }
       }
     },
+    "Finish": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fim"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fim"
+          }
+        }
+      }
+    },
     "First text": {
       "extractionState": "manual",
       "localizations": {
@@ -737,6 +875,29 @@
         }
       }
     },
+    "Key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chave"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chave"
+          }
+        }
+      }
+    },
     "Key and settings": {
       "extractionState": "manual",
       "localizations": {
@@ -848,6 +1009,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "A ouvir…"
+          }
+        }
+      }
+    },
+    "Messages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Messages"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mensagens"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mensagens"
           }
         }
       }
@@ -1032,6 +1216,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ainda sem escolhas"
+          }
+        }
+      }
+    },
+    "No question asked yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No question asked yet."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não foi feita nenhuma pergunta."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não foi feita nenhuma pergunta."
           }
         }
       }
@@ -1423,6 +1630,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Remover %@ das minhas escolhas"
+          }
+        }
+      }
+    },
+    "Request": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Requisição"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pedido"
           }
         }
       }
