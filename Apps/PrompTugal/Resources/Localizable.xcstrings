@@ -116,29 +116,6 @@
         }
       }
     },
-    "Add to My program": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add to My program"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adicionar ao meu programa"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adicionar ao meu programa"
-          }
-        }
-      }
-    },
     "Add to my program": {
       "extractionState": "manual",
       "localizations": {

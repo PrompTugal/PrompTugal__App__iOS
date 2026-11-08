@@ -221,7 +221,7 @@ struct AskMentions: View {
                     Spacer(minLength: 0)
                     if let url = event.url {
                         Link(destination: url) { Image(systemName: "arrow.up.right.square") }
-                            .accessibilityLabel(String(localized: "Open \(event.title)", bundle: .module))
+                            .accessibilityLabel(String(localized: "Open session \(event.title)", bundle: .module))
                     }
                 }
             }

@@ -1220,25 +1220,25 @@
         }
       }
     },
-    "Open %@": {
+    "Open session %@": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Open %@"
+            "value": "Open session %@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abrir %@"
+            "value": "Abrir a sessão %@"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abrir %@"
+            "value": "Abrir a sessão %@"
           }
         }
       }

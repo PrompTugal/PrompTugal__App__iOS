@@ -89,7 +89,7 @@ public struct WebsiteView: View {
                     } description: {
                         Text(failure)
                     } actions: {
-                        Button(String(localized: "Try Again", bundle: .module)) { browser.reload() }
+                        Button(String(localized: "Try again", bundle: .module)) { browser.reload() }
                             .buttonStyle(.borderedProminent)
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

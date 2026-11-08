@@ -33,7 +33,7 @@ public struct AgendaView: View {
             Section {
                 VStack(alignment: .leading, spacing: Space.s) {
                     Kicker("Web Summit Lisbon · 9–12 Nov")
-                    Text(String(localized: "Lisbon time \(model.clock)", bundle: .module)).font(Typo.data).foregroundStyle(Palette.muted)
+                    Text(String(localized: "Lisbon time · \(model.clock)", bundle: .module)).font(Typo.data).foregroundStyle(Palette.muted)
                     FreshnessLabel(updated: store.agendaUpdated, staleAfter: 3600)
                 }
                 Picker(String(localized: "Day", bundle: .module), selection: $day) {

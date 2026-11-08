@@ -89,7 +89,7 @@ public struct PlannerView: View {
                     .padding(.vertical, 2)
                 }
             } header: {
-                Text(String(localized: "Proposed", bundle: .module))
+                Text(String(localized: "Proposed sessions", bundle: .module))
             } footer: {
                 if identity?.currentID != nil {
                     Text(String(localized: "Sessions the team picked for you rank first, then sessions teammates have, then ones like your picks.", bundle: .module))

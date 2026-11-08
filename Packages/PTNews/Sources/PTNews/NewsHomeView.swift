@@ -74,7 +74,7 @@ public struct NewsHomeView: View {
         FreshnessLabel(updated: store.newsUpdated, failed: store.newsUnavailable)
         if store.news.isEmpty {
             StateView(phase: store.newsUnavailable ? .failed(String(localized: "The feed could not be reached.", bundle: .module)) : .loading,
-                      hasData: false, title: String(localized: "news", bundle: .module)) { Task { await store.refresh() } }
+                      hasData: false, title: String(localized: "news feed", bundle: .module)) { Task { await store.refresh() } }
         }
         if let lead = store.news.first {
             NavigationLink { WebPage(url: lead.url, title: String(localized: "Story", bundle: .module)) } label: {
@@ -158,7 +158,7 @@ public struct NewsHomeView: View {
                 }
             }
         } else {
-            StateView(phase: data.board.phase, hasData: false, title: String(localized: "stories", bundle: .module)) { Task { await data.board.load(force: true) } }
+            StateView(phase: data.board.phase, hasData: false, title: String(localized: "latest stories", bundle: .module)) { Task { await data.board.load(force: true) } }
         }
     }
 }

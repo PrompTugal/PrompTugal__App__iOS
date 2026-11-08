@@ -41,7 +41,7 @@ public struct GraphExplorerView: View {
                     if indexing {
                         ProgressView(String(localized: "Laying out \(feed.value?.nodes.count ?? 0) nodes…", bundle: .module)).frame(maxWidth: .infinity, minHeight: 200)
                     } else {
-                        StateView(phase: feed.phase, hasData: false, title: String(localized: "graph", bundle: .module)) { Task { await feed.load(force: true) } }
+                        StateView(phase: feed.phase, hasData: false, title: String(localized: "graph data", bundle: .module)) { Task { await feed.load(force: true) } }
                     }
                 }
             }

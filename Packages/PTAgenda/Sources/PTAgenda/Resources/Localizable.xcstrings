@@ -914,29 +914,6 @@
         }
       }
     },
-    "Lisbon time %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lisbon time %@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Horário de Lisboa %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hora de Lisboa %@"
-          }
-        }
-      }
-    },
     "Lisbon time · %@": {
       "extractionState": "manual",
       "localizations": {
@@ -1561,25 +1538,25 @@
         }
       }
     },
-    "Proposed": {
+    "Proposed sessions": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Proposed"
+            "value": "Proposed sessions"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Propostas"
+            "value": "Sessões sugeridas"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Propostas"
+            "value": "Sessões propostas"
           }
         }
       }

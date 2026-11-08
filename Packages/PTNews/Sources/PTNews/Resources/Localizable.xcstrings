@@ -947,25 +947,25 @@
         }
       }
     },
-    "graph": {
+    "graph data": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "graph"
+            "value": "graph data"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "grafo"
+            "value": "dados do grafo"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "grafo"
+            "value": "dados do grafo"
           }
         }
       }
@@ -993,13 +993,36 @@
         }
       }
     },
-    "news": {
+    "latest stories": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "news"
+            "value": "latest stories"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "últimas reportagens"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "últimas histórias"
+          }
+        }
+      }
+    },
+    "news feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "news feed"
           }
         },
         "pt-BR": {
@@ -1058,29 +1081,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "visível"
-          }
-        }
-      }
-    },
-    "stories": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "stories"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "reportagens"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "histórias"
           }
         }
       }
