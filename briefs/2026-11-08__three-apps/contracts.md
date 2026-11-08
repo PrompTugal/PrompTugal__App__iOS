@@ -137,3 +137,11 @@ These replace the matching rows above.
 - **URL schemes:** PrompTugal uses `promptugal://`, Team uses `ptteam://`. Reminder links take the scheme from the app.
 - **Background refresh:** `VaultBackground.register(taskIdentifier:)` takes each app's BGTask id from its entry point.
 - **Keychain after the split:** vault keys saved by today's app (`news.promptugal.reader`) stay with the PrompTugal app. In the Team app (`news.promptugal.team`), teammates import their key again.
+- **One version for every app (Dinis, 01:10 UTC):**
+  - The app version of all three apps equals the repo release version that CI tags for that commit: v0.4.n → 0.4.n. This replaces the per-app versions in §3.
+  - The series jumps to v0.4.0, which is above the 0.3.1 already in App Store Connect.
+  - iOS release builds the release commit, so the build and the tag match.
+  - Build numbers still go up with every upload.
+- **Runner load:** Screens runs by hand only during the split.
+- **RiskMandate publishes from the same Apple account (Dinis, 01:25 UTC).** It uses bundle `ai.riskmandate.app` and gets `testflight: true` once it builds. Uploads skip cleanly until Dinis creates its App Store Connect record, as for Team.
+- **Internal testers only during the summit (Dinis, 01:30 UTC).** Every build goes to each app's internal TestFlight group, and internal testers get it as soon as Apple finishes processing. There are no external groups and no Beta App Review submissions, so the per-push version numbers cost nothing. External testing and App Review come after the summit.

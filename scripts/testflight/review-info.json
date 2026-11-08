@@ -1,9 +1,5 @@
 {
-  "_comment": "Beta App Review contact. Dinis fills the four contact fields. No credentials here: the demo keys come from secrets/variables when the workflow runs (see review-notes.txt placeholders).",
-  "contactFirstName": "",
-  "contactLastName": "",
-  "contactEmail": "",
-  "contactPhone": "",
+  "_comment": "Non-personal Beta App Review settings. This repository is public: the contact name, email and phone come from the secrets REVIEW_CONTACT_FIRST_NAME, REVIEW_CONTACT_LAST_NAME, REVIEW_CONTACT_EMAIL and REVIEW_CONTACT_PHONE, and demo keys from secrets, never from this file.",
   "demoAccountRequired": false,
   "notesFile": "review-notes.txt"
 }

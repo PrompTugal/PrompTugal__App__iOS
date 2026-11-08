@@ -5,43 +5,59 @@ import Foundation
 /// `Scripts/build-info.sh` runs as a build phase and writes `BuildInfo.json`
 /// into the app bundle. When the file is missing (a preview, or a build that
 /// skipped the phase) every field reads "unknown".
-struct BuildInfo: Decodable, Sendable, Equatable {
-    var commit: String
-    var shortCommit: String
-    var branch: String
-    var dirty: Bool
-    var commitDate: String?
-    var commitCount: Int?
+public struct BuildInfo: Decodable, Sendable, Equatable {
+    public var commit: String
+    public var shortCommit: String
+    public var branch: String
+    public var dirty: Bool
+    public var commitDate: String?
+    public var commitCount: Int?
     /// The website release in `/VERSION` when the app was built, e.g. "v0.1.3".
-    var siteRelease: String
-    var builtAt: String
+    public var siteRelease: String
+    public var builtAt: String
     /// "ci" or "local".
-    var builder: String
-    var ciRun: String?
-    var configuration: String?
+    public var builder: String
+    public var ciRun: String?
+    public var configuration: String?
 
     /// App version and build number from Info.plist (MARKETING_VERSION, CURRENT_PROJECT_VERSION).
-    var appVersion: String = BuildInfo.infoString("CFBundleShortVersionString")
-    var appBuild: String = BuildInfo.infoString("CFBundleVersion")
+    public var appVersion: String = BuildInfo.infoString("CFBundleShortVersionString")
+    public var appBuild: String = BuildInfo.infoString("CFBundleVersion")
+
+    public init(commit: String, shortCommit: String, branch: String, dirty: Bool, commitDate: String? = nil, commitCount: Int? = nil, siteRelease: String, builtAt: String, builder: String, ciRun: String? = nil, configuration: String? = nil, appVersion: String? = nil, appBuild: String? = nil) {
+        self.commit = commit
+        self.shortCommit = shortCommit
+        self.branch = branch
+        self.dirty = dirty
+        self.commitDate = commitDate
+        self.commitCount = commitCount
+        self.siteRelease = siteRelease
+        self.builtAt = builtAt
+        self.builder = builder
+        self.ciRun = ciRun
+        self.configuration = configuration
+        self.appVersion = appVersion ?? BuildInfo.infoString("CFBundleShortVersionString")
+        self.appBuild = appBuild ?? BuildInfo.infoString("CFBundleVersion")
+    }
 
     private enum CodingKeys: String, CodingKey {
         case commit, shortCommit, branch, dirty, commitDate, commitCount, siteRelease, builtAt, builder, ciRun,
              configuration
     }
 
-    static let unknown = BuildInfo(commit: "unknown", shortCommit: "unknown", branch: "unknown", dirty: false,
+    public static let unknown = BuildInfo(commit: "unknown", shortCommit: "unknown", branch: "unknown", dirty: false,
                                    commitDate: nil, commitCount: nil, siteRelease: "unknown", builtAt: "unknown",
                                    builder: "unknown", ciRun: nil, configuration: nil)
 
-    static let current: BuildInfo = load(from: .main)
+    public static let current: BuildInfo = load(from: .main)
 
-    static func load(from bundle: Bundle) -> BuildInfo {
+    public static func load(from bundle: Bundle) -> BuildInfo {
         guard let url = bundle.url(forResource: "BuildInfo", withExtension: "json"),
               let data = try? Data(contentsOf: url) else { return .unknown }
         return decode(data) ?? .unknown
     }
 
-    static func decode(_ data: Data) -> BuildInfo? {
+    public static func decode(_ data: Data) -> BuildInfo? {
         guard var info = try? JSONDecoder().decode(BuildInfo.self, from: data) else { return nil }
         if info.commitDate?.isEmpty == true { info.commitDate = nil }
         if info.ciRun?.isEmpty == true { info.ciRun = nil }
@@ -49,13 +65,13 @@ struct BuildInfo: Decodable, Sendable, Equatable {
     }
 
     /// The commit on GitHub, when it is a real commit.
-    var commitURL: URL? {
+    public var commitURL: URL? {
         guard commit.count == 40, commit.allSatisfy(\.isHexDigit) else { return nil }
         return URL(string: "https://github.com/PrompTugal/PrompTugal__App__iOS/commit/\(commit)")
     }
 
     /// Rows for a debug panel, in display order. No secrets are in here.
-    var rows: [(label: String, value: String)] {
+    public var rows: [(label: String, value: String)] {
         [("App version", "\(appVersion) (\(appBuild))"),
          ("Commit", shortCommit + (dirty ? " (uncommitted changes)" : "")),
          ("Branch", branch),

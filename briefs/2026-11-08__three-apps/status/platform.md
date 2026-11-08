@@ -1,23 +1,24 @@
 # Platform status
 
-> Phase 1 (workspace, seven empty packages, apps.json, check scripts) is pushed on split/platform and waiting for CI.
+> Phase 1 is green (run 266). Phase 2 (PTCore) is pushed on split/platform and waiting for CI.
 
 ## Done
-- Workspace, seven empty packages with the contract graph, linked to the app target.
-- `PrompTugal/App/Exports.swift`, `apps.json`, `scripts/apps/` with tests.
-- `ios.yml`: `apps` job (Ubuntu) and `packages` job (simulator).
+- Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. Run 266 green, commit 8555016.
 
 ## In progress
-- Reading the first CI run.
+- Phase 2: moved into Packages/PTCore: Design/, HTTPClient and HTTPLog, Content.swift (Event, Lisbon, EventDetail, Story, FeedClient), LisbonDay, BuildInfo, RemoteFeed, LoadPhase, FeedCache, Wire / LooseText / LooseScalar / WireDate, TimingBar and FilterChip (from Debug/DebugHomeView.swift).
+- Tests that need no app host moved to PTCore/Tests: HTTP client, Lisbon time, build info decoding.
+- Waiting for CI to find the `public` I missed.
 
 ## Next
-- Phase 2: move Design, HTTPClient, logs, Lisbon time, shared constants and BuildInfo into PTCore.
+- Fix CI errors. Send PHASE 2 READY.
 
 ## Blocked
 - Nothing.
 
 ## Needs from others
-- Nothing.
+- Team: `Schedule/LisbonDay.swift` is now in PTCore (Lisbon.day). Do not move it again.
+- Team: the rest of `Dashboards/WireModels.swift` (Wire.Me, Person and so on) stays in the app for now; design decides where it goes.
 
 ## Last CI run
-- None yet.
+- Phase 1: run 266, green.
