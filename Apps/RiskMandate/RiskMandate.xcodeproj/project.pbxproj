@@ -1,0 +1,398 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		71C64C78830D4BFF573FC180 /* PTCore in Frameworks */ = {isa = PBXBuildFile; productRef = D81DE12F1505C41DE229C398 /* PTCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B802C93A2B65658DCA6D8AA9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BA8D1045ABD7054DB95CA974 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BBD0AB634436911BA1E969D;
+			remoteInfo = RiskMandate;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D8AAAE24C940A18285ECE3D8 /* RiskMandate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RiskMandate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03A5E0CA2EB74F5F397712AC /* RiskMandateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RiskMandateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		67B4D3EE4F6A4841A28A79DE /* RiskMandate.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = RiskMandate.xcconfig; sourceTree = "<group>"; };
+		A9EF54FF02134CB37A73313F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DCA2780EA4E280C97C89E457 /* RiskMandate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RiskMandate.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4A8F9AE308C303287F4BC301 /* Sources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		A80FED93903FBB2947103B4B /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		728C979B1DC28CA7D008D39C /* RiskMandateTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = RiskMandateTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E43386A38F98449D8DB76D15 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71C64C78830D4BFF573FC180 /* PTCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AE2205B1276EC9D277C30EF8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EB936AE05812541BF2190FB4 = {
+			isa = PBXGroup;
+			children = (
+				67B4D3EE4F6A4841A28A79DE /* RiskMandate.xcconfig */,
+				A9EF54FF02134CB37A73313F /* Info.plist */,
+				DCA2780EA4E280C97C89E457 /* RiskMandate.entitlements */,
+				4A8F9AE308C303287F4BC301 /* Sources */,
+				A80FED93903FBB2947103B4B /* Resources */,
+				728C979B1DC28CA7D008D39C /* RiskMandateTests */,
+				5DB35E8DD4D575B47C05991B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5DB35E8DD4D575B47C05991B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D8AAAE24C940A18285ECE3D8 /* RiskMandate.app */,
+				03A5E0CA2EB74F5F397712AC /* RiskMandateTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5BBD0AB634436911BA1E969D /* RiskMandate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 43546245BA7312FB3D5AD55D /* Build configuration list for PBXNativeTarget "RiskMandate" */;
+			buildPhases = (
+				989BB96F41334E9676794E98 /* Sources */,
+				E43386A38F98449D8DB76D15 /* Frameworks */,
+				F1649E5F642368FE20A65F06 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4A8F9AE308C303287F4BC301 /* Sources */,
+				A80FED93903FBB2947103B4B /* Resources */,
+			);
+			name = RiskMandate;
+			packageProductDependencies = (
+				D81DE12F1505C41DE229C398 /* PTCore */,
+			);
+			productName = RiskMandate;
+			productReference = D8AAAE24C940A18285ECE3D8;
+			productType = "com.apple.product-type.application";
+		};
+		0CEA80DD1252299C4F648CDE /* RiskMandateTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B0142FA1DB1B21AC511CFFB /* Build configuration list for PBXNativeTarget "RiskMandateTests" */;
+			buildPhases = (
+				27626DFA64A63B8558706BEB /* Sources */,
+				AE2205B1276EC9D277C30EF8 /* Frameworks */,
+				576CA0C05CFDE09A19DD1F96 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				113E85E51B65C378F5C5883C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				728C979B1DC28CA7D008D39C /* RiskMandateTests */,
+			);
+			name = RiskMandateTests;
+			packageProductDependencies = (
+			);
+			productName = RiskMandateTests;
+			productReference = 03A5E0CA2EB74F5F397712AC;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BA8D1045ABD7054DB95CA974 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					5BBD0AB634436911BA1E969D = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					0CEA80DD1252299C4F648CDE = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 5BBD0AB634436911BA1E969D;
+					};
+				};
+			};
+			buildConfigurationList = 5869FC91619ABC4BEAA7B3E0 /* Build configuration list for PBXProject "RiskMandate" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EB936AE05812541BF2190FB4;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				4FEF5151308080939130FEFE /* XCLocalSwiftPackageReference "../../Packages/PTCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5DB35E8DD4D575B47C05991B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5BBD0AB634436911BA1E969D /* RiskMandate */,
+				0CEA80DD1252299C4F648CDE /* RiskMandateTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F1649E5F642368FE20A65F06 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		576CA0C05CFDE09A19DD1F96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		989BB96F41334E9676794E98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		27626DFA64A63B8558706BEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		113E85E51B65C378F5C5883C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BBD0AB634436911BA1E969D /* RiskMandate */;
+			targetProxy = B802C93A2B65658DCA6D8AA9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EEE5A9B3857ECCA5D8D71E8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.4.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		56C22258B58744F2EBF37C3A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.4.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		73226C0E623C0925FE335FFA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67B4D3EE4F6A4841A28A79DE /* RiskMandate.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RiskMandate.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RiskMandate;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ai.riskmandate.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C73BB96CF33D733B4C4AB061 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67B4D3EE4F6A4841A28A79DE /* RiskMandate.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RiskMandate.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RiskMandate;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ai.riskmandate.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		0F9C01A120AB29C175C43246 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67B4D3EE4F6A4841A28A79DE /* RiskMandate.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.riskmandate.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RiskMandate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RiskMandate";
+			};
+			name = Debug;
+		};
+		88C60C99390F0BFFB7BAD54E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67B4D3EE4F6A4841A28A79DE /* RiskMandate.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.riskmandate.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RiskMandate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RiskMandate";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5869FC91619ABC4BEAA7B3E0 /* Build configuration list for PBXProject "RiskMandate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEE5A9B3857ECCA5D8D71E8B /* Debug */,
+				56C22258B58744F2EBF37C3A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		43546245BA7312FB3D5AD55D /* Build configuration list for PBXNativeTarget "RiskMandate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				73226C0E623C0925FE335FFA /* Debug */,
+				C73BB96CF33D733B4C4AB061 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8B0142FA1DB1B21AC511CFFB /* Build configuration list for PBXNativeTarget "RiskMandateTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F9C01A120AB29C175C43246 /* Debug */,
+				88C60C99390F0BFFB7BAD54E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4FEF5151308080939130FEFE /* XCLocalSwiftPackageReference "../../Packages/PTCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D81DE12F1505C41DE229C398 /* PTCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FEF5151308080939130FEFE /* XCLocalSwiftPackageReference "../../Packages/PTCore" */;
+			productName = PTCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BA8D1045ABD7054DB95CA974 /* Project object */;
+}

@@ -11,6 +11,7 @@ name: iOS
 #             for a device (unsigned), as two matrix legs
 #   test      per affected app, on an iPhone and an iPad simulator: dev, pull requests
 #             and workflow_dispatch only (night/** pushes build only; split/** branches run by workflow_dispatch)
+#   quick     manual runs only: Debug build and iPhone tests, no Release build, no iPad
 #   packages  per affected Swift package with a Tests/ folder
 #   result    one stable check name that is green when everything above is
 #
@@ -34,6 +35,10 @@ on:
         type: choice
         options: [all, team, promptugal, riskmandate]
         default: all
+      quick:
+        description: 'Quick: Debug build and iPhone unit tests of the app, plus the package tests of what the branch changed. No Release build, no iPad. Run once with quick off before a merge to dev.'
+        type: boolean
+        default: false
       runner:
         description: 'macOS runner for the build, test and package jobs (self-hosted = the Mac registered to this repository)'
         type: choice
@@ -76,6 +81,9 @@ jobs:
 
   changes:
     name: Changes
+    permissions:
+      contents: read
+      actions: read   # the called workflow reads earlier runs
     uses: ./.github/workflows/ios-changes.yml
     with:
       app: ${{ inputs.app || 'all' }}
@@ -109,7 +117,7 @@ jobs:
         app: ${{ fromJSON(needs.changes.outputs.apps) }}
         # Debug for the simulator; Release is what App Store and TestFlight builds use:
         # optimised, DEBUG not defined, so code behind #if DEBUG compiles out cleanly.
-        config: [Debug, Release]
+        config: ${{ fromJSON(inputs.quick && '["Debug"]' || '["Debug","Release"]') }}
     runs-on: ${{ inputs.runner || 'macos-26' }}
     concurrency:
       group: ios-build-${{ matrix.app.app }}-${{ matrix.config }}-${{ github.ref }}
@@ -162,7 +170,7 @@ jobs:
       matrix:
         app: ${{ fromJSON(needs.changes.outputs.apps) }}
         # The app must work on iPhone and iPad; both run every test.
-        device: [iPhone, iPad]
+        device: ${{ fromJSON(inputs.quick && '["iPhone"]' || '["iPhone","iPad"]') }}
     runs-on: ${{ inputs.runner || 'macos-26' }}
     timeout-minutes: 45
     concurrency:

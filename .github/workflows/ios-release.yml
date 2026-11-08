@@ -13,7 +13,9 @@ name: iOS release
 #             exist for it, or nothing is uploaded.
 #
 # Triggers
-#   push to dev          every affected app uploads, unless paused
+#   push to dev          website.yml bumps VERSION and tags vX.Y.Z; this workflow then runs
+#                        (workflow_run) on that release commit. Every app whose files changed since
+#                        its own last build uploads, unless paused. App version = the tag, without v.
 #   tags                 team-v*, promptugal-v*, riskmandate-v* release that app;
 #                        the old ios-v* means the app with bundle news.promptugal.reader
 #   workflow_dispatch    input "app": all, or one app; "upload" or "dry_run" to sign
@@ -23,6 +25,8 @@ name: iOS release
 #   TESTFLIGHT_ON_PUSH_TEAM=false      pauses one app (…_PROMPTUGAL, …_RISKMANDATE)
 #   Tags and manual runs still upload.
 #
+# Version: MARKETING_VERSION of every app = VERSION at the built commit (v0.4.7 -> 0.4.7), passed to
+# xcodebuild. Summary and TestFlight notes say "0.4.7 (build) · tag v0.4.7 · commit <sha>".
 # Build number: CFBundleVersion = run number of THIS workflow + the app's offset, passed as
 # CURRENT_PROJECT_VERSION. Offset: variable IOS_BUILD_OFFSET_<APP>, else IOS_BUILD_OFFSET,
 # else 100 (above the manual builds; PrompTugal's last manual build is 6). Both jobs of one
@@ -34,17 +38,15 @@ name: iOS release
 # Setup: briefs/2026-11-08__overnight-push/release-setup.md
 
 on:
-  push:
-    # dev only. Night branches are built by ios.yml; package one by hand with
-    # workflow_dispatch (+ source_ref). Changes to this workflow are tested the
-    # same way, so merges of dev into a night branch do not rebuild dev twice.
+  # A push to dev is released by website.yml ("Release and deploy"): it bumps VERSION, commits and
+  # tags vX.Y.Z. This workflow follows it and builds THAT commit, so the app version is the tag.
+  workflow_run:
+    workflows: ['Release and deploy']
+    types: [completed]
     branches: [dev]
-    tags: ['ios-v*', 'team-v*', 'promptugal-v*', 'riskmandate-v*']   # path filters do not apply to tag pushes
-    paths-ignore:           # same as ios.yml: docs and site-only pushes skip the macOS runner
-      - 'briefs/**'
-      - 'website/**'
-      - '*.md'
-      - 'VERSION'
+  push:
+    # Night branches are built by ios.yml; package one by hand with workflow_dispatch (+ source_ref).
+    tags: ['ios-v*', 'team-v*', 'promptugal-v*', 'riskmandate-v*']
   workflow_dispatch:
     inputs:
       app:
@@ -96,6 +98,11 @@ env:
 jobs:
   changes:
     name: Changes
+    # After a push to dev only when website.yml succeeded (it made the release commit and tag).
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    permissions:
+      contents: read
+      actions: read   # the called workflow reads earlier runs
     uses: ./.github/workflows/ios-changes.yml
     with:
       app: ${{ inputs.app || 'all' }}
@@ -123,9 +130,12 @@ jobs:
       APP_KEY: ${{ matrix.app.app }}
       EXPECTED_BUNDLE: ${{ matrix.app.bundle }}
       IOS_BUILD_OFFSET: ${{ matrix.app.offset }}
+      SOURCE_SHA: ${{ needs.changes.outputs.ref }}   # build-info and file names carry the built commit
+      NOTES_FROM: ${{ matrix.app.base }}             # release notes start at this app's last build
     steps:
       - uses: actions/checkout@v5
         with:
+          ref: ${{ needs.changes.outputs.ref }}   # the release commit after a push to dev; else the default
           fetch-depth: 0   # the app's build-info phase reads the commit count and tags
 
       - name: Use another branch's project (source_ref)
@@ -238,6 +248,8 @@ jobs:
       BUNDLE_ID: ${{ matrix.app.bundle }}   # asc.py looks the record up by this
       IOS_BUILD_OFFSET: ${{ matrix.app.offset }}
       GH_TOKEN: ${{ github.token }}
+      SOURCE_SHA: ${{ needs.changes.outputs.ref }}
+      NOTES_FROM: ${{ matrix.app.base }}
       # Only the presence of these is checked in the gate step; values never print.
       IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
       IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
@@ -302,6 +314,7 @@ jobs:
       - uses: actions/checkout@v5
         if: steps.gate.outputs.ready == 'true'
         with:
+          ref: ${{ needs.changes.outputs.ref }}
           fetch-depth: 0
 
       - name: Use another branch's project (source_ref)
@@ -330,14 +343,28 @@ jobs:
           MODE: ${{ steps.gate.outputs.mode }}
         run: scripts/release/signing-setup.sh
 
+      - name: App Store Connect record exists?
+        # An app without a record (Team, RiskMandate, until Dinis creates them) is skipped, green,
+        # before the expensive archive. A dry run does not upload, so it goes on.
+        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true'
+        run: |
+          rc=0
+          python3 scripts/release/asc.py has-record || rc=$?
+          if [ "$rc" = 3 ]; then
+            echo "RECORD_MISSING=true" >> "$GITHUB_ENV"
+            echo "- ⏭️ skipped: no App Store Connect record for \`$EXPECTED_BUNDLE\`. Create it by hand; nothing was archived or uploaded." >> "$GITHUB_STEP_SUMMARY"
+          elif [ "$rc" != 0 ]; then
+            exit "$rc"
+          fi
+
       - name: Archive, sign, export and upload
-        if: steps.gate.outputs.ready == 'true'
+        if: steps.gate.outputs.ready == 'true' && env.RECORD_MISSING != 'true'
         env:
           MODE: ${{ steps.gate.outputs.mode }}
         run: scripts/release/testflight.sh
 
       - name: Wait for processing, answer export compliance, set What to Test
-        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true'
+        if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true' && env.RECORD_MISSING != 'true'
         continue-on-error: true   # the upload is done; these are conveniences
         run: |
           scripts/release/release-notes.sh > "$RUNNER_TEMP/release/notes.txt"

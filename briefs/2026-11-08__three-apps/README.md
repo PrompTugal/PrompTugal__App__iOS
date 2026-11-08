@@ -20,6 +20,14 @@
 
 The App Review findings came from shipping an internal team tool and a public app in one binary. The public app has no team names, no debug panels and no messages between users, so most review risks disappear. The team keeps every tool it has, and never needs App Review.
 
+## Apple review so far
+
+**Beta App Review approved the original PrompTugal app, in about 24 hours.** Build **0.3.1 (4)** of `news.promptugal.reader` ("PrompTugal.news") was submitted for Beta App Review, the review for external TestFlight testing, and Apple approved it about 24 hours later (status `APPROVED`, read by TestFlight ops at 01:19 UTC on 8 Nov). It is in the "PrompTugal External Users" group (0 testers so far, 10 sessions), and expires in 89 days.
+
+- This was the one-binary app, before the split and before the [App Review readiness](../2026-11-08__app-review-readiness/README.md) fixes. The public PrompTugal app after the split is a smaller surface (no team screens, no debug panels, no messages), so its review should be no harder.
+- It is a Beta App Review approval, not an App Store review. The App Store review of the public app comes after the summit.
+- During the summit, every new build goes to internal testers only; build 4 stays in the external group as it is.
+
 ## The shape
 
 ```
