@@ -1,20 +1,24 @@
 import BackgroundTasks
 import Foundation
 
-/// Background refresh of the open vaults (`BGAppRefreshTask`, id `news.promptugal.reader.vault-refresh`).
+/// Background refresh of the open vaults (`BGAppRefreshTask`).
 ///
-/// Platform calls `VaultBackground.register()` once, before the app finishes launching
-/// (in `PrompTugalApp.init`), and `VaultBackground.schedule()` when the scene goes to the background.
+/// Each app passes its own task id (for example `news.promptugal.reader.vault-refresh` in the public app) and
+/// lists it in `BGTaskSchedulerPermittedIdentifiers` in its Info.
+/// The app calls `VaultBackground.register(taskIdentifier:)` once, before it finishes launching
+/// (in its `App.init`), and `VaultBackground.schedule()` when the scene goes to the background.
 /// The refresh only pulls vaults already open in memory; it never asks for Face ID and never unlocks keys.
 @MainActor
-enum VaultBackground {
+public enum VaultBackground {
     private static var registered = false
+    private static var identifier: String?
 
     /// Register the task handler and schedule the first refresh. Safe to call more than once.
-    static func register() {
+    public static func register(taskIdentifier: String) {
         guard !registered else { return }
         registered = true
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: VaultConfig.backgroundRefreshTask, using: .main) { task in
+        identifier = taskIdentifier
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: .main) { task in
             guard let refresh = task as? BGAppRefreshTask else {
                 task.setTaskCompleted(success: false)
                 return
@@ -25,8 +29,10 @@ enum VaultBackground {
     }
 
     /// Ask iOS for the next refresh, about 15 minutes from now (iOS chooses the real time).
-    static func schedule() {
-        let request = BGAppRefreshTaskRequest(identifier: VaultConfig.backgroundRefreshTask)
+    /// Does nothing until `register(taskIdentifier:)` has been called.
+    public static func schedule() {
+        guard let identifier else { return }
+        let request = BGAppRefreshTaskRequest(identifier: identifier)
         request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
         try? BGTaskScheduler.shared.submit(request)
     }
