@@ -48,8 +48,7 @@ struct MeterStoreTests {
     }
 
     @Test func storeKitConfigAgreesWithWhatTheAppCredits() throws {
-        let file = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("PrompTugal/Store/PrompTugal.storekit")
+        let file = try storeKitFile()
         let json = try #require(try JSONSerialization.jsonObject(with: Data(contentsOf: file)) as? [String: Any])
         let products = try #require(json["products"] as? [[String: Any]])
         #expect(Set(products.compactMap { $0["productID"] as? String }) == Set(CreditStore.packs.map(\.id)))
@@ -62,6 +61,16 @@ struct MeterStoreTests {
     }
 }
 
+/// The StoreKit test configuration, found from this file's own folder so it works in the old layout
+/// (`PrompTugal/Store/`) and the Team app's (`Sources/Store/`).
+private func storeKitFile(_ filePath: String = #filePath) throws -> URL {
+    let root = URL(fileURLWithPath: filePath).deletingLastPathComponent().deletingLastPathComponent()
+    let candidates = ["PrompTugal/Store/PrompTugal.storekit", "Sources/Store/PrompTugal.storekit"]
+        .map { root.appendingPathComponent($0) }
+    return try #require(candidates.first { FileManager.default.fileExists(atPath: $0.path) },
+                        "PrompTugal.storekit not found next to the tests")
+}
+
 // MARK: - StoreKit (Q3)
 
 @Suite("StoreKit purchases", .serialized)
@@ -71,8 +80,7 @@ struct CreditStoreTests {
     let session: SKTestSession
 
     init() throws {
-        let file = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-            .appendingPathComponent("PrompTugal/Store/PrompTugal.storekit")
+        let file = try storeKitFile()
         session = try SKTestSession(contentsOf: file)
         session.disableDialogs = true
         session.clearTransactions()
@@ -206,10 +214,12 @@ struct ReminderSchedulerTests {
 
     @Test func aReminderOpensTheSessionInsideTheApp() throws {
         let pick = ReminderItem(id: "pt.pick.ai-doom-or-boom", kind: .pick, title: "x", body: "", fire: .now, start: .now,
-                                url: URL(string: "https://promptugal.news/events/ai-doom-or-boom/index.html"))
+                                url: URL(string: "https://promptugal.news/events/ai-doom-or-boom/index.html"),
+                                scheme: "promptugal")
         #expect(pick.appLink.absoluteString == "promptugal://open/team.schedule?session=ai-doom-or-boom")
         let standup = ReminderItem(id: "pt.standup.2026-11-10-1200", kind: .standup, title: "x", body: "", fire: .now,
-                                   start: .now, url: URL(string: "https://web-summit.sgit.ai/meetings/2026-11-10-1200/silvio/index.html"))
+                                   start: .now, url: URL(string: "https://web-summit.sgit.ai/meetings/2026-11-10-1200/silvio/index.html"),
+                                   scheme: "promptugal")
         let link = try #require(URLComponents(url: standup.appLink, resolvingAgainstBaseURL: false))
         #expect(link.scheme == "promptugal" && link.host == "open" && link.path == "/team.schedule")
         #expect(link.queryItems?.first?.value == "https://web-summit.sgit.ai/meetings/2026-11-10-1200/silvio/index.html")
