@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 8 Nov 13:10 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 8 Nov 14:07 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 8 Nov 14:07 UTC: merged split/rc4 and split/review (1b628bb); review-notes.txt updated (step 4: notification permission wording), what-to-test.txt unchanged (commit eb40b63, sent to conductor for rc6). No new dev release or upload since 0.4.16 (197). External path still on hold.
 - 8 Nov 13:10 UTC: merged split/rc2 (3de45dd); `scripts/testflight/review-notes.txt` and `what-to-test.txt` now equal the summit store pack (commit a11b10f). Dev is still at v0.4.21 (run 102 cancelled), no new upload since 0.4.16 (197). External path for the public app is on hold: plan-only until the conductor says go on the final build after the 16:00 UTC freeze.
 
 - 01:50 UTC: account B took over. iOS release run 60 (dev `116a350`) is queued; no new upload yet. Run 59 (split/release dry run) is in progress. Next check in 30 minutes.
