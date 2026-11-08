@@ -107,7 +107,7 @@ private struct AskStarters: View {
     let store: ChatStore
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Ask about the summit, your day and the team. Choose below what Ask may see.")
+            Text(AskEnvironment.provider.askIntro)
                 .font(.subheadline).foregroundStyle(.secondary)
             ForEach(AIPrompts.starters(for: AskEnvironment.provider)) { starter in
                 Button {
@@ -302,6 +302,8 @@ private struct AskComposer: View {
     @Bindable var store: ChatStore
     var focused: FocusState<Bool>.Binding
     @State private var dictation = SpeechDictation()
+    /// Whether dictation runs on this device or at Apple (nil: not known or not available).
+    @State private var dictationOnDevice: Bool?
 
     var body: some View {
         VStack(spacing: 8) {
@@ -326,6 +328,10 @@ private struct AskComposer: View {
             if let error = dictation.error {
                 Text(error).font(.caption).foregroundStyle(.orange).padding(.horizontal)
             }
+            if let onDevice = dictationOnDevice {
+                Text(onDevice ? "Dictation runs on this device." : "Dictation sends your voice to Apple to turn it into text.")
+                    .font(.caption2).foregroundStyle(.secondary).padding(.horizontal)
+            }
             HStack(alignment: .bottom, spacing: 8) {
                 Image(systemName: dictation.isRecording ? "waveform.circle.fill" : "mic.circle")
                     .font(.title)
@@ -335,7 +341,7 @@ private struct AskComposer: View {
                         .onEnded { _ in dictation.stop() })
                     .accessibilityLabel("Hold to dictate")
                     .accessibilityAddTraits(.isButton)
-                TextField(dictation.isRecording ? "Listening…" : "Ask about today, your picks, the team…",
+                TextField(dictation.isRecording ? "Listening…" : AskEnvironment.provider.askPlaceholder,
                           text: $store.draft, axis: .vertical)
                     .lineLimit(1...6)
                     .textFieldStyle(.plain)
@@ -364,6 +370,7 @@ private struct AskComposer: View {
         .padding(.vertical, 8)
         .background(.bar)
         .onChange(of: dictation.transcript) { _, text in if !text.isEmpty { store.draft = text } }
+        .task { dictationOnDevice = SpeechDictation.supportsOnDevice() }
     }
 
     private func chipTitle(_ kind: AIContextKind) -> String {

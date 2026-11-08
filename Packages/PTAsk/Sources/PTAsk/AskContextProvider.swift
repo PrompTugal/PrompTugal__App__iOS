@@ -23,10 +23,16 @@ public protocol AskContextProvider: AnyObject {
     func runTool(_ name: String, args: [String: String], now: Date) async -> (text: String, summary: String)?
     /// Prepared questions only this app offers.
     var extraStarters: [AIStarter] { get }
+    /// The line above the prepared questions, and the hint in the empty question box. They name only what this app can see.
+    var askIntro: String { get }
+    var askPlaceholder: String { get }
 }
 
 public extension AskContextProvider {
     var extraStarters: [AIStarter] { [] }
+    /// The Team app's text (what the app said before there was a public app).
+    var askIntro: String { "Ask about the summit, your day and the team. Choose below what Ask may see." }
+    var askPlaceholder: String { "Ask about today, your picks, the team…" }
 }
 
 /// The provider Ask uses. Set once at launch; the default needs no wiring.

@@ -18,6 +18,13 @@ final class SpeechDictation {
     @ObservationIgnored private var request: SFSpeechAudioBufferRecognitionRequest?
     @ObservationIgnored private var task: SFSpeechRecognitionTask?
 
+    /// Whether dictation for this language runs on the device (true) or at Apple's servers (false). Nil: no recognizer.
+    /// `start` uses the on-device recognizer whenever it exists, so this says what the next dictation will do.
+    static func supportsOnDevice(locale: Locale = Locale(identifier: "en-GB")) -> Bool? {
+        guard let recognizer = SFSpeechRecognizer(locale: locale) ?? SFSpeechRecognizer() else { return nil }
+        return recognizer.supportsOnDeviceRecognition
+    }
+
     func start(locale: Locale = Locale(identifier: "en-GB")) async {
         guard !isRecording else { return }
         error = nil

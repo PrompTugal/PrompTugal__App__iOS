@@ -12,6 +12,10 @@ public final class PublicAskProvider: AskContextProvider {
     public var supportedKinds: Set<AIContextKind> { [.agenda, .picks, .page] }
     public var personName: String? { nil }
 
+    /// The public app has no team context, so the text says nothing about a team.
+    public var askIntro: String { "Ask about the summit and your day. Choose below what Ask may see." }
+    public var askPlaceholder: String { "Ask about today and your picks…" }
+
     /// The reader's cache on this device, then the network (logged in Debug → Network).
     public func agenda() async -> [Event] {
         let cached = AskAgendaCache.events()
