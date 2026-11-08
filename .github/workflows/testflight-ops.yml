@@ -1,0 +1,85 @@
+name: TestFlight ops
+
+# Manual TestFlight / Beta App Review operations through the App Store Connect API
+# (scripts/testflight/tf.py). Every changing action only prints its plan unless
+# "confirm" is ticked. The API key comes from the repository secrets; nothing is printed.
+#
+#   status               builds, processing, beta review state, groups, expiry
+#   add-to-group         build + group
+#   remove-from-group    build + group
+#   set-test-info        build; sets What to Test (scripts/testflight/what-to-test.txt)
+#                        and the Beta App Review details (scripts/testflight/review-info.json
+#                        + review-notes.txt, with demo keys from secrets)
+#   submit-beta-review   build
+#   expire               build
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to do
+        type: choice
+        required: true
+        options: [status, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
+      build:
+        description: Build number (as in TestFlight). Not needed for status.
+        type: string
+        required: false
+      group:
+        description: Beta group name, for add-to-group and remove-from-group
+        type: string
+        required: false
+      confirm:
+        description: Tick to really change App Store Connect. Unticked, only the plan is printed.
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  ops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: testflight
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+      BUNDLE_ID: news.promptugal.reader
+      # Placeholders in scripts/testflight/review-notes.txt. Unset ones stay missing and are listed.
+      DEMO_OPENROUTER_KEY: ${{ secrets.DEMO_OPENROUTER_KEY }}
+      DEMO_VAULT_KEY: ${{ secrets.DEMO_VAULT_KEY }}
+      DEMO_LANE_NAME: ${{ vars.DEMO_LANE_NAME }}
+      CAP: ${{ vars.DEMO_OPENROUTER_CAP }}
+      CONTACT_ADDRESS: ${{ vars.REVIEW_CONTACT_ADDRESS }}
+      RESPONSE_TIME: ${{ vars.REVIEW_RESPONSE_TIME }}
+      ACTION: ${{ inputs.action }}
+      BUILD: ${{ inputs.build }}
+      GROUP: ${{ inputs.group }}
+      CONFIRM: ${{ inputs.confirm }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Unit tests (no network)
+        run: python3 -I scripts/testflight/tests/test_tf.py
+
+      - name: Run action
+        run: |
+          set -euo pipefail
+          args=()
+          [ "$CONFIRM" = "true" ] && flag=(--yes) || flag=()
+          case "$ACTION" in
+            status) args=(status) ;;
+            add-to-group|remove-from-group)
+              [ -n "$BUILD" ] && [ -n "$GROUP" ] || { echo "::error::build and group are required"; exit 1; }
+              args=("$ACTION" --build "$BUILD" --group "$GROUP" "${flag[@]}") ;;
+            set-test-info)
+              [ -n "$BUILD" ] || { echo "::error::build is required"; exit 1; }
+              args=(set-test-info --build "$BUILD" --whats-new scripts/testflight/what-to-test.txt \
+                    --review-file scripts/testflight/review-info.json "${flag[@]}") ;;
+            submit-beta-review|expire)
+              [ -n "$BUILD" ] || { echo "::error::build is required"; exit 1; }
+              args=("$ACTION" --build "$BUILD" "${flag[@]}") ;;
+          esac
+          python3 scripts/testflight/tf.py "${args[@]}"

@@ -1,9 +1,9 @@
 import Foundation
 import SGitVault
 import Testing
-@testable import PrompTugal
+@testable import PTVaultUI
 
-// App Review readiness fixes in PrompTugal/Vault (vault session): S1 trust store, S3 keychain errors,
+// App Review readiness fixes in PTVaultUI (vault session): S1 trust store, S3 keychain errors,
 // S5 "my vault", Q7 user-facing errors. The signature policy itself is tested in the SGitVault package.
 
 @Suite("My vault (S5)")

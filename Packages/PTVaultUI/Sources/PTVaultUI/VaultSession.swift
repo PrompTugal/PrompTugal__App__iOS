@@ -15,17 +15,17 @@ import UIKit
 ///
 /// Keys live in `VaultKeychain`; this object holds open `SGitVault` readers in memory only, and drops them on `lock()`.
 @MainActor @Observable
-final class VaultSession {
-    static let shared = VaultSession()
+public final class VaultSession {
+    public static let shared = VaultSession()
 
-    struct OpenVault: Identifiable {
-        enum State: Equatable { case idle, pulling, ready, failed(String) }
-        var id: String { vaultId }
-        let vaultId: String
-        let label: String
-        let role: String
-        let kind: VaultKey.Kind
-        let canWrite: Bool
+    public struct OpenVault: Identifiable {
+        public enum State: Equatable, Sendable { case idle, pulling, ready, failed(String) }
+        public var id: String { vaultId }
+        public let vaultId: String
+        public let label: String
+        public let role: String
+        public let kind: VaultKey.Kind
+        public let canWrite: Bool
         let vault: SGitVault
         var state: State = .idle
         /// Set when the head was refused because a key this device does not trust signed it.
@@ -36,27 +36,27 @@ final class VaultSession {
     }
 
     /// One row of the debug panel's key inventory. Never a key value.
-    struct KeyInventoryItem: Identifiable, Hashable {
-        var id: String { "\(store)/\(name)" }
-        let name: String
-        let store: String          // "Keychain", "Secure Enclave", "memory"
-        let protection: String
-        let detail: String
+    public struct KeyInventoryItem: Identifiable, Hashable {
+        public var id: String { "\(store)/\(name)" }
+        public let name: String
+        public let store: String          // "Keychain", "Secure Enclave", "memory"
+        public let protection: String
+        public let detail: String
     }
 
-    let log = VaultTrafficLog()
-    private(set) var vaults: [OpenVault] = []
+    public let log = VaultTrafficLog()
+    public private(set) var vaults: [OpenVault] = []
     private(set) var isUnlocking = false
     private(set) var lastError: String?
     /// Set when an account was opened by passkey: which vault is the reader vault.
-    private(set) var readerVaultId: String?
+    public private(set) var readerVaultId: String?
 
     private let keychain = VaultKeychain.shared
     /// Access token for writes (from the master vault's `.vault/access-token.json`, or entered). Memory only.
     private var accessToken: String?
-    var canPush: Bool { accessToken != nil }
+    public var canPush: Bool { accessToken != nil }
 
-    init() {
+    public init() {
         #if canImport(UIKit)
         // Pull when the app comes to the foreground; end the Face ID reuse window when it leaves.
         // Observed here so the app needs no scene-phase code for the vault.
@@ -70,7 +70,7 @@ final class VaultSession {
         #endif
     }
 
-    var isLocked: Bool { vaults.isEmpty }
+    public var isLocked: Bool { vaults.isEmpty }
     var hasStoredKeys: Bool { !keychain.inventory().isEmpty }
 
     /// Roles. "Mine" is the person's own vault; a teammate's or pasted vault is never treated as theirs (S5).
@@ -87,7 +87,7 @@ final class VaultSession {
 
     /// "My vault": the person's explicit choice, else their reader vault, else a vault they marked as theirs,
     /// else their master. Never just the first vault open: a teammate's vault must not become "mine" (S5).
-    var reader: OpenVault? {
+    public var reader: OpenVault? {
         let id = Self.myVaultId(among: vaults.map { (id: $0.vaultId, role: $0.role) }, chosen: chosenVaultId, account: readerVaultId)
         return id.flatMap { id in vaults.first { $0.vaultId == id } }
     }
@@ -104,7 +104,7 @@ final class VaultSession {
     var protectionSummary: String { keychain.protectionSummary() }
 
     /// Make an open vault "my vault" (an explicit choice), or clear the choice.
-    func chooseMyVault(_ vaultId: String?) {
+    public func chooseMyVault(_ vaultId: String?) {
         chosenVaultId = vaultId
         UserDefaults.standard.set(vaultId, forKey: "vault.myVault")
     }
@@ -120,7 +120,7 @@ final class VaultSession {
     /// Paste or QR text → key (PBKDF2 off the main actor for vault keys) → Keychain → open → pull.
     /// `mine`: the person says this is their own vault. Otherwise it is a teammate's (S5).
     @discardableResult
-    func importKey(_ raw: String, label: String = "Teammate vault", mine: Bool = false) async throws -> OpenVault {
+    public func importKey(_ raw: String, label: String = "Teammate vault", mine: Bool = false) async throws -> OpenVault {
         let key = try await SGitVault.deriveKey(from: VaultUnlock.keyText(fromScanned: raw), log: log)
         let role = mine ? Role.mine : Role.teammate
         try keychain.save(key, label: label, role: role)
@@ -138,7 +138,7 @@ final class VaultSession {
     }
 
     /// Short text for people (Q7). The full detail goes to the vault traffic log, never to the screen.
-    func userMessage(for error: Error, context: String = "") -> String {
+    public func userMessage(for error: Error, context: String = "") -> String {
         let detail = String(describing: error)
         log.record(VaultTrafficEvent(kind: .error, path: context.isEmpty ? "app" : context, detail: detail))
         if let vaultError = error as? VaultError { return vaultError.localizedDescription }
@@ -253,7 +253,7 @@ final class VaultSession {
         keychain.invalidate()
     }
 
-    /// For `BGAppRefreshTask` (identifier `VaultConfig.backgroundRefreshTask`): pulls the vaults already open
+    /// For `BGAppRefreshTask` (the identifier each app passes to `VaultBackground.register(taskIdentifier:)`): pulls the vaults already open
     /// in memory. Returns false when there is nothing open (keys stay behind Face ID; nothing is unlocked here).
     func backgroundRefresh() async -> Bool {
         guard !vaults.isEmpty else { return false }
@@ -277,7 +277,7 @@ final class VaultSession {
 
     // MARK: Reading
 
-    func readText(_ path: String, vaultId: String? = nil) async throws -> String {
+    public func readText(_ path: String, vaultId: String? = nil) async throws -> String {
         guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else {
             throw VaultError.vaultNotFoundOrWrongKey(vaultId: vaultId ?? "")
         }
@@ -322,7 +322,7 @@ final class VaultSession {
     // MARK: Files other features keep in the vault
 
     /// A file of the reader vault (or `vaultId`), or nil when the vault has no such file.
-    func readFile(_ path: String, vaultId: String? = nil) async throws -> Data? {
+    public func readFile(_ path: String, vaultId: String? = nil) async throws -> Data? {
         guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else { return nil }
         do { return try await entry.vault.read(path) } catch VaultError.fileNotFound { return nil }
     }
@@ -331,7 +331,7 @@ final class VaultSession {
     /// when another device moved the branch first. `transform` gets the latest content (nil if none)
     /// and returns the new content (nil = no change). Returns nil when nothing needed writing.
     @discardableResult
-    func update(_ path: String, vaultId: String? = nil, branch: String = "current", message: String,
+    public func update(_ path: String, vaultId: String? = nil, branch: String = "current", message: String,
                 transform: @escaping (Data?) throws -> Data?) async throws -> VaultPushResult? {
         guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else {
             throw VaultError.vaultNotFoundOrWrongKey(vaultId: vaultId ?? "")
@@ -365,7 +365,7 @@ final class VaultSession {
     // MARK: Append lanes (for collab)
 
     /// The files under `folder` (e.g. "lanes/to-newsroom") in a vault, newest name last.
-    func files(in folder: String, vaultId: String? = nil) async throws -> [VaultFile] {
+    public func files(in folder: String, vaultId: String? = nil) async throws -> [VaultFile] {
         guard let entry = vaultId.flatMap({ id in vaults.first { $0.vaultId == id } }) ?? reader else { return [] }
         let prefix = folder.hasSuffix("/") ? folder : folder + "/"
         return try await entry.vault.files().filter { $0.path.hasPrefix(prefix) }
@@ -375,7 +375,7 @@ final class VaultSession {
     /// (`<UTC time>-<device branch>-<4 hex>.json` unless given), so appends from several
     /// devices never conflict; a lost race on the ref only retries. Returns the path written.
     @discardableResult
-    func append(_ data: Data, to folder: String, name: String? = nil, vaultId: String? = nil,
+    public func append(_ data: Data, to folder: String, name: String? = nil, vaultId: String? = nil,
                 branch: String = "current", message: String? = nil) async throws -> String {
         let unique = name ?? VaultLanes.fileName(device: deviceBranch)
         let trimmed = folder.hasSuffix("/") ? String(folder.dropLast()) : folder
@@ -393,12 +393,12 @@ final class VaultSession {
     static let picksPath = VaultPicks.path
 
     /// The vault's picks document (nr.schedule.v1 JSON), or nil. Team's ScheduleStore decodes and merges it.
-    func loadPicks() async throws -> Data? { try await readFile(Self.picksPath) }
+    public func loadPicks() async throws -> Data? { try await readFile(Self.picksPath) }
 
     /// Merge local picks into the vault's copy (the website's rule: union by `id`, the vault's entry kept when
     /// both have it) and save. Returns the merged document, for `ScheduleStore.merge`.
     @discardableResult
-    func savePicks(_ local: Data) async throws -> Data {
+    public func savePicks(_ local: Data) async throws -> Data {
         var merged = local
         try await update(Self.picksPath, message: "Picks from the app") { current in
             merged = try Self.unionPicks(vault: current, local: local)
@@ -423,7 +423,7 @@ final class VaultSession {
     }
 
     /// Which keys exist and where. Never values.
-    var keyInventory: [KeyInventoryItem] {
+    public var keyInventory: [KeyInventoryItem] {
         var items = keychain.inventory().map { meta in
             KeyInventoryItem(name: "\(meta.label) · vault \(meta.vaultId)", store: "Keychain",
                              protection: meta.protection.rawValue,
