@@ -27,6 +27,8 @@ WEBSITE = Path(__file__).resolve().parent
 ROOT = WEBSITE.parent
 sys.path.insert(0, str(WEBSITE))
 import admin  # noqa: E402
+import build  # noqa: E402
+import version  # noqa: E402
 
 # Product pages name only our own products and the tech under them: PrompTugal, sgit and RiskMandate
 # (Dinis, 8 Nov: sgit is one of the things we do; RiskMandate powers the site). Add any other company's
@@ -96,8 +98,9 @@ class Page(HTMLParser):
 
 
 def project_version():
-    text = (ROOT / 'PrompTugal.xcodeproj' / 'project.pbxproj').read_text()
-    return set(re.findall(r'MARKETING_VERSION = ([^;]+);', text))
+    text = build.PROJECT.read_text()
+    release = version.read()
+    return {build.app_version(release, m) for m in re.findall(r'MARKETING_VERSION = ([^;]+);', text)}
 
 
 def validate(out):

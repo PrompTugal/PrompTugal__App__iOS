@@ -145,3 +145,21 @@ These replace the matching rows above.
 - **Runner load:** Screens runs by hand only during the split.
 - **RiskMandate publishes from the same Apple account (Dinis, 01:25 UTC).** It uses bundle `ai.riskmandate.app` and gets `testflight: true` once it builds. Uploads skip cleanly until Dinis creates its App Store Connect record, as for Team.
 - **Internal testers only during the summit (Dinis, 01:30 UTC).** Every build goes to each app's internal TestFlight group, and internal testers get it as soon as Apple finishes processing. There are no external groups and no Beta App Review submissions, so the per-push version numbers cost nothing. External testing and App Review come after the summit.
+
+## 8. Next round: app-first, three workstreams (conductor.B, 8 Nov, 10:20 UTC)
+
+Dinis chose three parallel workstreams from the [app-first brief](https://github.com/PrompTugal/PrompTugal__App__iOS/blob/claude/serene-edison-22z0xn/briefs/2026-11-08__app-first-platform/README.md). GitHub's standard macOS runners only.
+
+| Workstream | Owner | Where | Package graph |
+| --- | --- | --- | --- |
+| PTSync: manifest delta sync of `promptugal.news/api/v1/manifest.json`, packs, SHA-256 check, atomic switch, build seed, offline outbox | collab | `Packages/PTSync` | PTSync → PTCore only |
+| Decks and presenter mode in the PrompTugal app (investor decks first, four languages, offline, external display) | deck (new session) | `Packages/PTDeck`, screens wired in `Apps/PrompTugal/Shell/` through design | PTDeck → PTCore only. Deck data comes through an injected loader, so PTDeck does not wait for PTSync. |
+| Native stand-ups, command centre, reports and pulse in the Team app | team | `Apps/Team/Sources/Team/` | uses existing packages only |
+
+Rules for this round:
+
+- **New package entries:** the owner of a new package adds it to `apps.json` (`packages`, and the app's `packages` list) in the same commit that creates the package. `check_apps.py` must pass. Platform reviews; nobody else edits another app's project.
+- **No upward edges.** A package that needs PTSync data takes a closure or protocol; the app wires PTSync in at launch.
+- **CI:** quick runs (`quick=true`) for fix rounds, one full run for READY, `runner=macos-26`. Cancel your own red or superseded runs at once.
+- **Shell entries:** new screens in the PrompTugal app are registered by design in `Apps/PrompTugal/Shell/`; ask design with the screen id and view.
+- **Merge order:** whichever is green first. The conductor merges the exact green commit, as before.
