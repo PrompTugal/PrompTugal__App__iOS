@@ -64,7 +64,9 @@ struct StandupNativeTests {
         #expect(rows.map(\.slot) == ["2026-11-02-1300", "2026-11-05-1300", "2026-11-08-1200"])   // by time
         let next = try #require(rows.last)
         #expect(next.isNext)
-        #expect([next.decisions, next.questions, next.ideas, next.syncs, next.decided] == [21, 6, 1, 7, 0])
+        let counts: [Int] = [next.decisions, next.questions, next.ideas, next.syncs, next.decided]
+        let expected: [Int] = [21, 6, 1, 7, 0]
+        #expect(counts == expected)
         #expect(next.openTotal == 35)
         #expect(rows.filter(\.isNext).count == 1)
         // the list's label wins over the folder name, as for TeamStandup
@@ -122,7 +124,8 @@ struct StandupNativeTests {
     @Test func briefingsNameThePersonAndTheCount() {
         let agenda = TeamMarkdown.agenda(agendaPage, slot: "2026-11-08-1200")
         #expect(agenda.briefings.map(\.person) == ["dinis", "silvio"])
-        #expect(agenda.briefings.map(\.items) == [31, 12])
+        let counts: [Int] = agenda.briefings.map(\.items)
+        #expect(counts == [31, 12] as [Int])
         #expect(agenda.briefings.first?.name == "Dinis Cruz")
     }
 
@@ -231,7 +234,8 @@ struct TeamPageNativeTests {
         #expect(rows == [["Sun 8 Nov", "no check-in", "no check-in"], ["Sat 7 Nov", "check-in", "check-in"]])
         #expect(blocks[10] == .quote("A note from the editor."))
         #expect(blocks[11] == .code("code line"))
-        #expect(page.items.map(\.id) == Array(0..<12))
+        let ids: [Int] = page.items.map(\.id)
+        #expect(ids == Array(0..<12))
     }
 
     @Test func textThatIsNotMarkdownStillReadsAsAParagraph() {
