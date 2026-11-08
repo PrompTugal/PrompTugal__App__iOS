@@ -321,3 +321,16 @@ Copyright: listing.json now has a top-level `"copyright": "2026 PrompTugal"` (ge
 | P4 No permission without a tap | Products: PTAgenda, PTCore, PTDeck, PTExplore, PTNews, PTNowNext, PTWeb (**PTAsk, PTVaultUI and SGitVault unlinked**). The purpose strings are calendar write-only alone. No AVAudio/Speech/DataScanner/AVCapture/LAContext reference in the linked sources. The permission calls: reminders toggle, "Allow reminders" button, first pick, the bridge's native alert, Add to Calendar, all after a tap. Onboarding ("Choose talks" / "Not now") asks the OS for nothing and opens Explore. | GO; confirm with `plutil -p` on the built app and processing |
 | P5 Build = listing | Onboarding copy matches the listing ("Your picks never leave your phone"). NextHoursCard is not on any screen yet. **`BGTaskSchedulerPermittedIdentifiers` still lists `news.promptugal.reader.refresh` with `fetch`, and nothing registers it** (the vault task went; collab's glue is due in rc10). **`webcredentials:promptugal.news`** has no user left. | risk: register the refresh in rc10 or drop the identifier and `fetch`; remove `webcredentials` (apps) |
 | P6 Quality | The agenda seed is not refreshed in rc9; refresh it before the release build. Full run 42535357582: pending. | pending |
+
+## Run 19: rc10 e9629ca against acceptance-0.4.25 (23:50 UTC): GO in the repository
+
+Delta from rc9: apps 9d35705, design 706e416, i18n 01ed752, review 0e1103d.
+
+| Rule | Finding | State |
+| --- | --- | --- |
+| P1 One host | `ShellLink.page(in:hosts:isBlocked:)` and `publicHosts = ["promptugal.news"]`; PublicShell passes `publicHosts` (tests in ShellLinkTests). PTSync is now linked: `LiveFeed.publicApp` is `promptugal.news/feed.xml` and `api/v1/newsletter.json`, and `FeedSyncer` enforces `allowedHosts` (the feed's own host). `SyncSource.promptugalNews` is the only content source. | **GO** (the rc9 must-fix is done) |
+| P2 No identifiers or cookies | PTSync's `URLSessionTransport.ephemeral`: no cookie storage, `httpShouldSetCookies` false, accept policy never, no URL cache, no credential storage, the same User-Agent | GO |
+| P3 Data Not Collected | Manifest unchanged (collected types empty). PTSync reads file sizes and modification dates in its own container, which the existing FileTimestamp reason C617.1 covers. | GO |
+| P4 No permission without a tap | No new permission calls; PTSync asks for nothing | GO |
+| P5 Build = listing | `news.promptugal.reader.refresh` is registered (`PublicLive.start` → `SyncBackground.register`, before launch finishes) and scheduled on background, so it matches `fetch` and the Info.plist id. `webcredentials` is removed. Onboarding pt strings added. | GO |
+| P6 Quality | Seed refreshed (v0.1.752). Full run 42535656436: pending. | pending |
