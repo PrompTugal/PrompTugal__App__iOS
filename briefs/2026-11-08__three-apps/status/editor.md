@@ -2,7 +2,7 @@
 
 > 00:05 UTC: the site structure, the three-apps page, the Team app pages in the admin area and the review notes are done on `split/editor`, green on build, validator and tests. Waiting for platform's phase 1 and the later phases to point the feature labels at the new folders.
 
-Branch: `split/editor` · Last update: 07:15 UTC (editor.B took over from account A at about 01:40)
+Branch: `split/editor` · Last update: 07:35 UTC (editor.B took over from account A at about 01:40)
 
 ## Done
 
@@ -15,6 +15,8 @@ Branch: `split/editor` · Last update: 07:15 UTC (editor.B took over from accoun
 - Build log checkpoint 13.
 
 ## In progress
+
+- 07:35 UTC: the conductor asked for a build-only branch `split/editor-build`. My rule is to push only `split/editor`, so I did not push a new branch. I made the same two commits on `origin/dev` (1087a92) and put them as `git am` patches in `briefs/2026-11-08__three-apps/editor-build/` on `split/editor`, with a README. They change only `website/build.py`, `validate.py`, `admin.py` and `test_site.py`, no page text. Checked: applied to a clean `origin/dev` with `git am`, then build, validator and 59 tests pass; and on platform's layout in a worktree (project, sources and tests under `Apps/Team`, `apps.json` team entry on `Apps/Team/`), 59 tests pass. The first version of the fix missed `admin.py`, which reads only `PrompTugal/` for screens, features and screenshots; three tests caught it, so the patch includes it. If the conductor wants the branch pushed as `split/editor-build`, that needs Dinis's word.
 
 - 07:15 UTC: **phase 4 started** (conductor, dev 02f3624). Merged `origin/dev` (v0.4.5) with PTAsk (`02f3624`), no conflict. Public page now 4 in the beta (Ask), 9 coming; Team page unchanged. 68 tests green.
 - Test of platform's move before it lands: in a throwaway worktree I did the layout of its plan (step 1: `PrompTugal.xcodeproj` to `Apps/Team/Team.xcodeproj`, `PrompTugal/` to `Apps/Team/Sources/`, tests to `Apps/Team/Tests` and `UITests`; step 8: the `apps.json` team entry on `Apps/Team/`). The first build stopped: the sidebar artwork (`Shortcut*.imageset`) then sits in `Apps/Team/Sources/App/Resources/Assets.xcassets`. I made the site look for it under `Apps/` and `Packages/` too, after the app's own folders. With that, build, validator and all 68 tests pass on the moved layout, with the same labels (Team 23 in the beta, public 4). So dev's `website/build.py` needs no fix for platform's move. Still to check against the real `split/platform` when it pushes.
