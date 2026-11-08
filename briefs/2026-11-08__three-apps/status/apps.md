@@ -21,6 +21,8 @@
 4. Run check_apps.py (PTAgenda is already in the closure), dispatch app=promptugal, and check `scripts/release/check-embedded.sh` passes.
 5. Then set promptugal testflight true when the conductor switches.
 
+6. (conductor, from editor) Copy the website shortcut images (`Shortcut*.imageset`) from `PrompTugal/App/Resources/Assets.xcassets` into `Apps/PrompTugal/Resources/Assets.xcassets`, so the PrompTugal sidebar has icons. Team keeps its copy. Phase 4.
+
 ## RiskMandate upload
 - Dinis: same Apple account. Set `testflight: true` after the first green CI run. Upload waits for the App Store Connect record; release must skip with a clear line until then (conductor to confirm with release).
 
