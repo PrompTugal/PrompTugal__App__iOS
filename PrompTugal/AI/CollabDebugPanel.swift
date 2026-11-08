@@ -1,10 +1,11 @@
+import PTAsk
+import PTLanes
 import SwiftUI
 
 /// Debug → Collaboration and AI: which secrets exist (never values), the lanes log, the last Ask requests.
 /// For design's Debug screen: `NavigationLink("Collaboration and AI") { CollabDebugPanel() }`.
 struct CollabDebugPanel: View {
     var keys: AIKeyStore = .shared
-    var chat: ChatStore = .shared
     var lanes: LanesStore = .shared
 
     var body: some View {
@@ -23,11 +24,7 @@ struct CollabDebugPanel: View {
                 LabeledContent("Day planner", value: CollabHooks.dayPlan == nil ? "not wired" : "wired")
             }
             Section("Ask requests") {
-                let requests = chat.turns.compactMap(\.debug)
-                if requests.isEmpty { Text("No question asked yet.").foregroundStyle(.secondary) }
-                ForEach(Array(requests.enumerated().reversed()), id: \.offset) { _, request in
-                    AskDebugDisclosure(request: request)
-                }
+                AskRequestsDebugRows()
             }
             Section("Lanes log") {
                 if lanes.log.events.isEmpty { Text("No lane traffic yet.").foregroundStyle(.secondary) }

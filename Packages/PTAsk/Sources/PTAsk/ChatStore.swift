@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import PTCore
 
 /// One conversation with Ask. Lives for the app's run; nothing is saved to disk (as on the website, where the
 /// conversation stays in the tab).
@@ -180,7 +181,7 @@ final class ChatStore {
     }
 
     func refreshPreview() async {
-        preview = await gather(Set(AIContextKind.toggleable))
+        preview = await gather(Set(AIContextKind.toggleableHere))
     }
 
     /// The messages for the next request: the system message, then the conversation (errors left out).
@@ -253,10 +254,10 @@ final class ChatStore {
             turns.append(Turn(role: .error, text: CollabErrorText.short(error)))
             return
         }
-        let kinds = AIContextKind.allowed(include, toggles: contextKinds)
+        let kinds = AIContextKind.allowed(include, toggles: contextKinds).intersection(AskEnvironment.provider.supportedKinds)
         let parts = await gather(kinds) + extra().filter { kinds.contains($0.kind) }
         let toolSet = useTools ? AITools.definitions(for: kinds) : []
-        let system = AIContextAssembler.systemPrompt(parts: parts, now: .now, person: CollabHooks.me()?.name,
+        let system = AIContextAssembler.systemPrompt(parts: parts, now: .now, person: AskEnvironment.provider.personName,
                                                      tools: !toolSet.isEmpty)
         var messages = Self.messages(system: system, turns: history, question: question)
 
@@ -297,7 +298,7 @@ final class ChatStore {
             turns[index].debug = debug
             turns[index].streaming = false
             if !failed, calls.isEmpty, !turns[index].text.isEmpty {
-                turns[index].mentions = AITools.mentioned(in: turns[index].text, events: await CollabHooks.agenda())
+                turns[index].mentions = AITools.mentioned(in: turns[index].text, events: await AskEnvironment.provider.agenda())
             }
             guard !failed, !calls.isEmpty, !Task.isCancelled else { return }
 
