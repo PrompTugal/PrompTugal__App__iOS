@@ -86,8 +86,8 @@ enum PublicDestinations {
     /// The debug screen exists only in DEBUG builds: a Release build has no debug panel and no switch.
     static var debug: [ShellDestination] {
         #if DEBUG
-        [ShellDestination(id: "debug", title: "Debug", symbol: "ladybug", group: "Debug", debugOnly: true,
-                          summary: "Network and build") { AnyView(PublicDebugView()) }]
+        [ShellDestination(id: "debug", title: "Debug", symbol: "ladybug", group: "Debug",
+                          summary: "Network and build", debugOnly: true) { AnyView(PublicDebugView()) }]
         #else
         []
         #endif
