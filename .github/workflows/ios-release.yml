@@ -76,10 +76,10 @@ on:
         type: boolean
         default: false
       archive_signing:
-        description: 'Automatic signing: how the archive is signed (distribution = no Apple Development certificate; development = old behaviour)'
+        description: 'Automatic signing: how the archive is signed (codesign = unsigned archive, signed with codesign and its entitlements, no Apple Development certificate; development = old behaviour)'
         type: choice
-        options: [distribution, adhoc, codesign, unsigned, development]
-        default: distribution
+        options: [codesign, distribution, adhoc, unsigned, development]
+        default: codesign
       source_ref:
         description: 'Build another branch (e.g. night/platform) with these release scripts'
         type: string
@@ -366,7 +366,7 @@ jobs:
         if: steps.gate.outputs.ready == 'true' && env.RECORD_MISSING != 'true'
         env:
           MODE: ${{ steps.gate.outputs.mode }}
-          AUTO_ARCHIVE: ${{ inputs.archive_signing || 'distribution' }}
+          AUTO_ARCHIVE: ${{ inputs.archive_signing || 'codesign' }}
         run: scripts/release/testflight.sh
 
       - name: Wait for processing, answer export compliance, set What to Test

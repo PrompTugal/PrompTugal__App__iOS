@@ -6,9 +6,10 @@
 #              App Store profiles; ExportOptions signingStyle manual.
 #   automatic  Xcode signs with the API key (-allowProvisioningUpdates); export
 #              uses a cloud-managed distribution certificate (key role Admin).
-#              AUTO_ARCHIVE picks how the archive is signed: distribution (default:
-#              automatic, distribution identity, no Apple Development certificate),
-#              adhoc, unsigned, or development (creates a development certificate
+#              AUTO_ARCHIVE picks how the archive is signed: codesign (default: unsigned
+#              archive, each bundle signed with codesign and its entitlements, no
+#              Apple Development certificate; distribution and adhoc are refused by
+#              xcodebuild on this SDK), unsigned, or development (creates a development certificate
 #              per run and so uses up the account's limit).
 #
 # Upload: xcodebuild -exportArchive with destination upload and the API key
@@ -62,7 +63,7 @@ if [ "$MODE" = manual ]; then
   fi
   extra+=(-xcconfig "$xc")
 else
-  case "${AUTO_ARCHIVE:-distribution}" in
+  case "${AUTO_ARCHIVE:-codesign}" in
     development)  # Xcode signs the archive itself; creates an Apple Development certificate per run
       extra+=(-allowProvisioningUpdates "${auth[@]}")
       settings+=(CODE_SIGN_STYLE=Automatic) ;;
@@ -92,7 +93,7 @@ run_logged "Archive (signed)" "$LOGS/archive-signed.log" -- \
 
 app=$(find "$archive/Products/Applications" -maxdepth 1 -name '*.app' | head -1)
 
-if [ "$MODE" = automatic ] && [ "${AUTO_ARCHIVE:-distribution}" = codesign ]; then
+if [ "$MODE" = automatic ] && [ "${AUTO_ARCHIVE:-codesign}" = codesign ]; then
   # xcodebuild refuses ad-hoc signing on this SDK, so use the codesign tool: innermost first
   # (frameworks, then each extension, then the app), each with its own entitlements file.
   "$(dirname "$0")/targets.sh" > "$OUT/targets-archive.tsv"
