@@ -210,8 +210,10 @@ public struct ExploreListView: View {
         NavigationLink(value: item) {
             HStack(alignment: .firstTextBaseline, spacing: Space.m) {
                 if let time = ExploreFormat.time(item) {
+                    // One line, never wrapped: "12:00–12:45" or "11:05 AM" does not fit a fixed 64 pt.
                     Text(time).font(Typo.dataSmall).foregroundStyle(Palette.red)
-                        .frame(width: 64, alignment: .leading)
+                        .lineLimit(1).fixedSize()
+                        .frame(minWidth: 64, alignment: .leading)
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(item.title).font(Typo.headline)
