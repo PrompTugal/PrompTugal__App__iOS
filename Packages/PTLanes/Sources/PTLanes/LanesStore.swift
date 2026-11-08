@@ -209,6 +209,8 @@ public final class LanesStore {
     /// The inbox the website made for my account (`inbox.json` in my master vault: vault, token, enum key and
     /// the PKCS#8 private key). Held in memory only, dropped when the app quits.
     private(set) var websiteInbox: LaneAddress?
+    /// For the Team app's debug panel: LaneAddress stays internal, so the app asks a yes/no question.
+    public var hasWebsiteInbox: Bool { websiteInbox != nil }
     @ObservationIgnored private var websiteInboxSecrets: (enumKey: String, record: Data)?
 
     func openWebsiteInbox() async {
