@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyLists-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Merged with the generated Info.plist (GENERATE_INFOPLIST_FILE = YES).
+	     Only keys the INFOPLIST_KEY_ build settings cannot express live here.
+	     No NFC, no speech or microphone (the public app has no Lanes or dictation).
+	     The camera string (in the project) is for vault QR codes only. -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>news.promptugal.reader.refresh</string>
+		<string>news.promptugal.reader.vault-refresh</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>news.promptugal.reader</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>promptugal</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+	<key>WKAppBoundDomains</key>
+	<array>
+		<string>promptugal.news</string>
+	</array>
+</dict>
+</plist>
