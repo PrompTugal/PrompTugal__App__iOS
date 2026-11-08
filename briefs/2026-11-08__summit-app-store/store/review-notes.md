@@ -21,6 +21,6 @@ Its only placeholder is `<DEMO_OPENROUTER_KEY>`; the secret exists. The contact 
 - [ ] Each step names a screen that is in the build. Check against `Apps/PrompTugal/Shell/Destinations.swift`; the four tabs on `split/design` 3f24dcc are Now, My program, Explore, News, and Settings opens from the gear. If the build differs, change the steps.
 - [ ] The design branch's new screens (Now, Explore, decks) get a line here once they are merged and in the build.
 - [ ] Step 1 says "the star" (`AgendaView.swift:109`, `star` / `star.fill`): if design changes the pick button, change the word.
-- [ ] The secrets are set: `REVIEW_CONTACT_*` (the phone is still missing, Dinis) and `DEMO_OPENROUTER_KEY` (set).
+- [x] The secrets are set: all four `REVIEW_CONTACT_*` (testflight checked; App Store Connect already has the contact) and `DEMO_OPENROUTER_KEY`.
 - [ ] The review key works on the day of submission: one question in Ask on a device, and the cap leaves room for a few days of review.
 - [ ] The Ask card on Now and the Settings row are both in the build, and their labels match step 7.
