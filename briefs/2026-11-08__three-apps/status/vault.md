@@ -1,0 +1,74 @@
+# Vault: PTVaultUI
+
+> Plan written while waiting for PTCore. Vault/ has no upward dependencies, so the move is mechanical: `public` on what other code uses, plus one change to the background task id. No code moved yet.
+
+**Branch:** `split/vault` (from origin/dev 45284d0) · **Phase:** 1 (map and plan) · **Updated:** 8 Nov, night
+
+## Done
+
+- Read the three-apps README, contracts, and the overnight rules.
+- Mapped what `PrompTugal/Vault/` (9 files, 1526 lines) uses from outside.
+
+## What Vault/ uses from outside
+
+| Candidate | Used by Vault/? |
+| --- | --- |
+| Design (Theme, Components) | No. It uses system fonts and colours only (`.green`, `.headline` are SwiftUI's). |
+| HTTPClient | No. It uses `HTTPVaultTransport` from SGitVault. |
+| TeamFeatures | No. The comments mention `ScheduleStore`, nothing in code. |
+| Debug panels | No. `VaultTrafficLog` and `VaultTrafficEvent` live in SGitVault. `VaultTrafficPanel` (in Debug/) reads from Vault, not the other way. |
+| AppShell, Destinations | No. They call `VaultHomeView` and `VaultSession.shared.log`. |
+| Logs, Lisbon time, BuildInfo | No. |
+
+Imports in Vault/: Foundation, SwiftUI, UIKit, CryptoKit, Security, LocalAuthentication, AuthenticationServices, BackgroundTasks, VisionKit, Observation, SGitVault. PTVaultUI therefore needs only SGitVault, and `import PTCore` is not needed unless PTCore ends up holding something I have not found. I will check when I move.
+
+## Edges to break
+
+| Edge | Plan |
+| --- | --- |
+| **BGTask id** `news.promptugal.reader.vault-refresh` in `VaultConfig.backgroundRefreshTask` | Make it a parameter. `VaultBackground.register(taskIdentifier:)` stores it; `VaultBackground.schedule()` uses the stored id (and does nothing if register was not called). Remove the constant from `VaultConfig`. Each app's entry point passes its own id. Platform adds the id to that app's `BGTaskSchedulerPermittedIdentifiers`. |
+| **Keychain service** `news.promptugal.reader.vault` | Stays as it is. Keychain items are per app anyway, so Team does not collide with the public app. Moving the string would lock out existing keys on the public app. |
+| **Passkey relying party, PRF salt** | Unchanged. Same site for both apps. |
+| **Public API for callers outside the package** | Mark `public`: `VaultSession` (shared, log, reader, keyInventory, trustSigner, chooseMyVault, userMessage, backgroundRefresh, picks calls, importKey, myVaultId), `VaultTrustStore`, `VaultKeychain` members used outside, `VaultError`, `VaultHomeView`, `VaultBackground`, `OpenVault`. I will list the exact members from the callers (Schedule, AI, Lanes, Coordination, Debug, Shell, App) after PTCore lands and use only what they call. |
+
+## Outside code that calls Vault (must keep compiling)
+
+TeamFeatures, AIKeyStore, AskView, CollabDebugPanel, LaneAddress, LanesView, LanesStore, TeamNotes, VaultTrafficPanel, DebugHomeView, SystemPanels, DebugPreviews, CollabVaultGlue, CoordinationStore, CollabHooks, TeamPlansView, PrompTugalApp, TeamBackground, AppShell, Destinations, ScheduleVaultLink, ScheduleVaultSync, ScheduleMerge, MyDayView. These belong to other roles. They get `VaultSession` and friends through `@_exported import` in Exports.swift, so they need no change from me.
+
+## Added by the conductor
+
+- Collab defines `CollabVaultAccess` in PTCore (`CollabSeams.swift`, plain types only). PTVaultUI gets the conformance `VaultCollabAccess`, wrapping `VaultSession`, as `CollabVaultGlue` does today. That means PTVaultUI depends on PTCore after all. Waiting for the exact protocol from the conductor.
+- Make `VaultSession` API public for the callers in Schedule/, AI/, Lanes/ and Coordination/.
+
+## Tests
+
+- `PrompTugalTests/VaultAppTests.swift` (uses `@testable import PrompTugal`, covers trust store, Keychain errors, "my vault", user-facing errors) moves to `Packages/PTVaultUI/Tests/PTVaultUITests/` with `@testable import PTVaultUI`. Risk: Keychain tests may need an app host on the simulator. If they fail without a host, they stay in the Team app's test target and I write that here.
+- Other tests that mention Vault (AITests, ScheduleTests, CoordinationTests) stay with their owners.
+
+## In progress
+
+Nothing. Waiting for the conductor to say PTCore is on dev.
+
+## Next
+
+1. Merge origin/dev. `git mv` the 9 files to `Packages/PTVaultUI/Sources/PTVaultUI/`.
+2. Add `public`, change the BGTask id to a parameter, set `Package.swift` deps to SGitVault (platform owns the dependency list; I will ask if it is not already right).
+3. Move VaultAppTests. Push, read the iOS run, fix.
+
+## Blocked
+
+Phase 1 (empty packages linked) on dev. The conductor says I can start the move then, without waiting for PTCore, since Vault/ needs nothing from it. The conductor will ping me.
+
+## Needs from others
+
+- **Platform:** each app's entry point passes its own task id to `VaultBackground.register(taskIdentifier:)`: `news.promptugal.reader.vault-refresh` for the public app, a `news.promptugal.team...` id for Team. Add both to each app's Info. Today `PrompTugalApp.init` calls `VaultBackground.register()`; the call changes to take the id.
+- **Platform:** PTVaultUI's `Package.swift` lists SGitVault and PTCore only if PTCore is really needed. My map says SGitVault alone is enough, but the contracts graph allows both.
+
+## After the split (for the release notes)
+
+- Keychain items are scoped to the app's access group (team ID + bundle ID). The Team app (`news.promptugal.team`) will not see vault keys saved by today's app (`news.promptugal.reader`). Those keys stay with the public app. Teammates re-import their key in the Team app. No keychain-sharing group tonight.
+- Call-site change for platform's phase 4 entry points: `VaultBackground.register()` becomes `VaultBackground.register(taskIdentifier: "<this app's id>")`.
+
+## Last CI run
+
+None yet on this branch.

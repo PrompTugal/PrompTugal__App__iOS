@@ -29,9 +29,6 @@ enum VaultConfig {
     /// How long one Face ID unlock is reused (contract: 60 seconds or less).
     static let faceIDReuseSeconds: TimeInterval = 60
 
-    /// BGAppRefreshTask identifier. Platform adds it to BGTaskSchedulerPermittedIdentifiers.
-    static let backgroundRefreshTask = "news.promptugal.reader.vault-refresh"
-
     /// Ciphertext object cache, kept forever (objects never change).
     static var cacheDirectory: URL {
         let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
