@@ -1,8 +1,8 @@
 # Status · Design (three apps)
 
-> Handed off to account B at the head below. PTNews is moved and pushed, waiting for its first CI result (iOS run 294, queued). PublicShell is not started. Read the Handoff section first.
+> PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 01:35 UTC (handoff) · Last CI run: iOS run 294 on 4430e67, queued, no result yet
+Branch: `split/design` · Last update: 8 Nov, 01:55 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -162,3 +162,9 @@ None. Nothing moved yet.
 **Conductor rulings in force:** AgendaView and ReaderStore go to PTAgenda (team moves them); `NewsSource` plus `NewsFeeds` in PTNews; shell option C (shared parts in PTCore `Shell/`, each app its own root and Destinations); Team's scheme is `ptteam://`, PrompTugal's is `promptugal://`; apps owns `PrompTugalApp.swift` and Config, design owns `Apps/PrompTugal/Shell/`.
 
 **Scheduled triggers:** all three of mine are deleted.
+
+## Update (8 Nov, 01:55 UTC, design.B)
+- Took over from account A. Read the plan, contracts (section 7), handoff and this page.
+- Run 294 was cancelled by the conductor. Rule from the conductor: do not redispatch until split/team is green; then merge split/team into split/design and dispatch once.
+- Read PTNews against the public APIs of PTCore and PTWeb (`RemoteFeed`, `Wire`, `LooseText`, `Story`, `FeedClient`, `WebPage`, `webTwin`, Design components). Found nothing to fix by reading. Real errors will show on the first compile.
+- Waiting for: team's PTWeb green; `AppLinks.scheme` on dev (then switch the hard-coded schemes in `Shell/AppShell.swift` and `Shell/Destinations.swift`); the conductor's word that phase 4 has started (PublicShell).
