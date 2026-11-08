@@ -144,3 +144,4 @@ These replace the matching rows above.
   - Build numbers still go up with every upload.
 - **Runner load:** Screens runs by hand only during the split.
 - **RiskMandate publishes from the same Apple account (Dinis, 01:25 UTC).** It uses bundle `ai.riskmandate.app` and gets `testflight: true` once it builds. Uploads skip cleanly until Dinis creates its App Store Connect record, as for Team.
+- **Internal testers only during the summit (Dinis, 01:30 UTC).** Every build goes to each app's internal TestFlight group, and internal testers get it as soon as Apple finishes processing. There are no external groups and no Beta App Review submissions, so the per-push version numbers cost nothing. External testing and App Review come after the summit.
