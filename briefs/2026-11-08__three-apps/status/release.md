@@ -22,7 +22,8 @@
 
 ## In progress
 
-- First CI runs on `split/release` (push run and manual runs). Not green yet.
+- Merged `origin/dev` (phase 1) at `b15d34f`: workflows now use platform's `affected.py` (apps and packages) and `check_apps.py`/`test_apps.py`.
+- Waiting for macOS runners: iOS push run 271 and iOS release dry run 50 (both `b15d34f`) are queued. Earlier push runs 267 and 269 were green (changes job and plan worked); manual run 268 was cancelled (not by me).
 
 ## Next
 
@@ -42,4 +43,4 @@
 
 ## Last CI run
 
-- iOS push run 267 on `split/release`: `changes` green, macOS jobs running.
+- iOS 267 and 269: success (before the dev merge). iOS 271 and iOS release 50 on `b15d34f`: queued. Updated 00:10 UTC.
