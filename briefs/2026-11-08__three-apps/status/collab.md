@@ -2,7 +2,7 @@
 
 > Collab moves AI/ into PTAsk and Lanes/ into PTLanes. Coordination/ stays in the Team app. Phase 0 (mapping and plan) is done. Waiting for team, design and vault packages on dev. No code moved yet.
 
-**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed)
+**Branch:** `split/collab` (from `origin/dev` 45284d0) · **Last CI run:** none yet (no code changed) · **Updated:** 00:10 UTC
 
 ## Rulings from the conductor (7 Nov, 23:47 UTC)
 1. `CollabSeams.swift` goes in PTCore, one file, owned by collab: protocols, value types and the formatter only. `CollabVaultAccess` there uses plain types. `VaultCollabAccess` lives in PTVaultUI (agreed with vault through the conductor). Add the file only after platform's phase 2 is on dev.
@@ -22,7 +22,7 @@ PublicAskProvider uses `ScheduleStore` for `myPickIds`, `isPicked` and `togglePi
 - Designed the provider split (below).
 
 ## In progress
-- Nothing. Waiting for the conductor.
+- Merged origin/dev (phase 1, 9220d7e) into split/collab at 00:05 UTC. PTCore, PTAgenda, PTNews and PTVaultUI are still empty on dev (phase 2 and vault not landed). Waiting for the conductor's ping.
 
 ## Next
 1. When PTCore, PTAgenda, PTNews, PTVaultUI are on dev: merge `origin/dev`, then step 1 to 5 below.
