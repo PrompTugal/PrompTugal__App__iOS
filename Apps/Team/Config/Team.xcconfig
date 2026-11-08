@@ -1,0 +1,23 @@
+// Settings for the Team app target. Values set in the project file
+// win over these, so keep signing and entitlements here only.
+
+// Associated domains (webcredentials:promptugal.news, for the vault passkey) and time-sensitive
+// notifications. No App Group: the Team app has no widgets. In-App Purchase needs no
+// entitlement key; it is enabled on the App ID.
+CODE_SIGN_ENTITLEMENTS = $(PT_ENTITLEMENTS)
+PT_ENTITLEMENTS = Config/Team.entitlements
+
+// Keys the INFOPLIST_KEY_ settings cannot express (WKAppBoundDomains).
+// App-bound domains keep WebKit from purging those sites' storage (the
+// schedule) and are the only sites where the app injects scripts.
+INFOPLIST_FILE = Config/Team-Info.plist
+
+// Calendar export (team: CalendarExport) writes events only.
+INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = PT Team adds the sessions you pick to your calendar when you ask it to.
+
+// Your own team and overrides, never committed. Copy Local.xcconfig.example.
+#include? "../../../Config/Local.xcconfig"
+
+// Export compliance: the app uses only encryption built into iOS (CryptoKit,
+// CommonCrypto, HTTPS), which needs no export documentation.
+INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO
