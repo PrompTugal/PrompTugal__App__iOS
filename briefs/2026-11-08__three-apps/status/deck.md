@@ -2,7 +2,7 @@
 
 > PTDeck merges as is (via design's run). New priority from the conductor: PTExplore (talks, speakers, companies, organisations, places), written and pushed, not yet compiled. Both packages are on `split/deck`; one CI run next.
 
-Branch: `split/deck` · Last update: 8 Nov, 12:00 UTC · Last CI run: none yet
+Branch: `split/deck` · Last update: 8 Nov, 12:10 UTC · Last CI run: none on this branch; my run 382 cancelled at the conductor's request. Design's run on 1b5a0a7 (contains 5e2ab6f) proves PTDeck and PTExplore
 
 ## What the site publishes today
 - The decks are HTML pages (`investors/decks/<id>/index.html`, and `.../<lang>/index.html` for pt, fr, es), each with a Markdown twin (`index.md`). There is no deck JSON and no speaker notes. Images are on the page only.
@@ -42,3 +42,6 @@ Branch: `split/deck` · Last update: 8 Nov, 12:00 UTC · Last CI run: none yet
 - Start destinations for screenshots: `ExploreScreen(hooks:, start:)` with `ExploreStart`: `explore` → `.talks`, `explore.people` → `.speakers`, `explore.talk` → `.talk(ref: nil)` (first talk of 10 Nov, or a given reference), `explore.graph` → `.graph` (pushes `ExploreHooks.graph`).
 - Strings (i18n rule): every PTExplore string is `String(localized: "...", bundle: .module)` with the literal as the key; `Resources/Localizable.xcstrings` has the keys (empty, for i18n to fill); package has `defaultLocalization: "en"`. PTDeck is not localised yet (decks are not in the summit build).
 - Ruling F4, the one native talk detail: `TalkDetailView(talk: TalkRef, store: ExploreStore? = nil, actions: TalkActions = TalkActions())`. `TalkRef(_ event: Event)` (agenda), `TalkRef(id:)` (a pick id, `events/<slug>/index.html`, `event:<slug>` or a slug), `TalkRef(_ item: ExploreItem)`. `TalkActions(pick:, calendar:)` are view builders `(TalkRef) -> AnyView` for the pick star and Add to Calendar (team's views). It shows what the caller passed at once, then speakers from the talk's record (disk cache offline; "Connect to see speakers" when never loaded). `ExploreHooks(talkActions:)` feeds the same detail inside Explore.
+
+## 12:10 UTC
+- Conductor merges PTDeck and PTExplore through design's branch (1b5a0a7 contains 5e2ab6f). Run 382 cancelled to free runners. I stand by for fixes if design's run shows errors in my packages.
