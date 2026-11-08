@@ -4,6 +4,59 @@
 
 **Lead:** Dinis Cruz · **Conductor:** the coordinating session (Opus) · **Sessions:** Sonnet · **Starts:** 8 Nov, about 00:00 Lisbon · **Wrap-up:** about 10:00 Lisbon, with a report on this page
 
+## Outcome (8 Nov, 09:40 UTC)
+
+**The split is done on `dev`.** All seven packages, the Team app in `Apps/Team`, the public PrompTugal app in `Apps/PrompTugal` and the RiskMandate app in `Apps/RiskMandate` build and test from one repository. conductor.B (account B) took over from conductor A at 01:35 UTC and ran nine sessions on Sonnet.
+
+### What reached TestFlight
+
+| Record | Builds tonight | State at 09:40 |
+| --- | --- | --- |
+| **RiskMandate** (`ai.riskmandate.app`) | 0.4.0 (167), 0.4.4 (178) | **First builds ever.** In "RiskMandate Internal". |
+| **PrompTugal.news** (`news.promptugal.reader`) | 0.3.1 (161, 163, 165), 0.4.0 (167), 0.4.1 (168), 0.4.4 (178), 0.4.6 (180) | Builds of the old single app (the Team app's code) until the move. Next: the new public app, once its uploads are switched on. |
+| **PrompTugal Team** (`news.promptugal.team`) | first build in progress | The project moved at 08:58 (`d94a5b4`); its release dry run signed it with the right entitlements. |
+
+Every app now has one version: the repository's release tag (v0.4.n).
+
+### Merged to `dev`, in order
+
+| Commit | What | Proof |
+| --- | --- | --- |
+| `36508b6` | `ios.yml`: runner choice (GitHub or a self-hosted Mac), Xcode without sudo, one simulator per job on a self-hosted Mac | run 297 |
+| `5500c02` | PTCore: `AppLinks.scheme` (platform) | run 301 |
+| `d597b8f` | PTCore: `CollabSeams.swift` (collab) | run 302 |
+| `7863ae2`, `11ab789` | PTWeb and PTAgenda (team); site build finds files in `Packages/` | run 307 |
+| `fef81e2` | RiskMandate and PrompTugal projects, `apps.json` entries (apps) | run 305 |
+| `588551a` | One version for every app, quick CI mode, skip upload without an App Store Connect record (release) | runs 306, 62 |
+| `19b9f0a` | Reminders use `AppLinks.scheme`; StoreKit test bounded (team) | run 313 |
+| `d3cb173` | PTNews (design) | run 323 |
+| `6300658` | PTLanes and `VaultCollabAccess` (collab and vault, merged together) | run 326 |
+| `d36d147` | Signing without Apple Development certificates, entitlement guard (release) | dry runs 76, 77 |
+| `02f3624` | PTAsk with `AskContextProvider` (collab) | run 330 |
+| `cf4f548`, `b17edc3` | Site build and admin pages for the new layout (editor) | site checks on both layouts |
+| `d94a5b4` | **Phase 4:** Team app to `Apps/Team` (`news.promptugal.team`, `ptteam://`); widgets and intents to `Apps/PrompTugal`; `NowNext` in PTAgenda (platform, team) | run 338, dry run 81 |
+| `a84a277` | PrompTugal app: widgets and intents targets, Files sharing, shortcut images, public entry point (apps) | run 340 |
+| `105ca49` | PublicShell, Destinations and settings for the PrompTugal app; shared shell parts in PTCore (design) | run 342; `dev` run 345 proves all of phase 4 together |
+
+### What went wrong, and what we changed
+
+- **The CI queue.** GitHub's macOS runners ran about two jobs at a time, so a full run took one to two hours. Dinis's laptop ran three self-hosted runners from 02:05 to 03:15: a full run took 10 to 25 minutes. Runs now choose `runner=macos-26` or `runner=self-hosted`.
+- **The certificate limit.** Automatic signing created a new Apple Development certificate on every CI run. At 05:42 the account reached its limit and every upload failed (iOS release 69, 71). The fix archives unsigned, signs each bundle with its entitlements, and lets the export sign with the cloud-managed distribution certificate. A new guard fails the upload if any declared entitlement is missing from the exported app. The first two attempts were refused: one by Xcode, the other caught by the guard (it would have shipped without the app group).
+- **Cross-package seams.** Most fix rounds were symbols that moved to a package the caller could not see (PTWeb using PTAgenda's `ScheduleDocument`, a PTLanes test using PTAsk's `OpenRouter`). The rule held: move the piece down, or inject it.
+
+### Left after 10:00
+
+1. **The public PrompTugal app's first upload.** Its code is on `dev`. Uploads switch on (`apps.json` "promptugal" `testflight: true`) once `dev` run 345 is green and apps' signing dry run shows the entitlements of the app, the widgets and the intents.
+2. **Editor's branch**: the site describes the three apps, with privacy and support for the public app (widget, Siri, camera). It merges after the public app's first upload.
+3. **Team testers** import their vault key again in the Team app (the Keychain is per bundle ID). Say so in the first Team build's notes.
+
+### Decisions for Dinis
+
+1. **The 10 stale Apple Development certificates** (7–8 Nov) are no longer needed by CI. Revoking them is optional cleanup.
+2. **A permanent macOS runner.** The laptop runners worked well. "Content at website speed, capability at app speed" needs a Mac that is always on, or paid larger GitHub runners.
+3. **The app-first brief** (`briefs/2026-11-08__app-first-platform/`): answer its four questions before the next round. PTSync first.
+4. **External TestFlight and App Review** for the public app after the summit. Beta App Review approved 0.3.1 (4) in about 24 hours.
+
 ## What Dinis decided (8 Nov)
 
 1. **Three apps:**
