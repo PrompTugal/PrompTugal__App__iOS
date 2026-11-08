@@ -2,7 +2,7 @@
 
 > PTNews is moved and pushed but has never compiled. Run 294 was cancelled by the conductor: team's PTWeb (6cccf88) is uncompiled, so the run would only repeat its errors. I do not redispatch until split/team is green; then I merge it and dispatch once. PublicShell is not started (waits for phase 4).
 
-Branch: `split/design` · Last update: 8 Nov, 01:55 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
+Branch: `split/design` · Last update: 8 Nov, 02:52 UTC · Last CI run: iOS run 294 on 4430e67, cancelled by the conductor, no result
 
 ## Done
 - Read the three-apps README and contracts, the overnight rules, and the App Review readiness page.
@@ -168,3 +168,8 @@ None. Nothing moved yet.
 - Run 294 was cancelled by the conductor. Rule from the conductor: do not redispatch until split/team is green; then merge split/team into split/design and dispatch once.
 - Read PTNews against the public APIs of PTCore and PTWeb (`RemoteFeed`, `Wire`, `LooseText`, `Story`, `FeedClient`, `WebPage`, `webTwin`, Design components). Found nothing to fix by reading. Real errors will show on the first compile.
 - Waiting for: team's PTWeb green; `AppLinks.scheme` on dev (then switch the hard-coded schemes in `Shell/AppShell.swift` and `Shell/Destinations.swift`); the conductor's word that phase 4 has started (PublicShell).
+
+## Update (8 Nov, 02:52 UTC, design.B)
+- Still holding. Team's run 300 on 1bf25c5 is queued, so split/team is not green. AppLinks.scheme is not on dev (dev d519d14).
+- Conductor ruling (02:25): when split/team is green, merge origin/dev and split/team into split/design, then dispatch ios.yml once with app=all, runner=self-hosted.
+- Nothing pushed to split/design except this page. PublicShell is not started.
