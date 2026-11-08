@@ -42,3 +42,17 @@ struct PrompTugalApp: App {
         #endif
     }
 }
+
+
+/// The agenda built into the app (`agenda-seed.json`, a copy of promptugal.news/api/v1/live/agenda.json), read
+/// when nothing is cached yet so a first launch with no network still shows the programme.
+enum AgendaSeed {
+    private struct Seed: Decodable { let items: [Event] }
+
+    static func events(bundle: Bundle = .main) -> [Event] {
+        guard let url = bundle.url(forResource: "agenda-seed", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let seed = try? JSONDecoder().decode(Seed.self, from: data) else { return [] }
+        return seed.items.sorted(by: Event.earlier)
+    }
+}

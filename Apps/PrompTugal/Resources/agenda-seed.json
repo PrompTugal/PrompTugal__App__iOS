@@ -1,0 +1,2017 @@
+{
+  "version": "v0.1.704",
+  "about": "The summit days' events (9 to 12 November 2026, Lisbon time, which is UTC), for the live strip (assets/live/live.js). Each event's page has its source and the date it was read.",
+  "count": 201,
+  "items": [
+    {
+      "date": "2026-11-09",
+      "time": "07:30-22:00",
+      "title": "Registration: collect your lanyard and wristband (bring your ticket QR from the Web Summit app and photo ID)",
+      "place": "Humberto Delgado Airport, Terminal 1",
+      "kind": "registration",
+      "official": true,
+      "centre": false,
+      "page": "events/registration-2026-11-09/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "10:00-11:30",
+      "title": "Build Your Second Brain with Claude",
+      "place": "PTW Palace",
+      "kind": "side-event",
+      "official": false,
+      "centre": false,
+      "page": "events/build-your-second-brain-with-claude/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "12:00-22:00",
+      "title": "Registration: collect your lanyard and wristband (bring your ticket QR from the Web Summit app and photo ID)",
+      "place": "Pavilhão de Portugal",
+      "kind": "registration",
+      "official": true,
+      "centre": false,
+      "page": "events/registration-2026-11-09-pavilhao-de-portugal/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "18:00-20:00",
+      "title": "Opening Night 🎉",
+      "place": "Centre Stage",
+      "kind": "summit",
+      "official": true,
+      "centre": true,
+      "page": "events/opening-night/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-20:55",
+      "title": "Asia-Pacific meet & greet",
+      "place": "Meetup 2",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/asia-pacific-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-20:55",
+      "title": "East Asia meet & greet",
+      "place": "Meetup 6",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/east-asia-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-20:55",
+      "title": "Iberia meet & greet",
+      "place": "Meetup 4",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/iberia-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-20:55",
+      "title": "Latin America meet & greet",
+      "place": "Meetup 1",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/latin-america-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-20:55",
+      "title": "North America meet & greet",
+      "place": "Meetup 3",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/north-america-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-20:55",
+      "title": "UK meet & greet",
+      "place": "Meetup 5",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/uk-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-23:00",
+      "title": "Karaoke Night",
+      "place": "Disco Bar (Night Summit), MEO Arena and FIL",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/karaoke-night/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-23:00",
+      "title": "Music lovers meetup",
+      "place": "Social Club (Night Summit), MEO Arena and FIL",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/music-lovers-meetup/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-23:00",
+      "title": "Night Summit",
+      "place": "Pavilion 5",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/night-summit-a5e13950/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "20:00-23:00",
+      "title": "Speed Networking",
+      "place": "Speed Networking",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/speed-networking/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "21:00-21:55",
+      "title": "Balkans meet & greet",
+      "place": "Meetup 4",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/balkans-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "21:00-21:55",
+      "title": "Baltics meet & greet",
+      "place": "Meetup 1",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/baltics-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "21:00-21:55",
+      "title": "DACH meet & greet",
+      "place": "Meetup 3",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/dach-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "21:00-21:55",
+      "title": "Gulf meet & greet",
+      "place": "Meetup 6",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/gulf-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "21:00-21:55",
+      "title": "MENA meet & greet",
+      "place": "Meetup 2",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/mena-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "21:00-21:55",
+      "title": "Southeast Asia meet & greet",
+      "place": "Meetup 5",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/southeast-asia-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "22:00-22:55",
+      "title": "Australia & New Zealand meet & greet",
+      "place": "Meetup 6",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/australia-new-zealand-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "22:00-22:55",
+      "title": "Benelux meet & greet",
+      "place": "Meetup 3",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/benelux-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "22:00-22:55",
+      "title": "Central & Eastern Europe meet & greet",
+      "place": "Meetup 4",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/central-eastern-europe-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "22:00-22:55",
+      "title": "Europe meet & greet",
+      "place": "Meetup 1",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/europe-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "22:00-22:55",
+      "title": "Nordics meet & greet",
+      "place": "Meetup 2",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/nordics-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-09",
+      "time": "22:00-22:55",
+      "title": "South Asia meet & greet",
+      "place": "Meetup 5",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/south-asia-meet-greet/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "07:30-15:00",
+      "title": "Registration: collect your lanyard and wristband (bring your ticket QR from the Web Summit app and photo ID)",
+      "place": "Humberto Delgado Airport, Terminal 1",
+      "kind": "registration",
+      "official": true,
+      "centre": false,
+      "page": "events/registration-2026-11-10/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "07:30-17:00",
+      "title": "Registration: collect your lanyard and wristband (bring your ticket QR from the Web Summit app and photo ID)",
+      "place": "Pavilhão de Portugal",
+      "kind": "registration",
+      "official": true,
+      "centre": false,
+      "page": "events/registration-2026-11-10-pavilhao-de-portugal/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "09:24-09:54",
+      "title": "Breakout startups",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/breakout-startups-66205ff8/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "09:55-10:00",
+      "title": "Opening remarks",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/opening-remarks-7332868f/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:00-10:20",
+      "title": "When AI builds itself",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/when-ai-builds-itself/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:00-11:00",
+      "title": "PITCH group round 1",
+      "place": "Stage 6",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-1/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:00-11:00",
+      "title": "PITCH group round 2",
+      "place": "Stage 9",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-2/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:00-11:00",
+      "title": "PITCH group round 3",
+      "place": "Stage 12",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-3/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:05-10:30",
+      "title": "Free or controlled internet? The great DSA debate",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/free-or-controlled-internet-the-great-dsa-debate/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:20-10:45",
+      "title": "The open source advantage",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-open-source-advantage/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:30-10:50",
+      "title": "Press conference: PitchBook Goes Free for Startups + New Platform for Finding Them First",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-pitchbook-goes-free-for-startups-new/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:45-11:05",
+      "title": "The AI paradox: Smarter models, disappointing results",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-ai-paradox-smarter-models-disappointing-results/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:50-11:10",
+      "title": "Your AI agent just got a passport",
+      "place": "Stage 7",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/your-ai-agent-just-got-a-passport/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "10:55-11:15",
+      "title": "Chat Control 2.0: The government in your DMs?",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/chat-control-2-0-the-government-in-your-dms/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:00-11:20",
+      "title": "Guardrails for Doomsday: Can AI be regulated? (Press conference)",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/guardrails-for-doomsday-can-ai-be-regulated-press-conference/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:00-12:00",
+      "title": "PITCH group round 4",
+      "place": "Stage 6",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-4/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:00-12:00",
+      "title": "PITCH group round 5",
+      "place": "Stage 9",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-5/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:00-12:00",
+      "title": "PITCH group round 6",
+      "place": "Stage 12",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-6/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:05-11:25",
+      "title": "Has Europe’s tech moment arrived?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/has-europe-s-tech-moment-arrived/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:25-11:45",
+      "title": "Double agents: Are your employees' AI agents working for or against your business?",
+      "place": "Stage 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/double-agents-are-your-employees-ai-agents-working-for-or/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:25-11:50",
+      "title": "AI: your new news editor?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/ai-your-new-news-editor/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:30-11:50",
+      "title": "Press conference: RWS launches the world’s first culturally intelligent content platform",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-rws-launches-the-world-s-first-culturally/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:30-12:15",
+      "title": "Dogfooding AI security: Lessons from our own SOC [Hosted by Elastic]",
+      "place": "Masterclass 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/dogfooding-ai-security-lessons-from-our-own-soc-hosted-by/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "11:50-12:10",
+      "title": "The agentic internet: Who controls the web?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-agentic-internet-who-controls-the-web/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:00-12:20",
+      "title": "What do the US midterms tell us about the future of America? (Press conference)",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/what-do-the-us-midterms-tell-us-about-the-future-of-america/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:00-12:45",
+      "title": "A guide to Portugal's startup scene [Hosted by Startup Portugal]",
+      "place": "Masterclass 1",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/a-guide-to-portugal-s-startup-scene-hosted-by-startup/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:00-12:55",
+      "title": "Lisbon founders & CEOs meetup",
+      "place": "Meetup 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/lisbon-founders-ceos-meetup/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:00-13:00",
+      "title": "PITCH group round 7",
+      "place": "Stage 6",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-7/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:00-13:00",
+      "title": "PITCH group round 8",
+      "place": "Stage 9",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-8/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:00-13:00",
+      "title": "PITCH group round 9",
+      "place": "Stage 12",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-9/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:10-12:30",
+      "title": "Next generation banking with global ambition",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/next-generation-banking-with-global-ambition/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:30-12:50",
+      "title": "Regulating big tech",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/regulating-big-tech/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:30-13:15",
+      "title": "The attack has started, now what? See Log360 & Zia AI in action [Hosted by ManageEngine]",
+      "place": "Masterclass 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-attack-has-started-now-what-see-log360-zia-ai-in-action/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:30-13:15",
+      "title": "Trust issues: Letting AI agents into production safely [Hosted by Delinea]",
+      "place": "Masterclass 3",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/trust-issues-letting-ai-agents-into-production-safely/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:45-12:55",
+      "title": "Building security for the human-machine era",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/building-security-for-the-human-machine-era/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "12:50-13:10",
+      "title": "Taking the flying car from sci-fi to reality",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/taking-the-flying-car-from-sci-fi-to-reality/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "13:00-13:45",
+      "title": "Building a secure device foundation for AI [Hosted by Lenovo]",
+      "place": "Masterclass 2",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/building-a-secure-device-foundation-for-ai-hosted-by-lenovo/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "13:55-14:00",
+      "title": "Opening remarks",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/opening-remarks-405fbb59/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:00-14:20",
+      "title": "Making useful intelligence accessible to everyone",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/making-useful-intelligence-accessible-to-everyone/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:00-14:20",
+      "title": "Press conference with Xpeng Aridge Founder and President, Deli Zhao, and Xpeng Aridge CFO, Michael Du",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-xpeng-aridge-founder-and-president/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:00-14:45",
+      "title": "The knowledge your agents can't see: Building visual context",
+      "place": "Developer Lounge",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-knowledge-your-agents-can-t-see-building-visual-context/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:00-14:55",
+      "title": "Let's talk AI ethics & responsible tech meetup",
+      "place": "Meetup 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/let-s-talk-ai-ethics-responsible-tech-meetup/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:00-15:00",
+      "title": "PITCH group round 10",
+      "place": "Stage 6",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-10/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:00-15:00",
+      "title": "PITCH group round 11",
+      "place": "Stage 9",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-11/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:00-15:00",
+      "title": "PITCH group round 12",
+      "place": "Stage 12",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-12/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:20-14:40",
+      "title": "AI and the human at 300km/h",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/ai-and-the-human-at-300km-h/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:25-14:50",
+      "title": "Who takes the fall for autonomous AI?",
+      "place": "Stage 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/who-takes-the-fall-for-autonomous-ai/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:30-14:50",
+      "title": "Press conference with Gravitee CEO Rory Blundell: Collapsing confidence in agent AI security after six months of reality",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-gravitee-ceo-rory-blundell-collapsing/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "14:40-15:00",
+      "title": "Surviving the AI shift: Media’s new reality",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/surviving-the-ai-shift-media-s-new-reality/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "15:00-15:20",
+      "title": "Building a Star Trek vision",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/building-a-star-trek-vision/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "15:00-15:20",
+      "title": "Press conference with Replit President Michele Catasta",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-replit-president-michele-catasta/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "15:00-16:00",
+      "title": "PITCH group round 13",
+      "place": "Stage 6",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-13/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "15:00-16:00",
+      "title": "PITCH group round 14",
+      "place": "Stage 9",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-14/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "15:00-16:00",
+      "title": "PITCH group round 15",
+      "place": "Stage 12",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-group-round-15/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "15:20-15:40",
+      "title": "Building the operating system for modern sport",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/building-the-operating-system-for-modern-sport/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "15:30-15:50",
+      "title": "Press conference: Otter.ai Announces Its Biggest Multilingual Leap Yet",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-otter-ai-announces-its-biggest/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:00-16:20",
+      "title": "Press conference with Defined AI Founder Daniela Braga",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-defined-ai-founder-daniela-braga/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:00-16:20",
+      "title": "What does a self-driving company look like?",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/what-does-a-self-driving-company-look-like/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:00-16:20",
+      "title": "When AI leaves the screen",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/when-ai-leaves-the-screen/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:00-16:55",
+      "title": "Open source & contributors meetup",
+      "place": "Meetup 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/open-source-contributors-meetup/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:20-16:40",
+      "title": "AI: doom or boom?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/ai-doom-or-boom/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:30-16:50",
+      "title": "Press conference with NXTPLAY Capital Co-Founder & Professional Football Player, Thibaut Courtois, and NXTPLAY Co-founder & Managing Partner, Gonzalo Vila",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-nxtplay-capital-co-founder/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:30-17:15",
+      "title": "How to break your AI phone agent before your customers [Hosted by Twilio]",
+      "place": "Masterclass 4",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/how-to-break-your-ai-phone-agent-before-your-customers/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "16:45-17:45",
+      "title": "PITCH results announcement",
+      "place": "Stage 9",
+      "kind": "pitch",
+      "official": true,
+      "centre": false,
+      "page": "events/pitch-results-announcement/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "17:00-19:00",
+      "title": "Superconnectors Lisbon 2026 @ Web Summit",
+      "place": "Lisbon",
+      "kind": "side-event",
+      "official": false,
+      "centre": false,
+      "page": "events/superconnectors-lisbon-2026-web-summit/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "18:00-21:00",
+      "title": "Night Summit: speed networking, 100+ meetups, games (accredited attendees)",
+      "place": "Pavilion 5",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/night-summit-2026-11-10/index.html"
+    },
+    {
+      "date": "2026-11-10",
+      "time": "21:00-00:00",
+      "title": "Night Summit Downtown (bars open to the public; bring your lanyard to find each other)",
+      "place": "Quiosque Lisboa, Praça São Paulo",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/night-summit-downtown-2026-11-10/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "07:30-17:00",
+      "title": "Registration: collect your lanyard and wristband (bring your ticket QR from the Web Summit app and photo ID)",
+      "place": "Pavilhão de Portugal",
+      "kind": "registration",
+      "official": true,
+      "centre": false,
+      "page": "events/registration-2026-11-11/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "09:24-09:54",
+      "title": "Breakout startups",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/breakout-startups-6059c850/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:00-10:20",
+      "title": "The future of enterprise software has no middleman",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-future-of-enterprise-software-has-no-middleman/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:00-10:45",
+      "title": "Monitoring in the age of GenAI: Beyond golden signals [Hosted by Datadog]",
+      "place": "Masterclass 2",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/monitoring-in-the-age-of-genai-beyond-golden-signals-hosted/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:05-10:30",
+      "title": "Do we need a UN AI treaty?",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/do-we-need-a-un-ai-treaty/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:10-10:30",
+      "title": "The AI agent economy",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-ai-agent-economy/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:20-10:40",
+      "title": "Who wins in the age of agentic AI?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/who-wins-in-the-age-of-agentic-ai/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:30-10:50",
+      "title": "New Unicorn in Lisbon: Discord Announces Expansion (Press conference)",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/new-unicorn-in-lisbon-discord-announces-expansion-press/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:30-10:50",
+      "title": "The next digital frontier",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-next-digital-frontier/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:30-10:50",
+      "title": "Why your AI agents don’t understand your business – and how to fix it",
+      "place": "Stage 10",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/why-your-ai-agents-don-t-understand-your-business-and-how/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:40-11:00",
+      "title": "Investing in zero billion dollar markets",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/investing-in-zero-billion-dollar-markets/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "10:50-11:10",
+      "title": "Putting human rights into artificial intelligence",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/putting-human-rights-into-artificial-intelligence/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:00-11:20",
+      "title": "Press conference with Web Summit CEO and Founder Paddy Cosgrave",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-web-summit-ceo-and-founder-paddy/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:00-11:25",
+      "title": "Reporting at the speed of news",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/reporting-at-the-speed-of-news/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:05-11:30",
+      "title": "Building AI on your own terms: From technology discovery to real-world scale",
+      "place": "Stage 7",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/building-ai-on-your-own-terms-from-technology-discovery-to/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:10-11:30",
+      "title": "Don’t feed shit to agents",
+      "place": "Stage 10",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/don-t-feed-shit-to-agents/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:10-11:30",
+      "title": "The Portuguese economic success story",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-portuguese-economic-success-story/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:10-11:30",
+      "title": "Why AI agents stall at the production line",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/why-ai-agents-stall-at-the-production-line/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:25-11:45",
+      "title": "The race for compute, agentic AI, and ROI",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-race-for-compute-agentic-ai-and-roi/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:25-11:50",
+      "title": "In bots we trust: Defending money against AI-powered fraud",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/in-bots-we-trust-defending-money-against-ai-powered-fraud/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:30-11:50",
+      "title": "Beyond the AI agent hype",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/beyond-the-ai-agent-hype/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:30-11:50",
+      "title": "Press conference with Qualcomm SVP & General Manager, Durga Malladi",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-qualcomm-svp-general-manager-durga/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:30-12:15",
+      "title": "AI sovereignty: Data control, governance and predictable AI costs [Hosted by Austriacard Holdings]",
+      "place": "Masterclass 3",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/ai-sovereignty-data-control-governance-and-predictable-ai/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:30-12:30",
+      "title": "Fake by Default: How to prove what's real",
+      "place": "PTW Palace",
+      "kind": "side-event",
+      "official": false,
+      "centre": false,
+      "page": "events/fake-by-default/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:45-12:10",
+      "title": "The next financial crisis: Are we ready for what's coming?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-next-financial-crisis-are-we-ready-for-what-s-coming/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:50-12:10",
+      "title": "When AI verifies AI",
+      "place": "Stage 10",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/when-ai-verifies-ai/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "11:55-12:25",
+      "title": "Open vs closed: The debate defining the AI era",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/open-vs-closed-the-debate-defining-the-ai-era/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "12:10-12:30",
+      "title": "Give me a brake: Coding without crashing",
+      "place": "Stage 10",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/give-me-a-brake-coding-without-crashing/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "12:10-12:30",
+      "title": "Maintaining the human in an AI world",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/maintaining-the-human-in-an-ai-world/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "12:30-12:50",
+      "title": "Open or Closed AI models: which types of future do they represent? (Press conference)",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/open-or-closed-ai-models-which-types-of-future-do-they/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "12:30-12:50",
+      "title": "Teaching AI to see the world",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/teaching-ai-to-see-the-world/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "13:55-14:00",
+      "title": "Opening remarks",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/opening-remarks-d52f1575/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "14:00-14:25",
+      "title": "The techstyle stack",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-techstyle-stack/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "14:00-14:45",
+      "title": "Make AI agents work beyond the demo [Hosted by Make]",
+      "place": "Masterclass 2",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/make-ai-agents-work-beyond-the-demo-hosted-by-make/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "14:25-14:45",
+      "title": "The best offense is a machine-speed defence",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-best-offense-is-a-machine-speed-defence/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "14:30-14:50",
+      "title": "Campus Tejo, the science and technology ecosystem of Santarém (Press conference)",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/campus-tejo-the-science-and-technology-ecosystem-of/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "14:30-15:15",
+      "title": "Building AI in Europe: Practical support for innovators [Hosted by European Commission - DG Connect]",
+      "place": "Masterclass 3",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/building-ai-in-europe-practical-support-for-innovators/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "14:45-15:10",
+      "title": "The new battle for brand influence",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-new-battle-for-brand-influence/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:00-15:20",
+      "title": "Coaching an AI agent like human talent",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/coaching-an-ai-agent-like-human-talent/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:00-15:20",
+      "title": "Press conference with NordVPN CTO Marijus Briedis",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-nordvpn-cto-marijus-briedis/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:10-15:30",
+      "title": "Rewriting the rules of female longevity",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/rewriting-the-rules-of-female-longevity/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:20-15:40",
+      "title": "The autonomous enterprise: Networks, cloud and AI agents",
+      "place": "Stage 7",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-autonomous-enterprise-networks-cloud-and-ai-agents/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:20-15:40",
+      "title": "Viable systems, judgement, and AI safety",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/viable-systems-judgement-and-ai-safety/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:30-15:50",
+      "title": "Press conference with the world's first AI CEO co-founder Sam Pasupalak",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-the-world-s-first-ai-ceo-co-founder/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:30-15:50",
+      "title": "When software meets matter",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/when-software-meets-matter/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "15:50-16:10",
+      "title": "The enterprise reality check: Who’s controlling data and AI?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-enterprise-reality-check-who-s-controlling-data-and-ai/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "16:00-16:20",
+      "title": "Press conference with Amazon Vice President People Experience & Technology, J. Ofori Agboka",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-amazon-vice-president-people/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "16:08-16:19",
+      "title": "Agents don't need prompts, they need context",
+      "place": "Stage 9",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/agents-don-t-need-prompts-they-need-context/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "16:10-16:40",
+      "title": "The last days of the rules-based order?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-last-days-of-the-rules-based-order/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "16:30-16:50",
+      "title": "Press conference: Rewriting the Rules of Female Longevity",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-rewriting-the-rules-of-female-longevity/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "16:40-17:00",
+      "title": "Building the infrastructure for AI everywhere",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/building-the-infrastructure-for-ai-everywhere/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "17:00-18:00",
+      "title": "PITCH semi-final",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/pitch-semi-final/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "17:30-18:30",
+      "title": "From Automation to Autonomy: How AI is changing the way we run technology (Cisco showcase)",
+      "place": "PTW Palace",
+      "kind": "side-event",
+      "official": false,
+      "centre": false,
+      "page": "events/from-automation-to-autonomy/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "18:00-21:00",
+      "title": "Night Summit: speed networking, 100+ meetups, games (accredited attendees)",
+      "place": "Pavilion 5",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/night-summit-2026-11-11/index.html"
+    },
+    {
+      "date": "2026-11-11",
+      "time": "21:00-00:00",
+      "title": "Night Summit Downtown (bars open to the public; bring your lanyard to find each other)",
+      "place": "Quiosque Lisboa, Príncipe Real",
+      "kind": "night-summit",
+      "official": true,
+      "centre": false,
+      "page": "events/night-summit-downtown-2026-11-11/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "07:30-16:45",
+      "title": "Registration: collect your lanyard and wristband (bring your ticket QR from the Web Summit app and photo ID)",
+      "place": "Pavilhão de Portugal",
+      "kind": "registration",
+      "official": true,
+      "centre": false,
+      "page": "events/registration-2026-11-12/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "09:24-09:44",
+      "title": "Breakout startups",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/breakout-startups-1b2f3f6c/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:00-10:20",
+      "title": "Introducing: The next billion workers",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/introducing-the-next-billion-workers/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:05-10:25",
+      "title": "AI vs. AI: The battle for the cyber advantage",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/ai-vs-ai-the-battle-for-the-cyber-advantage/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:20-10:40",
+      "title": "Build for people: A ‘human x car x home’ approach",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/build-for-people-a-human-x-car-x-home-approach/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:25-10:45",
+      "title": "Outsmarting AI: Defence at machine speed",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/outsmarting-ai-defence-at-machine-speed/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:30-10:50",
+      "title": "Press conference with Vivaldi CEO Jon von Tetzchner",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-with-vivaldi-ceo-jon-von-tetzchner/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:30-10:50",
+      "title": "Taming the agent swarm",
+      "place": "Stage 10",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/taming-the-agent-swarm/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:30-10:50",
+      "title": "When AI agents go rogue",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/when-ai-agents-go-rogue/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:30-10:55",
+      "title": "Frontline Europe: AI, sovereignty and truth",
+      "place": "Stage 11",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/frontline-europe-ai-sovereignty-and-truth/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:40-11:00",
+      "title": "Beyond the IPO: The new exit playbook",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/beyond-the-ipo-the-new-exit-playbook/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:45-11:10",
+      "title": "The biological bottleneck",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-biological-bottleneck/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "10:50-11:00",
+      "title": "Connecting the bots: Building secure infrastructure for inter-agent communication",
+      "place": "Stage 9",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/connecting-the-bots-building-secure-infrastructure-for/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:00-11:20",
+      "title": "Press conference: Unicorn Factory Lisboa, Hub 71, Instituto Caldeira & Q Branch launch a Global Program for Scaleups",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-unicorn-factory-lisboa-hub-71-instituto/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:00-11:20",
+      "title": "The $100 million prompt",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/the-100-million-prompt/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:00-11:55",
+      "title": "When agents write the code, does a framework like Angular still matter?",
+      "place": "Developer Lounge",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/when-agents-write-the-code-does-a-framework-like-angular/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:10-11:30",
+      "title": "The attackers are open source. The defences aren't.",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-attackers-are-open-source-the-defences-aren-t/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:20-11:45",
+      "title": "Will tech save the energy sector or break it?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/will-tech-save-the-energy-sector-or-break-it/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:30-11:50",
+      "title": "Big Tech detox",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/big-tech-detox/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:30-11:50",
+      "title": "Who Wins When AI Does the Shopping? (Press conference)",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/who-wins-when-ai-does-the-shopping-press-conference/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:50-12:10",
+      "title": "An AI identity crisis",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/an-ai-identity-crisis/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "11:50-12:10",
+      "title": "Beyond the model: Scaling AI agents for professional work",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/beyond-the-model-scaling-ai-agents-for-professional-work/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:00-12:20",
+      "title": "Who let the agent in?",
+      "place": "Stage 7",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/who-let-the-agent-in/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:00-12:25",
+      "title": "People in cybersecurity meetup",
+      "place": "Meetup 1",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/people-in-cybersecurity-meetup/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:00-12:45",
+      "title": "Can you trust your AI agent's accessibility? [Hosted by Deque]",
+      "place": "Masterclass 2",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/can-you-trust-your-ai-agent-s-accessibility-hosted-by-deque/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:05-12:25",
+      "title": "Reclaiming human agency in the machine era",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/reclaiming-human-agency-in-the-machine-era/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:10-12:30",
+      "title": "It takes two to trust: Operationalizing public-private security",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/it-takes-two-to-trust-operationalizing-public-private/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:30-12:45",
+      "title": "Is there a foreign operative on your payroll?",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/is-there-a-foreign-operative-on-your-payroll/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:30-12:50",
+      "title": "Press conference: Road 2 Web Summit 2026 Winner",
+      "place": "Stage 2",
+      "kind": "announcement",
+      "official": true,
+      "centre": false,
+      "page": "events/press-conference-road-2-web-summit-2026-winner/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:30-13:00",
+      "title": "PITCH final",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/pitch-final/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "12:40-13:00",
+      "title": "Who holds the kill switch?",
+      "place": "Stage 10",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/who-holds-the-kill-switch/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "13:00-13:45",
+      "title": "Democratising AI platform engineering with open-source [Hosted by Cisco Systems]",
+      "place": "Masterclass 1",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/democratising-ai-platform-engineering-with-open-source/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "13:30-13:55",
+      "title": "Founders building in Portugal meetup",
+      "place": "Meetup 6",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/founders-building-in-portugal-meetup/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "13:40-14:00",
+      "title": "Securing the software foundation of civilisation with AI",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/securing-the-software-foundation-of-civilisation-with-ai/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:00-14:20",
+      "title": "AI’s octopus era",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/ai-s-octopus-era/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:00-14:45",
+      "title": "(A)Identity: Auth tips to secure AI agents and MCP servers",
+      "place": "Developer Lounge",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/a-identity-auth-tips-to-secure-ai-agents-and-mcp-servers/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:10-14:30",
+      "title": "Zombie data: How your data comes back to haunt you",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/zombie-data-how-your-data-comes-back-to-haunt-you/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:30-14:55",
+      "title": "Securing the AI frontline",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/securing-the-ai-frontline/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:30-15:15",
+      "title": "Building AI products without building everything [Hosted by Open VSX]",
+      "place": "Masterclass 3",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/building-ai-products-without-building-everything-hosted-by/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:40-15:00",
+      "title": "Western tech: All is not lost",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/western-tech-all-is-not-lost/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:45-15:05",
+      "title": "Pricing SaaS when users are agents",
+      "place": "Stage 7",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/pricing-saas-when-users-are-agents/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "14:55-15:25",
+      "title": "The real threat isn’t a nation-state, it’s a teenager.",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-real-threat-isn-t-a-nation-state-it-s-a-teenager/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:00-15:10",
+      "title": "PITCH winner announcement",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/pitch-winner-announcement/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:00-15:55",
+      "title": "Be part of history: help build the first pages of the agentic web",
+      "place": "Developer Lounge",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/be-part-of-history-help-build-the-first-pages-of-the/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:20-15:40",
+      "title": "Chinamaxxing: The new era of Made in China",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/chinamaxxing-the-new-era-of-made-in-china/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:25-15:50",
+      "title": "The perimeter is dead. So what happens to trust?",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/the-perimeter-is-dead-so-what-happens-to-trust/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:26-15:37",
+      "title": "AI sprawl is exploding. Get ahead of governance and security challenges before it’s boo late",
+      "place": "Stage 9",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/ai-sprawl-is-exploding-get-ahead-of-governance-and-security/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:40-16:00",
+      "title": "Hollywood's identity crisis",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/hollywood-s-identity-crisis/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:40-16:00",
+      "title": "Search built for AI agents",
+      "place": "Stage 13",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/search-built-for-ai-agents/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:45-16:05",
+      "title": "Rebuilding open source with AI: Lessons Learned",
+      "place": "Stage 10",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/rebuilding-open-source-with-ai-lessons-learned/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "15:50-16:10",
+      "title": "Beyond the front door: Identity, access, and user trust",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/beyond-the-front-door-identity-access-and-user-trust/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "16:00-16:20",
+      "title": "Who gets a say in football’s future?",
+      "place": "Centre Stage",
+      "kind": "session",
+      "official": true,
+      "centre": true,
+      "page": "events/who-gets-a-say-in-football-s-future/index.html"
+    },
+    {
+      "date": "2026-11-12",
+      "time": "16:10-16:20",
+      "title": "Brazil's blueprint for cyber resilience",
+      "place": "Stage 8",
+      "kind": "session",
+      "official": true,
+      "centre": false,
+      "page": "events/brazil-s-blueprint-for-cyber-resilience/index.html"
+    }
+  ]
+}
