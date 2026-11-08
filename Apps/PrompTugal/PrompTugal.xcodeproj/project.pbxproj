@@ -15,6 +15,10 @@
 		5B2719121FAAE433CDC36721 /* PTNews in Frameworks */ = {isa = PBXBuildFile; productRef = 8CA679B880DAE215C2AF5ED5 /* PTNews */; };
 		FA561A52534BBBD0C4E9F720 /* PTAsk in Frameworks */ = {isa = PBXBuildFile; productRef = FC463707B728B9D5A483F362 /* PTAsk */; };
 		62C152B82B7782691901FDE6 /* PTVaultUI in Frameworks */ = {isa = PBXBuildFile; productRef = 00CAC9EBB3D202E3D0898BB2 /* PTVaultUI */; };
+		AD62C18680AF9EC5A07E5B5A /* PrompTugalWidgets.appex in Embed */ = {isa = PBXBuildFile; fileRef = 0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A3DB1CA94FAE24CD2F779D42 /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 32154EC416734B3A20FF1516 /* PTAgenda */; };
+		FA989053DC0B7A670553676E /* PrompTugalIntents.appex in Embed */ = {isa = PBXBuildFile; fileRef = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BDF15758967827341EB8892C /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = 96AD954C7DFBE4B782BD54D8 /* PTAgenda */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,7 +36,46 @@
 			remoteGlobalIDString = C42BBFBFA7E400E628E67134;
 			remoteInfo = PrompTugal;
 		};
+		D82A9FBA6AE1562492F80F6B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D1B7B65E5A391DE11054994 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 281A8D4D22CEFAAC424D3F11;
+			remoteInfo = PrompTugalWidgets;
+		};
+		02E081EF9D04B92643A44371 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D1B7B65E5A391DE11054994 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 60E7667C1B4E419A08D5E34E;
+			remoteInfo = PrompTugalIntents;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D741540C8F35E20B7BF69DB9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AD62C18680AF9EC5A07E5B5A /* PrompTugalWidgets.appex in Embed */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9DDF65C75FD6BBED3D7BA460 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				FA989053DC0B7A670553676E /* PrompTugalIntents.appex in Embed */,
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0D08D33B90E2593AC336F1CD /* PrompTugal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrompTugal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,9 +85,27 @@
 		C5443ECAB7D4F84049BEE315 /* PrompTugal.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PrompTugal.xcconfig; sourceTree = "<group>"; };
 		C49BA95E746809D084900CB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		333310F24A95B1462843FAB0 /* PrompTugal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrompTugal.entitlements; sourceTree = "<group>"; };
+		0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PrompTugalWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = PrompTugalIntents.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F7F5B6477771DF67ACEDF98 /* PrompTugalWidgets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PrompTugalWidgets.xcconfig; sourceTree = "<group>"; };
+		173BAAD3DFD7FC9492D6BAC9 /* PrompTugalWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PrompTugalWidgets.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1E8648FB69DC47228A095984 /* Exceptions for "Widgets" folder in "PrompTugalWidgets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 281A8D4D22CEFAAC424D3F11 /* PrompTugalWidgets */;
+		};
+		2D6ABD781A05ADC494690EA7 /* Exceptions for "Intents" folder in "PrompTugalIntents" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 60E7667C1B4E419A08D5E34E /* PrompTugalIntents */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -66,6 +127,22 @@
 		782AFEF8406860F059472FD3 /* PrompTugalUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = PrompTugalUITests;
+			sourceTree = "<group>";
+		};
+		6CFE3E6C214F9403F25A558B /* Widgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1E8648FB69DC47228A095984 /* Exceptions for "Widgets" folder in "PrompTugalWidgets" target */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		284FAE64B7A9293CC58C7F3A /* Intents */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2D6ABD781A05ADC494690EA7 /* Exceptions for "Intents" folder in "PrompTugalIntents" target */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -99,6 +176,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BDD8E5E2CD88A6F5EF2B0FFA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3DB1CA94FAE24CD2F779D42 /* PTAgenda in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26B79C23DDC7CF27B5374D6E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDF15758967827341EB8892C /* PTAgenda in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -111,6 +204,9 @@
 				333310F24A95B1462843FAB0 /* PrompTugal.entitlements */,
 				E9107D2D073DF2248736FA42 /* Shell */,
 				BC4E976463CB6D4FC1A867C6 /* Resources */,
+				6CFE3E6C214F9403F25A558B /* Widgets */,
+				284FAE64B7A9293CC58C7F3A /* Intents */,
+				24288DB35CBEA772A356201E /* Config */,
 				EE7292B7BF0ED91485087DF6 /* PrompTugalTests */,
 				782AFEF8406860F059472FD3 /* PrompTugalUITests */,
 				6184002F36CB9470245CDFFC /* Products */,
@@ -121,10 +217,21 @@
 			isa = PBXGroup;
 			children = (
 				0D08D33B90E2593AC336F1CD /* PrompTugal.app */,
+				0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */,
+				6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */,
 				62385C59273EE55AFA88D2C5 /* PrompTugalTests.xctest */,
 				0A8D29CF7EFF87A0CDB981F2 /* PrompTugalUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		24288DB35CBEA772A356201E /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				6F7F5B6477771DF67ACEDF98 /* PrompTugalWidgets.xcconfig */,
+				173BAAD3DFD7FC9492D6BAC9 /* PrompTugalWidgets.entitlements */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,10 +244,14 @@
 				F548A5E00174CE2465CCEADD /* Sources */,
 				B72D14A8ACED880A8D3677F8 /* Frameworks */,
 				993399F14CF0C9CC050E2790 /* Resources */,
+				D741540C8F35E20B7BF69DB9 /* Embed Foundation Extensions */,
+				9DDF65C75FD6BBED3D7BA460 /* Embed ExtensionKit Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CB1D9406013A1F36B2D59296 /* PBXTargetDependency */,
+				159447E24F037E79232AB7A0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E9107D2D073DF2248736FA42 /* Shell */,
@@ -206,6 +317,52 @@
 			productReference = 0A8D29CF7EFF87A0CDB981F2;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		281A8D4D22CEFAAC424D3F11 /* PrompTugalWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A3DF9FD1B296AE9363FE7F67 /* Build configuration list for PBXNativeTarget "PrompTugalWidgets" */;
+			buildPhases = (
+				C64D94DFE431B8D523723842 /* Sources */,
+				BDD8E5E2CD88A6F5EF2B0FFA /* Frameworks */,
+				1DCCD0C23B12E4D81A7B5CAD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6CFE3E6C214F9403F25A558B /* Widgets */,
+			);
+			name = PrompTugalWidgets;
+			packageProductDependencies = (
+				32154EC416734B3A20FF1516 /* PTAgenda */,
+			);
+			productName = PrompTugalWidgets;
+			productReference = 0485B70324B3CAF2A57E8008 /* PrompTugalWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		60E7667C1B4E419A08D5E34E /* PrompTugalIntents */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82E445771E83D64782CC5DA1 /* Build configuration list for PBXNativeTarget "PrompTugalIntents" */;
+			buildPhases = (
+				15D484199298F120E2F44114 /* Sources */,
+				26B79C23DDC7CF27B5374D6E /* Frameworks */,
+				8878093D7ED557C9A745709B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				284FAE64B7A9293CC58C7F3A /* Intents */,
+			);
+			name = PrompTugalIntents;
+			packageProductDependencies = (
+				96AD954C7DFBE4B782BD54D8 /* PTAgenda */,
+			);
+			productName = PrompTugalIntents;
+			productReference = 6C6F5DFA30844948E2F80344 /* PrompTugalIntents.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -217,6 +374,12 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					C42BBFBFA7E400E628E67134 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					281A8D4D22CEFAAC424D3F11 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					60E7667C1B4E419A08D5E34E = {
 						CreatedOnToolsVersion = 26.0;
 					};
 					A8782B35500E350FE24C0CEB = {
@@ -253,6 +416,8 @@
 			projectRoot = "";
 			targets = (
 				C42BBFBFA7E400E628E67134 /* PrompTugal */,
+				281A8D4D22CEFAAC424D3F11 /* PrompTugalWidgets */,
+				60E7667C1B4E419A08D5E34E /* PrompTugalIntents */,
 				A8782B35500E350FE24C0CEB /* PrompTugalTests */,
 				9C75BE0784ED2694C6FBF502 /* PrompTugalUITests */,
 			);
@@ -275,6 +440,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BF6BD334D63488AA09DD50C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DCCD0C23B12E4D81A7B5CAD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8878093D7ED557C9A745709B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,6 +485,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C64D94DFE431B8D523723842 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		15D484199298F120E2F44114 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -318,6 +511,16 @@
 			isa = PBXTargetDependency;
 			target = C42BBFBFA7E400E628E67134 /* PrompTugal */;
 			targetProxy = FE50A5FBF00CF6D27CA1AACB /* PBXContainerItemProxy */;
+		};
+		CB1D9406013A1F36B2D59296 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 281A8D4D22CEFAAC424D3F11 /* PrompTugalWidgets */;
+			targetProxy = D82A9FBA6AE1562492F80F6B /* PBXContainerItemProxy */;
+		};
+		159447E24F037E79232AB7A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 60E7667C1B4E419A08D5E34E /* PrompTugalIntents */;
+			targetProxy = 02E081EF9D04B92643A44371 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -370,10 +573,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera only to scan the QR code of a vault key, when you choose to scan one.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -402,10 +607,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera only to scan the QR code of a vault key, when you choose to scan one.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "PrompTugal uses Face ID to unlock your vault keys on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -478,6 +685,90 @@
 			};
 			name = Release;
 		};
+		B73CA7A0E42F196A137B6992 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F7F5B6477771DF67ACEDF98 /* PrompTugalWidgets.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.reader.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C9917C8D6120F5C427290C25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F7F5B6477771DF67ACEDF98 /* PrompTugalWidgets.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.reader.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BC037556774B193CEE3B337B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F7F5B6477771DF67ACEDF98 /* PrompTugalWidgets.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Intents/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.reader.intents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7EEC50DAC62FDCFD1904F5F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6F7F5B6477771DF67ACEDF98 /* PrompTugalWidgets.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Intents/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PrompTugal;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.reader.intents;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -513,6 +804,24 @@
 			buildConfigurations = (
 				B304AF03039CEE06335DD6F7 /* Debug */,
 				5BF1D60E80885F69F3791B47 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A3DF9FD1B296AE9363FE7F67 /* Build configuration list for PBXNativeTarget "PrompTugalWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B73CA7A0E42F196A137B6992 /* Debug */,
+				C9917C8D6120F5C427290C25 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		82E445771E83D64782CC5DA1 /* Build configuration list for PBXNativeTarget "PrompTugalIntents" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC037556774B193CEE3B337B /* Debug */,
+				7EEC50DAC62FDCFD1904F5F3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -585,6 +894,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5B8B55ACA6103253EC13D5C9 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */;
 			productName = PTVaultUI;
+		};
+		32154EC416734B3A20FF1516 /* PTAgenda */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E0A0E149DD8F39A2BD3E95E5 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
+			productName = PTAgenda;
+		};
+		96AD954C7DFBE4B782BD54D8 /* PTAgenda */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E0A0E149DD8F39A2BD3E95E5 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
+			productName = PTAgenda;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -6,7 +6,8 @@
 set -u
 
 out="${SCRIPT_OUTPUT_FILE_0:-${TARGET_BUILD_DIR:-.}/${UNLOCALIZED_RESOURCES_FOLDER_PATH:-.}/BuildInfo.json}"
-root="${SRCROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+# SRCROOT is Apps/<app>/ in the three-apps layout; git and VERSION live at the repo root.
+root="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$(dirname "$out")"
 
 clean() { printf '%s' "$1" | tr -d '"\\\n\r' ; }
