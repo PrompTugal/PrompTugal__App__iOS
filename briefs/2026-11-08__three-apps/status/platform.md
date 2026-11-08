@@ -1,6 +1,6 @@
 # Platform status
 
-> Phase 1 and 2 are on dev. AppLinks.scheme (ce3602e) is merged with origin/dev into 439ad32; run 301 (self-hosted) is queued. Phase 4 prepared, not started.
+> Phases 1 and 2 and AppLinks.scheme are on dev (439ad32 merged as 5500c02, run 301 green). Phase 4 is prepared and not started; I move no file until the conductor says phase 4 has started.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -83,3 +83,7 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Merged origin/dev (36508b6 runner choice) into split/platform: 439ad32, no conflicts.
 - Cancelled run 292 (GitHub-hosted, ce3602e). Dispatched run 301 on 439ad32 with runner=self-hosted. Waiting for it, then READY to the conductor.
 - Phase 4: no file moved. Waiting for the conductor's go.
+
+## Update (02:57 UTC)
+- Run 301 green on 439ad32; the conductor merged it to dev as 5500c02.
+- Waiting for phase 3 on dev (PTWeb/PTAgenda, PTNews, CollabSeams/VaultCollabAccess, PTLanes, PTAsk). Then phase 4 per the nine steps above.
