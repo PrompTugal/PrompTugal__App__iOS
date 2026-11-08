@@ -296,7 +296,9 @@ def plan(cfg, env, files, platform_set, exists, variables):
     # Packages: test the ones the change touches (only those that exist and have tests).
     pk = cfg.get("packages", {})
     pkgs = []
-    chosen = set(pk) if mode != "diff" else affected_packages(cfg, files)
+    # A manual run on a branch tests the packages that branch changed (against dev); with no
+    # diff (a run on dev itself) it tests all of them. Tags always test all.
+    chosen = affected_packages(cfg, files) if (mode == "diff" or (mode == "manual" and files is not None)) else set(pk)
     if mode == "diff" and PLATFORM["packages"] is not None:
         chosen = set(PLATFORM["packages"]) & set(pk)
     for name in sorted(chosen):
@@ -375,6 +377,10 @@ def main_plan():
             how = f"release `{release_tag}` (`{release_sha[:7]}`): " + "; ".join(parts)
     else:
         rng = diff_range(env)
+        if not rng and env["EVENT_NAME"] == "workflow_dispatch" and env["REF"] not in ("refs/heads/dev", "refs/heads/main"):
+            sh("git", "fetch", "--quiet", "origin", "dev")
+            mb = sh("git", "merge-base", "origin/dev", env["SHA"]).stdout.strip()
+            rng = (mb, env["SHA"]) if mb else None
         if rng:
             base, head = rng
             files = files_between(base, head)
