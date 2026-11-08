@@ -60,6 +60,53 @@ jobs:
           echo "run=$run" >> "$GITHUB_OUTPUT"
           echo "run=$run"
 
+  # apps.json against the projects and the packages (scripts/apps/check_apps.py), on Ubuntu.
+  apps:
+    name: apps.json check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: check_apps.py and its tests
+        run: |
+          python3 scripts/apps/check_apps.py
+          python3 scripts/apps/test_apps.py
+          echo "### ✅ apps.json matches the projects and packages" >> "$GITHUB_STEP_SUMMARY"
+
+  # The local packages' own tests, on an iPhone simulator (the packages target iOS only).
+  packages:
+    name: Package tests
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: macos-26
+    concurrency:
+      group: ios-packages-${{ github.ref }}
+      cancel-in-progress: false
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Pick and boot an iPhone simulator
+        id: sim
+        timeout-minutes: 8
+        run: |
+          udid=$(.github/scripts/pick-simulator.py "iPhone")
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          xcrun simctl boot "$udid" || true
+
+      - name: Test each package
+        run: |
+          fail=0
+          for pkg in $(python3 -c "import json;print(' '.join(n for n in json.load(open('apps.json'))['packages'] if n != 'SGitVault'))"); do
+            ( cd "Packages/$pkg" && "$GITHUB_WORKSPACE/.github/scripts/run-and-summarize.sh" "$pkg package tests" \
+                "$RUNNER_TEMP/logs/pkg-$pkg.log" -- \
+                xcodebuild test -scheme "$pkg" -destination "id=${{ steps.sim.outputs.udid }}" \
+                  -derivedDataPath "$RUNNER_TEMP/dd-pkg" CODE_SIGNING_ALLOWED=NO ) || fail=1
+          done
+          exit $fail
+
   build:
     name: App build and SGitVault tests
     needs: gate

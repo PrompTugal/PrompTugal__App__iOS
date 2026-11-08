@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:PrompTugal.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/PTCore">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/PTWeb">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/PTAgenda">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/PTNews">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/PTAsk">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/PTLanes">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/PTVaultUI">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/SGitVault">
+   </FileRef>
+</Workspace>

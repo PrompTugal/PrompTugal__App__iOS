@@ -111,3 +111,29 @@ Rules:
 | editor | `website/`, `briefs/` (except other sessions' status pages) | `split/editor` |
 
 The conductor merges into `dev` once a branch is green and its phase is due.
+
+## 7. Rulings during the night
+
+These replace the matching rows above.
+
+- **PTCore also gets:**
+  - from platform (phase 2): `Event`, `Story`, `FeedClient` (with `site`), `RemoteFeed`, `LoadPhase`, `FeedCache`, and `enum Wire {}` with its loose decoders;
+  - from collab: one file, `CollabSeams.swift`, with protocols and value types only (Data, String, URL; no vault types). The conformance, `VaultCollabAccess`, lives in PTVaultUI;
+  - from design (phase 4): the shared shell UI parts, in its own subfolder `Sources/PTCore/Shell/`.
+- **PTAgenda also gets `News/AgendaView.swift` and `App/ReaderStore.swift`**, moved by team. ReaderStore has the schedule injected; it no longer uses `TeamFeatures.shared`.
+- **PTNews:**
+  - There is no `Dashboards/Graph*` file; the graph is already in `News/`.
+  - PTNews defines a `NewsSource` protocol and `NewsFeeds` (newsletter, board, graph).
+  - Each app adds `extension ReaderStore: NewsSource {}`.
+  - `DashboardData` forwards to `NewsFeeds`.
+- **The bridge works at JSON level.** ScheduleDocument, ScheduleMerge and ScheduleID stay in PTAgenda.
+- **Seams between packages** use small protocols and registries, set by each app at launch:
+  - in PTWeb: `WebBridgeHub`, `BridgeServices`;
+  - in PTAgenda: `AgendaTeamSource`, `AgendaIdentitySource`, `VaultPicksAccess`, `AgendaHub`.
+
+  The public app supplies team sources that return nothing.
+- **PTAsk** takes an `AskContextProvider`. `PublicAskProvider`, in PTAsk, offers the agenda, picks, news and the current page. `TeamAskProvider`, in the Team app (`Coordination/`), keeps every current team context and tool.
+- **App Intents, widgets and the intents extension** go with the PrompTugal app in phase 4. The Team app has no extensions tonight.
+- **URL schemes:** PrompTugal uses `promptugal://`, Team uses `ptteam://`. Reminder links take the scheme from the app.
+- **Background refresh:** `VaultBackground.register(taskIdentifier:)` takes each app's BGTask id from its entry point.
+- **Keychain after the split:** vault keys saved by today's app (`news.promptugal.reader`) stay with the PrompTugal app. In the Team app (`news.promptugal.team`), teammates import their key again.
