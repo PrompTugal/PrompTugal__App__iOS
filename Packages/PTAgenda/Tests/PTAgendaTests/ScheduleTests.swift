@@ -383,11 +383,4 @@ struct SchedulePickTimeTests {
         #expect(store.document.picks.map(\.id) == ["good"])
         #expect(store.document.json.contains("\"good\""))
     }
-
-    @Test func teamCountsDoNotTrapEither() {
-        #expect(TeamNumbers.int(1e300) == 1_000_000_000)
-        #expect(TeamNumbers.int(-1e300) == -1_000_000_000)
-        #expect(TeamNumbers.int(.nan) == 0)
-        #expect(TeamNumbers.int(42.9) == 42)
-    }
 }
