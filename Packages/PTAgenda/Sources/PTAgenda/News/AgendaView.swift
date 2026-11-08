@@ -32,7 +32,7 @@ public struct AgendaView: View {
         List {
             Section {
                 VStack(alignment: .leading, spacing: Space.s) {
-                    Kicker("Web Summit Lisbon · 9–12 Nov")
+                    Kicker("Lisbon · 9–12 Nov")
                     Text("Lisbon time \(model.clock)").font(Typo.data).foregroundStyle(Palette.muted)
                     FreshnessLabel(updated: store.agendaUpdated, staleAfter: 3600)
                 }
