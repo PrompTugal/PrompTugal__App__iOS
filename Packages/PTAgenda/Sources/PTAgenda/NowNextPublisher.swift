@@ -1,5 +1,6 @@
 import Foundation
 import WidgetKit
+import PTCore
 
 /// Writes the "Now and next" snapshot to the App Group for the widgets, and
 /// asks WidgetKit to reload them when it changes.
@@ -7,10 +8,10 @@ import WidgetKit
 /// Today the source is the reader's agenda and saved sessions. When the
 /// schedule store lands, its picks should be passed as `saved`.
 @MainActor
-enum NowNextPublisher {
+public enum NowNextPublisher {
     private static var lastWritten: NowNextSnapshot?
 
-    static func publish(agenda: [Event], saved: [Event], now: Date = .now) {
+    public static func publish(agenda: [Event], saved: [Event], now: Date = .now) {
         let snapshot = makeSnapshot(agenda: agenda, saved: saved, now: now)
         guard snapshot.items != lastWritten?.items else { return }
         do {
@@ -24,7 +25,7 @@ enum NowNextPublisher {
 
     /// Saved sessions that have not ended, plus agenda sessions running now or
     /// starting within `horizon`, up to `limit`, sorted by start.
-    nonisolated static func makeSnapshot(agenda: [Event], saved: [Event], now: Date,
+    public nonisolated static func makeSnapshot(agenda: [Event], saved: [Event], now: Date,
                                          horizon: TimeInterval = 36 * 3_600, limit: Int = 40) -> NowNextSnapshot {
         let savedIDs = Set(saved.map(\.id))
         func item(_ event: Event) -> NowNextSnapshot.Item? {

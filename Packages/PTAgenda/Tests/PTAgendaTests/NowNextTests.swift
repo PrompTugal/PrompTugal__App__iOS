@@ -1,6 +1,7 @@
 import Foundation
 import Testing
-@testable import PrompTugal
+import PTCore
+@testable import PTAgenda
 
 @Suite("Now and next snapshot")
 struct NowNextTests {

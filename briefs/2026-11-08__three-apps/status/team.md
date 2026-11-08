@@ -19,6 +19,8 @@
 
 - **07:15 UTC, phase 4 review:** Read platform's plan against my folders and sent platform and the conductor the findings: module rename breaks 10 `@testable import PrompTugal` files; InfoPlistTests expects the old BGTask ids; NowNext is not in PTAgenda yet, so the Team project must keep the Shared group and `NowNextPublisher` (or I delete the publisher calls); design's `AppShell.swift:97` must compare with `AppLinks.scheme`. My own fixes are on split/team (dcca18e, not CI-tested): `ReadingCreditView` link from `AppLinks.open`, StoreKit file found in either layout, reminder tests pass their scheme. Waiting for platform's move to review it.
 
+- **07:25 UTC, NowNext moved (conductor ruling):** `Shared/NowNext.swift` is now `Packages/PTAgenda/Sources/PTAgenda/NowNext.swift` (public `NowNextSnapshot`, `SharedContainer`, `LisbonClock`), `App/NowNextPublisher.swift` is `Packages/PTAgenda/Sources/PTAgenda/NowNextPublisher.swift` (public, no team dependency), and `NowNextTests.swift` is in `Packages/PTAgenda/Tests/PTAgendaTests/`. `SharedContainer.appGroup` is now a settable static (default `group.news.promptugal.reader`; an app with its own group sets it at launch). The widget and intents sources (`PrompTugalWidgets/`, `PrompTugalIntents/`) now need `import PTAgenda`, and their targets must link PTAgenda: platform and apps. Not CI-tested.
+
 ## Handoff
 
 **Handed off at 01:35 UTC, 8 Nov, to the session on account B.**
