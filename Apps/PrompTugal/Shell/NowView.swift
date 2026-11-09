@@ -436,7 +436,7 @@ struct PracticalCard: View {
             }
             Spacer(minLength: Space.xs)
             if chevron {
-                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(Palette.muted).accessibilityHidden(true)
+                Image(systemName: "chevron.forward").font(.footnote).foregroundStyle(Palette.muted).accessibilityHidden(true)
             }
         }
         .contentShape(Rectangle())
