@@ -8,8 +8,12 @@ public struct Event: Codable, Identifiable, Hashable {
     public let kind: String
     public let official: Bool
     public let page: String
+    /// How the session shows on a calendar: "free" or "busy" (the feed's `shows_as`). Nil when the feed does not say,
+    /// so older feeds still decode.
+    public let showsAs: String?
 
-    public init(date: String, time: String, title: String, place: String, kind: String, official: Bool, page: String) {
+    public init(date: String, time: String, title: String, place: String, kind: String, official: Bool, page: String,
+                showsAs: String? = nil) {
         self.date = date
         self.time = time
         self.title = title
@@ -17,6 +21,12 @@ public struct Event: Codable, Identifiable, Hashable {
         self.kind = kind
         self.official = official
         self.page = page
+        self.showsAs = showsAs
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case date, time, title, place, kind, official, page
+        case showsAs = "shows_as"
     }
 
     public var id: String { page }
