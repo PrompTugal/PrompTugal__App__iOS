@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 9 Nov 15:14 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 9 Nov 16:20 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 9 Nov 16:20 UTC: release #121 (dev 4c11461, v0.4.40, internal only): Team 221 and RiskMandate 221 uploaded and VALID; public app upload still processing. 0.4.23 (204) and 0.4.24 (205) still WAITING_FOR_REVIEW in Beta App Review (about 24h and 18h; last check 16:17), build 4 APPROVED.
 
 - 9 Nov 15:14 UTC: Team 0.4.34 (215, release #115) VALID in PrompTugal Team Internal. Public app: 0.4.23 (204) and 0.4.24 (205) still WAITING_FOR_REVIEW in Beta App Review (about 23h and 16h50; last check 15:11); build 4 APPROVED, all three in the external group; latest public build 0.4.25 (206), internal only. Dev at v0.4.39: releases #116 to #120 ran no app jobs.
 
