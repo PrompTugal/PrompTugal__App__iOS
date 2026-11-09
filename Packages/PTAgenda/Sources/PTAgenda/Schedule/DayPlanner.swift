@@ -6,7 +6,9 @@ import PTWeb
 /// and gaps, with walking time between venues. Pure, so it can be tested; `PlannerStore` feeds it.
 public enum DayPlanner {
     public struct Item: Identifiable, Hashable, Sendable {
-        public init(id: String, kind: Kind, title: String, start: Date, end: Date, place: String, eventID: String? = nil) {
+        public init(id: String, kind: Kind, title: String, start: Date, end: Date, place: String, eventID: String? = nil,
+                    free: Bool = false) {
+            self.free = free
             self.id = id
             self.kind = kind
             self.title = title
@@ -24,6 +26,7 @@ public enum DayPlanner {
         public let end: Date
         public let place: String
         public var eventID: String?        // schedule id (slug) for picks and proposals
+        public let free: Bool              // shows as free (registration, opening night, ...): never part of a clash
     }
 
     public struct Gap: Hashable, Sendable {
@@ -51,17 +54,21 @@ public enum DayPlanner {
     }
 
     public struct Clash: Hashable, Sendable {
-        public init(first: Item, second: Item, minutes: Int, travel: Bool) {
+        public init(first: Item, second: Item, minutes: Int, travel: Bool, split: Bool = false, leaveAt: Date? = nil) {
             self.first = first
             self.second = second
             self.minutes = minutes
             self.travel = travel
+            self.split = split
+            self.leaveAt = leaveAt
         }
 
         public let first: Item
         public let second: Item
         public let minutes: Int            // overlap, or travel time short, in minutes
         public let travel: Bool            // true when they do not overlap but there is no time to walk between them
+        public let split: Bool             // the person chose "I'll split my time": a planned overlap, not an error
+        public let leaveAt: Date?          // for a split: when to leave the first to reach the second (its start minus the walk)
     }
 
     public struct Plan: Sendable {
@@ -97,6 +104,8 @@ public enum DayPlanner {
         public var dayEnd = "19:00"
         public var minimumGapMinutes = 20
         public var officialOnly = false
+        /// The person's own busy or free choice by schedule id; it wins over the feed and the rule (`BusyRule`).
+        public var toggled: [String: ShowsAs] = [:]
         /// Event slugs suggested for this person (their command centre's sessions) or that teammates picked.
         public var suggested: [String: String] = [:]      // slug → reason
         public var teammates: [String: [String]] = [:]    // slug → teammates' names
@@ -122,22 +131,30 @@ public enum DayPlanner {
 
     // MARK: Clashes
 
-    /// Overlaps, and back-to-back items in places too far apart. `items` must be sorted by start.
-    public static func clashes(in items: [Item]) -> [Clash] {
+    /// Overlaps, and back-to-back items in places too far apart. `items` must be sorted by start (then id). Free items
+    /// never clash. `splits` are the `splitKey`s (the two ids sorted, joined by "|") the person chose to split.
+    public static func clashes(in items: [Item], splits: Set<String> = []) -> [Clash] {
         var clashes: [Clash] = []
         for (i, a) in items.enumerated() {
-            for b in items[(i + 1)...] where b.start < a.end.addingTimeInterval(TimeInterval(travelMinutes(from: a.place, to: b.place) * 60)) {
+            if a.free { continue }
+            for b in items[(i + 1)...] where !b.free && b.start < a.end.addingTimeInterval(TimeInterval(travelMinutes(from: a.place, to: b.place) * 60)) {
                 let overlap = Int(min(a.end, b.end).timeIntervalSince(b.start) / 60)
+                let walk = travelMinutes(from: a.place, to: b.place)
+                let isSplit = splits.contains(splitKey(a.id, b.id))
+                let leave: Date? = isSplit ? b.start.addingTimeInterval(-TimeInterval(walk * 60)) : nil
                 if overlap > 0 {
-                    clashes.append(Clash(first: a, second: b, minutes: overlap, travel: false))
+                    clashes.append(Clash(first: a, second: b, minutes: overlap, travel: false, split: isSplit, leaveAt: leave))
                 } else {
-                    let short = travelMinutes(from: a.place, to: b.place) - Int(b.start.timeIntervalSince(a.end) / 60)
-                    if short > 0 { clashes.append(Clash(first: a, second: b, minutes: short, travel: true)) }
+                    let short = walk - Int(b.start.timeIntervalSince(a.end) / 60)
+                    if short > 0 { clashes.append(Clash(first: a, second: b, minutes: short, travel: true, split: isSplit, leaveAt: leave)) }
                 }
             }
         }
         return clashes
     }
+
+    /// The key a split is kept under: the two item ids, sorted, joined by "|".
+    public static func splitKey(_ a: String, _ b: String) -> String { [a, b].sorted().joined(separator: "|") }
 
     // MARK: Planning
 
@@ -147,10 +164,13 @@ public enum DayPlanner {
                      preferences: Preferences = Preferences(),
                      titleKeywords: [String: Set<String>]? = nil) -> Plan {
         let pickedIDs = Set(picks.map(\.id))
-        var fixed: [Item] = picks.compactMap { pick in
+        var fixed: [Item] = picks.compactMap { pick -> Item? in
             guard let event = pick.event, event.date == day, let start = event.start else { return nil }
+            let end = event.end ?? start.addingTimeInterval(30 * 60)
+            let fallback = BusyRule.fallback(title: event.title, start: start, end: end)
+            let shows = preferences.toggled[pick.id] ?? event.showsAs.flatMap(ShowsAs.init(rawValue:)) ?? fallback
             return Item(id: "pick.\(pick.id)", kind: .pick, title: event.title, start: start,
-                        end: event.end ?? start.addingTimeInterval(30 * 60), place: event.place, eventID: pick.id)
+                        end: end, place: event.place, eventID: pick.id, free: shows == .free)
         }
         fixed += standups.filter { Lisbon.day($0.at) == day }.map {
             Item(id: "standup.\($0.slot)", kind: .standup, title: String(localized: "Team stand-up", bundle: .module), start: $0.at, end: $0.end,
@@ -159,6 +179,7 @@ public enum DayPlanner {
         fixed.sort { $0.start == $1.start ? $0.id < $1.id : $0.start < $1.start }
 
         let clashes = Self.clashes(in: fixed)
+        let busyFixed = fixed.filter { !$0.free }       // a free pick (registration, opening night) does not fill the day
 
         // Gaps inside the day window, between busy items.
         guard let windowStart = Lisbon.instant(day: day, clock: preferences.dayStart),
@@ -167,7 +188,7 @@ public enum DayPlanner {
         }
         var gaps: [Gap] = []
         var cursor = windowStart
-        for item in fixed where item.end > windowStart && item.start < windowEnd {
+        for item in busyFixed where item.end > windowStart && item.start < windowEnd {
             if item.start > cursor { gaps.append(Gap(start: cursor, end: item.start)) }
             cursor = max(cursor, item.end)
         }
@@ -179,8 +200,8 @@ public enum DayPlanner {
         var proposals: [Proposal] = []
         var alternatives: [String: [Proposal]] = [:]
         for gap in gaps {
-            let before = fixed.last { $0.end <= gap.start }
-            let after = fixed.first { $0.start >= gap.end }
+            let before = busyFixed.last { $0.end <= gap.start }
+            let after = busyFixed.first { $0.start >= gap.end }
             var options: [Proposal] = []
             for event in agenda where event.date == day {
                 guard let id = ScheduleID.fromPage(event.page), !pickedIDs.contains(id),
