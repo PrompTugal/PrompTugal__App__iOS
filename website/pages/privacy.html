@@ -1,62 +1,47 @@
 <!--
 title: Privacy · PrompTugal for iOS
-description: What the PrompTugal app keeps on your device, what it sends and to whom, where its keys are kept, and what it never does: no tracking, no analytics, no advertising, no team data.
+description: PrompTugal: Lisbon Summit collects no data. Your picks, settings and reminders stay on your phone; the app only downloads the public agenda and news from promptugal.news. No account, no analytics, no advertising, no tracking.
 nav: Privacy
 order: 7
 -->
 <section class="band">
   <div class="wrap prose">
     <p class="kicker">Privacy · PrompTugal app</p>
-    <h1>What the app keeps, what it sends, and to whom</h1>
-    <p class="lede">PrompTugal {{version}} has no account system, no analytics, no advertising and no tracking. It has no server of its own that collects data about you. The public app holds no team data and no messages between people. Some features send what you write to other services, and only when you use them. This page lists every one.</p>
+    <h1>The app collects no data</h1>
+    <p class="lede">PrompTugal: Lisbon Summit {{version}} has no account, no analytics, no advertising, no tracking and no third-party SDKs. Nothing you pick, type or set leaves your phone. On the App Store its privacy label reads <strong>Data Not Collected</strong>. This page explains what the app keeps on your device and the one thing it does on the network.</p>
 
     <h2 id="device">What stays on your device</h2>
     <ul>
-      <li><strong>Your schedule, saved sessions and cached feeds,</strong> in the app’s private storage, so the app works offline.</li>
-      <li><strong>Your settings and your reminder times.</strong></li>
-      <li><strong>Reminders.</strong> They are local notifications, scheduled on the device. Nothing is sent to a push server. The app asks for notification permission only after you tap to turn reminders on.</li>
-      <li><strong>Website data.</strong> Cookies and storage of the websites you open in the app, one separate store per website, kept apart from Safari.</li>
-      <li><strong>The Home Screen widget and the Siri and Shortcuts answers.</strong> The app keeps a small copy of what is on now and next (session titles, rooms, times, and whether you picked the session) in storage shared only with its own widget and Siri extension on this device. They read that copy. They do not use the network and they cannot open your vault.</li>
-      <li><strong>The camera,</strong> only when you tap Scan to read the QR code of a vault key. The code is read on the device, and the camera picture is not saved or sent.</li>
-      <li><strong>Your Ask conversation,</strong> only if you turn on “Keep the conversation on this device”. It is off by default.</li>
+      <li><strong>Your picks, your program and your settings,</strong> in the app’s private storage.</li>
+      <li><strong>A saved copy of the agenda and the news,</strong> so the app works with no signal. A copy of the agenda is also built into the app for the first launch.</li>
+      <li><strong>Reminders.</strong> They are local notifications, scheduled on the device. Nothing is sent to a push server. The app asks for notification permission the first time you pick a talk, or when you turn reminders on in Settings → Reminders, never before.</li>
+      <li><strong>The Home Screen widget and the Siri and Shortcuts answers.</strong> The app keeps a small copy of what is on now and next (session titles, rooms, times, and whether you picked the session) in storage shared only with its own widget and Siri extension on this device. They read that copy and do not use the network.</li>
     </ul>
     <p>Deleting the app removes all of it from the device.</p>
 
-    <h2 id="sent">What the app sends, and where</h2>
+    <h2 id="network">What the app does on the network</h2>
     <dl class="qa">
-      <dt>Public feeds</dt>
-      <dd>The agenda, the news and the graph come from <code>promptugal.news</code>. These are reads of public files. The app sends nothing about you with them.</dd>
-      <dt>Ask (AI chat)</dt>
-      <dd>When you use Ask, your question, the conversation so far and the kinds of context you switch on are sent with your own key to <code>openrouter.ai</code>, which passes them to the maker of the AI model you chose. Before the first message, Ask shows what it sends and to whom, and sends nothing until you tap <strong>Allow</strong>. Each kind of context has its own switch; only the public agenda is on by default. You can withdraw permission in Ask → Key and settings.</dd>
-      <dt>Your vault</dt>
-      <dd>If you set up a personal vault, its reads and writes go to the vault server, <code>dev.send.sgraph.ai</code>. Everything is encrypted on the device before it leaves; the server stores ciphertext and opaque file names. What the app may write to your vault: your picks, notes, and your OpenRouter key if you choose to save it there. You do not need a vault to use the app.</dd>
-      <dt>Dictation in Ask</dt>
-      <dd>Hold the microphone button in Ask to dictate. The first time, iOS asks for the microphone and for speech recognition. iOS transcribes on the device when your language allows it; otherwise it sends the audio to Apple’s speech service, under Apple’s terms. The app does not keep the audio. The words go into the question box and are sent to OpenRouter only if you send the question.</dd>
+      <dt>Public agenda and news</dt>
+      <dd>The app downloads the public agenda, news and graph from <code>promptugal.news</code>, and refreshes them now and then in the background. These are plain reads of public files, without cookies and without any identifier: nothing about you is sent. This is the only server the app talks to.</dd>
+      <dt>Pages from promptugal.news</dt>
+      <dd>Some talks and stories open as pages from <code>promptugal.news</code> inside the app. Links to any other website open in Safari, under that site’s own privacy policy.</dd>
       <dt>Calendar</dt>
       <dd>“Add to Calendar” writes a session to your calendar, only when you ask, with write-only access. The app cannot read your calendar.</dd>
-      <dt>The websites you open</dt>
-      <dd>Pages load from their own sites, as in a browser. Each site’s privacy policy covers what it does. Links that leave a site open in Safari.</dd>
     </dl>
-
-    <h2 id="keys">Where the keys are kept</h2>
-    <ul>
-      <li><strong>Vault keys</strong> are in the Keychain on this device only, behind Face ID (or your device passcode where Face ID is not set up), and wrapped by a Secure Enclave key where the device has one. They are never synced to iCloud.</li>
-      <li><strong>Your OpenRouter key</strong> is in the Keychain on this device only, readable after the first unlock. It is not behind Face ID, so Ask can work without a prompt, and it is never synced to iCloud.</li>
-      <li>No key appears in logs or crash reports.</li>
-    </ul>
 
     <h2 id="never">What the app never does</h2>
     <ul>
-      <li>No tracking, no analytics, no advertising, and no third-party SDKs: the app uses Apple’s frameworks only.</li>
-      <li>It does not sell or share data with data brokers, and it does not use your data to follow you across other apps or websites.</li>
-      <li>It does not read your contacts, photos, location or calendar.</li>
+      <li>No account, no tracking, no analytics, no advertising, and no third-party SDKs: the app uses Apple’s frameworks only.</li>
+      <li>It does not send your picks, notes or settings anywhere, and it has no server of its own that collects data about you.</li>
+      <li>It does not use the camera, microphone, Face ID, location, contacts or photos, and it does not read your calendar.</li>
+      <li>It does not sell or share data, and it does not follow you across other apps or websites.</li>
     </ul>
 
     <h2 id="team">The team’s own app</h2>
-    <p>The PrompTugal team also has an app of its own, for its people, its agents and its messages. It is a different app with a different bundle identifier, and it is not in the App Store. Its privacy page is in the <a href="admin/team-privacy.html">developer area</a>. Nothing from it is in this app.</p>
+    <p>The PrompTugal team also has an app of its own, for its people, its agents and its messages, with features such as an AI assistant and an encrypted vault. It is a different app with a different bundle identifier, and it is not in the App Store. Its privacy page is in the <a href="admin/team-privacy.html">developer area</a>. None of those features are in this app.</p>
 
     <h2 id="beta">The beta</h2>
-    <p>The beta is installed from Xcode or through TestFlight. If you join through TestFlight, Apple shares your email address, device model, OS version and any feedback or crash reports you send with the team. <a href="https://www.apple.com/legal/privacy/data/en/testflight/">Apple’s TestFlight privacy notice</a> has the details.</p>
+    <p>The beta is installed through TestFlight. Apple then shares your email address, device model, OS version and any feedback or crash reports you choose to send with the team. <a href="https://www.apple.com/legal/privacy/data/en/testflight/">Apple’s TestFlight privacy notice</a> has the details. Older beta builds may still include features that the App Store version does not have.</p>
 
     <h2 id="check">Checking this, and questions</h2>
     <p>The whole app is open source on <a href="{{repo_url}}">GitHub</a>. In the app, this page and the support page are linked from Settings → About. Questions about privacy: see <a href="support.html#contact">Contact</a>.</p>
