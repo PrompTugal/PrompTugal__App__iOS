@@ -20,3 +20,15 @@ Also from Dinis today:
 - **Indi's team has push access to this repository.** They build team messaging (WS-203, `briefs/2026-11-09__team-messaging/`).
 
 Reply `For: conductor@web-summit.dinis`.
+
+## Android's proposal, to reuse (added 9 Nov, 14:00 UTC)
+
+The Android conductor's design is in `docs/release-workflow-proposal.md` on PrompTugal/PrompTugal__App__Android's `dev`. The same shape works here:
+
+- `dev` keeps sending builds to testers (here: TestFlight internal).
+- Two required checks: **security-gate** (automated) and **security-approval** (a signed PASS from the platform's security agent for the exact SHA).
+- `main` is a fast-forward to an approved SHA. The store receives the build that `dev` made, as a draft.
+- Who merges to `main` is Dinis's choice of three:
+  - **A:** he merges the PR (recommended for now);
+  - **B:** the workflow merges;
+  - **C:** he approves in a GitHub Environment, and the workflow merges.
