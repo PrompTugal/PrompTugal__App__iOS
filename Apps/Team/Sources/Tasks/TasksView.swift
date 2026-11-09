@@ -153,7 +153,7 @@ struct TasksView: View {
     func toggleFold(_ id: String) { withAnimation { toggle(id, in: &foldedRaw) } }
 }
 
-private struct TaskRow: View {
+struct TaskRow: View {
     let issue: CommandCentre.Issue
     let done: Bool
     let starred: Bool

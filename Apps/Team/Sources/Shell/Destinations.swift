@@ -71,10 +71,14 @@ enum Destinations {
     // MARK: Today (design; schedule from team)
 
     static let today: [AppDestination] = [
-        AppDestination(id: "today", title: "My day", symbol: "sun.max", section: .today, kind: .native,
-                       summary: "Your day: what is next, the stand-up, what waits on you", phoneTab: 0, tabTitle: "Now") { AnyView(TodayView()) },
-        AppDestination(id: "team.schedule", title: "My schedule", symbol: "calendar", section: .today,
-                       kind: .hybrid, summary: "Your schedule: the summit, the team and your picks, by day", phoneTab: 2, tabTitle: "Plan") { AnyView(MyDayView(title: "Plan")) },
+        AppDestination(id: "today", title: "Now", symbol: "sun.max", section: .today, kind: .native,
+                       summary: "Where you are, your day as one timeline, what needs you", phoneTab: 0, tabTitle: "Now") { AnyView(NowTabView()) },
+        AppDestination(id: "plan", title: "Plan", symbol: "calendar", section: .today, kind: .native,
+                       summary: "Each day as a timeline: the summit, the stand-ups, meetups and what is due", phoneTab: 2, tabTitle: "Plan") { AnyView(PlanTabView()) },
+        AppDestination(id: "today.classic", title: "My day (classic)", symbol: "sun.min", section: .today, kind: .native,
+                       summary: "The earlier My day: stand-up, briefing, the counts") { AnyView(TodayView()) },
+        AppDestination(id: "team.schedule", title: "My picks", symbol: "star", section: .today,
+                       kind: .hybrid, summary: "Picks from the website and the app, the planner, the calendar") { AnyView(MyDayView(title: "My picks")) },
         AppDestination(id: "tasks", title: "Tasks", symbol: "checkmark.circle", section: .today,
                        kind: .native, summary: "Everyone's tasks by day, starred first", phoneTab: 3, tabTitle: "Tasks") { AnyView(TasksView()) },
         AppDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", section: .today,
@@ -103,8 +107,12 @@ enum Destinations {
                        phoneTab: 4, tabTitle: "Messages") {
             AnyView(MessagesView())
         },
-        AppDestination(id: "collab.plans", title: "Where is everyone", symbol: "person.2.wave.2",
-                       section: .team, kind: .native, summary: "Who is where, who is together, where to meet", phoneTab: 1, tabTitle: "Where") {
+        AppDestination(id: "where", title: "Where", symbol: "person.2.wave.2", section: .team, kind: .native,
+                       summary: "The team's faces and places; share yours in two taps", phoneTab: 1, tabTitle: "Where") {
+            AnyView(WhereTabView())
+        },
+        AppDestination(id: "collab.plans", title: "Shared plans", symbol: "person.3.sequence",
+                       section: .team, kind: .native, summary: "Shared plans: together, clashes, where to meet") {
             AnyView(TeamPlansView())
         },
         AppDestination(id: "team.home", title: "Team home", symbol: "person.crop.circle", section: .team,

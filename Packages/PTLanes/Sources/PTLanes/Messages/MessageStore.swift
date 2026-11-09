@@ -200,11 +200,15 @@ public final class MessageStore: ObservableObject {
 
     // MARK: Sending
 
-    public func send(text: String, to names: [String], group: String? = nil) async throws {
+    /// `kind` is a Messaging-FS kind: "text", or "location" for the Team app's "I'm at" (a place, never GPS).
+    public func send(text: String, to names: [String], group: String? = nil, kind: String = "text") async throws {
         let others = names.filter { $0 != me }
         let thread = group.map(MessageThread.group) ?? MessageThread.direct([me] + others)
-        try await deliver(.chat(ChatMessage(thread: thread, from: me, to: others, text: text)), to: others)
+        try await deliver(.chat(ChatMessage(thread: thread, from: me, to: others, kind: kind, text: text)), to: others)
     }
+
+    /// True when messages can be sent and received (the vault's lanes are configured).
+    public var isSwitchedOn: Bool { transport.notReadyReason == nil }
 
     public func sendEmail(subject: String, text: String, to names: [String], thread: String? = nil, replyTo: String? = nil) async throws {
         let others = names.filter { $0 != me }

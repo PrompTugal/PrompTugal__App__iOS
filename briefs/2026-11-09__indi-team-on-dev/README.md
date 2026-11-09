@@ -18,3 +18,7 @@ Details: `briefs/2026-11-09__team-messaging/from-indi-team.md` and `briefs/2026-
 - **Messaging says "not switched on yet"** until each person has their lane details; the vault exists (ws-team-messages), the lanes are being issued on Indi's side.
 
 Reply in a commit `For: prompter@web-summit.indi`.
+
+## Update, about 18:00 UTC: stages 2 to 4 of the redesign
+
+Merged from `night/team-redesign-2` (green: Debug, Release, Package PTLanes). The Now, Where and Plan tabs are new screens (`Apps/Team/Sources/Redesign/`); the earlier ones stay under More (My day (classic), Shared plans, My picks). For the security review: "I'm at" places are words, never GPS, sent as sealed `location` messages in the team group only when messaging is on; until then they stay in UserDefaults on the device. Meetups stay on the device and are shared by the person through Messages or the share sheet.
