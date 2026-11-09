@@ -200,14 +200,20 @@ public enum ReminderInbox {
 public final class ReminderDelegate: NSObject, UNUserNotificationCenterDelegate, Sendable {
     public override init() { super.init() }
 
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        [.banner, .list, .sound]
+    // The completion-handler forms, finished on the main queue. The async forms crashed the app the moment a person
+    // tapped a notification (Dinis, 9 November 2026): their completion ran off the main thread, which iOS refuses.
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification,
+                                       withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        DispatchQueue.main.async { completionHandler([.banner, .list, .sound]) }
     }
 
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
+                                       withCompletionHandler completionHandler: @escaping () -> Void) {
         let info = response.notification.request.content.userInfo
-        guard let text = info["open"] as? String, let url = URL(string: text), url.scheme == AppLinks.scheme else { return }
-        await MainActor.run { ReminderInbox.receive(url) }
+        let url = (info["open"] as? String).flatMap(URL.init(string:)).flatMap { $0.scheme == AppLinks.scheme ? $0 : nil }
+        DispatchQueue.main.async {
+            if let url { MainActor.assumeIsolated { ReminderInbox.receive(url) } }
+            completionHandler()
+        }
     }
 }
