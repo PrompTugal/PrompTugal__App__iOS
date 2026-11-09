@@ -1,3 +1,7 @@
 // Settings for the RiskMandate app target. Values set in the project file win over these.
 // Your own team and overrides, never committed: copy Config/Local.xcconfig.example.
 #include? "../../Config/Local.xcconfig"
+
+// The Workbench uses Apple's Foundation Models (iOS 26) while the app supports iOS 18:
+// weak-link it so the app still launches where the framework does not exist.
+OTHER_LDFLAGS = $(inherited) -weak_framework FoundationModels
