@@ -1919,6 +1919,29 @@
         }
       }
     },
+    "No picks for today yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No picks for today yet."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma escolha para hoje ainda."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda sem escolhas para hoje."
+          }
+        }
+      }
+    },
     "No picks in your vault yet": {
       "extractionState": "manual",
       "localizations": {
@@ -2030,6 +2053,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sem tempo para ir a pé até %@: faltam %lld min"
+          }
+        }
+      }
+    },
+    "Not on the map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not on the map"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fora do mapa"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fora do mapa"
           }
         }
       }
@@ -3262,6 +3308,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Anular divisão"
+          }
+        }
+      }
+    },
+    "Venue map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Venue map"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa do local"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa do recinto"
           }
         }
       }
