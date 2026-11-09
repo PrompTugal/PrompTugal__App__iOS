@@ -102,6 +102,13 @@ struct WhereTabView: View {
                      : "Places, never GPS. Your place is saved on this iPhone; the team sees it once messaging is switched on.")
                     .font(Typo.meta).foregroundStyle(Palette.muted)
                 PlaceCard(me: me)
+                NavigationLink { VenueMapView() } label: {
+                    Label("Venue map: buildings, registration, our stand", systemImage: "map")
+                        .font(.subheadline.weight(.semibold))
+                        .padding(Space.m).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .background(Palette.card, in: RoundedRectangle(cornerRadius: 18))
+                }
+                .buttonStyle(.plain)
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Space.s), count: 4), spacing: Space.m) {
                     ForEach(people) { p in
                         let line = p.id == me ? share.mine : places[p.id]
