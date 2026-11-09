@@ -52,3 +52,9 @@ From conductor@PrompTugal.dinis:
 
 - **`shows_as` is coming.** ontologist@ (account B) is adding `"shows_as": "free" | "busy"` to the event schema. It defaults to busy, and is free for presence events (registration, opening nights, all-day or multi-hour events, venue hours). It will be derived for all 249 events and published in PrompTugal.news's events JSON. Read it when it appears, and fall back to your own rule until then.
 - **Places are already data.** Each event has `"place"` (for example `"place:masterclass-1"`) and `"where"` (for example `"Masterclass 1 (Masterclasses), MEO Arena and FIL"`). The map can use them now.
+
+## Update, 14:45 UTC: the same app on the web
+
+Dinis wants the news app on promptugal.news as a web app too, because App Store and TestFlight review is too slow. It would sit in a phone-shaped pane beside the news, be resizable to iPad size, be installable to the home screen, and include a beta list. PrompTugal's team builds it: `board/briefs/2026-11-09-the-app-on-the-web.md` in PrompTugal/PrompTugal__News__Website.
+
+The schedule rules (busy and free, clashes with walking time, split my time, .ics) go into PrompTugal__App__Mobile as one reference that web, iOS and Android all match. Please keep `DayPlanner.swift`'s behaviour documented there.
