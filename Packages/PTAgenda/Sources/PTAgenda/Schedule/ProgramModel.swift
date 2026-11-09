@@ -122,8 +122,13 @@ public struct ProgramModel: Equatable, Sendable {
         let mine = all.filter { Lisbon.day($0.start) == day }.sorted(by: NowModel.soonest)
         dayEntries = mine
 
+        // The pick's own copy of the event carries the feed's `shows_as`; the app's hook is the second source.
+        var eventFeed: [String: ShowsAs] = [:]
+        for pick in picks { if let value = pick.event?.showsAs.flatMap(ShowsAs.init(rawValue:)) { eventFeed[pick.id] = value } }
         var shows: [String: ShowsAs] = [:]
-        for entry in mine { shows[entry.id] = BusyRule.resolve(entry, toggled: toggled[entry.id], feed: feed(entry.id)) }
+        for entry in mine {
+            shows[entry.id] = BusyRule.resolve(entry, toggled: toggled[entry.id], feed: eventFeed[entry.id] ?? feed(entry.id))
+        }
         showsAs = shows
         let busy = mine.filter { shows[$0.id] == .busy }
         let presence = mine.filter { shows[$0.id] == .free }

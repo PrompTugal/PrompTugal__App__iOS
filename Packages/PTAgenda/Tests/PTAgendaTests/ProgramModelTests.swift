@@ -226,3 +226,20 @@ struct DayPlannerFreeTests {
         #expect(free.clashes.isEmpty)
     }
 }
+
+@Suite("shows_as from the feed")
+struct FeedShowsAsTests {
+    private func pick(_ slug: String, _ time: String, showsAs: String?) -> SchedulePick {
+        let event = Event(date: "2026-11-10", time: time, title: slug, place: "Stage 1", kind: "talk", official: false,
+                          page: "events/\(slug)/index.html", showsAs: showsAs)
+        return SchedulePick(id: ScheduleID.fromPage(event.page)!, at: .distantPast, event: event)
+    }
+
+    @Test func theEventsOwnShowsAsDecidesBeforeTheRule() {
+        let picks = [pick("a", "10:00-11:00", showsAs: nil), pick("b", "10:30-11:30", showsAs: "free")]
+        let model = ProgramModel(picks: picks, day: "2026-11-10")
+        #expect(model.showsAs["b"] == .free && model.clashes.isEmpty)
+        let busyOnRegistration = ProgramModel(picks: [pick("registration", "09:00-18:00", showsAs: "busy")], day: "2026-11-10")
+        #expect(busyOnRegistration.showsAs["registration"] == .busy)
+    }
+}

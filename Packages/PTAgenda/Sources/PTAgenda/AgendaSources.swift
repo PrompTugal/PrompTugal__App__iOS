@@ -131,7 +131,7 @@ public enum AgendaHub {
     /// The agenda built into the app, read when nothing has been cached yet, so the first launch works with no
     /// network at the venue. The app sets it at launch (the core pack of PTSync); the default has none.
     public static var seedAgenda: () -> [Event] = { [] }
-    /// The events JSON's `shows_as` ("free" or "busy") by schedule id, when the feed has it. The app sets it once
-    /// the event model carries the field; until then it has none and the busy rule decides.
+    /// A second source for `shows_as` by schedule id, for an app that has it somewhere other than the event (the picks'
+    /// own copy of the event carries the feed's `shows_as` already, and is read first). The default has none.
     public static var showsAs: (_ id: String) -> ShowsAs? = { _ in nil }
 }

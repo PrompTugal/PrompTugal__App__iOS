@@ -168,7 +168,8 @@ public enum DayPlanner {
             guard let event = pick.event, event.date == day, let start = event.start else { return nil }
             let end = event.end ?? start.addingTimeInterval(30 * 60)
             let fallback = BusyRule.fallback(title: event.title, start: start, end: end)
-            let shows = preferences.toggled[pick.id] ?? AgendaHub.showsAs(pick.id) ?? fallback
+            let shows = preferences.toggled[pick.id] ?? event.showsAs.flatMap(ShowsAs.init(rawValue:))
+                ?? AgendaHub.showsAs(pick.id) ?? fallback
             return Item(id: "pick.\(pick.id)", kind: .pick, title: event.title, start: start,
                         end: end, place: event.place, eventID: pick.id, free: shows == .free)
         }
