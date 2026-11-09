@@ -16,24 +16,22 @@ public enum BusyRule {
         toggled ?? feed ?? fallback(entry)
     }
 
-    /// Free: registration, opening nights, all-day or multi-hour presence events, venue opening hours.
-    /// Busy: talks, panels, workshops, meetings, and anything not recognised.
+    /// The shared rule (PrompTugal__App__Mobile `formats/schedule-rules`, so iOS, Android and the web agree): free when
+    /// the lowercased title contains one of `freeTitlePatterns`, or the session lasts `freeMinimumMinutes` or more
+    /// (all-day and multi-hour presence events); busy otherwise: talks, panels, workshops, meetings.
     public static func fallback(_ entry: NowModel.Entry) -> ShowsAs {
-        fallback(kind: entry.kind, title: entry.title, place: entry.place, start: entry.start, end: entry.end)
+        fallback(title: entry.title, start: entry.start, end: entry.end)
     }
 
-    public static func fallback(kind: String, title: String, place: String, start: Date, end: Date) -> ShowsAs {
-        if freeKinds.contains(kind.lowercased()) { return .free }
-        let words = (title + " " + place).lowercased()
-        if freePhrases.contains(where: { words.contains($0) }) { return .free }
-        if end.timeIntervalSince(start) >= presenceLength { return .free }
-        return .busy
+    public static func fallback(title: String, start: Date, end: Date) -> ShowsAs {
+        let lower = title.lowercased()
+        if freeTitlePatterns.contains(where: { lower.contains($0) }) { return .free }
+        return end.timeIntervalSince(start) >= TimeInterval(freeMinimumMinutes * 60) ? .free : .busy
     }
 
-    /// Three hours or longer is a place to be, not a room to sit in.
-    static let presenceLength: TimeInterval = 3 * 3600
-    static let freeKinds: Set<String> = ["registration", "summit", "venue", "presence", "opening"]
-    static let freePhrases = ["registration", "opening night", "opening hours", "doors open", "start of the show"]
+    static let freeMinimumMinutes = 180
+    static let freeTitlePatterns = ["registration", "badge pick", "opening night", "opening party", "start of the show",
+                                    "start-of-the-show", "doors open", "venue open", "venue hours", "all day", "all-day"]
 }
 
 /// What the person decided about their own program, kept on this device only (never sent anywhere, never in the

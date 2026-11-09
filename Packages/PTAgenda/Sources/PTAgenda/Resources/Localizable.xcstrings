@@ -70,6 +70,29 @@
         }
       }
     },
+    "%@ then %@: %lld min short to walk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ then %@: %lld min short to walk"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ e depois %@: faltam %lld min para o trajeto"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ e depois %@: faltam %lld min para o trajeto"
+          }
+        }
+      }
+    },
     "%@ to %@ · %lld min": {
       "extractionState": "manual",
       "localizations": {
@@ -1869,6 +1892,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sem hora definida"
+          }
+        }
+      }
+    },
+    "Not enough time to walk to %@: %lld min short": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not enough time to walk to %@: %lld min short"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem tempo para ir a pé até %@: faltam %lld min"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem tempo para ir a pé até %@: faltam %lld min"
           }
         }
       }

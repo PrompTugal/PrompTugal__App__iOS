@@ -57,7 +57,7 @@ public struct MyProgramView: View {
                 if model.rows.isEmpty {
                     Section { Text(String(localized: "Nothing picked for this day.", bundle: .module)).foregroundStyle(Palette.muted) }
                 }
-                ForEach(model.rows) { row in rowView(row) }
+                ForEach(model.rows) { row in rowView(row, in: model) }
             }
             .listStyle(.insetGrouped)
             .toolbar {
@@ -78,7 +78,9 @@ public struct MyProgramView: View {
             Section {
                 ForEach(unresolved) { pair in
                     Button { withAnimation { proxy.scrollTo(pair.first.id, anchor: .top) } } label: {
-                        Label(String(localized: "\(pair.first.title) and \(pair.second.title), \(overlapRange(pair))", bundle: .module),
+                        Label(pair.travel
+                              ? String(localized: "\(pair.first.title) then \(pair.second.title): \(pair.minutes) min short to walk", bundle: .module)
+                              : String(localized: "\(pair.first.title) and \(pair.second.title), \(overlapRange(pair))", bundle: .module),
                               systemImage: "exclamationmark.triangle.fill")
                             .foregroundStyle(Palette.ink)
                     }
@@ -119,16 +121,16 @@ public struct MyProgramView: View {
     }
 
     @ViewBuilder
-    private func rowView(_ row: ProgramModel.Row) -> some View {
+    private func rowView(_ row: ProgramModel.Row, in model: ProgramModel) -> some View {
         switch row {
         case .session(let entry):
-            Section { sessionRow(entry, shows: .busy) }
+            Section { sessionRow(entry, shows: .busy, pairs: model.clashes(with: entry.id)) }
         case .presence(let entry):
-            Section { sessionRow(entry, shows: .free) }
+            Section { sessionRow(entry, shows: .free, pairs: []) }
         case .clash(let group):
             Section {
                 ForEach(group.entries) { entry in
-                    sessionRow(entry, shows: .busy, group: group)
+                    sessionRow(entry, shows: .busy, pairs: model.clashes(with: entry.id))
                         .swipeActions(edge: .trailing) {
                             Button(String(localized: "Keep this one", bundle: .module)) { keep(entry, in: group) }.tint(Palette.red)
                         }
@@ -147,9 +149,8 @@ public struct MyProgramView: View {
         }
     }
 
-    private func sessionRow(_ entry: NowModel.Entry, shows: ShowsAs, group: ProgramModel.ClashGroup? = nil) -> some View {
-        let pairs = group?.pairs(with: entry.id) ?? []
-        return HStack(alignment: .top, spacing: Space.m) {
+    private func sessionRow(_ entry: NowModel.Entry, shows: ShowsAs, pairs: [ProgramModel.ClashPair]) -> some View {
+        HStack(alignment: .top, spacing: Space.m) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(timeRange(entry)).font(.caption.monospacedDigit()).foregroundStyle(Palette.red)
                 Text(entry.title).font(.headline).foregroundStyle(Palette.ink)
@@ -202,13 +203,15 @@ public struct MyProgramView: View {
         let other = pair.first.id == entry.id ? pair.second : pair.first
         if pair.isSplit {
             Text(pair.first.id == entry.id
-                 ? String(localized: "Splitting with \(other.title). Leave at \(clock(pair.leaveAt)) (\(pair.walkMinutes) min walk)", bundle: .module)
+                 ? String(localized: "Splitting with \(other.title). Leave at \(clock(pair.leaveAtForDisplay)) (\(pair.walkMinutes) min walk)", bundle: .module)
                  : String(localized: "Splitting with \(other.title). Arrive at \(clock(pair.second.start))", bundle: .module))
                 .font(.caption).foregroundStyle(Palette.muted)
             Button(String(localized: "Undo split", bundle: .module)) { choices.toggleSplit(pair.id) }
                 .font(.caption).buttonStyle(.borderless)
         } else {
-            Text(String(localized: "Clashes with \(other.title), \(overlapRange(pair))", bundle: .module))
+            Text(pair.travel
+                 ? String(localized: "Not enough time to walk to \(other.title): \(pair.minutes) min short", bundle: .module)
+                 : String(localized: "Clashes with \(other.title), \(overlapRange(pair))", bundle: .module))
                 .font(.caption).foregroundStyle(Palette.amber)
             Button(String(localized: "I'll split my time", bundle: .module)) { choices.toggleSplit(pair.id) }
                 .font(.caption).buttonStyle(.borderless)

@@ -11,24 +11,31 @@ public struct ProgramModel: Equatable, Sendable {
         public let count: Int           // picks on that day
     }
 
-    /// Two busy picks that overlap, with the time they share.
+    /// Two busy picks that clash: they overlap, or the second starts before there is time to walk there
+    /// (`travel`). The numbers are `DayPlanner.clashes`, the rule shared with Android and the web.
     public struct ClashPair: Identifiable, Equatable, Sendable {
         public let first: NowModel.Entry        // the one that starts first
         public let second: NowModel.Entry
-        public let overlapStart: Date
-        public let overlapEnd: Date
+        public let minutes: Int                 // overlap, or minutes short of the walk when `travel`
+        public let travel: Bool
         /// The person chose "I'll split my time": a planned overlap, not an error.
         public let isSplit: Bool
+        /// For a split: the second session's start minus the walk, as the shared rule says.
+        public let leaveAt: Date?
 
-        public var id: String { ProgramModel.splitKey(first.id, second.id) }
+        public var id: String { DayPlanner.splitKey(first.id, second.id) }
 
         /// Walking minutes between the two rooms (an estimate, from `DayPlanner.travelMinutes`).
         public var walkMinutes: Int { DayPlanner.travelMinutes(from: first.place, to: second.place) }
 
-        /// When to leave the first session to arrive at the second as it starts; never before the first starts or
+        /// The time they share (for an overlap).
+        public var overlapStart: Date { max(first.start, second.start) }
+        public var overlapEnd: Date { min(first.end, second.end) }
+
+        /// What to show as "leave at": the shared rule's time, but never before the first session starts or
         /// after it ends.
-        public var leaveAt: Date {
-            let leave = second.start.addingTimeInterval(-TimeInterval(walkMinutes * 60))
+        public var leaveAtForDisplay: Date {
+            let leave = leaveAt ?? second.start.addingTimeInterval(-TimeInterval(walkMinutes * 60))
             return min(max(leave, first.start), first.end)
         }
     }
@@ -76,7 +83,7 @@ public struct ProgramModel: Equatable, Sendable {
     public static let summitDays = ["2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12"]
 
     /// The key a split is kept under: the two schedule ids, sorted.
-    public static func splitKey(_ a: String, _ b: String) -> String { [a, b].sorted().joined(separator: "|") }
+    public static func splitKey(_ a: String, _ b: String) -> String { DayPlanner.splitKey(a, b) }
 
     public let days: [Day]
     public let day: String
@@ -90,6 +97,9 @@ public struct ProgramModel: Equatable, Sendable {
     /// How each pick of the day shows (busy or free), by schedule id.
     public let showsAs: [String: ShowsAs]
     public var unresolvedClashes: [ClashPair] { clashes.filter { !$0.isSplit } }
+
+    /// The clashes a session is in (overlap or too little time to walk), for "clashes with <session>, 10:30 to 10:45".
+    public func clashes(with id: String) -> [ClashPair] { clashes.filter { $0.first.id == id || $0.second.id == id } }
 
     /// - Parameters:
     ///   - toggled: the person's own busy or free choice by schedule id (wins over everything).
@@ -131,7 +141,16 @@ public struct ProgramModel: Equatable, Sendable {
             }
         }
 
-        var allPairs: [ClashPair] = []
+        // The shared clash rule on the busy picks (sorted by start, then id): overlaps and too-short walks.
+        let byID = Dictionary(uniqueKeysWithValues: busy.map { ($0.id, $0) })
+        let items = busy.sorted { $0.start == $1.start ? $0.id < $1.id : $0.start < $1.start }.map {
+            DayPlanner.Item(id: $0.id, kind: .pick, title: $0.title, start: $0.start, end: $0.end, place: $0.place, eventID: $0.id)
+        }
+        let overlapPairs: [ClashPair] = DayPlanner.clashes(in: items, splits: splits).compactMap { clash in
+            guard let first = byID[clash.first.id], let second = byID[clash.second.id] else { return nil }
+            return ClashPair(first: first, second: second, minutes: clash.minutes, travel: clash.travel,
+                             isSplit: clash.split, leaveAt: clash.leaveAt)
+        }
         var rows: [Row] = []
         var previousEnd: Date?
         let gap = TimeInterval(minimumGapMinutes * 60)
@@ -143,15 +162,8 @@ public struct ProgramModel: Equatable, Sendable {
             if cluster.count == 1, let only = cluster.first {
                 rows.append(.session(only))
             } else {
-                var pairs: [ClashPair] = []
-                for (i, a) in cluster.enumerated() {
-                    for b in cluster[(i + 1)...] where a.start < b.end && b.start < a.end {
-                        pairs.append(ClashPair(first: a, second: b, overlapStart: max(a.start, b.start),
-                                               overlapEnd: min(a.end, b.end),
-                                               isSplit: splits.contains(Self.splitKey(a.id, b.id))))
-                    }
-                }
-                allPairs += pairs
+                let members = Set(cluster.map(\.id))
+                let pairs = overlapPairs.filter { !$0.travel && members.contains($0.first.id) && members.contains($0.second.id) }
                 rows.append(.clash(ClashGroup(entries: cluster, pairs: pairs)))
             }
             previousEnd = cluster.map(\.end).max()
@@ -162,7 +174,7 @@ public struct ProgramModel: Equatable, Sendable {
             rows.insert(.presence(entry), at: index)
         }
         self.rows = rows
-        clashes = allPairs.sorted { $0.overlapStart < $1.overlapStart }
+        clashes = overlapPairs.sorted { $0.second.start < $1.second.start }
     }
 
     /// A short chip label for a day: the weekday and the day number in the person's language ("Tue 10", "ter. 10"),

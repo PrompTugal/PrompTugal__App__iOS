@@ -54,17 +54,21 @@ public enum DayPlanner {
     }
 
     public struct Clash: Hashable, Sendable {
-        public init(first: Item, second: Item, minutes: Int, travel: Bool) {
+        public init(first: Item, second: Item, minutes: Int, travel: Bool, split: Bool = false, leaveAt: Date? = nil) {
             self.first = first
             self.second = second
             self.minutes = minutes
             self.travel = travel
+            self.split = split
+            self.leaveAt = leaveAt
         }
 
         public let first: Item
         public let second: Item
         public let minutes: Int            // overlap, or travel time short, in minutes
         public let travel: Bool            // true when they do not overlap but there is no time to walk between them
+        public let split: Bool             // the person chose "I'll split my time": a planned overlap, not an error
+        public let leaveAt: Date?          // for a split: when to leave the first to reach the second (its start minus the walk)
     }
 
     public struct Plan: Sendable {
@@ -127,23 +131,30 @@ public enum DayPlanner {
 
     // MARK: Clashes
 
-    /// Overlaps, and back-to-back items in places too far apart. `items` must be sorted by start.
-    public static func clashes(in items: [Item]) -> [Clash] {
+    /// Overlaps, and back-to-back items in places too far apart. `items` must be sorted by start (then id). Free items
+    /// never clash. `splits` are the `splitKey`s (the two ids sorted, joined by "|") the person chose to split.
+    public static func clashes(in items: [Item], splits: Set<String> = []) -> [Clash] {
         var clashes: [Clash] = []
         for (i, a) in items.enumerated() {
             if a.free { continue }
             for b in items[(i + 1)...] where !b.free && b.start < a.end.addingTimeInterval(TimeInterval(travelMinutes(from: a.place, to: b.place) * 60)) {
                 let overlap = Int(min(a.end, b.end).timeIntervalSince(b.start) / 60)
+                let walk = travelMinutes(from: a.place, to: b.place)
+                let isSplit = splits.contains(splitKey(a.id, b.id))
+                let leave: Date? = isSplit ? b.start.addingTimeInterval(-TimeInterval(walk * 60)) : nil
                 if overlap > 0 {
-                    clashes.append(Clash(first: a, second: b, minutes: overlap, travel: false))
+                    clashes.append(Clash(first: a, second: b, minutes: overlap, travel: false, split: isSplit, leaveAt: leave))
                 } else {
-                    let short = travelMinutes(from: a.place, to: b.place) - Int(b.start.timeIntervalSince(a.end) / 60)
-                    if short > 0 { clashes.append(Clash(first: a, second: b, minutes: short, travel: true)) }
+                    let short = walk - Int(b.start.timeIntervalSince(a.end) / 60)
+                    if short > 0 { clashes.append(Clash(first: a, second: b, minutes: short, travel: true, split: isSplit, leaveAt: leave)) }
                 }
             }
         }
         return clashes
     }
+
+    /// The key a split is kept under: the two item ids, sorted, joined by "|".
+    public static func splitKey(_ a: String, _ b: String) -> String { [a, b].sorted().joined(separator: "|") }
 
     // MARK: Planning
 

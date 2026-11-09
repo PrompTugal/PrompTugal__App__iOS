@@ -97,10 +97,10 @@ struct BusyFreeClashTests {
     }
 
     @Test func aFreePresenceEventNeverClashesWithATalk() {
-        let picks = [pick("reg", "07:30-18:00", kind: "registration"), pick("talk", "10:00-11:00")]
+        let picks = [pick("reg", "07:30-18:00", kind: "registration", title: "Registration"), pick("talk", "10:00-11:00")]
         let model = ProgramModel(picks: picks, day: "2026-11-10")
         let rows: [String] = shape(model)
-        #expect(rows == ["presence:reg", "session:talk"])
+        #expect(rows == ["presence:Registration", "session:talk"])
         #expect(model.clashes.isEmpty)
     }
 
@@ -152,27 +152,28 @@ struct BusyFreeClashTests {
     @Test func theLeaveTimeStaysInsideTheFirstSession() throws {
         // far apart: a 25 minute trip, but the second starts only 10 minutes into the first
         let picks = [pick("a", "10:00-11:00", place: "Stage 1"), pick("b", "10:10-11:30", place: "Café across town")]
-        let pair = try #require(ProgramModel(picks: picks, day: "2026-11-10").clashes.first)
+        let pair = try #require(ProgramModel(picks: picks, day: "2026-11-10", splits: [ProgramModel.splitKey("a", "b")]).clashes.first)
         #expect(pair.walkMinutes == 25)
-        #expect(pair.leaveAt == at("10:00"))                                 // never before the first one starts
+        #expect(pair.leaveAt == at("09:45"))                                 // the shared rule: second start minus the walk
+        #expect(pair.leaveAtForDisplay == at("10:00"))                       // shown: never before the first one starts
     }
 
     @Test func theFallbackRule() {
-        func entry(kind: String, title: String = "x", place: String = "Stage 1", minutes: Int = 45) -> NowModel.Entry {
-            NowModel.Entry(id: "x", title: title, place: place, start: at("10:00"),
-                           end: at("10:00").addingTimeInterval(TimeInterval(minutes * 60)), mine: true, official: false,
-                           url: nil, kind: kind)
+        func entry(_ title: String, minutes: Int = 45) -> NowModel.Entry {
+            NowModel.Entry(id: "x", title: title, place: "Stage 1", start: at("10:00"),
+                           end: at("10:00").addingTimeInterval(TimeInterval(minutes * 60)), mine: true, official: false, url: nil)
         }
-        #expect(BusyRule.fallback(entry(kind: "registration")) == .free)
-        #expect(BusyRule.fallback(entry(kind: "summit", title: "Opening Night")) == .free)
-        #expect(BusyRule.fallback(entry(kind: "talk", title: "Venue opening hours")) == .free)
-        #expect(BusyRule.fallback(entry(kind: "talk", minutes: 240)) == .free)
-        for kind in ["talk", "panel", "workshop", "meeting", "masterclass", ""] {
-            #expect(BusyRule.fallback(entry(kind: kind)) == .busy)
+        for title in ["Registration", "Opening Night", "Start-of-the-show", "Venue hours", "ALL DAY lounge"] {
+            #expect(BusyRule.fallback(entry(title)) == .free)
         }
-        #expect(BusyRule.resolve(entry(kind: "talk"), toggled: .free, feed: .busy) == .free)
-        #expect(BusyRule.resolve(entry(kind: "talk"), toggled: nil, feed: .free) == .free)
-        #expect(BusyRule.resolve(entry(kind: "registration"), toggled: nil, feed: .busy) == .busy)
+        #expect(BusyRule.fallback(entry("Big expo", minutes: 180)) == .free)
+        #expect(BusyRule.fallback(entry("Big expo", minutes: 179)) == .busy)
+        for title in ["Panel: agents at work", "Workshop", "Meeting with the team", "Masterclass"] {
+            #expect(BusyRule.fallback(entry(title)) == .busy)
+        }
+        #expect(BusyRule.resolve(entry("Workshop"), toggled: .free, feed: .busy) == .free)
+        #expect(BusyRule.resolve(entry("Workshop"), toggled: nil, feed: .free) == .free)
+        #expect(BusyRule.resolve(entry("Registration"), toggled: nil, feed: .busy) == .busy)
     }
 }
 
@@ -207,7 +208,7 @@ struct DayPlannerFreeTests {
     }
 
     @Test func aFreePickMakesNoClashAndLeavesTheGapsOpen() {
-        let reg = event("reg", "07:30-18:00", kind: "registration", place: "Terminal 1")
+        let reg = event("registration", "07:30-18:00", kind: "registration", place: "Terminal 1")
         let talk = event("talk", "10:00-11:00")
         let plan = DayPlanner.plan(day: "2026-11-10", agenda: [], picks: [pick(reg), pick(talk)], standups: [])
         #expect(plan.clashes.isEmpty)
