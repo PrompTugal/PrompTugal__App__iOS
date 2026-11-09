@@ -105,7 +105,7 @@ struct PublicShell: View {
                             .id(destination.id)
                             .surfaceKind(destination.kind)
                     } else {
-                        ContentUnavailableView("Choose a screen", systemImage: "sidebar.left")
+                        ContentUnavailableView("Choose a screen", systemImage: "sidebar.leading")
                     }
                 }
             }

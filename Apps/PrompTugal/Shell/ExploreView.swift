@@ -72,7 +72,7 @@ private struct GraphCard: View {
                             Text("Companies, people and events").font(.footnote).foregroundStyle(Palette.muted)
                         }
                         Spacer(minLength: Space.s)
-                        Image(systemName: "chevron.right").font(.footnote).foregroundStyle(Palette.muted)
+                        Image(systemName: "chevron.forward").font(.footnote).foregroundStyle(Palette.muted)
                             .accessibilityHidden(true)
                     }
                 }

@@ -44,7 +44,7 @@ public struct WebPage: View {
                     .toolbar {
                         if showsToolbar {
                             ToolbarItemGroup(placement: .topBarTrailing) {
-                                Button { model.webView.goBack() } label: { Label(String(localized: "Back", bundle: .module), systemImage: "chevron.left") }
+                                Button { model.webView.goBack() } label: { Label(String(localized: "Back", bundle: .module), systemImage: "chevron.backward") }
                                     .disabled(!model.canGoBack)
                                 Button { model.reload() } label: { Label(String(localized: "Reload", bundle: .module), systemImage: "arrow.clockwise") }
                                 if let current = model.currentURL {
