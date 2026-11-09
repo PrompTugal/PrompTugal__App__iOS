@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 9 Nov 00:06 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 9 Nov 00:40 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 9 Nov 00:40 UTC: rc10 on dev 9be7b13 (v0.4.25), release #106: all three TestFlight jobs green. Public app 0.4.25 (206): upload COMPLETE with no errors, warnings or infos, so no ITMS-90683; VALID, in PrompTugal Internal Users only (internal-only rule). 0.4.23 (204) and 0.4.24 (205) still WAITING_FOR_REVIEW in Beta App Review, build 4 APPROVED.
 
 - 9 Nov 00:06 UTC: 0.4.23 (204) and 0.4.24 (205) both still WAITING_FOR_REVIEW in Beta App Review (204 for about 8h, 205 for about 1h40); build 4 stays APPROVED in the external group. 205 What to Test now set for en-US and en-GB (978 characters each; `set-test-info` writes both from now on). Rule from Dinis via the conductor: 0.4.25 and later are TestFlight internal only, no external steps unless he asks. Dev is at v0.4.24.
 
