@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 9 Nov 02:43 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 9 Nov 03:48 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 9 Nov 03:48 UTC: no change. 0.4.23 (204) and 0.4.24 (205) still WAITING_FOR_REVIEW in Beta App Review (about 11h40 and 5h20; last check 03:46); build 4 APPROVED, all three in the external group. Latest public build 0.4.25 (206), internal only. Dev at v0.4.26, no newer app build.
 
 - 9 Nov 02:43 UTC: no change. 0.4.23 (204) and 0.4.24 (205) still WAITING_FOR_REVIEW in Beta App Review (about 10h30 and 4h15; checked every 30 minutes, last 02:41); build 4 APPROVED, all three in the external group. Latest public build 0.4.25 (206), internal only. Dev at v0.4.26 (website only), no newer app build.
 
