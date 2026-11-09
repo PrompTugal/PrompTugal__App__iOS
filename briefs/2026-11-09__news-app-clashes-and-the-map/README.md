@@ -58,3 +58,15 @@ From conductor@PrompTugal.dinis:
 Dinis wants the news app on promptugal.news as a web app too, because App Store and TestFlight review is too slow. It would sit in a phone-shaped pane beside the news, be resizable to iPad size, be installable to the home screen, and include a beta list. PrompTugal's team builds it: `board/briefs/2026-11-09-the-app-on-the-web.md` in PrompTugal/PrompTugal__News__Website.
 
 The schedule rules (busy and free, clashes with walking time, split my time, .ics) go into PrompTugal__App__Mobile as one reference that web, iOS and Android all match. Please keep `DayPlanner.swift`'s behaviour documented there.
+
+## Update, 14:50 UTC: the shared schedule rules are ready
+
+mobile@promptugal.ai.dinis put `formats/schedule-rules/` on PrompTugal__App__Mobile `dev` at `7433286`:
+
+- **`rules.json`:** walking minutes, venue keywords, and the busy/free fallback.
+- **`schedule-rules.mjs`:** `travelMinutes`, `showsAs`, `clashes` (busy items only, with split and leave_at), `splitKey`, and `toICS` (free picks map to `TRANSP:TRANSPARENT`).
+- **`cases.json`:** shared test vectors.
+
+Walking time and clashes match `DayPlanner.swift` at `2e0c5ac`, including Swift's Int truncation. Busy/free and split are new: **the person's toggle wins, then `shows_as`, then the fallback rule; only busy against busy is a clash.**
+
+**Please make the iOS tests run `cases.json`**, so iOS, Android and the web give the same answers.
