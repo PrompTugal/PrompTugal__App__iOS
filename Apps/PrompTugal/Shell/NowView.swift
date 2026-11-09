@@ -38,10 +38,12 @@ struct NowView: View {
                         startProgram(model, now: now)
                     case .during:
                         forYou(model, now: now)
+                        whereToBe(model)
                         onNow(model, now: now)
                         upNext(model, now: now)
                     case .between:
                         forYou(model, now: now)
+                        whereToBe(model)
                         tomorrow(model, now: now)
                     case .after:
                         thanks(count: model.pickCount)
@@ -135,6 +137,11 @@ struct NowView: View {
     }
 
     // MARK: State B, during the summit
+
+    /// Where I need to be in the next 10 and 20 minutes, with the walk (PTAgenda's card): only for people with picks.
+    @ViewBuilder private func whereToBe(_ model: NowModel) -> some View {
+        if model.pickCount > 0 { WhereToBeCard() }
+    }
 
     /// NOW-1c: my current pick, or my next one.
     @ViewBuilder private func forYou(_ model: NowModel, now: Date) -> some View {
@@ -378,6 +385,8 @@ struct PracticalCard: View {
         let title: LocalizedStringKey
         let line: LocalizedStringKey
         let link: URL?
+        /// A screen of the app that the row opens instead of a link.
+        var destination: String?
         var id: String { symbol }
     }
 
@@ -392,7 +401,7 @@ struct PracticalCard: View {
         Row(symbol: "bus.fill", title: "Buses", line: "Carris runs extra buses to Oriente during the summit.",
             link: URL(string: "https://www.carris.pt/")),
         Row(symbol: "map", title: "Venue map", line: "FIL, MEO Arena and Pavilhão de Portugal, with what is on in each.",
-            link: URL(string: "https://promptugal.news/summit/venue/index.html")),
+            link: nil, destination: "map"),
         Row(symbol: "phone.fill", title: "Emergency", line: "Call 112.", link: URL(string: "tel:112")),
     ]
 
@@ -402,7 +411,10 @@ struct PracticalCard: View {
         TitledCard(String(localized: "Practical"), kicker: String(localized: "Lisbon · 9–12 Nov")) {
             VStack(alignment: .leading, spacing: Space.m) {
                 ForEach(rows) { row in
-                    if let link = row.link {
+                    if let destination = row.destination {
+                        Button { open(destination) } label: { content(row, chevron: true) }
+                            .buttonStyle(.plain)
+                    } else if let link = row.link {
                         Link(destination: link) { content(row, chevron: true) }
                             .buttonStyle(.plain)
                     } else {
