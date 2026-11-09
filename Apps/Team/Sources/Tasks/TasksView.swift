@@ -64,7 +64,8 @@ struct TasksView: View {
     @ViewBuilder
     func list(me: String) -> some View {
         let centre = team.centres[me]
-        let all = (centre?.issues ?? []).filter { everyone || $0.mine || $0.named }
+        // Mine = issues that name this person, the same rule as the Now screen's "overdue of open" (team site data).
+        let all = (centre?.issues ?? []).filter { everyone || $0.named }
         let open = all.filter { !$0.isDone && !doneHere.contains($0.id) }
             .sorted { ($0.dueAt ?? .distantFuture) < ($1.dueAt ?? .distantFuture) }
         let done = all.filter { $0.isDone || doneHere.contains($0.id) }
@@ -167,9 +168,9 @@ private struct TaskRow: View {
                     .frame(width: 44, height: 44)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(done ? "Mark not done: \(issue.title)" : "Mark done: \(issue.title)")
+            .accessibilityLabel(done ? "Mark not done: \(Self.clean(issue.title))" : "Mark done: \(Self.clean(issue.title))")
             VStack(alignment: .leading, spacing: 2) {
-                Text(issue.title).strikethrough(done).foregroundStyle(done ? Palette.muted : Palette.ink)
+                Text(Self.clean(issue.title)).strikethrough(done).foregroundStyle(done ? Palette.muted : Palette.ink)
                 HStack(spacing: 4) {
                     if !issue.area.isEmpty { Text(issue.area.capitalized) }
                     if !issue.pickedBy.isEmpty { Text("· " + Self.firstName(issue.pickedBy)) }
@@ -192,6 +193,11 @@ private struct TaskRow: View {
                 .accessibilityLabel(starred ? "Remove from Priority" : "Add to Priority")
             }
         }
+    }
+
+    /// Issue titles can arrive wrapped in the quotes of their front matter.
+    static func clean(_ title: String) -> String {
+        title.trimmingCharacters(in: CharacterSet(charactersIn: "\"“”' "))
     }
 
     static func firstName(_ s: String) -> String {
