@@ -47,6 +47,29 @@
         }
       }
     },
+    "%@ and %@, %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ and %@, %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ e %@, %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ e %@, %@"
+          }
+        }
+      }
+    },
     "%@ to %@ · %lld min": {
       "extractionState": "manual",
       "localizations": {
@@ -1032,6 +1055,52 @@
         }
       }
     },
+    "Clashes today: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clashes today: %lld"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conflitos hoje: %lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sobreposições hoje: %lld"
+          }
+        }
+      }
+    },
+    "Clashes with %@, %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clashes with %@, %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conflita com %@, %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sobrepõe-se a %@, %@"
+          }
+        }
+      }
+    },
     "Day": {
       "extractionState": "manual",
       "localizations": {
@@ -1124,6 +1193,29 @@
         }
       }
     },
+    "Free: does not clash": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free: does not clash"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Livre: não gera conflito"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Livre: não sobrepõe"
+          }
+        }
+      }
+    },
     "From PrompTugal · Lisbon 2026": {
       "extractionState": "manual",
       "localizations": {
@@ -1212,6 +1304,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajudar-me a planear a minha presença"
+          }
+        }
+      }
+    },
+    "I'll split my time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'll split my time"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vou dividir meu tempo"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vou dividir o meu tempo"
           }
         }
       }
@@ -1419,6 +1534,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lisboa · 9–12 nov."
+          }
+        }
+      }
+    },
+    "Mark as busy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark as busy"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar como ocupado"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar como ocupado"
+          }
+        }
+      }
+    },
+    "Mark as free": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark as free"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar como livre"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marcar como livre"
           }
         }
       }
@@ -2116,6 +2277,29 @@
         }
       }
     },
+    "Planned overlap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planned overlap"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sobreposição planejada"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sobreposição planeada"
+          }
+        }
+      }
+    },
     "Proposed sessions": {
       "extractionState": "manual",
       "localizations": {
@@ -2461,6 +2645,52 @@
         }
       }
     },
+    "Splitting with %@. Arrive at %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Splitting with %@. Arrive at %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dividindo com %@. Chegue às %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A dividir com %@. Chegue às %@"
+          }
+        }
+      }
+    },
+    "Splitting with %@. Leave at %@ (%lld min walk)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Splitting with %@. Leave at %@ (%lld min walk)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dividindo com %@. Saia às %@ (%lld min a pé)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A dividir com %@. Saia às %@ (%lld min a pé)"
+          }
+        }
+      }
+    },
     "Stand-up at %@": {
       "extractionState": "manual",
       "localizations": {
@@ -2802,6 +3032,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ativar as notificações nas Definições"
+          }
+        }
+      }
+    },
+    "Undo split": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo split"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desfazer divisão"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anular divisão"
           }
         }
       }

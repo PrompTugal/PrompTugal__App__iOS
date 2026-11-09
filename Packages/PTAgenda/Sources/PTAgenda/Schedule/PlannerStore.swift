@@ -47,12 +47,14 @@ public final class PlannerStore {
     public var plan: DayPlanner.Plan {
         let picks = schedule.picks
         let standups = identity?.currentID == nil ? [] : (team?.standups ?? [])
-        let key = [day, preferences.dayStart, preferences.dayEnd, "\(preferences.officialOnly)",
+        let toggled = PlanChoices.shared.toggled
+        let key = [day, preferences.dayStart, toggled.sorted { $0.key < $1.key }.map { "\($0.key)=\($0.value.rawValue)" }.joined(separator: ","), preferences.dayEnd, "\(preferences.officialOnly)",
                    "\(preferences.minimumGapMinutes)", coordinationKey,
                    picks.map { "\($0.id)@\($0.event?.time ?? "")" }.joined(separator: ","),
                    standups.map(\.slot).joined(separator: ",")].joined(separator: "|")
         if let cached = planCache, cached.key == key { return cached.value }
         var prefs = preferences
+        prefs.toggled = toggled
         let (suggested, teammates) = coordination()
         prefs.suggested.merge(suggested) { a, _ in a }
         prefs.teammates.merge(teammates) { a, _ in a }

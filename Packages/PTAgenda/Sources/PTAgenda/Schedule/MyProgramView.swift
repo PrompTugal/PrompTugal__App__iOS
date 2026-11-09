@@ -1,8 +1,9 @@
 import SwiftUI
 import PTCore
 
-/// My program (spec PROG-1): the person's picks for one day in time order, clashes marked, free time shown, with
-/// reminders and String(localized: "Add to Calendar", bundle: .module). The model does the work; this draws it.
+/// My program (spec PROG-1): the person's picks for one day in time order, clashes marked where they are (both
+/// sessions say what they clash with, and a list at the top jumps to them), free time shown, with reminders and
+/// "Add to Calendar". The model does the work; this draws it.
 public struct MyProgramView: View {
     public init(chooseTalks: @escaping () -> Void = {}, open: @escaping (URL) -> Void = { _ in }) {
         self.chooseTalks = chooseTalks
@@ -17,11 +18,13 @@ public struct MyProgramView: View {
     @Environment(PickFeedback.self) private var feedback: PickFeedback?
     @State private var day: String?
     @State private var calendarMessage: String?
+    @State private var choices = PlanChoices.shared
 
     public var body: some View {
         TimelineView(.everyMinute) { _ in
             let selected = day ?? ProgramModel.defaultDay(picks: schedule.picks, now: AgendaClock.now)
-            let model = ProgramModel(picks: schedule.picks, day: selected)
+            let model = ProgramModel(picks: schedule.picks, day: selected, toggled: choices.toggled,
+                                     feed: AgendaHub.showsAs, splits: choices.splits)
             content(model)
         }
         .navigationTitle(String(localized: "My program", bundle: .module))
@@ -41,6 +44,7 @@ public struct MyProgramView: View {
                 Button(String(localized: "Choose talks", bundle: .module), action: chooseTalks).buttonStyle(.borderedProminent)
             }
         } else {
+            ScrollViewReader { proxy in
             List {
                 Section {
                     Picker(String(localized: "Day", bundle: .module), selection: Binding(get: { model.day }, set: { day = $0 })) {
@@ -49,6 +53,7 @@ public struct MyProgramView: View {
                     .pickerStyle(.segmented)
                     reminderRow
                 }
+                clashList(model, proxy: proxy)
                 if model.rows.isEmpty {
                     Section { Text(String(localized: "Nothing picked for this day.", bundle: .module)).foregroundStyle(Palette.muted) }
                 }
@@ -60,6 +65,26 @@ public struct MyProgramView: View {
                     Button(String(localized: "Add to Calendar", bundle: .module)) { addToCalendar(model) }
                         .disabled(model.dayEntries.isEmpty)
                 }
+            }
+            }
+        }
+    }
+
+    /// The clashes still to decide, at the top of the day: tap one to jump to it.
+    @ViewBuilder
+    private func clashList(_ model: ProgramModel, proxy: ScrollViewProxy) -> some View {
+        let unresolved = model.unresolvedClashes
+        if !unresolved.isEmpty {
+            Section {
+                ForEach(unresolved) { pair in
+                    Button { withAnimation { proxy.scrollTo(pair.first.id, anchor: .top) } } label: {
+                        Label(String(localized: "\(pair.first.title) and \(pair.second.title), \(overlapRange(pair))", bundle: .module),
+                              systemImage: "exclamationmark.triangle.fill")
+                            .foregroundStyle(Palette.ink)
+                    }
+                }
+            } header: {
+                Text(String(localized: "Clashes today: \(unresolved.count)", bundle: .module)).foregroundStyle(Palette.amber)
             }
         }
     }
@@ -97,17 +122,23 @@ public struct MyProgramView: View {
     private func rowView(_ row: ProgramModel.Row) -> some View {
         switch row {
         case .session(let entry):
-            Section { sessionRow(entry) }
+            Section { sessionRow(entry, shows: .busy) }
+        case .presence(let entry):
+            Section { sessionRow(entry, shows: .free) }
         case .clash(let group):
             Section {
                 ForEach(group.entries) { entry in
-                    sessionRow(entry)
+                    sessionRow(entry, shows: .busy, group: group)
                         .swipeActions(edge: .trailing) {
                             Button(String(localized: "Keep this one", bundle: .module)) { keep(entry, in: group) }.tint(Palette.red)
                         }
                 }
             } header: {
-                Label(String(localized: "Clash · choose one", bundle: .module), systemImage: "exclamationmark.triangle.fill").foregroundStyle(Palette.amber)
+                if group.needsChoice {
+                    Label(String(localized: "Clash · choose one", bundle: .module), systemImage: "exclamationmark.triangle.fill").foregroundStyle(Palette.amber)
+                } else {
+                    Label(String(localized: "Planned overlap", bundle: .module), systemImage: "arrow.left.arrow.right").foregroundStyle(Palette.muted)
+                }
             }
         case .free(let start, let end):
             Text(String(localized: "Free · \(Int(end.timeIntervalSince(start) / 60)) min", bundle: .module))
@@ -116,12 +147,17 @@ public struct MyProgramView: View {
         }
     }
 
-    private func sessionRow(_ entry: NowModel.Entry) -> some View {
-        HStack(alignment: .top, spacing: Space.m) {
+    private func sessionRow(_ entry: NowModel.Entry, shows: ShowsAs, group: ProgramModel.ClashGroup? = nil) -> some View {
+        let pairs = group?.pairs(with: entry.id) ?? []
+        return HStack(alignment: .top, spacing: Space.m) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(timeRange(entry)).font(.caption.monospacedDigit()).foregroundStyle(Palette.red)
                 Text(entry.title).font(.headline).foregroundStyle(Palette.ink)
                 if !entry.place.isEmpty { Text(entry.place).font(.caption).foregroundStyle(Palette.muted) }
+                if shows == .free {
+                    Text(String(localized: "Free: does not clash", bundle: .module)).font(.caption).foregroundStyle(Palette.muted)
+                }
+                ForEach(pairs) { pair in clashNote(pair, for: entry) }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
@@ -132,8 +168,56 @@ public struct MyProgramView: View {
             .buttonStyle(.borderless)
             .accessibilityLabel(String(localized: "Remove from my program", bundle: .module))
         }
+        .padding(.leading, pairs.contains { !$0.isSplit } ? Space.s : 0)
+        .overlay(alignment: .leading) {
+            if pairs.contains(where: { !$0.isSplit }) { Rectangle().fill(Palette.amber).frame(width: 3) }
+        }
+        .id(entry.id)
         .accessibilityElement(children: .combine)
+        .accessibilityActions {
+            Button(shows == .busy ? String(localized: "Mark as free", bundle: .module) : String(localized: "Mark as busy", bundle: .module)) {
+                choices.set(shows.flipped, for: entry.id)
+            }
+            if let pair = pairs.first {
+                Button(pair.isSplit ? String(localized: "Undo split", bundle: .module) : String(localized: "I'll split my time", bundle: .module)) {
+                    choices.toggleSplit(pair.id)
+                }
+            }
+        }
+        .swipeActions(edge: .leading) {
+            Button(shows == .busy ? String(localized: "Mark as free", bundle: .module) : String(localized: "Mark as busy", bundle: .module)) {
+                choices.set(shows.flipped, for: entry.id)
+            }.tint(Palette.muted)
+        }
+        .contextMenu {
+            Button(shows == .busy ? String(localized: "Mark as free", bundle: .module) : String(localized: "Mark as busy", bundle: .module)) {
+                choices.set(shows.flipped, for: entry.id)
+            }
+        }
     }
+
+    /// "Clashes with B, 10:30 – 11:00", or for a planned overlap when to leave to reach the other one.
+    @ViewBuilder
+    private func clashNote(_ pair: ProgramModel.ClashPair, for entry: NowModel.Entry) -> some View {
+        let other = pair.first.id == entry.id ? pair.second : pair.first
+        if pair.isSplit {
+            Text(pair.first.id == entry.id
+                 ? String(localized: "Splitting with \(other.title). Leave at \(clock(pair.leaveAt)) (\(pair.walkMinutes) min walk)", bundle: .module)
+                 : String(localized: "Splitting with \(other.title). Arrive at \(clock(pair.second.start))", bundle: .module))
+                .font(.caption).foregroundStyle(Palette.muted)
+            Button(String(localized: "Undo split", bundle: .module)) { choices.toggleSplit(pair.id) }
+                .font(.caption).buttonStyle(.borderless)
+        } else {
+            Text(String(localized: "Clashes with \(other.title), \(overlapRange(pair))", bundle: .module))
+                .font(.caption).foregroundStyle(Palette.amber)
+            Button(String(localized: "I'll split my time", bundle: .module)) { choices.toggleSplit(pair.id) }
+                .font(.caption).buttonStyle(.borderless)
+        }
+    }
+
+    private func clock(_ date: Date) -> String { date.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: Lisbon.zone)) }
+
+    private func overlapRange(_ pair: ProgramModel.ClashPair) -> String { "\(clock(pair.overlapStart)) – \(clock(pair.overlapEnd))" }
 
     private func timeRange(_ entry: NowModel.Entry) -> String {
         let style = Date.FormatStyle(date: .omitted, time: .shortened, timeZone: Lisbon.zone)
@@ -145,7 +229,7 @@ public struct MyProgramView: View {
         if let feedback { feedback.toggle(event, in: schedule) } else { schedule.toggle(event) }
     }
 
-    /// String(localized: "Keep this one", bundle: .module): the other picks in the clash are removed.
+    /// "Keep this one": the other picks in the clash are removed.
     private func keep(_ entry: NowModel.Entry, in group: ProgramModel.ClashGroup) {
         for id in group.others(than: entry.id) {
             if let event = schedule.picks.first(where: { $0.id == id })?.event { schedule.toggle(event) }
