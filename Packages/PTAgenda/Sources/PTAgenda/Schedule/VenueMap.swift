@@ -261,6 +261,7 @@ public struct VenueMapView: View {
                     }
                 }
             }
+            .environment(\.layoutDirection, .leftToRight)   // a map keeps its geography in every language
             .aspectRatio(aspect, contentMode: .fit)
             .accessibilityHidden(true)             // the list below says the same
             Link(VenueMap.attribution, destination: VenueMap.attributionURL).font(.caption2).foregroundStyle(Palette.muted)

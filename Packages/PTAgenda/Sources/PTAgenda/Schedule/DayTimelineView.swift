@@ -22,6 +22,9 @@ public struct DayTimelineView: View {
     public var hourHeight: CGFloat = 64
     public var onTap: ((DayPlanner.Item) -> Void)?
 
+    /// Offsets are physical: in a right-to-left language the blocks start at the right edge, so they move the other way.
+    @Environment(\.layoutDirection) private var direction
+
     public var body: some View {
         TimelineView(.everyMinute) { context in
             ScrollView {
@@ -63,7 +66,7 @@ public struct DayTimelineView: View {
                 let columnWidth = width / CGFloat(slot.columns)
                 block(slot.item)
                     .frame(width: max(0, columnWidth - 4), height: max(22, height(slot.item)))
-                    .offset(x: gutter + CGFloat(slot.column) * columnWidth, y: y(slot.item.start))
+                    .offset(x: (gutter + CGFloat(slot.column) * columnWidth) * (direction == .rightToLeft ? -1 : 1), y: y(slot.item.start))
             }
         }
     }
