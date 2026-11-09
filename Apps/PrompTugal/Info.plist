@@ -12,6 +12,32 @@
 	<array>
 		<string>news.promptugal.reader.refresh</string>
 	</array>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>en-US</string>
+		<string>pt-PT</string>
+		<string>pt-BR</string>
+		<string>de</string>
+		<string>de-CH</string>
+		<string>es</string>
+		<string>es-AR</string>
+		<string>es-MX</string>
+		<string>fr</string>
+		<string>fr-CA</string>
+		<string>it</string>
+		<string>nl</string>
+		<string>pl</string>
+		<string>hr</string>
+		<string>ro</string>
+		<string>zh-Hans</string>
+		<string>ja</string>
+		<string>ko</string>
+		<string>hi</string>
+		<string>ar</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

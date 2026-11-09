@@ -4,10 +4,76 @@
     "After that, at %@: %@.": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بعد ذلك، عند %@: %@."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Danach, um %@: %@."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "After that, at %@: %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Después, a las %@: %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ensuite, à %@ : %@."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "उसके बाद, %@ बजे: %@।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nakon toga, u %@: %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo, alle %@: %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "その後、%@：%@。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "그 다음, %@: %@."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daarna, om %@: %@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potem, o %@: %@."
           }
         },
         "pt-BR": {
@@ -21,16 +87,94 @@
             "state": "translated",
             "value": "A seguir, às %@: %@."
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "După aceea, la %@: %@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再之后，%@：%@。"
+          }
         }
       }
     },
     "Next session": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الجلسة التالية"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächste Session"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Next session"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiente sesión"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prochaine session"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अगला सत्र"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sljedeća sesija"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prossima sessione"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次のセッション"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 세션"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volgende sessie"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Następna sesja"
           }
         },
         "pt-BR": {
@@ -44,16 +188,94 @@
             "state": "translated",
             "value": "Próxima sessão"
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Următoarea sesiune"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一场"
+          }
         }
       }
     },
     "Next, at %@: %@, %@.": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التالي، عند %@: %@، %@."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als Nächstes, um %@: %@, %@."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Next, at %@: %@, %@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A continuación, a las %@: %@, %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ensuite, à %@ : %@, %@."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आगे, %@ बजे: %@, %@।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sljedeće, u %@: %@, %@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo, alle %@: %@, %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次は%@：%@、%@。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음은 %@: %@, %@."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hierna, om %@: %@, %@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej, o %@: %@, %@."
           }
         },
         "pt-BR": {
@@ -67,16 +289,94 @@
             "state": "translated",
             "value": "A seguir, às %@: %@, %@."
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Urmează, la %@: %@, %@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接下来，%@：%@，%@。"
+          }
         }
       }
     },
     "No sessions coming up.": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد جلسات قادمة."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine anstehenden Sessions."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "No sessions coming up."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay sesiones próximas."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune session à venir."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "कोई सत्र आने वाला नहीं है।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nema nadolazećih sesija."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna sessione in arrivo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予定されているセッションはありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예정된 세션이 없어요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen sessies binnenkort."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak nadchodzących sesji."
           }
         },
         "pt-BR": {
@@ -90,16 +390,94 @@
             "state": "translated",
             "value": "Não há sessões a seguir."
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicio sesiune în curând."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无即将开始的场次。"
+          }
         }
       }
     },
     "Now: %@, %@.%@": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآن: %@، %@.%@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jetzt: %@, %@.%@"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Now: %@, %@.%@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora: %@, %@.%@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En cours : %@, %@.%@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अभी: %@, %@।%@"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sada: %@, %@.%@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ora: %@, %@.%@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今：%@、%@。%@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금: %@, %@.%@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu: %@, %@.%@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teraz: %@, %@.%@"
           }
         },
         "pt-BR": {
@@ -112,6 +490,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Agora: %@, %@.%@"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acum: %@, %@.%@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在：%@，%@。%@"
           }
         }
       }
@@ -119,10 +509,82 @@
     "Open PrompTugal once to load the agenda.": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "افتح PrompTugal مرة واحدة لتحميل الجدول."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnen Sie PrompTugal einmal, um das Programm zu laden."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Open PrompTugal once to load the agenda."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre PrompTugal una vez para cargar la agenda."
+          }
+        },
+        "es-AR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrí PrompTugal una vez para cargar la agenda."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrez PrompTugal une fois pour charger l’agenda."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "एजेंडा लोड करने के लिए PrompTugal को एक बार खोलें।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jednom otvorite PrompTugal za učitavanje rasporeda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri PrompTugal una volta per caricare l'agenda."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一度PrompTugalを開いてアジェンダを読み込んでください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal을 한 번 열어 일정을 불러오세요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open PrompTugal één keer om het programma te laden."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz PrompTugal raz, aby wczytać agendę."
           }
         },
         "pt-BR": {
@@ -136,16 +598,94 @@
             "state": "translated",
             "value": "Abra o PrompTugal uma vez para carregar a agenda."
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deschide PrompTugal o dată pentru a încărca agenda."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先打开一次 PrompTugal 以加载日程。"
+          }
         }
       }
     },
     "Says which session is next, in Lisbon time.": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يخبرك أي جلسة هي التالية، بتوقيت لشبونة."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nennt die nächste Session, in Lissabonner Zeit."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Says which session is next, in Lisbon time."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dice cuál es la siguiente sesión, en hora de Lisboa."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indique quelle session est la prochaine, à l’heure de Lisbonne."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "बताता है कि अगला सत्र कौन-सा है, लिस्बन समय में।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Govori koja je sesija sljedeća, po lisabonskom vremenu."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dice qual è la prossima sessione, all'ora di Lisbona."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次のセッションをリスボン時間でお知らせします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 세션이 무엇인지 리스본 시간으로 알려 줘요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zegt welke sessie hierna komt, in Lissabonse tijd."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podaje, która sesja jest następna, w czasie lizbońskim."
           }
         },
         "pt-BR": {
@@ -158,6 +698,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "Diz qual é a próxima sessão, em hora de Lisboa."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spune care este următoarea sesiune, în ora Lisabonei."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "告诉你下一场是哪个，按里斯本时间。"
           }
         }
       }
