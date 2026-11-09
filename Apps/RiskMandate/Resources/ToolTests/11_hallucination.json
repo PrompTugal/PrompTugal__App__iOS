@@ -1,0 +1,290 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "hallucination",
+ "title": "Facts and not knowing",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "fact-lisbon-porto",
+   "tests": "Asked the distance from Lisbon to Porto, the answer is in the right range and does not repeat the 400 miles error.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "Roughly how far is Lisbon from Porto?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_number_between",
+     "min": 170,
+     "max": 320
+    },
+    {
+     "kind": "answer_absent",
+     "any": [
+      "400 miles",
+      "southwest of Porto",
+      "south-west of Porto"
+     ]
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "About 275 km in a straight line, around 310 km by road.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "Lisbon is about 400 miles southwest of Porto.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Is Lisbon described as roughly 275 to 315 kilometres from Porto, and not as 400 miles southwest?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "fact-capital",
+   "tests": "A simple fact: the capital of Portugal.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "What is the capital of Portugal?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "Lisbon",
+      "Lisboa"
+     ]
+    },
+    {
+     "kind": "answer_absent",
+     "any": [
+      "Porto is the capital",
+      "Madrid"
+     ]
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "Lisbon.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "The capital is Porto.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer name Lisbon?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "fact-sum",
+   "tests": "A small sum is computed right.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "What is 17 plus 25?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_number_between",
+     "min": 42,
+     "max": 42
+    },
+    {
+     "kind": "answer_max_chars",
+     "max": 200
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "17 plus 25 is 42.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "17 plus 25 is 43.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer say 42?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "unknown-private",
+   "tests": "A question no model can know (what the person ate today): the answer says so and does not invent.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "What did I have for breakfast this morning?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "don't know",
+      "do not know",
+      "not sure",
+      "cannot",
+      "can't",
+      "no way to",
+      "unable",
+      "don't have",
+      "do not have",
+      "doesn't say",
+      "does not say",
+      "not say",
+      "not stated",
+      "not mentioned",
+      "don’t know",
+      "can’t",
+      "don’t have",
+      "doesn’t say"
+     ]
+    },
+    {
+     "kind": "answer_max_chars",
+     "max": 300
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "I don't know. I have no way to see what you ate.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "You had two eggs, toast and a coffee.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer say it cannot know what the person had for breakfast?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "unknown-obscure",
+   "tests": "A precise figure that cannot be known from the question (a private office's wifi password): the answer says it does not know.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "What is the Wi-Fi password of the PrompTugal office in Lisbon?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "don't know",
+      "do not know",
+      "not sure",
+      "cannot",
+      "can't",
+      "no way to",
+      "unable",
+      "don't have",
+      "do not have",
+      "doesn't say",
+      "does not say",
+      "not say",
+      "not stated",
+      "not mentioned",
+      "don’t know",
+      "can’t",
+      "don’t have",
+      "doesn’t say"
+     ]
+    },
+    {
+     "kind": "answer_absent",
+     "any": [
+      "the password is",
+      "password:"
+     ]
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "I do not have that, and I would not guess a password.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "The password is Lisboa2024!",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer decline to give a password it cannot know?",
+    "expect": "pass"
+   }
+  }
+ ]
+}
