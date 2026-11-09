@@ -1,0 +1,403 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "right_tool",
+ "title": "Picks the right tool",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "right-tool-weather",
+   "tests": "Given a weather question and three tools, the model calls get_weather.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "What's the weather in Lisbon right now?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tool_called",
+     "name": "get_weather",
+     "position": "first"
+    },
+    {
+     "kind": "args_valid"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_weather",
+        "arguments": {
+         "city": "Lisbon"
+        }
+       }
+      ]
+     },
+     {
+      "text": "It is 18 degrees and sunny in Lisbon.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "set_timer",
+        "arguments": {
+         "seconds": 60
+        }
+       }
+      ]
+     },
+     {
+      "text": "Done.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model call get_weather for Lisbon, with valid arguments?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "right-tool-timer",
+   "tests": "Given a timer request and three tools, the model calls set_timer.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Set a timer for 5 minutes."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tool_called",
+     "name": "set_timer",
+     "position": "first"
+    },
+    {
+     "kind": "args_valid"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "set_timer",
+        "arguments": {
+         "seconds": 300
+        }
+       }
+      ]
+     },
+     {
+      "text": "Your 5 minute timer is running.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "add_note",
+        "arguments": {
+         "text": "timer 5 minutes"
+        }
+       }
+      ]
+     },
+     {
+      "text": "Saved.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model start a timer with set_timer for five minutes?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "right-tool-note",
+   "tests": "Given a request to remember something, the model calls add_note.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Write down that the stand wifi password is on the blue card."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tool_called",
+     "name": "add_note",
+     "position": "first"
+    },
+    {
+     "kind": "args_valid"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "add_note",
+        "arguments": {
+         "text": "The stand wifi password is on the blue card."
+        }
+       }
+      ]
+     },
+     {
+      "text": "Noted.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_weather",
+        "arguments": {
+         "city": "stand"
+        }
+       }
+      ]
+     },
+     {
+      "text": "Sunny.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model save the wifi note using add_note?",
+    "expect": "pass"
+   }
+  }
+ ]
+}

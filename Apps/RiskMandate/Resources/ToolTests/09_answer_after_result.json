@@ -1,0 +1,297 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "answer_after_result",
+ "title": "Answers once the result is in",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "answer-after-weather",
+   "tests": "Given a weather result already in the conversation, the model answers in text and does not call the tool again.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "What's the weather in Lisbon?"
+    },
+    {
+     "role": "assistant",
+     "text": "",
+     "tool_calls": [
+      {
+       "name": "get_weather",
+       "arguments": {
+        "city": "Lisbon"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "name": "get_weather",
+     "text": "18 C, sunny"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answers_after_result",
+     "contains": [
+      "18",
+      "sunny"
+     ]
+    },
+    {
+     "kind": "max_calls",
+     "max": 0
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "It is 18 degrees and sunny in Lisbon.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_weather",
+        "arguments": {
+         "city": "Lisbon"
+        }
+       }
+      ]
+     },
+     {
+      "text": "It is sunny.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model answer in text using the weather result, without calling a tool again?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "answer-after-timer",
+   "tests": "Given a started-timer result already in the conversation, the model confirms in text and does not set another timer.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Set a timer for 3 minutes."
+    },
+    {
+     "role": "assistant",
+     "text": "",
+     "tool_calls": [
+      {
+       "name": "set_timer",
+       "arguments": {
+        "seconds": 180
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "name": "set_timer",
+     "text": "timer started for 180 seconds"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answers_after_result",
+     "contains": [
+      "180",
+      "3 minutes",
+      "three minutes",
+      "started",
+      "set"
+     ]
+    },
+    {
+     "kind": "max_calls",
+     "max": 0
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "Your 3 minute timer has started.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "set_timer",
+        "arguments": {
+         "seconds": 180
+        }
+       }
+      ]
+     },
+     {
+      "text": "Started.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model confirm in text that the timer started, without setting another?",
+    "expect": "pass"
+   }
+  }
+ ]
+}

@@ -1,0 +1,335 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "grounding",
+ "title": "Sticks to the bundled text",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "ground-gives",
+   "tests": "Asked what RiskMandate gives agents, the answer uses the quoted line and adds no invented figure.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "What does RiskMandate give agents?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "access"
+     ]
+    },
+    {
+     "kind": "answer_contains",
+     "any": [
+      "free rein"
+     ]
+    },
+    {
+     "kind": "answer_grounded",
+     "allow": [
+      "Agent",
+      "Agents"
+     ]
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "It gives agents access, not free rein.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "RiskMandate gives agents unlimited access across 40 apps, as Acme Corp reported in 2019.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer say agents get access but not free rein, and nothing else about RiskMandate?",
+    "expect": "pass"
+   },
+   "system": "This is the RiskMandate app, running on this device. RiskMandate means the product at riskmandate.ai, not the general term. From riskmandate.ai: \"Give agents access. Not free rein.\" \"Agent Behaviour Policies for the AI agents in Gmail, HR, payroll, CRM and meeting apps: what each one can reach, what you authorised it to do, and the gap between the two.\" Answer briefly. If you do not know, say so."
+  },
+  {
+   "id": "ground-apps",
+   "tests": "Asked which apps, the answer names only the apps in the text.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "Which apps are covered?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "Gmail"
+     ]
+    },
+    {
+     "kind": "answer_contains",
+     "any": [
+      "payroll"
+     ]
+    },
+    {
+     "kind": "answer_absent",
+     "any": [
+      "Slack",
+      "Salesforce",
+      "Zoom",
+      "Teams",
+      "Workday"
+     ]
+    },
+    {
+     "kind": "answer_grounded"
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "Gmail, HR, payroll, CRM and meeting apps.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "Gmail, Slack, Salesforce, Workday and Zoom.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer list only Gmail, HR, payroll, CRM and meeting apps?",
+    "expect": "pass"
+   },
+   "system": "This is the RiskMandate app, running on this device. RiskMandate means the product at riskmandate.ai, not the general term. From riskmandate.ai: \"Give agents access. Not free rein.\" \"Agent Behaviour Policies for the AI agents in Gmail, HR, payroll, CRM and meeting apps: what each one can reach, what you authorised it to do, and the gap between the two.\" Answer briefly. If you do not know, say so."
+  },
+  {
+   "id": "ground-gap",
+   "tests": "Asked what the policy compares, the answer says what an agent can reach against what it was authorised to do.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "What gap does it measure?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "reach"
+     ]
+    },
+    {
+     "kind": "answer_contains",
+     "any": [
+      "authoris",
+      "authoriz"
+     ]
+    },
+    {
+     "kind": "answer_grounded"
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "The gap between what each agent can reach and what you authorised it to do.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "The gap between the agent's cost and the Gartner benchmark.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer say the gap is between what an agent can reach and what it was authorised to do?",
+    "expect": "pass"
+   },
+   "system": "This is the RiskMandate app, running on this device. RiskMandate means the product at riskmandate.ai, not the general term. From riskmandate.ai: \"Give agents access. Not free rein.\" \"Agent Behaviour Policies for the AI agents in Gmail, HR, payroll, CRM and meeting apps: what each one can reach, what you authorised it to do, and the gap between the two.\" Answer briefly. If you do not know, say so."
+  },
+  {
+   "id": "ground-price",
+   "tests": "Asked something the text does not say (the price), the answer says it does not know and gives no figure.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "How much does RiskMandate cost per month?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "don't know",
+      "do not know",
+      "not sure",
+      "cannot",
+      "can't",
+      "no way to",
+      "unable",
+      "don't have",
+      "do not have",
+      "doesn't say",
+      "does not say",
+      "not say",
+      "not stated",
+      "not mentioned",
+      "don’t know",
+      "can’t",
+      "don’t have",
+      "doesn’t say"
+     ]
+    },
+    {
+     "kind": "answer_absent",
+     "any": [
+      "$",
+      "€",
+      "£",
+      "per month",
+      "free tier"
+     ]
+    },
+    {
+     "kind": "answer_max_chars",
+     "max": 300
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "I do not know: the text I have does not say what it costs.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "It costs $49 per month, with a free tier for small teams.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer admit it does not know the price instead of giving one?",
+    "expect": "pass"
+   },
+   "system": "This is the RiskMandate app, running on this device. RiskMandate means the product at riskmandate.ai, not the general term. From riskmandate.ai: \"Give agents access. Not free rein.\" \"Agent Behaviour Policies for the AI agents in Gmail, HR, payroll, CRM and meeting apps: what each one can reach, what you authorised it to do, and the gap between the two.\" Answer briefly. If you do not know, say so."
+  },
+  {
+   "id": "ground-security",
+   "tests": "Asked about encryption, which the text does not mention, the answer does not invent a standard.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "Is the data encrypted with AES-256 at rest?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_contains",
+     "any": [
+      "don't know",
+      "do not know",
+      "not sure",
+      "cannot",
+      "can't",
+      "no way to",
+      "unable",
+      "don't have",
+      "do not have",
+      "doesn't say",
+      "does not say",
+      "not say",
+      "not stated",
+      "not mentioned",
+      "don’t know",
+      "can’t",
+      "don’t have",
+      "doesn’t say"
+     ]
+    },
+    {
+     "kind": "answer_absent",
+     "any": [
+      "yes",
+      "AES-256 at rest is",
+      "ISO",
+      "SOC"
+     ]
+    },
+    {
+     "kind": "answer_max_chars",
+     "max": 300
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "I don't know. The text I have does not say anything about encryption.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "Yes, it uses AES-256 at rest and is SOC 2 certified.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer avoid confirming encryption details the text does not give?",
+    "expect": "pass"
+   },
+   "system": "This is the RiskMandate app, running on this device. RiskMandate means the product at riskmandate.ai, not the general term. From riskmandate.ai: \"Give agents access. Not free rein.\" \"Agent Behaviour Policies for the AI agents in Gmail, HR, payroll, CRM and meeting apps: what each one can reach, what you authorised it to do, and the gap between the two.\" Answer briefly. If you do not know, say so."
+  }
+ ]
+}

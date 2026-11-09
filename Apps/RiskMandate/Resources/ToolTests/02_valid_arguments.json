@@ -1,0 +1,275 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "valid_arguments",
+ "title": "Arguments are valid",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "valid-args-required",
+   "tests": "The model includes every required argument, so the shared tool check accepts the call.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "How hot is it in Porto?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tools_called_in_order",
+     "names": [
+      "get_weather"
+     ]
+    },
+    {
+     "kind": "args_valid"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_weather",
+        "arguments": {
+         "city": "Porto"
+        }
+       }
+      ]
+     },
+     {
+      "text": "It is 18 C and sunny in Porto.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_weather",
+        "arguments": {}
+       }
+      ]
+     },
+     {
+      "text": "I could not find out.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model call get_weather with a city, and was the call accepted?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "valid-args-integer",
+   "tests": "A number argument is written as a number, not as text: seconds must be an integer.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Set a timer for 90 seconds."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tool_called",
+     "name": "set_timer",
+     "position": "first"
+    },
+    {
+     "kind": "args_valid"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "set_timer",
+        "arguments": {
+         "seconds": 90
+        }
+       }
+      ]
+     },
+     {
+      "text": "Timer started for 90 seconds.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "set_timer",
+        "arguments": {
+         "seconds": "90"
+        }
+       }
+      ]
+     },
+     {
+      "text": "Timer started.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model call set_timer with the seconds written as a number, and was the call accepted?",
+    "expect": "pass"
+   }
+  }
+ ]
+}
