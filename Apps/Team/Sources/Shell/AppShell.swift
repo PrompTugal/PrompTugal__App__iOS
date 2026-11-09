@@ -239,17 +239,35 @@ private struct PhoneShell: View {
         Destinations.all.filter { $0.phoneTab != nil }.sorted { ($0.phoneTab ?? 0) < ($1.phoneTab ?? 0) }
     }
 
+    /// More is a sheet from the button at the top right of every tab, so five tabs fit (the redesign, Indi's brief v7).
+    /// A route to a screen outside the tabs still sets `tab = "more"`; that opens the sheet.
+    @State private var moreShown = false
+
     var body: some View {
         TabView(selection: $tab) {
             ForEach(tabs) { destination in
                 Tab(destination.tabTitle ?? destination.title, systemImage: destination.symbol, value: destination.id) {
                     NavigationStack {
                         destination.view().destinationID(destination.id).surfaceKind(destination.kind)
+                            .toolbar {
+                                ToolbarItem(placement: .topBarTrailing) {
+                                    Button { moreShown = true } label: { Label("More", systemImage: "ellipsis.circle") }
+                                }
+                            }
                     }
                 }
             }
-            Tab("More", systemImage: "ellipsis.circle", value: "more") {
-                NavigationStack { MoreList(debug: debug) }
+        }
+        .sheet(isPresented: $moreShown) {
+            NavigationStack {
+                MoreList(debug: debug)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { moreShown = false } } }
+            }
+        }
+        .onChange(of: tab, initial: true) { _, value in
+            if value == "more" {
+                moreShown = true
+                tab = tabs.first?.id ?? "today"
             }
         }
     }
