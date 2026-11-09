@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 9 Nov 20:50 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 9 Nov 21:30 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 9 Nov 21:30 UTC: no change in the external group: 0.4.23 (204), 0.4.24 (205) and 0.3.1 (4) all APPROVED in PrompTugal External Users, waiting for the conductor on removing 204 and 4. Release #132 (v0.4.51): Team and RiskMandate TestFlight jobs done, public app queued; #133 (v0.4.52) pending. Internal only.
 
 - 9 Nov 20:50 UTC: BETA APP REVIEW APPROVED for 0.4.23 (204) and 0.4.24 (205) (seen 20:48, about 38 minutes in review); both are in PrompTugal External Users, so the public link serves the newest approved build (205). Build 4 (0.3.1) is still in that group; removing 204 and 4 waits for the conductor. v0.4.48 (229) is on all three apps (internal); release #132 (v0.4.51) archiving, #133 (v0.4.52) pending.
 
