@@ -1,0 +1,261 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "no_tool",
+ "title": "No tool when none fits",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "no-tool-general",
+   "tests": "A general knowledge question gets a text answer and no tool call.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "What is the capital of Portugal?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "no_tool"
+    },
+    {
+     "kind": "answer_contains",
+     "any": [
+      "Lisbon"
+     ]
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "The capital of Portugal is Lisbon.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_weather",
+        "arguments": {
+         "city": "Lisbon"
+        }
+       }
+      ]
+     },
+     {
+      "text": "Sunny.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model answer that the capital is Lisbon, without calling any tool?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "no-tool-ask",
+   "tests": "A timer request with no duration gets a question back, not a guessed number.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Set a timer."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "no_tool"
+    },
+    {
+     "kind": "answer_contains",
+     "any": [
+      "how long",
+      "duration",
+      "how many",
+      "minutes",
+      "seconds",
+      "?"
+     ]
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "How long should the timer run?",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "set_timer",
+        "arguments": {
+         "seconds": 60
+        }
+       }
+      ]
+     },
+     {
+      "text": "Timer set for a minute.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model ask how long the timer should run instead of starting one?",
+    "expect": "pass"
+   }
+  }
+ ]
+}

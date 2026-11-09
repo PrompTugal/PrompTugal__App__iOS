@@ -1,0 +1,254 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "similar_tools",
+ "title": "Chooses between similar tools",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "similar-search",
+   "tests": "To find one note the model searches, instead of listing every note.",
+   "tools": [
+    {
+     "name": "search_notes",
+     "description": "Search the saved notes for a word or phrase.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "query": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "query"
+      ]
+     }
+    },
+    {
+     "name": "list_notes",
+     "description": "List every saved note.",
+     "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "search_notes": {
+     "returns": "Wi-Fi password: on the blue card"
+    },
+    "list_notes": {
+     "returns": [
+      "Wi-Fi password: on the blue card",
+      "Buy spare cables"
+     ]
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Find my note about the Wi-Fi."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tool_called",
+     "name": "search_notes",
+     "position": "first"
+    },
+    {
+     "kind": "args_valid"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "search_notes",
+        "arguments": {
+         "query": "Wi-Fi"
+        }
+       }
+      ]
+     },
+     {
+      "text": "Your note says the Wi-Fi password is on the blue card.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "list_notes",
+        "arguments": {}
+       }
+      ]
+     },
+     {
+      "text": "Here they are.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model search the notes for the Wi-Fi note instead of listing every note?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "similar-list",
+   "tests": "To show every note the model lists them, instead of searching for a made-up word.",
+   "tools": [
+    {
+     "name": "search_notes",
+     "description": "Search the saved notes for a word or phrase.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "query": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "query"
+      ]
+     }
+    },
+    {
+     "name": "list_notes",
+     "description": "List every saved note.",
+     "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "search_notes": {
+     "returns": "Wi-Fi password: on the blue card"
+    },
+    "list_notes": {
+     "returns": [
+      "Wi-Fi password: on the blue card",
+      "Buy spare cables"
+     ]
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Show me all my notes."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tool_called",
+     "name": "list_notes",
+     "position": "first"
+    },
+    {
+     "kind": "args_valid"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "list_notes",
+        "arguments": {}
+       }
+      ]
+     },
+     {
+      "text": "You have two notes.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "search_notes",
+        "arguments": {
+         "query": "all"
+        }
+       }
+      ]
+     },
+     {
+      "text": "Here they are.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model list every note instead of searching?",
+    "expect": "pass"
+   }
+  }
+ ]
+}
