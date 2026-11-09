@@ -1,0 +1,36 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.news.promptugal.card",
+  "teamIdentifier": "SET-BY-make-pass.py",
+  "serialNumber": "riskmandate-card-grc-2026",
+  "organizationName": "RiskMandate",
+  "description": "RiskMandate business card, Web Summit Lisbon 2026",
+  "logoText": "",
+  "foregroundColor": "rgb(255, 255, 255)",
+  "backgroundColor": "rgb(22, 22, 21)",
+  "labelColor": "rgb(34, 197, 94)",
+  "sharingProhibited": false,
+  "generic": {
+    "headerFields": [
+      { "key": "edition", "label": "WEB SUMMIT", "value": "Lisbon" }
+    ],
+    "primaryFields": [
+      { "key": "line", "label": "AGENT BEHAVIOUR POLICIES", "value": "Know their reach. Define their mandate. Control the gap." }
+    ],
+    "secondaryFields": [
+      { "key": "when", "label": "MEET US", "value": "Thursday 12 November" },
+      { "key": "where", "label": "WHERE", "value": "Between Booths A1-30" }
+    ],
+    "auxiliaryFields": [
+      { "key": "tagline", "label": "", "value": "Govern AI. Grow with Confidence." }
+    ],
+    "backFields": [
+      { "key": "what", "label": "Agent Behaviour Policies", "value": "What one agent can reach, what you authorised it to do, and the gap between the two." },
+      { "key": "web", "label": "Website", "value": "https://riskmandate.ai" },
+      { "key": "meet", "label": "Meet the team", "value": "https://web-summit.sgit.ai/meet/" }
+    ]
+  },
+  "barcodes": [
+    { "format": "PKBarcodeFormatQR", "message": "https://web-summit.sgit.ai/meet/", "messageEncoding": "iso-8859-1", "altText": "web-summit.sgit.ai/meet/" }
+  ]
+}
