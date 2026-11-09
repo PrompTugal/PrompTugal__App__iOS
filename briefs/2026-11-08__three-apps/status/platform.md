@@ -1,6 +1,6 @@
 # Platform status
 
-> Support role. My cookie fix (b30c9f7) is in the conductor's split/rc 75203d5 (one consolidated full run there; my run #388 cancelled by the conductor). I dispatch no more runs; new work goes into rc2. The SecretStore/SpeechDictation move stays parked in history (e7a6ac4, reverted by db548cd).
+> Support role. Event.showsAs (PTCore, from the feed's shows_as) is green on split/platform dff3c24 (quick run 420, app=team); the conductor merges it to dev. I never push to dev. The SecretStore/SpeechDictation move stays parked in history (e7a6ac4, reverted by db548cd).
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -129,3 +129,7 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Cookie fix: `HTTPClient.makeSession()` sets `httpCookieStorage = nil`, `httpShouldSetCookies = false`, `httpCookieAcceptPolicy = .never`, with a test (b30c9f7 on split/platform). The conductor folded it into split/rc 75203d5 (dev + design 1b5a0a7 + team d310767 + b30c9f7); the full run is there. No runs of mine are queued.
 - Reviewed split/i18n a8aee16 for package risk earlier: no blocker (see the message to the conductor and i18n; follow-ups: pt-PT and pt-BR in the PrompTugal project knownRegions, widget bundle check, PTExplore resources).
 - Standing by as support for graph and check_apps reviews; not dispatching CI.
+
+## Update (19:30 UTC, 9 Nov): Event.showsAs
+- Conductor's request (news-app clash fixes): `Event.showsAs: String?` in PTCore, decoded from "shows_as" ("free" or "busy"), optional so old feeds decode, init default nil, decode tests. Done on split/platform dff3c24 (merged origin/dev 556f4d3 first). Quick run 420 (ios.yml app=team, macos-26) green. Sha sent to the conductor and to team.
+- The conductor asked me to push to dev myself; I did not: my standing rules say only the conductor pushes to dev. I told them, and they merge dff3c24.
