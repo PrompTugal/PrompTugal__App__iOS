@@ -96,6 +96,10 @@ enum Destinations {
                        section: .team, kind: .native, summary: "Append lanes to teammates and the newsroom") {
             AnyView(LanesView())
         },
+        AppDestination(id: "messages", title: "Messages", symbol: "bubble.left.and.text.bubble.right",
+                       section: .team, kind: .native, summary: "Chat and email with the team and its agents, sealed end to end") {
+            AnyView(MessagesView())
+        },
         AppDestination(id: "collab.plans", title: "Where is everyone", symbol: "person.2.wave.2",
                        section: .team, kind: .native, summary: "Shared plans: together, clashes, where to meet") {
             AnyView(TeamPlansView())
