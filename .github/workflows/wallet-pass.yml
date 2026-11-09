@@ -1,0 +1,42 @@
+name: Wallet pass
+
+# The RiskMandate business card as an Apple Wallet pass (scripts/wallet/wallet_pass.py), at Dinis's word
+# (9 November 2026). Run by hand. Without "confirm" it only checks the Pass Type ID. With it, it creates the ID if
+# needed and a new pass certificate through the App Store Connect API, signs the pass, and uploads card.pkpass as an
+# artifact. The certificate's private key exists only on the runner and is deleted; nothing secret is printed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Create the Pass Type ID (if needed), a pass certificate, and the signed pass'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wallet-pass
+  cancel-in-progress: false
+
+jobs:
+  pass:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Make the pass
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+        run: python3 scripts/wallet/wallet_pass.py --out card.pkpass ${{ inputs.confirm && '--confirm' || '' }}
+      - name: Upload the pass
+        if: inputs.confirm
+        uses: actions/upload-artifact@v5
+        with:
+          name: riskmandate-card-pkpass
+          path: card.pkpass
+          if-no-files-found: error
