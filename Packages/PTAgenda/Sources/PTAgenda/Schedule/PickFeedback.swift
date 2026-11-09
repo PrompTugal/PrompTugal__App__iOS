@@ -21,8 +21,8 @@ public enum PickRules {
     /// "Tue 14:00": the weekday and the start time in Lisbon time, in the person's language and format.
     public static func whenLabel(_ event: Event) -> String {
         guard let start = event.start else { return event.time }
-        let day = start.formatted(Date.FormatStyle(timeZone: Lisbon.zone).weekday(.abbreviated))
-        let time = start.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: Lisbon.zone))
+        let day = start.formatted(Date.FormatStyle(timeZone: Lisbon.zone).locale(AppCulture.locale).weekday(.abbreviated))
+        let time = start.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: AppCulture.locale, timeZone: Lisbon.zone))
         return "\(day) \(time)"
     }
 }

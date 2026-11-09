@@ -4,10 +4,76 @@
     "Next · %@": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "التالي · %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Danach · %@"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Next · %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiente · %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ensuite · %@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आगे · %@"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sljedeće · %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dopo · %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "次 · %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다음 · %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daarna · %@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej · %@"
           }
         },
         "pt-BR": {
@@ -21,16 +87,94 @@
             "state": "translated",
             "value": "A seguir · %@"
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apoi · %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接下来 · %@"
+          }
         }
       }
     },
     "No sessions coming up": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد جلسات قادمة"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine anstehenden Sessions"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "No sessions coming up"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay sesiones próximas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune session à venir"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "कोई सत्र आने वाला नहीं है"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nema nadolazećih sesija"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna sessione in arrivo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "予定されているセッションはありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예정된 세션 없음"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen sessies binnenkort"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak nadchodzących sesji"
           }
         },
         "pt-BR": {
@@ -44,16 +188,94 @@
             "state": "translated",
             "value": "Sem sessões a seguir"
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicio sesiune în curând"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂无即将开始的场次"
+          }
         }
       }
     },
     "Now and next": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الآن والتالي"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jetzt und danach"
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Now and next"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora y después"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintenant et ensuite"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अभी और आगे"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sada i sljedeće"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ora e dopo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今と次"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금과 다음"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu en straks"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teraz i dalej"
           }
         },
         "pt-BR": {
@@ -67,16 +289,100 @@
             "state": "translated",
             "value": "Agora e a seguir"
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acum și apoi"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "现在与接下来"
+          }
         }
       }
     },
     "Open PrompTugal to load the agenda.": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "افتح PrompTugal لتحميل الجدول."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnen Sie PrompTugal, um das Programm zu laden."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Open PrompTugal to load the agenda."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre PrompTugal para cargar la agenda."
+          }
+        },
+        "es-AR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrí PrompTugal para cargar la agenda."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrez PrompTugal pour charger l’agenda."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "एजेंडा लोड करने के लिए PrompTugal खोलें।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otvorite PrompTugal za učitavanje rasporeda."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri PrompTugal per caricare l'agenda."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugalを開いてアジェンダを読み込んでください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal을 열어 일정을 불러오세요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open PrompTugal om het programma te laden."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz PrompTugal, aby wczytać agendę."
           }
         },
         "pt-BR": {
@@ -90,16 +396,94 @@
             "state": "translated",
             "value": "Abra o PrompTugal para carregar a agenda."
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deschide PrompTugal pentru a încărca agenda."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请打开 PrompTugal 以加载日程。"
+          }
         }
       }
     },
     "The session happening now and what comes next, in Lisbon time.": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الجلسة الجارية الآن وما يليها، بتوقيت لشبونة."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die aktuelle Session und die nächste, in Lissabonner Zeit."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "The session happening now and what comes next, in Lisbon time."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La sesión que está en marcha y la siguiente, en hora de Lisboa."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La session en cours et la suivante, à l’heure de Lisbonne."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अभी चल रहा सत्र और उसके बाद क्या है, लिस्बन समय में।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sesija koja je upravo na redu i ona koja slijedi, po lisabonskom vremenu."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La sessione in corso e quella successiva, all'ora di Lisbona."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リスボン時間で、現在のセッションと次のセッションを表示します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지금 진행 중인 세션과 다음 세션, 리스본 시간 기준."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De sessie die nu bezig is en wat erna komt, in Lissabonse tijd."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trwająca sesja i następna, w czasie lizbońskim."
           }
         },
         "pt-BR": {
@@ -112,6 +496,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "A sessão a decorrer agora e a seguinte, em hora de Lisboa."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sesiunea în desfășurare și următoarea, în ora Lisabonei."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "里斯本时间当前进行的场次以及接下来的安排。"
           }
         }
       }

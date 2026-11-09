@@ -68,11 +68,12 @@ struct NowView: View {
         }
     }
 
-    private static let dayStyle: Date.FormatStyle = {
-        var style = Date.FormatStyle().weekday(.wide).day().month(.wide)
+    /// Computed, not stored: the chosen culture can change while the app runs.
+    private static var dayStyle: Date.FormatStyle {
+        var style = Date.FormatStyle().locale(AppCulture.locale).weekday(.wide).day().month(.wide)
         style.timeZone = Lisbon.zone
         return style
-    }()
+    }
 
     /// No agenda yet (the first launch offline, or still loading): a loading or failed state with "Try again", never a blank screen.
     private var agendaMissing: some View {
@@ -118,11 +119,11 @@ struct NowView: View {
         return [day + ", " + Lisbon.timeLabel(entry.start), entry.place].filter { !$0.isEmpty }.joined(separator: " · ")
     }
 
-    private static let shortDayStyle: Date.FormatStyle = {
-        var style = Date.FormatStyle().weekday(.abbreviated).day().month(.abbreviated)
+    private static var shortDayStyle: Date.FormatStyle {
+        var style = Date.FormatStyle().locale(AppCulture.locale).weekday(.abbreviated).day().month(.abbreviated)
         style.timeZone = Lisbon.zone
         return style
-    }()
+    }
 
     /// NOW-1b: with no picks, a card that starts the program; with picks, the next one.
     @ViewBuilder private func startProgram(_ model: NowModel, now: Date) -> some View {
