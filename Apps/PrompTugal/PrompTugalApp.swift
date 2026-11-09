@@ -13,6 +13,8 @@ struct PrompTugalApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        // The app's own language (default English, never the device's), before any view reads a string.
+        AppCulture.start()
         // The app's own URL scheme, before any view reads it (reminder links, deep links).
         AppLinks.scheme = "promptugal"
         // The public list of websites (PrompTugal.news only, no team site), before any view reads it.

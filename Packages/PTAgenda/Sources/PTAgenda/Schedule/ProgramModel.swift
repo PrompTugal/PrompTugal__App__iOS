@@ -184,7 +184,7 @@ public struct ProgramModel: Equatable, Sendable {
 
     /// A short chip label for a day: the weekday and the day number in the person's language ("Tue 10", "ter. 10"),
     /// from a DateFormatter template so the order and punctuation follow the locale. Lisbon time.
-    public static func shortLabel(_ day: String, locale: Locale = .current) -> String {
+    public static func shortLabel(_ day: String, locale: Locale = AppCulture.locale) -> String {
         guard let date = Lisbon.instant(day: day) else { return day }
         let formatter = DateFormatter()
         formatter.locale = locale

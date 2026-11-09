@@ -22,6 +22,8 @@ struct PublicShell: View {
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     /// ONB-1: the first-run screen, shown once.
     @AppStorage("onboarding.seen") private var onboardingSeen = false
+    /// The reader's culture (default English); changing it rebuilds the screens in the new language.
+    @AppStorage(AppCulture.storageKey) private var cultureID = AppCulture.english
     @State private var onboarding = false
     @State private var columns: NavigationSplitViewVisibility = .all
     /// A page opened by a link (a reminder's session), shown over the shell.
@@ -39,6 +41,8 @@ struct PublicShell: View {
                 splitView
             }
         }
+        .id(cultureID)
+        .appCulture(cultureID)
         .environment(reader)
         .environment(\.newsSource, reader)
         .environment(newsFeeds)
@@ -197,6 +201,7 @@ private struct PublicSidebar: View {
         }
         .listStyle(.sidebar)
         .navigationTitle("PrompTugal")
+        .toolbar { ToolbarItem(placement: .topBarTrailing) { LanguageButton() } }
     }
 
     @ViewBuilder private func rowViews(_ rows: [ShellDestination]) -> some View {
@@ -245,6 +250,7 @@ private struct PublicPhoneShell: View {
                         NavigationStack {
                             destination.view().destinationID(destination.id).surfaceKind(destination.kind)
                                 .toolbar {
+                                    ToolbarItem(placement: .topBarLeading) { LanguageButton() }
                                     if hasGear(destination.id) {
                                         ToolbarItem(placement: .topBarTrailing) {
                                             Button(action: openSettings) { Image(systemName: "gearshape") }

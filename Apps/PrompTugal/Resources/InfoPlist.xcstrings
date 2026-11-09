@@ -4,7 +4,73 @@
     "CFBundleDisplayName": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
         "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "PrompTugal"
@@ -21,16 +87,100 @@
             "state": "translated",
             "value": "PrompTugal"
           }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal"
+          }
         }
       }
     },
     "NSCalendarsWriteOnlyAccessUsageDescription": {
       "extractionState": "manual",
       "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يضيف PrompTugal الجلسات التي تختارها إلى تقويمك عندما تطلب ذلك."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal fügt die von Ihnen gewählten Sessions Ihrem Kalender hinzu, wenn Sie es verlangen."
+          }
+        },
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "PrompTugal adds the sessions you pick to your calendar when you ask it to."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal añade a tu calendario las sesiones que eliges cuando se lo pides."
+          }
+        },
+        "es-MX": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal agrega a tu calendario las sesiones que eliges cuando se lo pides."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal ajoute à votre calendrier les sessions que vous choisissez, à votre demande."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "जब आप कहें, PrompTugal आपके चुने सत्र आपके कैलेंडर में जोड़ देता है।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal dodaje sesije koje odaberete u vaš kalendar kad to zatražite."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal aggiunge a Calendario le sessioni che scegli, quando glielo chiedi."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ご依頼があったとき、PrompTugalは選んだセッションをカレンダーに追加します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal은 요청할 때 선택한 세션을 캘린더에 추가해요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal voegt de sessies die je kiest toe aan je agenda als je dat vraagt."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal dodaje wybrane sesje do kalendarza, gdy o to poprosisz."
           }
         },
         "pt-BR": {
@@ -43,6 +193,18 @@
           "stringUnit": {
             "state": "translated",
             "value": "O PrompTugal adiciona ao seu calendário as sessões que escolher, quando lho pedir."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal adaugă în calendar sesiunile alese, la cerere."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当你提出请求时，PrompTugal 会将你精选的场次添加到日历。"
           }
         }
       }
