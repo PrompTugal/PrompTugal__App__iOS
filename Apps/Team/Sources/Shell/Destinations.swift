@@ -72,9 +72,11 @@ enum Destinations {
 
     static let today: [AppDestination] = [
         AppDestination(id: "today", title: "My day", symbol: "sun.max", section: .today, kind: .native,
-                       summary: "Stand-up, what waits on me, my agents", phoneTab: 0, tabTitle: "Today") { AnyView(TodayView()) },
+                       summary: "Your day: what is next, the stand-up, what waits on you", phoneTab: 0, tabTitle: "Now") { AnyView(TodayView()) },
         AppDestination(id: "team.schedule", title: "My schedule", symbol: "calendar", section: .today,
-                       kind: .hybrid, summary: "Picks from the website and the app, one list") { AnyView(MyDayView()) },
+                       kind: .hybrid, summary: "Your schedule: the summit, the team and your picks, by day", phoneTab: 2, tabTitle: "Plan") { AnyView(MyDayView()) },
+        AppDestination(id: "tasks", title: "Tasks", symbol: "checkmark.circle", section: .today,
+                       kind: .native, summary: "Everyone's tasks by day, starred first", phoneTab: 3, tabTitle: "Tasks") { AnyView(TasksView()) },
         AppDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", section: .today,
                        kind: .native, summary: "Free slots and walking times between picks") { AnyView(PlannerView()) },
         AppDestination(id: "wall", title: "Wall", symbol: "rectangle.on.rectangle", section: .today, kind: .native,
@@ -87,7 +89,7 @@ enum Destinations {
 
     static let team: [AppDestination] = [
         AppDestination(id: "team.people", title: "The team", symbol: "person.3", section: .team, kind: .native,
-                       summary: "Everyone's load: only you, decide, overdue", phoneTab: 1, tabTitle: "Team") { AnyView(TeamDashboardView()) },
+                       summary: "Everyone's load: only you, decide, overdue") { AnyView(TeamDashboardView()) },
         AppDestination(id: "team.commandcentre", title: "My command centre", symbol: "rectangle.3.group",
                        section: .team, kind: .web(TeamEndpoints.base), summary: "The team site's command centre") {
             AnyView(MyCommandCentreWeb())
@@ -97,11 +99,12 @@ enum Destinations {
             AnyView(LanesView())
         },
         AppDestination(id: "messages", title: "Messages", symbol: "bubble.left.and.text.bubble.right",
-                       section: .team, kind: .native, summary: "Chat and email with the team and its agents, sealed end to end") {
+                       section: .team, kind: .native, summary: "Chat and email with the team and its agents, sealed end to end",
+                       phoneTab: 4, tabTitle: "Messages") {
             AnyView(MessagesView())
         },
         AppDestination(id: "collab.plans", title: "Where is everyone", symbol: "person.2.wave.2",
-                       section: .team, kind: .native, summary: "Shared plans: together, clashes, where to meet") {
+                       section: .team, kind: .native, summary: "Who is where, who is together, where to meet", phoneTab: 1, tabTitle: "Where") {
             AnyView(TeamPlansView())
         },
         AppDestination(id: "team.home", title: "Team home", symbol: "person.crop.circle", section: .team,
@@ -117,7 +120,7 @@ enum Destinations {
 
     static let agents: [AppDestination] = [
         AppDestination(id: "agents.activity", title: "What my agents do", symbol: "cpu", section: .agents,
-                       kind: .native, summary: "Wakes, runs and reports", phoneTab: 2, tabTitle: "Agents") { AnyView(AgentsDashboardView()) },
+                       kind: .native, summary: "What the agents did today: wakes, runs and reports") { AnyView(AgentsDashboardView()) },
         AppDestination(id: "agents.wakes.web", title: "Wakes (web)", symbol: "globe", section: .agents,
                        kind: .web(TeamEndpoints.base.appendingPathComponent("wakes/")), summary: "The web original") {
             AnyView(WebPage(url: TeamEndpoints.base.appendingPathComponent("wakes/"), title: "Wakes"))
@@ -153,7 +156,7 @@ enum Destinations {
 
     static let news: [AppDestination] = [
         AppDestination(id: "news.home", title: "News", symbol: "newspaper", section: .news, kind: .native,
-                       summary: "Feed, newsletter, stories, graph", phoneTab: 3) { AnyView(NewsHomeView()) },
+                       summary: "Feed, newsletter, stories, graph") { AnyView(NewsHomeView()) },
         AppDestination(id: "news.newsroom", title: "Newsroom", symbol: "building.columns", section: .news,
                        kind: .native, summary: "Desks, the story pipeline, decisions") { AnyView(NewsroomStatusView()) },
         AppDestination(id: "news.graph", title: "Graph", symbol: "point.3.connected.trianglepath.dotted",
