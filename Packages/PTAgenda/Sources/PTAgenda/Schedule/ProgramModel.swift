@@ -142,7 +142,7 @@ public struct ProgramModel: Equatable, Sendable {
         }
 
         // The shared clash rule on the busy picks (sorted by start, then id): overlaps and too-short walks.
-        let byID = Dictionary(uniqueKeysWithValues: busy.map { ($0.id, $0) })
+        let byID = Dictionary(busy.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let items = busy.sorted { $0.start == $1.start ? $0.id < $1.id : $0.start < $1.start }.map {
             DayPlanner.Item(id: $0.id, kind: .pick, title: $0.title, start: $0.start, end: $0.end, place: $0.place, eventID: $0.id)
         }
