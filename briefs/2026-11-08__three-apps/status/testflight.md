@@ -2,7 +2,7 @@
 
 > TestFlight ops tool works: "status" ran (TestFlight ops #2) and shows build 4 in Beta App Review (IN_REVIEW), builds 5 and 6 only in the internal group. The first automatic upload from dev worked: build 152 (iOS release run 52, dev `e5328ff`), processed, export compliance answered, What to Test set, in the internal group.
 
-**Branch:** `split/testflight` · **Updated:** 9 Nov 17:37 UTC (account B session watching)
+**Branch:** `split/testflight` · **Updated:** 9 Nov 18:42 UTC (account B session watching)
 
 ## Done
 
@@ -25,6 +25,8 @@ iOS release run 52 on dev `e5328ff`: uploaded 0.3.1 (152) at 00:57 UTC; processe
 
 ## In progress
 
+
+- 9 Nov 18:42 UTC: Team 0.4.42 (223, release #123) VALID in PrompTugal Team Internal; public and RiskMandate stay 0.4.40 (221). The notification-crash fix (8605cba, in v0.4.44/v0.4.45) has no TestFlight build yet: releases #124 and #125 were cancelled, #126 (0451382) ended as failure with no jobs; ios.yml for 8605cba is green now. Reported to the conductor; a re-run of release run 42670843820 is needed (not mine). 0.4.23 (204) and 0.4.24 (205) still WAITING_FOR_REVIEW (about 26h35 and 20h20), build 4 APPROVED.
 
 - 9 Nov 17:37 UTC: no change. 0.4.23 (204) and 0.4.24 (205) still WAITING_FOR_REVIEW in Beta App Review (about 25h35 and 19h20; last check 17:34); build 4 APPROVED. Latest builds are 0.4.40 (221) on all three apps, internal only; release #122 ran no app jobs.
 
