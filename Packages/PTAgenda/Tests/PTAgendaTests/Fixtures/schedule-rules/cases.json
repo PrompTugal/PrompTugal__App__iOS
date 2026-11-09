@@ -1,0 +1,55 @@
+{
+ "format": "schedule-rules-cases/1",
+ "version": 1,
+ "note": "Shared vectors: the JS reference, Swift (DayPlanner) and Kotlin must give these results. Synthetic sessions. Times in Lisbon (WET, +00:00) on 10 Nov 2026.",
+ "travel": [
+  {"a": "", "b": "Centre Stage", "minutes": 0},
+  {"a": "Centre Stage", "b": "centre stage", "minutes": 0},
+  {"a": "Centre Stage", "b": "Masterclass 1", "minutes": 5},
+  {"a": "Centre Stage", "b": "Hotel bar, Baixa", "minutes": 25},
+  {"a": "Cafe in Belem", "b": "Hotel bar, Baixa", "minutes": 25}
+ ],
+ "shows_as": [
+  {"item": {"id": "t1", "title": "Panel: agents at work", "start": "2026-11-10T10:00:00+00:00", "end": "2026-11-10T10:40:00+00:00"}, "expect": "busy"},
+  {"item": {"id": "t2", "title": "Registration", "start": "2026-11-10T08:00:00+00:00", "end": "2026-11-10T09:00:00+00:00"}, "expect": "free"},
+  {"item": {"id": "t3", "title": "Evening showcase", "start": "2026-11-10T17:00:00+00:00", "end": "2026-11-10T20:00:00+00:00"}, "expect": "free"},
+  {"item": {"id": "t4", "title": "Registration", "start": "2026-11-10T08:00:00+00:00", "shows_as": "busy"}, "expect": "busy"},
+  {"item": {"id": "t5", "title": "Workshop", "start": "2026-11-10T11:00:00+00:00", "shows_as": "busy"}, "toggles": {"t5": "free"}, "expect": "free"}
+ ],
+ "clashes": [
+  {
+   "name": "overlap, travel clash, free item ignored, split planned",
+   "items": [
+    {"id": "a", "title": "Talk A", "start": "2026-11-10T10:00:00+00:00", "end": "2026-11-10T10:30:00+00:00", "place": "Centre Stage"},
+    {"id": "b", "title": "Talk B", "start": "2026-11-10T10:20:00+00:00", "end": "2026-11-10T11:00:00+00:00", "place": "Centre Stage"},
+    {"id": "c", "title": "Dinner meetup", "start": "2026-11-10T11:10:00+00:00", "end": "2026-11-10T12:00:00+00:00", "place": "Restaurant, Chiado"},
+    {"id": "r", "title": "Registration", "start": "2026-11-10T09:00:00+00:00", "end": "2026-11-10T19:00:00+00:00", "place": "FIL"},
+    {"id": "d", "title": "Masterclass D", "start": "2026-11-10T14:00:00+00:00", "end": "2026-11-10T15:00:00+00:00", "place": "Masterclass 1"},
+    {"id": "e", "title": "Panel E", "start": "2026-11-10T14:30:00+00:00", "end": "2026-11-10T15:30:00+00:00", "place": "Centre Stage"}
+   ],
+   "splits": ["d|e"],
+   "expect": [
+    {"first": "a", "second": "b", "minutes": 10, "travel": false, "split": false},
+    {"first": "b", "second": "c", "minutes": 15, "travel": true, "split": false},
+    {"first": "d", "second": "e", "minutes": 30, "travel": false, "split": true, "leave_at": "2026-11-10T14:25:00.000Z"}
+   ]
+  },
+  {
+   "name": "toggled free: no clash",
+   "items": [
+    {"id": "a", "title": "Talk A", "start": "2026-11-10T10:00:00+00:00", "end": "2026-11-10T10:30:00+00:00", "place": "Centre Stage"},
+    {"id": "b", "title": "Talk B", "start": "2026-11-10T10:20:00+00:00", "end": "2026-11-10T11:00:00+00:00", "place": "Centre Stage"}
+   ],
+   "toggles": {"b": "free"},
+   "expect": []
+  },
+  {
+   "name": "back to back in the venue, enough time to walk",
+   "items": [
+    {"id": "a", "title": "Talk A", "start": "2026-11-10T10:00:00+00:00", "end": "2026-11-10T10:30:00+00:00", "place": "Centre Stage"},
+    {"id": "b", "title": "Talk B", "start": "2026-11-10T10:35:00+00:00", "end": "2026-11-10T11:00:00+00:00", "place": "Masterclass 2"}
+   ],
+   "expect": []
+  }
+ ]
+}

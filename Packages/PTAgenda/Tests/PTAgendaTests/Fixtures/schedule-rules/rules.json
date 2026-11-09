@@ -1,0 +1,27 @@
+{
+ "format": "schedule-rules/1",
+ "version": 1,
+ "source": "PrompTugal__App__iOS Packages/PTAgenda/Sources/PTAgenda/Schedule/DayPlanner.swift at dev 2e0c5ac (v0.4.38); busy/free and split from briefs/2026-11-09__news-app-clashes-and-the-map",
+ "travel": {
+  "same_place_minutes": 0,
+  "within_summit_minutes": 5,
+  "elsewhere_minutes": 25,
+  "summit_place_keywords": ["stage", "masterclass", "meetup", "lounge", "meo arena", "fil", "pitch", "summit", "booth", "hall", "pavilion"],
+  "note": "Estimates (places have no coordinates). Empty place or the same place (case-insensitive) is 0. A place is in the summit venue if its lowercased name contains any keyword."
+ },
+ "default_duration_minutes": 30,
+ "shows_as": {
+  "values": ["busy", "free"],
+  "default": "busy",
+  "precedence": ["the person's toggle", "the event's shows_as field", "the fallback rule"],
+  "fallback_free_title_patterns": ["registration", "badge pick", "opening night", "opening party", "start of the show", "start-of-the-show", "doors open", "venue open", "venue hours", "all day", "all-day"],
+  "fallback_free_min_minutes": 180,
+  "note": "The fallback applies only while an event has no shows_as (ontologist@ is publishing it for all events). Free if the lowercased title contains a pattern, or the event lasts at least fallback_free_min_minutes."
+ },
+ "ics": {
+  "uid_domain": "promptugal.news",
+  "free_maps_to": "TRANSP:TRANSPARENT",
+  "busy_maps_to": "TRANSP:OPAQUE",
+  "times": "UTC (Z), so no VTIMEZONE is needed"
+ }
+}
