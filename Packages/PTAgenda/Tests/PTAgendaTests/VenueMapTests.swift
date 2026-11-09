@@ -58,7 +58,8 @@ struct VenueMapTests {
         let pinLabels: [String] = model.pins.map(\.label)
         let expectedLabels: [String] = ["Pavilion 3", "MEO Arena"]          // in the map's own order
         #expect(pinLabels == expectedLabels)
-        #expect(model.pins.allSatisfy(\.isActive))                          // the current session and the next one
+        let allActive: Bool = model.pins.allSatisfy { $0.isActive }          // the current session and the next one
+        #expect(allActive)
         let unplaced: [String] = model.unplaced.map(\.title)
         #expect(unplaced == ["dinner"])
         #expect(model.walks.count == 1 && model.walks[0].minutes == 5 && model.walks[0].toTitle == "next")
