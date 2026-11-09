@@ -41,13 +41,14 @@ public struct WhereToBe: Equatable, Sendable {
                 feed: (String) -> ShowsAs? = { _ in nil }) {
         self.now = now
         let busy = BusyRule.busyEntries(picks, toggled: toggled, feed: feed)
-        current = busy.filter { $0.isLive(at: now) }.sorted(by: NowModel.soonest).first
+        let inNow = busy.filter { $0.isLive(at: now) }.sorted(by: NowModel.soonest).first
+        current = inNow
         let horizon10 = now.addingTimeInterval(10 * 60)
         let horizon20 = now.addingTimeInterval(20 * 60)
-        let upcoming = busy.filter { $0.start > now && $0.start <= horizon20 && $0.id != current?.id }
+        let upcoming = busy.filter { $0.start > now && $0.start <= horizon20 && $0.id != inNow?.id }
             .sorted(by: NowModel.soonest)
 
-        var previous = current
+        var previous = inNow
         var legs: [Leg] = []
         for entry in upcoming {
             let walk = previous.map { DayPlanner.travelMinutes(from: $0.place, to: entry.place) } ?? 0
