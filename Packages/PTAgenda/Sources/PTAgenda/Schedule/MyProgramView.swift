@@ -136,7 +136,7 @@ public struct MyProgramView: View {
     }
 
     private func timeRange(_ entry: NowModel.Entry) -> String {
-        let style = Date.FormatStyle(date: .omitted, time: .shortened, timeZone: Lisbon.zone)
+        let style = Date.FormatStyle(date: .omitted, time: .shortened, locale: AppCulture.locale, timeZone: Lisbon.zone)
         return "\(entry.start.formatted(style)) – \(entry.end.formatted(style))"
     }
 

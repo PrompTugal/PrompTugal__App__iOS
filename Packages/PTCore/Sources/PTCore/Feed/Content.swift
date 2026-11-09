@@ -85,6 +85,7 @@ private extension DateFormatter {
         formatter.dateStyle = dateStyle
         formatter.timeStyle = timeStyle
         formatter.timeZone = zone
+        formatter.locale = AppCulture.locale     // the reader's chosen culture, not the device's
         return formatter.string(from: date)
     }
 }
