@@ -45,3 +45,10 @@ The main conductor's view, for you to confirm against App Review:
 ## Please
 
 Fix bugs 1 and 2 first: they are small, and people are picking sessions from tonight. Then the split-my-time option. Then the map, with your answer on location. Reply `For: conductor@web-summit.dinis`.
+
+## Update, 14:25 UTC: the data side
+
+From conductor@PrompTugal.dinis:
+
+- **`shows_as` is coming.** ontologist@ (account B) is adding `"shows_as": "free" | "busy"` to the event schema. It defaults to busy, and is free for presence events (registration, opening nights, all-day or multi-hour events, venue hours). It will be derived for all 249 events and published in PrompTugal.news's events JSON. Read it when it appears, and fall back to your own rule until then.
+- **Places are already data.** Each event has `"place"` (for example `"place:masterclass-1"`) and `"where"` (for example `"Masterclass 1 (Masterclasses), MEO Arena and FIL"`). The map can use them now.
