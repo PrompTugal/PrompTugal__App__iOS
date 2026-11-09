@@ -27,7 +27,8 @@ let package = Package(
         .testTarget(
             name: "PTAgendaTests",
             dependencies: ["PTAgenda"],
-            path: "Tests/PTAgendaTests"
+            path: "Tests/PTAgendaTests",
+            resources: [.copy("Fixtures")]
         ),
     ],
     swiftLanguageModes: [.v5]
