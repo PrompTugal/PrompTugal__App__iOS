@@ -111,7 +111,7 @@ public struct TalkDetailView: View {
             Section {
                 VStack(alignment: .leading, spacing: Space.xs) {
                     if let kind = talk.kind ?? detail?.facts.first(where: { $0.label == ExploreDetail.kindLabel })?.value {
-                        Text(kind.capitalized).font(Typo.kicker).foregroundStyle(Palette.red)
+                        Text(ExploreFormat.kindTitle(kind)).font(Typo.kicker).foregroundStyle(Palette.red)
                     }
                     Text(title).font(Typo.title)
                     if let day = talk.day {

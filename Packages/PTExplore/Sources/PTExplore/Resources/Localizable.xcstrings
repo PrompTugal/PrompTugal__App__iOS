@@ -1,6 +1,29 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "Announcement": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Announcement"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anúncio"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anúncio"
+          }
+        }
+      }
+    },
     "At the summit as": {
       "extractionState": "manual",
       "localizations": {
@@ -231,6 +254,29 @@
         }
       }
     },
+    "Night summit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Night summit"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noite do evento"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noite da cimeira"
+          }
+        }
+      }
+    },
     "Note": {
       "extractionState": "manual",
       "localizations": {
@@ -346,6 +392,29 @@
         }
       }
     },
+    "Pitch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pitch"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pitch"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pitch"
+          }
+        }
+      }
+    },
     "Places": {
       "extractionState": "manual",
       "localizations": {
@@ -365,6 +434,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Locais"
+          }
+        }
+      }
+    },
+    "Registration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registration"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registro"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registo"
           }
         }
       }
@@ -433,7 +525,30 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pesquisar palestras, oradores, empresas, locais"
+            "value": "Pesquisar sessões, oradores, empresas, locais"
+          }
+        }
+      }
+    },
+    "Session": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão"
           }
         }
       }
@@ -461,6 +576,29 @@
         }
       }
     },
+    "Side event": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Side event"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evento paralelo"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evento paralelo"
+          }
+        }
+      }
+    },
     "Speakers": {
       "extractionState": "manual",
       "localizations": {
@@ -484,6 +622,29 @@
         }
       }
     },
+    "Summit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summit"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evento"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cimeira"
+          }
+        }
+      }
+    },
     "Talks": {
       "extractionState": "manual",
       "localizations": {
@@ -502,7 +663,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Palestras"
+            "value": "Sessões"
           }
         }
       }

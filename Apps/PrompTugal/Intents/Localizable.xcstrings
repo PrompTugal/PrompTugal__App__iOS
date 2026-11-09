@@ -1,6 +1,29 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "After that, at %@: %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After that, at %@: %@."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depois, às %@: %@."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A seguir, às %@: %@."
+          }
+        }
+      }
+    },
     "Next session": {
       "extractionState": "manual",
       "localizations": {

@@ -53,7 +53,7 @@ public struct ProgramModel: Equatable, Sendable {
         var counts: [String: Int] = [:]
         for entry in all { counts[Lisbon.day(entry.start), default: 0] += 1 }
         let ids = Array(Set(Self.summitDays).union(counts.keys)).sorted()
-        days = ids.map { Day(id: $0, label: Lisbon.dayLabel($0), count: counts[$0] ?? 0) }
+        days = ids.map { Day(id: $0, label: Self.shortLabel($0), count: counts[$0] ?? 0) }
 
         let mine = all.filter { Lisbon.day($0.start) == day }.sorted(by: NowModel.soonest)
         dayEntries = mine
@@ -86,6 +86,18 @@ public struct ProgramModel: Equatable, Sendable {
             previousEnd = cluster.map(\.end).max()
         }
         self.rows = rows
+    }
+
+    /// A short chip label for a day: the weekday and the day number in the person's language ("Tue 10", "ter. 10"),
+    /// from a DateFormatter template so the order and punctuation follow the locale. Lisbon time.
+    public static func shortLabel(_ day: String, locale: Locale = .current) -> String {
+        guard let date = Lisbon.instant(day: day) else { return day }
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.timeZone = Lisbon.zone
+        formatter.calendar = Lisbon.calendar
+        formatter.setLocalizedDateFormatFromTemplate("EEEd")
+        return formatter.string(from: date)
     }
 
     /// Which day to open on: today during the summit; otherwise the first day with picks (Tuesday when there are

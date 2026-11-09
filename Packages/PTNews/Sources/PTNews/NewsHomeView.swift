@@ -17,11 +17,11 @@ public struct NewsHomeView: View {
         case feed = "Feed", editions = "Editions", stories = "Stories"
         var id: Self { self }
         /// What the segmented control shows. The raw values stay as they are: they are the saved selection.
-        var label: LocalizedStringKey {
+        var label: String {
             switch self {
-            case .feed: "Latest"
-            case .editions: "Newsletter"
-            case .stories: "Stories"
+            case .feed: String(localized: "Latest", bundle: .module)
+            case .editions: String(localized: "Newsletter", bundle: .module)
+            case .stories: String(localized: "Stories", bundle: .module)
             }
         }
         /// The English name, for the web twin's title.
@@ -115,7 +115,7 @@ public struct NewsHomeView: View {
         let list = data.newsletter.value?.editions ?? []
         NewsFreshness(updated: data.newsletter.updated, failed: data.newsletter.failed)
         if list.isEmpty {
-            StateView(phase: data.newsletter.phase, hasData: false, title: "newsletter") {
+            StateView(phase: data.newsletter.phase, hasData: false, title: String(localized: "the newsletter", bundle: .module)) {
                 Task { await data.newsletter.load(force: true) }
             }
         }

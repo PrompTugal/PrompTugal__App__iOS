@@ -20,6 +20,9 @@ struct PublicShell: View {
     @SceneStorage("shell.selection") private var selection = "now"
     @SceneStorage("shell.tab") private var tab = "now"
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
+    /// ONB-1: the first-run screen, shown once.
+    @AppStorage("onboarding.seen") private var onboardingSeen = false
+    @State private var onboarding = false
     @State private var columns: NavigationSplitViewVisibility = .all
     /// A page opened by a link (a reminder's session), shown over the shell.
     @State private var linkedPage: LinkedPage?
@@ -58,6 +61,12 @@ struct PublicShell: View {
                     }
             }
         }
+        .fullScreenCover(isPresented: Binding(get: { onboarding && width == .compact }, set: { onboarding = $0 })) {
+            OnboardingView(finish: finishOnboarding)
+        }
+        .sheet(isPresented: Binding(get: { onboarding && width != .compact }, set: { onboarding = $0 })) {
+            OnboardingView(finish: finishOnboarding)
+        }
         .sheet(item: $presented) { screen in
             if let destination = PublicDestinations.destination(screen.id) {
                 PresentedScreenView(destination: destination) { presented = nil }
@@ -70,6 +79,8 @@ struct PublicShell: View {
             if PublicDestinations.destination(tab)?.phoneTab == nil { tab = "now" }
             tab = PublicDestinations.resolve(tab) ?? "now"
             if let id = PublicLaunch.destination { open(id) }
+            // Never in UI tests or store screenshots (a launch destination); `-PTOnboarding` forces it in DEBUG.
+            if PublicLaunch.onboarding || (!onboardingSeen && PublicLaunch.destination == nil) { onboarding = true }
         }
         .accessibilityIdentifier("public-shell")
     }
@@ -102,6 +113,13 @@ struct PublicShell: View {
         .background(PublicKeyboardShortcuts(selection: $selection))
     }
 
+    /// Closes the first-run screen. "Choose talks" opens Explore on Talks. Both remember that it was seen.
+    private func finishOnboarding(chooseTalks: Bool) {
+        onboardingSeen = true
+        onboarding = false
+        if chooseTalks { open("explore") }
+    }
+
     /// Opens a screen by id: a tab selects the tab, any other screen is a sheet on iPhone and the detail on iPad.
     private func open(_ id: String) {
         if let start = PublicDestinations.exploreStarts[id] { exploreStart = start }
@@ -122,7 +140,7 @@ struct PublicShell: View {
         guard PublicDestinations.openable(id, debug: debug) != nil else { return }
         open(id)
         // A reminder names the session (?session=<slug>): open its page over the shell.
-        linkedPage = ShellLink.page(in: url, isBlocked: CheckoutPolicy.isBlocked)
+        linkedPage = ShellLink.page(in: url, hosts: ShellLink.publicHosts, isBlocked: CheckoutPolicy.isBlocked)
     }
 }
 
@@ -272,6 +290,15 @@ private struct PublicKeyboardShortcuts: View {
 /// Launch arguments for screenshots and UI tests: `-PTDestination now` opens that screen.
 /// DEBUG builds only: in a Release build every option reads as absent.
 enum PublicLaunch {
+    /// `-PTOnboarding` shows the first-run screen even when it was seen (DEBUG builds only).
+    static var onboarding: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-PTOnboarding")
+        #else
+        false
+        #endif
+    }
+
     static var destination: String? {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments

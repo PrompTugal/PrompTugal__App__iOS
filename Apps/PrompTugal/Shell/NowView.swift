@@ -1,5 +1,4 @@
 import PTAgenda
-import PTAsk
 import PTCore
 import PTNews
 import PTWeb
@@ -23,10 +22,6 @@ extension EnvironmentValues {
 /// Every user-facing string is written exactly as in the ux spec, so the String Catalog keys match.
 struct NowView: View {
     @Environment(ReaderStore.self) private var reader
-    #if DEBUG
-    @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
-    #endif
-
     var body: some View {
         // One minute at a time: the clock, the model and the countdowns follow it. `-PTNow` fixes the time in DEBUG builds.
         TimelineView(.everyMinute) { context in
@@ -54,10 +49,6 @@ struct NowView: View {
                 }
                 LatestNewsCard()
                 PracticalCard()
-                #if DEBUG
-                // Ask is DEBUG-only (and only with debug mode on): the App Store build collects no data.
-                if debug { AskCard() }
-                #endif
             }
         }
         .background(Palette.paper.ignoresSafeArea())
@@ -237,68 +228,6 @@ private struct StartProgramCard: View {
             }
         }
     }
-}
-
-/// NOW-1h: Ask about the summit, the last card in every state. iPhone pushes Ask; iPad selects the sidebar's Ask row.
-private struct AskCard: View {
-    @Environment(\.horizontalSizeClass) private var width
-    @Environment(\.openDestination) private var open
-    @State private var asked: AskedQuestion?
-
-    /// The three questions the card offers once a key is saved (written as in the ux spec).
-    private static let questions: [LocalizedStringKey] = ["What's on now?", "Which talks clash in my program?", "What's new today?"]
-    private static let questionTexts = [String(localized: "What's on now?"), String(localized: "Which talks clash in my program?"),
-                                        String(localized: "What's new today?")]
-
-    var body: some View {
-        Card {
-            VStack(alignment: .leading, spacing: Space.m) {
-                HStack(spacing: Space.m) {
-                    Image(systemName: "sparkles").font(.title3).foregroundStyle(Palette.red).accessibilityHidden(true)
-                    Text("Ask about the summit").font(Typo.headline).foregroundStyle(Palette.ink)
-                        .accessibilityAddTraits(.isHeader)
-                }
-                Text("What's on now, what clashes in my program, what's new today. Uses your own OpenRouter key.")
-                    .font(.footnote).foregroundStyle(Palette.muted)
-                if AIKeyStore.shared.hasKey {
-                    ForEach(Array(Self.questions.enumerated()), id: \.offset) { index, label in
-                        Button { asked = AskedQuestion(text: Self.questionTexts[index]) } label: {
-                            Label(label, systemImage: "text.bubble").frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .buttonStyle(.bordered)
-                        .accessibilityIdentifier("pt.now.ask.q\(index)")
-                    }
-                }
-                if width == .compact {
-                    NavigationLink {
-                        AskView().destinationID("collab.ai")
-                    } label: {
-                        Text("Ask").frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .accessibilityIdentifier("pt.now.ask")
-                } else {
-                    Button { open("collab.ai") } label: {
-                        Text("Ask").frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .accessibilityIdentifier("pt.now.ask")
-                }
-            }
-        }
-        .sheet(item: $asked) { question in
-            NavigationStack {
-                AskView(initialQuestion: question.text).destinationID("collab.ai")
-                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { asked = nil } } }
-            }
-        }
-    }
-}
-
-/// A question sent from the card: Ask opens over Now with it.
-private struct AskedQuestion: Identifiable {
-    let text: String
-    var id: String { text }
 }
 
 /// A session row: the time in a fixed column, the title, and one line that depends on where the row is shown.

@@ -58,7 +58,7 @@ public struct ExploreDetail: Sendable, Hashable {
         let title = (root["label"] as? String) ?? (record["name"] as? String) ?? (record["title"] as? String) ?? ""
         let facts: [Fact] = fields(kind).compactMap { key, label in
             guard let value = record[key] as? String, !value.isEmpty else { return nil }
-            return Fact(label: label, value: value)
+            return Fact(label: label, value: key == "kind" && kind == .event ? ExploreFormat.kindTitle(value) : value)
         }
         let website = (record["website"] as? String).flatMap { URL(string: $0) }
         var links: [Link] = []

@@ -525,7 +525,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "O acesso ao calendário está desativado. Permita-o nas Definições para adicionar palestras."
+            "value": "O acesso ao calendário está desativado. Permita-o nas Definições para adicionar sessões."
           }
         }
       }
@@ -640,7 +640,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escolher palestras"
+            "value": "Escolher sessões"
           }
         }
       }
@@ -847,7 +847,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ligue-se para carregar o horário desta palestra e a adicionar ao seu programa."
+            "value": "Ligue-se para carregar o horário desta sessão e a adicionar ao seu programa."
           }
         }
       }
@@ -1077,7 +1077,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Todas as palestras da cimeira, offline"
+            "value": "Todas as sessões da cimeira, offline"
           }
         }
       }
@@ -1308,6 +1308,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Grafo"
+          }
+        }
+      }
+    },
+    "How PrompTugal works": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How PrompTugal works"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como o PrompTugal funciona"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como funciona o PrompTugal"
           }
         }
       }
@@ -1703,6 +1726,29 @@
         }
       }
     },
+    "My program puts your talks in order, marks the ones that clash and shows the gaps between them. A reminder comes before each one.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "My program puts your talks in order, marks the ones that clash and shows the gaps between them. A reminder comes before each one."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meu programa coloca suas palestras em ordem, marca as que conflitam e mostra os intervalos entre elas. Um lembrete chega antes de cada uma."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O programa ordena as suas sessões por hora, assinala as que se sobrepõem e mostra os intervalos entre elas. Recebe um lembrete antes de cada uma."
+          }
+        }
+      }
+    },
     "Network": {
       "extractionState": "manual",
       "localizations": {
@@ -2066,7 +2112,30 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escolha as palestras que quer. Avisamos das sobreposições e lembramos antes de cada uma."
+            "value": "Escolha as sessões que quer. Avisamos das sobreposições e lembramos antes de cada uma."
+          }
+        }
+      }
+    },
+    "Pick your talks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick your talks"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha suas palestras"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha as suas sessões"
           }
         }
       }
@@ -2273,7 +2342,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lembrar-me 10 min antes de cada palestra"
+            "value": "Lembrar-me 10 min antes de cada sessão"
           }
         }
       }
@@ -2320,6 +2389,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lembretes, Perguntar, sobre, privacidade, apoio"
+          }
+        }
+      }
+    },
+    "Reminders, about, privacy, support": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders, about, privacy, support"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lembretes, sobre, privacidade, suporte"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lembretes, sobre, privacidade, apoio"
           }
         }
       }
@@ -2485,6 +2577,29 @@
         }
       }
     },
+    "See clashes and free time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See clashes and free time"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veja os conflitos e o tempo livre"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veja as sobreposições e o tempo livre"
+          }
+        }
+      }
+    },
     "Settings": {
       "extractionState": "manual",
       "localizations": {
@@ -2618,7 +2733,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Marque uma palestra e receba um lembrete antes de começar"
+            "value": "Marque uma sessão e receba um lembrete antes de começar"
           }
         }
       }
@@ -2641,7 +2756,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Marque palestras com a estrela em Explorar ou em Agora. Aparecem aqui por ordem de hora, com as sobreposições assinaladas."
+            "value": "Marque sessões com a estrela em Explorar ou em Agora. Aparecem aqui por ordem de hora, com as sobreposições assinaladas."
           }
         }
       }
@@ -2779,7 +2894,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Palestras"
+            "value": "Sessões"
           }
         }
       }
@@ -2802,7 +2917,30 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Palestras, oradores, empresas e locais"
+            "value": "Sessões, oradores, empresas e locais"
+          }
+        }
+      }
+    },
+    "Tap the star on any talk, in Explore or on Now. It goes into My program.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the star on any talk, in Explore or on Now. It goes into My program."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque na estrela em qualquer palestra, em Explorar ou em Agora. Ela vai para Meu programa."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque na estrela em qualquer sessão, em Explorar ou em Agora. Entra no seu programa."
           }
         }
       }
@@ -2826,6 +2964,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Obrigado por participar"
+          }
+        }
+      }
+    },
+    "The agenda and the news are saved here and work with no signal. Your picks never leave your phone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The agenda and the news are saved here and work with no signal. Your picks never leave your phone."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A agenda e as notícias ficam salvas aqui e funcionam sem sinal. Suas escolhas nunca saem do seu celular."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A agenda e as notícias ficam guardadas aqui e funcionam sem rede. As suas escolhas nunca saem do telemóvel."
           }
         }
       }
@@ -3124,7 +3285,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "As palestras que escolheu, sobreposições e tempo livre"
+            "value": "As sessões que escolheu, sobreposições e tempo livre"
           }
         }
       }
@@ -3170,7 +3331,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta palestra ainda não tem hora."
+            "value": "Esta sessão ainda não tem hora."
           }
         }
       }
@@ -3630,7 +3791,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Que palestras se sobrepõem no meu programa?"
+            "value": "Que sessões se sobrepõem no meu programa?"
           }
         }
       }
@@ -3658,6 +3819,29 @@
         }
       }
     },
+    "Works offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Works offline"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona offline"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona offline"
+          }
+        }
+      }
+    },
     "You picked %lld talks. The news and the agenda stay on this phone.": {
       "extractionState": "manual",
       "localizations": {
@@ -3676,7 +3860,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escolheu %lld palestras. As notícias e a agenda ficam neste telemóvel."
+            "value": "Escolheu %lld sessões. As notícias e a agenda ficam neste telemóvel."
           }
         }
       }
@@ -3699,7 +3883,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Escolheu 1 palestra. As notícias e a agenda ficam neste telemóvel."
+            "value": "Escolheu 1 sessão. As notícias e a agenda ficam neste telemóvel."
           }
         }
       }
@@ -3746,6 +3930,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "O seu programa está vazio"
+          }
+        }
+      }
+    },
+    "Your summit, on your phone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your summit, on your phone"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seu evento, no seu celular"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua cimeira, no seu telemóvel"
           }
         }
       }
@@ -3861,29 +4068,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "até às %@"
-          }
-        }
-      }
-    },
-    "Reminders, about, privacy, support": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reminders, about, privacy, support"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lembretes, sobre, privacidade, suporte"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lembretes, sobre, privacidade, apoio"
           }
         }
       }

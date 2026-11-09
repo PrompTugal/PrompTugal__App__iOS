@@ -54,6 +54,8 @@ def main():
     result["locales"]["en-GB"] = dict(result["locales"]["en-US"])
     # A first App Store version takes no "What's New"; keep it here for later versions, but asc.py skips it on 1st release.
     result["whatsNewOnFirstVersion"] = False
+    # The App Store version's copyright line (asc.py store-metadata reads it; --copyright overrides). Bump the year as needed.
+    result["copyright"] = "2026 PrompTugal"
     with open("listing.json", "w", encoding="utf-8") as out:
         json.dump(result, out, ensure_ascii=False, indent=2)
         out.write("\n")

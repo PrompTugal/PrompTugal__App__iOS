@@ -1,5 +1,5 @@
 {
-  "version": "v0.1.704",
+  "version": "v0.1.752",
   "about": "The summit days' events (9 to 12 November 2026, Lisbon time, which is UTC), for the live strip (assets/live/live.js). Each event's page has its source and the date it was read.",
   "count": 201,
   "items": [
