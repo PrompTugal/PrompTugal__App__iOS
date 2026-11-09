@@ -1469,6 +1469,75 @@
         }
       }
     },
+    "Leave in %lld min, %lld min walk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave in %lld min, %lld min walk"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saia em %lld min, %lld min a pé"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saia em %lld min, %lld min a pé"
+          }
+        }
+      }
+    },
+    "Leave now, %lld min walk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave now, %lld min walk"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saia agora, %lld min a pé"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saia agora, %lld min a pé"
+          }
+        }
+      }
+    },
+    "Leave now: %lld min late, %lld min walk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave now: %lld min late, %lld min walk"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saia agora: %lld min de atraso, %lld min a pé"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saia agora: %lld min de atraso, %lld min a pé"
+          }
+        }
+      }
+    },
     "Like your picks: %@": {
       "extractionState": "manual",
       "localizations": {
@@ -1735,6 +1804,52 @@
         }
       }
     },
+    "Next 10 minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next 10 minutes"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próximos 10 minutos"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próximos 10 minutos"
+          }
+        }
+      }
+    },
+    "Next 20 minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next 20 minutes"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próximos 20 minutos"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próximos 20 minutos"
+          }
+        }
+      }
+    },
     "Next: %@": {
       "extractionState": "manual",
       "localizations": {
@@ -1974,6 +2089,29 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Nothing in the next 20 minutes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing in the next 20 minutes."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada nos próximos 20 minutos."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada nos próximos 20 minutos."
           }
         }
       }
@@ -2875,6 +3013,29 @@
         }
       }
     },
+    "Starts at %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts at %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Começa às %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Começa às %@"
+          }
+        }
+      }
+    },
     "Team stand-up": {
       "extractionState": "manual",
       "localizations": {
@@ -3128,6 +3289,29 @@
         }
       }
     },
+    "Walking times are estimates.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Walking times are estimates."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os tempos a pé são estimativas."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os tempos a pé são estimativas."
+          }
+        }
+      }
+    },
     "Walking times are estimates: 5 minutes between rooms at the venue, 25 to anywhere else. All times are Lisbon time.": {
       "extractionState": "manual",
       "localizations": {
@@ -3147,6 +3331,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "Os tempos de deslocação são estimativas: 5 minutos entre salas no recinto, 25 para qualquer outro sítio. Todas as horas são de Lisboa."
+          }
+        }
+      }
+    },
+    "Where I need to be": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where I need to be"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onde preciso estar"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onde tenho de estar"
+          }
+        }
+      }
+    },
+    "You are at %@, %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are at %@, %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você está em %@, %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Está em %@, %@"
           }
         }
       }
