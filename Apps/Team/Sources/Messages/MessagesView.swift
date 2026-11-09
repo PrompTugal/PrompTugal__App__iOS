@@ -132,7 +132,7 @@ private struct ThreadRow: View {
     let me: String
     var body: some View {
         HStack(spacing: Space.m) {
-            Avatar(name: summary.title, group: summary.isGroup)
+            MessageAvatar(name: summary.title, group: summary.isGroup)
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(MessagesHub.displayName(summary.title)).font(.body.weight(.semibold)).lineLimit(1)
@@ -158,7 +158,7 @@ private struct ThreadRow: View {
     }
 }
 
-private struct Avatar: View {
+private struct MessageAvatar: View {
     let name: String
     var group = false
     var body: some View {
@@ -407,7 +407,7 @@ private struct NewChatSheet: View {
             NewThreadView(store: store, thread: thread, title: title, group: group)
         } label: {
             HStack(spacing: Space.m) {
-                Avatar(name: title, group: group)
+                MessageAvatar(name: title, group: group)
                 Text(MessagesHub.displayName(title))
                 if title.contains("@") { AgentTag() }
             }
