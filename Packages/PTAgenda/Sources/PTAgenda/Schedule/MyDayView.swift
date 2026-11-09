@@ -4,7 +4,9 @@ import PTWeb
 
 /// Entry view for the schedule: my picks (website and app, one list) and, for the team, my stand-ups, by Lisbon day.
 public struct MyDayView: View {
-    public init() {}
+    /// The screen's title; nil keeps "My day". The Team app's Plan tab passes "Plan" (the redesign).
+    private let title: String?
+    public init(title: String? = nil) { self.title = title }
 
     @Environment(ScheduleStore.self) private var schedule
     @Environment(\.agendaTeam) private var team
@@ -36,7 +38,7 @@ public struct MyDayView: View {
                 timeline
             }
         }
-        .navigationTitle(String(localized: "My day", bundle: .module))
+        .navigationTitle(title ?? String(localized: "My day", bundle: .module))
         .refreshable { await team?.refresh(person: identity?.currentID) }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

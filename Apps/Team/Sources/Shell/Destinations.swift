@@ -74,7 +74,7 @@ enum Destinations {
         AppDestination(id: "today", title: "My day", symbol: "sun.max", section: .today, kind: .native,
                        summary: "Your day: what is next, the stand-up, what waits on you", phoneTab: 0, tabTitle: "Now") { AnyView(TodayView()) },
         AppDestination(id: "team.schedule", title: "My schedule", symbol: "calendar", section: .today,
-                       kind: .hybrid, summary: "Your schedule: the summit, the team and your picks, by day", phoneTab: 2, tabTitle: "Plan") { AnyView(MyDayView()) },
+                       kind: .hybrid, summary: "Your schedule: the summit, the team and your picks, by day", phoneTab: 2, tabTitle: "Plan") { AnyView(MyDayView(title: "Plan")) },
         AppDestination(id: "tasks", title: "Tasks", symbol: "checkmark.circle", section: .today,
                        kind: .native, summary: "Everyone's tasks by day, starred first", phoneTab: 3, tabTitle: "Tasks") { AnyView(TasksView()) },
         AppDestination(id: "team.planner", title: "Plan my day", symbol: "calendar.day.timeline.left", section: .today,
