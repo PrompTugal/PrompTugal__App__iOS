@@ -83,6 +83,8 @@ enum PublicDestinations {
     static let more: [ShellDestination] = [
         ShellDestination(id: "settings", title: String(localized: "Settings"), symbol: "gearshape", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
+        ShellDestination(id: "map", title: String(localized: "Venue map"), symbol: "map", group: "More",
+                         summary: String(localized: "Where each talk is, and the walks between them")) { AnyView(VenueMapView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",
                          summary: String(localized: "Before each pick")) { AnyView(ReminderSettingsView()) },
     ]
