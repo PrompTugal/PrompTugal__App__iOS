@@ -123,7 +123,8 @@ struct ScheduleRulesTests {
             for (clash, want) in zip(found, vector.expect) {
                 #expect(clash.first.id == want.first && clash.second.id == want.second, "\(vector.name)")
                 #expect(clash.minutes == want.minutes && clash.travel == want.travel && clash.split == want.split, "\(vector.name)")
-                #expect(clash.leaveAt == (try want.leaveAt.map(date)), "\(vector.name): leave at")
+                let wantLeave: Date? = try want.leaveAt.map(date)
+                #expect(clash.leaveAt == wantLeave, "\(vector.name): leave at")
             }
         }
     }
