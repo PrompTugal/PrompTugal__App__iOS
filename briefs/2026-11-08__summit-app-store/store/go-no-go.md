@@ -334,3 +334,7 @@ Delta from rc9: apps 9d35705, design 706e416, i18n 01ed752, review 0e1103d.
 | P4 No permission without a tap | No new permission calls; PTSync asks for nothing | GO |
 | P5 Build = listing | `news.promptugal.reader.refresh` is registered (`PublicLive.start` → `SyncBackground.register`, before launch finishes) and scheduled on background, so it matches `fetch` and the Info.plist id. `webcredentials` is removed. Onboarding pt strings added. | GO |
 | P6 Quality | Seed refreshed (v0.1.752). Full run 42535656436: pending. | pending |
+
+## 0.4.25 (206): uploaded, internal only (9 Nov, 00:28 UTC)
+
+buildUploads COMPLETE with errors [], warnings [] and infos [], then VALID. **No ITMS-90683, which proves the unlinking of PTAsk, PTVaultUI and SGitVault**: the binary no longer references the camera, Face ID, microphone or speech APIs whose strings were removed (P4). Dinis's rule from 0.4.25 on: internal TestFlight only, no App Review and no Beta App Review. So 206 needs no store metadata, screenshots or review notes; acceptance-0.4.25 P1 to P5 were checked on rc10 (run 19). Still worth one check on the build: `plutil -p` on the archive's Info.plist shows only `NSCalendarsWriteOnlyAccessUsageDescription` (release, if the archive is at hand). 0.4.24 (205) stays in App Review, unchanged.
