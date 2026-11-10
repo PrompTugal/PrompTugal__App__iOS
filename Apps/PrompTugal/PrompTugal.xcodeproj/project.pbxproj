@@ -434,6 +434,7 @@
 				E0A0E149DD8F39A2BD3E95E5 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */,
 				689CF41318B6542F4B8EB9FE /* XCLocalSwiftPackageReference "../../Packages/PTNews" */,
 				DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */,
+				7080FAAC64CAE38D5EFD955D /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */,
 				6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */,
 				68F21D0D111DF6468DFC0904 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */,
 				74304D6E9A5485D46D560243 /* XCLocalSwiftPackageReference "../../Packages/PTExplore" */,
@@ -880,6 +881,10 @@
 		DC41243FFBC2582D768EE8C6 /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTNowNext;
+		};
+		7080FAAC64CAE38D5EFD955D /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/SGitVault;
 		};
 		74304D6E9A5485D46D560243 /* XCLocalSwiftPackageReference "../../Packages/PTExplore" */ = {
 			isa = XCLocalSwiftPackageReference;

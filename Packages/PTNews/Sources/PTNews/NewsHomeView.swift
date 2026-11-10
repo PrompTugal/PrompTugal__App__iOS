@@ -14,7 +14,7 @@ public struct NewsHomeView: View {
     public init() {}
 
     enum Form: String, CaseIterable, Identifiable {
-        case feed = "Feed", editions = "Editions", stories = "Stories"
+        case feed = "Feed", editions = "Editions", stories = "Stories", videos = "Videos"
         var id: Self { self }
         /// What the segmented control shows. The raw values stay as they are: they are the saved selection.
         var label: String {
@@ -22,6 +22,7 @@ public struct NewsHomeView: View {
             case .feed: String(localized: "Latest", bundle: .module)
             case .editions: String(localized: "Newsletter", bundle: .module)
             case .stories: String(localized: "Stories", bundle: .module)
+            case .videos: String(localized: "Videos", bundle: .module)
             }
         }
         /// The English name, for the web twin's title.
@@ -30,6 +31,7 @@ public struct NewsHomeView: View {
             case .feed: "Latest"
             case .editions: "Newsletter"
             case .stories: "Stories"
+            case .videos: "Videos"
             }
         }
     }
@@ -46,6 +48,7 @@ public struct NewsHomeView: View {
             case .feed: feed
             case .editions: editions
             case .stories: stories
+            case .videos: VideosSection()
             }
         }
         .navigationTitle(String(localized: "News", bundle: .module))
@@ -66,6 +69,7 @@ public struct NewsHomeView: View {
         case .feed: FeedClient.articleIndex
         case .editions: FeedClient.site.appendingPathComponent("newsletter/")
         case .stories: FeedClient.site.appendingPathComponent("newsroom/stories/")
+        case .videos: FeedClient.site
         }
     }
 
