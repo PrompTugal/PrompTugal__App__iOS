@@ -4,7 +4,7 @@ Please try, at the venue if you can:
 - Now: what is on now, what is next for you, and the latest news, in Lisbon time.
 - Explore: search the program, tap the star to pick a talk.
 - My program: your picks in one list, clashes and free time; Add to Calendar.
-- Reminders: turn them on in Settings (the gear on Now). You get a notification before each pick.
+- Reminders: turn them on in More (the round button at the top right). You get a notification before each pick.
 - News: read a story, then try the app in airplane mode. The program, your picks and saved news should still work.
 - The widget and Siri: add the PrompTugal widget, or ask "What's next in PrompTugal".
 
