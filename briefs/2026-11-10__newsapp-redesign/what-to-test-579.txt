@@ -1,0 +1,15 @@
+PrompTugal: Lisbon Summit, the independent companion app for the Lisbon tech summit, 9 to 12 November. No account needed.
+
+New in this build: watch the interviews.
+- News has a new Videos tab with our editors' interviews from the summit. Tap one to watch it in the app, full screen if you like.
+- A video takes a moment to load the first time (about 26 MB for three minutes). After that it plays again without a connection.
+- Still new from the last builds: a lighter look with a greeting by the time in Lisbon, five tabs, Show on the map on every talk, one tap to pick a talk and add it to your calendar, and where to meet RiskMandate in More.
+
+Please try:
+- Open News, then Videos, and watch an interview. Try it once on Wi-Fi and again in airplane mode.
+- Star a talk, find it on the map, and check it is in your calendar.
+
+Tell us with Send Beta Feedback (take a screenshot in the app, or open TestFlight): what was confusing, what was missing, and anything that broke. Please include what you were trying to do.
+
+Privacy: https://ios.app.promptugal.news/privacy.html
+Support: https://ios.app.promptugal.news/support.html
