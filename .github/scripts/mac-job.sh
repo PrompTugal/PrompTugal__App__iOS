@@ -99,7 +99,6 @@ case "${1:?phase}" in
         echo "$d=$u" >> "$sims"; echo "$d: $u"
       done
     fi
-    first=$(udid_for "${DEVICES%% *}")
     while IFS= read -r e; do
       [ -n "$e" ] || continue
       key=$(field "$e" app); project=$(field "$e" project); scheme=$(field "$e" scheme)
@@ -107,10 +106,11 @@ case "${1:?phase}" in
       common=(-project "$project" -scheme "$scheme" -configuration Debug -derivedDataPath "$DD"
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO)
       if [ "${RUN_TESTS:-false}" = true ]; then
-        # One build for every device: same platform, same architecture, same test bundle. A
-        # simulator destination needs the device to exist, not to be booted.
+        # One build for every device, for the generic simulator destination: it needs no device
+        # from the simulator service (an id destination failed while simulators booted, run
+        # 42754836431) and it compiles every simulator architecture, as the old Debug build did.
         if step "$key: build for testing (Debug, iOS Simulator)" "$LOGS/$key-build-for-testing.log" -- \
-            xcodebuild build-for-testing "${common[@]}" -destination "id=$first"; then
+            xcodebuild build-for-testing "${common[@]}" -destination 'generic/platform=iOS Simulator'; then
           echo "app $key" >> "$built"
         else
           fail "$key: build for testing"
@@ -141,7 +141,7 @@ case "${1:?phase}" in
       fi
       sch=$(package_scheme "$path")
       if (cd "$path" && step "$name: build for testing (simulator)" "$LOGS/$name-build.log" -- \
-            xcodebuild build-for-testing -scheme "$sch" -destination "id=$first" -derivedDataPath "$PDD" \
+            xcodebuild build-for-testing -scheme "$sch" -destination 'generic/platform=iOS Simulator' -derivedDataPath "$PDD" \
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO); then
         echo "package $name $path $sch" >> "$built"
       else
