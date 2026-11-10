@@ -1,5 +1,6 @@
 import PTAgenda
 import PTCore
+import PTNews
 import PTWeb
 import SwiftUI
 
@@ -99,7 +100,7 @@ struct AppNoticeCard: View {
                         Text(sources).font(.footnote).foregroundStyle(Palette.muted)
                     }
                     if let link = notice.safeLink {
-                        NavigationLink { WebPage(url: link.url, title: link.title) } label: {
+                        NavigationLink { SitePage(url: link.url, title: link.title) } label: {
                             Label(link.title, systemImage: "arrow.forward.circle")
                         }
                         .font(.subheadline.weight(.semibold))

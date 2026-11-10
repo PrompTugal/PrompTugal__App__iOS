@@ -90,6 +90,41 @@ enum VideoRules {
     }
 }
 
+/// One turn of a machine transcript: "Speaker 1: words".
+struct TranscriptTurn: Equatable, Identifiable {
+    let id: Int
+    let speaker: String?
+    let text: String
+
+    static func parse(_ text: String) -> [TranscriptTurn] {
+        var turns: [TranscriptTurn] = []
+        var speaker: String?
+        var words: [String] = []
+        func flush() {
+            let joined = words.joined(separator: " ").trimmingCharacters(in: .whitespaces)
+            if !joined.isEmpty { turns.append(TranscriptTurn(id: turns.count, speaker: speaker, text: joined)) }
+            words = []
+        }
+        for raw in text.components(separatedBy: "\n") {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            if line.isEmpty { continue }
+            if let colon = line.firstIndex(of: ":"), line[..<colon].hasPrefix("Speaker "), line[..<colon].count <= 12 {
+                flush()
+                speaker = String(line[..<colon])
+                words.append(String(line[line.index(after: colon)...]))
+            } else if line.hasPrefix("Speaker "), line.count <= 12 {
+                // A speaker on a line of its own, with the words on the next lines.
+                flush()
+                speaker = line
+            } else {
+                words.append(line)
+            }
+        }
+        flush()
+        return turns
+    }
+}
+
 /// The list of videos, from the site, with the last copy kept for offline.
 @MainActor @Observable
 final class VideoFeed {
@@ -163,6 +198,23 @@ final class VideoLoader {
                              log: VaultTrafficLog())
         vault = made
         return made
+    }
+
+    private(set) var transcript: [TranscriptTurn]?
+    private(set) var transcriptFailed = false
+
+    /// The machine transcript beside the video's folder (transcript-machine.txt), as speaker turns.
+    func loadTranscript() async {
+        guard transcript == nil else { return }
+        transcriptFailed = false
+        let parent = (item.folder as NSString).deletingLastPathComponent
+        guard let vault = try? openVault(),
+              let data = try? await vault.read(parent + "/transcript-machine.txt"),
+              let text = String(data: data, encoding: .utf8) else {
+            transcriptFailed = true
+            return
+        }
+        transcript = TranscriptTurn.parse(text)
     }
 
     func loadPoster() async {
@@ -283,6 +335,12 @@ struct VideoScreen: View {
     let item: VideoItem
     @State private var loader: VideoLoader
     @State private var player: AVPlayer?
+    @State private var part: Part = .article
+    @State private var articles = ArticleStore.shared
+    @Namespace private var pill
+
+    /// The two pills under the video: the article about the interview, and the transcript of the video.
+    enum Part: CaseIterable { case article, transcript }
 
     init(item: VideoItem) {
         self.item = item
@@ -299,9 +357,22 @@ struct VideoScreen: View {
                 stage
                 Text(item.title).font(Typo.title).foregroundStyle(Palette.ink)
                 Text(Self.byline(item)).font(Typo.data).foregroundStyle(Palette.muted)
-                if let summary = item.summary, !summary.isEmpty {
-                    Text(summary).font(Typo.body).foregroundStyle(Palette.ink)
+                pills
+                Group {
+                    switch part {
+                    case .article: articlePart.transition(.push(from: .leading))
+                    case .transcript: transcriptPart.transition(.push(from: .trailing))
+                    }
                 }
+                // Slide left for the transcript, right for the article.
+                .contentShape(Rectangle())
+                .simultaneousGesture(DragGesture(minimumDistance: 30).onEnded { drag in
+                    guard abs(drag.translation.width) > abs(drag.translation.height) * 1.5 else { return }
+                    withAnimation(.snappy) {
+                        if drag.translation.width < -60 { part = .transcript }
+                        if drag.translation.width > 60 { part = .article }
+                    }
+                })
                 Link(destination: item.pageURL) {
                     Label(String(localized: "Read the interview on promptugal.news", bundle: .module), systemImage: "arrow.up.right.square")
                 }
@@ -315,10 +386,84 @@ struct VideoScreen: View {
         .navigationTitle(String(localized: "Video", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
         .task { await loader.loadPoster() }
+        .task { if let twin = ArticleTwin.twinURL(for: item.pageURL) { await articles.load(twin) } }
+        .task(id: part) { if part == .transcript { await loader.loadTranscript() } }
+        .sensoryFeedback(.selection, trigger: part)
         .onChange(of: loader.phase) { _, phase in
             if case .ready(let url) = phase, player == nil { start(url) }
         }
         .onDisappear { player?.pause() }
+    }
+
+    private func label(_ part: Part) -> String {
+        switch part {
+        case .article: String(localized: "Article", bundle: .module)
+        case .transcript: String(localized: "Transcript", bundle: .module)
+        }
+    }
+
+    /// Two pills; the chosen one is filled, and the fill slides between them.
+    private var pills: some View {
+        HStack(spacing: 4) {
+            ForEach(Part.allCases, id: \.self) { candidate in
+                Button {
+                    withAnimation(.snappy) { part = candidate }
+                } label: {
+                    Text(label(candidate))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(part == candidate ? Palette.paper : Palette.ink)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background {
+                            if part == candidate {
+                                Capsule().fill(Palette.ink).matchedGeometryEffect(id: "pill", in: pill)
+                            }
+                        }
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(part == candidate ? .isSelected : [])
+                .accessibilityIdentifier("pt.video.\(candidate == .article ? "article" : "transcript")")
+            }
+        }
+        .padding(4)
+        .background(Palette.paper2, in: Capsule())
+    }
+
+    @ViewBuilder private var articlePart: some View {
+        if let twin = ArticleTwin.twinURL(for: item.pageURL), let article = articles.articles[twin] {
+            VStack(alignment: .leading, spacing: Space.m) {
+                if let summary = article.summary { Text(summary).font(.title3).foregroundStyle(Palette.muted) }
+                ArticleBody(blocks: article.blocks, base: item.pageURL)
+            }
+        } else if let summary = item.summary, !summary.isEmpty {
+            VStack(alignment: .leading, spacing: Space.m) {
+                Text(summary).font(Typo.body).foregroundStyle(Palette.ink)
+                ProgressView()
+            }
+        } else {
+            ProgressView().frame(maxWidth: .infinity)
+        }
+    }
+
+    @ViewBuilder private var transcriptPart: some View {
+        if let turns = loader.transcript {
+            VStack(alignment: .leading, spacing: Space.m) {
+                Text("A machine transcript of the video: some words may be wrong.", bundle: .module)
+                    .font(.footnote).foregroundStyle(Palette.muted)
+                ForEach(turns) { turn in
+                    VStack(alignment: .leading, spacing: 2) {
+                        if let speaker = turn.speaker {
+                            Text(speaker).font(.footnote.weight(.semibold)).foregroundStyle(Palette.red)
+                        }
+                        Text(turn.text).font(.body).foregroundStyle(Palette.ink).textSelection(.enabled)
+                    }
+                }
+            }
+        } else if loader.transcriptFailed {
+            Text("The transcript could not be loaded.", bundle: .module).font(.footnote).foregroundStyle(Palette.muted)
+        } else {
+            ProgressView().frame(maxWidth: .infinity)
+        }
     }
 
     @ViewBuilder private var stage: some View {

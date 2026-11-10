@@ -390,7 +390,7 @@ private struct LatestNewsCard: View {
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
             ForEach(stories) { story in
-                NavigationLink { WebPage(url: story.url, title: story.title) } label: {
+                NavigationLink { SitePage(url: story.url, title: story.title) } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
                             .multilineTextAlignment(.leading)

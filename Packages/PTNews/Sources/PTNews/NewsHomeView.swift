@@ -22,7 +22,7 @@ public struct NewsHomeView: View {
             case .feed: String(localized: "Latest", bundle: .module)
             case .editions: String(localized: "Newsletter", bundle: .module)
             case .stories: String(localized: "Stories", bundle: .module)
-            case .videos: String(localized: "Videos", bundle: .module)
+            case .videos: String(localized: "Interviews", bundle: .module)
             }
         }
         /// The English name, for the web twin's title.
@@ -31,7 +31,7 @@ public struct NewsHomeView: View {
             case .feed: "Latest"
             case .editions: "Newsletter"
             case .stories: "Stories"
-            case .videos: "Videos"
+            case .videos: "Interviews"
             }
         }
     }
@@ -82,7 +82,7 @@ public struct NewsHomeView: View {
                       hasData: false, title: String(localized: "news feed", bundle: .module)) { Task { await store.refresh() } }
         }
         if let lead = store.news.first {
-            NavigationLink { WebPage(url: lead.url, title: lead.title) } label: {
+            NavigationLink { SitePage(url: lead.url, title: lead.title) } label: {
                 Card(padding: Space.xl) {
                     if !lead.category.isEmpty { Kicker(lead.category) }
                     Text(lead.title).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
@@ -97,7 +97,7 @@ public struct NewsHomeView: View {
         }
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Space.m)], spacing: Space.m) {
             ForEach(store.news.dropFirst()) { story in
-                NavigationLink { WebPage(url: story.url, title: story.title) } label: {
+                NavigationLink { SitePage(url: story.url, title: story.title) } label: {
                     Card {
                         if !story.category.isEmpty { Kicker(story.category) }
                         Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
@@ -152,7 +152,7 @@ public struct NewsHomeView: View {
                     TitledCard(column.name ?? column.id, kicker: "\(items.count) stories") {
                         ForEach(items) { story in
                             if let url = story.url {
-                                NavigationLink { WebPage(url: url, title: String(localized: "Story", bundle: .module)) } label: {
+                                NavigationLink { SitePage(url: url, title: String(localized: "Story", bundle: .module)) } label: {
                                     NewsRow(title: story.title ?? story.id, detail: story.next, symbol: "doc.text",
                                             tint: Palette.stable(column.id))
                                 }

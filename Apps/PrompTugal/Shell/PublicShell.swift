@@ -24,6 +24,8 @@ struct PublicShell: View {
     /// The reader's culture (default English); changing it rebuilds the screens in the new language.
     @AppStorage(AppCulture.storageKey) private var cultureID = AppCulture.english
     @State private var onboarding = false
+    /// Light by default (the brand is paper and ink); Dark or the iPhone's own setting in More.
+    @AppStorage(Appearance.key) private var appearance = Appearance.light.rawValue
     @State private var columns: NavigationSplitViewVisibility = .all
     /// A page opened by a link (a reminder's session), shown over the shell.
     @State private var linkedPage: LinkedPage?
@@ -51,6 +53,7 @@ struct PublicShell: View {
         .publicFeatures(features)
         .pickToasts()
         .tint(Palette.red)
+        .preferredColorScheme((Appearance(rawValue: appearance) ?? .light).scheme)
         // Pill-shaped buttons everywhere in the public app (round 3, the softer look).
         .buttonBorderShape(.capsule)
         .task { await reader.refresh() }

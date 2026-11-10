@@ -9,6 +9,7 @@ struct PublicSettingsView: View {
     #endif
 
     @State private var showHow = false
+    @AppStorage(Appearance.key) private var appearance = Appearance.light.rawValue
     @Environment(\.openDestination) private var open
 
     var body: some View {
@@ -23,6 +24,14 @@ struct PublicSettingsView: View {
                 Button { showHow = true } label: {
                     Label("Show the welcome again", systemImage: "questionmark.circle")
                 }
+            }
+            Section {
+                Picker(selection: $appearance) {
+                    ForEach(Appearance.allCases) { Text($0.title).tag($0.rawValue) }
+                } label: {
+                    Label("Appearance", systemImage: "circle.lefthalf.filled")
+                }
+                .accessibilityIdentifier("pt.more.appearance")
             }
             Section {
                 PickCalendarToggle()
@@ -91,6 +100,31 @@ struct StandSection: View {
             .accessibilityIdentifier("pt.more.riskmandate")
         } header: {
             Text("At the summit")
+        }
+    }
+}
+
+/// Light (the default), Dark, or whatever the iPhone is set to.
+enum Appearance: String, CaseIterable, Identifiable {
+    case light, dark, system
+
+    static let key = "appearance"
+    var id: String { rawValue }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .light: "Light"
+        case .dark: "Dark"
+        case .system: "Match iPhone"
+        }
+    }
+
+    /// nil follows the iPhone.
+    var scheme: ColorScheme? {
+        switch self {
+        case .light: .light
+        case .dark: .dark
+        case .system: nil
         }
     }
 }

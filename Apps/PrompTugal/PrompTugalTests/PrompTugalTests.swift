@@ -117,4 +117,11 @@ struct PublicAppTests {
         #expect(AgendaHub.isOn(SchedulePick(id: "b", at: .now, event: thursday)))
         #expect(AgendaHub.isOn(SchedulePick(id: "c", at: .now, event: nil)))
     }
+
+    @Test("the app opens in light mode by default; Match iPhone follows the phone")
+    func appearance() {
+        #expect(Appearance(rawValue: "light")?.scheme == .light)
+        #expect(Appearance.system.scheme == nil)
+        #expect((Appearance(rawValue: "") ?? .light).scheme == .light)
+    }
 }
