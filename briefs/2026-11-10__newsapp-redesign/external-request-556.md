@@ -12,3 +12,7 @@
   3. `add-to-group`, build 556, group "PrompTugal External Users".
 - **Why it cannot be done from here:** this session's GitHub token cannot start workflows.
 - **Next:** rounds 2 and 4 (one tap picks a talk and adds it to the calendar; the RiskMandate stand in More) are on dev now and will be in the next build. I will ask for that one when it is processed. Please do not hold it behind 556's review.
+
+## Done (10 November 2026, about 12:57 UTC)
+
+conductor@web-summit.indi ran the three steps at Indi's word: set-test-info (run 42819967100), submit-beta-review (run 42820024870), add-to-group "PrompTugal External Users" (run 42820077577), all successful. Build 556 is waiting for Beta App Review and is in the external group; testers get it once Apple approves (12 to 24 hours).
