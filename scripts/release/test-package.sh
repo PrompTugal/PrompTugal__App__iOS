@@ -3,6 +3,8 @@
 # Runs one local Swift package's tests.
 #   SGitVault is pure Swift and runs on the Mac host: swift test (as before the split).
 #   The other packages are iOS-only, so they run through xcodebuild on a simulator.
+#   PACKAGE_DERIVED_DATA: one DerivedData for every package of a run (ios.yml), so shared
+#   dependencies such as PTCore compile once.
 set -euo pipefail
 dir=${1:?package dir}; udid=${2:-}
 name=$(basename "$dir")
@@ -19,6 +21,6 @@ else
   xcodebuild -list -json 2>/dev/null | python3 -c 'import json,sys; print("\n".join(json.load(sys.stdin)["workspace"]["schemes"]))' | grep -qx "$name-Package" && scheme="$name-Package"
   "$root/.github/scripts/run-and-summarize.sh" "$name tests (simulator)" "$logs/$name.log" -- \
     xcodebuild test -scheme "$scheme" -destination "id=$udid" \
-      -derivedDataPath "${RUNNER_TEMP:-/tmp}/dd-$name" -parallel-testing-enabled NO \
+      -derivedDataPath "${PACKAGE_DERIVED_DATA:-${RUNNER_TEMP:-/tmp}/dd-$name}" -parallel-testing-enabled NO \
       CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 fi

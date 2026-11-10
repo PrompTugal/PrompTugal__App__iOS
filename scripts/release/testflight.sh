@@ -20,7 +20,7 @@ set +x
 : "${APP_NAME:?APP_NAME is not set (name of the app, from apps.json)}"
 : "${MODE:?}" "${EXPECTED_BUNDLE:?}" "${BUILD_NUMBER:?}" "${ARTIFACT_BASE:?}" "${ASC_KEY_PATH:?}" "${APPLE_TEAM_ID:?}"
 UPLOAD_TOOL=${UPLOAD_TOOL:-xcodebuild}
-DD=$OUT/dd-signed
+DD=${SIGNED_DERIVED_DATA:-$OUT/dd-signed}   # ios.yml shares one Release DerivedData across apps
 archive=$OUT/$APP_NAME-signed.xcarchive
 export_dir=$OUT/export
 mkdir -p "$export_dir" "$LOGS"
@@ -123,6 +123,8 @@ if [ "$built" != "$EXPECTED_BUNDLE" ]; then
   exit 1
 fi
 summary "- Bundle id \`$built\` matches apps.json."
+# ios.yml archives here without a separate unsigned Release build, so the extension check runs here.
+if [ "${CHECK_EMBEDDED:-false}" = true ]; then "$(dirname "$0")/check-embedded.sh" "$app"; fi
 enc=$(plist_get "$app/Info.plist" ITSAppUsesNonExemptEncryption)
 if [ "$enc" = "?" ]; then
   echo "::warning::Info.plist has no ITSAppUsesNonExemptEncryption; App Store Connect will ask the export compliance question for every build."
@@ -158,6 +160,8 @@ mv "$ipa" "$export_dir/$ARTIFACT_BASE-appstore.ipa"; ipa=$export_dir/$ARTIFACT_B
 ipa_bundle=$(unzip -p "$ipa" 'Payload/*.app/Info.plist' | plutil -extract CFBundleIdentifier raw -o - -)
 [ "$ipa_bundle" = "$EXPECTED_BUNDLE" ] || { echo "::error::the .ipa is $ipa_bundle, expected $EXPECTED_BUNDLE. Nothing uploaded."; exit 1; }
 "$(dirname "$0")/report.sh" "$app" "$ipa"
+# ios.yml: the size budget gates the upload, as the unsigned package job did for ios-release.
+if [ "${SIZE_CHECK:-false}" = true ]; then "$(dirname "$0")/size-check.sh" "$OUT/dist/build-info.json"; fi
 # Show who signed the exported app (the archive itself may be unsigned).
 tmp=$(mktemp -d); unzip -q "$ipa" 'Payload/*' -d "$tmp"
 codesign -dvv "$tmp"/Payload/*.app 2>&1 | grep -E '^(Authority|TeamIdentifier|Identifier)=' | head -4 | sed 's/^/    /' || true
