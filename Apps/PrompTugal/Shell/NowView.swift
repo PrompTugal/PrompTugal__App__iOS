@@ -80,6 +80,10 @@ struct NowView: View {
 
     private func header(now: Date) -> some View {
         VStack(alignment: .leading, spacing: Space.xs) {
+            // Round 3: a friendly first line, at Indi's word ("Good morning", nothing more for now).
+            Text("Good morning").font(Typo.display).foregroundStyle(Palette.ink)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityIdentifier("pt.now.greeting")
             Kicker(String(localized: "Lisbon · \(now.formatted(Self.dayStyle)) · \(Lisbon.timeLabel(now))"))
                 .accessibilityLabel(String(localized: "Lisbon, \(now.formatted(Self.dayStyle)) at \(Lisbon.timeLabel(now))"))
             FreshnessLabel(updated: reader.agendaUpdated ?? reader.newsUpdated,

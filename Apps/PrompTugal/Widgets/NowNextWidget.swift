@@ -62,6 +62,8 @@ struct NowNextWidget: Widget {
 }
 
 struct NowNextView: View {
+    /// The app's red (Palette.red, light), so the widget matches the app without importing PTCore.
+    static let red = Color(red: 173 / 255, green: 34 / 255, blue: 43 / 255)
     @Environment(\.widgetFamily) private var family
     let entry: NowNextEntry
 
@@ -92,10 +94,10 @@ struct NowNextView: View {
     private var list: some View {
         let limit = family == .systemSmall ? 1 : 2
         return VStack(alignment: .leading, spacing: 6) {
-            Text("PROMPTUGAL")
-                .font(.caption2.weight(.bold))
-                .tracking(1.2)
-                .foregroundStyle(.red)
+            // The app's softer look (redesign round 3): the name in sentence case, in the app's red.
+            Text(verbatim: "PrompTugal")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(Self.red)
             if entry.now.isEmpty && entry.next.isEmpty {
                 Spacer(minLength: 0)
                 Text(entry.updatedAt == nil ? "Open PrompTugal to load the agenda." : "No sessions coming up")
@@ -117,7 +119,7 @@ struct NowNextView: View {
         VStack(alignment: .leading, spacing: 1) {
             HStack(spacing: 4) {
                 Text(label).font(.caption.weight(.semibold).monospacedDigit())
-                if item.mine { Image(systemName: "bookmark.fill").font(.caption2).foregroundStyle(.red) }
+                if item.mine { Image(systemName: "star.fill").font(.caption2).foregroundStyle(Self.red) }
             }
             Text(item.title).font(.subheadline.weight(.semibold)).lineLimit(2)
             Text(item.place).font(.caption).foregroundStyle(.secondary).lineLimit(1)
