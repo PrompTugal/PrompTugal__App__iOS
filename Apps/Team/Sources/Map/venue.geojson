@@ -1,0 +1,739 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "osm-821641463",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.094987,
+       38.77353
+      ],
+      [
+       -9.09532,
+       38.769451
+      ],
+      [
+       -9.092915,
+       38.769344
+      ],
+      [
+       -9.092808,
+       38.769466
+      ],
+      [
+       -9.092476,
+       38.773371
+      ],
+      [
+       -9.094987,
+       38.77353
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-821641463",
+    "name": "FIL (the four pavilions)",
+    "kind": "site",
+    "osm": "https://www.openstreetmap.org/way/821641463",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-821643074",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.094859,
+       38.770825
+      ],
+      [
+       -9.094932,
+       38.769964
+      ],
+      [
+       -9.093276,
+       38.76988
+      ],
+      [
+       -9.093203,
+       38.77074
+      ],
+      [
+       -9.094859,
+       38.770825
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-821643074",
+    "name": "Pavilion 1",
+    "kind": "hall",
+    "osm": "https://www.openstreetmap.org/way/821643074",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-821643075",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.094786,
+       38.771741
+      ],
+      [
+       -9.094858,
+       38.770878
+      ],
+      [
+       -9.093199,
+       38.770794
+      ],
+      [
+       -9.093128,
+       38.771658
+      ],
+      [
+       -9.094786,
+       38.771741
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-821643075",
+    "name": "Pavilion 2",
+    "kind": "hall",
+    "osm": "https://www.openstreetmap.org/way/821643075",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-821643076",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.094711,
+       38.772658
+      ],
+      [
+       -9.094783,
+       38.771795
+      ],
+      [
+       -9.093124,
+       38.77171
+      ],
+      [
+       -9.093052,
+       38.772574
+      ],
+      [
+       -9.094711,
+       38.772658
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-821643076",
+    "name": "Pavilion 3",
+    "kind": "hall",
+    "osm": "https://www.openstreetmap.org/way/821643076",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-821643077",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.093048,
+       38.772628
+      ],
+      [
+       -9.092975,
+       38.773487
+      ],
+      [
+       -9.094636,
+       38.773572
+      ],
+      [
+       -9.094707,
+       38.772713
+      ],
+      [
+       -9.093048,
+       38.772628
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-821643077",
+    "name": "Pavilion 4",
+    "kind": "hall",
+    "osm": "https://www.openstreetmap.org/way/821643077",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-821784762",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.095201,
+       38.768385
+      ],
+      [
+       -9.095074,
+       38.768199
+      ],
+      [
+       -9.094862,
+       38.768045
+      ],
+      [
+       -9.094598,
+       38.767919
+      ],
+      [
+       -9.094502,
+       38.767953
+      ],
+      [
+       -9.09447,
+       38.767877
+      ],
+      [
+       -9.094258,
+       38.767827
+      ],
+      [
+       -9.094021,
+       38.7678
+      ],
+      [
+       -9.093951,
+       38.767854
+      ],
+      [
+       -9.093884,
+       38.767791
+      ],
+      [
+       -9.093532,
+       38.76781
+      ],
+      [
+       -9.093284,
+       38.767875
+      ],
+      [
+       -9.093268,
+       38.767982
+      ],
+      [
+       -9.093191,
+       38.768022
+      ],
+      [
+       -9.093126,
+       38.767956
+      ],
+      [
+       -9.092632,
+       38.767942
+      ],
+      [
+       -9.092606,
+       38.768315
+      ],
+      [
+       -9.09256,
+       38.768395
+      ],
+      [
+       -9.092588,
+       38.768496
+      ],
+      [
+       -9.092557,
+       38.768865
+      ],
+      [
+       -9.093046,
+       38.7689
+      ],
+      [
+       -9.093138,
+       38.768845
+      ],
+      [
+       -9.093197,
+       38.768897
+      ],
+      [
+       -9.093191,
+       38.769002
+      ],
+      [
+       -9.093641,
+       38.769127
+      ],
+      [
+       -9.093775,
+       38.769139
+      ],
+      [
+       -9.093842,
+       38.769085
+      ],
+      [
+       -9.093909,
+       38.769148
+      ],
+      [
+       -9.09437,
+       38.769114
+      ],
+      [
+       -9.094415,
+       38.769043
+      ],
+      [
+       -9.094502,
+       38.769084
+      ],
+      [
+       -9.094787,
+       38.768985
+      ],
+      [
+       -9.095109,
+       38.768783
+      ],
+      [
+       -9.095177,
+       38.768721
+      ],
+      [
+       -9.095227,
+       38.768579
+      ],
+      [
+       -9.095201,
+       38.768385
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-821784762",
+    "name": "MEO Arena",
+    "kind": "arena",
+    "osm": "https://www.openstreetmap.org/way/821784762",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-r3266709",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.094716,
+       38.766215
+      ],
+      [
+       -9.094665,
+       38.766833
+      ],
+      [
+       -9.095081,
+       38.766855
+      ],
+      [
+       -9.095069,
+       38.767024
+      ],
+      [
+       -9.095508,
+       38.767077
+      ],
+      [
+       -9.095512,
+       38.767001
+      ],
+      [
+       -9.095453,
+       38.766972
+      ],
+      [
+       -9.095513,
+       38.766975
+      ],
+      [
+       -9.09552,
+       38.766865
+      ],
+      [
+       -9.095338,
+       38.766855
+      ],
+      [
+       -9.095397,
+       38.766133
+      ],
+      [
+       -9.094727,
+       38.766101
+      ],
+      [
+       -9.094716,
+       38.766215
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-r3266709",
+    "name": "Pavilhão de Portugal",
+    "kind": "landmark",
+    "osm": "https://www.openstreetmap.org/relation/3266709",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-189718436",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.099038,
+       38.768458
+      ],
+      [
+       -9.101886,
+       38.768511
+      ],
+      [
+       -9.101983,
+       38.767445
+      ],
+      [
+       -9.099153,
+       38.767186
+      ],
+      [
+       -9.099127,
+       38.767477
+      ],
+      [
+       -9.09954,
+       38.7675
+      ],
+      [
+       -9.099531,
+       38.767605
+      ],
+      [
+       -9.100048,
+       38.767661
+      ],
+      [
+       -9.100037,
+       38.767774
+      ],
+      [
+       -9.100845,
+       38.767772
+      ],
+      [
+       -9.100841,
+       38.767818
+      ],
+      [
+       -9.10101,
+       38.767828
+      ],
+      [
+       -9.101112,
+       38.767787
+      ],
+      [
+       -9.101108,
+       38.767833
+      ],
+      [
+       -9.101277,
+       38.767843
+      ],
+      [
+       -9.101379,
+       38.767802
+      ],
+      [
+       -9.101397,
+       38.768049
+      ],
+      [
+       -9.101352,
+       38.768092
+      ],
+      [
+       -9.100289,
+       38.767988
+      ],
+      [
+       -9.100187,
+       38.768029
+      ],
+      [
+       -9.100193,
+       38.767983
+      ],
+      [
+       -9.10002,
+       38.767973
+      ],
+      [
+       -9.100009,
+       38.768086
+      ],
+      [
+       -9.099488,
+       38.768084
+      ],
+      [
+       -9.099478,
+       38.76819
+      ],
+      [
+       -9.099064,
+       38.768167
+      ],
+      [
+       -9.099038,
+       38.768458
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-189718436",
+    "name": "Oriente station",
+    "kind": "station",
+    "osm": "https://www.openstreetmap.org/way/189718436",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "osm-240816973",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -9.097415,
+       38.768495
+      ],
+      [
+       -9.097562,
+       38.768337
+      ],
+      [
+       -9.097655,
+       38.767192
+      ],
+      [
+       -9.097491,
+       38.767185
+      ],
+      [
+       -9.097483,
+       38.76727
+      ],
+      [
+       -9.096819,
+       38.767236
+      ],
+      [
+       -9.096847,
+       38.766891
+      ],
+      [
+       -9.096155,
+       38.766836
+      ],
+      [
+       -9.096001,
+       38.768173
+      ],
+      [
+       -9.096828,
+       38.768215
+      ],
+      [
+       -9.096805,
+       38.768495
+      ],
+      [
+       -9.097415,
+       38.768495
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "osm-240816973",
+    "name": "Vasco da Gama centre",
+    "kind": "landmark",
+    "osm": "https://www.openstreetmap.org/way/240816973",
+    "credit": "© OpenStreetMap contributors (ODbL)"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "registration-airport",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -9.1281,
+     38.77
+    ]
+   },
+   "properties": {
+    "id": "registration-airport",
+    "name": "Registration: Airport, Terminal 1",
+    "kind": "registration",
+    "approximate": true,
+    "detail": "Humberto Delgado Airport, Terminal 1. Collect your lanyard and wristband. Bring your ticket QR code (in Web Summit's app) and photo ID.",
+    "hours": "Sat 7 Nov 09:30 to 22:00; Sun 8 and Mon 9 Nov 07:30 to 22:00; Tue 10 Nov 07:30 to 15:00. Times may change.",
+    "source": "https://websummit.com/essentials/registration-essentials/"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "registration-pavilhao",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -9.095093,
+     38.766589
+    ]
+   },
+   "properties": {
+    "id": "registration-pavilhao",
+    "name": "Registration: Pavilhão de Portugal",
+    "kind": "registration",
+    "approximate": false,
+    "detail": "Pavilhão de Portugal, Alameda dos Oceanos. Collect your lanyard and wristband. Bring your ticket QR code (in Web Summit's app) and photo ID.",
+    "hours": "Sat 7 and Sun 8 Nov 12:00 to 18:00; Mon 9 Nov 12:00 to 22:00; Tue 10 and Wed 11 Nov 07:30 to 17:00; Thu 12 Nov 07:30 to 16:45. Times may change.",
+    "source": "https://websummit.com/essentials/registration-essentials/"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "entrance-north",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -9.093754,
+     38.773447
+    ]
+   },
+   "properties": {
+    "id": "entrance-north",
+    "name": "North Entrance",
+    "kind": "entrance",
+    "approximate": true,
+    "detail": "Near Moscavide metro. After 17:00 this is the way in to Night Summit. Placed at the north end of FIL: Web Summit gives no exact spot.",
+    "source": "https://websummit.com/essentials/schedule-essentials/"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "stage-centre",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -9.093892,
+     38.76847
+    ]
+   },
+   "properties": {
+    "id": "stage-centre",
+    "name": "Centre Stage",
+    "kind": "stage",
+    "approximate": false,
+    "detail": "Centre Stage is in MEO Arena.",
+    "source": "https://websummit.com/schedule/"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "startup-lounge",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -9.093955,
+     38.771764
+    ]
+   },
+   "properties": {
+    "id": "startup-lounge",
+    "name": "Startup Lounge",
+    "kind": "area",
+    "approximate": true,
+    "detail": "Between Pavilion 2 and Pavilion 3. For startup ticket holders and the investors and speakers they meet.",
+    "source": "Web Summit Startup Success team, email of 5 November 2026"
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "our-stand",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -9.094068,
+     38.770352
+    ]
+   },
+   "properties": {
+    "id": "our-stand",
+    "name": "Our stand: RiskMandate, booth A1-30",
+    "kind": "stand",
+    "approximate": true,
+    "detail": "Thursday 12 November only. ALPHA 1, Pavilion 1, booth A1-30. The exact spot is shown at the venue.",
+    "source": "Web Summit Startup Success team, email of 5 November 2026"
+   }
+  }
+ ]
+}
