@@ -44,6 +44,9 @@ finish() {
 field() { python3 -c 'import json,sys; print(json.loads(sys.argv[1]).get(sys.argv[2], ""))' "$1" "$2"; }
 entries() { python3 -c 'import json,sys; [print(json.dumps(e)) for e in json.loads(sys.argv[1] or "[]")]' "${1:-[]}"; }
 in_list() { python3 -c 'import json,sys; sys.exit(0 if any(e["app"] == sys.argv[2] for e in json.loads(sys.argv[1] or "[]")) else 1)' "${1:-[]}" "$2"; }
+# The scripts write KEY=value lines to $GITHUB_ENV for later steps; inside one step, export them.
+# Line by line, not `source`: values have spaces (the signing identity's name).
+load_env() { local k v; while IFS="=" read -r k v; do if [ -n "$k" ]; then export "$k=$v"; fi; done < "$1"; return 0; }
 udid_for() { grep "^$1=" "$sims" | cut -d= -f2; }
 wait_booted() {
   local u=$1
@@ -176,9 +179,9 @@ case "${1:?phase}" in
           echo "::error::$key: signing secrets missing: ${missing[*]}"; say "- ❌ secrets missing: ${missing[*]}"; exit 1
         fi
         export MODE=$mode
-        scripts/release/version.sh;      set -a; . "$envf"; set +a
+        scripts/release/version.sh;       load_env "$envf"
         trap 'scripts/release/signing-cleanup.sh >/dev/null 2>&1 || true' EXIT
-        scripts/release/signing-setup.sh; set -a; . "$envf"; set +a
+        scripts/release/signing-setup.sh; load_env "$envf"
         rc=0; python3 scripts/release/asc.py has-record || rc=$?
         if [ "$rc" = 3 ]; then say "- ⏭️ no App Store Connect record for \`$EXPECTED_BUNDLE\`; nothing archived or uploaded."; exit 0; fi
         [ "$rc" = 0 ]

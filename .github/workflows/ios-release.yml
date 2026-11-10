@@ -13,9 +13,9 @@ name: iOS release
 #             exist for it, or nothing is uploaded.
 #
 # Triggers
-#   push to dev          website.yml bumps VERSION and tags vX.Y.Z; this workflow then runs
-#                        (workflow_run) on that release commit. Every app whose files changed since
-#                        its own last build uploads, unless paused. App version = the tag, without v.
+#   push to dev          NOT here since 10 Nov 2026: ios.yml's one macOS job builds, tests and, when
+#                        green, uploads the affected apps from the release commit website.yml tags
+#                        (briefs/2026-11-10__ci-on-one-mac). Pausing works the same way there.
 #   tags                 team-v*, promptugal-v*, riskmandate-v* release that app;
 #                        the old ios-v* means the app with bundle news.promptugal.reader
 #   workflow_dispatch    input "app": all, or one app; "upload" or "dry_run" to sign
@@ -23,11 +23,12 @@ name: iOS release
 # Pausing (repository variables, Settings > Secrets and variables > Actions > Variables)
 #   TESTFLIGHT_ON_PUSH=false           pauses push uploads of every app
 #   TESTFLIGHT_ON_PUSH_TEAM=false      pauses one app (…_PROMPTUGAL, …_RISKMANDATE)
-#   Tags and manual runs still upload.
+#   Tags and manual runs still upload. The same switches pause ios.yml's uploads.
 #
 # Version: MARKETING_VERSION of every app = VERSION at the built commit (v0.4.7 -> 0.4.7), passed to
 # xcodebuild. Summary and TestFlight notes say "0.4.7 (build) · tag v0.4.7 · commit <sha>".
-# Build number: CFBundleVersion = run number of THIS workflow + the app's offset, passed as
+# Build number: CFBundleVersion = run number of THIS workflow + the app's offset (ios.yml uses its own
+# run number, which is higher; to upload a version ios.yml already uploaded, set build_number), passed as
 # CURRENT_PROJECT_VERSION. Offset: variable IOS_BUILD_OFFSET_<APP>, else IOS_BUILD_OFFSET,
 # else 100 (above the manual builds; PrompTugal's last manual build is 6). Both jobs of one
 # app use the same number. MARKETING_VERSION comes from the app's own project.
@@ -38,12 +39,7 @@ name: iOS release
 # Setup: briefs/2026-11-08__overnight-push/release-setup.md
 
 on:
-  # A push to dev is released by website.yml ("Release and deploy"): it bumps VERSION, commits and
-  # tags vX.Y.Z. This workflow follows it and builds THAT commit, so the app version is the tag.
-  workflow_run:
-    workflows: ['Release and deploy']
-    types: [completed]
-    branches: [dev]
+  # Dev pushes publish from ios.yml (one macOS job). This workflow keeps tags and manual runs.
   push:
     # Night branches are built by ios.yml; package one by hand with workflow_dispatch (+ source_ref).
     tags: ['ios-v*', 'team-v*', 'promptugal-v*', 'riskmandate-v*']

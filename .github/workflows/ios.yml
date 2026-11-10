@@ -142,10 +142,15 @@ jobs:
   #                (unsigned) and check-embedded.sh.
   #   packages     each affected package's tests, in one DerivedData (PTCore compiles once)
   #
+  #   publish      on a push to dev, once everything above is green: each affected app with
+  #                "testflight": true (and not paused) is archived from the push's release commit,
+  #                signed and uploaded to TestFlight (internal testers). No step on main for now
+  #                (Dinis, 10 Nov). The App Store submission stays manual: ios-submit.yml.
+  #
   # quick (manual): Debug and iPhone tests only, no Release build, no iPad.
   # One app's failure does not stop the others; the job lists every failure and fails.
   mac:
-    name: 'macOS: build and test'
+    name: 'macOS: build, test and publish'
     needs: [gate, changes, pick-runner]
     if: needs.gate.outputs.run == 'true' && (needs.changes.outputs.has_apps == 'true' || needs.changes.outputs.has_packages == 'true')
     runs-on: ${{ needs.pick-runner.outputs.runner }}
@@ -155,12 +160,19 @@ jobs:
       group: ios-mac-${{ github.ref }}
       cancel-in-progress: false
     timeout-minutes: 150
+    # The signing secrets may live in the testflight environment. Only a dev push uses it; any
+    # other run has no environment and no secrets.
+    environment: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev') && 'testflight' || '' }}
     permissions:
       contents: read
       actions: read   # size check and plan read earlier runs
+    outputs:
+      uploaded: ${{ steps.publish.outputs.uploaded }}
     env:
       APPS_JSON: ${{ needs.changes.outputs.apps }}
       PACKAGES_JSON: ${{ needs.changes.outputs.packages }}
+      UPLOAD_JSON: ${{ needs.changes.outputs.upload }}
+      PUBLISH: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev' && needs.changes.outputs.has_upload == 'true') && 'true' || 'false' }}
       # Unit tests on dev, pull requests and manual runs; night/** and split/** pushes build only.
       RUN_TESTS: ${{ (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && 'true' || 'false' }}
       DEVICES: ${{ inputs.quick && 'iPhone' || 'iPhone iPad' }}
@@ -187,6 +199,109 @@ jobs:
         if: ${{ !cancelled() && needs.changes.outputs.has_packages == 'true' }}
         run: .github/scripts/mac-job.sh packages
 
+      # The app version is the v* tag that website.yml puts on this push's release commit (VERSION
+      # bumped, nothing else). Built after the tests, so the tag is normally there already.
+      - name: Find this push's release commit
+        id: release
+        if: success() && env.PUBLISH == 'true'
+        timeout-minutes: 8
+        run: |
+          found=""
+          for i in $(seq 1 30); do
+            git fetch --quiet --force --tags origin dev
+            for tag in $(git tag --list 'v[0-9]*' --sort=-version:refname | head -20); do
+              c=$(git rev-parse "$tag^{commit}")
+              if [ "$(git rev-parse "$c^")" = "$GITHUB_SHA" ]; then found="$tag $c"; break 2; fi
+            done
+            # website.yml finished without a tag for this commit: a later push took the release.
+            st=$(gh run list --workflow website.yml --commit "$GITHUB_SHA" --json status -q '.[0].status' 2>/dev/null || true)
+            [ "$st" = completed ] && [ "$i" -gt 2 ] && break
+            sleep 15
+          done
+          if [ -z "$found" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "### ⏭️ No release commit for \`${GITHUB_SHA:0:7}\` (a later push took it). Built and tested; that push's run uploads." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          read -r tag commit <<< "$found"
+          diff=$(git diff --name-only "$GITHUB_SHA" "$commit")
+          if [ "$diff" != VERSION ]; then
+            echo "::error::release commit $commit changes more than VERSION: $diff"; exit 1
+          fi
+          git checkout --quiet --detach "$commit"
+          echo "SOURCE_SHA=$commit" >> "$GITHUB_ENV"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+          echo "### Release $tag (\`${commit:0:7}\`, VERSION bump on \`${GITHUB_SHA:0:7}\`)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Release build (no release commit, so no upload)
+        if: success() && steps.release.outputs.ready == 'false'
+        env:
+          RELEASE_APPS: ${{ needs.changes.outputs.upload }}
+        run: .github/scripts/mac-job.sh release
+
+      - name: Sign, export and upload to TestFlight
+        id: publish
+        if: success() && steps.release.outputs.ready == 'true'
+        env:
+          IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
+          IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+          IOS_PROFILE_TEAM_APP_BASE64: ${{ secrets.IOS_PROFILE_TEAM_APP_BASE64 }}
+          IOS_PROFILE_TEAM_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_TEAM_WIDGETS_BASE64 }}
+          IOS_PROFILE_TEAM_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_TEAM_INTENTS_BASE64 }}
+          IOS_PROFILE_TEAM_SHARE_BASE64: ${{ secrets.IOS_PROFILE_TEAM_SHARE_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_APP_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_APP_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_WIDGETS_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_INTENTS_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_SHARE_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_SHARE_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_APP_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_APP_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_WIDGETS_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_INTENTS_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_SHARE_BASE64 }}
+          # The old unprefixed names belong to the app with the legacy bundle (news.promptugal.reader).
+          LEGACY_PROFILE_APP_BASE64: ${{ secrets.IOS_PROFILE_APP_BASE64 }}
+          LEGACY_PROFILE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_WIDGETS_BASE64 }}
+          LEGACY_PROFILE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_INTENTS_BASE64 }}
+          LEGACY_PROFILE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_SHARE_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          # Not internal-only: the internal group gets every build with no review, and ios-submit.yml
+          # (manual) can still send a chosen build to App Store review.
+          INTERNAL_ONLY: 'false'
+          AUTO_ARCHIVE: codesign
+        run: .github/scripts/mac-job.sh publish
+
+      - name: Remove keychain, profiles and key
+        if: always() && steps.release.outputs.ready == 'true'
+        run: |
+          for d in "$RUNNER_TEMP"/release/*/; do
+            [ -d "$d" ] || continue
+            OUT=${d%/} PROJECT=x SCHEME=x scripts/release/signing-cleanup.sh || true
+          done
+
+      - name: Upload build-info and release notes
+        if: always() && steps.publish.outcome != 'skipped'
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-info-apps
+          path: |
+            ${{ runner.temp }}/publish/*/build-info.json
+            ${{ runner.temp }}/publish/*/release-notes.txt
+            ${{ runner.temp }}/publish/*/uploaded.json
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Upload signed .ipa files
+        if: always() && steps.publish.outcome != 'skipped'
+        uses: actions/upload-artifact@v5
+        with:
+          name: appstore-ipas
+          path: ${{ runner.temp }}/publish/*/*.ipa
+          if-no-files-found: ignore
+          retention-days: 30
+          compression-level: 0
+
       - name: Delete the simulators (self-hosted only)
         if: always() && runner.environment == 'self-hosted'
         run: |
@@ -201,9 +316,58 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: mac-logs
-          path: ${{ runner.temp }}/logs/
+          path: |
+            ${{ runner.temp }}/logs/
+            ${{ runner.temp }}/release/*/logs/
           if-no-files-found: ignore
           retention-days: 14
+
+  # After an upload: wait for App Store Connect to process each build, answer export compliance
+  # and set What to Test. Ubuntu (asc.py is Python and openssl), so no Mac waits on Apple.
+  # Conveniences, as before: the upload is done, so this job never turns the run red.
+  testflight-processing:
+    name: TestFlight processing
+    needs: mac
+    if: ${{ !cancelled() && needs.mac.outputs.uploaded != '' && needs.mac.outputs.uploaded != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    environment: testflight
+    permissions:
+      contents: read
+      actions: read
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+      UPLOADED: ${{ needs.mac.outputs.uploaded }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts/release
+
+      - uses: actions/download-artifact@v5
+        with:
+          name: build-info-apps
+          path: ${{ runner.temp }}/publish
+
+      - name: Wait for processing, answer export compliance, set What to Test
+        run: |
+          set -u   # asc.py signs its token from ASC_KEY_P8_BASE64 and writes no key file
+          rc=0
+          for row in $(echo "$UPLOADED" | python3 -c 'import json,sys; [print("%s|%s|%s|%s" % (e["app"], e["bundle"], e["version"], e["build"])) for e in json.load(sys.stdin)]'); do
+            IFS='|' read -r key bundle version build <<< "$row"
+            echo "== $key ($bundle) $version ($build)"
+            echo "## \`$key\`: $version ($build)" >> "$GITHUB_STEP_SUMMARY"
+            export BUNDLE_ID=$bundle
+            notes=$RUNNER_TEMP/publish/$key/release-notes.txt
+            python3 scripts/release/asc.py wait-build --version "$version" --build "$build" --timeout 1200 \
+              && python3 scripts/release/asc.py compliance --version "$version" --build "$build" \
+              && python3 scripts/release/asc.py whats-new --version "$version" --build "$build" --file "$notes" \
+              && echo "- ✅ processed, compliance answered, What to Test set" >> "$GITHUB_STEP_SUMMARY" \
+              || { rc=1; echo "- ⚠️ processing steps did not all finish; see the log" >> "$GITHUB_STEP_SUMMARY"; }
+          done
+          exit $rc
 
   # One check name that does not change with the matrix: green when every job that ran is
   # green (skipped jobs do not count against it). Branch protection can require this one.
