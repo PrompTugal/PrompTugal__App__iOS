@@ -40,4 +40,19 @@ struct PublicAppTests {
     @MainActor func mapLinkStillWorks() {
         #expect(PublicDestinations.openable("map", debug: false)?.phoneTab == 3)
     }
+
+    @Test("only one new pick made in the app goes to the calendar")
+    func pickCalendarRule() {
+        #expect(PickCalendarRule.newPick(old: ["a"], new: ["a", "b"], fromApp: true) == "b")
+        #expect(PickCalendarRule.newPick(old: [], new: ["a", "b"], fromApp: true) == nil)
+        #expect(PickCalendarRule.newPick(old: ["a"], new: ["a", "b"], fromApp: false) == nil)
+        #expect(PickCalendarRule.newPick(old: ["a", "b"], new: ["a"], fromApp: true) == nil)
+    }
+
+    @Test("the ids sent to the calendar survive a round trip")
+    func pickCalendarIDs() {
+        let ids: Set<String> = ["talk-b", "talk-a"]
+        #expect(PickCalendarRule.ids(PickCalendarRule.raw(ids)) == ids)
+        #expect(PickCalendarRule.ids("").isEmpty)
+    }
 }

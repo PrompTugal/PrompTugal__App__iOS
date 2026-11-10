@@ -24,6 +24,11 @@ struct PublicSettingsView: View {
                 }
             }
             Section {
+                PickCalendarToggle()
+            } footer: {
+                Text("The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.")
+            }
+            Section {
                 LabeledContent("Version") {
                     versionText
                 }

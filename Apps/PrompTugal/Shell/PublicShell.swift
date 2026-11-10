@@ -41,6 +41,7 @@ struct PublicShell: View {
             }
         }
         .id(cultureID)
+        .pickCalendar()
         .appCulture(cultureID)
         .environment(reader)
         .environment(\.newsSource, reader)

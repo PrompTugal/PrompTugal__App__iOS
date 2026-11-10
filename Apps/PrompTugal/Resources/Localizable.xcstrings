@@ -506,6 +506,107 @@
         }
       }
     },
+    "Add new picks to my calendar": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إضافة الاختيارات الجديدة إلى تقويمي"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Auswahl in meinen Kalender"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add new picks to my calendar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir lo nuevo que elija a mi calendario"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter mes nouveaux choix au calendrier"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "नई चुनी बातें मेरे कैलेंडर में जोड़ें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj novi odabir u moj kalendar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi le nuove scelte al mio calendario"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しく選んだものをカレンダーに追加"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "새로 선택한 세션을 캘린더에 추가"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieuwe keuzes in mijn agenda zetten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodawaj nowe sesje do kalendarza"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar novas escolhas à minha agenda"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar novas escolhas ao meu calendário"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adaugă alegerile noi în calendar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "把新选的加入我的日历"
+          }
+        }
+      }
+    },
     "Add to Calendar": {
       "extractionState": "manual",
       "localizations": {
@@ -619,6 +720,107 @@
         }
       }
     },
+    "Add to Calendar too": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أضف إلى التقويم أيضًا"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auch in den Kalender"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Calendar too"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir también al calendario"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter aussi au calendrier"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "कैलेंडर में भी जोड़ें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj i u kalendar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungi anche al calendario"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カレンダーにも追加"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "캘린더에도 추가"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ook in agenda zetten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj też do kalendarza"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar à agenda também"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar também ao calendário"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adaugă și în calendar"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同时加入日历"
+          }
+        }
+      }
+    },
     "Add to my program": {
       "extractionState": "manual",
       "localizations": {
@@ -728,6 +930,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "添加到我的日程"
+          }
+        }
+      }
+    },
+    "Add your picks to your calendar too?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل تضيف اختياراتك إلى تقويمك أيضًا؟"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl auch in den Kalender eintragen?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add your picks to your calendar too?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Añadir también tus charlas al calendario?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter aussi vos choix à votre calendrier ?"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "क्या अपनी चुनी हुई बातें कैलेंडर में भी जोड़ें?"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodati odabrano i u kalendar?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiungere le tue scelte anche al calendario?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選んだトークをカレンダーにも追加しますか?"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택한 세션을 캘린더에도 추가할까요?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je keuzes ook in je agenda zetten?"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodać wybrane sesje także do kalendarza?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar suas escolhas à agenda também?"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionar também as suas escolhas ao calendário?"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adaugi alegerile și în calendar?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "也把你选的演讲加入日历吗?"
           }
         }
       }
@@ -4692,6 +4995,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "已下载"
+          }
+        }
+      }
+    },
+    "Each talk you pick goes into your phone's calendar with its time and hall. You can change this in More.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كل جلسة تختارها تُضاف إلى تقويم هاتفك مع وقتها وقاعتها. يمكنك تغيير ذلك من «المزيد»."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeder gewählte Talk kommt mit Zeit und Halle in den Kalender deines Telefons. Ändern kannst du das unter Mehr."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each talk you pick goes into your phone's calendar with its time and hall. You can change this in More."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada charla que elijas entra en el calendario del móvil con su hora y su pabellón. Puedes cambiarlo en Más."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque talk choisi entre dans le calendrier de votre téléphone, avec son heure et sa salle. Modifiable dans Plus."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आप जो भी सत्र चुनेंगे, वह समय और हॉल के साथ फ़ोन के कैलेंडर में जुड़ जाएगा। इसे 'और' में बदल सकते हैं।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Svako odabrano predavanje ulazi u kalendar telefona s vremenom i dvoranom. To možete promijeniti pod Više."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ogni talk scelto entra nel calendario del telefono con orario e padiglione. Puoi cambiarlo in Altro."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選んだトークは時間と会場つきで電話のカレンダーに入ります。「その他」で変更できます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택한 세션은 시간과 홀 정보와 함께 휴대폰 캘린더에 들어갑니다. 더 보기에서 바꿀 수 있습니다."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elke gekozen talk komt met tijd en hal in de agenda van je telefoon. Je kunt dit wijzigen onder Meer."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każda wybrana sesja trafia do kalendarza telefonu z godziną i salą. Zmienisz to w sekcji Więcej."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada palestra escolhida entra na agenda do celular com horário e pavilhão. Você pode mudar isso em Mais."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada palestra escolhida entra no calendário do telemóvel com a hora e o pavilhão. Pode alterar isto em Mais."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiecare prezentare aleasă intră în calendarul telefonului, cu ora și sala. Poți schimba asta în Mai multe."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你选的每场演讲都会带着时间和场馆进入手机日历。可在“更多”中更改。"
           }
         }
       }
@@ -8684,6 +9088,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "Not Now"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas maintenant"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अभी नहीं"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne sada"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non ora"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今はしない"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "나중에"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niet nu"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie teraz"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora não"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora não"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu acum"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "以后再说"
+          }
+        }
+      }
+    },
+    "Not now": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ليس الآن"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
           }
         },
         "es": {
@@ -13825,6 +14330,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "无法加载日程。"
+          }
+        }
+      }
+    },
+    "The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يضيف التطبيق الجلسات ولا يقرأ تقويمك أبدًا. إزالة اختيار تترك حدثه في التقويم."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die App trägt Talks ein und liest deinen Kalender nie. Entfernst du eine Auswahl, bleibt der Termin im Kalender."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La app añade charlas y nunca lee tu calendario. Si quitas una, su evento se queda en el calendario."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’app ajoute des talks et ne lit jamais votre calendrier. Retirer un choix laisse son événement dans le calendrier."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ऐप सत्र जोड़ता है और आपका कैलेंडर कभी नहीं पढ़ता। चुनाव हटाने पर उसका इवेंट कैलेंडर में रहता है।"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikacija dodaje predavanja i nikad ne čita vaš kalendar. Uklonjeni odabir ostaje u kalendaru."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’app aggiunge i talk e non legge mai il tuo calendario. Se togli una scelta, l’evento resta nel calendario."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリはトークを追加するだけで、カレンダーを読みません。選択を外してもカレンダーの予定は残ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "앱은 세션을 추가만 하고 캘린더를 읽지 않습니다. 선택을 취소해도 캘린더 일정은 남습니다."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De app zet talks erin en leest je agenda nooit. Haal je een keuze weg, dan blijft het item in je agenda."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikacja dodaje sesje i nigdy nie czyta kalendarza. Usunięcie wyboru zostawia wydarzenie w kalendarzu."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O app adiciona palestras e nunca lê sua agenda. Tirar uma escolha deixa o evento na agenda."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A app adiciona palestras e nunca lê o seu calendário. Retirar uma escolha deixa o evento no calendário."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplicația adaugă prezentări și nu îți citește niciodată calendarul. Dacă scoți o alegere, evenimentul rămâne în calendar."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "应用只添加演讲,从不读取你的日历。取消选择后,日历里的活动会保留。"
           }
         }
       }
