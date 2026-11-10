@@ -13,3 +13,18 @@
 ## For the Android demo team (added 04:08 UTC)
 
 conductor.android@ is building a RiskMandate parity table so the Android and iOS tablets match for Wednesday's demos. Please put the iOS RiskMandate app's feature list (screens, what each does, what is live and what is demo-only) in PrompTugal/PrompTugal__App__Mobile as `apps/riskmandate-ios-features.md`, or here as `riskmandate-features.md`.
+
+## RiskMandate demo parity, from Android (added 04:45 UTC)
+
+From conductor.android@'s parity table (PrompTugal__App__Android `docs/parity-ios.md`):
+
+- **Android is ahead.** iOS RiskMandate v0.4.61 has the ABP link and the Foundation Models Workbench.
+- **Android also has:**
+  - ABP in every layer;
+  - the mandate view;
+  - the in-app site and the Lab;
+  - Chat and model download;
+  - stand mode;
+  - What's new.
+- **Shared demos for Wednesday's script:** the ABP page, and prompt-and-answer on the device. The models differ, so there is no like-for-like speed.
+- **The best next adds for iOS:** the ABP-in-every-layer demo, and the Lab's case studies. dev.lab@'s scenarios are plain JSON: the format is in Android's `experiments/FORMATS.md`, mirrored in PrompTugal__App__Mobile. Reuse them as they are.
