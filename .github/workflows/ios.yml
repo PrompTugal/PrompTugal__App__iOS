@@ -136,11 +136,12 @@ jobs:
   # One job queues once, selects Xcode once, boots one iPhone and one iPad simulator and builds
   # each app once for both devices. What it checks has not changed:
   #
-  #   per app      build-for-testing (Debug, iOS Simulator), then the unit tests on the iPhone
-  #                and on the iPad (test-without-building, the same test bundle); on night/**
-  #                pushes a Debug build only, as before. Then the Release build for a device
-  #                (unsigned) and check-embedded.sh.
-  #   packages     each affected package's tests, in one DerivedData (PTCore compiles once)
+  #   build        per app: build-for-testing (Debug, iOS Simulator), or a Debug build only on
+  #                night/** pushes as before; the Release build for a device (unsigned) and
+  #                check-embedded.sh; each affected package's tests built in one DerivedData
+  #                (PTCore compiles once). No simulator runs while compiling.
+  #   test         then the iPhone simulator: every app's and package's tests; then the iPad
+  #                simulator: every app's tests (test-without-building, the same test bundles)
   #
   #   publish      on a push to dev, once everything above is green: each affected app with
   #                "testflight": true (and not paused) is archived from the push's release commit,
@@ -186,18 +187,19 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: Pick and boot the simulators
-        if: env.RUN_TESTS == 'true' || needs.changes.outputs.has_packages == 'true'
-        timeout-minutes: 8
-        run: .github/scripts/mac-job.sh sims
+      # All builds first with no simulator running, then one simulator at a time (mac-job.sh).
+      - name: Build the apps and packages
+        run: .github/scripts/mac-job.sh build
 
-      - name: Build and test the apps
-        if: needs.changes.outputs.has_apps == 'true'
-        run: .github/scripts/mac-job.sh apps
+      - name: Tests on the iPhone simulator
+        if: ${{ !cancelled() && (env.RUN_TESTS == 'true' || needs.changes.outputs.has_packages == 'true') }}
+        timeout-minutes: 60
+        run: .github/scripts/mac-job.sh test iPhone
 
-      - name: Package tests
-        if: ${{ !cancelled() && needs.changes.outputs.has_packages == 'true' }}
-        run: .github/scripts/mac-job.sh packages
+      - name: Tests on the iPad simulator
+        if: ${{ !cancelled() && env.RUN_TESTS == 'true' && !inputs.quick }}
+        timeout-minutes: 60
+        run: .github/scripts/mac-job.sh test iPad
 
       # The app version is the v* tag that website.yml puts on this push's release commit (VERSION
       # bumped, nothing else). Built after the tests, so the tag is normally there already.

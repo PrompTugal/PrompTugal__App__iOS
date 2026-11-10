@@ -1,16 +1,22 @@
 #!/usr/bin/env bash
 # The one macOS job of ios.yml: every app and package a run touches, on one Mac.
 #
-#   mac-job.sh sims       pick an iPhone and an iPad simulator and start booting both
-#   mac-job.sh apps       per app: build-for-testing once, then test-without-building on each
-#                         device (or a plain Debug build when tests are off), then the Release
-#                         device build (unsigned) with check-embedded.sh, unless the app is
-#                         about to be archived for TestFlight in this job
-#   mac-job.sh packages   each affected package's tests, in one shared DerivedData
+#   mac-job.sh build      pick the simulators (none booted), then per app: build-for-testing once
+#                         (or a plain Debug build when tests are off) and the Release device build
+#                         (unsigned) with check-embedded.sh, unless the app is archived for
+#                         TestFlight in this job; then build each affected package's tests
+#   mac-job.sh test <iPhone|iPad>
+#                         boot that one simulator, run every built app's tests on it, and on the
+#                         iPhone every package's tests (test-without-building); shut it down
 #   mac-job.sh release    the unsigned Release device build for the apps named in RELEASE_APPS
 #                         (apps that were going to upload but did not get a release commit)
 #   mac-job.sh publish    per app in UPLOAD_JSON: version, signing setup, signed archive,
 #                         size check, export, upload (scripts/release/testflight.sh), cleanup
+#
+# All builds first, with no simulator running, then one simulator at a time: on the 3-core
+# runner a booting or idle simulator slows the compiler and actool (asset catalogs go through
+# the simulator service) about threefold. Run 42754257697 booted both while compiling: Team's
+# build took 12 min (2.4 min in a job without simulators) and its Release build 7.5 (2.7).
 #
 # One app failing does not stop the others: every app and package is built and tested,
 # failures are listed in the summary, and the step fails at the end. A later step that
@@ -28,10 +34,11 @@ LOGS=$T/logs
 SUMMARY=${GITHUB_STEP_SUMMARY:-/dev/null}
 mkdir -p "$LOGS"
 sims=$T/sims.env
+built=$T/built.txt       # what built: the test steps run exactly these
 failed=()
 
 say() { printf '%s\n' "$*" >> "$SUMMARY"; }
-step() { .github/scripts/run-and-summarize.sh "$@"; }
+step() { "$root/.github/scripts/run-and-summarize.sh" "$@"; }
 fail() { failed+=("$1"); }
 finish() {
   if [ ${#failed[@]} -gt 0 ]; then
@@ -40,24 +47,31 @@ finish() {
   fi
   exit 0
 }
-# app_field <json entry> <key>
 field() { python3 -c 'import json,sys; print(json.loads(sys.argv[1]).get(sys.argv[2], ""))' "$1" "$2"; }
 entries() { python3 -c 'import json,sys; [print(json.dumps(e)) for e in json.loads(sys.argv[1] or "[]")]' "${1:-[]}"; }
 in_list() { python3 -c 'import json,sys; sys.exit(0 if any(e["app"] == sys.argv[2] for e in json.loads(sys.argv[1] or "[]")) else 1)' "${1:-[]}" "$2"; }
+app_entry() { python3 -c 'import json,sys; print(json.dumps(next(e for e in json.loads(sys.argv[1]) if e["app"] == sys.argv[2])))' "$APPS_JSON" "$1"; }
 # The scripts write KEY=value lines to $GITHUB_ENV for later steps; inside one step, export them.
 # Line by line, not `source`: values have spaces (the signing identity's name).
 load_env() { local k v; while IFS="=" read -r k v; do if [ -n "$k" ]; then export "$k=$v"; fi; done < "$1"; return 0; }
-udid_for() { grep "^$1=" "$sims" | cut -d= -f2; }
-wait_booted() {
-  local u=$1
-  # bootstatus -b boots if needed and waits; cap it so a stuck boot leaves xcodebuild to finish it.
-  ( xcrun simctl bootstatus "$u" -b >/dev/null 2>&1 ) & local p=$!
+udid_for() { grep "^$1=" "$sims" 2>/dev/null | cut -d= -f2; }
+boot() {  # boot <udid>: boot and wait, at most 5 minutes (xcodebuild finishes a slow boot)
+  local u=$1 p
+  xcrun simctl boot "$u" 2>/dev/null || true
+  ( xcrun simctl bootstatus "$u" -b >/dev/null 2>&1 ) & p=$!
   for _ in $(seq 1 60); do kill -0 "$p" 2>/dev/null || break; sleep 5; done
   kill "$p" 2>/dev/null || true
 }
+# The scheme of a package with several products is "<Name>-Package", with one it is "<Name>".
+package_scheme() {
+  local name; name=$(basename "$1")
+  if (cd "$1" && xcodebuild -list -json 2>/dev/null) \
+       | python3 -c 'import json,sys; sys.exit(0 if sys.argv[1] + "-Package" in json.load(sys.stdin)["workspace"]["schemes"] else 1)' "$name"
+  then echo "$name-Package"; else echo "$name"; fi
+}
 
 release_build() {  # release_build <entry>: Release, generic iOS device, unsigned, then check-embedded
-  local e=$1 key project scheme app
+  local e=$1 key project scheme app name
   key=$(field "$e" app); project=$(field "$e" project); scheme=$(field "$e" scheme)
   if step "$key: Release build (iOS device, unsigned)" "$LOGS/$key-release.log" -- \
       xcodebuild build -project "$project" -scheme "$scheme" -configuration Release \
@@ -76,18 +90,16 @@ release_build() {  # release_build <entry>: Release, generic iOS device, unsigne
 }
 
 case "${1:?phase}" in
-  sims)
-    : > "$sims"
-    for d in ${DEVICES:-iPhone iPad}; do
-      u=$(.github/scripts/pick-simulator.py "$d") || { echo "::error::no $d simulator"; exit 1; }
-      echo "$d=$u" >> "$sims"
-      xcrun simctl boot "$u" 2>/dev/null || true   # boots in the background while the apps compile
-      echo "$d: $u"
-    done
-    cat "$sims"
-    ;;
-
-  apps)
+  build)
+    : > "$sims"; : > "$built"
+    if [ "${RUN_TESTS:-false}" = true ] || [ "${PACKAGES_JSON:-[]}" != "[]" ]; then
+      for d in ${DEVICES:-iPhone iPad}; do
+        u=$(.github/scripts/pick-simulator.py "$d") || { echo "::error::no $d simulator"; exit 1; }
+        xcrun simctl shutdown "$u" 2>/dev/null || true   # nothing booted while compiling
+        echo "$d=$u" >> "$sims"; echo "$d: $u"
+      done
+    fi
+    first=$(udid_for "${DEVICES%% *}")
     while IFS= read -r e; do
       [ -n "$e" ] || continue
       key=$(field "$e" app); project=$(field "$e" project); scheme=$(field "$e" scheme)
@@ -95,20 +107,11 @@ case "${1:?phase}" in
       common=(-project "$project" -scheme "$scheme" -configuration Debug -derivedDataPath "$DD"
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO)
       if [ "${RUN_TESTS:-false}" = true ]; then
-        first=$(udid_for "${DEVICES%% *}")
-        # One build for every device: same platform, same architecture, same test bundle.
+        # One build for every device: same platform, same architecture, same test bundle. A
+        # simulator destination needs the device to exist, not to be booted.
         if step "$key: build for testing (Debug, iOS Simulator)" "$LOGS/$key-build-for-testing.log" -- \
             xcodebuild build-for-testing "${common[@]}" -destination "id=$first"; then
-          for d in ${DEVICES:-iPhone iPad}; do
-            u=$(udid_for "$d"); wait_booted "$u"
-            rm -rf "$LOGS/$key-$d.xcresult"
-            step "$key: unit tests ($d)" "$LOGS/$key-test-$d.log" -- \
-              xcodebuild test-without-building "${common[@]}" -destination "id=$u" \
-                -resultBundlePath "$LOGS/$key-$d.xcresult" \
-                -parallel-testing-enabled NO -test-timeouts-enabled YES \
-                -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
-              || fail "$key: tests ($d)"
-          done
+          echo "app $key" >> "$built"
         else
           fail "$key: build for testing"
         fi
@@ -125,17 +128,56 @@ case "${1:?phase}" in
         fi
       fi
     done < <(entries "${APPS_JSON:-[]}")
-    finish
-    ;;
-
-  packages)
-    u=$(udid_for iPhone 2>/dev/null || true)
-    [ -n "$u" ] && wait_booted "$u"
     while IFS= read -r e; do
       [ -n "$e" ] || continue
       name=$(field "$e" name); path=$(field "$e" path)
-      PACKAGE_DERIVED_DATA=$PDD scripts/release/test-package.sh "$path" "$u" || fail "package $name"
+      if [ ! -f "$path/Package.swift" ] || [ ! -d "$path/Tests" ]; then
+        say "- ⏭️ \`$name\`: no Package.swift or Tests/ folder"; continue
+      fi
+      if [ "$name" = SGitVault ]; then
+        # Pure Swift, tested on the Mac itself with no simulator, as before.
+        (cd "$path" && step "$name swift test" "$LOGS/$name.log" -- swift test) || fail "package $name"
+        continue
+      fi
+      sch=$(package_scheme "$path")
+      if (cd "$path" && step "$name: build for testing (simulator)" "$LOGS/$name-build.log" -- \
+            xcodebuild build-for-testing -scheme "$sch" -destination "id=$first" -derivedDataPath "$PDD" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO); then
+        echo "package $name $path $sch" >> "$built"
+      else
+        fail "package $name: build"
+      fi
     done < <(entries "${PACKAGES_JSON:-[]}")
+    finish
+    ;;
+
+  test)
+    d=${2:?device}; u=$(udid_for "$d")
+    [ -n "$u" ] || { echo "no $d simulator picked"; exit 0; }
+    [ -s "$built" ] || { echo "nothing to test"; exit 0; }
+    boot "$u"
+    say ""; say "## Tests on the $d simulator"
+    while read -r kind name path sch; do
+      if [ "$kind" = app ]; then
+        e=$(app_entry "$name")
+        result="${LOGS:?}/${name:?}-${d:?}.xcresult"
+        rm -rf "$result"
+        step "$name: unit tests ($d)" "$LOGS/$name-test-$d.log" -- \
+          xcodebuild test-without-building -project "$(field "$e" project)" -scheme "$(field "$e" scheme)" \
+            -configuration Debug -derivedDataPath "$DD" -destination "id=$u" -resultBundlePath "$result" \
+            -parallel-testing-enabled NO -test-timeouts-enabled YES \
+            -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+          || fail "$name: tests ($d)"
+      elif [ "$d" = iPhone ]; then
+        # Package tests run on the iPhone simulator only, as before.
+        (cd "$path" && step "$name tests (simulator)" "$LOGS/$name.log" -- \
+          xcodebuild test-without-building -scheme "$sch" -destination "id=$u" -derivedDataPath "$PDD" \
+            -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO) \
+          || fail "package $name"
+      fi
+    done < "$built"
+    xcrun simctl shutdown "$u" 2>/dev/null || true
     finish
     ;;
 
