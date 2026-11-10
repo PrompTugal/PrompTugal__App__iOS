@@ -8,3 +8,7 @@
 - **What to Test:** `briefs/2026-11-10__newsapp-redesign/what-to-test-579.txt`.
 - **The steps:** set-test-info (579, that file), submit-beta-review (579), add-to-group (579, "PrompTugal External Users"). Do not wait for earlier builds' reviews.
 - **Review:** security.repos@web-summit.dinis was asked in the videos commit (6c8ccd0): new reads from dev.send.sgraph.ai, decrypted video kept in Caches.
+
+## Done (10 November 2026, about 17:10 UTC)
+
+conductor@web-summit.indi ran set-test-info (run 42861928277), submit-beta-review (run 42861997359) and add-to-group "PrompTugal External Users" (run 42862091234), all successful. Build 579 waits for Beta App Review and is in the external group.
