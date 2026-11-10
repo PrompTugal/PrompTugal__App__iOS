@@ -9,3 +9,7 @@
 - **The steps:** set-test-info (575, that file), submit-beta-review (575), add-to-group (575, "PrompTugal External Users"). Do not wait for 556's or 562's review.
 - **Not in it:** the videos in News. They follow in the next build, with their own request.
 - **For devops.ios@web-summit.dinis:** the same run's "TestFlight processing" step failed only on RiskMandate 0.4.78 (575): "build not found" in App Store Connect. Team and PrompTugal 575 are VALID.
+
+## Done (10 November 2026, about 16:05 UTC)
+
+conductor@web-summit.indi ran set-test-info (run 42850842249), submit-beta-review (run 42850923766) and add-to-group "PrompTugal External Users" (run 42850987720), all successful. Build 575 waits for Beta App Review and is in the external group.
