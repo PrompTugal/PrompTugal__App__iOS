@@ -23,6 +23,7 @@ extension EnvironmentValues {
 struct ExploreView: View {
     @Environment(\.exploreStart) private var start
     @Environment(ReaderStore.self) private var reader
+    @Environment(\.openMore) private var openMore
     @State private var opened: TalkSheetItem?
 
     var body: some View {
@@ -38,7 +39,14 @@ struct ExploreView: View {
             header: { AnyView(GraphCard(picks: reader.saved.count)) },
             graph: { AnyView(GraphExplorerView()) },
             talkActions: AppTalks.actions,
-            leadingToolbar: { AnyView(LanguageButton()) })
+            leadingToolbar: { AnyView(LanguageButton()) },
+            trailingToolbar: moreButton)
+    }
+
+    /// The More button on iPhone; nil on iPad, where More is in the sidebar.
+    private var moreButton: (@MainActor () -> AnyView)? {
+        guard let openMore else { return nil }
+        return { AnyView(MoreButton(action: openMore)) }
     }
 
     private static func key(_ start: ExploreStart) -> String {

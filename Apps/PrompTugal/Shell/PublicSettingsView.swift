@@ -2,7 +2,7 @@ import PTAgenda
 import PTCore
 import SwiftUI
 
-/// Settings of the public app: version, links, the independence note. The debug switch exists only in DEBUG builds.
+/// More: reminders, the welcome screen again, version, links, the independence note. The debug switch exists only in DEBUG builds.
 struct PublicSettingsView: View {
     #if DEBUG
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
@@ -20,7 +20,7 @@ struct PublicSettingsView: View {
                     Label("Reminders", systemImage: "bell.badge")
                 }
                 Button { showHow = true } label: {
-                    Label("How PrompTugal works", systemImage: "questionmark.circle")
+                    Label("Show the welcome again", systemImage: "questionmark.circle")
                 }
             }
             Section {
@@ -45,7 +45,7 @@ struct PublicSettingsView: View {
             }
             #endif
         }
-        .navigationTitle("Settings")
+        .navigationTitle("More")
         .sheet(isPresented: $showHow) {
             OnboardingView { chooseTalks in
                 showHow = false

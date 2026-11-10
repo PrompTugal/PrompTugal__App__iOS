@@ -8,7 +8,12 @@ import SwiftUI
 enum AppTalks {
     @MainActor static var actions: TalkActions {
         TalkActions(pick: { AnyView(TalkPickButton(talk: $0)) },
-                    calendar: { AnyView(TalkCalendarButton(talk: $0)) })
+                    calendar: { talk in
+                        AnyView(VStack(spacing: Space.s) {
+                            TalkCalendarButton(talk: talk)
+                            TalkMapLink(talk: talk)
+                        })
+                    })
     }
 }
 
@@ -62,6 +67,32 @@ private struct TalkCalendarButton: View {
         case .added(let count): message = count == 0 ? String(localized: "This talk has no time yet.") : String(localized: "Added to your calendar.")
         case .denied: message = String(localized: "Calendar access is off. Allow it in Settings to add talks.")
         case .failed(let text): message = text
+        }
+    }
+}
+
+/// "Show on the map": the venue map, with today's picks and the walks, one tap from the talk.
+/// A sheet, not a push: the talk detail is a List, where a navigation destination would be ignored.
+private struct TalkMapLink: View {
+    let talk: TalkRef
+    @State private var showing = false
+
+    var body: some View {
+        if let place = talk.place, !place.isEmpty {
+            Button { showing = true } label: {
+                Label("Show on the map", systemImage: "map").frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .accessibilityHint(Text(place))
+            .accessibilityIdentifier("pt.talk.map")
+            .sheet(isPresented: $showing) {
+                NavigationStack {
+                    VenueMapView()
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) { Button("Done") { showing = false } }
+                        }
+                }
+            }
         }
     }
 }

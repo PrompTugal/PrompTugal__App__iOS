@@ -1,5 +1,6 @@
 import PTAgenda
 import PTCore
+import PTExplore
 import PTNews
 import PTWeb
 import SwiftUI
@@ -16,12 +17,26 @@ extension EnvironmentValues {
     }
 }
 
+/// Opens a talk in the app's own talk sheet (pick, calendar, map). Set by Now; nil elsewhere.
+private struct OpenTalkKey: EnvironmentKey {
+    static let defaultValue: ((TalkSheetItem) -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var openTalk: ((TalkSheetItem) -> Void)? {
+        get { self[OpenTalkKey.self] }
+        set { self[OpenTalkKey.self] = newValue }
+    }
+}
+
 /// Now (ux spec NOW-1): the first screen. It changes with the summit's phase, worked out from Lisbon time and the
 /// agenda (`NowModel`, PTAgenda): before the summit a countdown, during it For you, On now and Up next, between days
 /// Tomorrow, after it a thank you. The latest news, the practical card and the Ask card are in every phase.
 /// Every user-facing string is written exactly as in the ux spec, so the String Catalog keys match.
 struct NowView: View {
     @Environment(ReaderStore.self) private var reader
+    /// A talk opened from a row: the same native sheet as Explore and My program.
+    @State private var opened: TalkSheetItem?
     var body: some View {
         // One minute at a time: the clock, the model and the countdowns follow it. `-PTNow` fixes the time in DEBUG builds.
         TimelineView(.everyMinute) { context in
@@ -57,6 +72,8 @@ struct NowView: View {
         .navigationTitle("Now")
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await reader.refresh() }
+        .environment(\.openTalk, { opened = $0 })
+        .talkSheet($opened)
     }
 
     // MARK: Header: the date and the time in Lisbon, then how fresh the data is
@@ -259,7 +276,7 @@ private struct SessionRow: View {
                         .font(Typo.data).foregroundStyle(Palette.ink)
                         .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                 }
-            link {
+            EntryLink(entry: entry) {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: Space.xs) {
                         if entry.isLive(at: now) {
@@ -306,15 +323,6 @@ private struct SessionRow: View {
         return parts.joined(separator: " · ")
     }
 
-    @ViewBuilder private func link<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
-        if let url = entry.url {
-            NavigationLink { WebPage(url: url, title: entry.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
-                .buttonStyle(.plain)
-        } else {
-            content().frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
     private func toggle() {
         // The entry's id is the schedule slug; the agenda's events are keyed by their page.
         if let event = reader.agenda.first(where: { ScheduleID.fromPage($0.page) == entry.id }) {
@@ -325,13 +333,21 @@ private struct SessionRow: View {
     }
 }
 
-/// A row that opens a session's page on the site.
+/// A row that opens a talk: the app's native talk sheet when the agenda has it, else the talk's page on the site.
 private struct EntryLink<Content: View>: View {
     let entry: NowModel.Entry
     @ViewBuilder let content: () -> Content
 
+    @Environment(ReaderStore.self) private var reader
+    @Environment(\.openTalk) private var openTalk
+
     var body: some View {
-        if let url = entry.url {
+        if let openTalk, let event = reader.agenda.first(where: { ScheduleID.fromPage($0.page) == entry.id }) {
+            Button { openTalk(TalkSheetItem(talk: TalkRef(event))) } label: {
+                content().frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        } else if let url = entry.url {
             NavigationLink { WebPage(url: url, title: entry.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
                 .buttonStyle(.plain)
         } else {
