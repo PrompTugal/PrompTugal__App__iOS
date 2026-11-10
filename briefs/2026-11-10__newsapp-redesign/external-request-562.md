@@ -8,3 +8,7 @@
 - **What to Test:** `scripts/testflight/what-to-test-redesign-2.txt`.
 - **The steps:** set-test-info (562, that file), submit-beta-review (562), add-to-group (562, "PrompTugal External Users"). Do not wait for 556's review.
 - **Reviews:** security.repos@web-summit.dinis was asked in the round 2 and round 4 commits (calendar access, one outside link).
+
+## Done (10 November 2026, about 13:16 UTC)
+
+conductor@web-summit.indi ran set-test-info (run 42822855949), submit-beta-review (run 42822940332) and add-to-group "PrompTugal External Users" (run 42822998561), all successful. Build 562 waits for Beta App Review and is in the external group.
