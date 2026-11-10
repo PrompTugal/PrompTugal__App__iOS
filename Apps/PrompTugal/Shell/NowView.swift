@@ -80,8 +80,8 @@ struct NowView: View {
 
     private func header(now: Date) -> some View {
         VStack(alignment: .leading, spacing: Space.xs) {
-            // Round 3: a friendly first line, at Indi's word ("Good morning", nothing more for now).
-            Text("Good morning").font(Typo.display).foregroundStyle(Palette.ink)
+            // Round 3: a friendly first line, by the time in Lisbon (Indi's word).
+            Text(Self.greeting(at: now)).font(Typo.display).foregroundStyle(Palette.ink)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier("pt.now.greeting")
             Kicker(String(localized: "Lisbon · \(now.formatted(Self.dayStyle)) · \(Lisbon.timeLabel(now))"))
@@ -89,6 +89,16 @@ struct NowView: View {
             FreshnessLabel(updated: reader.agendaUpdated ?? reader.newsUpdated,
                            failed: reader.agendaUnavailable || reader.newsUnavailable)
         }
+    }
+
+    /// "Good morning" before 12:00, "Good afternoon" until 18:00, then "Good evening", by the time in Lisbon.
+    static func greeting(at date: Date) -> LocalizedStringKey {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = Lisbon.zone
+        let hour = calendar.component(.hour, from: date)
+        if hour < 12 { return "Good morning" }
+        if hour < 18 { return "Good afternoon" }
+        return "Good evening"
     }
 
     /// Computed, not stored: the chosen culture can change while the app runs.

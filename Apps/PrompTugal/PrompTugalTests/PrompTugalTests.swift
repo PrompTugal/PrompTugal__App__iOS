@@ -72,4 +72,15 @@ struct PublicAppTests {
         #expect(Typo.data == Font.subheadline.monospacedDigit())
         #expect(Space.radius == 22)
     }
+
+    @Test("the greeting follows the time in Lisbon")
+    @MainActor func greeting() throws {
+        let iso = ISO8601DateFormatter()
+        // Lisbon is on UTC in November.
+        #expect(NowView.greeting(at: try #require(iso.date(from: "2026-11-11T09:00:00Z"))) == "Good morning")
+        #expect(NowView.greeting(at: try #require(iso.date(from: "2026-11-11T11:59:00Z"))) == "Good morning")
+        #expect(NowView.greeting(at: try #require(iso.date(from: "2026-11-11T12:00:00Z"))) == "Good afternoon")
+        #expect(NowView.greeting(at: try #require(iso.date(from: "2026-11-11T18:00:00Z"))) == "Good evening")
+        #expect(NowView.greeting(at: try #require(iso.date(from: "2026-11-11T23:30:00Z"))) == "Good evening")
+    }
 }
