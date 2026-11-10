@@ -55,11 +55,13 @@ struct NowView: View {
                     case .during:
                         forYou(model, now: now)
                         whereToBe(model)
+                        InterviewsStrip()
                         onNow(model, now: now)
                         upNext(model, now: now)
                     case .between:
                         forYou(model, now: now)
                         whereToBe(model)
+                        InterviewsStrip()
                         tomorrow(model, now: now)
                     case .after:
                         thanks(count: model.pickCount)
@@ -181,10 +183,25 @@ struct NowView: View {
     /// NOW-1c: my current pick, or my next one.
     @ViewBuilder private func forYou(_ model: NowModel, now: Date) -> some View {
         if let forYou = model.forYou {
-            TitledCard(String(localized: "For you"),
-                       kicker: forYou.isNow ? String(localized: "On now") : String(localized: "Next in your program")) {
+            // The focal point of Now: a solid red card, paper text.
+            VStack(alignment: .leading, spacing: Space.m) {
+                HStack {
+                    Text("For you").font(.headline).foregroundStyle(Palette.paper)
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer(minLength: Space.s)
+                    Text(forYou.isNow ? String(localized: "On now") : String(localized: "Next in your program"))
+                        .font(.caption.weight(.semibold)).foregroundStyle(Palette.red)
+                        .padding(.horizontal, Space.m).padding(.vertical, 4)
+                        .background(Palette.paper, in: Capsule())
+                }
                 SessionRow(entry: forYou.entry, now: now, style: .forYou, clash: forYou.clashes)
             }
+            .padding(Space.l)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Palette.red, in: RoundedRectangle(cornerRadius: Space.radius, style: .continuous))
+            .shadow(color: Palette.red.opacity(0.28), radius: 14, y: 8)
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("pt.now.forYou")
         } else if model.phase == .during {
             StartProgramCard()
         }
@@ -285,37 +302,51 @@ private struct SessionRow: View {
     @Environment(ReaderStore.self) private var reader
     @Environment(ScheduleStore.self) private var schedule
 
+    /// For you sits on the red hero card: its text is paper, not ink.
+    private var onHero: Bool { style == .forYou }
+    private var ink: Color { onHero ? Palette.paper : Palette.ink }
+    private var muted: Color { onHero ? Palette.paper.opacity(0.85) : Palette.muted }
+
     var body: some View {
         HStack(alignment: .top, spacing: Space.m) {
             // The column is as wide as "88:88 AM" (12-hour locales), so a time never wraps and the rows line up.
             Text(verbatim: "88:88 AM").font(Typo.data).lineLimit(1).fixedSize(horizontal: true, vertical: false).hidden()
                 .overlay(alignment: .leading) {
                     Text(Lisbon.timeLabel(entry.start))
-                        .font(Typo.data).foregroundStyle(Palette.ink)
+                        .font(Typo.data.weight(.semibold)).foregroundStyle(ink)
                         .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                 }
             EntryLink(entry: entry) {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: Space.xs) {
                         if entry.isLive(at: now) {
-                            Circle().fill(Palette.red).frame(width: 7, height: 7).accessibilityHidden(true)
+                            // A live session's dot pulses.
+                            Image(systemName: "circle.fill").font(.system(size: 7))
+                                .foregroundStyle(onHero ? Palette.paper : Palette.red)
+                                .symbolEffect(.pulse, options: .repeating)
+                                .accessibilityHidden(true)
                         }
-                        Text(entry.title).font(style == .forYou ? Typo.headline : .subheadline.weight(.semibold))
-                            .foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                        Text(entry.title).font(onHero ? .title3.weight(.semibold) : .subheadline.weight(.semibold))
+                            .foregroundStyle(ink).multilineTextAlignment(.leading)
                     }
-                    Text(detail).font(Typo.data).foregroundStyle(Palette.muted).multilineTextAlignment(.leading)
+                    Text(detail).font(Typo.data).foregroundStyle(muted).multilineTextAlignment(.leading)
                     if clash {
-                        Text("Clash").font(.caption.weight(.semibold)).foregroundStyle(Palette.amber)
+                        Text("Clash").font(.caption.weight(.semibold))
+                            .foregroundStyle(onHero ? Palette.ink : Palette.amber)
+                            .padding(.horizontal, onHero ? Space.s : 0).padding(.vertical, onHero ? 2 : 0)
+                            .background(onHero ? Palette.sun : .clear, in: Capsule())
                     }
                 }
             }
             Spacer(minLength: Space.xs)
             Button { toggle() } label: {
                 Image(systemName: entry.mine ? "star.fill" : "star")
-                    .foregroundStyle(entry.mine ? Palette.red : Palette.muted)
+                    .foregroundStyle(onHero ? Palette.paper : (entry.mine ? Palette.red : Palette.muted))
+                    .symbolEffect(.bounce, value: entry.mine)
                     .frame(minWidth: 44, minHeight: 44)
             }
             .buttonStyle(.plain)
+            .sensoryFeedback(.impact(weight: .light), trigger: entry.mine)
             .accessibilityLabel(entry.mine ? LocalizedStringKey("Remove from my program") : LocalizedStringKey("Add to my program"))
         }
         .accessibilityElement(children: .contain)

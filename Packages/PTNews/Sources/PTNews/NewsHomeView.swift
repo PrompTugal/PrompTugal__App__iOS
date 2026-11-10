@@ -84,7 +84,9 @@ public struct NewsHomeView: View {
         if let lead = store.news.first {
             NavigationLink { SitePage(url: lead.url, title: lead.title) } label: {
                 Card(padding: Space.xl) {
-                    if !lead.category.isEmpty { Kicker(lead.category) }
+                    // The lead story's focal point: a short sun band above the kicker.
+                    Capsule().fill(Palette.sun).frame(width: 44, height: 6).accessibilityHidden(true)
+                    if !lead.category.isEmpty { Kicker(lead.category, color: Palette.accent(for: lead.category)) }
                     Text(lead.title).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
                     if !lead.summary.isEmpty { Text(lead.summary).font(.body).foregroundStyle(Palette.muted) }
                     if let published = lead.published {
@@ -99,7 +101,7 @@ public struct NewsHomeView: View {
             ForEach(store.news.dropFirst()) { story in
                 NavigationLink { SitePage(url: story.url, title: story.title) } label: {
                     Card {
-                        if !story.category.isEmpty { Kicker(story.category) }
+                        if !story.category.isEmpty { Kicker(story.category, color: Palette.accent(for: story.category)) }
                         Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                         if !story.summary.isEmpty {
                             Text(story.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(3)

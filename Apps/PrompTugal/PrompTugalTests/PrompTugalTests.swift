@@ -124,4 +124,11 @@ struct PublicAppTests {
         #expect(Appearance.system.scheme == nil)
         #expect((Appearance(rawValue: "") ?? .light).scheme == .light)
     }
+
+    @Test("a category keeps its accent, whatever its case, and the accent is one of the five")
+    func categoryAccent() {
+        #expect(Palette.accent(for: "AI") == Palette.accent(for: "ai"))
+        #expect(Palette.accents.contains(Palette.accent(for: "The summit")))
+        #expect(Palette.accents.count == 5)
+    }
 }

@@ -524,3 +524,61 @@ struct VideoScreen: View {
         made.play()
     }
 }
+
+/// Now's strip of interviews: posters that slide sideways and snap, each opening the interview.
+public struct InterviewsStrip: View {
+    @State private var feed = VideoFeed.shared
+
+    public init() {}
+
+    public var body: some View {
+        Group {
+            if !feed.items.isEmpty {
+                VStack(alignment: .leading, spacing: Space.s) {
+                    Text("Interviews from the summit", bundle: .module)
+                        .font(.headline).foregroundStyle(Palette.ink)
+                        .accessibilityAddTraits(.isHeader)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(spacing: Space.m) {
+                            ForEach(feed.items) { item in
+                                NavigationLink { VideoScreen(item: item) } label: { StripCard(item: item) }
+                                    .buttonStyle(.plain)
+                            }
+                        }
+                        .scrollTargetLayout()
+                    }
+                    .scrollTargetBehavior(.viewAligned)
+                    .scrollClipDisabled()
+                }
+                .accessibilityIdentifier("pt.now.interviews")
+            }
+        }
+        .task { await feed.load() }
+    }
+}
+
+private struct StripCard: View {
+    let item: VideoItem
+    @State private var loader: VideoLoader
+
+    init(item: VideoItem) {
+        self.item = item
+        _loader = State(initialValue: VideoLoader.loader(item))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Space.s) {
+            PosterView(image: loader.poster)
+            Text(item.person).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink).lineLimit(1)
+            Text(item.company).font(.footnote).foregroundStyle(Palette.accent(for: item.company)).lineLimit(1)
+        }
+        .frame(width: 250)
+        .task { await loader.loadPoster() }
+        .scrollTransition(.animated(.smooth)) { content, phase in
+            content.scaleEffect(phase.isIdentity ? 1 : 0.94).opacity(phase.isIdentity ? 1 : 0.75)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(Text("Plays the video", bundle: .module))
+    }
+}

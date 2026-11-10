@@ -20,6 +20,12 @@ public struct Card<Content: View>: View {
             .overlay(RoundedRectangle(cornerRadius: Space.radius, style: .continuous)
                 .strokeBorder(Palette.rule.opacity(Look.isSoft ? 0.45 : 0.7), lineWidth: 0.5))
             .shadow(color: Look.isSoft ? Palette.ink.opacity(0.05) : .clear, radius: 9, y: 4)
+            // Soft look: cards ease in as they scroll into view.
+            .scrollTransition(.animated(.smooth)) { content, phase in
+                content
+                    .opacity(Look.isSoft && !phase.isIdentity ? 0.7 : 1)
+                    .scaleEffect(Look.isSoft && !phase.isIdentity ? 0.97 : 1)
+            }
     }
 }
 

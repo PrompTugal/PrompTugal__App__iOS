@@ -27,6 +27,18 @@ public enum Palette {
 
     public static func series(_ index: Int) -> Color { series[abs(index) % series.count] }
 
+    /// Sun: a warm yellow for highlights behind ink (the redesign's round 6, "make it pop"). Ink on sun passes 4.5:1.
+    public static let sun = Color(light: 0xF6C453, dark: 0xF2C14E)
+    /// The accents a category may take: red, blue, green, amber and purple. Never more on one screen than it has categories.
+    public static let accents: [Color] = [red, blue, green, amber, series[4]]
+
+    /// A stable accent for a category (a news category, a stage).
+    public static func accent(for key: String) -> Color {
+        var hash: UInt32 = 2166136261
+        for byte in key.lowercased().utf8 { hash = (hash ^ UInt32(byte)) &* 16777619 }
+        return accents[Int(hash % UInt32(accents.count))]
+    }
+
     /// A stable colour for any string (an agent, a person, a type).
     public static func stable(_ key: String) -> Color {
         var hash: UInt32 = 2166136261
