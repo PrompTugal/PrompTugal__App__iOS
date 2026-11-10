@@ -1,4 +1,6 @@
 import Foundation
+import PTCore
+import SwiftUI
 import Testing
 @testable import PrompTugal
 
@@ -60,5 +62,14 @@ struct PublicAppTests {
     func standLink() {
         #expect(StandSection.site.scheme == "https")
         #expect(StandSection.site.host == "riskmandate.ai")
+    }
+
+    @Test("the public app uses the soft look; story headlines keep the serif")
+    @MainActor func softLook() {
+        #expect(Look.current == .soft)
+        #expect(Typo.headline == Font.system(.headline, weight: .semibold))
+        #expect(Typo.story == Font.system(.headline, design: .serif, weight: .semibold))
+        #expect(Typo.data == Font.subheadline.monospacedDigit())
+        #expect(Space.radius == 22)
     }
 }

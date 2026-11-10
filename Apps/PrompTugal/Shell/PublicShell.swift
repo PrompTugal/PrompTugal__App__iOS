@@ -51,6 +51,8 @@ struct PublicShell: View {
         .publicFeatures(features)
         .pickToasts()
         .tint(Palette.red)
+        // Pill-shaped buttons everywhere in the public app (round 3, the softer look).
+        .buttonBorderShape(.capsule)
         .task { await reader.refresh() }
         // The app-switcher snapshot is taken while the scene is inactive: cover keys and picks.
         .overlay {

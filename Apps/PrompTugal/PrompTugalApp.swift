@@ -13,6 +13,9 @@ struct PrompTugalApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        // The redesign's softer look (SF throughout, rounder cards; story headlines stay serif), before any view draws.
+        // The Team app keeps the classic look.
+        Look.current = .soft
         // The app's own language (default English, never the device's), before any view reads a string.
         AppCulture.start()
         // The app's own URL scheme, before any view reads it (reminder links, deep links).

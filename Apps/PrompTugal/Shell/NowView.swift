@@ -374,7 +374,7 @@ private struct LatestNewsCard: View {
             ForEach(stories) { story in
                 NavigationLink { WebPage(url: story.url, title: story.title) } label: {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink)
+                        Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
                             .multilineTextAlignment(.leading)
                         if !story.summary.isEmpty {
                             Text(story.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(2)

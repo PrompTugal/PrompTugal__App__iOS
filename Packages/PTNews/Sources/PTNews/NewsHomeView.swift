@@ -96,7 +96,7 @@ public struct NewsHomeView: View {
                 NavigationLink { WebPage(url: story.url, title: story.title) } label: {
                     Card {
                         if !story.category.isEmpty { Kicker(story.category) }
-                        Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                        Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                         if !story.summary.isEmpty {
                             Text(story.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(3)
                         }
@@ -129,7 +129,7 @@ public struct NewsHomeView: View {
                             Text(String(localized: "assembled from data", bundle: .module)).font(.caption2).foregroundStyle(Palette.muted)
                         }
                     }
-                    Text(edition.title ?? "Edition").font(Typo.title).foregroundStyle(Palette.ink)
+                    Text(edition.title ?? "Edition").font(Typo.storyTitle).foregroundStyle(Palette.ink)
                     if let summary = edition.summary { Text(summary).font(.subheadline).foregroundStyle(Palette.muted) }
                 }
             }
@@ -175,7 +175,7 @@ struct EditionReader: View {
     var body: some View {
         Page(maxWidth: Space.readable) {
             Kicker(edition.edition ?? "Edition")
-            Text(edition.title ?? "").font(Typo.display)
+            Text(edition.title ?? "").font(Typo.storyDisplay)
             if failed {
                 GapNote(title: String(localized: "This edition could not be loaded", bundle: .module), text: String(localized: "Open it on the web with the button at the top.", bundle: .module))
             } else if blocks.isEmpty {
@@ -184,7 +184,7 @@ struct EditionReader: View {
             ForEach(blocks) { block in
                 switch block.kind {
                 case .heading:
-                    Text(block.text).font(Typo.title).padding(.top, Space.s).accessibilityAddTraits(.isHeader)
+                    Text(block.text).font(Typo.storyTitle).padding(.top, Space.s).accessibilityAddTraits(.isHeader)
                 case .bullet:
                     HStack(alignment: .firstTextBaseline, spacing: Space.s) {
                         Circle().fill(Palette.red).frame(width: 5, height: 5).accessibilityHidden(true)
