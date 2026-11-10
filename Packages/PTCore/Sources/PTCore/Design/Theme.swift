@@ -68,33 +68,33 @@ public enum Look: Sendable {
 
     /// Set once, before the first view, by an app that wants `soft`. Read only on the main thread by views.
     nonisolated(unsafe) public static var current: Look = .classic
-    static var soft: Bool { current == .soft }
+    static var isSoft: Bool { current == .soft }
 }
 
 /// Type for the current `Look`. All styles are text styles, so they follow Dynamic Type.
 public enum Typo {
     public static var display: Font {
-        Look.soft ? .system(.largeTitle, weight: .light) : .system(.largeTitle, design: .serif, weight: .bold)
+        Look.isSoft ? .system(.largeTitle, weight: .light) : .system(.largeTitle, design: .serif, weight: .bold)
     }
     public static var title: Font {
-        Look.soft ? .system(.title2, weight: .semibold) : .system(.title2, design: .serif, weight: .bold)
+        Look.isSoft ? .system(.title2, weight: .semibold) : .system(.title2, design: .serif, weight: .bold)
     }
     public static var headline: Font {
-        Look.soft ? .system(.headline, weight: .semibold) : .system(.headline, design: .serif, weight: .semibold)
+        Look.isSoft ? .system(.headline, weight: .semibold) : .system(.headline, design: .serif, weight: .semibold)
     }
     /// News: story headlines keep the serif in every look, so News still reads like a paper.
     public static let story = Font.system(.headline, design: .serif, weight: .semibold)
     public static let storyTitle = Font.system(.title2, design: .serif, weight: .bold)
     public static let storyDisplay = Font.system(.largeTitle, design: .serif, weight: .bold)
-    public static var kicker: Font { Look.soft ? Font.footnote.weight(.semibold) : Font.caption.weight(.semibold) }
+    public static var kicker: Font { Look.isSoft ? Font.footnote.weight(.semibold) : Font.caption.weight(.semibold) }
     public static let body = Font.body
     public static let meta = Font.footnote
     /// Times and short facts. Soft: SF with even-width digits, so times line up without a typewriter face.
     public static var data: Font {
-        Look.soft ? Font.subheadline.monospacedDigit() : .system(.footnote, design: .monospaced)
+        Look.isSoft ? Font.subheadline.monospacedDigit() : .system(.footnote, design: .monospaced)
     }
     public static var dataSmall: Font {
-        Look.soft ? Font.caption.monospacedDigit() : .system(.caption2, design: .monospaced)
+        Look.isSoft ? Font.caption.monospacedDigit() : .system(.caption2, design: .monospaced)
     }
     public static let number = Font.system(.title, design: .rounded, weight: .semibold).monospacedDigit()
 }
@@ -107,6 +107,6 @@ public enum Space {
     public static let l: CGFloat = 16
     public static let xl: CGFloat = 24
     public static let xxl: CGFloat = 32
-    public static var radius: CGFloat { Look.soft ? 22 : 14 }
+    public static var radius: CGFloat { Look.isSoft ? 22 : 14 }
     public static let readable: CGFloat = 680
 }

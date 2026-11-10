@@ -18,8 +18,8 @@ public struct Card<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: Space.radius, style: .continuous)
-                .strokeBorder(Palette.rule.opacity(Look.soft ? 0.45 : 0.7), lineWidth: 0.5))
-            .shadow(color: Look.soft ? Palette.ink.opacity(0.05) : .clear, radius: 9, y: 4)
+                .strokeBorder(Palette.rule.opacity(Look.isSoft ? 0.45 : 0.7), lineWidth: 0.5))
+            .shadow(color: Look.isSoft ? Palette.ink.opacity(0.05) : .clear, radius: 9, y: 4)
     }
 }
 
@@ -68,9 +68,9 @@ public struct Kicker: View {
     public init(_ text: String, color: Color = Palette.red) { self.text = text; self.color = color }
 
     public var body: some View {
-        Text(Look.soft ? text : text.uppercased())
+        Text(Look.isSoft ? text : text.uppercased())
             .font(Typo.kicker)
-            .tracking(Look.soft ? 0 : 1.4)
+            .tracking(Look.isSoft ? 0 : 1.4)
             .foregroundStyle(color)
     }
 }
