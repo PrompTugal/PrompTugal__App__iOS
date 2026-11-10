@@ -5567,7 +5567,7 @@
         }
       }
     },
-    "videos": {
+    "the videos": {
       "extractionState": "manual",
       "localizations": {
         "ar": {
@@ -5579,25 +5579,25 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Videos"
+            "value": "die Videos"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "videos"
+            "value": "the videos"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "vídeos"
+            "value": "los vídeos"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "vidéos"
+            "value": "les vidéos"
           }
         },
         "hi": {
@@ -5615,7 +5615,7 @@
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "video"
+            "value": "i video"
           }
         },
         "ja": {
@@ -5633,7 +5633,7 @@
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "video's"
+            "value": "de video's"
           }
         },
         "pl": {
@@ -5645,19 +5645,19 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "vídeos"
+            "value": "os vídeos"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "vídeos"
+            "value": "os vídeos"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "videoclipuri"
+            "value": "videoclipurile"
           }
         },
         "zh-Hans": {

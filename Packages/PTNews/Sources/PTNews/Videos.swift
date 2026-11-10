@@ -221,7 +221,7 @@ struct VideosSection: View {
         VStack(alignment: .leading, spacing: Space.l) {
             if feed.items.isEmpty {
                 StateView(phase: feed.failed ? .failed(String(localized: "The videos could not be loaded.", bundle: .module)) : .loading,
-                          hasData: false, title: String(localized: "videos", bundle: .module)) { Task { await feed.load() } }
+                          hasData: false, title: String(localized: "the videos", bundle: .module)) { Task { await feed.load() } }
             }
             ForEach(feed.items) { item in
                 NavigationLink { VideoScreen(item: item) } label: { VideoCard(item: item) }
