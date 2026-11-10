@@ -2295,6 +2295,107 @@
         }
       }
     },
+    "At the summit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "في القمة"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf dem Summit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "At the summit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En la cumbre"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Au summit"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "समिट में"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na summitu"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al summit"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "サミットで"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "서밋 현장"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Op de summit"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na szczycie"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No evento"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No evento"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La summit"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "峰会现场"
+          }
+        }
+      }
+    },
     "Before each pick": {
       "extractionState": "manual",
       "localizations": {
@@ -7544,6 +7645,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "地图"
+          }
+        }
+      }
+    },
+    "Meet RiskMandate": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قابل RiskMandate"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RiskMandate treffen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meet RiskMandate"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conoce a RiskMandate"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rencontrer RiskMandate"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RiskMandate से मिलें"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upoznajte RiskMandate"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incontra RiskMandate"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RiskMandateに会う"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RiskMandate 만나기"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ontmoet RiskMandate"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poznaj RiskMandate"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conheça a RiskMandate"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conhecer a RiskMandate"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Întâlnește RiskMandate"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "与 RiskMandate 见面"
           }
         }
       }
@@ -15869,6 +16071,107 @@
           "stringUnit": {
             "state": "translated",
             "value": "这场演讲尚未确定时间。"
+          }
+        }
+      }
+    },
+    "Thursday 12 November, booth A1-30, ALPHA 1, Pavilion 1": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الخميس 12 نوفمبر، الجناح A1-30، ALPHA 1، Pavilion 1"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donnerstag, 12. November, Stand A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thursday 12 November, booth A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jueves 12 de noviembre, stand A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeudi 12 novembre, stand A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "गुरुवार 12 नवंबर, बूथ A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "hr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Četvrtak, 12. studenoga, štand A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giovedì 12 novembre, stand A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "11月12日(木)、ブース A1-30、ALPHA 1、Pavilion 1"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "11월 12일 목요일, 부스 A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donderdag 12 november, stand A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czwartek, 12 listopada, stoisko A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quinta-feira, 12 de novembro, estande A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quinta-feira, 12 de novembro, stand A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Joi, 12 noiembrie, standul A1-30, ALPHA 1, Pavilion 1"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "11月12日星期四,A1-30 展位,ALPHA 1,Pavilion 1"
           }
         }
       }

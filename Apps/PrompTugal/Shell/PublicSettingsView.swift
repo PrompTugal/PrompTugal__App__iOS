@@ -13,6 +13,7 @@ struct PublicSettingsView: View {
 
     var body: some View {
         Form {
+            StandSection()
             Section {
                 NavigationLink {
                     ReminderSettingsView()
@@ -69,5 +70,27 @@ struct PublicSettingsView: View {
         #else
         text
         #endif
+    }
+}
+
+/// Round 4 of the redesign: where to meet RiskMandate at the summit. The stand line is the one Dinis approved.
+struct StandSection: View {
+    static let site = URL(string: "https://riskmandate.ai")!
+
+    var body: some View {
+        Section {
+            VStack(alignment: .leading, spacing: Space.xs) {
+                Text("Meet RiskMandate").font(Typo.headline).foregroundStyle(Palette.ink)
+                Text("Thursday 12 November, booth A1-30, ALPHA 1, Pavilion 1")
+                    .font(.subheadline).foregroundStyle(Palette.muted)
+            }
+            .accessibilityElement(children: .combine)
+            Link(destination: Self.site) {
+                Label("riskmandate.ai", systemImage: "arrow.up.right.square")
+            }
+            .accessibilityIdentifier("pt.more.riskmandate")
+        } header: {
+            Text("At the summit")
+        }
     }
 }

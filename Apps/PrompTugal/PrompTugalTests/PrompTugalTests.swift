@@ -55,4 +55,10 @@ struct PublicAppTests {
         #expect(PickCalendarRule.ids(PickCalendarRule.raw(ids)) == ids)
         #expect(PickCalendarRule.ids("").isEmpty)
     }
+
+    @Test("the stand links to RiskMandate's own site over https")
+    func standLink() {
+        #expect(StandSection.site.scheme == "https")
+        #expect(StandSection.site.host == "riskmandate.ai")
+    }
 }
