@@ -135,4 +135,13 @@ public enum AgendaHub {
     /// own copy of the event carries the feed's `shows_as` already, and is read first). Main-actor: My program reads it
     /// from the screen; the day planner (nonisolated) reads only the event's own field. The default has none.
     public static var showsAs: (_ id: String) -> ShowsAs? = { _ in nil }
+    /// Summit days that were called off (Lisbon dates, `2026-11-11`), from the app's notice on promptugal.news. Their
+    /// sessions leave the agenda (Now, Explore), My program's days and the reminders. Empty by default.
+    public static var cancelledDays: Set<String> = []
+
+    /// A pick still on: its day was not called off. A pick with no event yet stays.
+    public static func isOn(_ pick: SchedulePick) -> Bool {
+        guard let day = pick.event?.date else { return true }
+        return !cancelledDays.contains(day)
+    }
 }

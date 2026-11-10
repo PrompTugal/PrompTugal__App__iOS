@@ -22,8 +22,11 @@ public struct MyProgramView: View {
 
     public var body: some View {
         TimelineView(.everyMinute) { _ in
-            let selected = day ?? ProgramModel.defaultDay(picks: schedule.picks, now: AgendaClock.now)
-            let model = ProgramModel(picks: schedule.picks, day: selected, toggled: choices.toggled,
+            // Days called off are left out (AgendaHub.cancelledDays).
+            let picks = schedule.picks.filter(AgendaHub.isOn)
+            let selected = day.flatMap { AgendaHub.cancelledDays.contains($0) ? nil : $0 }
+                ?? ProgramModel.defaultDay(picks: picks, now: AgendaClock.now)
+            let model = ProgramModel(picks: picks, day: selected, toggled: choices.toggled,
                                      feed: AgendaHub.showsAs, splits: choices.splits)
             content(model)
         }

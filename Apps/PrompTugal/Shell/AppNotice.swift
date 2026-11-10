@@ -1,3 +1,4 @@
+import PTAgenda
 import PTCore
 import PTWeb
 import SwiftUI
@@ -19,9 +20,12 @@ struct AppNotice: Decodable, Equatable {
     let lines: [String]
     let link: Link?
     let sources: String?
+    /// Summit days called off (Lisbon dates). Applies whether or not the card is still showing.
+    let cancelledDays: [String]?
 
     enum CodingKeys: String, CodingKey {
         case id, kicker, title, lines, link, sources
+        case cancelledDays = "cancelled_days"
         case showFrom = "show_from"
         case showUntil = "show_until"
     }
@@ -53,7 +57,11 @@ final class AppNoticeStore {
 
     init() {
         notice = (try? Data(contentsOf: saved)).flatMap { try? AppNotice.decode($0) }
+        AgendaHub.cancelledDays = Set(notice?.cancelledDays ?? [])
     }
+
+    /// Called at launch, before the first screen, so a day called off never shows even offline.
+    static func start() { _ = shared }
 
     /// At most every five minutes, unless forced (pull to refresh).
     func load(force: Bool = false) async {
@@ -64,6 +72,11 @@ final class AppNoticeStore {
               let fresh = try? AppNotice.decode(data) else { return }
         notice = fresh
         try? data.write(to: saved, options: .atomic)
+        let cancelled = Set(fresh.cancelledDays ?? [])
+        if cancelled != AgendaHub.cancelledDays {
+            AgendaHub.cancelledDays = cancelled
+            _ = await PublicFeatures.shared.reminders.reschedule()
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 import Foundation
+import PTAgenda
 import PTCore
 import SwiftUI
 import Testing
@@ -99,5 +100,21 @@ struct PublicAppTests {
         #expect(notice.safeLink != nil)
         let elsewhere = json.replacingOccurrences(of: "https://promptugal.news/", with: "https://example.com/")
         #expect(try AppNotice.decode(Data(elsewhere.utf8)).safeLink == nil)
+    }
+
+    @Test("a day called off leaves the picks that are on it")
+    @MainActor func cancelledDays() throws {
+        let json = #"{"id":"s","show_from":"2026-11-10T19:00:00Z","show_until":"2026-11-11T21:00:00Z","title":"T","lines":[],"cancelled_days":["2026-11-11"]}"#
+        #expect(try AppNotice.decode(Data(json.utf8)).cancelledDays == ["2026-11-11"])
+        let before = AgendaHub.cancelledDays
+        defer { AgendaHub.cancelledDays = before }
+        AgendaHub.cancelledDays = ["2026-11-11"]
+        let wednesday = Event(date: "2026-11-11", time: "10:00-10:20", title: "A", place: "Centre Stage", kind: "session",
+                              official: true, page: "events/a/index.html")
+        let thursday = Event(date: "2026-11-12", time: "10:00-10:20", title: "B", place: "Centre Stage", kind: "session",
+                             official: true, page: "events/b/index.html")
+        #expect(!AgendaHub.isOn(SchedulePick(id: "a", at: .now, event: wednesday)))
+        #expect(AgendaHub.isOn(SchedulePick(id: "b", at: .now, event: thursday)))
+        #expect(AgendaHub.isOn(SchedulePick(id: "c", at: .now, event: nil)))
     }
 }

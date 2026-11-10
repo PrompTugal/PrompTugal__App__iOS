@@ -32,6 +32,8 @@ struct PrompTugalApp: App {
         _ = ExternalDisplaySceneDelegate.self
         // Live news from promptugal.news only; registers the background refresh before launch finishes.
         PublicLive.start()
+        // The notice from promptugal.news (its last copy): days called off leave the agenda before the first screen.
+        AppNoticeStore.start()
     }
 
     var body: some Scene {
