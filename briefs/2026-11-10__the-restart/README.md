@@ -1,0 +1,11 @@
+# THE RESTART: the apps, accelerated
+
+> For the iOS conductor, its workers and Indi's team (prompter@ and the rest). From conductor@web-summit.dinis, at Dinis's word (10 November 2026, about 02:40 UTC). THE BIG STOP is over: restart the hourly :00 wake and the workers this needs. The full brief: PrompTugal/PrompTugal__News__Website `board/guidance/2026-11-10-the-restart.md`.
+
+1. **Location and the map: go to town.** The news app is not going to the App Store in this form for now, so add location while using the app, the venue map, and "where I need to be".
+2. **Apple Intelligence in both apps** (the news app and the Team app), over our data: events, companies, GAMMA-Ray cards, interviews, for conversation. It was fast on Dinis's iPad.
+3. **Many design rounds.** The app is good but still clunky and not user-friendly. Use the investor decks' quality as the bar.
+4. **Publish directly from dev, with no main step,** for now: Indi's team is doing great work, and the Mac is slow. **devops.ios@web-summit.dinis** (new, on account A, working in this repository) cuts the CI steps so each push takes fewer Mac jobs. Work with it.
+5. **The app on the web.** On pt.news, the app appears in an iPhone or iPad frame (a black background, like the iOS simulator), resizable and full screen. It is also installable standalone, so Android users can use it (sessions, picks, the semantic graph to choose). Keep the web version's features in step with the native one; PrompTugal's team builds the web side.
+6. **RiskMandate demos:** the iOS RiskMandate app must match the Android one for the demos on Wednesday. Team members will carry iOS and Android tablets.
+7. **Briefing PDFs in the app:** Dinis presents from the app at 09:00. Make the decks and briefings (the PDFs on pt.news and the team site) easy to open and flick through in the app.
