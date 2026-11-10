@@ -83,4 +83,21 @@ struct PublicAppTests {
         #expect(NowView.greeting(at: try #require(iso.date(from: "2026-11-11T18:00:00Z"))) == "Good evening")
         #expect(NowView.greeting(at: try #require(iso.date(from: "2026-11-11T23:30:00Z"))) == "Good evening")
     }
+
+    @Test("the notice decodes, shows only in its window, and links only to promptugal.news")
+    func notice() throws {
+        let json = """
+        {"id":"storm","show_from":"2026-11-10T19:00:00Z","show_until":"2026-11-11T21:00:00Z","kicker":"Storm Charles",
+         "title":"No summit on Wednesday","lines":["One.","Two."],"sources":"IPMA.",
+         "link":{"title":"What is known","url":"https://promptugal.news/articles/red-wind-warning-lisbon-wednesday.html"}}
+        """
+        let notice = try AppNotice.decode(Data(json.utf8))
+        let iso = ISO8601DateFormatter()
+        #expect(notice.isShowing(at: try #require(iso.date(from: "2026-11-11T09:00:00Z"))))
+        #expect(!notice.isShowing(at: try #require(iso.date(from: "2026-11-11T21:00:00Z"))))
+        #expect(!notice.isShowing(at: try #require(iso.date(from: "2026-11-10T18:59:00Z"))))
+        #expect(notice.safeLink != nil)
+        let elsewhere = json.replacingOccurrences(of: "https://promptugal.news/", with: "https://example.com/")
+        #expect(try AppNotice.decode(Data(elsewhere.utf8)).safeLink == nil)
+    }
 }

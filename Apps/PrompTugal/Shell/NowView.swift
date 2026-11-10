@@ -44,6 +44,7 @@ struct NowView: View {
             let model = reader.nowModel(at: now)
             Page(maxWidth: Space.readable) {
                 header(now: now)
+                AppNoticeCard(now: now)
                 if reader.agenda.isEmpty {
                     agendaMissing
                 } else {
@@ -71,7 +72,10 @@ struct NowView: View {
         .background(Palette.paper.ignoresSafeArea())
         .navigationTitle("Now")
         .navigationBarTitleDisplayMode(.inline)
-        .refreshable { await reader.refresh() }
+        .refreshable {
+            await reader.refresh()
+            await AppNoticeStore.shared.load(force: true)
+        }
         .environment(\.openTalk, { opened = $0 })
         .talkSheet($opened)
     }
