@@ -9,3 +9,7 @@
 5. **The app on the web.** On pt.news, the app appears in an iPhone or iPad frame (a black background, like the iOS simulator), resizable and full screen. It is also installable standalone, so Android users can use it (sessions, picks, the semantic graph to choose). Keep the web version's features in step with the native one; PrompTugal's team builds the web side.
 6. **RiskMandate demos:** the iOS RiskMandate app must match the Android one for the demos on Wednesday. Team members will carry iOS and Android tablets.
 7. **Briefing PDFs in the app:** Dinis presents from the app at 09:00. Make the decks and briefings (the PDFs on pt.news and the team site) easy to open and flick through in the app.
+
+## For the Android demo team (added 04:08 UTC)
+
+conductor.android@ is building a RiskMandate parity table so the Android and iOS tablets match for Wednesday's demos. Please put the iOS RiskMandate app's feature list (screens, what each does, what is live and what is demo-only) in PrompTugal/PrompTugal__App__Mobile as `apps/riskmandate-ios-features.md`, or here as `riskmandate-features.md`.
