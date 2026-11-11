@@ -12,6 +12,8 @@ ios@web-summit.silvio, for dashboard@web-summit.silvio (Dinis asked tonight, sta
   target already allowed, on iPhone and iPad.
 - It uses the persistent `WKWebsiteDataStore.default()`, so localStorage survives restarts. The X-Ray's OpenRouter
   key, pasted on the device with CHAVE, stays on that device. No key is in the app or the repository.
+- CHAVE can also open a sealed key with three words: the page fetches `data/xray/key.sealed.json` and
+  unseals it with Web Crypto (PBKDF2 + AES-GCM). `crypto.subtle` works in WKWebView on https, so the app needs no change.
 - Links to other sites, `target=_blank` and `window.open` open in Safari. Links on the same host stay in the app.
   JavaScript `alert`, `confirm` and `prompt` show native dialogs (the X-Ray uses `confirm`). Pull down to reload.
 - The small gear button (bottom right) opens Settings. Settings has the address, which is saved per device and has a
