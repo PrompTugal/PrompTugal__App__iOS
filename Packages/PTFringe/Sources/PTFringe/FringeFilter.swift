@@ -6,20 +6,46 @@ public struct FringeFilter: Equatable, Sendable {
     public var day: String?
     public var kind: String?
     public var topic: String?
+    /// Only the events the site says the storm moved.
+    public var stormMoved: Bool
 
-    public init(day: String? = nil, kind: String? = nil, topic: String? = nil) {
+    public init(day: String? = nil, kind: String? = nil, topic: String? = nil, stormMoved: Bool = false) {
         self.day = day
         self.kind = kind
         self.topic = topic
+        self.stormMoved = stormMoved
     }
 
-    public var isActive: Bool { day != nil || kind != nil || topic != nil }
+    public var isActive: Bool { day != nil || kind != nil || topic != nil || stormMoved }
 
     public func apply(_ events: [FringeEvent]) -> [FringeEvent] {
         events.filter { event in
             (day == nil || event.date == day)
                 && (kind == nil || event.kind.caseInsensitiveCompare(kind ?? "") == .orderedSame)
                 && (topic == nil || event.topics.contains { $0.caseInsensitiveCompare(topic ?? "") == .orderedSame })
+                && (!stormMoved || event.movedByStorm)
+        }
+    }
+
+    /// A day to jump to: today, tomorrow and the day after (named by its weekday), in Lisbon time.
+    public struct QuickDay: Identifiable, Equatable, Sendable {
+        public let id: String       // "2026-11-12"
+        public let label: String
+    }
+
+    public static func quickDays(now: Date, locale: Locale = .current) -> [QuickDay] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE"
+        formatter.timeZone = Lisbon.zone
+        formatter.locale = locale
+        return (0...2).compactMap { offset in
+            guard let date = Lisbon.calendar.date(byAdding: .day, value: offset, to: now) else { return nil }
+            let label = switch offset {
+            case 0: String(localized: "Today", bundle: .module)
+            case 1: String(localized: "Tomorrow", bundle: .module)
+            default: formatter.string(from: date).capitalized(with: locale)
+            }
+            return QuickDay(id: Lisbon.day(date), label: label)
         }
     }
 
