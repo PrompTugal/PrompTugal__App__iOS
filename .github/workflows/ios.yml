@@ -32,7 +32,7 @@ on:
       app:
         description: 'Which app to build and test'
         type: choice
-        options: [all, team, promptugal, riskmandate, fringe, lisbontechfringe]
+        options: [all, team, promptugal, riskmandate, fringe]
         default: all
       quick:
         description: 'Quick: Debug build and iPhone unit tests of the app, plus the package tests of what the branch changed. No Release build, no iPad. Run once with quick off before a merge to dev.'

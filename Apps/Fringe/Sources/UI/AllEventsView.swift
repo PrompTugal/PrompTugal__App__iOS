@@ -83,7 +83,12 @@ struct AllEventsView: View {
                                          onOpen: { detail = e })
                             }
                         }
-                        Text("Independent of Web Summit.").font(.footnote).foregroundStyle(Palette.ink2).padding(.top, 8)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Wordmark()
+                            Text("Independent of Web Summit. Events from lisbontechfringe.com.")
+                                .font(.footnote).foregroundStyle(Palette.ink2)
+                        }
+                        .padding(.top, 16)
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 24)

@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import LisbonTechFringe
+@testable import Fringe
 
 /// Lisbon times in November are UTC, so "Z" times read the same on the clock.
 private func t(_ s: String) -> Date { FeedDate.parse(s)! }

@@ -6,6 +6,8 @@ struct LisbonTechFringeApp: App {
     @State private var saved = SavedStore()
     @State private var app = AppState()
 
+    init() { Wordmark.registerFonts() }
+
     var body: some Scene {
         WindowGroup {
             RootView()
