@@ -74,9 +74,17 @@ struct FreshnessLine: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text(feed.freshnessText())
-                .font(.footnote)
-                .foregroundStyle(Palette.ink2)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(feed.freshnessText())
+                    .font(.footnote)
+                    .foregroundStyle(Palette.ink2)
+                if !feed.isLive, !feed.isLoading, let error = feed.lastError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(Palette.ink2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
             Spacer(minLength: 0)
             if feed.isLoading {
                 ProgressView().accessibilityLabel("Checking for updates")

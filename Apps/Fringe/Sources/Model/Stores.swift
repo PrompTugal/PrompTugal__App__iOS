@@ -74,7 +74,7 @@ final class FeedStore {
             lastError = nil
         } catch {
             isLive = false
-            lastError = "Could not reach lisbontechfringe.com."
+            lastError = "Could not load lisbontechfringe.com: \(error.localizedDescription)"
         }
         if let result = try? await session.data(from: Self.communitiesURL),
            (result.1 as? HTTPURLResponse)?.statusCode == 200,

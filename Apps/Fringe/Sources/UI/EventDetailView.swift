@@ -48,6 +48,8 @@ struct EventDetailView: View {
                 Text(footer).font(.footnote).foregroundStyle(Palette.ink2).padding(.top, 4)
             }
             .padding(16)
+            // Pin the content to the screen width, so it never drifts sideways while scrolling.
+            .containerRelativeFrame(.horizontal)
         }
         .background(Palette.bg)
         .presentationDragIndicator(.visible)
