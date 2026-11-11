@@ -3,7 +3,7 @@ import PTAgenda
 import PTCore
 import PTFringe
 
-enum FringeTab: Hashable { case now, events, plan, more }
+enum FringeTab: Hashable { case now, events, plan, communities, more }
 
 /// Four tabs. Picks are PTAgenda's ScheduleStore; local reminders are asked for only after the first pick.
 struct RootView: View {
@@ -21,6 +21,7 @@ struct RootView: View {
             NowView().tabItem { Label("Now", systemImage: "clock") }.tag(FringeTab.now)
             EventsView().tabItem { Label("Events", systemImage: "calendar") }.tag(FringeTab.events)
             PlanView(chooseEvents: { tab = .events }).tabItem { Label("My plan", systemImage: "star") }.tag(FringeTab.plan)
+            CommunitiesView().tabItem { Label("Communities", systemImage: "person.3") }.tag(FringeTab.communities)
             MoreView().tabItem { Label("More", systemImage: "ellipsis.circle") }.tag(FringeTab.more)
         }
         .tint(Palette.red)
