@@ -21,7 +21,7 @@ public enum FringeStatus: String, Sendable, CaseIterable {
     }
 }
 
-/// One event in the shape of fringe.promptugal.news/api/v1/events.json (and of the bundled seed):
+/// One event in the shape of lisbontechfringe.com/api/v1/events.json (and of the bundled seed):
 /// `name, kind, organiser, date, start, end, place, join, url, status, storm_note, topics[], read_at, verified`.
 /// `start` and `end` may be null. Every field but `name` is optional on the wire; a missing date is "" (shown as not published).
 public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
@@ -47,18 +47,23 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
     public let label: String
     public let stormMoved: Bool?
     public let check: String
+    /// Added by the site within v1: whether the event is in Lisbon (nil when it does not say) and its size ("major").
+    public let inLisbon: Bool?
+    public let size: String
 
     enum CodingKeys: String, CodingKey {
         case name, kind, organiser, date, start, end, place, join, url, status
         case stormNote = "storm_note", topics
         case readAt = "read_at", verified, note
         case explicitID = "id", cost, label, stormMoved = "storm_moved", check
+        case inLisbon = "in_lisbon", size
     }
 
     public init(name: String, kind: String = "other", organiser: String = "", date: String, start: String? = nil,
                 end: String? = nil, place: String = "", join: String = "", url: URL? = nil, status: String = "unknown",
                 stormNote: String = "", topics: [String] = [], readAt: String? = nil, verified: Bool = false, note: String = "",
-                id: String = "", cost: String = "", label: String = "", stormMoved: Bool? = nil, check: String = "") {
+                id: String = "", cost: String = "", label: String = "", stormMoved: Bool? = nil, check: String = "",
+                inLisbon: Bool? = nil, size: String = "") {
         self.name = name
         self.kind = kind
         self.organiser = organiser
@@ -79,6 +84,8 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
         self.label = label
         self.stormMoved = stormMoved
         self.check = check
+        self.inLisbon = inLisbon
+        self.size = size
     }
 
     public init(from decoder: Decoder) throws {
@@ -108,6 +115,8 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
         label = ((try? c.decodeIfPresent(String.self, forKey: .label)) ?? "").lowercased()
         stormMoved = try? c.decodeIfPresent(Bool.self, forKey: .stormMoved)
         check = (try? c.decodeIfPresent(String.self, forKey: .check)) ?? ""
+        inLisbon = try? c.decodeIfPresent(Bool.self, forKey: .inLisbon)
+        size = ((try? c.decodeIfPresent(String.self, forKey: .size)) ?? "").lowercased()
     }
 
     /// A start or end as the Lisbon clock (and day, when the value carries one): "18:30", or an ISO 8601 instant such as
@@ -161,6 +170,9 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
     }
 
     public var movedByStorm: Bool { stormMoved == true }
+    public var isMajor: Bool { size == "major" }
+    /// False only when the site says the event is not in Lisbon; an event that says nothing is shown.
+    public var isInLisbon: Bool { inLisbon != false }
 
     public var statusValue: FringeStatus { FringeStatus(feed: status) }
     public var startDate: Date? { start.flatMap { Lisbon.instant(day: date, clock: $0) } }

@@ -41,8 +41,11 @@ struct EventRow: View {
             }
             Text(event.name).font(Typo.headline).foregroundStyle(Palette.ink)
                 .strikethrough(event.isCancelled)
-            if event.movedByStorm {
-                Text("Moved by the storm").font(Typo.kicker).foregroundStyle(Palette.amber)
+            if event.movedByStorm || event.isMajor {
+                HStack(spacing: Space.s) {
+                    if event.isMajor { Text("Major").font(Typo.kicker).foregroundStyle(Palette.blue) }
+                    if event.movedByStorm { Text("Moved by the storm").font(Typo.kicker).foregroundStyle(Palette.amber) }
+                }
             }
             if !event.organiser.isEmpty { Text(event.organiser).font(Typo.meta).foregroundStyle(Palette.muted) }
             if !event.place.isEmpty { Text(event.place).font(Typo.meta).foregroundStyle(Palette.muted) }
@@ -64,6 +67,7 @@ struct EventDetail: View {
                 HStack {
                     Kicker(FringeFilter.kindLabel(event.kind))
                     StatusBadge(status: event.statusValue)
+                    if event.isMajor { Text("Major").font(Typo.kicker).foregroundStyle(Palette.blue) }
                     if event.movedByStorm { Text("Moved by the storm").font(Typo.kicker).foregroundStyle(Palette.amber) }
                 }
                 Text(event.name).font(Typo.title).strikethrough(event.isCancelled)

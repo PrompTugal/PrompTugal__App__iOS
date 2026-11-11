@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 /// The events and the storm headline the screens show. First launch and offline read the seed bundled in the app (or
-/// the last good copy kept on the device); a refresh reads fringe.promptugal.news and the storm site over an
+/// the last good copy kept on the device); a refresh reads lisbontechfringe.com and the storm site over an
 /// ephemeral session: no cookies, no disk cache, no credentials, nothing that identifies the reader.
 @MainActor @Observable
 public final class FringeStore {
@@ -10,6 +10,9 @@ public final class FringeStore {
 
     public private(set) var events: [FringeEvent] = []
     public private(set) var storm: StormHeadline?
+    public private(set) var communities: [FringeCommunity] = []
+    public private(set) var communitiesUpdated: Date?
+    public private(set) var communitiesUnavailable = false
     public private(set) var source: Source = .seed
     public private(set) var eventsUpdated: Date?
     public private(set) var stormUpdated: Date?
@@ -42,6 +45,11 @@ public final class FringeStore {
         if let kept = try? Data(contentsOf: self.directory.appendingPathComponent("storm.json")) {
             storm = StormHeadline.parse(kept)
         }
+        // Communities have no bundled copy: the last good one kept on the phone, or none until the first read.
+        if let kept = try? Data(contentsOf: self.directory.appendingPathComponent("communities.json")),
+           let list = try? FringeCommunityFeed.communities(from: kept) {
+            communities = list
+        }
     }
 
     nonisolated public static func bundledSeed() -> Data? {
@@ -71,7 +79,8 @@ public final class FringeStore {
         defer { refreshing = false }
         async let eventsDone: Void = refreshEvents()
         async let stormDone: Void = refreshStorm()
-        _ = await (eventsDone, stormDone)
+        async let communitiesDone: Void = refreshCommunities()
+        _ = await (eventsDone, stormDone, communitiesDone)
     }
 
     private func get(_ url: URL) async throws -> Data {
@@ -94,6 +103,26 @@ public final class FringeStore {
         } catch {
             if !Task.isCancelled { eventsUnavailable = true }
         }
+    }
+
+    private func refreshCommunities() async {
+        do {
+            let data = try await get(FringeHosts.communities)
+            let list = try FringeCommunityFeed.communities(from: data)
+            guard !list.isEmpty else { throw URLError(.cannotParseResponse) }
+            try? keep(data, as: "communities.json")
+            communities = list
+            communitiesUpdated = .now
+            communitiesUnavailable = false
+        } catch {
+            if !Task.isCancelled { communitiesUnavailable = true }
+        }
+    }
+
+    /// The events a community lists that are in the current list, in the list's order. Ids the list does not hold are skipped.
+    public func events(of community: FringeCommunity) -> [FringeEvent] {
+        let wanted = Set(community.eventIDs)
+        return events.filter { wanted.contains($0.explicitID) || wanted.contains($0.id) }
     }
 
     private func refreshStorm() async {

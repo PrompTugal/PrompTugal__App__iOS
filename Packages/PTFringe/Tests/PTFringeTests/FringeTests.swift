@@ -166,15 +166,80 @@ struct FringeFilterTests {
     }
 }
 
+@Suite("Fringe communities and Lisbon filter")
+struct FringeCommunityTests {
+    private let sample = Data(#"""
+    {"communities":[
+      {"id":"ptw","name":"Portugal Tech Week","what":{"text":"A festival","quoted_from":"https://luma.com/x","read_at":"2026-11-11T13:50:39Z"},
+       "join":"Follow its Luma calendar","links":[{"label":"Luma","url":"https://luma.com/ptw"},{"label":"Bad","url":"javascript:alert(1)"},{"url":"http://plain.example/"},{"label":"Site","url":"https://ptw.example/"}],
+       "events":["2026-11-11-a","2026-11-12-b","gone"],"sources":[{"url":"https://luma.com/x","read_at":"2026-11-11T13:50:41Z","what":"calendar"}],"label":"fact"},
+      {"name":"No what","what":null,"join":"unknown","links":[],"events":[]},
+      {"name":"String what","what":"plain words"},
+      {"id":"nameless"}
+    ]}
+    """#.utf8)
+
+    @Test("communities read leniently: null what, a string what, a missing id, and no name skipped")
+    func lenient() throws {
+        let list = try FringeCommunityFeed.communities(from: sample)
+        #expect(list.map(\.name) == ["No what", "Portugal Tech Week", "String what"])
+        let ptw = try #require(list.first { $0.id == "ptw" })
+        #expect(ptw.about == "A festival" && ptw.aboutSource?.host == "luma.com" && ptw.label == "fact")
+        #expect(ptw.eventIDs == ["2026-11-11-a", "2026-11-12-b", "gone"] && ptw.sources.count == 1)
+        let noWhat = try #require(list.first { $0.name == "No what" })
+        #expect(noWhat.about.isEmpty && noWhat.joinText == nil && noWhat.id == "no-what")
+        #expect(list.first { $0.name == "String what" }?.about == "plain words")
+    }
+
+    @Test("only https links are kept, and an unlabelled one is named by its host")
+    func links() throws {
+        let ptw = try #require(try FringeCommunityFeed.communities(from: sample).first { $0.id == "ptw" })
+        #expect(ptw.links.map(\.url.absoluteString) == ["https://luma.com/ptw", "https://ptw.example/"])
+        #expect(ptw.links.map(\.label) == ["Luma", "Site"])
+        #expect(ptw.joinText == "Follow its Luma calendar")
+    }
+
+    @Test("a bare array reads too")
+    func bare() throws {
+        #expect(try FringeCommunityFeed.communities(from: Data(#"[{"name":"A"}]"#.utf8)).count == 1)
+    }
+
+    @MainActor
+    @Test("a community's events are the ones in the list; the kept copy is read on start")
+    func storeEvents() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("fringe-c-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try sample.write(to: directory.appendingPathComponent("communities.json"))
+        try Data(#"{"events":[{"id":"2026-11-11-a","name":"A","date":"2026-11-11"},{"id":"other","name":"Z","date":"2026-11-11"}]}"#.utf8)
+            .write(to: directory.appendingPathComponent("events.json"))
+        let store = FringeStore(directory: directory)
+        let ptw = try #require(store.communities.first { $0.id == "ptw" })
+        #expect(store.events(of: ptw).map(\.name) == ["A"])
+    }
+
+    @Test("In Lisbon hides only events the site says are elsewhere; major is read from size")
+    func lisbonAndMajor() throws {
+        let data = Data(#"{"events":[{"name":"Here","date":"2026-11-12","in_lisbon":true,"size":"Major"},{"name":"There","date":"2026-11-12","in_lisbon":false},{"name":"Silent","date":"2026-11-12"}]}"#.utf8)
+        let events = try FringeFeed.events(from: data)
+        #expect(FringeFilter(lisbonOnly: true).apply(events).map(\.name).sorted() == ["Here", "Silent"])
+        #expect(FringeFilter().apply(events).count == 3)
+        #expect(!FringeFilter(lisbonOnly: true).isActive)
+        #expect(events.first { $0.name == "Here" }?.isMajor == true && events.first { $0.name == "There" }?.isMajor == false)
+    }
+}
+
 @Suite("Fringe network rules")
 struct FringeNetworkTests {
-    @Test("only fringe.promptugal.news and storm-charles.promptugal.news over https")
+    @Test("only lisbontechfringe.com and storm-charles.promptugal.news over https")
     func hosts() throws {
         #expect(FringeHosts.isAllowed(FringeHosts.events))
         #expect(FringeHosts.isAllowed(FringeHosts.storm))
-        #expect(!FringeHosts.isAllowed(try #require(URL(string: "http://fringe.promptugal.news/api/v1/events.json"))))
+        #expect(FringeHosts.isAllowed(FringeHosts.communities))
+        #expect(!FringeHosts.isAllowed(try #require(URL(string: "http://lisbontechfringe.com/api/v1/events.json"))))
         #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://websummit.com/"))))
-        #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://fringe.promptugal.news.evil.example/"))))
+        #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://lisbontechfringe.com.evil.example/"))))
+        #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://fringe.promptugal.news/api/v1/events.json"))))   // the old host is dropped
         #expect(FringeHosts.allowed.count == 2)
     }
 

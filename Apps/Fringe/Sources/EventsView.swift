@@ -6,7 +6,8 @@ import PTFringe
 /// The events with filters for day, type and topic.
 struct EventsView: View {
     @Environment(FringeStore.self) private var store
-    @State private var filter = FringeFilter()
+    // In Lisbon starts on: the list also holds events elsewhere in Portugal and online.
+    @State private var filter = FringeFilter(lisbonOnly: true)
 
     var body: some View {
         NavigationStack {
@@ -50,9 +51,10 @@ struct EventsView: View {
                 ForEach(FringeFilter.topics(in: store.events), id: \.self) { Text($0).tag(String?.some($0)) }
             }
             .pickerStyle(.menu)
+            Toggle("In Lisbon", isOn: $filter.lisbonOnly)
             Toggle("Moved by the storm", isOn: $filter.stormMoved)
             if filter.isActive {
-                Button("Clear filters") { filter = FringeFilter() }
+                Button("Clear filters") { filter = FringeFilter(lisbonOnly: true) }
             }
         }
     }

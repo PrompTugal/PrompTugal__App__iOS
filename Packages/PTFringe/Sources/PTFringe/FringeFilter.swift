@@ -8,12 +8,15 @@ public struct FringeFilter: Equatable, Sendable {
     public var topic: String?
     /// Only the events the site says the storm moved.
     public var stormMoved: Bool
+    /// Hide the events the site says are not in Lisbon. Not part of `isActive`: the screen starts with it on.
+    public var lisbonOnly: Bool
 
-    public init(day: String? = nil, kind: String? = nil, topic: String? = nil, stormMoved: Bool = false) {
+    public init(day: String? = nil, kind: String? = nil, topic: String? = nil, stormMoved: Bool = false, lisbonOnly: Bool = false) {
         self.day = day
         self.kind = kind
         self.topic = topic
         self.stormMoved = stormMoved
+        self.lisbonOnly = lisbonOnly
     }
 
     public var isActive: Bool { day != nil || kind != nil || topic != nil || stormMoved }
@@ -24,6 +27,7 @@ public struct FringeFilter: Equatable, Sendable {
                 && (kind == nil || event.kind.caseInsensitiveCompare(kind ?? "") == .orderedSame)
                 && (topic == nil || event.topics.contains { $0.caseInsensitiveCompare(topic ?? "") == .orderedSame })
                 && (!stormMoved || event.movedByStorm)
+                && (!lisbonOnly || event.isInLisbon)
         }
     }
 

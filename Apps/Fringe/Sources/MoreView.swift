@@ -19,7 +19,7 @@ struct MoreView: View {
                 Section("Join in") {
                     Button("Join the team") { openURL(FringeText.join) }
                     Button("Submit an event") { openURL(FringeText.submit) }
-                    Button("fringe.promptugal.news") { openURL(FringeText.site) }
+                    Button("lisbontechfringe.com") { openURL(FringeText.site) }
                 }
                 Section("The storm") {
                     Button("IPMA") { openURL(FringeText.ipma) }

@@ -1,5 +1,5 @@
 // swift-tools-version: 6.0
-// PTFringe: the Lisbon Fringe app's event models and store. Reads fringe.promptugal.news and the storm site only,
+// PTFringe: the Lisbon Fringe app's event models and store. Reads lisbontechfringe.com and the storm site only,
 // with a bundled seed for first launch and offline. Depends on PTCore only. Apple SDK only.
 import PackageDescription
 
