@@ -5,6 +5,7 @@ name: TestFlight ops
 # "confirm" is ticked. The API key comes from the repository secrets; nothing is printed.
 #
 #   status               builds, processing, beta review state, groups, expiry
+#   bundle-id            read-only: is the bundle ID registered for iOS (not the same as an app record)
 #   add-to-group         build + group
 #   remove-from-group    build + group
 #   set-test-info        build; sets What to Test (scripts/testflight/what-to-test.txt)
@@ -20,7 +21,7 @@ on:
         description: What to do
         type: choice
         required: true
-        options: [status, inspect, groups, public-link, certificates, set-whats-new, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
+        options: [status, inspect, groups, public-link, certificates, bundle-id, set-whats-new, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
       build:
         description: Build number (as in TestFlight). Not needed for status.
         type: string
@@ -94,6 +95,7 @@ jobs:
               args=(public-link --group "$GROUP" "${flag[@]}") ;;
             inspect) args=(inspect --version "${BUILD:-0}") ;;
             certificates) args=(certificates) ;;
+            bundle-id) args=(bundle-id) ;;
             set-whats-new)
               [ -n "$BUILD" ] || { echo "::error::build is required"; exit 1; }
               case "$TEXT_FILE" in scripts/testflight/*.txt) ;; *) echo "::error::text_file must be scripts/testflight/*.txt"; exit 1;; esac

@@ -7,6 +7,7 @@
     tf.py set-test-info     --build 151 [--whats-new FILE] [--review-file FILE] [--yes]
     tf.py submit-beta-review --build 151 [--yes]
     tf.py expire            --build 4 [--yes]
+    tf.py bundle-id         read-only: is --bundle (BUNDLE_ID) registered as an iOS identifier
 
 Every action that changes App Store Connect only prints its plan unless --yes is given.
 Environment: ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8_BASE64 (or ASC_KEY_PATH); BUNDLE_ID
@@ -464,12 +465,31 @@ def cmd_certificates(a):
         say("| {} | {} | {} |".format(t, len(by[t]), ", ".join(sorted(by[t]))))
 
 
+def cmd_bundle_id(a):
+    """Read-only: is the bundle ID registered for iOS (Certificates, Identifiers & Profiles)? Needed before an
+    App Store Connect record can be created for it. Prints the name and platform only, no ids."""
+    items, _ = get_all(f"/v1/bundleIds?filter[identifier]={a.bundle}&filter[platform]=IOS&limit=50"
+                       "&fields[bundleIds]=identifier,name,platform")
+    exact = [i for i in items if i["attributes"].get("identifier") == a.bundle]
+    if not exact:
+        say(f"### Bundle ID `{a.bundle}`: not registered")
+        say("")
+        say("Register it (an automatic-signing archive does it) before creating the App Store Connect record.")
+        return
+    at = exact[0]["attributes"]
+    say(f"### Bundle ID `{a.bundle}`: registered")
+    say("")
+    say(f"- Name: {at.get('name')}")
+    say(f"- Platform: {at.get('platform')}")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--bundle", default=os.environ.get("BUNDLE_ID", DEFAULT_BUNDLE))
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("status"); s.add_argument("--limit", type=int, default=25)
     sub.add_parser("certificates")
+    sub.add_parser("bundle-id")
     sub.add_parser("groups")
     s = sub.add_parser("public-link"); s.add_argument("--group", required=True); s.add_argument("--limit", type=int, default=0); s.add_argument("--yes", action="store_true")
     s = sub.add_parser("inspect"); s.add_argument("--version", required=True)
@@ -487,6 +507,8 @@ def main(argv=None):
         sys.exit("missing secret ASC_KEY_P8_BASE64")
     if a.cmd == "certificates":
         return cmd_certificates(a)
+    if a.cmd == "bundle-id":
+        return cmd_bundle_id(a)
     app, name = app_id(a.bundle)
     if a.cmd == "inspect":
         return cmd_inspect(a, app, name)
