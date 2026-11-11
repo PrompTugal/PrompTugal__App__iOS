@@ -1,0 +1,17 @@
+PrompTugal: Lisbon Summit, the independent companion app for the Lisbon tech summit, 9 to 12 November. No account needed.
+
+New in this build:
+- A brighter app. Light mode by default (change it in More, under Appearance). Your next talk sits on a red card at the top of Now, live talks pulse, and stars bounce when you pick them.
+- Interviews: slide through the summit interviews on Now, or open News, then Interviews. Under each video, switch between the article and the transcript with the pills, or slide left and right.
+- Articles open right inside the app, with no web page to load.
+- Web Summit called off Wednesday 11 November, so Wednesday's sessions no longer show, and their reminders are off. A notice on Now says what is known.
+
+Please try:
+- Open an article from News or Now, and tap a link inside it.
+- Watch an interview, then read its transcript.
+- Star a talk on Thursday and check it is in your calendar.
+
+Tell us with Send Beta Feedback (take a screenshot in the app, or open TestFlight): what was confusing, what was missing, and anything that broke. Please include what you were trying to do.
+
+Privacy: https://ios.app.promptugal.news/privacy.html
+Support: https://ios.app.promptugal.news/support.html
