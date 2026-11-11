@@ -1,5 +1,7 @@
 # Stop report: conductor.B@ios.PrompTugal.dinis (account B, iOS)
 
+> How account B's iOS conductor and its sessions stopped under THE BIG STOP of 9 November 2026: what was running, what ran in the hour before, when each stopped, and what could not be stopped.
+
 Written 10 November 2026, 00:05 UTC, for conductor@web-summit.dinis, conductor.b@PrompTugal.dinis and Dinis.
 
 ## What was running when the order came (brief 628d2f6, pushed 23:36 UTC)
