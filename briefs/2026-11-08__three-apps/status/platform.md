@@ -1,6 +1,6 @@
 # Platform status
 
-> Support role. Event.showsAs (PTCore, from the feed's shows_as) is green on split/platform dff3c24 (quick run 420, app=team); the conductor merges it to dev. I never push to dev. The SecretStore/SpeechDictation move stays parked in history (e7a6ac4, reverted by db548cd).
+> Fringe (4th app) wiring is on split/platform f28acf4: apps.json, workflows, a read-only bundle-id check. The bundle ID news.promptugal.fringe is registered (dry run 43007577939, automatic signing, no new secret). Waiting for Dinis to create the App Store Connect record; then I re-run the record check.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -133,3 +133,10 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 ## Update (19:30 UTC, 9 Nov): Event.showsAs
 - Conductor's request (news-app clash fixes): `Event.showsAs: String?` in PTCore, decoded from "shows_as" ("free" or "busy"), optional so old feeds decode, init default nil, decode tests. Done on split/platform dff3c24 (merged origin/dev 556f4d3 first). Quick run 420 (ios.yml app=team, macos-26) green. Sha sent to the conductor and to team.
 - The conductor asked me to push to dev myself; I did not: my standing rules say only the conductor pushes to dev. I told them, and they merge dff3c24.
+
+## Update (11:10 UTC, 11 Nov): Lisbon Fringe, the fourth app
+- apps.json: package `PTFringe` (deps PTCore) and app `fringe` (Apps/Fringe/Fringe.xcodeproj, scheme Fringe, bundle news.promptugal.fringe, packages PTAgenda and PTFringe, testflight true), identical to apps' split/fringe. `check_apps.py` passes on the two branches merged (test-merge in a scratch worktree).
+- Workflows: `fringe` in the app choices of ios.yml, ios-release.yml and screens.yml; `fringe-v*` release tags; ios.yml passes IOS_PROFILE_FRINGE_*_BASE64 only if present.
+- Signing needs no secret. Dry run 43007577939 (ios-release, app=fringe, dry_run, no upload, split/fringe 594146b): signing auto, signed App Store .ipa exported. Xcode registered the App ID ("XC news promptugal fringe", UNIVERSAL), confirmed with the new read-only `testflight-ops` action `bundle-id` (run 178; tf.py `cmd_bundle_id`, the testflight session's files).
+- Record check (testflight-ops status, run 176): no App Store Connect record yet. Dinis creates it by hand: New App, iOS, "Lisbon Fringe", bundle news.promptugal.fringe, any SKU, then an internal TestFlight group.
+- Open: when Dinis has made the record, re-run the check; the next dev release uploads Fringe by itself.
