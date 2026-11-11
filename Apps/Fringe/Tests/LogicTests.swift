@@ -8,8 +8,8 @@ private func t(_ s: String) -> Date { FeedDate.parse(s)! }
 private func event(_ id: String, _ start: String?, _ end: String?, date: String = "2026-11-12",
                    status: String = "on", place: String = "Some venue, Rua X 1, 1000-001 Lisboa (Beato)",
                    inLisbon: Bool? = true) -> FeedEvent {
-    FeedEvent(id: id, name: id, date: date, start: start.map(t), end: end.map(t), status: status,
-              place: place, inLisbon: inLisbon)
+    FeedEvent(id: id, name: id, date: date, start: start.map(t), end: end.map(t), place: place,
+              status: status, inLisbon: inLisbon)
 }
 
 @Suite struct FeedParsing {
