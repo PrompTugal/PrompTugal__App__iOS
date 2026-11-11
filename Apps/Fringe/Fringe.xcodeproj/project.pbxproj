@@ -6,63 +6,49 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		07FB2E9ED89A673AFBC9AC1D /* PTCore in Frameworks */ = {isa = PBXBuildFile; productRef = C14012A5AA45E2C58EACD3BA /* PTCore */; };
-		953FFA6285272F53B94D8E1D /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = BAB05E348032ED1089D26781 /* PTAgenda */; };
-		7CEEEF2C7C192CFF1698B064 /* PTFringe in Frameworks */ = {isa = PBXBuildFile; productRef = 4DEF4DC40E85CD34B7784B63 /* PTFringe */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
-		D8039CF6A50C141C94BB8638 /* PBXContainerItemProxy */ = {
+		EB934E59EBA3125C4BA11FCB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = E83DDEB5086B98A904339F25 /* Project object */;
+			containerPortal = 56A7B990F213D3209DD50473 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 87416376EF1D27F6F3EC25E7;
+			remoteGlobalIDString = C3ADE1DD755CC2A36A7F04BC;
 			remoteInfo = Fringe;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		E5D592389E1D766B99092F66 /* Fringe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fringe.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8C71301A735C8146C78D7899 /* FringeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FringeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Fringe.xcconfig; sourceTree = "<group>"; };
-		28AA49D39A7E3A403114AC8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C64C94A0F8EC8C3C7710B89C /* Fringe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fringe.entitlements; sourceTree = "<group>"; };
+		610642B90E8AA3738B598607 /* Fringe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fringe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB005559FA522744F6E73BB3 /* FringeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FringeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D1DE9D46DD4153EEFC52165 /* Fringe.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Fringe.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5795F54675E53F9959DB7960 /* Sources */ = {
+		B3FCC7F3A9642629AC44C670 /* Sources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		615EA5272C03CB0D977AD34C /* Resources */ = {
+		316130A2C9EAB5ACBDCE9ECB /* Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		90193BD81E5D7AFAC450DA75 /* FringeTests */ = {
+		60161581E5E9A6F1A823F59C /* Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = FringeTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CD70093436C649B48145828B /* Frameworks */ = {
+		23B22E16FA211E484EE5BBA0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07FB2E9ED89A673AFBC9AC1D /* PTCore in Frameworks */,
-				953FFA6285272F53B94D8E1D /* PTAgenda in Frameworks */,
-				7CEEEF2C7C192CFF1698B064 /* PTFringe in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CE6946784E3179D77DCEAD8C /* Frameworks */ = {
+		CFA441EF15270692A5E34F62 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,24 +58,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9AAF1880F20C96F44C066D9A = {
+		6B3507D9290C2EA961E649EA = {
 			isa = PBXGroup;
 			children = (
-				A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */,
-				28AA49D39A7E3A403114AC8A /* Info.plist */,
-				C64C94A0F8EC8C3C7710B89C /* Fringe.entitlements */,
-				5795F54675E53F9959DB7960 /* Sources */,
-				615EA5272C03CB0D977AD34C /* Resources */,
-				90193BD81E5D7AFAC450DA75 /* FringeTests */,
-				00F3D72F119C1F4D3CB49D23 /* Products */,
+				9D1DE9D46DD4153EEFC52165 /* Fringe.xcconfig */,
+				B3FCC7F3A9642629AC44C670 /* Sources */,
+				316130A2C9EAB5ACBDCE9ECB /* Resources */,
+				60161581E5E9A6F1A823F59C /* Tests */,
+				BA0D98B62092BE1F80CD54D3 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		00F3D72F119C1F4D3CB49D23 /* Products */ = {
+		BA0D98B62092BE1F80CD54D3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E5D592389E1D766B99092F66 /* Fringe.app */,
-				8C71301A735C8146C78D7899 /* FringeTests.xctest */,
+				610642B90E8AA3738B598607 /* Fringe.app */,
+				CB005559FA522744F6E73BB3 /* FringeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -97,110 +81,101 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		87416376EF1D27F6F3EC25E7 /* Fringe */ = {
+		C3ADE1DD755CC2A36A7F04BC /* Fringe */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E92CB691794C7F4C8E59EE5 /* Build configuration list for PBXNativeTarget "Fringe" */;
+			buildConfigurationList = BBBF88CC494CC044897CFD93 /* Build configuration list for PBXNativeTarget "Fringe" */;
 			buildPhases = (
-				099E2194A9722FFB0106713B /* Sources */,
-				CD70093436C649B48145828B /* Frameworks */,
-				77C92BD0F18243EE5C4B6245 /* Resources */,
+				7E41E518EC4C9D361857667E /* Sources */,
+				23B22E16FA211E484EE5BBA0 /* Frameworks */,
+				216FAF171F25E61D0E8D4815 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				5795F54675E53F9959DB7960 /* Sources */,
-				615EA5272C03CB0D977AD34C /* Resources */,
+				B3FCC7F3A9642629AC44C670 /* Sources */,
+				316130A2C9EAB5ACBDCE9ECB /* Resources */,
 			);
 			name = Fringe;
 			packageProductDependencies = (
-				C14012A5AA45E2C58EACD3BA /* PTCore */,
-				BAB05E348032ED1089D26781 /* PTAgenda */,
-				4DEF4DC40E85CD34B7784B63 /* PTFringe */,
 			);
 			productName = Fringe;
-			productReference = E5D592389E1D766B99092F66;
+			productReference = 610642B90E8AA3738B598607;
 			productType = "com.apple.product-type.application";
 		};
-		985A2F5BC243BF6B747796C6 /* FringeTests */ = {
+		AFA9D4AB916D9FF7752B9226 /* FringeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D68BAC51EC0FF30D93C579B5 /* Build configuration list for PBXNativeTarget "FringeTests" */;
+			buildConfigurationList = 2A60A46E3297226B33D3B637 /* Build configuration list for PBXNativeTarget "FringeTests" */;
 			buildPhases = (
-				9B5798F3854961BBEB0D129D /* Sources */,
-				CE6946784E3179D77DCEAD8C /* Frameworks */,
-				380807B17C3ACFA61B32A3CC /* Resources */,
+				985F05F62C1ECABF0DEAF9CB /* Sources */,
+				CFA441EF15270692A5E34F62 /* Frameworks */,
+				4526E75E60988521F7D9372C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				88D7F50C2B68D0BD63F6FF43 /* PBXTargetDependency */,
+				C7A3C1C37F73CA0E65AB29FF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				90193BD81E5D7AFAC450DA75 /* FringeTests */,
+				60161581E5E9A6F1A823F59C /* Tests */,
 			);
 			name = FringeTests;
 			packageProductDependencies = (
 			);
 			productName = FringeTests;
-			productReference = 8C71301A735C8146C78D7899;
+			productReference = CB005559FA522744F6E73BB3;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E83DDEB5086B98A904339F25 /* Project object */ = {
+		56A7B990F213D3209DD50473 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
-					87416376EF1D27F6F3EC25E7 = {
+					C3ADE1DD755CC2A36A7F04BC = {
 						CreatedOnToolsVersion = 26.0;
 					};
-					985A2F5BC243BF6B747796C6 = {
+					AFA9D4AB916D9FF7752B9226 = {
 						CreatedOnToolsVersion = 26.0;
-						TestTargetID = 87416376EF1D27F6F3EC25E7;
+						TestTargetID = C3ADE1DD755CC2A36A7F04BC;
 					};
 				};
 			};
-			buildConfigurationList = BE4663CB8947986B6A7C8FA3 /* Build configuration list for PBXProject "Fringe" */;
-			developmentRegion = en;
+			buildConfigurationList = AAEFDD3A71918B6EC1F27D84 /* Build configuration list for PBXProject "Fringe" */;
+			developmentRegion = "en-GB";
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				"en-GB",
 				en,
 				Base,
 			);
-			mainGroup = 9AAF1880F20C96F44C066D9A;
+			mainGroup = 6B3507D9290C2EA961E649EA;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				762EC15246222A7CFF6F6868 /* XCLocalSwiftPackageReference "../../Packages/PTCore" */,
-				6B171454DE927F6D31F0649F /* XCLocalSwiftPackageReference "../../Packages/PTWeb" */,
-				C26EE35D991F506382394001 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */,
-				807F3DABC7A636967B058B4A /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */,
-				0D76C88AEFBFC32D713A50F9 /* XCLocalSwiftPackageReference "../../Packages/PTFringe" */,
-			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 00F3D72F119C1F4D3CB49D23 /* Products */;
+			productRefGroup = BA0D98B62092BE1F80CD54D3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				87416376EF1D27F6F3EC25E7 /* Fringe */,
-				985A2F5BC243BF6B747796C6 /* FringeTests */,
+				C3ADE1DD755CC2A36A7F04BC /* Fringe */,
+				AFA9D4AB916D9FF7752B9226 /* FringeTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		77C92BD0F18243EE5C4B6245 /* Resources */ = {
+		216FAF171F25E61D0E8D4815 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		380807B17C3ACFA61B32A3CC /* Resources */ = {
+		4526E75E60988521F7D9372C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -210,14 +185,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		099E2194A9722FFB0106713B /* Sources */ = {
+		7E41E518EC4C9D361857667E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9B5798F3854961BBEB0D129D /* Sources */ = {
+		985F05F62C1ECABF0DEAF9CB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -227,51 +202,51 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		88D7F50C2B68D0BD63F6FF43 /* PBXTargetDependency */ = {
+		C7A3C1C37F73CA0E65AB29FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 87416376EF1D27F6F3EC25E7 /* Fringe */;
-			targetProxy = D8039CF6A50C141C94BB8638 /* PBXContainerItemProxy */;
+			target = C3ADE1DD755CC2A36A7F04BC /* Fringe */;
+			targetProxy = EB934E59EBA3125C4BA11FCB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		97C2DC53E1C05033C660955C /* Debug */ = {
+		3A2B960BBC7FB0A7917BC6F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_TESTABILITY = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 0.1.0;
-				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		F8FA0582E6C8269EE9856C5F /* Release */ = {
+		88794241DCC1BD5F5C73E552 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 0.1.0;
 				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		32F286023E9B8AF7D865A7AB /* Debug */ = {
+		CB5AF0D61CBDFD2126AAD858 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			baseConfigurationReference = 9D1DE9D46DD4153EEFC52165 /* Fringe.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -279,14 +254,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Lisbon Fringe";
+				INFOPLIST_KEY_CFBundleDisplayName = "Tech Fringe";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Lisbon Fringe adds the events you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -299,9 +272,9 @@
 			};
 			name = Debug;
 		};
-		E61DC39485B3921F989041EC /* Release */ = {
+		5867E69D71CC129F9E14BEAB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			baseConfigurationReference = 9D1DE9D46DD4153EEFC52165 /* Fringe.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -309,14 +282,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Lisbon Fringe";
+				INFOPLIST_KEY_CFBundleDisplayName = "Tech Fringe";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Lisbon Fringe adds the events you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -329,9 +300,9 @@
 			};
 			name = Release;
 		};
-		E9DA7719985A8EAE0F488C49 /* Debug */ = {
+		E1D8DF6CDC9CACC4F41BBC2D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			baseConfigurationReference = 9D1DE9D46DD4153EEFC52165 /* Fringe.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -344,9 +315,9 @@
 			};
 			name = Debug;
 		};
-		F80A97218D02287AFA2167CC /* Release */ = {
+		E9B340141CEF9D151D455C4C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			baseConfigurationReference = 9D1DE9D46DD4153EEFC52165 /* Fringe.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -362,75 +333,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BE4663CB8947986B6A7C8FA3 /* Build configuration list for PBXProject "Fringe" */ = {
+		AAEFDD3A71918B6EC1F27D84 /* Build configuration list for PBXProject "Fringe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				97C2DC53E1C05033C660955C /* Debug */,
-				F8FA0582E6C8269EE9856C5F /* Release */,
+				3A2B960BBC7FB0A7917BC6F6 /* Debug */,
+				88794241DCC1BD5F5C73E552 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8E92CB691794C7F4C8E59EE5 /* Build configuration list for PBXNativeTarget "Fringe" */ = {
+		BBBF88CC494CC044897CFD93 /* Build configuration list for PBXNativeTarget "Fringe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				32F286023E9B8AF7D865A7AB /* Debug */,
-				E61DC39485B3921F989041EC /* Release */,
+				CB5AF0D61CBDFD2126AAD858 /* Debug */,
+				5867E69D71CC129F9E14BEAB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D68BAC51EC0FF30D93C579B5 /* Build configuration list for PBXNativeTarget "FringeTests" */ = {
+		2A60A46E3297226B33D3B637 /* Build configuration list for PBXNativeTarget "FringeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E9DA7719985A8EAE0F488C49 /* Debug */,
-				F80A97218D02287AFA2167CC /* Release */,
+				E1D8DF6CDC9CACC4F41BBC2D /* Debug */,
+				E9B340141CEF9D151D455C4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		762EC15246222A7CFF6F6868 /* XCLocalSwiftPackageReference "../../Packages/PTCore" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../Packages/PTCore;
-		};
-		6B171454DE927F6D31F0649F /* XCLocalSwiftPackageReference "../../Packages/PTWeb" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../Packages/PTWeb;
-		};
-		C26EE35D991F506382394001 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../Packages/PTAgenda;
-		};
-		807F3DABC7A636967B058B4A /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../Packages/PTNowNext;
-		};
-		0D76C88AEFBFC32D713A50F9 /* XCLocalSwiftPackageReference "../../Packages/PTFringe" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../Packages/PTFringe;
-		};
-/* End XCLocalSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		C14012A5AA45E2C58EACD3BA /* PTCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 762EC15246222A7CFF6F6868 /* XCLocalSwiftPackageReference "../../Packages/PTCore" */;
-			productName = PTCore;
-		};
-		BAB05E348032ED1089D26781 /* PTAgenda */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C26EE35D991F506382394001 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
-			productName = PTAgenda;
-		};
-		4DEF4DC40E85CD34B7784B63 /* PTFringe */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0D76C88AEFBFC32D713A50F9 /* XCLocalSwiftPackageReference "../../Packages/PTFringe" */;
-			productName = PTFringe;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = E83DDEB5086B98A904339F25 /* Project object */;
+	rootObject = 56A7B990F213D3209DD50473 /* Project object */;
 }
