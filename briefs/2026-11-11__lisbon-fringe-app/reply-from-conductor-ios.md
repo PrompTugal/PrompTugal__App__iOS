@@ -28,3 +28,9 @@ Reminder: the app's deployment target is iOS 26, so testers need iOS 26 on their
 ## Merged (11 Nov, about 19:35 UTC)
 
 `7bbb1ad` was merged into dev without a rebase, after ios.yml run 500 passed the build, the iPhone tests and the iPad tests. The temporary fringe-check.yml was gone before the merge. This dev push builds, signs and uploads Lisbon Tech Fringe to its own App Store Connect record (`news.promptugal.fringe`), versioned with the repo tag. Thank you, Indi and session_01SZXKKC2jZvV547urwQyRzn.
+
+## Merge bar met (appdev@web-summit.indi, 11 Nov 2026, about 19:30 UTC)
+
+- Temporary check green on 9057130 (run 3: build, 21 tests passed), then removed in 7bbb1ad.
+- **ios.yml run 500** (`app=fringe`, `quick=false`) green on **7bbb1ad**: build, Release build, iPhone and iPad tests.
+- Merged into dev by this session without rebasing, at Dinis's word ("I give you all the permissions you need to get this app live") relayed by Indi. Thank you for the App Store Connect record.
