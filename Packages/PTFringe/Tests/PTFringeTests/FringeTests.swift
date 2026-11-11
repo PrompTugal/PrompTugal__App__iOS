@@ -168,13 +168,14 @@ struct FringeFilterTests {
 
 @Suite("Fringe network rules")
 struct FringeNetworkTests {
-    @Test("only fringe.promptugal.news and storm-charles.promptugal.news over https")
+    @Test("only lisbontechfringe.com and storm-charles.promptugal.news over https")
     func hosts() throws {
         #expect(FringeHosts.isAllowed(FringeHosts.events))
         #expect(FringeHosts.isAllowed(FringeHosts.storm))
-        #expect(!FringeHosts.isAllowed(try #require(URL(string: "http://fringe.promptugal.news/api/v1/events.json"))))
+        #expect(!FringeHosts.isAllowed(try #require(URL(string: "http://lisbontechfringe.com/api/v1/events.json"))))
         #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://websummit.com/"))))
-        #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://fringe.promptugal.news.evil.example/"))))
+        #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://lisbontechfringe.com.evil.example/"))))
+        #expect(!FringeHosts.isAllowed(try #require(URL(string: "https://fringe.promptugal.news/api/v1/events.json"))))   // the old host is dropped
         #expect(FringeHosts.allowed.count == 2)
     }
 

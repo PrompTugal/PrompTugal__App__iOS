@@ -4,7 +4,7 @@ import PTCore
 import PTFringe
 
 /// Lisbon Fringe (news.promptugal.fringe): an independent guide to the side events, meetups and communities around
-/// Web Summit Lisbon. It reads fringe.promptugal.news and the storm site only, collects no data and has no account.
+/// Web Summit Lisbon. It reads lisbontechfringe.com and the storm site only, collects no data and has no account.
 @main @MainActor
 struct FringeApp: App {
     @State private var store = FringeStore()

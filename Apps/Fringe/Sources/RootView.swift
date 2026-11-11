@@ -78,9 +78,9 @@ struct IndependenceSheet: View {
 enum FringeText {
     static let independence = String(localized: "Lisbon Fringe is independent. It is not affiliated with, endorsed by or sponsored by Web Summit.")
     static let officialSite = URL(string: "https://websummit.com/")!
-    static let join = URL(string: "https://fringe.promptugal.news/join/")!
-    static let submit = URL(string: "https://fringe.promptugal.news/submit/")!
-    static let site = URL(string: "https://fringe.promptugal.news/")!
+    static let join = URL(string: "https://lisbontechfringe.com/join/")!
+    static let submit = URL(string: "https://lisbontechfringe.com/submit/")!
+    static let site = URL(string: "https://lisbontechfringe.com/")!
     static let stormSite = URL(string: "https://storm-charles.promptugal.news/")!
     static let ipma = URL(string: "https://www.ipma.pt/")!
     static let anepc = URL(string: "https://prociv.gov.pt/")!

@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 /// The events and the storm headline the screens show. First launch and offline read the seed bundled in the app (or
-/// the last good copy kept on the device); a refresh reads fringe.promptugal.news and the storm site over an
+/// the last good copy kept on the device); a refresh reads lisbontechfringe.com and the storm site over an
 /// ephemeral session: no cookies, no disk cache, no credentials, nothing that identifies the reader.
 @MainActor @Observable
 public final class FringeStore {

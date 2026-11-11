@@ -21,7 +21,7 @@ public enum FringeStatus: String, Sendable, CaseIterable {
     }
 }
 
-/// One event in the shape of fringe.promptugal.news/api/v1/events.json (and of the bundled seed):
+/// One event in the shape of lisbontechfringe.com/api/v1/events.json (and of the bundled seed):
 /// `name, kind, organiser, date, start, end, place, join, url, status, storm_note, topics[], read_at, verified`.
 /// `start` and `end` may be null. Every field but `name` is optional on the wire; a missing date is "" (shown as not published).
 public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
