@@ -141,3 +141,4 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Record check (testflight-ops status, run 176): no App Store Connect record yet. Dinis creates it by hand: New App, iOS, "Lisbon Fringe", bundle news.promptugal.fringe, any SKU, then an internal TestFlight group.
 - Open: when Dinis has made the record, re-run the check; the next dev release uploads Fringe by itself.
 - Record checks (testflight-ops status, runs 181 to 184, hourly to 18:02 UTC): still no App Store Connect record. Dev releases skip Fringe cleanly. Next check 19:00 UTC.
+- 19:02 UTC (run 185): the App Store Connect record for news.promptugal.fringe EXISTS (app "Lisbon Tech Fringe", internal group, no builds). Conductor told. Watching release v0.4.98 (dev run 501) for the first Fringe upload; will report the build number once VALID.
