@@ -41,6 +41,9 @@ struct EventRow: View {
             }
             Text(event.name).font(Typo.headline).foregroundStyle(Palette.ink)
                 .strikethrough(event.isCancelled)
+            if event.movedByStorm {
+                Text("Moved by the storm").font(Typo.kicker).foregroundStyle(Palette.amber)
+            }
             if !event.organiser.isEmpty { Text(event.organiser).font(Typo.meta).foregroundStyle(Palette.muted) }
             if !event.place.isEmpty { Text(event.place).font(Typo.meta).foregroundStyle(Palette.muted) }
         }
@@ -61,6 +64,7 @@ struct EventDetail: View {
                 HStack {
                     Kicker(FringeFilter.kindLabel(event.kind))
                     StatusBadge(status: event.statusValue)
+                    if event.movedByStorm { Text("Moved by the storm").font(Typo.kicker).foregroundStyle(Palette.amber) }
                 }
                 Text(event.name).font(Typo.title).strikethrough(event.isCancelled)
                 if !event.organiser.isEmpty { Text(event.organiser).font(Typo.body).foregroundStyle(Palette.muted) }
@@ -69,6 +73,7 @@ struct EventDetail: View {
                 fact("When", "\(FringeFilter.dayLabel(event.date)), \(event.timeLabel) (Lisbon time)")
                 if !event.place.isEmpty { fact("Where", event.place) }
                 if !event.join.isEmpty { fact("How to join", event.join) }
+                if !event.cost.isEmpty { fact("Cost", event.cost) }
                 if !event.topics.isEmpty { fact("Topics", event.topics.joined(separator: ", ")) }
             }
             if !event.stormNote.isEmpty {
@@ -76,6 +81,9 @@ struct EventDetail: View {
                     Kicker(String(localized: "The storm"), color: Palette.amber)
                     Text(event.stormNote).font(Typo.body)
                 }
+            }
+            if !event.check.isEmpty {
+                Text("What was checked: \(event.check)").font(Typo.meta).foregroundStyle(Palette.muted)
             }
             if !event.note.isEmpty { Text(event.note).font(Typo.meta).foregroundStyle(Palette.muted) }
             if event.isPickable {
@@ -108,11 +116,11 @@ struct EventDetail: View {
 
     /// Where the team read it and when, so nobody takes a guess for a fact.
     private var sourceLine: some View {
-        let checked = event.verified ? "Checked." : "Not yet checked."
         var text = "When this was read is not published."
         if let date = event.readDate {
-            text = "Read from the source at \(FringeFilter.dayLabel(Lisbon.day(date))), \(Lisbon.timeLabel(date)). \(checked)"
+            text = "Read from the source at \(FringeFilter.dayLabel(Lisbon.day(date))), \(Lisbon.timeLabel(date))."
         }
+        if let label = event.labelText { text += " Labelled: \(label.lowercased())." }
         return Text(text).font(Typo.meta).foregroundStyle(Palette.muted)
     }
 }
