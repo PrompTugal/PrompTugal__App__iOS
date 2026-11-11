@@ -27,7 +27,9 @@ public enum FringeFeed {
 extension FringeEvent {
     /// Day, then start (events with no start after those with one), then name.
     public static func earlier(_ lhs: FringeEvent, _ rhs: FringeEvent) -> Bool {
-        if lhs.date != rhs.date { return lhs.date < rhs.date }
+        // An event with no date sorts after every dated one.
+        let (a, b) = (lhs.date.isEmpty ? "9999" : lhs.date, rhs.date.isEmpty ? "9999" : rhs.date)
+        if a != b { return a < b }
         switch (lhs.start, rhs.start) {
         case let (a?, b?) where a != b: return a < b
         case (nil, .some): return false

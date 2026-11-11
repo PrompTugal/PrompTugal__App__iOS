@@ -23,7 +23,7 @@ public struct FringeFilter: Equatable, Sendable {
         }
     }
 
-    public static func days(in events: [FringeEvent]) -> [String] { Array(Set(events.map(\.date))).sorted() }
+    public static func days(in events: [FringeEvent]) -> [String] { Array(Set(events.map(\.date).filter { !$0.isEmpty })).sorted() }
     public static func kinds(in events: [FringeEvent]) -> [String] {
         Array(Set(events.map { $0.kind.lowercased() }.filter { !$0.isEmpty })).sorted()
     }
@@ -32,7 +32,9 @@ public struct FringeFilter: Equatable, Sendable {
     }
 
     /// "Thu 12 Nov" for a day id.
-    public static func dayLabel(_ day: String) -> String { Lisbon.dayLabel(day) }
+    public static func dayLabel(_ day: String) -> String {
+        day.isEmpty ? String(localized: "Date not published", bundle: .module) : Lisbon.dayLabel(day)
+    }
 
     public static func kindLabel(_ kind: String) -> String {
         switch kind.lowercased() {

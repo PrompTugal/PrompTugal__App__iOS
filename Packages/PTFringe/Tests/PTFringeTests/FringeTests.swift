@@ -25,6 +25,14 @@ struct FringeEventTests {
         #expect(events.allSatisfy { $0.start == nil && !$0.isPickable })
     }
 
+    @Test("only the name is required: an event with no date is kept, sorted last, and cannot be picked")
+    func nameOnly() throws {
+        let data = Data(#"{"events":[{"name":"Floating"},{"name":"Dated","date":"2026-11-12"}]}"#.utf8)
+        let events = try FringeFeed.events(from: data)
+        #expect(events.map(\.name) == ["Dated", "Floating"])
+        #expect(events[1].date.isEmpty && !events[1].isPickable)
+    }
+
     @Test("a malformed event is skipped and the rest are kept; a bare array and items also read")
     func lenient() throws {
         let one = Data(#"{"events":[{"date":"2026-11-12"},{"name":"Ok","date":"2026-11-12"}]}"#.utf8)

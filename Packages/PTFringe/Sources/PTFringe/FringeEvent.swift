@@ -23,12 +23,12 @@ public enum FringeStatus: String, Sendable, CaseIterable {
 
 /// One event in the shape of fringe.promptugal.news/api/v1/events.json (and of the bundled seed):
 /// `name, kind, organiser, date, start, end, place, join, url, status, storm_note, topics[], read_at, verified`.
-/// `start` and `end` may be null. Every field but `name` and `date` is optional on the wire.
+/// `start` and `end` may be null. Every field but `name` is optional on the wire; a missing date is "" (shown as not published).
 public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
     public let name: String
     public let kind: String
     public let organiser: String
-    public let date: String          // "2026-11-12", Lisbon time
+    public let date: String          // "2026-11-12", Lisbon time; "" when the feed has none
     public let start: String?        // "18:30"
     public let end: String?
     public let place: String
@@ -70,7 +70,7 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         name = try c.decode(String.self, forKey: .name)
-        date = try c.decode(String.self, forKey: .date)
+        date = (try? c.decodeIfPresent(String.self, forKey: .date)) ?? ""
         kind = (try? c.decodeIfPresent(String.self, forKey: .kind)) ?? "other"
         organiser = (try? c.decodeIfPresent(String.self, forKey: .organiser)) ?? ""
         start = Self.clock(try? c.decodeIfPresent(String.self, forKey: .start))
