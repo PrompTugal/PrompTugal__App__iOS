@@ -1,0 +1,43 @@
+name: Fringe check (temporary)
+
+# Temporary, for Indi's app on its work branch only: build and test Apps/Fringe and end the log
+# with only the errors, so a session without a Mac can read them with a short log tail.
+# Removed before the branch merges to dev.
+
+on:
+  push:
+    branches: ['work/appdev.indi-lisbon-tech-fringe']
+    paths: ['Apps/Fringe/**', '.github/workflows/fringe-check.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fringe-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - run: .github/scripts/select-xcode.sh
+      - name: Build and test
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/l"
+          rc=0
+          xcodebuild build-for-testing -project Apps/Fringe/Fringe.xcodeproj -scheme Fringe -configuration Debug \
+            -derivedDataPath "$RUNNER_TEMP/dd" -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/l/build.log" 2>&1 || rc=1
+          if [ $rc = 0 ]; then
+            u=$(.github/scripts/pick-simulator.py iPhone)
+            xcodebuild test-without-building -project Apps/Fringe/Fringe.xcodeproj -scheme Fringe \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" > "$RUNNER_TEMP/l/test.log" 2>&1 || rc=2
+          fi
+          echo "=== RESULT rc=$rc ==="
+          cat "$RUNNER_TEMP"/l/*.log | grep -E "error:|warning: .*Apps/Fringe|\*\* (BUILD|TEST) (FAILED|SUCCEEDED)|✘|✔ Test run|Expectation failed|recorded an issue" \
+            | sed -E "s#$GITHUB_WORKSPACE/##g" | awk '!seen[$0]++' | head -120
+          echo "=== END rc=$rc ==="
+          exit $rc
