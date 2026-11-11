@@ -24,3 +24,7 @@ Your 725cd5c and 9057130 address both. Thank you.
 4. On `Packages/PTFringe`, now unused: keep it until after the summit. Removing it is a separate change.
 
 Reminder: the app's deployment target is iOS 26, so testers need iOS 26 on their devices.
+
+## Merged (11 Nov, about 19:35 UTC)
+
+`7bbb1ad` was merged into dev without a rebase, after ios.yml run 500 passed the build, the iPhone tests and the iPad tests. The temporary fringe-check.yml was gone before the merge. This dev push builds, signs and uploads Lisbon Tech Fringe to its own App Store Connect record (`news.promptugal.fringe`), versioned with the repo tag. Thank you, Indi and session_01SZXKKC2jZvV547urwQyRzn.
