@@ -259,6 +259,11 @@ jobs:
           IOS_PROFILE_RISKMANDATE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_WIDGETS_BASE64 }}
           IOS_PROFILE_RISKMANDATE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_INTENTS_BASE64 }}
           IOS_PROFILE_RISKMANDATE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_SHARE_BASE64 }}
+          # Fringe signs automatically (the API key makes its App ID and profile) unless this secret is set.
+          IOS_PROFILE_FRINGE_APP_BASE64: ${{ secrets.IOS_PROFILE_FRINGE_APP_BASE64 }}
+          IOS_PROFILE_FRINGE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_FRINGE_WIDGETS_BASE64 }}
+          IOS_PROFILE_FRINGE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_FRINGE_INTENTS_BASE64 }}
+          IOS_PROFILE_FRINGE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_FRINGE_SHARE_BASE64 }}
           # The old unprefixed names belong to the app with the legacy bundle (news.promptugal.reader).
           LEGACY_PROFILE_APP_BASE64: ${{ secrets.IOS_PROFILE_APP_BASE64 }}
           LEGACY_PROFILE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_WIDGETS_BASE64 }}
