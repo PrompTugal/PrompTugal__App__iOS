@@ -4,7 +4,7 @@ import SwiftUI
 struct RiskMandateApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            CommandCentreView()
         }
     }
 }
