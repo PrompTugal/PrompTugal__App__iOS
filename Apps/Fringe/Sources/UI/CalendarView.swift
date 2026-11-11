@@ -64,6 +64,8 @@ struct CalendarView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
+                // Pin the content to the screen width, so it never drifts sideways while scrolling.
+                .containerRelativeFrame(.horizontal)
             }
             .background(Palette.bg)
             .navigationTitle("Calendar")
