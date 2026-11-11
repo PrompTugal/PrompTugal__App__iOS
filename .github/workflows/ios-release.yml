@@ -16,13 +16,13 @@ name: iOS release
 #   push to dev          NOT here since 10 Nov 2026: ios.yml's one macOS job builds, tests and, when
 #                        green, uploads the affected apps from the release commit website.yml tags
 #                        (briefs/2026-11-10__ci-on-one-mac). Pausing works the same way there.
-#   tags                 team-v*, promptugal-v*, riskmandate-v* release that app;
+#   tags                 team-v*, promptugal-v*, riskmandate-v*, fringe-v* release that app;
 #                        the old ios-v* means the app with bundle news.promptugal.reader
 #   workflow_dispatch    input "app": all, or one app; "upload" or "dry_run" to sign
 #
 # Pausing (repository variables, Settings > Secrets and variables > Actions > Variables)
 #   TESTFLIGHT_ON_PUSH=false           pauses push uploads of every app
-#   TESTFLIGHT_ON_PUSH_TEAM=false      pauses one app (…_PROMPTUGAL, …_RISKMANDATE)
+#   TESTFLIGHT_ON_PUSH_TEAM=false      pauses one app (…_PROMPTUGAL, …_RISKMANDATE, …_FRINGE)
 #   Tags and manual runs still upload. The same switches pause ios.yml's uploads.
 #
 # Version: MARKETING_VERSION of every app = VERSION at the built commit (v0.4.7 -> 0.4.7), passed to
@@ -42,13 +42,13 @@ on:
   # Dev pushes publish from ios.yml (one macOS job). This workflow keeps tags and manual runs.
   push:
     # Night branches are built by ios.yml; package one by hand with workflow_dispatch (+ source_ref).
-    tags: ['ios-v*', 'team-v*', 'promptugal-v*', 'riskmandate-v*']
+    tags: ['ios-v*', 'team-v*', 'promptugal-v*', 'riskmandate-v*', 'fringe-v*']
   workflow_dispatch:
     inputs:
       app:
         description: 'Which app: all, or one'
         type: choice
-        options: [all, team, promptugal, riskmandate]
+        options: [all, team, promptugal, riskmandate, fringe]
         default: all
       upload:
         description: 'Sign and upload to TestFlight (needs the signing secrets)'
@@ -345,7 +345,7 @@ jobs:
         run: scripts/release/signing-setup.sh
 
       - name: App Store Connect record exists?
-        # An app without a record (Team, RiskMandate, until Dinis creates them) is skipped, green,
+        # An app without a record (Team, RiskMandate, Fringe, until Dinis creates them) is skipped, green,
         # before the expensive archive. A dry run does not upload, so it goes on.
         if: steps.gate.outputs.ready == 'true' && env.SKIP_UPLOAD != 'true'
         run: |

@@ -16,7 +16,7 @@ on:
       app:
         description: 'Which app to photograph'
         type: choice
-        options: [all, team, promptugal, riskmandate]
+        options: [all, team, promptugal, riskmandate, fringe]
         default: all
       store:
         description: 'App Store screenshots instead of the site set: 6.9" and 6.5" iPhone and 13" iPad at the native pixel size, one set per locale. Use app=promptugal.'

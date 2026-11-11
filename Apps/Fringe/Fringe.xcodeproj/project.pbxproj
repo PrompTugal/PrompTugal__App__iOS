@@ -1,0 +1,436 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07FB2E9ED89A673AFBC9AC1D /* PTCore in Frameworks */ = {isa = PBXBuildFile; productRef = C14012A5AA45E2C58EACD3BA /* PTCore */; };
+		953FFA6285272F53B94D8E1D /* PTAgenda in Frameworks */ = {isa = PBXBuildFile; productRef = BAB05E348032ED1089D26781 /* PTAgenda */; };
+		7CEEEF2C7C192CFF1698B064 /* PTFringe in Frameworks */ = {isa = PBXBuildFile; productRef = 4DEF4DC40E85CD34B7784B63 /* PTFringe */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D8039CF6A50C141C94BB8638 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E83DDEB5086B98A904339F25 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 87416376EF1D27F6F3EC25E7;
+			remoteInfo = Fringe;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E5D592389E1D766B99092F66 /* Fringe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fringe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C71301A735C8146C78D7899 /* FringeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FringeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Fringe.xcconfig; sourceTree = "<group>"; };
+		28AA49D39A7E3A403114AC8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C64C94A0F8EC8C3C7710B89C /* Fringe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fringe.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5795F54675E53F9959DB7960 /* Sources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		615EA5272C03CB0D977AD34C /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		90193BD81E5D7AFAC450DA75 /* FringeTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FringeTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CD70093436C649B48145828B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07FB2E9ED89A673AFBC9AC1D /* PTCore in Frameworks */,
+				953FFA6285272F53B94D8E1D /* PTAgenda in Frameworks */,
+				7CEEEF2C7C192CFF1698B064 /* PTFringe in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE6946784E3179D77DCEAD8C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9AAF1880F20C96F44C066D9A = {
+			isa = PBXGroup;
+			children = (
+				A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */,
+				28AA49D39A7E3A403114AC8A /* Info.plist */,
+				C64C94A0F8EC8C3C7710B89C /* Fringe.entitlements */,
+				5795F54675E53F9959DB7960 /* Sources */,
+				615EA5272C03CB0D977AD34C /* Resources */,
+				90193BD81E5D7AFAC450DA75 /* FringeTests */,
+				00F3D72F119C1F4D3CB49D23 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		00F3D72F119C1F4D3CB49D23 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E5D592389E1D766B99092F66 /* Fringe.app */,
+				8C71301A735C8146C78D7899 /* FringeTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		87416376EF1D27F6F3EC25E7 /* Fringe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8E92CB691794C7F4C8E59EE5 /* Build configuration list for PBXNativeTarget "Fringe" */;
+			buildPhases = (
+				099E2194A9722FFB0106713B /* Sources */,
+				CD70093436C649B48145828B /* Frameworks */,
+				77C92BD0F18243EE5C4B6245 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5795F54675E53F9959DB7960 /* Sources */,
+				615EA5272C03CB0D977AD34C /* Resources */,
+			);
+			name = Fringe;
+			packageProductDependencies = (
+				C14012A5AA45E2C58EACD3BA /* PTCore */,
+				BAB05E348032ED1089D26781 /* PTAgenda */,
+				4DEF4DC40E85CD34B7784B63 /* PTFringe */,
+			);
+			productName = Fringe;
+			productReference = E5D592389E1D766B99092F66;
+			productType = "com.apple.product-type.application";
+		};
+		985A2F5BC243BF6B747796C6 /* FringeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D68BAC51EC0FF30D93C579B5 /* Build configuration list for PBXNativeTarget "FringeTests" */;
+			buildPhases = (
+				9B5798F3854961BBEB0D129D /* Sources */,
+				CE6946784E3179D77DCEAD8C /* Frameworks */,
+				380807B17C3ACFA61B32A3CC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				88D7F50C2B68D0BD63F6FF43 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				90193BD81E5D7AFAC450DA75 /* FringeTests */,
+			);
+			name = FringeTests;
+			packageProductDependencies = (
+			);
+			productName = FringeTests;
+			productReference = 8C71301A735C8146C78D7899;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E83DDEB5086B98A904339F25 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					87416376EF1D27F6F3EC25E7 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					985A2F5BC243BF6B747796C6 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 87416376EF1D27F6F3EC25E7;
+					};
+				};
+			};
+			buildConfigurationList = BE4663CB8947986B6A7C8FA3 /* Build configuration list for PBXProject "Fringe" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9AAF1880F20C96F44C066D9A;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				762EC15246222A7CFF6F6868 /* XCLocalSwiftPackageReference "../../Packages/PTCore" */,
+				6B171454DE927F6D31F0649F /* XCLocalSwiftPackageReference "../../Packages/PTWeb" */,
+				C26EE35D991F506382394001 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */,
+				807F3DABC7A636967B058B4A /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */,
+				0D76C88AEFBFC32D713A50F9 /* XCLocalSwiftPackageReference "../../Packages/PTFringe" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 00F3D72F119C1F4D3CB49D23 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				87416376EF1D27F6F3EC25E7 /* Fringe */,
+				985A2F5BC243BF6B747796C6 /* FringeTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		77C92BD0F18243EE5C4B6245 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		380807B17C3ACFA61B32A3CC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		099E2194A9722FFB0106713B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B5798F3854961BBEB0D129D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		88D7F50C2B68D0BD63F6FF43 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 87416376EF1D27F6F3EC25E7 /* Fringe */;
+			targetProxy = D8039CF6A50C141C94BB8638 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		97C2DC53E1C05033C660955C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F8FA0582E6C8269EE9856C5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		32F286023E9B8AF7D865A7AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Fringe.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Lisbon Fringe";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Lisbon Fringe adds the events you pick to your calendar when you ask it to.";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.fringe;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E61DC39485B3921F989041EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Fringe.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Lisbon Fringe";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "Lisbon Fringe adds the events you pick to your calendar when you ask it to.";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.fringe;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E9DA7719985A8EAE0F488C49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.fringe.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fringe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fringe";
+			};
+			name = Debug;
+		};
+		F80A97218D02287AFA2167CC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A2C89FDB482CC4ACCE347C76 /* Fringe.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = news.promptugal.fringe.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Fringe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Fringe";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BE4663CB8947986B6A7C8FA3 /* Build configuration list for PBXProject "Fringe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				97C2DC53E1C05033C660955C /* Debug */,
+				F8FA0582E6C8269EE9856C5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8E92CB691794C7F4C8E59EE5 /* Build configuration list for PBXNativeTarget "Fringe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32F286023E9B8AF7D865A7AB /* Debug */,
+				E61DC39485B3921F989041EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D68BAC51EC0FF30D93C579B5 /* Build configuration list for PBXNativeTarget "FringeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9DA7719985A8EAE0F488C49 /* Debug */,
+				F80A97218D02287AFA2167CC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		762EC15246222A7CFF6F6868 /* XCLocalSwiftPackageReference "../../Packages/PTCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTCore;
+		};
+		6B171454DE927F6D31F0649F /* XCLocalSwiftPackageReference "../../Packages/PTWeb" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTWeb;
+		};
+		C26EE35D991F506382394001 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTAgenda;
+		};
+		807F3DABC7A636967B058B4A /* XCLocalSwiftPackageReference "../../Packages/PTNowNext" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTNowNext;
+		};
+		0D76C88AEFBFC32D713A50F9 /* XCLocalSwiftPackageReference "../../Packages/PTFringe" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTFringe;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C14012A5AA45E2C58EACD3BA /* PTCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 762EC15246222A7CFF6F6868 /* XCLocalSwiftPackageReference "../../Packages/PTCore" */;
+			productName = PTCore;
+		};
+		BAB05E348032ED1089D26781 /* PTAgenda */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C26EE35D991F506382394001 /* XCLocalSwiftPackageReference "../../Packages/PTAgenda" */;
+			productName = PTAgenda;
+		};
+		4DEF4DC40E85CD34B7784B63 /* PTFringe */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0D76C88AEFBFC32D713A50F9 /* XCLocalSwiftPackageReference "../../Packages/PTFringe" */;
+			productName = PTFringe;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = E83DDEB5086B98A904339F25 /* Project object */;
+}

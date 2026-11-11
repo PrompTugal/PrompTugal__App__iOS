@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyLists-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Merged with the generated Info.plist (GENERATE_INFOPLIST_FILE = YES).
+	     Lisbon Fringe asks for one permission: write-only calendar access, when the person taps Add to Calendar
+	     (the string is in the project's INFOPLIST_KEY_ settings). Reminders are local notifications, which need no
+	     string. No camera, microphone, speech, Face ID or location, and no background task. The only URL scheme is
+	     the one reminder links use. Hosts the app reads: fringe.promptugal.news and storm-charles.promptugal.news. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>news.promptugal.fringe</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fringe</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
