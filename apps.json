@@ -11,7 +11,8 @@
     "PTLanes": {"path": "Packages/PTLanes", "deps": ["PTCore", "PTVaultUI"]},
     "PTSync": {"path": "Packages/PTSync", "deps": ["PTCore"]},
     "PTDeck": {"path": "Packages/PTDeck", "deps": ["PTCore"]},
-    "PTExplore": {"path": "Packages/PTExplore", "deps": ["PTCore"]}
+    "PTExplore": {"path": "Packages/PTExplore", "deps": ["PTCore"]},
+    "PTFringe": {"path": "Packages/PTFringe", "deps": ["PTCore"]}
   },
   "apps": {
     "team": {"project": "Apps/Team/Team.xcodeproj", "scheme": "Team", "bundle": "news.promptugal.team",
@@ -20,7 +21,9 @@
     "promptugal": {"project": "Apps/PrompTugal/PrompTugal.xcodeproj", "scheme": "PrompTugal", "bundle": "news.promptugal.reader",
                    "paths": ["Apps/PrompTugal/"], "packages": ["PTAgenda", "PTNews", "PTDeck", "PTExplore", "PTSync"], "testflight": true},
     "riskmandate": {"project": "Apps/RiskMandate/RiskMandate.xcodeproj", "scheme": "RiskMandate", "bundle": "ai.riskmandate.app",
-                    "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": true}
+                    "paths": ["Apps/RiskMandate/"], "packages": ["PTCore"], "testflight": true},
+    "fringe": {"project": "Apps/Fringe/Fringe.xcodeproj", "scheme": "Fringe", "bundle": "news.promptugal.fringe",
+               "paths": ["Apps/Fringe/"], "packages": ["PTAgenda", "PTFringe"], "testflight": false}
   },
   "all": [".github/workflows/ios.yml", ".github/workflows/ios-release.yml", "apps.json", "scripts/release/", "Config/Shared/", ".github/scripts/"]
 }
