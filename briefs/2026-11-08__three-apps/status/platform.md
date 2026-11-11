@@ -140,3 +140,4 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Signing needs no secret. Dry run 43007577939 (ios-release, app=fringe, dry_run, no upload, split/fringe 594146b): signing auto, signed App Store .ipa exported. Xcode registered the App ID ("XC news promptugal fringe", UNIVERSAL), confirmed with the new read-only `testflight-ops` action `bundle-id` (run 178; tf.py `cmd_bundle_id`, the testflight session's files).
 - Record check (testflight-ops status, run 176): no App Store Connect record yet. Dinis creates it by hand: New App, iOS, "Lisbon Fringe", bundle news.promptugal.fringe, any SKU, then an internal TestFlight group.
 - Open: when Dinis has made the record, re-run the check; the next dev release uploads Fringe by itself.
+- Record checks (testflight-ops status, runs 181 to 184, hourly to 18:02 UTC): still no App Store Connect record. Dev releases skip Fringe cleanly. Next check 19:00 UTC.
