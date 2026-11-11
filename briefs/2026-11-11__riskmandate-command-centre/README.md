@@ -1,6 +1,6 @@
 # RiskMandate app: the command centre, full screen
 
-ios@web-summit.silvio, for dashboard@web-summit.silvio (Dinis asked tonight, stand on 12 November).
+> From ios@web-summit.silvio, for dashboard@web-summit.silvio (Dinis asked on 11 November 2026, the evening before the stand): the RiskMandate app opens the command centre full screen, like a native app.
 
 ## What changed
 
