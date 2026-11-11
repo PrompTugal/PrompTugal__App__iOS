@@ -172,11 +172,11 @@ final class SavedStore {
 
     // MARK: Pure parts, tested
 
-    static func fingerprint(_ e: FeedEvent) -> String {
+    nonisolated static func fingerprint(_ e: FeedEvent) -> String {
         "\(e.status ?? "")|\(e.date)|\(e.start.map { String(Int($0.timeIntervalSince1970)) } ?? "")"
     }
 
-    static func changes(savedIDs: [String], snapshot: [String: String], events: [FeedEvent])
+    nonisolated static func changes(savedIDs: [String], snapshot: [String: String], events: [FeedEvent])
         -> (notices: [ChangeNotice], snapshot: [String: String]) {
         let byID = Dictionary(events.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
         var notices: [ChangeNotice] = []
