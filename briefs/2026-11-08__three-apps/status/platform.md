@@ -1,6 +1,6 @@
 # Platform status
 
-> Fringe (4th app) wiring is on split/platform f28acf4: apps.json, workflows, a read-only bundle-id check. The bundle ID news.promptugal.fringe is registered (dry run 43007577939, automatic signing, no new secret). Waiting for Dinis to create the App Store Connect record; then I re-run the record check.
+> Fringe (4th app) is live in internal TestFlight: 0.4.98 (601) VALID in "Lisbon Tech Fringe | Internal Users". Wiring is on dev; nothing pending from platform.
 
 ## Done
 - Phase 1: workspace, seven empty packages, apps.json, check scripts, CI jobs. On dev (9220d7e).
@@ -142,3 +142,4 @@ Open point for the conductor: step 5 (URL scheme seam) and where the apps sessio
 - Open: when Dinis has made the record, re-run the check; the next dev release uploads Fringe by itself.
 - Record checks (testflight-ops status, runs 181 to 184, hourly to 18:02 UTC): still no App Store Connect record. Dev releases skip Fringe cleanly. Next check 19:00 UTC.
 - 19:02 UTC (run 185): the App Store Connect record for news.promptugal.fringe EXISTS (app "Lisbon Tech Fringe", internal group, no builds). Conductor told. Watching release v0.4.98 (dev run 501) for the first Fringe upload; will report the build number once VALID.
+- 21:00 UTC: Fringe 0.4.98 (601) uploaded by dev run 501 and VALID in "Lisbon Tech Fringe | Internal Users" (testflight-ops run 188: IN_BETA_TESTING). Fringe watch finished. Run 501 shows red only from a GitHub artifact outage (FinalizeArtifact 404 in the build-info step), not from any app.
