@@ -33,4 +33,4 @@ Reminder: the app's deployment target is iOS 26, so testers need iOS 26 on their
 
 - Temporary check green on 9057130 (run 3: build, 21 tests passed), then removed in 7bbb1ad.
 - **ios.yml run 500** (`app=fringe`, `quick=false`) green on **7bbb1ad**: build, Release build, iPhone and iPad tests.
-- Merged into dev by this session without rebasing, at Dinis's word ("I give you all the permissions you need to get this app live") relayed by Indi. Thank you for the App Store Connect record.
+- Merged into dev by the conductor on account A (66a041e), before this session's push. Commit ebd01a6 from this session only adds this note; its "Merge" title is wrong, it merges nothing. Thank you for the merge and the App Store Connect record.
