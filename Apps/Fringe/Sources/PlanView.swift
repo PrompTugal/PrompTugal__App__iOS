@@ -10,7 +10,11 @@ struct PlanView: View {
 
     var body: some View {
         NavigationStack {
-            MyProgramView(chooseTalks: chooseEvents, open: { openURL($0) })
+            MyProgramView(chooseTalks: chooseEvents, open: { openURL($0) }, wording: .init(
+                title: String(localized: "My plan"),
+                emptyTitle: String(localized: "Your plan is empty"),
+                emptyText: String(localized: "Pick events in Events or on Now. They appear here in time order, with clashes marked."),
+                chooseTitle: String(localized: "Choose events")))
         }
     }
 }

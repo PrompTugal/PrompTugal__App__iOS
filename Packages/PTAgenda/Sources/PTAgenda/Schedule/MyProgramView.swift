@@ -5,13 +5,30 @@ import PTCore
 /// sessions say what they clash with, and a list at the top jumps to them), free time shown, with reminders and
 /// "Add to Calendar". The model does the work; this draws it.
 public struct MyProgramView: View {
-    public init(chooseTalks: @escaping () -> Void = {}, open: @escaping (URL) -> Void = { _ in }) {
+    /// The words are the pt.news app's unless an app passes its own (Lisbon Fringe says "events", not "talks").
+    public struct Wording: Sendable {
+        public var title: String?
+        public var emptyTitle: String?
+        public var emptyText: String?
+        public var chooseTitle: String?
+
+        public init(title: String? = nil, emptyTitle: String? = nil, emptyText: String? = nil, chooseTitle: String? = nil) {
+            self.title = title
+            self.emptyTitle = emptyTitle
+            self.emptyText = emptyText
+            self.chooseTitle = chooseTitle
+        }
+    }
+
+    public init(chooseTalks: @escaping () -> Void = {}, open: @escaping (URL) -> Void = { _ in }, wording: Wording = Wording()) {
         self.chooseTalks = chooseTalks
         self.open = open
+        self.wording = wording
     }
 
     private let chooseTalks: () -> Void
     private let open: (URL) -> Void
+    private let wording: Wording
 
     @Environment(ScheduleStore.self) private var schedule
     @Environment(ReminderScheduler.self) private var reminders
@@ -30,7 +47,7 @@ public struct MyProgramView: View {
                                      feed: AgendaHub.showsAs, splits: choices.splits)
             content(model)
         }
-        .navigationTitle(String(localized: "My program", bundle: .module))
+        .navigationTitle(wording.title ?? String(localized: "My program", bundle: .module))
         .alert(String(localized: "Calendar", bundle: .module), isPresented: Binding(get: { calendarMessage != nil }, set: { if !$0 { calendarMessage = nil } })) {
             Button(String(localized: "OK", bundle: .module), role: .cancel) {}
         } message: { Text(calendarMessage ?? "") }
@@ -40,11 +57,11 @@ public struct MyProgramView: View {
     private func content(_ model: ProgramModel) -> some View {
         if model.isEmpty {
             ContentUnavailableView {
-                Label(String(localized: "Your program is empty", bundle: .module), systemImage: "star")
+                Label(wording.emptyTitle ?? String(localized: "Your program is empty", bundle: .module), systemImage: "star")
             } description: {
-                Text(String(localized: "Star talks in Explore or on Now. They appear here in time order, with clashes marked.", bundle: .module))
+                Text(wording.emptyText ?? String(localized: "Star talks in Explore or on Now. They appear here in time order, with clashes marked.", bundle: .module))
             } actions: {
-                Button(String(localized: "Choose talks", bundle: .module), action: chooseTalks).buttonStyle(.borderedProminent)
+                Button(wording.chooseTitle ?? String(localized: "Choose talks", bundle: .module), action: chooseTalks).buttonStyle(.borderedProminent)
             }
         } else {
             ScrollViewReader { proxy in
