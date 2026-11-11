@@ -13,17 +13,25 @@ public struct ExploreHooks {
     public var graph: (@MainActor () -> AnyView)?
     /// The pick and calendar controls shown on PTExplore's own talk detail.
     public var talkActions: TalkActions
+    /// Leading items for the screen's navigation bar, e.g. the app's language button.
+    public var leadingToolbar: (@MainActor () -> AnyView)?
+    /// Trailing items for the screen's navigation bar, e.g. the app's More button.
+    public var trailingToolbar: (@MainActor () -> AnyView)?
 
     public init(talks: (@MainActor () -> AnyView)? = nil,
                 talkDetail: (@MainActor (ExploreItem) -> AnyView)? = nil,
                 header: (@MainActor () -> AnyView)? = nil,
                 graph: (@MainActor () -> AnyView)? = nil,
-                talkActions: TalkActions = TalkActions()) {
+                talkActions: TalkActions = TalkActions(),
+                leadingToolbar: (@MainActor () -> AnyView)? = nil,
+                trailingToolbar: (@MainActor () -> AnyView)? = nil) {
         self.talks = talks
         self.talkDetail = talkDetail
         self.header = header
         self.graph = graph
         self.talkActions = talkActions
+        self.leadingToolbar = leadingToolbar
+        self.trailingToolbar = trailingToolbar
     }
 }
 
@@ -70,6 +78,14 @@ public struct ExploreScreen: View {
         NavigationStack(path: $path) {
             ExploreListView(store: store, hooks: hooks)
                 .navigationTitle(String(localized: "Explore", bundle: .module))
+                .toolbar {
+                    if let leading = hooks.leadingToolbar {
+                        ToolbarItem(placement: .topBarLeading) { leading() }
+                    }
+                    if let trailing = hooks.trailingToolbar {
+                        ToolbarItem(placement: .topBarTrailing) { trailing() }
+                    }
+                }
                 .navigationDestination(for: ExploreGraphRoute.self) { _ in
                     if let graph = hooks.graph { graph() }
                 }
@@ -334,6 +350,7 @@ enum ExploreFormat {
         guard let date = parser.date(from: day) else { return day }
         let out = DateFormatter()
         out.timeZone = lisbon
+        out.locale = AppCulture.locale
         out.setLocalizedDateFormatFromTemplate("EEEEdMMMM")
         return out.string(from: date)
     }

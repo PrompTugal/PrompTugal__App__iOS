@@ -199,24 +199,21 @@ def find_release(head_sha):
     return None, None
 
 
-def last_built(key, legacy, limit=15):
-    """The commit an app was last built from: the build-info of the newest ios-release run on dev
-    that has one for it (written only when its unsigned package succeeded). None if there is none,
-    or gh is not usable; then the app counts as changed."""
+def last_built(key, legacy=False):
+    """The commit an app was last built for release from: the newest build-info of the app on dev,
+    from ios.yml (dev pushes that uploaded) or ios-release.yml (scripts/release/find-build-info.sh).
+    None if there is none, or gh is not usable; then the app counts as changed."""
     import tempfile
-    names = [f"build-info-{key}"] + (["build-info"] if legacy else [])
-    r = sh("gh", "run", "list", "--workflow", "ios-release.yml", "--branch", "dev", "--limit", str(limit),
-           "--json", "databaseId", "-q", ".[].databaseId")
-    for run in r.stdout.split():
-        for name in names:
-            with tempfile.TemporaryDirectory() as d:
-                if sh("gh", "run", "download", run, "-n", name, "-D", d).returncode == 0:
-                    try:
-                        commit = json.load(open(os.path.join(d, "build-info.json"))).get("commit", "")
-                    except (OSError, ValueError):
-                        continue
-                    if commit and sh("git", "cat-file", "-e", commit + "^{commit}").returncode == 0:
-                        return commit
+    script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "find-build-info.sh")
+    with tempfile.TemporaryDirectory() as d:
+        if sh(script, key, d, "any", "dev").returncode != 0:
+            return None
+        try:
+            commit = json.load(open(os.path.join(d, "build-info.json"))).get("commit", "")
+        except (OSError, ValueError):
+            return None
+    if commit and sh("git", "cat-file", "-e", commit + "^{commit}").returncode == 0:
+        return commit
     return None
 
 
@@ -387,6 +384,28 @@ def main_plan():
             platform_set = platform_affected(files)
             how = f"`{base[:7]}..{head[:7]}`, {len(files) if files is not None else '?'} changed files" + \
                   (" (scripts/apps/affected.py)" if platform_set is not None else "")
+        if env["EVENT_NAME"] == "push" and env["REF"] == "refs/heads/dev":
+            # A dev push publishes to TestFlight from ios.yml (briefs/2026-11-10__ci-on-one-mac). An app
+            # that uploads also counts every change since the commit it was last released from, as the
+            # old release run did, so a run that waited and was replaced by a newer push never drops
+            # an app's changes. Its release notes start at that commit too.
+            selected = set(platform_set) if platform_set is not None else affected_by_files(cfg, files)
+            pk_since, parts = set(), []
+            for key, app in cfg["apps"].items():
+                if not app.get("testflight") or paused(key, variables):
+                    continue
+                base = last_built(key)
+                bases[key] = base
+                changed = files_between(base, env["SHA"]) if base else None
+                if key not in selected and key in affected_by_files(cfg, changed):
+                    selected.add(key)
+                    pk_since |= affected_packages(cfg, changed) & set(closure(cfg, app.get("packages", [])))
+                    parts.append(f"`{key}` added: changed since its last release `{base[:7] if base else 'never'}`")
+            if parts:
+                pk_now = PLATFORM["packages"] if PLATFORM["packages"] is not None else affected_packages(cfg, files)
+                PLATFORM["packages"] = sorted(set(pk_now) | pk_since)
+                platform_set = selected
+                how += "; " + "; ".join(parts)
     lines.append(f"Compared: {how}.")
 
     exists = os.path.exists

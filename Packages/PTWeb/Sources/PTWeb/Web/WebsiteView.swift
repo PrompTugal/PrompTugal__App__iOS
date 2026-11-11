@@ -108,10 +108,10 @@ public struct WebsiteView: View {
                             if sidebarFits { sidebarVisible.toggle() }
                             else { showsShortcuts = true }
                         } label: {
-                            Label(String(localized: "Websites", bundle: .module), systemImage: "sidebar.left").labelStyle(.iconOnly)
+                            Label(String(localized: "Websites", bundle: .module), systemImage: "sidebar.leading").labelStyle(.iconOnly)
                         }
                         Button { browser.goBack() } label: {
-                            Label(String(localized: "Back", bundle: .module), systemImage: "chevron.left").labelStyle(.iconOnly)
+                            Label(String(localized: "Back", bundle: .module), systemImage: "chevron.backward").labelStyle(.iconOnly)
                         }
                         .disabled(!browser.canGoBack)
                         Button { browser.goHome() } label: {

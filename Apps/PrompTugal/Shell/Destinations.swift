@@ -6,7 +6,7 @@ import PTNews
 import PTWeb
 import SwiftUI
 
-/// The public app's screens (ux spec: four tabs, no More tab). The ids are the Team app's ids where a screen is the
+/// The public app's screens: five tabs (Now, My program, Explore, Map, News) and More, a sheet from the round button. The ids are the Team app's ids where a screen is the
 /// same, so `promptugal://open/<id>` links and reminders keep working; the ids of screens that moved are aliases.
 @MainActor
 enum PublicDestinations {
@@ -63,7 +63,7 @@ enum PublicDestinations {
         all.filter { $0.group == group && $0.listed && (debug || !$0.debugOnly) }
     }
 
-    // MARK: The four tabs
+    // MARK: The five tabs
 
     static let tabs: [ShellDestination] = [
         ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
@@ -74,14 +74,18 @@ enum PublicDestinations {
                          summary: String(localized: "Talks, speakers, companies and places"), phoneTab: 2, wrapsStack: false) {
             AnyView(ExploreView())
         },
+        ShellDestination(id: "map", title: String(localized: "Map"), symbol: "map", group: "Tabs",
+                         summary: String(localized: "Where each talk is, and the walks between them"), phoneTab: 3) {
+            AnyView(VenueMapView())
+        },
         ShellDestination(id: "news.home", title: String(localized: "News"), symbol: "newspaper", group: "Tabs",
-                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 3) { AnyView(NewsHomeView()) },
+                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 4) { AnyView(NewsHomeView()) },
     ]
 
-    // MARK: More (the iPad sidebar; on iPhone Settings opens from the gear)
+    // MARK: More (the iPad sidebar; on iPhone a sheet from the round button on every tab)
 
     static let more: [ShellDestination] = [
-        ShellDestination(id: "settings", title: String(localized: "Settings"), symbol: "gearshape", group: "More",
+        ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",
                          summary: String(localized: "Before each pick")) { AnyView(ReminderSettingsView()) },

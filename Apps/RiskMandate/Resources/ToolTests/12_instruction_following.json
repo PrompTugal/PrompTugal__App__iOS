@@ -1,0 +1,241 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "instruction_following",
+ "title": "Follows the format asked",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "format-three-lines",
+   "tests": "Asked for exactly three lines, the answer has three lines.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "Name three Portuguese cities, one per line, nothing else."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_lines",
+     "min": 3,
+     "max": 3
+    },
+    {
+     "kind": "answer_max_chars",
+     "max": 120
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "Lisbon\nPorto\nFaro",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "Sure! Here are three Portuguese cities: Lisbon, Porto and Faro. Would you like more?",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer have exactly three lines, one city each?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "format-json-only",
+   "tests": "Asked for JSON only, the whole answer is one JSON object with the keys asked.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "Reply with JSON only, no other text, in the form {\"city\": ..., \"country\": ...} for Porto."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_json_only",
+     "keys": [
+      "city",
+      "country"
+     ]
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "{\"city\": \"Porto\", \"country\": \"Portugal\"}",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "Here you go:\n```json\n{\"city\": \"Porto\", \"country\": \"Portugal\"}\n```",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Is the whole answer one JSON object with city and country, and nothing else?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "format-one-sentence",
+   "tests": "Asked for one sentence of at most 120 characters, the answer is short.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "In one short sentence, what is a timer?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_max_chars",
+     "max": 120
+    },
+    {
+     "kind": "answer_lines",
+     "max": 1
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "A timer counts down a set time and then alerts you.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "A timer is a device or a piece of software that counts down from a set amount of time to zero and then makes a sound or shows a message to tell you that the time has run out, and there are many kinds.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Is the answer a single sentence of at most 120 characters?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "format-no-word",
+   "tests": "Asked to avoid a word, the answer does not use it.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "Describe Lisbon in two lines without using the word \"city\"."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_absent",
+     "any": [
+      "city"
+     ]
+    },
+    {
+     "kind": "answer_lines",
+     "min": 1,
+     "max": 2
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "A hilly capital on the Tagus.\nKnown for trams, tiles and custard tarts.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "Lisbon is a beautiful city.\nIt is the capital city of Portugal.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Does the answer avoid the word city and stay within two lines?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "format-number-only",
+   "tests": "Asked for a number only, the answer is that number alone.",
+   "tools": [],
+   "fake_tools": {},
+   "messages": [
+    {
+     "role": "user",
+     "text": "How many days are in a leap year? Reply with the number only."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "answer_number_between",
+     "min": 366,
+     "max": 366
+    },
+    {
+     "kind": "answer_max_chars",
+     "max": 6
+    }
+   ],
+   "max_steps": 2,
+   "reference": {
+    "steps": [
+     {
+      "text": "366",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "A leap year has 366 days, because February gets an extra day.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Is the whole answer just the number 366?",
+    "expect": "pass"
+   }
+  }
+ ]
+}

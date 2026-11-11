@@ -5,14 +5,13 @@ name: iOS
 # can read a failure through the GitHub tools (actions_list, get_job_logs).
 #
 # Only what a change touches is built (contracts section 5). The `changes` job
-# (ubuntu, ios-changes.yml) reads apps.json and the diff, then:
+# (ubuntu, ios-changes.yml) reads apps.json and the diff, then ONE macOS job does
+# all of it (briefs/2026-11-10__ci-on-one-mac):
 #
-#   build     per affected app: Debug build for the iOS Simulator and Release build
-#             for a device (unsigned), as two matrix legs
-#   test      per affected app, on an iPhone and an iPad simulator: dev, pull requests
-#             and workflow_dispatch only (night/** pushes build only; split/** branches run by workflow_dispatch)
+#   mac       per affected app: build once, unit tests on an iPhone and an iPad simulator
+#             (dev, pull requests and workflow_dispatch; night/** pushes build only), the
+#             Release build for a device (unsigned); then each affected package's tests
 #   quick     manual runs only: Debug build and iPhone tests, no Release build, no iPad
-#   packages  per affected Swift package with a Tests/ folder
 #   result    one stable check name that is green when everything above is
 #
 # An app whose project does not exist yet is skipped, with a line in the summary.
@@ -50,8 +49,6 @@ permissions:
 
 # Concurrency is per job, not per run. A job that has started always finishes;
 # a job still waiting for a runner is replaced by the same job of a newer push.
-# (With a run-level group, GitHub cancelled whole runs whose test jobs had
-# started but whose other jobs were still queued.)
 
 jobs:
   # Which runner the macOS jobs use. Pushes and pull requests: macos-26. Manual runs: the input;
@@ -133,28 +130,55 @@ jobs:
             echo "- ⏭️ check_apps.py: not on this ref yet, skipped" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-  build:
-    name: ${{ matrix.config }} build (${{ matrix.app.app }})
+  # All the Mac work of a run, in ONE job (briefs/2026-11-10__ci-on-one-mac): the account has
+  # 5 macOS runners for every repository and session, and a job per app, device, configuration
+  # and package (a median of 10 per dev push) spent three times longer queueing than running.
+  # One job queues once, selects Xcode once, boots one iPhone and one iPad simulator and builds
+  # each app once for both devices. What it checks has not changed:
+  #
+  #   build        per app: build-for-testing (Debug, iOS Simulator), or a Debug build only on
+  #                night/** pushes as before; the Release build for a device (unsigned) and
+  #                check-embedded.sh; each affected package's tests built in one DerivedData
+  #                (PTCore compiles once). No simulator runs while compiling.
+  #   test         then the iPhone simulator: every app's and package's tests; then the iPad
+  #                simulator: every app's tests (test-without-building, the same test bundles)
+  #
+  #   publish      on a push to dev, once everything above is green: each affected app with
+  #                "testflight": true (and not paused) is archived from the push's release commit,
+  #                signed and uploaded to TestFlight (internal testers). No step on main for now
+  #                (Dinis, 10 Nov). The App Store submission stays manual: ios-submit.yml.
+  #
+  # quick (manual): Debug and iPhone tests only, no Release build, no iPad.
+  # One app's failure does not stop the others; the job lists every failure and fails.
+  mac:
+    name: 'macOS: build, test and publish'
     needs: [gate, changes, pick-runner]
-    if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_apps == 'true'
+    if: needs.gate.outputs.run == 'true' && (needs.changes.outputs.has_apps == 'true' || needs.changes.outputs.has_packages == 'true')
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    # One running and one waiting per branch; a newer push replaces the waiting one. A started
+    # job always finishes.
+    concurrency:
+      group: ios-mac-${{ github.ref }}
+      cancel-in-progress: false
+    timeout-minutes: 150
+    # The signing secrets may live in the testflight environment. Only a dev push uses it; any
+    # other run has no environment and no secrets.
+    environment: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev') && 'testflight' || '' }}
     permissions:
       contents: read
-      actions: write   # to cancel the rest of a manual run when this build fails
-    strategy:
-      fail-fast: false
-      matrix:
-        app: ${{ fromJSON(needs.changes.outputs.apps) }}
-        # Debug for the simulator; Release is what App Store and TestFlight builds use:
-        # optimised, DEBUG not defined, so code behind #if DEBUG compiles out cleanly.
-        config: ${{ fromJSON(inputs.quick && '["Debug"]' || '["Debug","Release"]') }}
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
-    concurrency:
-      group: ios-build-${{ matrix.app.app }}-${{ matrix.config }}-${{ github.ref }}
-      cancel-in-progress: false
-    timeout-minutes: 40
+      actions: read   # size check and plan read earlier runs
+    outputs:
+      uploaded: ${{ steps.publish.outputs.uploaded }}
     env:
-      PROJECT: ${{ matrix.app.project }}
-      SCHEME: ${{ matrix.app.scheme }}
+      APPS_JSON: ${{ needs.changes.outputs.apps }}
+      PACKAGES_JSON: ${{ needs.changes.outputs.packages }}
+      UPLOAD_JSON: ${{ needs.changes.outputs.upload }}
+      PUBLISH: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev' && needs.changes.outputs.has_upload == 'true') && 'true' || 'false' }}
+      # Unit tests on dev, pull requests and manual runs; night/** and split/** pushes build only.
+      RUN_TESTS: ${{ (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && 'true' || 'false' }}
+      DEVICES: ${{ inputs.quick && 'iPhone' || 'iPhone iPad' }}
+      RELEASE_BUILD: ${{ inputs.quick && 'false' || 'true' }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -163,159 +187,196 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: Debug build (iOS Simulator)
-        if: matrix.config == 'Debug'
-        run: |
-          .github/scripts/run-and-summarize.sh "${{ matrix.app.app }}: Debug build (iOS Simulator)" "$RUNNER_TEMP/logs/build.log" -- \
-            xcodebuild build \
-              -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
-              -destination 'generic/platform=iOS Simulator' \
-              -derivedDataPath "$RUNNER_TEMP/dd" \
-              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+      # All builds first with no simulator running, then one simulator at a time (mac-job.sh).
+      - name: Build the apps and packages
+        run: .github/scripts/mac-job.sh build
 
-      - name: Release build (device, unsigned)
-        if: matrix.config == 'Release'
-        run: |
-          .github/scripts/run-and-summarize.sh "${{ matrix.app.app }}: Release build (iOS device, unsigned)" "$RUNNER_TEMP/logs/release.log" -- \
-            xcodebuild build \
-              -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
-              -destination 'generic/platform=iOS' \
-              -derivedDataPath "$RUNNER_TEMP/dd" \
-              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
-          app=$(find "$RUNNER_TEMP/dd/Build/Products/Release-iphoneos" -maxdepth 1 -name '*.app' | head -1)
-          echo "Built: $app"
-          # Each extension target of the project must be inside the app.
-          scripts/release/check-embedded.sh "$app"
+      - name: Tests on the iPhone simulator
+        if: ${{ !cancelled() && (env.RUN_TESTS == 'true' || needs.changes.outputs.has_packages == 'true') }}
+        timeout-minutes: 60
+        run: .github/scripts/mac-job.sh test iPhone
 
-      # A red manual run on a split branch stops here: cancel the rest of the run so it does not
-      # keep holding runners. Pushes, pull requests and dev are left alone.
-      - name: Cancel the rest of this manual run
-        if: failure() && github.event_name == 'workflow_dispatch' && startsWith(github.ref, 'refs/heads/split/')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh run cancel "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY" || true
+      - name: Tests on the iPad simulator
+        if: ${{ !cancelled() && env.RUN_TESTS == 'true' && !inputs.quick }}
+        timeout-minutes: 60
+        run: .github/scripts/mac-job.sh test iPad
 
-  test:
-    name: ${{ matrix.app.app }} unit tests (${{ matrix.device }} simulator)
-    # Runner capacity: on night/** and split/** pushes only the build legs run. The unit tests
-    # run on dev, on pull requests and by hand. Run them for a branch from the Actions tab
-    # (workflow_dispatch) when you need them before a merge.
-    needs: [gate, changes, pick-runner]
-    if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_apps == 'true' && (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch')
-    strategy:
-      fail-fast: false
-      matrix:
-        app: ${{ fromJSON(needs.changes.outputs.apps) }}
-        # The app must work on iPhone and iPad; both run every test.
-        device: ${{ fromJSON(inputs.quick && '["iPhone"]' || '["iPhone","iPad"]') }}
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
-    timeout-minutes: 45
-    concurrency:
-      group: ios-test-${{ matrix.app.app }}-${{ matrix.device }}-${{ github.ref }}
-      cancel-in-progress: false
-    env:
-      PROJECT: ${{ matrix.app.project }}
-      SCHEME: ${{ matrix.app.scheme }}
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Select Xcode
-        run: .github/scripts/select-xcode.sh
-
-      - name: Pick and boot an ${{ matrix.device }} simulator
-        id: sim
+      # The app version is the v* tag that website.yml puts on this push's release commit (VERSION
+      # bumped, nothing else). Built after the tests, so the tag is normally there already.
+      - name: Find this push's release commit
+        id: release
+        if: success() && env.PUBLISH == 'true'
         timeout-minutes: 8
         run: |
-          udid=$(.github/scripts/pick-simulator.py "${{ matrix.device }}")
-          echo "udid=$udid" >> "$GITHUB_OUTPUT"
-          xcrun simctl boot "$udid" || true
-          # Wait up to 5 minutes for "Booted"; if it is slower, xcodebuild finishes the boot.
-          for i in $(seq 1 60); do
-            xcrun simctl list devices | grep "$udid" | grep -q "(Booted)" && { echo "Booted after $((i * 5)) s"; break; }
-            sleep 5
+          found=""
+          for i in $(seq 1 30); do
+            git fetch --quiet --force --tags origin dev
+            for tag in $(git tag --list 'v[0-9]*' --sort=-version:refname | head -20); do
+              c=$(git rev-parse "$tag^{commit}")
+              if [ "$(git rev-parse "$c^")" = "$GITHUB_SHA" ]; then found="$tag $c"; break 2; fi
+            done
+            # website.yml finished without a tag for this commit: a later push took the release.
+            st=$(gh run list --workflow website.yml --commit "$GITHUB_SHA" --json status -q '.[0].status' 2>/dev/null || true)
+            [ "$st" = completed ] && [ "$i" -gt 2 ] && break
+            sleep 15
           done
-          xcrun simctl list devices | grep "$udid" || true
+          if [ -z "$found" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "### ⏭️ No release commit for \`${GITHUB_SHA:0:7}\` (a later push took it). Built and tested; that push's run uploads." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          read -r tag commit <<< "$found"
+          diff=$(git diff --name-only "$GITHUB_SHA" "$commit")
+          if [ "$diff" != VERSION ]; then
+            echo "::error::release commit $commit changes more than VERSION: $diff"; exit 1
+          fi
+          git checkout --quiet --detach "$commit"
+          echo "SOURCE_SHA=$commit" >> "$GITHUB_ENV"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+          echo "### Release $tag (\`${commit:0:7}\`, VERSION bump on \`${GITHUB_SHA:0:7}\`)" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: xcodebuild test
-        timeout-minutes: 20
+      - name: Release build (no release commit, so no upload)
+        if: success() && steps.release.outputs.ready == 'false'
+        env:
+          RELEASE_APPS: ${{ needs.changes.outputs.upload }}
+        run: .github/scripts/mac-job.sh release
+
+      - name: Sign, export and upload to TestFlight
+        id: publish
+        if: success() && steps.release.outputs.ready == 'true'
+        env:
+          IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
+          IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+          IOS_PROFILE_TEAM_APP_BASE64: ${{ secrets.IOS_PROFILE_TEAM_APP_BASE64 }}
+          IOS_PROFILE_TEAM_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_TEAM_WIDGETS_BASE64 }}
+          IOS_PROFILE_TEAM_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_TEAM_INTENTS_BASE64 }}
+          IOS_PROFILE_TEAM_SHARE_BASE64: ${{ secrets.IOS_PROFILE_TEAM_SHARE_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_APP_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_APP_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_WIDGETS_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_INTENTS_BASE64 }}
+          IOS_PROFILE_PROMPTUGAL_SHARE_BASE64: ${{ secrets.IOS_PROFILE_PROMPTUGAL_SHARE_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_APP_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_APP_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_WIDGETS_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_INTENTS_BASE64 }}
+          IOS_PROFILE_RISKMANDATE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_RISKMANDATE_SHARE_BASE64 }}
+          # The old unprefixed names belong to the app with the legacy bundle (news.promptugal.reader).
+          LEGACY_PROFILE_APP_BASE64: ${{ secrets.IOS_PROFILE_APP_BASE64 }}
+          LEGACY_PROFILE_WIDGETS_BASE64: ${{ secrets.IOS_PROFILE_WIDGETS_BASE64 }}
+          LEGACY_PROFILE_INTENTS_BASE64: ${{ secrets.IOS_PROFILE_INTENTS_BASE64 }}
+          LEGACY_PROFILE_SHARE_BASE64: ${{ secrets.IOS_PROFILE_SHARE_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          # Not internal-only: the internal group gets every build with no review, and ios-submit.yml
+          # (manual) can still send a chosen build to App Store review.
+          INTERNAL_ONLY: 'false'
+          AUTO_ARCHIVE: codesign
+        run: .github/scripts/mac-job.sh publish
+
+      - name: Remove keychain, profiles and key
+        if: always() && steps.release.outputs.ready == 'true'
         run: |
-          .github/scripts/run-and-summarize.sh "${{ matrix.app.app }}: unit tests (${{ matrix.device }})" "$RUNNER_TEMP/logs/test.log" -- \
-            xcodebuild test \
-              -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
-              -destination "id=${{ steps.sim.outputs.udid }}" \
-              -derivedDataPath "$RUNNER_TEMP/dd" \
-              -resultBundlePath "$RUNNER_TEMP/logs/Tests.xcresult" \
-              -parallel-testing-enabled NO \
-              -test-timeouts-enabled YES \
-              -default-test-execution-time-allowance 60 \
-              -maximum-test-execution-time-allowance 180 \
-              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          for d in "$RUNNER_TEMP"/release/*/; do
+            [ -d "$d" ] || continue
+            OUT=${d%/} PROJECT=x SCHEME=x scripts/release/signing-cleanup.sh || true
+          done
 
-      - name: Delete this job's simulator (self-hosted only)
-        if: always() && runner.environment == 'self-hosted' && steps.sim.outputs.udid != ''
+      - name: Upload build-info and release notes
+        if: always() && steps.publish.outcome != 'skipped'
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-info-apps
+          path: |
+            ${{ runner.temp }}/publish/*/build-info.json
+            ${{ runner.temp }}/publish/*/release-notes.txt
+            ${{ runner.temp }}/publish/*/uploaded.json
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Upload signed .ipa files
+        if: always() && steps.publish.outcome != 'skipped'
+        uses: actions/upload-artifact@v5
+        with:
+          name: appstore-ipas
+          path: ${{ runner.temp }}/publish/*/*.ipa
+          if-no-files-found: ignore
+          retention-days: 30
+          compression-level: 0
+
+      - name: Delete the simulators (self-hosted only)
+        if: always() && runner.environment == 'self-hosted'
         run: |
-          xcrun simctl shutdown "${{ steps.sim.outputs.udid }}" 2>/dev/null || true
-          xcrun simctl delete "${{ steps.sim.outputs.udid }}" || true
+          [ -f "$RUNNER_TEMP/sims.env" ] || exit 0
+          cut -d= -f2 "$RUNNER_TEMP/sims.env" | while read -r u; do
+            xcrun simctl shutdown "$u" 2>/dev/null || true
+            xcrun simctl delete "$u" || true
+          done
 
-      - name: Upload log and results (failures only; the bundle is about 60 MB)
+      - name: Upload logs and test results (failures only)
         if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: test-log-${{ matrix.app.app }}-${{ matrix.device }}
-          path: ${{ runner.temp }}/logs/
+          name: mac-logs
+          path: |
+            ${{ runner.temp }}/logs/
+            ${{ runner.temp }}/release/*/logs/
           if-no-files-found: ignore
+          retention-days: 14
 
-  packages:
-    name: Package ${{ matrix.package.name }}
-    # A package's own tests, when it or something it depends on changed. They run on every
-    # push where they are affected, as SGitVault's did before the split (one runner each).
-    needs: [gate, changes, pick-runner]
-    if: needs.gate.outputs.run == 'true' && needs.changes.outputs.has_packages == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        package: ${{ fromJSON(needs.changes.outputs.packages) }}
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+  # After an upload: wait for App Store Connect to process each build, answer export compliance
+  # and set What to Test. Ubuntu (asc.py is Python and openssl), so no Mac waits on Apple.
+  # Conveniences, as before: the upload is done, so this job never turns the run red.
+  testflight-processing:
+    name: TestFlight processing
+    needs: mac
+    if: ${{ !cancelled() && needs.mac.outputs.uploaded != '' && needs.mac.outputs.uploaded != '[]' }}
+    runs-on: ubuntu-latest
     timeout-minutes: 30
-    concurrency:
-      group: ios-package-${{ matrix.package.name }}-${{ github.ref }}
-      cancel-in-progress: false
+    continue-on-error: true
+    environment: testflight
+    permissions:
+      contents: read
+      actions: read
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+      UPLOADED: ${{ needs.mac.outputs.uploaded }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts/release
 
-      - name: Select Xcode
-        run: .github/scripts/select-xcode.sh
+      - uses: actions/download-artifact@v5
+        with:
+          name: build-info-apps
+          path: ${{ runner.temp }}/publish
 
-      - name: Boot an iPhone simulator
-        id: sim
-        if: matrix.package.name != 'SGitVault'
-        timeout-minutes: 8
+      - name: Wait for processing, answer export compliance, set What to Test
         run: |
-          udid=$(.github/scripts/pick-simulator.py iPhone)
-          echo "udid=$udid" >> "$GITHUB_OUTPUT"
-          xcrun simctl boot "$udid" || true
-          for i in $(seq 1 60); do
-            xcrun simctl list devices | grep "$udid" | grep -q "(Booted)" && break
-            sleep 5
+          set -u   # asc.py signs its token from ASC_KEY_P8_BASE64 and writes no key file
+          rc=0
+          for row in $(echo "$UPLOADED" | python3 -c 'import json,sys; [print("%s|%s|%s|%s" % (e["app"], e["bundle"], e["version"], e["build"])) for e in json.load(sys.stdin)]'); do
+            IFS='|' read -r key bundle version build <<< "$row"
+            echo "== $key ($bundle) $version ($build)"
+            echo "## \`$key\`: $version ($build)" >> "$GITHUB_STEP_SUMMARY"
+            export BUNDLE_ID=$bundle
+            notes=$RUNNER_TEMP/publish/$key/release-notes.txt
+            python3 scripts/release/asc.py wait-build --version "$version" --build "$build" --timeout 1200 \
+              && python3 scripts/release/asc.py compliance --version "$version" --build "$build" \
+              && python3 scripts/release/asc.py whats-new --version "$version" --build "$build" --file "$notes" \
+              && echo "- ✅ processed, compliance answered, What to Test set" >> "$GITHUB_STEP_SUMMARY" \
+              || { rc=1; echo "- ⚠️ processing steps did not all finish; see the log" >> "$GITHUB_STEP_SUMMARY"; }
           done
-
-      - name: Test ${{ matrix.package.name }}
-        run: scripts/release/test-package.sh "${{ matrix.package.path }}" "${{ steps.sim.outputs.udid }}"
-
-      - name: Delete this job's simulator (self-hosted only)
-        if: always() && runner.environment == 'self-hosted' && steps.sim.outputs.udid != ''
-        run: |
-          xcrun simctl shutdown "${{ steps.sim.outputs.udid }}" 2>/dev/null || true
-          xcrun simctl delete "${{ steps.sim.outputs.udid }}" || true
+          exit $rc
 
   # One check name that does not change with the matrix: green when every job that ran is
   # green (skipped jobs do not count against it). Branch protection can require this one.
   result:
     name: iOS result
     if: always()
-    needs: [gate, changes, check-apps, build, test, packages]
+    needs: [gate, changes, check-apps, mac]
     runs-on: ubuntu-latest
     steps:
       - run: |

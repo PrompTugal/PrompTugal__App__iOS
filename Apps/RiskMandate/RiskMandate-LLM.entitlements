@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyLists-1.0.dtd">
+<!--
+  STAGED, NOT IN USE. The entitlements RiskMandate needs for Stage B (Gemma 4 E2B on the device).
+  The app target still signs with RiskMandate.entitlements (empty). Switch over only after the
+  "Increased Memory Limit" capability is on for the App ID ai.riskmandate.app and the App Store
+  profile has been regenerated and its secret updated: scripts/release/check-profiles.sh fails a
+  manual-signing release whose profile lacks an entitlement the target asks for.
+  Steps: briefs/2026-11-09__m-ipad-and-the-conductors/stage-b.md
+-->
+<plist version="1.0">
+<dict>
+	<key>com.apple.developer.kernel.increased-memory-limit</key>
+	<true/>
+</dict>
+</plist>

@@ -29,9 +29,17 @@ struct InfoPlistTests {
     @Test("Every remaining purpose string is one we use")
     func onlyKnownPurposeStrings() {
         let used: Set = ["NSCameraUsageDescription", "NSFaceIDUsageDescription", "NSMicrophoneUsageDescription",
-                         "NSSpeechRecognitionUsageDescription", "NSCalendarsWriteOnlyAccessUsageDescription"]
+                         "NSSpeechRecognitionUsageDescription", "NSCalendarsWriteOnlyAccessUsageDescription",
+                         "NSLocationWhenInUseUsageDescription"]
         let declared = Set(info.keys.filter { $0.hasSuffix("UsageDescription") })
         #expect(declared == used)
+    }
+
+    @Test("The location string says the position stays on the iPhone")
+    func location() throws {
+        let text = try #require(info["NSLocationWhenInUseUsageDescription"] as? String)
+        #expect(text.contains("venue map"))
+        #expect(text.contains("not sent anywhere"))
     }
 
     @Test("Background modes: fetch only (BGAppRefreshTask), no processing")

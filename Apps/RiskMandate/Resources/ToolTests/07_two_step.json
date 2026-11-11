@@ -1,0 +1,324 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "two_step",
+ "title": "Uses a result in the next call",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "two-step-order",
+   "tests": "The model looks up the order id first, then passes that id (not a guess) to get_tracking.",
+   "tools": [
+    {
+     "name": "lookup_order",
+     "description": "Find a customer's latest order id from their first name.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "customer": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "customer"
+      ]
+     }
+    },
+    {
+     "name": "get_tracking",
+     "description": "Get the delivery status of an order id.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "order_id": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "order_id"
+      ]
+     }
+    },
+    {
+     "name": "cancel_order",
+     "description": "Cancel an order by its id.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "order_id": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "order_id"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "lookup_order": {
+     "returns": "ORD-4471"
+    },
+    "get_tracking": {
+     "returns": "In transit, arrives Tuesday"
+    },
+    "cancel_order": {
+     "returns": "order cancelled"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Where is Ana's order?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tools_called_in_order",
+     "names": [
+      "lookup_order",
+      "get_tracking"
+     ]
+    },
+    {
+     "kind": "args_equal",
+     "name": "get_tracking",
+     "arg": "order_id",
+     "rule": "exact",
+     "value": "ORD-4471",
+     "label": "uses the id the lookup returned"
+    },
+    {
+     "kind": "answers_after_result",
+     "contains": [
+      "Tuesday",
+      "transit"
+     ]
+    }
+   ],
+   "max_steps": 4,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "lookup_order",
+        "arguments": {
+         "customer": "Ana"
+        }
+       }
+      ]
+     },
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_tracking",
+        "arguments": {
+         "order_id": "ORD-4471"
+        }
+       }
+      ]
+     },
+     {
+      "text": "It is in transit and arrives Tuesday.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_tracking",
+        "arguments": {
+         "order_id": "Ana"
+        }
+       }
+      ]
+     },
+     {
+      "text": "I could not tell.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model look up the order id first and then use that id to get the tracking?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "two-step-city",
+   "tests": "The model finds the numeric city id, then passes that integer to get_forecast.",
+   "tools": [
+    {
+     "name": "find_city_id",
+     "description": "Find the numeric id of a city by name.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "name"
+      ]
+     }
+    },
+    {
+     "name": "get_forecast",
+     "description": "Get tomorrow's forecast for a numeric city id.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city_id": {
+        "type": "integer"
+       }
+      },
+      "required": [
+       "city_id"
+      ]
+     }
+    },
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city name.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "find_city_id": {
+     "returns": "7"
+    },
+    "get_forecast": {
+     "returns": "Rain tomorrow, 14 C"
+    },
+    "get_weather": {
+     "returns": "18 C, sunny"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Will it rain tomorrow in Porto?"
+    }
+   ],
+   "checks": [
+    {
+     "kind": "tools_called_in_order",
+     "names": [
+      "find_city_id",
+      "get_forecast"
+     ]
+    },
+    {
+     "kind": "args_equal",
+     "name": "get_forecast",
+     "arg": "city_id",
+     "rule": "exact",
+     "value": 7,
+     "label": "uses the id the lookup returned"
+    },
+    {
+     "kind": "answers_after_result",
+     "contains": [
+      "rain"
+     ]
+    }
+   ],
+   "max_steps": 4,
+   "reference": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "find_city_id",
+        "arguments": {
+         "name": "Porto"
+        }
+       }
+      ]
+     },
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_forecast",
+        "arguments": {
+         "city_id": 7
+        }
+       }
+      ]
+     },
+     {
+      "text": "Yes, rain is expected tomorrow, around 14 C.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "find_city_id",
+        "arguments": {
+         "name": "Porto"
+        }
+       }
+      ]
+     },
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "get_forecast",
+        "arguments": {
+         "city_id": 3
+        }
+       }
+      ]
+     },
+     {
+      "text": "No idea.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model find the city id first and then use that id to get the forecast?",
+    "expect": "pass"
+   }
+  }
+ ]
+}

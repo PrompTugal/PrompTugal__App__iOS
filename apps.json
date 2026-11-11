@@ -5,7 +5,7 @@
     "PTWeb": {"path": "Packages/PTWeb", "deps": ["PTCore"]},
     "PTNowNext": {"path": "Packages/PTNowNext", "deps": []},
     "PTAgenda": {"path": "Packages/PTAgenda", "deps": ["PTCore", "PTWeb", "PTNowNext"]},
-    "PTNews": {"path": "Packages/PTNews", "deps": ["PTCore", "PTWeb"]},
+    "PTNews": {"path": "Packages/PTNews", "deps": ["PTCore", "PTWeb", "SGitVault"]},
     "PTVaultUI": {"path": "Packages/PTVaultUI", "deps": ["PTCore", "SGitVault"]},
     "PTAsk": {"path": "Packages/PTAsk", "deps": ["PTCore", "PTAgenda", "PTNews", "PTVaultUI"]},
     "PTLanes": {"path": "Packages/PTLanes", "deps": ["PTCore", "PTVaultUI"]},

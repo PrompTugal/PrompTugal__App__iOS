@@ -2,17 +2,19 @@ import PTAgenda
 import PTCore
 import SwiftUI
 
-/// Settings of the public app: version, links, the independence note. The debug switch exists only in DEBUG builds.
+/// More: reminders, the welcome screen again, version, links, the independence note. The debug switch exists only in DEBUG builds.
 struct PublicSettingsView: View {
     #if DEBUG
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     #endif
 
     @State private var showHow = false
+    @AppStorage(Appearance.key) private var appearance = Appearance.light.rawValue
     @Environment(\.openDestination) private var open
 
     var body: some View {
         Form {
+            StandSection()
             Section {
                 NavigationLink {
                     ReminderSettingsView()
@@ -20,8 +22,21 @@ struct PublicSettingsView: View {
                     Label("Reminders", systemImage: "bell.badge")
                 }
                 Button { showHow = true } label: {
-                    Label("How PrompTugal works", systemImage: "questionmark.circle")
+                    Label("Show the welcome again", systemImage: "questionmark.circle")
                 }
+            }
+            Section {
+                Picker(selection: $appearance) {
+                    ForEach(Appearance.allCases) { Text($0.title).tag($0.rawValue) }
+                } label: {
+                    Label("Appearance", systemImage: "circle.lefthalf.filled")
+                }
+                .accessibilityIdentifier("pt.more.appearance")
+            }
+            Section {
+                PickCalendarToggle()
+            } footer: {
+                Text("The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.")
             }
             Section {
                 LabeledContent("Version") {
@@ -45,7 +60,7 @@ struct PublicSettingsView: View {
             }
             #endif
         }
-        .navigationTitle("Settings")
+        .navigationTitle("More")
         .sheet(isPresented: $showHow) {
             OnboardingView { chooseTalks in
                 showHow = false
@@ -64,5 +79,52 @@ struct PublicSettingsView: View {
         #else
         text
         #endif
+    }
+}
+
+/// Round 4 of the redesign: where to meet RiskMandate at the summit. The stand line is the one Dinis approved.
+struct StandSection: View {
+    static let site = URL(string: "https://riskmandate.ai")!
+
+    var body: some View {
+        Section {
+            VStack(alignment: .leading, spacing: Space.xs) {
+                Text("Meet RiskMandate").font(Typo.headline).foregroundStyle(Palette.ink)
+                Text("Thursday 12 November, booth A1-30, ALPHA 1, Pavilion 1")
+                    .font(.subheadline).foregroundStyle(Palette.muted)
+            }
+            .accessibilityElement(children: .combine)
+            Link(destination: Self.site) {
+                Label("riskmandate.ai", systemImage: "arrow.up.right.square")
+            }
+            .accessibilityIdentifier("pt.more.riskmandate")
+        } header: {
+            Text("At the summit")
+        }
+    }
+}
+
+/// Light (the default), Dark, or whatever the iPhone is set to.
+enum Appearance: String, CaseIterable, Identifiable {
+    case light, dark, system
+
+    static let key = "appearance"
+    var id: String { rawValue }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .light: "Light"
+        case .dark: "Dark"
+        case .system: "Match iPhone"
+        }
+    }
+
+    /// nil follows the iPhone.
+    var scheme: ColorScheme? {
+        switch self {
+        case .light: .light
+        case .dark: .dark
+        case .system: nil
+        }
     }
 }

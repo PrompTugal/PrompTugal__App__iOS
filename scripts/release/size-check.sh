@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # size-check.sh <build-info.json>
-# Compares this build's sizes with the latest successful iOS release build on
-# dev (its build-info artifact), and with fixed budgets in size-budget.json.
+# Compares this build's sizes with the latest successful build of the app on
+# dev (its build-info, from ios.yml or ios-release.yml), and with fixed budgets in size-budget.json.
 #   - over a budget                      -> error, the job fails
 #   - grew more than warnPercent vs dev  -> warning in the summary
 # Needs GH_TOKEN (the workflow's GITHUB_TOKEN, actions: read) for the comparison;
@@ -20,13 +20,10 @@ summary "| --- | ---: | ---: | ---: | ---: |"
 
 base=""
 if [ -n "${GH_TOKEN:-}" ] && command -v gh >/dev/null; then
-  # The newest successful dev run that has a build-info for THIS app. Runs that did not
-  # touch the app have none, so look back a few runs. Older runs named it plain build-info.
-  for run in $(gh run list --workflow ios-release.yml --branch dev --status success --limit 20 --json databaseId -q '.[].databaseId' 2>/dev/null || true); do
-    for art in "build-info-${APP_KEY:-app}" build-info; do
-      if gh run download "$run" -n "$art" -D "$OUT/baseline" >/dev/null 2>&1; then base=$OUT/baseline/build-info.json; break 2; fi
-    done
-  done
+  # The newest successful dev run that has a build-info for THIS app (ios.yml or ios-release.yml).
+  if "$(dirname "$0")/find-build-info.sh" "${APP_KEY:-app}" "$OUT/baseline" success dev >/dev/null; then
+    base=$OUT/baseline/build-info.json
+  fi
 fi
 
 warn=$(get "$budget" warnPercent)

@@ -1,5 +1,6 @@
 import PTAgenda
 import PTCore
+import PTExplore
 import PTNews
 import PTWeb
 import SwiftUI
@@ -16,12 +17,26 @@ extension EnvironmentValues {
     }
 }
 
+/// Opens a talk in the app's own talk sheet (pick, calendar, map). Set by Now; nil elsewhere.
+private struct OpenTalkKey: EnvironmentKey {
+    static let defaultValue: ((TalkSheetItem) -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var openTalk: ((TalkSheetItem) -> Void)? {
+        get { self[OpenTalkKey.self] }
+        set { self[OpenTalkKey.self] = newValue }
+    }
+}
+
 /// Now (ux spec NOW-1): the first screen. It changes with the summit's phase, worked out from Lisbon time and the
 /// agenda (`NowModel`, PTAgenda): before the summit a countdown, during it For you, On now and Up next, between days
 /// Tomorrow, after it a thank you. The latest news, the practical card and the Ask card are in every phase.
 /// Every user-facing string is written exactly as in the ux spec, so the String Catalog keys match.
 struct NowView: View {
     @Environment(ReaderStore.self) private var reader
+    /// A talk opened from a row: the same native sheet as Explore and My program.
+    @State private var opened: TalkSheetItem?
     var body: some View {
         // One minute at a time: the clock, the model and the countdowns follow it. `-PTNow` fixes the time in DEBUG builds.
         TimelineView(.everyMinute) { context in
@@ -29,6 +44,7 @@ struct NowView: View {
             let model = reader.nowModel(at: now)
             Page(maxWidth: Space.readable) {
                 header(now: now)
+                AppNoticeCard(now: now)
                 if reader.agenda.isEmpty {
                     agendaMissing
                 } else {
@@ -38,10 +54,14 @@ struct NowView: View {
                         startProgram(model, now: now)
                     case .during:
                         forYou(model, now: now)
+                        whereToBe(model)
+                        InterviewsStrip()
                         onNow(model, now: now)
                         upNext(model, now: now)
                     case .between:
                         forYou(model, now: now)
+                        whereToBe(model)
+                        InterviewsStrip()
                         tomorrow(model, now: now)
                     case .after:
                         thanks(count: model.pickCount)
@@ -54,13 +74,22 @@ struct NowView: View {
         .background(Palette.paper.ignoresSafeArea())
         .navigationTitle("Now")
         .navigationBarTitleDisplayMode(.inline)
-        .refreshable { await reader.refresh() }
+        .refreshable {
+            await reader.refresh()
+            await AppNoticeStore.shared.load(force: true)
+        }
+        .environment(\.openTalk, { opened = $0 })
+        .talkSheet($opened)
     }
 
     // MARK: Header: the date and the time in Lisbon, then how fresh the data is
 
     private func header(now: Date) -> some View {
         VStack(alignment: .leading, spacing: Space.xs) {
+            // Round 3: a friendly first line, by the time in Lisbon (Indi's word).
+            Text(Self.greeting(at: now)).font(Typo.display).foregroundStyle(Palette.ink)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityIdentifier("pt.now.greeting")
             Kicker(String(localized: "Lisbon · \(now.formatted(Self.dayStyle)) · \(Lisbon.timeLabel(now))"))
                 .accessibilityLabel(String(localized: "Lisbon, \(now.formatted(Self.dayStyle)) at \(Lisbon.timeLabel(now))"))
             FreshnessLabel(updated: reader.agendaUpdated ?? reader.newsUpdated,
@@ -68,11 +97,22 @@ struct NowView: View {
         }
     }
 
-    private static let dayStyle: Date.FormatStyle = {
-        var style = Date.FormatStyle().weekday(.wide).day().month(.wide)
+    /// "Good morning" before 12:00, "Good afternoon" until 18:00, then "Good evening", by the time in Lisbon.
+    static func greeting(at date: Date) -> LocalizedStringKey {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = Lisbon.zone
+        let hour = calendar.component(.hour, from: date)
+        if hour < 12 { return "Good morning" }
+        if hour < 18 { return "Good afternoon" }
+        return "Good evening"
+    }
+
+    /// Computed, not stored: the chosen culture can change while the app runs.
+    private static var dayStyle: Date.FormatStyle {
+        var style = Date.FormatStyle().locale(AppCulture.locale).weekday(.wide).day().month(.wide)
         style.timeZone = Lisbon.zone
         return style
-    }()
+    }
 
     /// No agenda yet (the first launch offline, or still loading): a loading or failed state with "Try again", never a blank screen.
     private var agendaMissing: some View {
@@ -118,11 +158,11 @@ struct NowView: View {
         return [day + ", " + Lisbon.timeLabel(entry.start), entry.place].filter { !$0.isEmpty }.joined(separator: " · ")
     }
 
-    private static let shortDayStyle: Date.FormatStyle = {
-        var style = Date.FormatStyle().weekday(.abbreviated).day().month(.abbreviated)
+    private static var shortDayStyle: Date.FormatStyle {
+        var style = Date.FormatStyle().locale(AppCulture.locale).weekday(.abbreviated).day().month(.abbreviated)
         style.timeZone = Lisbon.zone
         return style
-    }()
+    }
 
     /// NOW-1b: with no picks, a card that starts the program; with picks, the next one.
     @ViewBuilder private func startProgram(_ model: NowModel, now: Date) -> some View {
@@ -135,13 +175,33 @@ struct NowView: View {
 
     // MARK: State B, during the summit
 
+    /// Where I need to be in the next 10 and 20 minutes, with the walk (PTAgenda's card): only for people with picks.
+    @ViewBuilder private func whereToBe(_ model: NowModel) -> some View {
+        if model.pickCount > 0 { WhereToBeCard() }
+    }
+
     /// NOW-1c: my current pick, or my next one.
     @ViewBuilder private func forYou(_ model: NowModel, now: Date) -> some View {
         if let forYou = model.forYou {
-            TitledCard(String(localized: "For you"),
-                       kicker: forYou.isNow ? String(localized: "On now") : String(localized: "Next in your program")) {
+            // The focal point of Now: a solid red card, paper text.
+            VStack(alignment: .leading, spacing: Space.m) {
+                HStack {
+                    Text("For you").font(.headline).foregroundStyle(Palette.paper)
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer(minLength: Space.s)
+                    Text(forYou.isNow ? String(localized: "On now") : String(localized: "Next in your program"))
+                        .font(.caption.weight(.semibold)).foregroundStyle(Palette.red)
+                        .padding(.horizontal, Space.m).padding(.vertical, 4)
+                        .background(Palette.paper, in: Capsule())
+                }
                 SessionRow(entry: forYou.entry, now: now, style: .forYou, clash: forYou.clashes)
             }
+            .padding(Space.l)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Palette.red, in: RoundedRectangle(cornerRadius: Space.radius, style: .continuous))
+            .shadow(color: Palette.red.opacity(0.28), radius: 14, y: 8)
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("pt.now.forYou")
         } else if model.phase == .during {
             StartProgramCard()
         }
@@ -242,37 +302,51 @@ private struct SessionRow: View {
     @Environment(ReaderStore.self) private var reader
     @Environment(ScheduleStore.self) private var schedule
 
+    /// For you sits on the red hero card: its text is paper, not ink.
+    private var onHero: Bool { style == .forYou }
+    private var ink: Color { onHero ? Palette.paper : Palette.ink }
+    private var muted: Color { onHero ? Palette.paper.opacity(0.85) : Palette.muted }
+
     var body: some View {
         HStack(alignment: .top, spacing: Space.m) {
             // The column is as wide as "88:88 AM" (12-hour locales), so a time never wraps and the rows line up.
             Text(verbatim: "88:88 AM").font(Typo.data).lineLimit(1).fixedSize(horizontal: true, vertical: false).hidden()
                 .overlay(alignment: .leading) {
                     Text(Lisbon.timeLabel(entry.start))
-                        .font(Typo.data).foregroundStyle(Palette.ink)
+                        .font(Typo.data.weight(.semibold)).foregroundStyle(ink)
                         .lineLimit(1).fixedSize(horizontal: true, vertical: false)
                 }
-            link {
+            EntryLink(entry: entry) {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: Space.xs) {
                         if entry.isLive(at: now) {
-                            Circle().fill(Palette.red).frame(width: 7, height: 7).accessibilityHidden(true)
+                            // A live session's dot pulses.
+                            Image(systemName: "circle.fill").font(.system(size: 7))
+                                .foregroundStyle(onHero ? Palette.paper : Palette.red)
+                                .symbolEffect(.pulse, options: .repeating)
+                                .accessibilityHidden(true)
                         }
-                        Text(entry.title).font(style == .forYou ? Typo.headline : .subheadline.weight(.semibold))
-                            .foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                        Text(entry.title).font(onHero ? .title3.weight(.semibold) : .subheadline.weight(.semibold))
+                            .foregroundStyle(ink).multilineTextAlignment(.leading)
                     }
-                    Text(detail).font(Typo.data).foregroundStyle(Palette.muted).multilineTextAlignment(.leading)
+                    Text(detail).font(Typo.data).foregroundStyle(muted).multilineTextAlignment(.leading)
                     if clash {
-                        Text("Clash").font(.caption.weight(.semibold)).foregroundStyle(Palette.amber)
+                        Text("Clash").font(.caption.weight(.semibold))
+                            .foregroundStyle(onHero ? Palette.ink : Palette.amber)
+                            .padding(.horizontal, onHero ? Space.s : 0).padding(.vertical, onHero ? 2 : 0)
+                            .background(onHero ? Palette.sun : .clear, in: Capsule())
                     }
                 }
             }
             Spacer(minLength: Space.xs)
             Button { toggle() } label: {
                 Image(systemName: entry.mine ? "star.fill" : "star")
-                    .foregroundStyle(entry.mine ? Palette.red : Palette.muted)
+                    .foregroundStyle(onHero ? Palette.paper : (entry.mine ? Palette.red : Palette.muted))
+                    .symbolEffect(.bounce, value: entry.mine)
                     .frame(minWidth: 44, minHeight: 44)
             }
             .buttonStyle(.plain)
+            .sensoryFeedback(.impact(weight: .light), trigger: entry.mine)
             .accessibilityLabel(entry.mine ? LocalizedStringKey("Remove from my program") : LocalizedStringKey("Add to my program"))
         }
         .accessibilityElement(children: .contain)
@@ -298,15 +372,6 @@ private struct SessionRow: View {
         return parts.joined(separator: " · ")
     }
 
-    @ViewBuilder private func link<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
-        if let url = entry.url {
-            NavigationLink { WebPage(url: url, title: entry.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
-                .buttonStyle(.plain)
-        } else {
-            content().frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
     private func toggle() {
         // The entry's id is the schedule slug; the agenda's events are keyed by their page.
         if let event = reader.agenda.first(where: { ScheduleID.fromPage($0.page) == entry.id }) {
@@ -317,13 +382,21 @@ private struct SessionRow: View {
     }
 }
 
-/// A row that opens a session's page on the site.
+/// A row that opens a talk: the app's native talk sheet when the agenda has it, else the talk's page on the site.
 private struct EntryLink<Content: View>: View {
     let entry: NowModel.Entry
     @ViewBuilder let content: () -> Content
 
+    @Environment(ReaderStore.self) private var reader
+    @Environment(\.openTalk) private var openTalk
+
     var body: some View {
-        if let url = entry.url {
+        if let openTalk, let event = reader.agenda.first(where: { ScheduleID.fromPage($0.page) == entry.id }) {
+            Button { openTalk(TalkSheetItem(talk: TalkRef(event))) } label: {
+                content().frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        } else if let url = entry.url {
             NavigationLink { WebPage(url: url, title: entry.title) } label: { content().frame(maxWidth: .infinity, alignment: .leading) }
                 .buttonStyle(.plain)
         } else {
@@ -348,9 +421,9 @@ private struct LatestNewsCard: View {
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
             ForEach(stories) { story in
-                NavigationLink { WebPage(url: story.url, title: story.title) } label: {
+                NavigationLink { SitePage(url: story.url, title: story.title) } label: {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink)
+                        Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
                             .multilineTextAlignment(.leading)
                         if !story.summary.isEmpty {
                             Text(story.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(2)
@@ -377,6 +450,8 @@ struct PracticalCard: View {
         let title: LocalizedStringKey
         let line: LocalizedStringKey
         let link: URL?
+        /// A screen of the app that the row opens instead of a link.
+        var destination: String?
         var id: String { symbol }
     }
 
@@ -391,7 +466,7 @@ struct PracticalCard: View {
         Row(symbol: "bus.fill", title: "Buses", line: "Carris runs extra buses to Oriente during the summit.",
             link: URL(string: "https://www.carris.pt/")),
         Row(symbol: "map", title: "Venue map", line: "FIL, MEO Arena and Pavilhão de Portugal, with what is on in each.",
-            link: URL(string: "https://promptugal.news/summit/venue/index.html")),
+            link: nil, destination: "map"),
         Row(symbol: "phone.fill", title: "Emergency", line: "Call 112.", link: URL(string: "tel:112")),
     ]
 
@@ -401,7 +476,10 @@ struct PracticalCard: View {
         TitledCard(String(localized: "Practical"), kicker: String(localized: "Lisbon · 9–12 Nov")) {
             VStack(alignment: .leading, spacing: Space.m) {
                 ForEach(rows) { row in
-                    if let link = row.link {
+                    if let destination = row.destination {
+                        Button { open(destination) } label: { content(row, chevron: true) }
+                            .buttonStyle(.plain)
+                    } else if let link = row.link {
                         Link(destination: link) { content(row, chevron: true) }
                             .buttonStyle(.plain)
                     } else {
@@ -423,7 +501,7 @@ struct PracticalCard: View {
             }
             Spacer(minLength: Space.xs)
             if chevron {
-                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(Palette.muted).accessibilityHidden(true)
+                Image(systemName: "chevron.forward").font(.footnote).foregroundStyle(Palette.muted).accessibilityHidden(true)
             }
         }
         .contentShape(Rectangle())

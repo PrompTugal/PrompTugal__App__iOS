@@ -8,6 +8,12 @@ enum RiskMandateContent {
 
 struct HomeView: View {
     var body: some View {
+        NavigationStack {
+            content
+        }
+    }
+
+    private var content: some View {
         VStack(spacing: 20) {
             Text(RiskMandateContent.title)
                 .font(.largeTitle.bold())
@@ -17,6 +23,12 @@ struct HomeView: View {
                 .foregroundStyle(.secondary)
             Link("Read about Agent Behaviour Policies", destination: RiskMandateContent.abpURL)
                 .font(.headline)
+            NavigationLink {
+                WorkbenchView()
+            } label: {
+                Label("Workbench: an AI model on this device", systemImage: "cpu")
+            }
+            .font(.headline)
         }
         .padding(24)
         .frame(maxWidth: 520)

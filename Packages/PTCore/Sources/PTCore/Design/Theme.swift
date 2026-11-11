@@ -27,6 +27,18 @@ public enum Palette {
 
     public static func series(_ index: Int) -> Color { series[abs(index) % series.count] }
 
+    /// Sun: a warm yellow for highlights behind ink (the redesign's round 6, "make it pop"). Ink on sun passes 4.5:1.
+    public static let sun = Color(light: 0xF6C453, dark: 0xF2C14E)
+    /// The accents a category may take: red, blue, green, amber and purple. Never more on one screen than it has categories.
+    public static let accents: [Color] = [red, blue, green, amber, series[4]]
+
+    /// A stable accent for a category (a news category, a stage).
+    public static func accent(for key: String) -> Color {
+        var hash: UInt32 = 2166136261
+        for byte in key.lowercased().utf8 { hash = (hash ^ UInt32(byte)) &* 16777619 }
+        return accents[Int(hash % UInt32(accents.count))]
+    }
+
     /// A stable colour for any string (an agent, a person, a type).
     public static func stable(_ key: String) -> Color {
         var hash: UInt32 = 2166136261
@@ -60,17 +72,42 @@ extension UIColor {
     }
 }
 
-/// Type: serif for headlines (like the brand), SF for interface text, SF Mono for data.
-/// All styles are text styles, so they follow Dynamic Type.
+/// The app's look. `classic` (the Team app): serif headlines, uppercase kickers, SF Mono for data.
+/// `soft` (the public app, from the news app redesign's round 3): SF throughout, light large titles, sentence-case
+/// kickers, times in SF with even-width digits, rounder cards. Story headlines stay serif in both (`Typo.story`).
+public enum Look: Sendable {
+    case classic, soft
+
+    /// Set once, before the first view, by an app that wants `soft`. Read only on the main thread by views.
+    nonisolated(unsafe) public static var current: Look = .classic
+    static var isSoft: Bool { current == .soft }
+}
+
+/// Type for the current `Look`. All styles are text styles, so they follow Dynamic Type.
 public enum Typo {
-    public static let display = Font.system(.largeTitle, design: .serif, weight: .bold)
-    public static let title = Font.system(.title2, design: .serif, weight: .bold)
-    public static let headline = Font.system(.headline, design: .serif, weight: .semibold)
-    public static let kicker = Font.caption.weight(.semibold)
+    public static var display: Font {
+        Look.isSoft ? .system(.largeTitle, weight: .light) : .system(.largeTitle, design: .serif, weight: .bold)
+    }
+    public static var title: Font {
+        Look.isSoft ? .system(.title2, weight: .semibold) : .system(.title2, design: .serif, weight: .bold)
+    }
+    public static var headline: Font {
+        Look.isSoft ? .system(.headline, weight: .semibold) : .system(.headline, design: .serif, weight: .semibold)
+    }
+    /// News: story headlines keep the serif in every look, so News still reads like a paper.
+    public static let story = Font.system(.headline, design: .serif, weight: .semibold)
+    public static let storyTitle = Font.system(.title2, design: .serif, weight: .bold)
+    public static let storyDisplay = Font.system(.largeTitle, design: .serif, weight: .bold)
+    public static var kicker: Font { Look.isSoft ? Font.footnote.weight(.semibold) : Font.caption.weight(.semibold) }
     public static let body = Font.body
     public static let meta = Font.footnote
-    public static let data = Font.system(.footnote, design: .monospaced)
-    public static let dataSmall = Font.system(.caption2, design: .monospaced)
+    /// Times and short facts. Soft: SF with even-width digits, so times line up without a typewriter face.
+    public static var data: Font {
+        Look.isSoft ? Font.subheadline.monospacedDigit() : .system(.footnote, design: .monospaced)
+    }
+    public static var dataSmall: Font {
+        Look.isSoft ? Font.caption.monospacedDigit() : .system(.caption2, design: .monospaced)
+    }
     public static let number = Font.system(.title, design: .rounded, weight: .semibold).monospacedDigit()
 }
 
@@ -82,6 +119,6 @@ public enum Space {
     public static let l: CGFloat = 16
     public static let xl: CGFloat = 24
     public static let xxl: CGFloat = 32
-    public static let radius: CGFloat = 14
+    public static var radius: CGFloat { Look.isSoft ? 22 : 14 }
     public static let readable: CGFloat = 680
 }

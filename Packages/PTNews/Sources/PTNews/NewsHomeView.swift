@@ -14,7 +14,7 @@ public struct NewsHomeView: View {
     public init() {}
 
     enum Form: String, CaseIterable, Identifiable {
-        case feed = "Feed", editions = "Editions", stories = "Stories"
+        case feed = "Feed", editions = "Editions", stories = "Stories", videos = "Videos"
         var id: Self { self }
         /// What the segmented control shows. The raw values stay as they are: they are the saved selection.
         var label: String {
@@ -22,6 +22,7 @@ public struct NewsHomeView: View {
             case .feed: String(localized: "Latest", bundle: .module)
             case .editions: String(localized: "Newsletter", bundle: .module)
             case .stories: String(localized: "Stories", bundle: .module)
+            case .videos: String(localized: "Interviews", bundle: .module)
             }
         }
         /// The English name, for the web twin's title.
@@ -30,6 +31,7 @@ public struct NewsHomeView: View {
             case .feed: "Latest"
             case .editions: "Newsletter"
             case .stories: "Stories"
+            case .videos: "Interviews"
             }
         }
     }
@@ -46,6 +48,7 @@ public struct NewsHomeView: View {
             case .feed: feed
             case .editions: editions
             case .stories: stories
+            case .videos: VideosSection()
             }
         }
         .navigationTitle(String(localized: "News", bundle: .module))
@@ -66,6 +69,7 @@ public struct NewsHomeView: View {
         case .feed: FeedClient.articleIndex
         case .editions: FeedClient.site.appendingPathComponent("newsletter/")
         case .stories: FeedClient.site.appendingPathComponent("newsroom/stories/")
+        case .videos: FeedClient.site
         }
     }
 
@@ -78,9 +82,11 @@ public struct NewsHomeView: View {
                       hasData: false, title: String(localized: "news feed", bundle: .module)) { Task { await store.refresh() } }
         }
         if let lead = store.news.first {
-            NavigationLink { WebPage(url: lead.url, title: lead.title) } label: {
+            NavigationLink { SitePage(url: lead.url, title: lead.title) } label: {
                 Card(padding: Space.xl) {
-                    if !lead.category.isEmpty { Kicker(lead.category) }
+                    // The lead story's focal point: a short sun band above the kicker.
+                    Capsule().fill(Palette.sun).frame(width: 44, height: 6).accessibilityHidden(true)
+                    if !lead.category.isEmpty { Kicker(lead.category, color: Palette.accent(for: lead.category)) }
                     Text(lead.title).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
                     if !lead.summary.isEmpty { Text(lead.summary).font(.body).foregroundStyle(Palette.muted) }
                     if let published = lead.published {
@@ -93,10 +99,10 @@ public struct NewsHomeView: View {
         }
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Space.m)], spacing: Space.m) {
             ForEach(store.news.dropFirst()) { story in
-                NavigationLink { WebPage(url: story.url, title: story.title) } label: {
+                NavigationLink { SitePage(url: story.url, title: story.title) } label: {
                     Card {
-                        if !story.category.isEmpty { Kicker(story.category) }
-                        Text(story.title).font(Typo.headline).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                        if !story.category.isEmpty { Kicker(story.category, color: Palette.accent(for: story.category)) }
+                        Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                         if !story.summary.isEmpty {
                             Text(story.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(3)
                         }
@@ -129,7 +135,7 @@ public struct NewsHomeView: View {
                             Text(String(localized: "assembled from data", bundle: .module)).font(.caption2).foregroundStyle(Palette.muted)
                         }
                     }
-                    Text(edition.title ?? "Edition").font(Typo.title).foregroundStyle(Palette.ink)
+                    Text(edition.title ?? "Edition").font(Typo.storyTitle).foregroundStyle(Palette.ink)
                     if let summary = edition.summary { Text(summary).font(.subheadline).foregroundStyle(Palette.muted) }
                 }
             }
@@ -148,7 +154,7 @@ public struct NewsHomeView: View {
                     TitledCard(column.name ?? column.id, kicker: "\(items.count) stories") {
                         ForEach(items) { story in
                             if let url = story.url {
-                                NavigationLink { WebPage(url: url, title: String(localized: "Story", bundle: .module)) } label: {
+                                NavigationLink { SitePage(url: url, title: String(localized: "Story", bundle: .module)) } label: {
                                     NewsRow(title: story.title ?? story.id, detail: story.next, symbol: "doc.text",
                                             tint: Palette.stable(column.id))
                                 }
@@ -175,7 +181,7 @@ struct EditionReader: View {
     var body: some View {
         Page(maxWidth: Space.readable) {
             Kicker(edition.edition ?? "Edition")
-            Text(edition.title ?? "").font(Typo.display)
+            Text(edition.title ?? "").font(Typo.storyDisplay)
             if failed {
                 GapNote(title: String(localized: "This edition could not be loaded", bundle: .module), text: String(localized: "Open it on the web with the button at the top.", bundle: .module))
             } else if blocks.isEmpty {
@@ -184,7 +190,7 @@ struct EditionReader: View {
             ForEach(blocks) { block in
                 switch block.kind {
                 case .heading:
-                    Text(block.text).font(Typo.title).padding(.top, Space.s).accessibilityAddTraits(.isHeader)
+                    Text(block.text).font(Typo.storyTitle).padding(.top, Space.s).accessibilityAddTraits(.isHeader)
                 case .bullet:
                     HStack(alignment: .firstTextBaseline, spacing: Space.s) {
                         Circle().fill(Palette.red).frame(width: 5, height: 5).accessibilityHidden(true)

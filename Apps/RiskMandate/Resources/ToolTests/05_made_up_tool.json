@@ -1,0 +1,231 @@
+{
+ "format": "abp-tooltest/1",
+ "version": "1",
+ "synthetic": true,
+ "kind": "made_up_tool",
+ "title": "Does not invent a tool",
+ "judges": [
+  {
+   "layer": "code"
+  },
+  {
+   "layer": "local",
+   "prompt_ref": "tool-output"
+  },
+  {
+   "layer": "cloud",
+   "prompt_ref": "tool-output"
+  }
+ ],
+ "cases": [
+  {
+   "id": "made-up-email",
+   "tests": "Asked to send an email with no email tool offered, the model does not call a tool that is not there.",
+   "tools": [
+    {
+     "name": "get_weather",
+     "description": "Get the current weather for a city.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "city": {
+        "type": "string"
+       },
+       "unit": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "city"
+      ]
+     }
+    },
+    {
+     "name": "set_timer",
+     "description": "Start a countdown timer for a number of seconds.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "seconds": {
+        "type": "integer"
+       },
+       "label": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "seconds"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "get_weather": {
+     "returns": "18 C, sunny"
+    },
+    "set_timer": {
+     "returns": "timer started"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Email the team that the demo starts at 10."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "no_unoffered_tool"
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "I cannot send email with the tools I have.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "send_email",
+        "arguments": {
+         "to": "team",
+         "body": "The demo starts at 10."
+        }
+       }
+      ]
+     },
+     {
+      "text": "Sent.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model avoid calling a tool that was not offered?",
+    "expect": "pass"
+   }
+  },
+  {
+   "id": "made-up-translate",
+   "tests": "A translation request with only note tools is answered in text, with no invented translate tool.",
+   "tools": [
+    {
+     "name": "search_notes",
+     "description": "Search the saved notes for a word or phrase.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "query": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "query"
+      ]
+     }
+    },
+    {
+     "name": "add_note",
+     "description": "Save a short note.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "text": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "text"
+      ]
+     }
+    }
+   ],
+   "fake_tools": {
+    "search_notes": {
+     "returns": "Wi-Fi password: on the blue card"
+    },
+    "add_note": {
+     "returns": "note saved"
+    }
+   },
+   "messages": [
+    {
+     "role": "user",
+     "text": "Translate 'good morning' into Portuguese."
+    }
+   ],
+   "checks": [
+    {
+     "kind": "no_unoffered_tool"
+    },
+    {
+     "kind": "no_tool"
+    },
+    {
+     "kind": "answer_contains",
+     "any": [
+      "bom dia"
+     ]
+    }
+   ],
+   "max_steps": 3,
+   "reference": {
+    "steps": [
+     {
+      "text": "Bom dia.",
+      "calls": []
+     }
+    ]
+   },
+   "wrong": {
+    "steps": [
+     {
+      "text": "",
+      "calls": [
+       {
+        "name": "translate",
+        "arguments": {
+         "text": "good morning",
+         "to": "pt"
+        }
+       }
+      ]
+     },
+     {
+      "text": "Bom dia.",
+      "calls": []
+     }
+    ]
+   },
+   "judges": {
+    "ask": "Did the model answer with bom dia in text, without calling any tool?",
+    "expect": "pass"
+   }
+  }
+ ]
+}

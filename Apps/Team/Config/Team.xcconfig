@@ -14,6 +14,7 @@ INFOPLIST_FILE = Config/Team-Info.plist
 
 // Calendar export (team: CalendarExport) writes events only.
 INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = PT Team adds the sessions you pick to your calendar when you ask it to.
+INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = PT Team shows where you are on the venue map, only while you use the app. Your position stays on this iPhone and is not sent anywhere.
 
 // Your own team and overrides, never committed. Copy Local.xcconfig.example.
 #include? "../../../Config/Local.xcconfig"

@@ -1,0 +1,17 @@
+PrompTugal: Lisbon Summit, the independent companion app for the Lisbon tech summit, 9 to 12 November. No account needed.
+
+New in this build: a simpler layout.
+- Five tabs: Now, My program, Explore, Map and News. The venue map is now one tap away.
+- The round More button at the top right of every tab has reminders, help, privacy and support.
+- Tap a talk on Now to open it in the app, with the star and Add to Calendar.
+- Every talk has Show on the map.
+
+Please try, at the venue if you can:
+- Find a talk in Explore, tap the star, then find it on the map.
+- Turn on reminders in More. You get a notification before each pick.
+- Read a story in News, then try the app in airplane mode. The program, your picks and saved news should still work.
+
+Tell us with Send Beta Feedback (take a screenshot in the app, or open TestFlight): what was confusing, what was missing, and anything that broke. Please include what you were trying to do.
+
+Privacy: https://ios.app.promptugal.news/privacy.html
+Support: https://ios.app.promptugal.news/support.html

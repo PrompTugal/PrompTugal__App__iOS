@@ -32,7 +32,12 @@ public final class ReaderStore {
     public var storageMessage: String?
 
     // Both go through the screenshot filter (-PTHideTerm, Debug builds only; a no-op in Release).
-    public var agenda: [Event] { ScreenshotFilter.events(cache.agenda) }
+    /// Days called off (`AgendaHub.cancelledDays`) are left out.
+    public var agenda: [Event] {
+        let cancelled = AgendaHub.cancelledDays
+        let all = ScreenshotFilter.events(cache.agenda)
+        return cancelled.isEmpty ? all : all.filter { !cancelled.contains($0.date) }
+    }
     public var news: [Story] { ScreenshotFilter.stories(cache.news) }
     public var agendaUpdated: Date? { cache.agendaUpdated }
     public var newsUpdated: Date? { cache.newsUpdated }

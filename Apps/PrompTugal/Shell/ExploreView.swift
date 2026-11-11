@@ -23,6 +23,7 @@ extension EnvironmentValues {
 struct ExploreView: View {
     @Environment(\.exploreStart) private var start
     @Environment(ReaderStore.self) private var reader
+    @Environment(\.openMore) private var openMore
     @State private var opened: TalkSheetItem?
 
     var body: some View {
@@ -37,7 +38,15 @@ struct ExploreView: View {
             talks: { AnyView(AgendaView(title: String(localized: "Explore"), openSession: { opened = TalkSheetItem(talk: TalkRef($0)) })) },
             header: { AnyView(GraphCard(picks: reader.saved.count)) },
             graph: { AnyView(GraphExplorerView()) },
-            talkActions: AppTalks.actions)
+            talkActions: AppTalks.actions,
+            leadingToolbar: { AnyView(LanguageButton()) },
+            trailingToolbar: moreButton)
+    }
+
+    /// The More button on iPhone; nil on iPad, where More is in the sidebar.
+    private var moreButton: (@MainActor () -> AnyView)? {
+        guard let openMore else { return nil }
+        return { AnyView(MoreButton(action: openMore)) }
     }
 
     private static func key(_ start: ExploreStart) -> String {
@@ -71,7 +80,7 @@ private struct GraphCard: View {
                             Text("Companies, people and events").font(.footnote).foregroundStyle(Palette.muted)
                         }
                         Spacer(minLength: Space.s)
-                        Image(systemName: "chevron.right").font(.footnote).foregroundStyle(Palette.muted)
+                        Image(systemName: "chevron.forward").font(.footnote).foregroundStyle(Palette.muted)
                             .accessibilityHidden(true)
                     }
                 }

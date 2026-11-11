@@ -5,10 +5,9 @@ import PTNews
 import PTWeb
 import SwiftUI
 
-/// Root view of the public app. iPhone: four tabs (Now, My program, Explore, News) and no More tab; iPad: a sidebar
-/// with the same four, then Settings and Reminders. Settings opens from a gear on Now and My program. Ask is reached
-/// from a card on Now and from Settings, not from a tab. Every screen comes from `PublicDestinations`. No team names,
-/// no lanes, no sample data, and no debug screen in a Release build.
+/// Root view of the public app. iPhone: five tabs (Now, My program, Explore, Map, News), with More as a sheet from the
+/// round button at the top right of every tab; iPad: a sidebar with the same five, then More and Reminders. Every
+/// screen comes from `PublicDestinations`. No team names, no lanes, no sample data, and no debug screen in a Release build.
 struct PublicShell: View {
     // Created in this order: the features register the hubs the reader store reads.
     @State private var features = PublicFeatures.shared
@@ -22,7 +21,11 @@ struct PublicShell: View {
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     /// ONB-1: the first-run screen, shown once.
     @AppStorage("onboarding.seen") private var onboardingSeen = false
+    /// The reader's culture (default English); changing it rebuilds the screens in the new language.
+    @AppStorage(AppCulture.storageKey) private var cultureID = AppCulture.english
     @State private var onboarding = false
+    /// Light by default (the brand is paper and ink); Dark or the iPhone's own setting in More.
+    @AppStorage(Appearance.key) private var appearance = Appearance.light.rawValue
     @State private var columns: NavigationSplitViewVisibility = .all
     /// A page opened by a link (a reminder's session), shown over the shell.
     @State private var linkedPage: LinkedPage?
@@ -34,11 +37,14 @@ struct PublicShell: View {
     var body: some View {
         Group {
             if width == .compact {
-                PublicPhoneShell(tab: $tab, openSettings: { open("settings") })
+                PublicPhoneShell(tab: $tab, openMore: { open("settings") })
             } else {
                 splitView
             }
         }
+        .id(cultureID)
+        .pickCalendar()
+        .appCulture(cultureID)
         .environment(reader)
         .environment(\.newsSource, reader)
         .environment(newsFeeds)
@@ -47,6 +53,9 @@ struct PublicShell: View {
         .publicFeatures(features)
         .pickToasts()
         .tint(Palette.red)
+        .preferredColorScheme((Appearance(rawValue: appearance) ?? .light).scheme)
+        // Pill-shaped buttons everywhere in the public app (round 3, the softer look).
+        .buttonBorderShape(.capsule)
         .task { await reader.refresh() }
         // The app-switcher snapshot is taken while the scene is inactive: cover keys and picks.
         .overlay {
@@ -101,7 +110,7 @@ struct PublicShell: View {
                             .id(destination.id)
                             .surfaceKind(destination.kind)
                     } else {
-                        ContentUnavailableView("Choose a screen", systemImage: "sidebar.left")
+                        ContentUnavailableView("Choose a screen", systemImage: "sidebar.leading")
                     }
                 }
             }
@@ -197,6 +206,7 @@ private struct PublicSidebar: View {
         }
         .listStyle(.sidebar)
         .navigationTitle("PrompTugal")
+        .toolbar { ToolbarItem(placement: .topBarTrailing) { LanguageButton() } }
     }
 
     @ViewBuilder private func rowViews(_ rows: [ShellDestination]) -> some View {
@@ -228,14 +238,11 @@ private struct PublicSidebar: View {
 
 private struct PublicPhoneShell: View {
     @Binding var tab: String
-    let openSettings: () -> Void
+    let openMore: () -> Void
 
     private var tabs: [ShellDestination] {
         PublicDestinations.all.filter { $0.phoneTab != nil }.sorted { ($0.phoneTab ?? 0) < ($1.phoneTab ?? 0) }
     }
-
-    /// The gear sits on the two screens a participant lives in.
-    private func hasGear(_ id: String) -> Bool { id == "now" || id == "team.schedule" }
 
     var body: some View {
         TabView(selection: $tab) {
@@ -245,17 +252,14 @@ private struct PublicPhoneShell: View {
                         NavigationStack {
                             destination.view().destinationID(destination.id).surfaceKind(destination.kind)
                                 .toolbar {
-                                    if hasGear(destination.id) {
-                                        ToolbarItem(placement: .topBarTrailing) {
-                                            Button(action: openSettings) { Image(systemName: "gearshape") }
-                                                .accessibilityLabel("Settings")
-                                        }
-                                    }
+                                    ToolbarItem(placement: .topBarLeading) { LanguageButton() }
+                                    ToolbarItem(placement: .topBarTrailing) { MoreButton(action: openMore) }
                                 }
                         }
                     } else {
-                        // The screen has its own navigation stack (Explore).
+                        // The screen has its own navigation stack (Explore) and puts the More button in it.
                         destination.view().destinationID(destination.id)
+                            .environment(\.openMore, openMore)
                     }
                 }
             }
@@ -263,9 +267,34 @@ private struct PublicPhoneShell: View {
     }
 }
 
+/// The round More button at the top right of every iPhone tab.
+struct MoreButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "ellipsis.circle").frame(minWidth: 44, minHeight: 44)
+        }
+        .accessibilityLabel("More")
+        .accessibilityIdentifier("pt.more")
+    }
+}
+
+/// Opens More from a screen that brings its own navigation stack (Explore). Empty on iPad, where More is in the sidebar.
+private struct OpenMoreKey: EnvironmentKey {
+    static let defaultValue: (() -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var openMore: (() -> Void)? {
+        get { self[OpenMoreKey.self] }
+        set { self[OpenMoreKey.self] = newValue }
+    }
+}
+
 // MARK: - Keyboard shortcuts (iPad with a keyboard)
 
-/// ⌘1–⌘4 jump to the four tabs; ⌘, opens Settings.
+/// ⌘1 to ⌘5 jump to the five tabs; ⌘, opens More.
 private struct PublicKeyboardShortcuts: View {
     @Binding var selection: String
 
@@ -276,7 +305,7 @@ private struct PublicKeyboardShortcuts: View {
                 Button(destination.title) { selection = destination.id }
                     .keyboardShortcut(KeyEquivalent(Character("\(index + 1)")), modifiers: .command)
             }
-            Button("Settings") { selection = "settings" }.keyboardShortcut(",", modifiers: .command)
+            Button("More") { selection = "settings" }.keyboardShortcut(",", modifiers: .command)
             #if DEBUG
             Button("Debug") { UserDefaults.standard.set(true, forKey: DebugMode.key); selection = "debug" }
                 .keyboardShortcut("d", modifiers: [.command, .shift])

@@ -132,7 +132,7 @@ public final class ReminderScheduler {
         case .denied: authorization = .denied
         default: authorization = .unknown
         }
-        let plan = ReminderPlan.items(picks: schedule.picks, standups: team?.upcomingStandups(after: now) ?? [],
+        let plan = ReminderPlan.items(picks: schedule.picks.filter(AgendaHub.isOn), standups: team?.upcomingStandups(after: now) ?? [],
                                       person: identity?.currentID, leadMinutes: leadMinutes, now: now,
                                       includePicks: picksOn, includeStandups: standupsOn, scheme: urlScheme ?? AppLinks.scheme)
         planned = plan

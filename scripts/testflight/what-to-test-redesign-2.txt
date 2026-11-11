@@ -1,0 +1,16 @@
+PrompTugal: Lisbon Summit, the independent companion app for the Lisbon tech summit, 9 to 12 November. No account needed.
+
+New in this build:
+- One tap on the star picks a talk. The first time, the app asks if picks should go to your phone's calendar too. Say yes and every new pick lands there with its time and hall. Change it any time in More.
+- More (the round button at the top right) shows where to meet RiskMandate on Thursday.
+- Still new from the last build: five tabs (Now, My program, Explore, Map, News), and Show on the map on every talk.
+
+Please try, at the venue if you can:
+- Star a talk on Now and check it is in your calendar.
+- Find the talk's hall with Show on the map.
+- Read a story in News, then try the app in airplane mode. The program, your picks and saved news should still work.
+
+Tell us with Send Beta Feedback (take a screenshot in the app, or open TestFlight): what was confusing, what was missing, and anything that broke. Please include what you were trying to do.
+
+Privacy: https://ios.app.promptugal.news/privacy.html
+Support: https://ios.app.promptugal.news/support.html

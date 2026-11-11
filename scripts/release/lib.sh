@@ -27,7 +27,7 @@ run_logged() {
   if [ "$status" -eq 0 ]; then summary "### ✅ $title"; return 0; fi
   local errs
   errs=$(grep -E "error:|\*\* (ARCHIVE|BUILD|EXPORT) FAILED|No profiles for|requires a provisioning profile|doesn't match|Provisioning profile" "$log" \
-          | sed -E "s#${GITHUB_WORKSPACE:-$PWD}/##g" | awk '!seen[$0]++' | head -60)
+          | sed -E "s#${GITHUB_WORKSPACE:-$PWD}/##g" | awk '!seen[$0]++' | awk 'NR<=60')
   { echo "### ❌ $title (exit $status)"; echo; echo '```'; echo "$errs"; echo '```'
     echo; echo "Full log: the \`release-logs\` artifact, file \`$(basename "$log")\`."; } >> "$SUMMARY"
   echo "===== $title failed (exit $status) ====="; echo "$errs"; echo "===== end ====="

@@ -38,7 +38,7 @@ summary ""
 summary "<details><summary>Largest 10 files</summary>"
 summary ""
 summary '```'
-find "$app" -type f -print0 | xargs -0 stat -f '%z %N' | sort -rn | head -10 \
+find "$app" -type f -print0 | xargs -0 stat -f '%z %N' | sort -rn | awk 'NR<=10' \
   | while read -r b p; do printf '%10s  %s\n' "$(human "$b")" "${p#$app/}"; done >> "$SUMMARY"
 summary '```'
 summary "</details>"
