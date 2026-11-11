@@ -9,10 +9,11 @@ struct FringeEventTests {
         try FringeFeed.events(from: try #require(FringeStore.bundledSeed()))
     }
 
-    @Test("the bundled seed decodes to the 21 events it holds, in day and time order")
+    @Test("the bundled seed (a copy of the live events.json) decodes, in day and time order, with a time on every event")
     func seedDecodes() throws {
         let events = try seed()
-        #expect(events.count == 21)
+        #expect(events.count > 60)
+        #expect(events.allSatisfy { $0.start != nil && !$0.date.isEmpty })
         #expect(events == events.sorted(by: FringeEvent.earlier))
         #expect(Set(events.map(\.id)).count == events.count)
     }
@@ -43,6 +44,29 @@ struct FringeEventTests {
         #expect(try FringeFeed.events(from: items).count == 1)
     }
 
+    @Test("the served feed's ISO instants become Lisbon clocks, and its extra fields read")
+    func liveShape() throws {
+        let data = Data(#"""
+        {"events":[{"id":"2026-11-11-x","name":"X","date":"2026-11-11","start":"2026-11-11T08:30:00Z","end":"2026-11-11T10:00:00Z",
+          "kind":"meetup","status":"cancelled","cost":"free","label":"Fact","storm_moved":true,"check":"The page says so."},
+         {"name":"Late","start":"2026-11-12T23:00:00Z","end":"2026-11-13T00:30:00Z"},
+         {"name":"Plain","date":"2026-11-12","start":"2026-11-12T09:15:00.000Z"},
+         {"name":"Bad","date":"2026-11-12","start":"soon","storm_moved":"maybe"}]}
+        """#.utf8)
+        let events = try FringeFeed.events(from: data)
+        let x = try #require(events.first { $0.name == "X" })
+        #expect(x.start == "08:30" && x.end == "10:00" && x.date == "2026-11-11")
+        #expect(x.id == "2026-11-11-x" && x.cost == "free" && x.labelText == "Fact" && x.movedByStorm && !x.check.isEmpty)
+        let late = try #require(events.first { $0.name == "Late" })
+        #expect(late.date == "2026-11-12" && late.start == "23:00" && late.end == "00:30")
+        let end = try #require(late.endDate)
+        let start = try #require(late.startDate)
+        #expect(end.timeIntervalSince(start) == 90 * 60)
+        #expect(events.first { $0.name == "Plain" }?.start == "09:15")
+        let bad = try #require(events.first { $0.name == "Bad" })
+        #expect(bad.start == nil && bad.stormMoved == nil && !bad.movedByStorm && bad.labelText == nil)
+    }
+
     @Test("clocks: only HH:mm, anything else is no time")
     func clocks() {
         #expect(FringeEvent.clock("18:30") == "18:30")
@@ -57,7 +81,10 @@ struct FringeEventTests {
     func planEvent() {
         let timed = FringeEvent(name: "Open Coffee", date: "2026-11-12", start: "09:30", end: "11:30")
         #expect(timed.planEvent.time == "09:30-11:30")
-        #expect(timed.planEvent.page == "events/2026-11-12-open-coffee/index.html")
+        #expect(timed.id == "2026-11-12-open-coffee-0930")
+        #expect(timed.planEvent.page == "events/2026-11-12-open-coffee-0930/index.html")
+        let keyed = FringeEvent(name: "Open Coffee", date: "2026-11-12", start: "09:30", end: "11:30", id: "site-id.7")
+        #expect(keyed.id == "site-id.7" && keyed.planEvent.page == "events/site-id.7/index.html")
         let open = FringeEvent(name: "Late", date: "2026-11-12", start: "18:00")
         #expect(open.planEvent.time == "18:00-19:00")
         #expect(open.timeLabel != "18:00-19:00")
@@ -150,7 +177,7 @@ struct FringeNetworkTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("fringe-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: directory) }
         let first = FringeStore(directory: directory)
-        #expect(first.source == .seed && first.events.count == 21)
+        #expect(first.source == .seed && first.events.count > 60)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try Data(#"{"events":[{"name":"Kept","date":"2026-11-12"}]}"#.utf8).write(to: directory.appendingPathComponent("events.json"))
         let second = FringeStore(directory: directory)

@@ -40,16 +40,25 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
     public let readAt: String?       // ISO 8601, UTC: when the team read the source
     public let verified: Bool
     public let note: String
+    /// Added by the site within v1: a stable id, the cost as stated, whether the storm moved the event, the label
+    /// (fact, evidence or hypothesis) and what the checker found. All optional.
+    public let explicitID: String
+    public let cost: String
+    public let label: String
+    public let stormMoved: Bool?
+    public let check: String
 
     enum CodingKeys: String, CodingKey {
         case name, kind, organiser, date, start, end, place, join, url, status
         case stormNote = "storm_note", topics
         case readAt = "read_at", verified, note
+        case explicitID = "id", cost, label, stormMoved = "storm_moved", check
     }
 
     public init(name: String, kind: String = "other", organiser: String = "", date: String, start: String? = nil,
                 end: String? = nil, place: String = "", join: String = "", url: URL? = nil, status: String = "unknown",
-                stormNote: String = "", topics: [String] = [], readAt: String? = nil, verified: Bool = false, note: String = "") {
+                stormNote: String = "", topics: [String] = [], readAt: String? = nil, verified: Bool = false, note: String = "",
+                id: String = "", cost: String = "", label: String = "", stormMoved: Bool? = nil, check: String = "") {
         self.name = name
         self.kind = kind
         self.organiser = organiser
@@ -65,16 +74,25 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
         self.readAt = readAt
         self.verified = verified
         self.note = note
+        self.explicitID = id
+        self.cost = cost
+        self.label = label
+        self.stormMoved = stormMoved
+        self.check = check
     }
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         name = try c.decode(String.self, forKey: .name)
-        date = (try? c.decodeIfPresent(String.self, forKey: .date)) ?? ""
+        let startTime = Self.parseTime(try? c.decodeIfPresent(String.self, forKey: .start))
+        let endTime = Self.parseTime(try? c.decodeIfPresent(String.self, forKey: .end))
+        // `date` is the day the event starts; when the feed has none, the start's own day (an ISO instant) stands in.
+        let givenDate = (try? c.decodeIfPresent(String.self, forKey: .date)) ?? ""
+        date = givenDate.isEmpty ? (startTime?.day ?? "") : givenDate
         kind = (try? c.decodeIfPresent(String.self, forKey: .kind)) ?? "other"
         organiser = (try? c.decodeIfPresent(String.self, forKey: .organiser)) ?? ""
-        start = Self.clock(try? c.decodeIfPresent(String.self, forKey: .start))
-        end = Self.clock(try? c.decodeIfPresent(String.self, forKey: .end))
+        start = startTime?.clock
+        end = endTime?.clock
         place = (try? c.decodeIfPresent(String.self, forKey: .place)) ?? ""
         join = (try? c.decodeIfPresent(String.self, forKey: .join)) ?? ""
         let rawURL = try? c.decodeIfPresent(String.self, forKey: .url)
@@ -85,6 +103,31 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
         readAt = try? c.decodeIfPresent(String.self, forKey: .readAt)
         verified = (try? c.decodeIfPresent(Bool.self, forKey: .verified)) ?? false
         note = (try? c.decodeIfPresent(String.self, forKey: .note)) ?? ""
+        explicitID = (try? c.decodeIfPresent(String.self, forKey: .explicitID)) ?? ""
+        cost = (try? c.decodeIfPresent(String.self, forKey: .cost)) ?? ""
+        label = ((try? c.decodeIfPresent(String.self, forKey: .label)) ?? "").lowercased()
+        stormMoved = try? c.decodeIfPresent(Bool.self, forKey: .stormMoved)
+        check = (try? c.decodeIfPresent(String.self, forKey: .check)) ?? ""
+    }
+
+    /// A start or end as the Lisbon clock (and day, when the value carries one): "18:30", or an ISO 8601 instant such as
+    /// "2026-11-11T18:30:00Z" (what events.json serves), converted to Lisbon time. nil for anything else.
+    static func parseTime(_ raw: String?) -> (clock: String, day: String?)? {
+        guard let raw = raw?.trimmingCharacters(in: .whitespaces), !raw.isEmpty else { return nil }
+        guard raw.contains("T") else { return clock(raw).map { ($0, nil) } }
+        let variants: [ISO8601DateFormatter.Options] = [[.withInternetDateTime], [.withInternetDateTime, .withFractionalSeconds]]
+        let formatter = ISO8601DateFormatter()
+        for options in variants {
+            formatter.formatOptions = options
+            if let date = formatter.date(from: raw) {
+                let parts = Lisbon.calendar.dateComponents([.hour, .minute], from: date)
+                return (String(format: "%02d:%02d", parts.hour ?? 0, parts.minute ?? 0), Lisbon.day(date))
+            }
+        }
+        // No zone: the day and the clock as written, taken as Lisbon time.
+        let pieces = raw.split(separator: "T", maxSplits: 1).map(String.init)
+        if pieces.count == 2, let time = clock(pieces[1]) { return (time, pieces[0]) }
+        return nil
     }
 
     /// A clock as "HH:mm", or nil for anything else (null, empty, "TBC").
@@ -95,13 +138,39 @@ public struct FringeEvent: Codable, Identifiable, Hashable, Sendable {
         return String(format: "%02d:%02d", h, m)
     }
 
-    /// Stable across refreshes: the day and the name, lower-cased and hyphenated.
-    public var id: String { "\(date)-\(Self.slug(name))" }
+    /// The pick key: the site's `id` when it has one, else the day, the name and the start, so it holds across refreshes.
+    public var id: String {
+        if !explicitID.isEmpty { return Self.pageSafe(explicitID) }
+        return "\(date)-\(Self.slug(name))-\((start ?? "").replacingOccurrences(of: ":", with: ""))"
+    }
+
+    static func pageSafe(_ text: String) -> String {
+        String(text.unicodeScalars.map { scalar -> Character in
+            (scalar.isASCII && (CharacterSet.alphanumerics.contains(scalar) || scalar == "-" || scalar == "_" || scalar == ".")) ? Character(scalar) : "-"
+        })
+    }
+
+    /// The site's own label for how sure it is: fact, evidence or hypothesis; nil when it says nothing.
+    public var labelText: String? {
+        switch label {
+        case "fact": String(localized: "Fact", bundle: .module)
+        case "evidence": String(localized: "Evidence", bundle: .module)
+        case "hypothesis": String(localized: "Hypothesis", bundle: .module)
+        default: nil
+        }
+    }
+
+    public var movedByStorm: Bool { stormMoved == true }
 
     public var statusValue: FringeStatus { FringeStatus(feed: status) }
     public var startDate: Date? { start.flatMap { Lisbon.instant(day: date, clock: $0) } }
     /// The end, or nil when the feed has none.
-    public var endDate: Date? { end.flatMap { Lisbon.instant(day: date, clock: $0) } }
+    public var endDate: Date? {
+        guard let end = end.flatMap({ Lisbon.instant(day: date, clock: $0) }) else { return nil }
+        // An event that ends after midnight has an end clock earlier than its start.
+        if let start = startDate, end < start { return Lisbon.calendar.date(byAdding: .day, value: 1, to: end) }
+        return end
+    }
     public var timeLabel: String {
         switch (start, end) {
         case let (start?, end?): "\(start)–\(end)"
