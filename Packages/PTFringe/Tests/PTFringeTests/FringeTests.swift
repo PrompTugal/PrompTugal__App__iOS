@@ -126,6 +126,26 @@ struct FringeFilterTests {
         #expect(!FringeFilter().isActive && FringeFilter(day: "x").isActive)
     }
 
+    @Test("the storm filter keeps only what the site says the storm moved")
+    func stormFilter() {
+        let list = [
+            FringeEvent(name: "Moved", date: "2026-11-12", start: "09:00", stormMoved: true),
+            FringeEvent(name: "Same", date: "2026-11-12", start: "10:00", stormMoved: false),
+            FringeEvent(name: "Unsaid", date: "2026-11-12", start: "11:00"),
+        ]
+        #expect(FringeFilter(stormMoved: true).apply(list).map(\.name) == ["Moved"])
+        #expect(FringeFilter(stormMoved: false).apply(list).count == 3)
+        #expect(FringeFilter(stormMoved: true).isActive)
+    }
+
+    @Test("quick days: today, tomorrow and the day after, named, in Lisbon time")
+    func quickDays() throws {
+        let now = try #require(Lisbon.instant(day: "2026-11-11", clock: "23:30"))
+        let days = FringeFilter.quickDays(now: now, locale: Locale(identifier: "en"))
+        #expect(days.map(\.id) == ["2026-11-11", "2026-11-12", "2026-11-13"])
+        #expect(days.map(\.label) == ["Today", "Tomorrow", "Friday"])
+    }
+
     @Test("the options come from the data")
     func options() {
         #expect(FringeFilter.days(in: events) == ["2026-11-12", "2026-11-13"])

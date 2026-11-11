@@ -1,4 +1,5 @@
 import SwiftUI
+import PTAgenda
 import PTCore
 import PTFringe
 
@@ -34,11 +35,11 @@ struct EventsView: View {
 
     private var filters: some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            Picker("Day", selection: $filter.day) {
-                Text("All days").tag(String?.none)
-                ForEach(FringeFilter.days(in: store.events), id: \.self) { Text(FringeFilter.dayLabel($0)).tag(String?.some($0)) }
+            Picker("When", selection: $filter.day) {
+                Text("All").tag(String?.none)
+                ForEach(FringeFilter.quickDays(now: AgendaClock.now)) { Text($0.label).tag(String?.some($0.id)) }
             }
-            .pickerStyle(.menu)
+            .pickerStyle(.segmented)
             Picker("Type", selection: $filter.kind) {
                 Text("All types").tag(String?.none)
                 ForEach(FringeFilter.kinds(in: store.events), id: \.self) { Text(FringeFilter.kindLabel($0)).tag(String?.some($0)) }
@@ -49,6 +50,7 @@ struct EventsView: View {
                 ForEach(FringeFilter.topics(in: store.events), id: \.self) { Text($0).tag(String?.some($0)) }
             }
             .pickerStyle(.menu)
+            Toggle("Moved by the storm", isOn: $filter.stormMoved)
             if filter.isActive {
                 Button("Clear filters") { filter = FringeFilter() }
             }
