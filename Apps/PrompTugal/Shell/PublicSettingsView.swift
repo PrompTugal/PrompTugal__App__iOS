@@ -1,5 +1,6 @@
 import PTAgenda
 import PTCore
+import PTLocal
 import SwiftUI
 
 /// More: reminders, the welcome screen again, version, links, the independence note. The debug switch exists only in DEBUG builds.
@@ -14,6 +15,24 @@ struct PublicSettingsView: View {
 
     var body: some View {
         Form {
+            Section {
+                NavigationLink {
+                    AlgarveView()
+                } label: {
+                    Label("The Algarve", systemImage: "map.circle")
+                }
+                .accessibilityIdentifier("pt.more.algarve")
+                NavigationLink {
+                    NewsroomCentreView()
+                } label: {
+                    Label("Newsroom", systemImage: "person.3.sequence")
+                }
+                .accessibilityIdentifier("pt.more.newsroom")
+            } header: {
+                Text("PrompTugal.news by place")
+            } footer: {
+                Text("The 17 towns of the Algarve, each with its own site and its own agent. The newsroom is read-only.")
+            }
             StandSection()
             Section {
                 NavigationLink {

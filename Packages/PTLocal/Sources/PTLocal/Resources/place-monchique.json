@@ -1,0 +1,197 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "monchique",
+  "name": "Monchique",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.monchique@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Monchique: AI and technology in Monchique, a forested mountain municipality where wildfire risk and a small municipal business incubator set the agenda, and what reaches Monchique from the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "Monchique is a mountain municipality whose public agenda is shaped by forest and wildfire risk. The Serra was badly hit by the fires of 2018, and the research project BRIDGE (IST, LNEC and the University of the Algarve, funded by FCT, 2021 to 2024) used Monchique as its pilot case for community-based fire risk reduction, followed by InnoBRIDGE funded by AGIF. A fire in Marmelete on 25 July 2026 drew nearly a hundred operatives. On the technology side, the council runs a business incubator, and its best-known tenant is Invisible CFO, a fintech whose product uses AI.",
+    "sources": [
+      {
+        "title": "Barlavento: gestao dos territorios florestais em Monchique, final conference of the BRIDGE project (12 March 2024)",
+        "url": "https://www.barlavento.pt/?p=342624",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Barlavento: Invisible CFO, startup of the Incubadora de Empresas de Monchique, named Impact Startup 2025 (21 October 2025)",
+        "url": "https://www.barlavento.pt/?p=384561",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Municipality of Monchique: project sheet, Vale incubadoras e aceleradoras",
+        "url": "https://www.cm-monchique.pt/pt/menu/2796/ficha-de-projeto-vale-incubadoras-e-aceleradoras.aspx",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Observador (Lusa): fire at Vale de Água, Marmelete, 25 July 2026, 98 operatives, alert at 04:58",
+        "url": "https://observador.pt/2026/07/25/perto-de-uma-centena-de-operacionais-combatem-fogo-em-monchique/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Técnico Lisboa: BRIDGE pilot project, Monchique as target, follow-up InnoBRIDGE funded by AGIF (12 September 2024)",
+        "url": "https://tecnico.ulisboa.pt/en/news/tecnico-coordinates-pilot-project-to-reduce-wildfire-risk-in-algarve/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "ICNF: Monchique municipal forest fire defence plan (Caderno II), fire detection by lookout posts",
+        "url": "https://fogos.icnf.pt/pmdfci/08_Faro/0809/2G/Caderno_II/Texto/PMDFCI_Monchique_Caderno_II.pdf",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#2E5E3E",
+    "landmark": "Fóia, the highest point of the Serra de Monchique",
+    "motif": "chestnut and cork-oak forest, mountain mist, thermal springs"
+  },
+  "ai_news": [
+    {
+      "title": "Monchique fintech Invisible CFO named a Web Summit Impact Startup for 2025",
+      "summary": "Invisible CFO, founded in 2024 and housed in the Monchique business incubator, was recognised as an Impact Startup 2025, reported as the only Portuguese fintech with that recognition. It combines financial and tax optimisation algorithms and AI with a human team of accountants and advisers, and went to the 2025 summit through the Algarve Empreende 2026 project.",
+      "date": "2025-10-21",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=384561",
+      "read_on": "2026-11-15",
+      "ai_path": "The startup's own service uses AI in its financial technology layer, and it is based in a Monchique municipal incubator.",
+      "steps": 1
+    },
+    {
+      "title": "Wider news: Floresta Limpa uses satellite data and machine learning to watch fuel-management strips (not yet in Monchique)",
+      "summary": "A NOVA FCT team (NOVA LINCS) built a platform that reads satellite vegetation indices with machine learning to check regularly whether wildfire fuel-management zones are clear, with an Android app. The app was set up for Almada, Mação and Santarém, with expansion planned. The article does not mention Monchique or the Algarve.",
+      "date": "2025-03-27",
+      "publisher": "NOVA FCT",
+      "url": "https://www.fct.unl.pt/en/news/2025/03/project-floresta-limpa-nova-fct-uses-artificial-intelligence-prevent-wildfires",
+      "read_on": "2026-11-15",
+      "ai_path": "An AI tool aimed at the exact risk that defines Monchique's agenda, forest fuel and fire, so it is a candidate for the Serra, but we found no sign it is used there.",
+      "steps": 1
+    }
+  ],
+  "sources": [
+    {
+      "name": "Câmara Municipal de Monchique",
+      "url": "https://www.cm-monchique.pt/pt/",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Câmara Municipal de Monchique: news list",
+      "url": "https://www.cm-monchique.pt/pt/noticias-listagem.aspx",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Câmara Municipal de Monchique: Proteção Civil",
+      "url": "https://www.cm-monchique.pt/pt/menu/151/protecao-civil.aspx",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Barlavento (Algarve regional press)",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "NOVA FCT news (Floresta Limpa)",
+      "url": "https://www.fct.unl.pt/en/news/2025/03/project-floresta-limpa-nova-fct-uses-artificial-intelligence-prevent-wildfires",
+      "kind": "university",
+      "feed": null
+    },
+    {
+      "name": "Câmara Municipal de Monchique: Atividade Económica and Incubadora de Empresas",
+      "url": "https://www.cm-monchique.pt/pt/menu/2495/incubadora-de-empresas.aspx",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Observador (Lusa) on Monchique fires",
+      "url": "https://observador.pt/2026/07/25/perto-de-uma-centena-de-operacionais-combatem-fogo-em-monchique/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Técnico Lisboa news (BRIDGE and InnoBRIDGE)",
+      "url": "https://tecnico.ulisboa.pt/en/news/tecnico-coordinates-pilot-project-to-reduce-wildfire-risk-in-algarve/",
+      "kind": "university",
+      "feed": null
+    },
+    {
+      "name": "ICNF: municipal forest fire defence plan of Monchique",
+      "url": "https://fogos.icnf.pt/pmdfci/08_Faro/0809/2G/Caderno_II/Texto/PMDFCI_Monchique_Caderno_II.pdf",
+      "kind": "other",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "Invisible CFO",
+      "type": "startup",
+      "url": "https://www.barlavento.pt/?p=384561",
+      "what": "Portuguese fintech founded in 2024 and based in Monchique, helping small businesses with finance using algorithms, AI and a human advisory team. Named an Impact Startup 2025.",
+      "source_url": "https://www.barlavento.pt/?p=384561",
+      "read_on": "2026-11-15",
+      "ai_path": "Its product uses AI directly in financial and tax optimisation.",
+      "steps": 1
+    },
+    {
+      "name": "Incubadora de Empresas de Monchique (IEM)",
+      "type": "organisation",
+      "url": "https://www.cm-monchique.pt/pt/menu/2796/ficha-de-projeto-vale-incubadoras-e-aceleradoras.aspx",
+      "what": "The municipal business incubator, listed by the council among its co-financed projects (Vale incubadoras e aceleradoras). It hosts Invisible CFO and says it aims to attract and support companies that settle in Monchique and create jobs.",
+      "source_url": "https://www.barlavento.pt/?p=384561",
+      "read_on": "2026-11-15",
+      "ai_path": "It hosts an AI-using startup, so it is the place where an AI company in Monchique would most likely start.",
+      "steps": 2
+    }
+  ],
+  "extras": [
+    {
+      "label": "Latest council news read",
+      "value": "The six latest items on the council's news list (3 to 12 November 2026) cover the passage of storm Charles, civil protection notices, a school theatre project, scholarships and cardiac protection. None mentions AI.",
+      "source_url": "https://www.cm-monchique.pt/pt/noticias-listagem.aspx",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "How fires are detected in Monchique (plan)",
+      "value": "The municipal forest fire plan (period 2016 to 2020, data to 2015) relies on two lookout posts of the national network, one tower of the AFOCELCA forest industry group and mobile patrols. It describes no video or AI detection.",
+      "source_url": "https://fogos.icnf.pt/pmdfci/08_Faro/0809/2G/Caderno_II/Texto/PMDFCI_Monchique_Caderno_II.pdf",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Latest fire in the news",
+      "value": "25 July 2026, Vale de Água, Marmelete: alert at 04:58, 98 operatives and 32 vehicles, scrub and eucalyptus, difficult access. The report does not say how it was spotted.",
+      "source_url": "https://observador.pt/2026/07/25/perto-de-uma-centena-de-operacionais-combatem-fogo-em-monchique/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "The incubator, as the council describes it",
+      "value": "Individual support to local entrepreneurs and businesses and signposting to funding calls, at the Espaço Jovem next to the Monchique parish council. No tenants are named.",
+      "source_url": "https://www.cm-monchique.pt/pt/menu/2495/incubadora-de-empresas.aspx",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "gaps": [
+    "No AI wildfire detection or forest monitoring in Monchique was found. The fire plan we could open (data to 2015) describes human lookout posts, one industry tower and mobile patrols, and the July 2026 fire report names no technology. This is the main gap, since fire is the town's centre of gravity: look for ICNF, ANEPC, the Algarve fire-surveillance network and the University of the Algarve.",
+    "None of the council's latest news (3 to 12 November 2026) is about AI, and its site has no RSS feed. Its projects #Algarve mais digital, the business park and Vale incubadoras e aceleradoras are listed without detail we could cite as AI.",
+    "The council's incubator page names no tenants, so the AI map holds only Invisible CFO. A 2023 plan for six or seven companies and a 2025 industrial park plan suggest more may follow, but we could not read those Sul Informação pieces (the site refused automatic reading).",
+    "BRIDGE and InnoBRIDGE (IST, LNEC, UAlg, AGIF) are research on community fire risk with no AI or data tools mentioned, so they are context, not AI map entries. The national 2025 GNR plan for 25 drone cameras names neither AI nor Monchique.",
+    "Postal do Algarve, Sul Informação and the RR site refused automatic reading on 15 November (bot checks or 403), so their Monchique stories are not used. A person should read them.",
+    "No AI events in Monchique were found. Algarve Evolution has no Monchique member or programme in any source we could open.",
+    "Other sources to look for: Monchique's parish councils (Alferce, Marmelete, Monchique), Água de Monchique and the Caldas de Monchique spa for digital projects."
+  ],
+  "identity": {
+    "key_id": "site.monchique-promptugal",
+    "signed_by": "place.monchique@PrompTugal.dinis"
+  },
+  "voice": {
+    "lede": "Ó pá, up here on the Serra we have more chestnut trees than data centres, but the medronho is strong and so is the Wi-Fi in the incubator.",
+    "mandate": "PrompTugal.news Monchique, from the cool of the Serra: AI and technology in a green mountain concelho where the fire worry never sleeps and the little incubator keeps the lights on, plus whatever drifts up from the Algarve, Portugal and the world. Independent, and every fact has its source, ó freguês.",
+    "gravity": "Monchique lives with the mountain and the mountain lives with fire. The Serra was burned hard in 2018, and the BRIDGE project (IST, LNEC and the University of the Algarve) picked Monchique to learn how neighbours can cut fire risk together. Meanwhile, down at the council incubator, Invisible CFO is minding other people's money with a bit of AI. Not bad for a place famous for ham, honey and hot springs.",
+    "gaps_intro": "Now the honest part, que se não houver não se inventa: the things we looked for up the Serra and did not find."
+  }
+}

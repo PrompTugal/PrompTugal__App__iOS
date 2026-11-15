@@ -1,0 +1,265 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "lagos",
+  "name": "Lagos",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "live",
+  "updated": "2026-11-15",
+  "by": "place.lagos@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Lagos: AI and technology in Lagos, a town of remote workers, a municipal coworking space and a busy Google developer community, and what reaches Lagos from the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "Lagos is where the Algarve's tech community meets in person. The council co-organised the Algarve Tech Hub Summit here in November 2025, which drew several hundred people to one hotel, and it works with GDG Lagos on AI events such as DevFest Lagos 2025 and International Women's Day Build with AI. The municipal coworking space CoLagos has been fully occupied since November 2023, and a community built for the town's digital nomads has existed since the pandemic. We found no AI company that is confirmed to be headquartered in Lagos, so the centre of gravity is a community of builders and remote workers, not a cluster of AI firms.",
+    "sources": [
+      {
+        "title": "Barlavento: Lagos foi capital da inovacao no Algarve Tech Hub Summit (14 Nov 2025)",
+        "url": "https://www.barlavento.pt/lagos-foi-capital-da-inovacao-no-algarve-tech-hub-summit/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Barlavento: CoLagos wins the Cinco Estrelas award for the third time (15 Apr 2025)",
+        "url": "https://www.barlavento.pt/premio-cinco-estrelas-regioes-distingue-colagos-pelo-terceiro-ano-consecutivo/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Barlavento: more than 250 took part in Google DevFest Lagos 2025 (23 Oct 2025)",
+        "url": "https://www.barlavento.pt/mais-de-250-participantes-debateram-sobre-inovacao-no-google-devfest-lagos-2025/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Essential Business: Lagos Digital Nomads (2 Dec 2022)",
+        "url": "https://www.essential-business.pt/2022/12/02/lagos-digital-nomads-building-a-bridge-between-local-businesses-and-remote-workers/",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#9A4A12",
+    "landmark": "Ponta da Piedade, the golden cliffs and sea grottoes",
+    "motif": "ochre cliffs, turquoise water, caravels of the Age of Discoveries"
+  },
+  "ai_news": [
+    {
+      "title": "Algarve Tech Hub Summit lands in Lagos with a live AI demo",
+      "summary": "The two-day summit ran at a Lagos hotel on 6 and 7 November 2025. A preview named a live demonstration of building a specialised ChatGPT on the first day. Barlavento later counted about 450 people on day one and 570 on day two.",
+      "date": "2025-11-04",
+      "publisher": "Observador",
+      "url": "https://observador.pt/2025/11/04/algarve-tech-hub-summit-em-lagos-vai-apoiar-talento-e-investimento-na-regiao/",
+      "read_on": "2026-11-15",
+      "ai_path": "A summit hosted in Lagos with a session that shows how to build a specialised ChatGPT (AI directly, in one session of a wider programme).",
+      "steps": 1
+    },
+    {
+      "title": "Lagos hosts DevFest 2025 with an AI theory-to-action day",
+      "summary": "GDG Lagos and the council ran DevFest on 17 and 18 October 2025. Day one reached about 150 students in schools. Day two at the Town Hall was themed AI from theory to action, with 120 registrations. CoLagos and the Fábrica do Empreendedor were partners.",
+      "date": "2025-10-23",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/mais-de-250-participantes-debateram-sobre-inovacao-no-google-devfest-lagos-2025/",
+      "read_on": "2026-11-15",
+      "ai_path": "A developer conference whose second day was about AI, automation and app building for business.",
+      "steps": 0
+    },
+    {
+      "title": "CoLagos, the council's coworking space, wins a regional award for the third year",
+      "summary": "The municipal coworking space in the old town has 20 workstations and has been full since November 2023. It also partners GDG Lagos on AI events.",
+      "date": "2025-04-15",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/premio-cinco-estrelas-regioes-distingue-colagos-pelo-terceiro-ano-consecutivo/",
+      "read_on": "2026-11-15",
+      "ai_path": "CoLagos is a partner of GDG Lagos's AI events, and it houses the remote workers and small firms who attend them.",
+      "steps": 2
+    }
+  ],
+  "sources": [
+    {
+      "name": "Câmara Municipal de Lagos: news",
+      "url": "https://www.cm-lagos.pt/municipio/noticias",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Barlavento (Algarve regional press)",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Sul Informação",
+      "url": "https://www.sulinformacao.pt/en/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "GDG Lagos events (Google Developer Groups)",
+      "url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-build-with-ai-intro-to-ai-agent-skills/",
+      "kind": "events",
+      "feed": null
+    },
+    {
+      "name": "Algarve Evolution",
+      "url": "https://www.algarveevolution.pt/",
+      "kind": "business",
+      "feed": null
+    },
+    {
+      "name": "Algarve Tech Hub Summit",
+      "url": "https://athsummit.odoo.com/",
+      "kind": "events",
+      "feed": null
+    },
+    {
+      "name": "CoLagos, the municipal coworking space",
+      "url": "https://www.colagos.pt/",
+      "kind": "other",
+      "feed": null
+    }
+  ],
+  "events": [
+    {
+      "title": "Algarve Tech Hub Summit 2025, Hotel Vila Galé Lagos (past)",
+      "date": "2025-11-06 to 2025-11-07",
+      "url": "https://www.barlavento.pt/lagos-foi-capital-da-inovacao-no-algarve-tech-hub-summit/",
+      "read_on": "2026-11-15",
+      "ai_path": "Included a live AI demonstration, per the preview at https://observador.pt/2025/11/04/algarve-tech-hub-summit-em-lagos-vai-apoiar-talento-e-investimento-na-regiao/"
+    },
+    {
+      "title": "DevFest Lagos 2025 (past)",
+      "date": "2025-10-17 to 2025-10-18",
+      "url": "https://www.barlavento.pt/mais-de-250-participantes-debateram-sobre-inovacao-no-google-devfest-lagos-2025/",
+      "read_on": "2026-11-15",
+      "ai_path": "Day two themed AI: Theory to Action"
+    },
+    {
+      "title": "GDG Lagos: Build with AI, Intro to AI Agent Skills, The Collab Bar (past)",
+      "date": "2026-03-04",
+      "url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-build-with-ai-intro-to-ai-agent-skills/",
+      "read_on": "2026-11-15",
+      "ai_path": "Talk on building AI agents and reusable skills, with Algarve Evolution as partner"
+    },
+    {
+      "title": "Algarve Digital Innovators network public session, Faro, supported by GDG Lagos (past)",
+      "date": "2026-07-27",
+      "url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-public-session-of-the-algarve-digital-innovators-network-adi/",
+      "read_on": "2026-11-15",
+      "ai_path": null
+    }
+  ],
+  "ai_map": [
+    {
+      "name": "GDG Lagos (Google Developer Group)",
+      "type": "community",
+      "url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-build-with-ai-intro-to-ai-agent-skills/",
+      "what": "Runs AI talks and workshops at The Collab Bar and the Town Hall, including Build with AI, an agents talk and DevFest Lagos.",
+      "source_url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-ai-agents-the-architects-of-automation/",
+      "read_on": "2026-11-15",
+      "ai_path": "Its programme is largely about AI, agents and building with AI.",
+      "steps": 0
+    },
+    {
+      "name": "Câmara Municipal de Lagos",
+      "type": "public body",
+      "url": "https://www.cm-lagos.pt/",
+      "what": "Co-organised DevFest Lagos 2025 and the International Women's Day Build with AI event, which was held in its Town Hall, and co-organised the 2025 Algarve Tech Hub Summit.",
+      "source_url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-international-womens-day-build-with-ai",
+      "read_on": "2026-11-15",
+      "ai_path": "A public body that hosts and co-organises AI events.",
+      "steps": 1
+    },
+    {
+      "name": "CoLagos, municipal coworking space",
+      "type": "organisation",
+      "url": "https://www.colagos.pt/",
+      "what": "Run with the Lagos Youth Association (A)Garra in the old town, 20 workstations, partner of DevFest Lagos 2025.",
+      "source_url": "https://www.barlavento.pt/premio-cinco-estrelas-regioes-distingue-colagos-pelo-terceiro-ano-consecutivo/",
+      "read_on": "2026-11-15",
+      "ai_path": "A partner of GDG Lagos's AI events and a base for remote workers.",
+      "steps": 2
+    },
+    {
+      "name": "Fábrica do Empreendedor de Lagos",
+      "type": "organisation",
+      "url": "https://www.barlavento.pt/mais-de-250-participantes-debateram-sobre-inovacao-no-google-devfest-lagos-2025/",
+      "what": "Named as a partner of DevFest Lagos 2025.",
+      "source_url": "https://www.barlavento.pt/mais-de-250-participantes-debateram-sobre-inovacao-no-google-devfest-lagos-2025/",
+      "read_on": "2026-11-15",
+      "ai_path": "Partner of an AI-themed developer conference.",
+      "steps": 2
+    },
+    {
+      "name": "Lagos Remoters",
+      "type": "community",
+      "url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-international-womens-day-build-with-ai",
+      "what": "A community of Lagos remote workers, listed as a partner and media partner of the International Women's Day Build with AI event.",
+      "source_url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-international-womens-day-build-with-ai",
+      "read_on": "2026-11-15",
+      "ai_path": "Partner of an AI and business event, and a pool of remote workers who attend such events.",
+      "steps": 2
+    },
+    {
+      "name": "Lagos Digital Nomads",
+      "type": "community",
+      "url": "https://www.essential-business.pt/2022/12/02/lagos-digital-nomads-building-a-bridge-between-local-businesses-and-remote-workers/",
+      "what": "Started by a local entrepreneur in 2020 or 2021 during the pandemic, it links the town's digital nomads with local businesses through a website, networking events and workshops. Media partner of the Women's Day AI event.",
+      "source_url": "https://www.essential-business.pt/2022/12/02/lagos-digital-nomads-building-a-bridge-between-local-businesses-and-remote-workers/",
+      "read_on": "2026-11-15",
+      "ai_path": "Media partner of an AI event, and a community of remote workers who are a likely audience for AI tools.",
+      "steps": 2
+    },
+    {
+      "name": "The Collab Bar",
+      "type": "organisation",
+      "url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-build-with-ai-intro-to-ai-agent-skills/",
+      "what": "Bar venue on Avenida dos Descobrimentos that hosts GDG Lagos AI talks.",
+      "source_url": "https://gdg.community.dev/events/details/google-gdg-lagos-presents-build-with-ai-intro-to-ai-agent-skills/",
+      "read_on": "2026-11-15",
+      "ai_path": "Host venue for AI talks.",
+      "steps": 1
+    },
+    {
+      "name": "Algarve Evolution",
+      "type": "organisation",
+      "url": "https://www.algarveevolution.pt/",
+      "what": "Regional association of more than 100 professionals and companies, partner of GDG Lagos events, with an AI and Robotics project for tourism SMEs.",
+      "source_url": "https://www.algarveevolution.pt/",
+      "read_on": "2026-11-15",
+      "ai_path": "Runs AI and robotics work and partners AI events in Lagos.",
+      "steps": 0
+    },
+    {
+      "name": "NOVA IMS and the Lagos council smart cities protocol",
+      "type": "institution",
+      "url": "https://www.barlavento.pt/lagos-e-nova-ims-protocolizam-inovacao-turismo-e-cidades-inteligentes/",
+      "what": "A three-year protocol signed in September 2021 for smart-city research and data management. The article does not mention AI.",
+      "source_url": "https://www.barlavento.pt/lagos-e-nova-ims-protocolizam-inovacao-turismo-e-cidades-inteligentes/",
+      "read_on": "2026-11-15",
+      "ai_path": "Data management and smart-city research is the base for AI services, but no AI is named, so this is context only.",
+      "steps": 3
+    }
+  ],
+  "extras": [
+    {
+      "label": "CoLagos workstations",
+      "value": "20, full since November 2023",
+      "source_url": "https://www.barlavento.pt/premio-cinco-estrelas-regioes-distingue-colagos-pelo-terceiro-ano-consecutivo/",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.lagos-promptugal",
+    "signed_by": "place.lagos@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI company is confirmed as headquartered in Lagos. A directory lists one small firm, but a directory entry is not a source we trust, and the Algarve AI startups we found (such as one in Monchique) are based elsewhere, so they belong to those towns. We should check the company register and Algarve Evolution's member list.",
+    "The council's news page, read on 15 November 2026, lists its twenty latest items, from 16 October to 13 November, and none is about AI or technology. It shows no feed and no year on its dates, so the council is a source to watch, not one that feeds us AI news yet.",
+    "No upcoming Lagos AI event was found. Meetup and Luma listings, where the local groups post, are not read by this publication, so the groups' own pages are the source to look for.",
+    "The Lagos Digital Nomads and Lagos Remoters membership figures could not be read from a page we may use, so none are given. We want a dated figure from the groups' own sites.",
+    "CoLagos's own site and Postal do Algarve showed a verification wall when we tried them, so we relied on Barlavento.",
+    "A summit page we read points to a 2027 edition, but we found nothing confirming the 2026 edition."
+  ],
+  "voice": {
+    "lede": "Ó pá, Lagos has caravels, cliffs and more laptops per beach towel than anywhere else in the Algarve, and now it is learning to talk to the machines too.",
+    "mandate": "PrompTugal.news Lagos: the AI and tech news of the town of the golden cliffs, where remote workers, a municipal coworking space and a lively Google developer crowd keep the Wi-Fi warm, plus whatever arrives from the Algarve, Portugal and the world. Independent, and every fact comes with its source, pois claro.",
+    "gravity": "Lagos is where the Algarve's techies turn up in person, and bem. The council co-hosted the Algarve Tech Hub Summit here in November 2025 and teams up with GDG Lagos on AI nights and DevFest. CoLagos, the town's coworking space, has been full since November 2023, and the nomad crowd has been around since the pandemic. A real AI company with its head office in Lagos? We have not found one yet, so the town's strength is its people, not a cluster of firms.",
+    "gaps_intro": "Here is what we could not find, and sim, we looked properly:"
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "aljezur",
+  "name": "Aljezur",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.aljezur@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Aljezur: AI and technology in Aljezur, a west coast municipality of beaches, surf and nature, and what reaches Aljezur from the Algarve, Portugal and the world. Independent. Every fact sourced.",
+  "gravity": {
+    "text": "Aljezur is the Algarve's Atlantic edge: a large, thinly populated municipality (about 323 square kilometres and 5,884 residents at the 2011 census) of four parishes, inside the Southwest Alentejo and Vicentine Coast Natural Park. Its identity is nature, surf at beaches such as Arrifana, and a council that calls nature tourism a strategic driver of the local economy. It is not an AI hub: what we found is a council with online services and a geo portal, a parish teleassistance pilot for older residents, and regional AI programmes for tourism firms that Aljezur businesses could join.",
+    "sources": [
+      {
+        "title": "Aljezur (Wikipedia): area, parishes, 2011 census, natural park, Arrifana",
+        "url": "https://en.wikipedia.org/wiki/Aljezur",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Barlavento, 23 Aug 2022: nature tourism as a strategic driver, council backs the Algarve + Sustentavel event",
+        "url": "https://www.barlavento.pt/turismo-da-natureza-e-mote-para-algarve-sustentavel/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Barlavento, 29 Mar 2024: 160,000 euro tourism funding after the Odemira fires, with Rota Vicentina",
+        "url": "https://www.barlavento.pt/aljezur-obtem-financiamento-para-regenerar-territorio-apos-incendio/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Municipio de Aljezur, official site",
+        "url": "https://www.cm-aljezur.pt",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#0A5C6E",
+    "landmark": "Praia da Arrifana and the ruins of its Moorish-era fortified settlement",
+    "motif": "Atlantic teal, cliffs, wind and surf"
+  },
+  "ai_news": [
+    {
+      "title": "Algarve tourism firms get a state-backed route to AI and robotics, Aljezur's trade included",
+      "summary": "CCDR Algarve met its tourism innovation platform on 18 March 2026. A project under the Algarve 2030 programme will fund digital maturity checks and action plans for 15 tourism SMEs aiming to adopt AI and robotics. Algarve Evolution's president warned firms to prepare for AI agents that search and book travel. The article does not name Aljezur.",
+      "date": "2026-03-20",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/fundos-europeus-ia-robotica-15-empresas-turismo-algarve/",
+      "read_on": "2026-11-15",
+      "ai_path": "Aljezur lives on nature and surf tourism. The Algarve-wide scheme funds AI and robotics plans for tourism SMEs in the region. Aljezur is not named, so this is context, not a local project.",
+      "steps": 3
+    },
+    {
+      "title": "Liceu Azul will give Aljezur its first upper secondary school, in Sciences and Technologies",
+      "summary": "A new school project was due to open in September 2026 with lower and upper secondary education in Sciences and Technologies, applied learning on local challenges and a research centre that monitors its teaching methods. Until now most Aljezur students had to travel to Lagos or Portimao after the 9th grade. The article does not mention AI.",
+      "date": "2026-03-31",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=395797",
+      "read_on": "2026-11-15",
+      "ai_path": "A science and technology school keeps young people in a municipality with no tech base, which is how a local talent pool for AI could start. No AI content is claimed.",
+      "steps": 3
+    },
+    {
+      "title": "Applications opened for the Algarve's pilot AI and robotics plan for tourism SMEs",
+      "summary": "Algarve Evolution ran a pilot, part of Inova Algarve 3.0 and co-financed by Algarve 2030, to pick 15 regional tourism SMEs for technical consulting and a tailored AI and robotics action plan. Applications ran from 20 February to 30 April 2026, so the call looks closed. No Aljezur company is named.",
+      "date": "2026-02-23",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/candidaturas-algarve-transicao-digital-turismo/",
+      "read_on": "2026-11-15",
+      "ai_path": "A regional programme to bring AI to tourism firms, the sector that dominates Aljezur's economy. Whether any Aljezur firm applied is unknown.",
+      "steps": 3
+    },
+    {
+      "title": "Gota Click2Care: a parish teleassistance pilot for Aljezur's older residents",
+      "summary": "The Aljezur parish council and the company Tecnologias Imaginadas started a free pilot with 15 people, each given a teleassistance device with nurse monitoring, location access, automatic fall alerts and an SOS button. The source does not say the system uses AI.",
+      "date": "2022-09-30",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=266797",
+      "read_on": "2026-11-15",
+      "ai_path": "Sensor-based health teleassistance with automatic fall detection is the kind of service that AI is moving into, step 1 to care technology, step 2 to AI in elderly care. No AI is claimed by the source.",
+      "steps": 2
+    }
+  ],
+  "sources": [
+    {
+      "name": "Municipio de Aljezur (council news)",
+      "url": "https://www.cm-aljezur.pt",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Barlavento (Algarve press)",
+      "url": "https://www.barlavento.pt",
+      "kind": "press",
+      "feed": "https://www.barlavento.pt/feed"
+    },
+    {
+      "name": "Sul Informacao (Algarve press, has an Aljezur tag)",
+      "url": "https://www.sulinformacao.pt",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Postal do Algarve (regional weekly, strong Aljezur coverage)",
+      "url": "https://postal.pt",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Algarve Evolution (Inova Algarve programmes)",
+      "url": "https://algarveevolution.pt",
+      "kind": "business",
+      "feed": null
+    },
+    {
+      "name": "CCDR Algarve (regional programme and tourism innovation platform)",
+      "url": "https://www.ccdr-alg.pt",
+      "kind": "other",
+      "feed": null
+    },
+    {
+      "name": "Rota Vicentina (walking and nature tourism partner)",
+      "url": "https://rotavicentina.com",
+      "kind": "business",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "Municipio de Aljezur",
+      "type": "public body",
+      "url": "https://www.cm-aljezur.pt",
+      "what": "The council runs an online services portal, an interactive municipal map, a GEO Portal and a tourist app. We found no AI use.",
+      "source_url": "https://www.cm-aljezur.pt",
+      "read_on": "2026-11-15",
+      "ai_path": "Digital services and geodata are the base on which AI assistants and analysis would sit. Nothing AI found yet.",
+      "steps": 3
+    },
+    {
+      "name": "Tecnologias Imaginadas",
+      "type": "company",
+      "what": "Company behind the Gota Click2Care teleassistance device used in the parish of Aljezur's pilot. Its base is not stated in the source.",
+      "source_url": "https://www.barlavento.pt/?p=266797",
+      "read_on": "2026-11-15",
+      "ai_path": "Care technology with remote monitoring and fall alerts, close to AI in elderly care. The source does not claim AI.",
+      "steps": 2
+    },
+    {
+      "name": "Junta de Freguesia de Aljezur",
+      "type": "public body",
+      "what": "The parish council that launched the Gota Aljezur teleassistance pilot with Tecnologias Imaginadas.",
+      "source_url": "https://www.barlavento.pt/?p=266797",
+      "read_on": "2026-11-15",
+      "ai_path": "A public body adopting health technology, a first step toward AI services.",
+      "steps": 2
+    },
+    {
+      "name": "Liceu Azul",
+      "type": "institution",
+      "what": "New school project in Aljezur with secondary education in Sciences and Technologies, due to open in September 2026, with a research centre on innovative teaching.",
+      "source_url": "https://www.barlavento.pt/?p=395797",
+      "read_on": "2026-11-15",
+      "ai_path": "Science and technology education is the start of a local pipeline toward AI skills. No AI teaching is claimed.",
+      "steps": 3
+    },
+    {
+      "name": "Cowork Aljezur",
+      "type": "community",
+      "url": "https://www.outsite.co/blog/where-to-go-in-algarve",
+      "what": "Described in an Outsite guide (June 2026) as a small, community-oriented coworking space near Praia do Amado. Other listings say Aljezur has no coworking, so its status needs checking.",
+      "source_url": "https://www.outsite.co/blog/where-to-go-in-algarve",
+      "read_on": "2026-11-15",
+      "ai_path": "A workspace for remote workers, some of whom work in software and AI. We have not found which.",
+      "steps": 3
+    }
+  ],
+  "extras": [
+    {
+      "label": "Digital history: new council website and Visit Aljezur app (May 2019)",
+      "value": "Funded by the Algarve Mais Digital application of the Algarve 2020 programme: online services and a tourism app.",
+      "source_url": "https://www.barlavento.pt/aljezur-lanca-novo-portal-e-aplicacao-movel-no-dia-mundial-da-internet/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Digital history: programming in primary schools (2015)",
+      "value": "The council approved computers for a Direcao-Geral da Educacao pilot teaching programming at Aljezur, Rogil and Odeceixe school hubs.",
+      "source_url": "https://www.sulinformacao.pt/en/?p=297347",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Size",
+      "value": "323.5 square kilometres, four parishes (Aljezur, Bordeira, Odeceixe, Rogil), 5,884 residents at the 2011 census.",
+      "source_url": "https://en.wikipedia.org/wiki/Aljezur",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Rescue technology at Arrifana (February 2026)",
+      "value": "A search for a missing person off Praia da Arrifana used a drone, an Air Force helicopter and a lifeboat, with Aljezur's volunteer firefighters. Drones in rescue are a step toward computer vision, but no AI is stated.",
+      "source_url": "https://www.barlavento.pt/retomadas-buscas-jovem-desaparecido-praia-arrifana/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "SeaWatch on Aljezur's unguarded beaches (July 2025)",
+      "value": "The Instituto de Socorros a Naufragos runs SeaWatch with all-terrain vehicles and trained military personnel on unguarded beaches of Aljezur, Lagos and Vila do Bispo, supported by the Terras do Infante municipalities. No sensors or AI mentioned.",
+      "source_url": "https://www.barlavento.pt/terras-do-infante-renova-apoio-com-seawatch-para-reforcar-seguranca-nas-praias/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Water network renewal (January 2025)",
+      "value": "Over 4 million euros from the PRR for five reservoirs, 13 km of pipes and 127 connections, aiming to cut losses by about 27,700 cubic metres a year. Civil works, not digital.",
+      "source_url": "https://www.barlavento.pt/prr-aljezur-investe-mais-de-4-milhoes-na-reducao-de-perdas-de-agua/",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.aljezur-promptugal",
+    "signed_by": "place.aljezur@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI company, startup, lab or community with a public page in Aljezur was found on the first pass. That is a finding, not a failure to look.",
+    "Leads to chase next: the national company registry (software and IT activity codes in the Aljezur municipality), whether Cowork Aljezur still operates, surf and nature tourism firms using AI, and agri-tech in the Aljezur and Odemira farming belt.",
+    "Agriculture is part of the centre of gravity but we could not open a source on it: the pages found refused automated access. Needs a source such as INE or the Direcao Regional de Agricultura.",
+    "Postal do Algarve, the best Aljezur source, answers automated readers with a bot challenge, so we did not read it. Sul Informacao and the University of Algarve repository also refused some pages.",
+    "The council site has no RSS feed we could find: only a newsletter. A scraper or a human check of its news page is needed.",
+    "No upcoming Aljezur event with an AI link was found.",
+    "Whether any Aljezur business joined the Algarve Evolution AI and robotics pilot is unknown: no Aljezur name appears in the coverage we read.",
+    "Leads we did not read because the pages refused automated access: the 1,500 smart water meters with telemetry at Vale da Telha (reported by Postal do Algarve and Portugal Resident, with resident complaints) and AHSA, the growers' association of Odemira and Aljezur, whose partners include an agricultural innovation firm. Both could earn a map entry.",
+    "The consortium behind the Algarve AI and robotics pilot is reported to be led by NERA with Algarve Evolution and the University of Algarve. That comes from a search snippet we could not open, so it is a lead only."
+  ],
+  "voice": {
+    "lede": "Ora pois, Aljezur: mais ondas do que servidores, mais vento do que wi-fi, e mesmo assim a olhar para a inteligencia artificial.",
+    "mandate": "PrompTugal.news Aljezur: AI and technology in Aljezur, ora essa, a big wild corner of the west coast where the Atlantic does the talking, and what reaches us from the Algarve, Portugal and the world. Independent, and every fact sourced, pa.",
+    "gravity": "Aljezur is the Algarve's Atlantic edge: huge, quiet and in the Natural Park, with about 323 square kilometres and 5,884 souls at the 2011 census. Nature, surf at Arrifana and tourism that the council calls strategic. Not an AI hub, nao senhor: a council with online services, a parish teleassistance pilot and regional AI schemes that our firms could join.",
+    "gaps_intro": "Cá entre nós, aqui o vento levou tudo o que ainda não encontrámos. Eis o que falta:"
+  }
+}
