@@ -309,7 +309,7 @@ public struct PlaceDetailView: View {
                 LazyVGrid(columns: columns, alignment: .leading, spacing: Space.m) {
                     ForEach(shown) { entry in
                         MapEntryCard(entry: entry, accent: accent,
-                                     subject: CommentSubject(place: id, title: entry.name, item: entry.name, page: place.map { PlacesStore.pageURL($0).absoluteString } ?? ""))
+                                     subject: CommentSubject(place: id, title: entry.name, item: entry.name, page: PlacesStore.pageURL(place).absoluteString))
                     }
                 }
             }
