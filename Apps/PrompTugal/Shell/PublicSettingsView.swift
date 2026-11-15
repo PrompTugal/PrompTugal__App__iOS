@@ -18,12 +18,6 @@ struct PublicSettingsView: View {
         Form {
             Section {
                 NavigationLink {
-                    AlgarveView()
-                } label: {
-                    Label("The Algarve", systemImage: "map.circle")
-                }
-                .accessibilityIdentifier("pt.more.algarve")
-                NavigationLink {
                     NewsroomCentreView()
                 } label: {
                     Label("Newsroom", systemImage: "person.3.sequence")
@@ -32,7 +26,7 @@ struct PublicSettingsView: View {
             } header: {
                 Text("PrompTugal.news by place")
             } footer: {
-                Text("The 17 towns of the Algarve, each with its own site and its own agent. The newsroom is read-only.")
+                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. Read-only.")
             }
             StandSection()
             Section {
