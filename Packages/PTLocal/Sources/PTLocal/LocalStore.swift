@@ -53,7 +53,7 @@ public final class LocalStore {
     @ObservationIgnored private let bundle: Bundle
     static let followedKey = "local.followed"
 
-    public init(fetch: @escaping LocalFetch = LocalStore.liveFetch, cache: LocalDiskCache = .standard(), bundle: Bundle = .module) {
+    public init(fetch: @escaping LocalFetch = LocalStore.liveFetch, cache: LocalDiskCache = .standard(), bundle: Bundle = LocalResources.bundle) {
         self.fetch = fetch
         self.cache = cache
         self.bundle = bundle
