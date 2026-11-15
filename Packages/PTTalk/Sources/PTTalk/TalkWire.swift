@@ -23,6 +23,8 @@ public enum TalkWire {
         case video = "sgit/talk/video/v1"
         case audio = "sgit/talk/audio/v1"
         case transcript = "sgit/talk/transcript/v1"
+        /// A payload another package made (PTPlaces' `promptugal/comment/v1` JSON), carried as `payload.json`.
+        case payload = "sgit/talk/payload/v1"
     }
 
     /// The first line of every message. Same field names as VoiceDebrief's header (conductor.py reads `kind`,
@@ -39,6 +41,58 @@ public enum TalkWire {
         public var sha256: String
         public var app: String
         public var sentAt: String
+        /// The signer: `sha256:` and 16 hex of SHA-256 over its P-256 public key (SPKI DER), the sgit fingerprint form.
+        public var by: String? = nil
+        /// The signer's P-256 public key, SPKI DER, base64.
+        public var key: String? = nil
+        /// ECDSA P-256 over SHA-256 of `signedText(body:)`, raw r||s (64 bytes, IEEE P1363), base64.
+        public var sig: String? = nil
+
+        /// What is signed: kind, note, part, of, name, size, sha256, sentAt and the SHA-256 (hex) of this message's
+        /// own bytes, joined by "\n". Binds the header to its body, so no part can be moved to another item.
+        public func signedText(body: Data) -> Data {
+            Data([kind, note, String(part), String(of), name, String(size), sha256, sentAt, TalkWire.sha256Hex(body)]
+                .joined(separator: "\n").utf8)
+        }
+
+        public var isSigned: Bool { by != nil && key != nil && sig != nil }
+    }
+
+    /// Signs every message of an item with a P-256 key (the person key, from PTPlaces' sign-in).
+    public struct Signer: Sendable {
+        public let key: P256.Signing.PrivateKey
+        public init(key: P256.Signing.PrivateKey) { self.key = key }
+        public var publicKeyBase64: String { key.publicKey.derRepresentation.base64EncodedString() }
+        public var fingerprint: String { TalkWire.fingerprint(of: key.publicKey) }
+
+        func sign(_ header: inout Header, body: Data) throws {
+            header.by = fingerprint
+            header.key = publicKeyBase64
+            header.sig = try key.signature(for: header.signedText(body: body)).rawRepresentation.base64EncodedString()
+        }
+    }
+
+    public static func fingerprint(of key: P256.Signing.PublicKey) -> String {
+        "sha256:" + sha256Hex(key.derRepresentation).prefix(16)
+    }
+
+    public enum Verdict: Equatable, Sendable {
+        /// Signed, and the signature holds for this header and body; the receiver still checks `by` is registered.
+        case signed(by: String)
+        case unsigned
+        case invalid
+    }
+
+    /// The receiving side's check of one message.
+    public static func verify(header: Header, body: Data) -> Verdict {
+        guard header.by != nil || header.key != nil || header.sig != nil else { return .unsigned }
+        guard let by = header.by, let keyB64 = header.key, let sigB64 = header.sig,
+              let keyData = Data(base64Encoded: keyB64), let sigData = Data(base64Encoded: sigB64),
+              let key = try? P256.Signing.PublicKey(derRepresentation: keyData),
+              fingerprint(of: key) == by,
+              let signature = try? P256.Signing.ECDSASignature(rawRepresentation: sigData),
+              key.isValidSignature(signature, for: header.signedText(body: body)) else { return .invalid }
+        return .signed(by: by)
     }
 
     /// Why an item is sent, which decides the receiver's handling.
@@ -49,6 +103,8 @@ public enum TalkWire {
         case draft
         /// A message to a town's agent.
         case agent
+        /// A comment, thumbs or other payload from PTPlaces, sent through `TalkTransport`.
+        case comment
     }
 
     /// One file of an item.
@@ -88,6 +144,8 @@ public enum TalkWire {
         public var needsApproval: Bool
         public var app: String
         public var sentAt: String
+        /// The signer's fingerprint, when the item is signed (each message carries the signature itself).
+        public var by: String? = nil
     }
 
     // MARK: Building
@@ -142,7 +200,7 @@ public enum TalkWire {
     public static func messages(item: String, purpose: Purpose, to: String, town: String? = nil, townName: String? = nil,
                                 title: String? = nil, text: String, attachments: [Attachment] = [],
                                 transcriptSource: String? = nil, app: String, at date: Date = .now,
-                                partSize: Int = partSize) throws -> [Data] {
+                                partSize: Int = partSize, signer: Signer? = nil) throws -> [Data] {
         let line = text.trimmingCharacters(in: .whitespacesAndNewlines)
         let files = attachments.filter { !$0.data.isEmpty }
         guard !line.isEmpty || !files.isEmpty else { throw Failure.empty }
@@ -156,21 +214,25 @@ public enum TalkWire {
                         text: line,
                         files: all.map { .init(name: $0.name, kind: $0.kind.rawValue, size: $0.data.count, sha256: sha256Hex($0.data),
                                                parts: max(1, parts(of: $0.data, size: partSize).count)) },
-                        transcriptSource: transcriptSource, needsApproval: purpose == .draft, app: app, sentAt: sentAt)
+                        transcriptSource: transcriptSource, needsApproval: purpose == .draft, app: app, sentAt: sentAt,
+                        by: signer?.fingerprint)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys, .prettyPrinted, .withoutEscapingSlashes]
         let metaJSON = try encoder.encode(meta)
 
-        var out = [try message(header: Header(kind: Kind.meta.rawValue, note: item, part: 1, of: 1, name: "meta.json",
-                                              size: metaJSON.count, sha256: sha256Hex(metaJSON), app: app, sentAt: sentAt),
-                               body: metaJSON)]
+        func signed(_ header: Header, _ body: Data) throws -> Data {
+            var header = header
+            try signer?.sign(&header, body: body)
+            return try message(header: header, body: body)
+        }
+        var out = [try signed(Header(kind: Kind.meta.rawValue, note: item, part: 1, of: 1, name: "meta.json",
+                                     size: metaJSON.count, sha256: sha256Hex(metaJSON), app: app, sentAt: sentAt), metaJSON)]
         for file in all {
             let pieces = parts(of: file.data, size: partSize)
             let digest = sha256Hex(file.data)
             for (index, piece) in pieces.enumerated() {
-                out.append(try message(header: Header(kind: file.kind.rawValue, note: item, part: index + 1, of: pieces.count,
-                                                      name: file.name, size: file.data.count, sha256: digest, app: app, sentAt: sentAt),
-                                       body: piece))
+                out.append(try signed(Header(kind: file.kind.rawValue, note: item, part: index + 1, of: pieces.count,
+                                             name: file.name, size: file.data.count, sha256: digest, app: app, sentAt: sentAt), piece))
             }
         }
         return out

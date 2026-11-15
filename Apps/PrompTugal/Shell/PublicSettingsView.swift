@@ -58,8 +58,8 @@ struct PublicSettingsView: View {
             } footer: {
                 Text("The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.")
             }
-            // Owner-only (PTTalk): one locked row; everything behind it waits for the owner's passphrase.
-            OwnerTalkSection()
+            // PTTalk: notes and contributions to the conductor; only offers to connect until its lane link is pasted.
+            TalkSection()
             Section {
                 LabeledContent("Version") {
                     versionText

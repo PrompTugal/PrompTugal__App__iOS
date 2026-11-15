@@ -1,14 +1,10 @@
 import AVKit
+import CryptoKit
 import PhotosUI
 import PTCore
 import PTLanes
-import PTLocal
 import SwiftUI
 import UIKit
-
-enum PlaceDirectoryName {
-    static func of(_ id: String) -> String? { PlaceDirectory.info(id)?.name }
-}
 
 /// A photo, a video or a recorded interview (with its transcript, made on this device), about a town, sent to the
 /// conductor's lane as a draft. A person approves a draft before anything is published.
@@ -42,13 +38,14 @@ struct ContributeView: View {
     @State private var problem: String?
     @State private var lastMessages: [Data] = []
     @State private var lastRecord: TalkHistory.Record?
+    @Environment(\.talkSigningKey) private var signingKey
 
     var body: some View {
         Form {
             if lanes.conductor == nil { NoLaneSection() }
             Section {
                 Picker("Town", selection: $town) {
-                    ForEach(PlaceDirectory.towns.sorted { $0.name < $1.name }) { Text($0.name).tag($0.id) }
+                    ForEach(TalkTowns.all) { Text($0.name).tag($0.id) }
                 }
                 .accessibilityIdentifier("pt.talk.contribute.town")
                 Picker("What", selection: $kind) {
@@ -56,7 +53,7 @@ struct ContributeView: View {
                 }
                 .pickerStyle(.segmented)
             } footer: {
-                Text("Goes to \(PlaceDirectoryName.of(town) ?? town)'s drafts through the conductor. A person approves it before it is published.")
+                Text("Goes to \(TalkTowns.name(town) ?? town)'s drafts through the conductor. A person approves it before it is published.")
             }
 
             switch kind {
@@ -72,7 +69,7 @@ struct ContributeView: View {
 
             Section {
                 if let problem { Text(problem).font(.footnote).foregroundStyle(Palette.red) }
-                SendStatusView(state: sender.state, recipient: "the conductor",
+                SendStatusView(state: sender.state, recipient: "the conductor", signed: signingKey?() != nil,
                                onTryNow: { sender.tryNow() }, onRetry: { Task { await resend() } })
             }
 
@@ -233,9 +230,9 @@ struct ContributeView: View {
         let line = [title, notes].map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }.joined(separator: "\n\n")
         do {
             lastMessages = try TalkWire.messages(item: item, purpose: .draft, to: "conductor", town: town,
-                                                 townName: PlaceDirectoryName.of(town), title: title.isEmpty ? nil : title,
+                                                 townName: TalkTowns.name(town), title: title.isEmpty ? nil : title,
                                                  text: line, attachments: attachments, transcriptSource: transcriptSource,
-                                                 app: TalkApp.line)
+                                                 app: TalkApp.line, signer: signingKey?().map(TalkWire.Signer.init(key:)))
         } catch {
             problem = error.localizedDescription
             return

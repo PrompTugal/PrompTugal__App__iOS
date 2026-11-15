@@ -14,7 +14,7 @@
     "PTExplore": {"path": "Packages/PTExplore", "deps": ["PTCore"]},
     "PTFringe": {"path": "Packages/PTFringe", "deps": ["PTCore"]},
     "PTLocal": {"path": "Packages/PTLocal", "deps": ["PTCore"]},
-    "PTTalk": {"path": "Packages/PTTalk", "deps": ["PTCore", "PTLanes", "PTLocal"]}
+    "PTTalk": {"path": "Packages/PTTalk", "deps": ["PTCore", "PTLanes"]}
   },
   "apps": {
     "team": {"project": "Apps/Team/Team.xcodeproj", "scheme": "Team", "bundle": "news.promptugal.team",

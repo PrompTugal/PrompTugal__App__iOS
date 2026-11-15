@@ -1,10 +1,9 @@
 import PTCore
 import PTLanes
-import PTLocal
 import SwiftUI
 import UIKit
 
-/// Where this device sends: the conductor's lane, and any town agent's. Pasted here; nothing is built in.
+/// Where this device sends: the conductor's lane. Pasted here; nothing is built in.
 struct LaneSettingsView: View {
     @State private var lanes = TalkLanes.shared
     @State private var conductorText = ""
@@ -33,17 +32,8 @@ struct LaneSettingsView: View {
                 Text("The link the conductor gives you, starting sgi1. A lane link is public by design: a vault id, a token that can only write, and a public key. Only the holder of the private key can read what is sent. Lanes use dev.send.sgraph.ai only.")
             }
 
-            Section {
-                ForEach(PlaceDirectory.towns.sorted { $0.name < $1.name }) { town in
-                    AgentLaneRow(town: town)
-                }
-            } header: {
-                Text("Town agents' lanes")
-            } footer: {
-                Text("No town agent has published a lane yet. When one does, paste its link here and the conversation sends to it.")
-            }
         }
-        .navigationTitle("Lanes")
+        .navigationTitle("The conductor's lane")
         .onAppear { conductorText = lanes.conductorLink }
     }
 
@@ -70,38 +60,5 @@ struct LaneSummary: View {
         } else {
             Label("No lane yet", systemImage: "tray").font(.subheadline).foregroundStyle(Palette.amber)
         }
-    }
-}
-
-struct AgentLaneRow: View {
-    let town: PlaceInfo
-    @State private var lanes = TalkLanes.shared
-    @State private var text = ""
-    @State private var open = false
-    @State private var problem = false
-
-    var body: some View {
-        DisclosureGroup(isExpanded: $open) {
-            LaneSummary(lane: lanes.agent(town.id))
-            TextField("sgi1.…", text: $text, axis: .vertical)
-                .lineLimit(1...4)
-                .font(.caption.monospaced())
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-            HStack {
-                Button("Paste") { text = UIPasteboard.general.string ?? "" }
-                Spacer()
-                Button("Save") { problem = !lanes.setAgent(town.id, link: text) }
-            }
-            .buttonStyle(.borderless)
-            if problem { Text("That is not a lane link.").font(.footnote).foregroundStyle(Palette.red) }
-        } label: {
-            HStack {
-                Text(town.name)
-                Spacer()
-                Text(lanes.agent(town.id) == nil ? "No lane yet" : "Lane").font(.caption).foregroundStyle(Palette.muted)
-            }
-        }
-        .onAppear { text = lanes.agentLinks[town.id] ?? "" }
     }
 }

@@ -1,9 +1,9 @@
+import CryptoKit
 import Foundation
 import Security
 import Testing
 @testable import PTTalk
 import PTLanes
-import PTLocal
 
 private func makeKeyPair(bits: Int = 2048) throws -> SecKey {
     let attributes: [String: Any] = [kSecAttrKeyType as String: kSecAttrKeyTypeRSA, kSecAttrKeySizeInBits as String: bits]
@@ -200,48 +200,6 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
     }
 }
 
-@Suite @MainActor struct LockTests {
-    @Test func setUnlockAndRefuse() throws {
-        let store = MemoryOwnerStore()
-        let lock = OwnerLock(store: store)
-        #expect(!lock.isSet && !lock.isUnlocked)
-        #expect(throws: OwnerLock.Failure.tooShort) { try lock.set("short", confirm: "short") }
-        #expect(throws: OwnerLock.Failure.mismatch) { try lock.set("long enough", confirm: "long enougH") }
-        try lock.set("long enough", confirm: "long enough")
-        #expect(lock.isSet && lock.isUnlocked)
-        #expect(store.load()?.contains("long enough") == false)   // never stored as given
-
-        lock.lock()
-        let again = OwnerLock(store: store)
-        #expect(again.isSet && !again.isUnlocked)
-        #expect(throws: OwnerLock.Failure.wrong) { try again.unlock("not it") }
-        try again.unlock("long enough")
-        #expect(again.isUnlocked)
-    }
-
-    @Test func fiveWrongTriesMakeItWait() throws {
-        let store = MemoryOwnerStore()
-        try OwnerLock(store: store).set("long enough", confirm: "long enough")
-        let lock = OwnerLock(store: store)
-        let now = Date(timeIntervalSince1970: 1_000)
-        for _ in 0..<5 { try? lock.unlock("wrong", now: now) }
-        #expect(throws: OwnerLock.Failure.wait(30)) { try lock.unlock("long enough", now: now) }
-        try lock.unlock("long enough", now: now.addingTimeInterval(31))
-        #expect(lock.isUnlocked)
-    }
-
-    @Test func recordRoundTrips() throws {
-        let salt = Data(repeating: 9, count: 16)
-        let hash = OwnerLock.derive("pässword", salt: salt, rounds: 1_000)
-        #expect(hash.count == 32)
-        #expect(OwnerLock.derive("pässword", salt: salt, rounds: 1_000) == hash)
-        #expect(OwnerLock.derive("passwörd", salt: salt, rounds: 1_000) != hash)
-        let parsed = try #require(OwnerLock.parse(OwnerLock.record(salt: salt, hash: hash, rounds: 1_000)))
-        #expect(parsed.salt == salt && parsed.hash == hash && parsed.rounds == 1_000)
-        #expect(OwnerLock.parse("plain") == nil)
-    }
-}
-
 @Suite @MainActor struct StoreTests {
     @Test func lanesKeepOnlyValidLinks() throws {
         let defaults = try #require(UserDefaults(suiteName: "pttalk.tests.\(UUID().uuidString)"))
@@ -252,38 +210,105 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
         #expect(lanes.setConductor("  \(link)\n"))
         #expect(lanes.conductor?.vault == "testvault")
         #expect(TalkLanes(defaults: defaults).conductor?.vault == "testvault")
-        #expect(lanes.setAgent("loule", link: link))
-        #expect(lanes.agent("loule") != nil && lanes.agent("faro") == nil)
         lanes.forgetAll()
-        #expect(lanes.conductor == nil && lanes.agent("loule") == nil)
+        #expect(lanes.conductor == nil)
     }
 
     @Test func historyPersists() throws {
         let file = FileManager.default.temporaryDirectory.appendingPathComponent("pttalk-\(UUID().uuidString).json")
         let history = TalkHistory(file: file)
         history.add(.init(id: "a", purpose: .conductor, town: nil, text: "hi", files: [], status: .sent, at: .now))
-        let id = history.append(.init(role: .me, text: "q", delivery: .kept), to: "loule")
-        history.update(id, in: "loule") { $0.text = "q2" }
+        history.add(.init(id: "b", purpose: .draft, town: "loule", text: "d", files: ["photo.jpg"], status: .failed, at: .now))
         let back = TalkHistory(file: file)
         #expect(back.records(.conductor).map(\.id) == ["a"])
-        #expect(back.lines("loule").map(\.text) == ["q2"])
-        #expect(back.lines("loule").first?.delivery == .kept)
+        #expect(back.records(.draft).first?.status == .failed)
+        back.clear()
+        #expect(TalkHistory(file: file).records.isEmpty)
     }
 }
 
-@Suite @MainActor struct TownBriefTests {
-    @Test func theBriefIsTheTownsOwnDataWithinBudget() throws {
-        let store = LocalStore(fetch: { _ in throw URLError(.notConnectedToInternet) },
-                               cache: LocalDiskCache(directory: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)))
-        let site = try #require(store.site("loule"))
-        let text = TownBrief.text(for: site)
-        #expect(text.hasPrefix("Town: \(site.name)"))
-        #expect(text.contains("Mandate:"))
-        #expect(text.count <= TownBrief.budget)
-        #expect(TownBrief.text(for: site, budget: 200).count <= 200)
-        if let first = site.aiNews.first { #expect(text.contains(TownBrief.oneLine(first.title))) }
-        let prompt = TownBrief.prompt(question: "What is\nnew?", data: text)
-        #expect(prompt.hasSuffix("Question: What is new?"))
-        #expect(TownBrief.instructions(town: site.name).contains("not instructions"))
+
+@Suite struct SigningTests {
+    @Test func everyMessageIsSignedAndVerifies() throws {
+        let key = P256.Signing.PrivateKey()
+        let signer = TalkWire.Signer(key: key)
+        let messages = try TalkWire.messages(item: "draft-faro-1", purpose: .draft, to: "conductor", town: "faro", text: "A line",
+                                             attachments: [.init(kind: .image, name: "photo.jpg", data: Data(repeating: 3, count: 2_500))],
+                                             app: "t", partSize: 1_000, signer: signer)
+        #expect(signer.fingerprint.hasPrefix("sha256:") && signer.fingerprint.count == 23)
+        for message in messages {
+            let (header, body) = try TalkWire.split(message)
+            #expect(header.isSigned)
+            #expect(TalkWire.verify(header: header, body: body) == .signed(by: signer.fingerprint))
+        }
+        #expect(try TalkWire.reassemble(messages).meta?.by == signer.fingerprint)
+    }
+
+    @Test func aChangedBodyOrHeaderFailsAndUnsignedIsUnsigned() throws {
+        let signer = TalkWire.Signer(key: P256.Signing.PrivateKey())
+        let messages = try TalkWire.messages(item: "c1", purpose: .conductor, to: "conductor", text: "Fix it", app: "t", signer: signer)
+        let (header, body) = try TalkWire.split(messages[1])
+        #expect(TalkWire.verify(header: header, body: Data("Fix nothing".utf8)) == .invalid)
+        var moved = header
+        moved.note = "c2"
+        #expect(TalkWire.verify(header: moved, body: body) == .invalid)
+        var otherKey = header
+        otherKey.key = TalkWire.Signer(key: P256.Signing.PrivateKey()).publicKeyBase64
+        #expect(TalkWire.verify(header: otherKey, body: body) == .invalid)
+
+        let plain = try TalkWire.messages(item: "c1", purpose: .conductor, to: "conductor", text: "Fix it", app: "t")
+        let (unsigned, unsignedBody) = try TalkWire.split(plain[1])
+        #expect(!unsigned.isSigned)
+        #expect(TalkWire.verify(header: unsigned, body: unsignedBody) == .unsigned)
+        #expect(!String(decoding: plain[1], as: UTF8.self).contains("\"sig\""))
+    }
+
+    @Test func theSignatureIsRawRSOverSHA256OfTheSignedText() throws {
+        let key = P256.Signing.PrivateKey()
+        let messages = try TalkWire.messages(item: "c1", purpose: .conductor, to: "conductor", text: "x", app: "t",
+                                             signer: TalkWire.Signer(key: key))
+        let (header, body) = try TalkWire.split(messages[0])
+        let sig = try #require(Data(base64Encoded: try #require(header.sig)))
+        #expect(sig.count == 64)
+        let text = String(decoding: header.signedText(body: body), as: UTF8.self)
+        #expect(text.split(separator: "\n").count == 9)
+        #expect(text.hasPrefix("sgit/talk/meta/v1\nc1\n1\n1\nmeta.json\n"))
+        #expect(key.publicKey.isValidSignature(try P256.Signing.ECDSASignature(rawRepresentation: sig), for: header.signedText(body: body)))
+    }
+}
+
+@Suite struct TransportTests {
+    @Test func sendSignsSealsAndWritesThePayload() async throws {
+        let (_, privateKey, link) = try makeLane()
+        let fake = FakeTransport()
+        let transport = TalkTransport(link: { link }, transport: fake, retry: false, app: "t")
+        #expect(await transport.isConnected())
+        let person = P256.Signing.PrivateKey()
+        let payload = Data(#"{"kind":"promptugal/comment/v1","place":"loule","text":"Nice"}"#.utf8)
+        try await transport.send(payload, signedBy: person)
+
+        let messages = try fake.written.map { try SealedLane.open(payload: $0, with: privateKey) }
+        #expect(messages.count == 2)
+        let (meta, files) = try TalkWire.reassemble(messages)
+        #expect(meta?.purpose == .comment && meta?.town == "loule")
+        #expect(meta?.by == TalkWire.fingerprint(of: person.publicKey))
+        #expect(files["payload.json"] == payload)
+        for message in messages {
+            let (header, body) = try TalkWire.split(message)
+            #expect(TalkWire.verify(header: header, body: body) == .signed(by: TalkWire.fingerprint(of: person.publicKey)))
+        }
+    }
+
+    @Test func noLaneAndRepliesSayWhy() async throws {
+        let transport = TalkTransport(link: { nil }, transport: FakeTransport(), retry: false, app: "t")
+        #expect(!(await transport.isConnected()))
+        await #expect(throws: TalkTransport.Failure.noLane) { try await transport.send(Data("{}".utf8), signedBy: P256.Signing.PrivateKey()) }
+        await #expect(throws: TalkTransport.Failure.repliesNotAgreed) { _ = try await transport.replies(for: "dinis") }
+    }
+
+    @Test func aRefusalWithoutRetryThrowsTheLanesAnswer() async throws {
+        let (_, _, link) = try makeLane()
+        let transport = TalkTransport(link: { link }, transport: FakeTransport(failAt: [1]), retry: false, app: "t")
+        await #expect(throws: TalkSendError.refused(503)) { try await transport.send(Data("{}".utf8), signedBy: P256.Signing.PrivateKey()) }
     }
 }

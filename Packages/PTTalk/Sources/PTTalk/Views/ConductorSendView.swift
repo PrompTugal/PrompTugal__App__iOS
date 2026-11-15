@@ -1,3 +1,4 @@
+import CryptoKit
 import PhotosUI
 import PTCore
 import PTLanes
@@ -17,6 +18,7 @@ struct ConductorSendView: View {
     @State private var nothingToPaste = false
     @State private var lastMessages: [Data] = []
     @State private var lastRecord: TalkHistory.Record?
+    @Environment(\.talkSigningKey) private var signingKey
 
     var body: some View {
         Form {
@@ -37,7 +39,7 @@ struct ConductorSendView: View {
                 Text("Screenshot or photo")
             }
             Section {
-                SendStatusView(state: sender.state, recipient: "the conductor",
+                SendStatusView(state: sender.state, recipient: "the conductor", signed: signingKey?() != nil,
                                onTryNow: { sender.tryNow() }, onRetry: { Task { await resend() } })
             }
             let sent = history.records(.conductor)
@@ -78,7 +80,8 @@ struct ConductorSendView: View {
         let item = TalkWire.itemId(purpose: .conductor, town: nil)
         do {
             lastMessages = try TalkWire.messages(item: item, purpose: .conductor, to: "conductor", text: text,
-                                                 attachments: attachments, app: TalkApp.line)
+                                                 attachments: attachments, app: TalkApp.line,
+                                                 signer: signingKey?().map(TalkWire.Signer.init(key:)))
         } catch {
             sender.reset()
             return
@@ -183,7 +186,7 @@ struct RecordRow: View {
                 Text(record.at, format: .dateTime.day().month().hour().minute()).foregroundStyle(Palette.muted)
             }
             .font(.caption)
-            if let town = record.town, let name = PlaceDirectoryName.of(town) {
+            if let town = record.town, let name = TalkTowns.name(town) {
                 Text(name).font(.caption.weight(.semibold)).foregroundStyle(Palette.ink)
             }
             if !record.text.isEmpty { Text(record.text).font(.subheadline).foregroundStyle(Palette.ink).lineLimit(3) }
