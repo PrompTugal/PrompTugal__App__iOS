@@ -1,0 +1,93 @@
+name: CI status
+
+# How long a push takes to reach production, for the website and the iOS apps, and the latest
+# TestFlight build of each app: scripts/ci-status/collect.py writes ci-status.json, and this
+# workflow force-pushes it, alone, to the `ci-status` branch (one commit, no history). The app's
+# Status screen (PTLocal/Status) reads it from
+#   https://raw.githubusercontent.com/PrompTugal/PrompTugal__App__iOS/ci-status/ci-status.json
+# and the product site's status page (admin/status.html) is built from the same collector on every
+# site build (website.yml).
+#
+# Ubuntu only, about half a minute, about 30 API calls with the workflow's own token: no secrets.
+# The push uses GITHUB_TOKEN, which starts no workflow, so there is no loop; and ios.yml only builds
+# dev and night/**, never ci-status.
+#
+# Triggers: every 10 minutes (schedule and workflow_run run from the default branch only); when a
+# run of the watched workflows is requested or completes; when the collector or this file changes.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_run:
+    workflows: ['iOS', 'iOS release', 'Release and deploy']
+    types: [requested, completed]
+  push:
+    branches: [dev, 'night/**', 'work/status']
+    paths: ['.github/workflows/ci-status.yml', 'scripts/ci-status/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Only the newest matters: a newer run replaces a waiting or running one.
+concurrency:
+  group: ci-status
+  cancel-in-progress: true
+
+jobs:
+  collect:
+    name: Collect and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write   # push the ci-status branch
+      actions: read     # runs, jobs and the build-info artifacts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/ci-status
+          persist-credentials: false
+
+      - name: Collect
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/ci-status/collect.py --out "$RUNNER_TEMP/ci-status.json"
+
+      - name: Summary
+        run: |
+          python3 - "$RUNNER_TEMP/ci-status.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json, sys
+          d = json.load(open(sys.argv[1]))
+          m = lambda s: '–' if s is None else f'{s // 60}m {s % 60:02d}s'
+          print(f"### CI status at {d['generatedAt']}\n\n| Pipeline | Latest run | Push to live (latest / median) |\n| --- | --- | --- |")
+          for p in d['pipelines']:
+              r = (p.get('runs') or [{}])[0]
+              t = p.get('pushToLive') or {}
+              latest = f"#{r.get('number')} {r.get('branch')} {r.get('conclusion') or r.get('status')}" if r else (p.get('reason') or '')
+              print(f"| {p['title']} | {latest} | {m(t.get('latestSeconds'))} / {m(t.get('medianSeconds'))} |")
+          for key, a in (d.get('testflight') or {}).get('apps', {}).items():
+              print(f"\n- TestFlight `{key}`: {a['version']} ({a['build']}), uploaded {a['uploadedAt']}")
+          PY
+
+      - name: Publish to the ci-status branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pub="$RUNNER_TEMP/pub"; rm -rf "$pub"; mkdir -p "$pub"; cd "$pub"
+          cp "$RUNNER_TEMP/ci-status.json" .
+          cat > README.md <<EOF
+          # ci-status
+
+          Data only, rewritten by .github/workflows/ci-status.yml (one commit, force-pushed) about every
+          ten minutes. Do not commit here. Last written by ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} from ${GITHUB_REF_NAME}.
+          EOF
+          git init -q -b ci-status
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ci-status.json README.md
+          git commit -qm "ci-status: $(python3 -c 'import json; print(json.load(open("ci-status.json"))["generatedAt"])')"
+          for attempt in 1 2 3; do
+            git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/ci-status && exit 0
+            sleep $((attempt * 5))
+          done
+          echo "::error::could not push the ci-status branch"; exit 1
