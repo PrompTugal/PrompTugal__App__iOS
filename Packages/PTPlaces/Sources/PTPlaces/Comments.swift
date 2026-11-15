@@ -113,13 +113,12 @@ struct CommentButton: View {
     }
 }
 
-/// Thumbs up or down, remembered on the device; sent with the transport when the person is signed in.
+/// Thumbs up or down: anonymous (no person, no key), an unsigned vote on the website's observability lane, and
+/// remembered on the device so the button stays lit. Written feedback goes in a signed comment instead.
 struct ThumbsBar: View {
     let subject: CommentSubject
     let accent: Color
     @AppStorage("places.thumbs") private var thumbs = ""
-    @Environment(\.placesTalk) private var talk
-    @State private var session = PersonSession.shared
 
     private var current: String? {
         thumbs.split(separator: ";").first { $0.hasPrefix(subject.id + "=") }.map { String($0.split(separator: "=").last ?? "") }
@@ -145,17 +144,19 @@ struct ThumbsBar: View {
         .accessibilityLabel(value == "up" ? String(localized: "Useful") : String(localized: "Not useful"))
     }
 
+    /// The path voted on: the place's page, with the story's source after a # when it is a story.
+    private var path: String {
+        let page = URL(string: subject.page)?.path ?? "/"
+        return subject.item.isEmpty ? page : page + "#" + subject.item
+    }
+
     private func set(_ value: String?) {
         var entries = thumbs.split(separator: ";").map(String.init).filter { !$0.hasPrefix(subject.id + "=") }
         if let value { entries.append(subject.id + "=" + value) }
         thumbs = entries.joined(separator: ";")
-        guard let value, let talk, let key = session.key else { return }
-        Task {
-            if let payload = try? CommentMessage.payload(subject: subject, text: "", feedback: "thumbs-\(value)", key: key),
-               let signer = try? key.signingKey() {
-                try? await talk.send(payload, signedBy: signer)
-            }
-        }
+        guard let value else { return }
+        let path = self.path
+        Task.detached { await AnonymousVote.send(vote: value == "up" ? 1 : -1, on: path) }
     }
 }
 

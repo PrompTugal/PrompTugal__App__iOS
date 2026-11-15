@@ -332,3 +332,28 @@ struct CommentTests {
         #expect(reply.by == "conductor@PrompTugal.dinis")
     }
 }
+
+@Suite("PTPlaces: anonymous votes")
+struct VoteTests {
+    @Test("a vote carries no person and no key, only the website's view fields and the vote")
+    func event() {
+        let e = AnonymousVote.event(vote: -5, on: "/algarve/loule/", version: "0.4.107", screen: "phone")
+        #expect(e["type"] as? String == "vote")
+        #expect(e["vote"] as? Int == -1)
+        #expect(e["person"] == nil)
+        #expect(e["key"] == nil)
+        #expect((e["ts"] as? String)?.count == 17)
+    }
+
+    @Test("the SPKI wrapper comes off an RSA key, and the envelope is base64 of base64 of {v:2,w,i,c}")
+    func seal() throws {
+        // A throwaway 2048-bit key made with Node for this test.
+        let pem = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6+ETikMJo4IEQ7gpaGtj\n/POFgi6KHcCriJLiVoHR7NTw0/0z08xwkM7W/lj4AuOOZwpxXJWOwsB18ArkXpav\ndzgg7kBm6REm5aOuP+Cl8SSftm8O/AYbRQ0iOoKpkzg8AORH1q7j3jwYkvVDzcTs\nFAeIlsNVeCWm5M861RRUJoIi16oRiNjq52cclX5udv0BoTOz1JXiW3TBsc1zo3q4\nAX04tpxVIqXqZnKTwj4DPqqhftZ/Tx2QKU9zYyz5kzy5EZPTeNcjrs0+wH48gJ+P\n55Ku72ib8FmCpT1ZIT0m/u6xJcCcrLnfrl5OXn3dVAXokcTvdzv8S7TLGAYotleG\nzwIDAQAB\n-----END PUBLIC KEY-----\n"
+        let sealed = try AnonymousVote.seal(Data("{}".utf8), toPEM: pem)
+        let inner = try #require(Data(base64Encoded: sealed).flatMap { String(data: $0, encoding: .utf8) })
+        let json = try #require(Data(base64Encoded: inner))
+        let object = try #require(try JSONSerialization.jsonObject(with: json) as? [String: Any])
+        #expect(object["v"] as? Int == 2)
+        #expect((object["w"] as? String).flatMap { Data(base64Encoded: $0) }?.count == 256)
+    }
+}
