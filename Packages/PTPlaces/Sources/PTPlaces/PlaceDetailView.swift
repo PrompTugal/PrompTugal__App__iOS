@@ -9,6 +9,8 @@ public struct PlaceDetailView: View {
     @State private var store = PlacesStore.shared
     /// The labelled Algarvio voice toggle: the same facts, in a local voice.
     @State private var algarvio = false
+    /// The AI map's section filter (government, companies, startups...), nil for all.
+    @State private var kind: PlaceKind?
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openURL) private var openURL
     @Environment(\.placeAccessory) private var accessory
@@ -289,19 +291,43 @@ public struct PlaceDetailView: View {
         if !entries.isEmpty, let place {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "The AI map"),
-                            subtitle: String(localized: "Who does AI here, and how close each is: the nearer the centre, the fewer steps from AI"), accent: accent)
+                            subtitle: String(localized: "Government, companies, startups, investors, research and communities doing AI here; the nearer the centre, the fewer steps from AI. Spot something wrong? Comment on it."), accent: accent)
                 ConnectionsGraph(center: place.name, entries: entries, accent: accent)
                     .frame(height: wide ? 520 : 380)
                     .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius))
+                let groups = PlaceKind.groups(entries)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Space.s) {
+                        kindChip(nil, String(localized: "All"), entries.count, "square.grid.2x2.fill")
+                        ForEach(groups, id: \.kind) { group in
+                            kindChip(group.kind, group.kind.title, group.entries.count, group.kind.symbol)
+                        }
+                    }
+                }
+                let shown = kind.map { k in entries.filter { PlaceKind.of($0.type) == k } } ?? entries
                 let columns = [GridItem(.adaptive(minimum: wide ? 300 : 280), spacing: Space.m)]
                 LazyVGrid(columns: columns, alignment: .leading, spacing: Space.m) {
-                    ForEach(entries) { entry in
+                    ForEach(shown) { entry in
                         MapEntryCard(entry: entry, accent: accent,
                                      subject: CommentSubject(place: id, title: entry.name, item: entry.name, page: place.map { PlacesStore.pageURL($0).absoluteString } ?? ""))
                     }
                 }
             }
         }
+    }
+
+    private func kindChip(_ value: PlaceKind?, _ title: String, _ count: Int, _ symbol: String) -> some View {
+        let on = kind == value
+        return Button {
+            withAnimation(.snappy) { kind = value }
+        } label: {
+            Label("\(title) \(count)", systemImage: symbol)
+                .font(.caption.weight(.semibold))
+                .padding(.horizontal, 10).padding(.vertical, 6)
+                .background(on ? accent : accent.opacity(0.1), in: Capsule())
+                .foregroundStyle(on ? .white : accent)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Events

@@ -10,27 +10,18 @@ struct ConnectionsGraph: View {
     @State private var selected: MapEntry?
     @State private var appeared = false
 
-    static func symbol(_ type: String) -> String {
-        switch type.lowercased() {
-        case let t where t.contains("company") || t.contains("startup"): "building.2.fill"
-        case let t where t.contains("institution") || t.contains("university") || t.contains("research"): "graduationcap.fill"
-        case let t where t.contains("council") || t.contains("public") || t.contains("government"): "building.columns.fill"
-        case let t where t.contains("event"): "calendar"
-        case let t where t.contains("programme") || t.contains("program") || t.contains("project"): "flag.fill"
-        case let t where t.contains("association") || t.contains("community") || t.contains("group"): "person.3.fill"
-        default: "circle.hexagongrid.fill"
-        }
-    }
+    static func symbol(_ type: String) -> String { PlaceKind.of(type).symbol }
 
     static func color(_ type: String, accent: Color) -> Color {
-        switch symbol(type) {
-        case "building.2.fill": Palette.blue
-        case "graduationcap.fill": Palette.green
-        case "building.columns.fill": accent
-        case "calendar": Palette.amber
-        case "flag.fill": Palette.series(4)
-        case "person.3.fill": Palette.series(5)
-        default: Palette.muted
+        switch PlaceKind.of(type) {
+        case .government: accent
+        case .companies: Palette.blue
+        case .startups: Palette.series(4)
+        case .investors: Palette.amber
+        case .research: Palette.green
+        case .community: Palette.series(5)
+        case .talent: Palette.red
+        case .other: Palette.muted
         }
     }
 

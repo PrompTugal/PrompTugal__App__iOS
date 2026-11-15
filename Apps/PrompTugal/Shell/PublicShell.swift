@@ -6,7 +6,7 @@ import PTPlaces
 import PTWeb
 import SwiftUI
 
-/// Root view of the public app. iPhone: five tabs (Places, Now, My program, Explore, News), with More as a sheet from the
+/// Root view of the public app. iPhone: four tabs (Places, News, Now, Explore), with More as a sheet from the
 /// round button at the top right of every tab; iPad: a sidebar with the same five, then More and Reminders. Every
 /// screen comes from `PublicDestinations`. No team names, no lanes, no sample data, and no debug screen in a Release build.
 struct PublicShell: View {

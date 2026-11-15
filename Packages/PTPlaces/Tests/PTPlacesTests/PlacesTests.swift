@@ -357,3 +357,21 @@ struct VoteTests {
         #expect((object["w"] as? String).flatMap { Data(base64Encoded: $0) }?.count == 256)
     }
 }
+
+@Suite("PTPlaces: sections by kind")
+struct KindTests {
+    @Test("the place agents' types map to Dinis's sections")
+    func kinds() {
+        #expect(PlaceKind.of("public body") == .government)
+        #expect(PlaceKind.of("company") == .companies)
+        #expect(PlaceKind.of("startup") == .startups)
+        #expect(PlaceKind.of("investor") == .investors)
+        #expect(PlaceKind.of("institution") == .research)
+        #expect(PlaceKind.of("organisation") == .community)
+        #expect(PlaceKind.of("community") == .community)
+        #expect(PlaceKind.of("person") == .talent)
+        #expect(PlaceKind.of("lighthouse") == .other)
+        let groups = PlaceKind.groups([MapEntry(name: "a", type: "startup"), MapEntry(name: "b", type: "public body")])
+        #expect(groups.map(\.kind) == [.government, .startups])
+    }
+}
