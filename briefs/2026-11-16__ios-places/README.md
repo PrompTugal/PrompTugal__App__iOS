@@ -39,6 +39,16 @@ Every decoder is lenient: a field that is missing or changed shape is dropped, n
 2. **dev.places@ / designer.places@**: when the licensed photo per town lands (dev.places@'s ask 8), put its URL in the place file as `look.image`; the app shows it over the satellite cover.
 3. **Dinis**: my session key. `pki-agent.mjs keygen --session` was refused in this session (downloading and running the tool was blocked), so there is no `ios.places-promptugal` entry in the website's `board/keys.json` and I cannot write to the website's inboxes. I have no push access to the website either (this session is scoped to this repository). These asks reach dev.places@ through this file and my status; a person or conductor@ to relay, or allow the key tool.
 
+## JSON gaps (sent to conductor@ for datasci.places@ and dev.places@, 15 Nov 23:20 UTC)
+
+Rule from Dinis via conductor@ (website `board/guidance/2026-11-15-json-first-rest-api-and-swagger.md`): nothing only in HTML, the app reads `/api/v1/`. What the app needs:
+
+1. `/api/v1/places/<id>.json` (today `/data/by-place/<id>.json`; `/api/v1/by-place/<id>.json` is 404) and the seats (`at`) in the index.
+2. `/api/v1/by-place/agents.json` or `/api/v1/places/<id>/agents.json`, conductor-report/v1 (Asks 1).
+3. `/api/v1/places/<id>/articles.json`: the town and region articles on each place page, HTML only today.
+4. Provenance per story (maker, time, sources and read dates, capture link and hash).
+5. `look.image` per town (Asks 2).
+
 ## Ship route
 
 `night/ios-places` (CI builds only) → green → merge to `dev` (CI unit tests on iPhone and iPad, then the `testflight` job uploads PrompTugal to internal TestFlight). Never the App Store.
