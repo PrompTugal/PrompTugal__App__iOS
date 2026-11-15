@@ -202,16 +202,17 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
 
 @Suite @MainActor struct StoreTests {
     @Test func lanesKeepOnlyValidLinks() throws {
-        let defaults = try #require(UserDefaults(suiteName: "pttalk.tests.\(UUID().uuidString)"))
-        let lanes = TalkLanes(defaults: defaults)
+        let store = MemoryLinkStore()
+        let lanes = TalkLanes(store: store)
         #expect(lanes.conductor == nil)
         #expect(!lanes.setConductor("not a link"))
         let (_, _, link) = try makeLane()
         #expect(lanes.setConductor("  \(link)\n"))
         #expect(lanes.conductor?.vault == "testvault")
-        #expect(TalkLanes(defaults: defaults).conductor?.vault == "testvault")
+        #expect(store.load() == link)
+        #expect(TalkLanes(store: store).conductor?.vault == "testvault")
         lanes.forgetAll()
-        #expect(lanes.conductor == nil)
+        #expect(lanes.conductor == nil && store.load() == nil)
     }
 
     @Test func historyPersists() throws {
@@ -291,6 +292,7 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
         #expect(messages.count == 2)
         let (meta, files) = try TalkWire.reassemble(messages)
         #expect(meta?.purpose == .comment && meta?.town == "loule")
+        #expect(try messages.allSatisfy { try TalkWire.split($0).header.place == "loule" })
         #expect(meta?.by == TalkWire.fingerprint(of: person.publicKey))
         #expect(files["payload.json"] == payload)
         for message in messages {

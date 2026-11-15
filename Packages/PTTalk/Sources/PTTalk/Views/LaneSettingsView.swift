@@ -8,6 +8,7 @@ struct LaneSettingsView: View {
     @State private var lanes = TalkLanes.shared
     @State private var conductorText = ""
     @State private var problem: String?
+    @State private var scanning = false
 
     var body: some View {
         Form {
@@ -20,6 +21,11 @@ struct LaneSettingsView: View {
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("pt.talk.lanes.conductor")
                 HStack {
+                    if LaneScanner.isAvailable {
+                        Button { scanning = true } label: { Label("Scan QR", systemImage: "qrcode.viewfinder") }
+                            .accessibilityIdentifier("pt.talk.lanes.scan")
+                        Spacer()
+                    }
                     Button("Paste") { conductorText = UIPasteboard.general.string ?? "" }
                     Spacer()
                     Button("Save") { save() }.disabled(conductorText == lanes.conductorLink)
@@ -29,12 +35,25 @@ struct LaneSettingsView: View {
             } header: {
                 Text("The conductor's lane")
             } footer: {
-                Text("The link the conductor gives you, starting sgi1. A lane link is public by design: a vault id, a token that can only write, and a public key. Only the holder of the private key can read what is sent. Lanes use dev.send.sgraph.ai only.")
+                Text("Scan the conductor's QR code or paste its link (it starts sgi1.). It holds a vault id, a token that can only write, and the conductor's public key; only the conductor can read what is sent. Kept in this device's Keychain. Lanes use dev.send.sgraph.ai only.")
             }
 
         }
         .navigationTitle("The conductor's lane")
         .onAppear { conductorText = lanes.conductorLink }
+        .sheet(isPresented: $scanning) {
+            NavigationStack {
+                LaneScanner { link in
+                    conductorText = link
+                    scanning = false
+                    save()
+                }
+                .ignoresSafeArea()
+                .navigationTitle("Scan the lane's QR code")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { scanning = false } } }
+            }
+        }
     }
 
     private func save() {

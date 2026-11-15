@@ -41,6 +41,8 @@ public enum TalkWire {
         public var sha256: String
         public var app: String
         public var sentAt: String
+        /// The town the item is about, when it has one (also in meta.json), for the drainer's filing.
+        public var place: String? = nil
         /// The signer: `sha256:` and 16 hex of SHA-256 over its P-256 public key (SPKI DER), the sgit fingerprint form.
         public var by: String? = nil
         /// The signer's P-256 public key, SPKI DER, base64.
@@ -222,6 +224,7 @@ public enum TalkWire {
 
         func signed(_ header: Header, _ body: Data) throws -> Data {
             var header = header
+            header.place = town
             try signer?.sign(&header, body: body)
             return try message(header: header, body: body)
         }

@@ -7,7 +7,8 @@ Code: `Sources/PTTalk/TalkWire.swift` (format, signing, `verify`), `TalkTranspor
 ## Layers, outside in
 
 1. **Lane.** `POST https://dev.send.sgraph.ai/api/vault/append/write/<vault>` with `{"append_token", "payload"}`.
-   The lane comes from an `sgi1.<vault>.<token>.<SPKI base64url>` link pasted on the device. Nothing is built in.
+   The lane comes from an `sgi1.<vault>.<token>.<SPKI base64url>` link scanned (QR) or pasted on the device and
+   kept in its Keychain. Nothing is built in.
    A lane link is public by design: it can only write.
 2. **Seal.** `payload` is base64 of the `.enc` text, which is base64 of
    `{"v": 2, "w": <RSA-OAEP-SHA256 wrapped AES key>, "i": <12-byte IV>, "c": <AES-256-GCM ciphertext+tag>}`
@@ -26,6 +27,7 @@ Code: `Sources/PTTalk/TalkWire.swift` (format, signing, `verify`), `TalkTranspor
 | `name` | the file name (`meta.json`, `message.txt`, `screenshot.jpg`, `photo.jpg`, `video.mp4`, `interview.m4a`, `transcript.txt`, `payload.json`) |
 | `size`, `sha256` | the whole file's size and SHA-256 hex, to check the joined parts |
 | `app`, `sentAt` | `PrompTugal iOS <version> (<build>)`, ISO 8601 UTC |
+| `place` | the town id, when the item is about one (also in meta.json; not signed per message, meta.json is) |
 | `by` | signed only: `sha256:` + first 16 hex of SHA-256 over the signer's P-256 public key, SPKI DER |
 | `key` | signed only: that public key, SPKI DER, base64 |
 | `sig` | signed only: ECDSA P-256 over SHA-256 of the signed text, raw r‖s (64 bytes, IEEE P1363), base64 |

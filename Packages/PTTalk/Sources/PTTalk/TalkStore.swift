@@ -1,21 +1,20 @@
 import Foundation
 import Observation
+import Security
 import PTLanes
 
-/// The lane this device sends to: the conductor's. Pasted in the app; nothing is built in.
-/// A lane link is public by design (a vault id, a write-only token, a public key), so it lives in UserDefaults.
+/// The lane this device sends to: the conductor's. Scanned (QR) or pasted in the app; nothing is built in. Kept in
+/// the Keychain (this device only): a lane link is public by design, but whoever holds it can write to the lane.
 @MainActor @Observable
 public final class TalkLanes {
     public static let shared = TalkLanes()
 
-    static let conductorKey = "talk.lane.conductor"
-    private let defaults: UserDefaults
-
+    private let store: TalkLinkStore
     public private(set) var conductorLink: String
 
-    public init(defaults: UserDefaults = .standard) {
-        self.defaults = defaults
-        conductorLink = defaults.string(forKey: Self.conductorKey) ?? ""
+    public init(store: TalkLinkStore = KeychainLinkStore()) {
+        self.store = store
+        conductorLink = store.load() ?? ""
     }
 
     public var conductor: SealedLane? { SealedLane.parse(conductorLink) }
@@ -25,12 +24,56 @@ public final class TalkLanes {
     public func setConductor(_ text: String) -> Bool {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isEmpty || SealedLane.parse(trimmed) != nil else { return false }
+        if trimmed.isEmpty { store.delete() } else { store.save(trimmed) }
         conductorLink = trimmed
-        defaults.set(trimmed, forKey: Self.conductorKey)
         return true
     }
 
     public func forgetAll() { setConductor("") }
+}
+
+/// Where the lane link lives: the Keychain in the app, memory in tests.
+public protocol TalkLinkStore: Sendable {
+    func load() -> String?
+    func save(_ link: String)
+    func delete()
+}
+
+public struct KeychainLinkStore: TalkLinkStore {
+    let service: String
+    public init(service: String = "news.promptugal.reader.talk.lane") { self.service = service }
+
+    private var base: [String: Any] {
+        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: "conductor"]
+    }
+
+    public func load() -> String? {
+        var query = base
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        var item: CFTypeRef?
+        guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess, let data = item as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    public func save(_ link: String) {
+        SecItemDelete(base as CFDictionary)
+        var item = base
+        item[kSecValueData as String] = Data(link.utf8)
+        item[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        SecItemAdd(item as CFDictionary, nil)
+    }
+
+    public func delete() { SecItemDelete(base as CFDictionary) }
+}
+
+public final class MemoryLinkStore: TalkLinkStore, @unchecked Sendable {
+    private var link: String?
+    private let lock = NSLock()
+    public init(_ link: String? = nil) { self.link = link }
+    public func load() -> String? { lock.lock(); defer { lock.unlock() }; return link }
+    public func save(_ link: String) { lock.lock(); self.link = link; lock.unlock() }
+    public func delete() { lock.lock(); link = nil; lock.unlock() }
 }
 
 /// What this device sent, kept on this device only (Application Support, complete
