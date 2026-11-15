@@ -342,3 +342,28 @@ struct AlgarveAbstractMap: View {
         .foregroundStyle(Palette.muted)
     }
 }
+
+// MARK: - The maps on their own
+
+/// The Algarve map in all its styles on one screen, for any reader to open or embed (the newsroom's live screen links
+/// here; the Places reader can too). Reads the shared store; says whether its data is live.
+public struct AlgarveMapsView: View {
+    @State private var store = LocalStore.shared
+
+    public init() {}
+
+    public var body: some View {
+        Page {
+            ScreenHeader(kicker: "PrompTugal.news · the Algarve", title: "The towns, four ways",
+                         summary: "The 17 places of the Algarve: on the map, in 3D over the terrain, as a grid that keeps the region's shape, and as a cartogram where each town grows with what its agent has found.")
+            ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
+            AlgarveMap(store: store)
+        }
+        .navigationTitle("Algarve maps")
+        .task {
+            if !store.placeProvenance.isLive { await store.refreshPlaces() }
+            if !store.dashboardProvenance.isLive { await store.refreshDashboard() }
+        }
+        .refreshable { await store.refreshAll() }
+    }
+}

@@ -31,6 +31,16 @@ public struct NewsroomLiveView: View {
                         .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                 }
                 storyCard
+                NavigationLink {
+                    AlgarveMapsView()
+                } label: {
+                    Card {
+                        Label("The towns, four ways", systemImage: "map").font(.headline)
+                        Text("The Algarve on the map, in 3D flying town to town, as a tile grid, and as a cartogram sized by what each agent found.")
+                            .font(.footnote).foregroundStyle(Palette.muted)
+                    }
+                }
+                .buttonStyle(.plain)
                 Columns {
                     LiveTicker(model: model, selected: $selected)
                 } trailing: {
