@@ -8,7 +8,6 @@ import SwiftUI
 /// the towns you follow first. Every story opens its source; every screen says whether its data is live.
 public struct AlgarveView: View {
     @State private var store = LocalStore.shared
-    @State private var personas = PersonaStore.shared
     @AppStorage("local.voice") private var algarvio = false
 
     public init() {}
@@ -16,10 +15,7 @@ public struct AlgarveView: View {
     public var body: some View {
         Page {
             header
-            PersonaBanner()
             ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
-            NearMeCard(store: store)
-            PersonaForYouCard(store: store)
             StatGrid(minimum: 120) {
                 StatTile(label: "Places", value: "\(PlaceDirectory.towns.count)", detail: "first wave")
                 StatTile(label: "Live sites", value: "\(store.liveTownCount)", detail: "the rest researching", tone: .good)
@@ -36,11 +32,11 @@ public struct AlgarveView: View {
             }
             Columns {
                 TitledCard("The latest from the towns", kicker: "Local AI news") {
-                    let latest = PersonaRanker.order(store.latestFromTowns(limit: 10)) { personas.match($0.story).score }
+                    let latest = store.latestFromTowns(limit: 10)
                     if latest.isEmpty {
                         Text("No stories yet.").font(.footnote).foregroundStyle(Palette.muted)
                     }
-                    ForEach(latest) { item in StoryRow(story: item.story, town: item.town.name, match: personas.match(item.story)) }
+                    ForEach(latest) { item in StoryRow(story: item.story, town: item.town.name) }
                 }
             } trailing: {
                 TitledCard("The towns", kicker: "\(store.liveTownCount) live · \(PlaceDirectory.towns.count - store.liveTownCount) researching") {
@@ -49,8 +45,7 @@ public struct AlgarveView: View {
             }
             if let region = store.region, !region.aiNews.isEmpty {
                 TitledCard("Across the region", kicker: "The Algarve") {
-                    let ordered = PersonaRanker.order(Array(region.aiNews.prefix(8))) { personas.match($0).score }
-                    ForEach(ordered) { story in StoryRow(story: story, town: nil, match: personas.match(story)) }
+                    ForEach(region.aiNews.prefix(8)) { story in StoryRow(story: story, town: nil) }
                 }
             }
             NavigationLink {
@@ -68,7 +63,6 @@ public struct AlgarveView: View {
         }
         .navigationTitle("The Algarve")
         .toolbar {
-            ToolbarItem(placement: .primaryAction) { PersonaToolbarButton() }
             ToolbarItem(placement: .primaryAction) {
                 Toggle(isOn: $algarvio) { Label("Algarvio voice", systemImage: "quote.bubble") }
                     .toggleStyle(.button)
@@ -86,21 +80,9 @@ public struct AlgarveView: View {
                             summary: text ?? "AI and technology across the Algarve and its 17 towns, every fact sourced.")
     }
 
-    /// In persona mode, the towns with the most that matters to the persona first; then live sites, then by number
-    /// of stories.
+    /// Live sites first, then by number of stories.
     private var sortedTowns: [PlaceInfo] {
-        var fit: [String: Int] = [:]
-        if personas.isOn {
-            for info in PlaceDirectory.towns {
-                guard let site = store.site(info.id) else { continue }
-                let stories = site.aiNews.filter { personas.match($0).isMatch }.count
-                let entries = site.aiMap.filter { personas.match($0).isMatch }.count
-                fit[info.id] = stories + entries
-            }
-        }
-        return PlaceDirectory.towns.sorted { a, b in
-            let fa = fit[a.id] ?? 0, fb = fit[b.id] ?? 0
-            if fa != fb { return fa > fb }
+        PlaceDirectory.towns.sorted { a, b in
             let sa = store.site(a.id), sb = store.site(b.id)
             let la = sa?.isLive == true ? 0 : 1, lb = sb?.isLive == true ? 0 : 1
             if la != lb { return la < lb }
@@ -211,26 +193,9 @@ struct StatusChip: View {
 struct StoryRow: View {
     let story: PlaceSite.News
     let town: String?
-    /// In persona mode, how the story fits the persona: a match is marked "For you".
-    var match: PersonaMatch = .none
-    /// The town to tell Apple Intelligence about when the row shows none (a town's own page).
-    var townForAI: String? = nil
 
     var body: some View {
-        HStack(alignment: .top, spacing: Space.xs) {
-            content
-                .padding(.leading, match.isMatch ? Space.s : 0)
-                .overlay(alignment: .leading) {
-                    if match.isMatch { Rectangle().fill(Palette.green).frame(width: 3) }
-                }
-            Spacer(minLength: 0)
-            StoryAIButton(story: story, town: town ?? townForAI)
-        }
-    }
-
-    private var content: some View {
         VStack(alignment: .leading, spacing: 4) {
-            PersonaMatchChip(match: match)
             if let town { Kicker(town) }
             if let url = story.sourceURL {
                 Link(destination: url) {

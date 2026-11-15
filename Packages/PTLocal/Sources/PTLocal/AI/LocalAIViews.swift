@@ -176,13 +176,18 @@ struct StoryAISheet: View {
     }
 }
 
-/// A small sparkles button that opens StoryAISheet.
-struct StoryAIButton: View {
+/// A small sparkles button that opens the story's on-device summary and "explain the AI path".
+public struct StorySummaryButton: View {
     let story: PlaceSite.News
     let town: String?
     @State private var showing = false
 
-    var body: some View {
+    public init(story: PlaceSite.News, town: String?) {
+        self.story = story
+        self.town = town
+    }
+
+    public var body: some View {
         Button {
             showing = true
         } label: {
@@ -216,11 +221,13 @@ struct PersonaMatchChip: View {
 }
 
 /// The header that says persona mode is on, with a way to change it or turn it off. With no persona, an invitation.
-struct PersonaBanner: View {
+public struct PersonaBanner: View {
     @State private var personas = PersonaStore.shared
     @State private var picking = false
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         Group {
             if let persona = personas.persona {
                 HStack(alignment: .top, spacing: Space.m) {
@@ -255,12 +262,14 @@ struct PersonaBanner: View {
 }
 
 /// Pick a ready-made persona or type your own.
-struct PersonaPicker: View {
+public struct PersonaPicker: View {
     @State private var personas = PersonaStore.shared
     @State private var typed = ""
     @Environment(\.dismiss) private var dismiss
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         NavigationStack {
             Form {
                 Section {
@@ -322,17 +331,19 @@ struct PersonaPicker: View {
 
 /// Persona mode on the Algarve home: the stories and organisations across all 17 towns and the region that match,
 /// best first, and a briefing from Apple Intelligence when the device has it.
-struct PersonaForYouCard: View {
+public struct PersonaForYouCard: View {
     let store: LocalStore
     @State private var personas = PersonaStore.shared
     @State private var ask = OnDeviceAsk()
     @State private var status = LocalModel.status
 
+    public init(store: LocalStore = .shared) { self.store = store }
+
     private var sites: [(info: PlaceInfo, site: PlaceSite)] {
         ([PlaceDirectory.region] + PlaceDirectory.towns).compactMap { info in store.site(info.id).map { (info, $0) } }
     }
 
-    var body: some View {
+    public var body: some View {
         if let persona = personas.persona {
             let stories = PersonaRanker.stories(in: sites, terms: personas.terms, limit: 6)
             let entries = PersonaRanker.entries(in: sites, terms: personas.terms, limit: 6)
@@ -355,7 +366,7 @@ struct PersonaForYouCard: View {
                     LocalModelStatusLine(status: status)
                 }
                 ForEach(stories) { item in
-                    StoryRow(story: item.story, town: item.town, match: item.match)
+                    AIStoryRow(story: item.story, town: item.town, match: item.match)
                     Divider()
                 }
                 if !entries.isEmpty {
@@ -366,7 +377,7 @@ struct PersonaForYouCard: View {
                                 PersonaMatchChip(match: item.match)
                                 Kicker(item.town)
                             }
-                            MapEntryRow(entry: item.entry)
+                            AIEntryRow(entry: item.entry)
                         }
                     }
                 }
@@ -378,11 +389,13 @@ struct PersonaForYouCard: View {
 }
 
 /// A toolbar button that opens the persona picker; filled when persona mode is on.
-struct PersonaToolbarButton: View {
+public struct PersonaToolbarButton: View {
     @State private var personas = PersonaStore.shared
     @State private var picking = false
 
-    var body: some View {
+    public init() {}
+
+    public var body: some View {
         Button {
             picking = true
         } label: {
@@ -396,11 +409,13 @@ struct PersonaToolbarButton: View {
 
 /// The town nearest the reader, and its news first. Asks for location only on a tap, while in use; without it the
 /// reader picks a town.
-struct NearMeCard: View {
+public struct NearMeView: View {
     let store: LocalStore
     @State private var locator = NearMeLocator.shared
 
-    var body: some View {
+    public init(store: LocalStore = .shared) { self.store = store }
+
+    public var body: some View {
         TitledCard("Near me", kicker: kicker) {
             switch locator.state {
             case .asking:
@@ -453,21 +468,23 @@ struct NearMeCard: View {
     @ViewBuilder
     private func townNews(_ info: PlaceInfo) -> some View {
         let site = store.site(info.id)
-        TownRow(info: info, site: site)
+        AITownHeader(info: info, site: site)
         let stories = site?.aiNews.prefix(3) ?? []
         if stories.isEmpty {
             Text("\(info.name)'s agent has no local AI stories yet: still researching.").font(.footnote).foregroundStyle(Palette.muted)
         }
-        ForEach(Array(stories)) { story in StoryRow(story: story, town: nil) }
+        ForEach(Array(stories)) { story in AIStoryRow(story: story, town: nil, townForAI: info.name) }
     }
 }
 
 /// The town page's on-device summary, led by the persona when one is on.
-struct TownSummaryCard: View {
+public struct TownSummaryCard: View {
     let site: PlaceSite
     @State private var personas = PersonaStore.shared
 
-    var body: some View {
+    public init(site: PlaceSite) { self.site = site }
+
+    public var body: some View {
         OnDeviceCard(title: "\(site.name) in one paragraph",
                      kicker: personas.persona.map { "Apple Intelligence · for \($0.label)" } ?? "Apple Intelligence",
                      action: "Summarise on this device",

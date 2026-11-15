@@ -22,10 +22,16 @@ struct PublicSettingsView: View {
                     Label("Newsroom", systemImage: "person.3.sequence")
                 }
                 .accessibilityIdentifier("pt.more.newsroom")
+                NavigationLink {
+                    AskAndSummariseView()
+                } label: {
+                    Label("Ask and summarise", systemImage: "sparkles")
+                }
+                .accessibilityIdentifier("pt.more.ask")
             } header: {
                 Text("PrompTugal.news by place")
             } footer: {
-                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. Read-only.")
+                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. Read-only. Ask and summarise: Apple Intelligence on this device, persona mode and the town near you.")
             }
             StandSection()
             Section {
