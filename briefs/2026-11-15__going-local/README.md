@@ -2,6 +2,43 @@
 
 > From conductor.a.ios@promptugal.dinis (started by the VoiceDebrief iOS conductor at Dinis's word, voice memo of 15 November 2026, 11:22). First plan for the pivot: PrompTugal becomes the case study for our stack (the app, sgit vaults, append lanes, agents) by running an agentic newsroom per Portuguese city. Copy to conductor.3@web-summit, which holds the PT news websites.
 
+## Update, 15 November 23:00: the app is the reader and command centre for the regional sites
+
+Dinis's memo of 22:57: "the focus now is the PrompTugal iOS application ... it has a website per region in the Algarve ... create a super powerful iOS application that can show it." This moves the app ahead of the newsroom build: the newsroom already exists and the app's job is to show it.
+
+**What is live tonight** (read from promptugal.news, site v0.1.1496):
+
+- `promptugal.news/algarve/` and 17 town sites, 4 live (Faro, Tavira, Lagos, Vila do Bispo), 13 researching; 66 local AI stories, 100 organisations on the region's map, each story with its source, date and "AI path" (direct, or 1 to 3 steps).
+- One agent per place already: `place.algarve@`, `place.<town>@PrompTugal.dinis` (17) plus `place.portugal@`, `designer.places@`, `dev.places@`. All 53 agents are in `api/v1/newsroom/dashboard.json`, which the Team app's Agents dashboard already reads.
+- The national graph and API: `api/v1/index.json` (companies, organisations, places, stories, evidence, the whole graph, search index).
+- **Gap:** the regional and town sites have no JSON yet: only HTML and Markdown twins (`/algarve/<town>/index.md`). `api/v1/places/faro.json` is the old national place record, not the town site.
+
+**So the first release is a reader, in the news app (PrompTugal), not the Team app:**
+
+1. **Portugal → the Algarve → town.** A region home (the map of the 17 places, live vs researching, the latest from the towns) and a page per town (its stories, its organisations on the map, its centre of gravity). Every story opens its source first; the AI path shows under each story.
+2. **The map.** MapKit with the 17 places and the organisations on the AI map; tap a place to open its town.
+3. **Pick my town.** Follow one or more towns; Now and the widget show their latest.
+4. **The newsroom behind it** (Team app, then a read-only view in the news app): the town's agent, its last wake and next step from `newsroom/dashboard.json`, and "is this correct?" for any fact (opens the outreach page once the web side has it).
+5. **Command centre** (Team app): as in section 2A; the town agents are the first rows.
+
+**What the app needs from the web side** (the PrompTugal.news agents: dev.places@, place.algarve@), proposed shape, one file per region and per town, built from the same content as the pages:
+
+```
+api/v1/regions/algarve.json
+{ "id": "algarve", "name", "updated", "agent": "place.algarve@PrompTugal.dinis", "mandate", "voice"?,
+  "places": [ { "id": "faro", "name", "status": "live"|"researching", "lat", "lon", "agent",
+                "stories": 10, "mapped": 12, "picture"?: { "url", "caption", "credit" } } ],
+  "latest": [ <story> ] }
+
+api/v1/regions/algarve/<town>.json
+{ "id", "name", "region": "algarve", "status", "updated", "agent", "mandate", "centreOfGravity",
+  "stories": [ { "id", "title", "summary", "url" (the source), "source", "published", "aiPath": { "steps": 0..3, "text" },
+                 "places": [ids], "level": "local"|"region"|"national"|"world" } ],
+  "map": [ { "id", "name", "kind", "lat"?, "lon"?, "role", "sources": [url], "confidence": "sourced"|"asked"|"confirmed" } ] }
+```
+
+Until it exists the app can read the Markdown twins as a stop-gap, but that is brittle and I'd rather not ship it.
+
 ## 0. Already settled on the web side (from conductor@web-summit.dinis, 15 Nov)
 
 - Dinis's answer on local sites (14 Nov): https://web-summit.sgit.ai/articles/promptugal-by-place.html (brief with infographics: https://web-summit.sgit.ai/people/dinis/local-sites/, answering Vicky's plan at https://web-summit.sgit.ai/people/vicky/local-sites/).
@@ -105,6 +142,8 @@ The plan for the code: lift VoiceDebrief's report reader and agent conversation 
 7. **News app: local tab**, once a city has a week of published items.
 
 ## 5. What I need from Dinis
+
+0. **Go-ahead for the reader in the news app** (above) as the first release, with the regional JSON asked of the PrompTugal.news agents; the city-newsroom build (sections 1 and 4) follows.
 
 1. **Read access to VoiceDebrief/VoiceDebrief__App__iOS** for this session (adding it was refused here), so I port the Agents screen and the conductor's report writer rather than rewrite them.
 2. **The first city.** Which town is first: the town of Algarve Evolution, or one Vicky's agents already cover?
