@@ -132,9 +132,7 @@ private struct UpdateCard: View {
                 badge
             }
             if let latest {
-                Text("Latest in TestFlight: \(latest.version ?? "?") (\(latest.build ?? "?"))"
-                     + (latest.uploadedAt.map { ", uploaded \($0.formatted(.relative(presentation: .named)))" } ?? "")
-                     + (latest.processed ? ", processed" : ", processing or unknown"))
+                Text(Self.latestLine(latest))
                     .font(.footnote).foregroundStyle(Palette.muted)
             } else {
                 Text("No TestFlight upload of this app in the latest runs on dev.").font(.footnote).foregroundStyle(Palette.muted)
@@ -147,6 +145,15 @@ private struct UpdateCard: View {
             }
         }
         .accessibilityIdentifier("pt.status.update")
+    }
+
+    static func latestLine(_ latest: TestFlightBuild) -> String {
+        var parts: [String] = ["Latest in TestFlight: \(latest.version ?? "?") (\(latest.build ?? "?"))"]
+        if let uploaded = latest.uploadedAt {
+            parts.append("uploaded " + uploaded.formatted(.relative(presentation: .named)))
+        }
+        parts.append(latest.processed ? "processed" : "processing or unknown")
+        return parts.joined(separator: ", ")
     }
 
     @ViewBuilder private var badge: some View {
