@@ -5,13 +5,16 @@ import SwiftUI
 /// "this story, these agents", and where each fired in the last 24 hours. Reads dashboard.json every minute while
 /// open and animates what changed between reads. Read-only: nothing here starts, stops or steers an agent.
 public struct NewsroomLiveView: View {
-    @State private var model = LiveNewsroom()
+    @State private var model = LiveNewsroom.shared
     @State private var selected: String?
     @State private var story: TownStory?
     @Namespace private var storyChip
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    public init() {}
+    /// `selecting` opens the board with that agent selected ("place.faro").
+    public init(selecting role: String? = nil) {
+        _selected = State(initialValue: role)
+    }
 
     private var highlighted: Set<String> {
         guard let story else { return [] }

@@ -8,6 +8,9 @@ import PTCore
 /// screen shows what changed while you were away. Read-only.
 @MainActor @Observable
 public final class LiveNewsroom {
+    /// One watcher for the whole app: the live screen and the strips on the places pages share its reads.
+    public static let shared = LiveNewsroom()
+
     public private(set) var dashboard: NewsroomDashboard?
     public private(set) var extras: LiveDashboardExtras?
     public private(set) var events: [LiveEvent] = []
@@ -36,15 +39,25 @@ public final class LiveNewsroom {
         self.clock = clock
     }
 
-    /// Polls until the calling task is cancelled (the screen's `.task`).
+    @ObservationIgnored private var inFlight = false
+
+    /// Reads once a minute until the calling task is cancelled (a screen's `.task`). Several screens may run it at
+    /// once; they share the reads, so the dashboard is still read once a minute.
     public func run() async {
         while !Task.isCancelled {
-            await poll()
-            try? await Task.sleep(for: Self.interval)
+            if !inFlight, Self.isDue(lastPoll: lastPoll, now: clock()) { await poll() }
+            try? await Task.sleep(for: .seconds(5))
         }
     }
 
+    nonisolated static func isDue(lastPoll: Date?, now: Date) -> Bool {
+        guard let lastPoll else { return true }
+        return now.timeIntervalSince(lastPoll) >= 55
+    }
+
     public func poll() async {
+        inFlight = true
+        defer { inFlight = false }
         let now = clock()
         phase = .loading
         var url = URLComponents(url: LocalStore.site.appendingPathComponent("api/v1/newsroom/dashboard.json"),

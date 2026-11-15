@@ -259,3 +259,51 @@ struct StoryAgentsTests {
         #expect(credits[2].note.contains("Faro"))
     }
 }
+
+@Suite("Live strips")
+struct LiveStripTests {
+    @Test("Faces get two letters: a town's initials, or the desk's name")
+    func initials() {
+        #expect(AgentFace.initials("place.vila-do-bispo") == "VB")
+        #expect(AgentFace.initials("place.faro") == "Fa")
+        #expect(AgentFace.initials("place.algarve") == "Al")
+        #expect(AgentFace.initials("abp") == "Ab")
+        #expect(AgentFace.initials("detective.places") == "De")
+    }
+
+    @Test("The home strip shows the agents with the latest sign of life first")
+    func recent() throws {
+        let d = try JSONDecoder().decode(NewsroomDashboard.self, from: Data(after.utf8))
+        let recent = NewsroomLiveSection.recentAgents(d, now: now, limit: 2)
+        #expect(recent.map(\.role) == ["viz.places", "place.faro"])
+    }
+
+    @Test("A shared watcher reads at most once a minute")
+    func due() {
+        #expect(LiveNewsroom.isDue(lastPoll: nil, now: now))
+        #expect(!LiveNewsroom.isDue(lastPoll: now.addingTimeInterval(-30), now: now))
+        #expect(LiveNewsroom.isDue(lastPoll: now.addingTimeInterval(-60), now: now))
+    }
+}
+
+@Suite("Algarve map component")
+struct AlgarveMapComponentTests {
+    private let town = AlgarveMapTown(id: "faro", name: "Faro", latitude: 37.0, longitude: -7.9, accentHex: "#0B5C7A",
+                                      live: true, stories: 14, mapped: 12, agentLastSign: now.addingTimeInterval(-7200))
+
+    @Test("The measures read stories, map entries and agent activity")
+    func metrics() {
+        #expect(AlgarveMetric.stories.value(town, now: now) == 14)
+        #expect(AlgarveMetric.mapped.value(town, now: now) == 12)
+        let fresh = AlgarveMetric.fresh.value(town, now: now)
+        #expect(abs(fresh - (1 - 2.0 / 24)) < 0.0001)
+        #expect(AlgarveMetric.fresh.label(fresh) == "2h")
+        #expect(AlgarveMetric.fresh.label(0) == "–")
+    }
+
+    @Test("Short names fit the tiles")
+    func shortNames() {
+        #expect(AlgarveAbstractMap.shortName(id: "vila-real-de-santo-antonio", name: "Vila Real de Santo António") == "VRSA")
+        #expect(AlgarveAbstractMap.shortName(id: "faro", name: "Faro") == "Faro")
+    }
+}
