@@ -15,6 +15,7 @@ public struct PlacesHomeView: View {
     @State private var store = PlacesStore.shared
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openURL) private var openURL
+    @Environment(\.placesHomeAccessory) private var homeAccessory
 
     /// The case studies, deepest first (Dinis, 15 November).
     static let caseStudies = ["loule", "faro"]
@@ -30,6 +31,7 @@ public struct PlacesHomeView: View {
                 } else {
                     regionHero
                     caseStudies
+                    if let homeAccessory { homeAccessory() }
                     nationalEdition
                     townMosaic
                     connected

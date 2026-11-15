@@ -11,6 +11,7 @@ public struct PlaceDetailView: View {
     @State private var algarvio = false
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openURL) private var openURL
+    @Environment(\.placeAccessory) private var accessory
 
     public init(id: String) { self.id = id }
 
@@ -27,6 +28,7 @@ public struct PlaceDetailView: View {
                     hero(place)
                     VStack(alignment: .leading, spacing: Space.xl) {
                         mandate
+                        if let accessory { accessory(id) }
                         numbers(place)
                         gravity
                         children
