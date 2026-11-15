@@ -6,6 +6,7 @@ import SwiftUI
 public struct TownView: View {
     public let id: String
     @State private var store = LocalStore.shared
+    @State private var personas = PersonaStore.shared
     @AppStorage("local.voice") private var algarvio = false
 
     public init(id: String) { self.id = id }
@@ -63,8 +64,11 @@ public struct TownView: View {
         .padding(.bottom, Space.xs)
         .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 4).offset(x: -Space.m) }
 
+        if personas.isOn { PersonaBanner() }
         ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
         Text("Updated \(site.updated) by \(site.by)").font(.caption.monospaced()).foregroundStyle(Palette.muted)
+
+        TownSummaryCard(site: site)
 
         if let text = algarvio ? (site.voice?.gravity ?? site.gravity?.text) : site.gravity?.text {
             TitledCard("The centre of gravity", kicker: site.name) {
@@ -77,9 +81,10 @@ public struct TownView: View {
             if site.aiNews.isEmpty {
                 Text("No local AI stories yet: the town's agent is still researching.").font(.footnote).foregroundStyle(Palette.muted)
             }
-            ForEach(site.aiNews) { story in
-                StoryRow(story: story, town: nil)
-                if story != site.aiNews.last { Divider() }
+            let stories = PersonaRanker.order(site.aiNews) { personas.match($0).score }
+            ForEach(stories) { story in
+                StoryRow(story: story, town: nil, match: personas.match(story), townForAI: site.name)
+                if story != stories.last { Divider() }
             }
         }
 
@@ -103,7 +108,9 @@ public struct TownView: View {
         TitledCard("The AI map", kicker: "\(site.aiMap.count) organisations") {
             Text("The companies, institutions and communities with a path to AI, each from a public source.")
                 .font(.footnote).foregroundStyle(Palette.muted)
-            ForEach(site.aiMap) { entry in MapEntryRow(entry: entry) }
+            ForEach(PersonaRanker.order(site.aiMap) { personas.match($0).score }) { entry in
+                MapEntryRow(entry: entry, match: personas.match(entry))
+            }
         }
 
         TownAgentCard(placeID: id, dashboard: store.dashboard, provenance: store.dashboardProvenance)
@@ -154,9 +161,12 @@ struct SourceLinks: View {
 
 struct MapEntryRow: View {
     let entry: PlaceSite.MapEntry
+    /// In persona mode, how the organisation fits the persona.
+    var match: PersonaMatch = .none
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
+            PersonaMatchChip(match: match)
             HStack(alignment: .firstTextBaseline) {
                 if let home = entry.home {
                     Link(entry.name, destination: home).font(.body.weight(.semibold))

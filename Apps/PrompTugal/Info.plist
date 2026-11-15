@@ -7,7 +7,11 @@
 	     No NFC (the public app has no Lanes). Purpose strings live in the project's INFOPLIST_KEY_ settings:
 	     calendar write-only (add picks to the calendar) is the only one: the public app links no Ask, no vault and no
 	     capture or speech code (PTAsk, PTVaultUI and SGitVault are Team-app only). Every framework the linked code uses that needs a
-	     purpose string must have one, or App Store Connect fails processing (ITMS-90683). -->
+	     purpose string must have one, or App Store Connect fails processing (ITMS-90683).
+	     Location (when in use only) is here: "Near me" in PTLocal works out which of the 17 Algarve towns is closest, on the
+	     device, and keeps only that town's id. The location is never sent or stored. Asked only when the reader taps it. -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>PrompTugal uses your location, only while you use the app and only when you tap Near me, to find the nearest Algarve town and show its news first. Your location stays on this device.</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>news.promptugal.reader.refresh</string>
