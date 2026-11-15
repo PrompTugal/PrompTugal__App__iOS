@@ -49,6 +49,16 @@ public struct AlgarveView: View {
                 }
             }
             NavigationLink {
+                NewsroomLiveView()
+            } label: {
+                Card {
+                    Label("The newsroom in action", systemImage: "waveform.path.ecg").font(.headline)
+                    Text("Every agent, live: who just woke, who handed what to whom, who found which story.")
+                        .font(.footnote).foregroundStyle(Palette.muted)
+                }
+            }
+            .buttonStyle(.plain)
+            NavigationLink {
                 NewsroomCentreView()
             } label: {
                 Card {
@@ -96,7 +106,8 @@ public struct AlgarveView: View {
 // MARK: - The map
 
 /// The 17 places, each in its site's own accent: a filled dot is a live site, a ring one still being researched.
-struct AlgarveMap: View {
+/// The flat style of `AlgarveMap` (Live/AlgarveMapStyles.swift), which switches between it and the other styles.
+struct AlgarveFlatMap: View {
     let store: LocalStore
     @State private var position = MapCameraPosition.region(MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 37.21, longitude: -8.15),
