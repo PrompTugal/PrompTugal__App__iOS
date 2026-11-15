@@ -86,9 +86,7 @@ enum PublicDestinations {
     // MARK: More (the iPad sidebar; on iPhone a sheet from the round button on every tab)
 
     static let more: [ShellDestination] = [
-        // PrompTugal.news by place: the Algarve and its 17 towns, and the newsroom behind them (read-only).
-        ShellDestination(id: "local.algarve", title: String(localized: "The Algarve"), symbol: "map.circle", group: "More",
-                         summary: String(localized: "The 17 towns, their AI news and AI map")) { AnyView(AlgarveView()) },
+        // The newsroom behind PrompTugal.news by place (read-only). The Places reader itself is PTPlaces (ios.places@).
         ShellDestination(id: "local.newsroom", title: String(localized: "Newsroom"), symbol: "person.3.sequence", group: "More",
                          summary: String(localized: "The agents behind the sites, read-only")) { AnyView(NewsroomCentreView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
