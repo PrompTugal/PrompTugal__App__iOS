@@ -65,6 +65,11 @@ public struct PersonKey: Sendable, Equatable {
 
     // MARK: Using it
 
+    /// The signing key itself, for a transport that signs its envelope (PTTalk's TalkTransport.send).
+    public func signingKey() throws -> P256.Signing.PrivateKey {
+        try P256.Signing.PrivateKey(rawRepresentation: signD)
+    }
+
     /// ECDSA P-256 over SHA-256, the raw r||s form (WebCrypto and person-key.mjs verify use ieee-p1363), base64.
     public func sign(_ text: String) throws -> String {
         let key = try P256.Signing.PrivateKey(rawRepresentation: signD)

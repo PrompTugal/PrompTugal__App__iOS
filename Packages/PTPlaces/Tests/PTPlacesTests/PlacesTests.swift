@@ -304,3 +304,31 @@ struct PersonKeyTests {
         #expect(throws: PersonKey.Failure.notInRegister) { try key.prove(against: empty) }
     }
 }
+
+@Suite("PTPlaces: comments")
+struct CommentTests {
+    @Test("a comment is signed over its fields in order, and the signature verifies")
+    func signed() throws {
+        let key = try PersonKey(link: testLink)
+        let subject = CommentSubject(place: "loule", title: "Loulé", item: "https://b", page: "https://promptugal.news/algarve/loule/")
+        let at = Date(timeIntervalSince1970: 1_800_000_000)
+        let data = try CommentMessage.payload(subject: subject, text: "Great page", feedback: nil, key: key, at: at)
+        let object = try #require(try JSONSerialization.jsonObject(with: data) as? [String: String])
+        #expect(object["kind"] == "promptugal/comment/v1")
+        #expect(object["person"] == "tester")
+        let text = CommentMessage.signedText(kind: object["kind"]!, person: "tester", at: object["at"]!, place: "loule", item: "https://b", text: "Great page")
+        let x = try #require(Base64URL.decode(testSignX)), y = try #require(Base64URL.decode(testSignY))
+        let pub = try P256.Signing.PublicKey(rawRepresentation: x + y)
+        let sig = try P256.Signing.ECDSASignature(rawRepresentation: try #require(Data(base64Encoded: object["signature"]!)))
+        #expect(pub.isValidSignature(sig, for: Data(text.utf8)))
+    }
+
+    @Test("a reply sealed to the person opens into a reply")
+    func reply() throws {
+        let key = try PersonKey(link: testLink)
+        let envelope = try JSONDecoder().decode(SealedEnvelope.self, from: Data(testEnvelope.utf8))
+        let reply = try #require(CommentReply.open(try JSONEncoder().encode(envelope), with: key))
+        #expect(reply.text == "Olá from the conductor")
+        #expect(reply.by == "conductor@PrompTugal.dinis")
+    }
+}

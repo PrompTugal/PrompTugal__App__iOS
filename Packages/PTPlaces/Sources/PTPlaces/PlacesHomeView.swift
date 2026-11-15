@@ -484,6 +484,7 @@ struct StoryTile: View {
     let item: NewsItem
     let accent: Color
     let place: PlaceSummary?
+    var subject: CommentSubject? = nil
     @Environment(\.openURL) private var openURL
 
     var body: some View {
@@ -508,6 +509,15 @@ struct StoryTile: View {
             .clipShape(RoundedRectangle(cornerRadius: Space.radius))
         }
         .buttonStyle(.plain)
+        .overlay(alignment: .bottomTrailing) {
+            if let subject {
+                HStack(spacing: Space.m) {
+                    CommentButton(subject: subject, accent: accent, compact: true)
+                    ThumbsBar(subject: subject, accent: accent)
+                }
+                .padding(Space.l)
+            }
+        }
     }
 }
 

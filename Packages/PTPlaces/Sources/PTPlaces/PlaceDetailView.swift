@@ -28,6 +28,7 @@ public struct PlaceDetailView: View {
                     hero(place)
                     VStack(alignment: .leading, spacing: Space.xl) {
                         mandate
+                        talkRow(place)
                         if let accessory { accessory(id) }
                         numbers(place)
                         gravity
@@ -134,6 +135,19 @@ public struct PlaceDetailView: View {
         .clipped()
     }
 
+    // MARK: Talk to us
+
+    private func talkRow(_ place: PlaceSummary) -> some View {
+        let subject = CommentSubject(place: place.id, title: "PrompTugal.news · \(place.name)", page: PlacesStore.pageURL(place).absoluteString)
+        return HStack(spacing: Space.l) {
+            CommentButton(subject: subject, accent: accent)
+            ThumbsBar(subject: subject, accent: accent)
+            Spacer()
+            PersonBadge()
+        }
+        .padding(.vertical, Space.s)
+    }
+
     // MARK: Mandate and numbers
 
     @ViewBuilder private var mandate: some View {
@@ -220,13 +234,13 @@ public struct PlaceDetailView: View {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "Local AI news"),
                             subtitle: String(localized: "Each story passes the PrompTugal test: AI within three steps, with the path written down"), accent: accent)
-                LeadStory(item: lead, accent: accent)
+                LeadStory(item: lead, accent: accent, subject: subject(for: lead))
                 let rest = Array(items.dropFirst())
                 if !rest.isEmpty {
                     let columns = wide ? [GridItem(.flexible(), spacing: Space.l), GridItem(.flexible(), spacing: Space.l)] : [GridItem(.flexible())]
                     LazyVGrid(columns: columns, alignment: .leading, spacing: Space.l) {
                         ForEach(rest) { item in
-                            StoryTile(item: item, accent: accent, place: place)
+                            StoryTile(item: item, accent: accent, place: place, subject: subject(for: item))
                                 .frame(minHeight: 220)
                         }
                     }
@@ -282,7 +296,8 @@ public struct PlaceDetailView: View {
                 let columns = [GridItem(.adaptive(minimum: wide ? 300 : 280), spacing: Space.m)]
                 LazyVGrid(columns: columns, alignment: .leading, spacing: Space.m) {
                     ForEach(entries) { entry in
-                        MapEntryCard(entry: entry, accent: accent)
+                        MapEntryCard(entry: entry, accent: accent,
+                                     subject: CommentSubject(place: id, title: entry.name, item: entry.name, page: place.map { PlacesStore.pageURL($0).absoluteString } ?? ""))
                     }
                 }
             }
@@ -322,6 +337,10 @@ public struct PlaceDetailView: View {
                 }
             }
         }
+    }
+
+    private func subject(for item: NewsItem) -> CommentSubject {
+        CommentSubject(place: id, title: item.title, item: item.url, page: place.map { PlacesStore.pageURL($0).absoluteString } ?? "")
     }
 
     private func dayNumber(_ text: String) -> String {
@@ -410,6 +429,7 @@ public struct PlaceDetailView: View {
 struct LeadStory: View {
     let item: NewsItem
     let accent: Color
+    var subject: CommentSubject?
     @Environment(\.openURL) private var openURL
 
     var body: some View {
@@ -417,9 +437,8 @@ struct LeadStory: View {
             if let url = URL(string: item.url) { openURL(url) }
         } label: {
             VStack(alignment: .leading, spacing: Space.m) {
-                HStack {
+                VStack(alignment: .leading, spacing: 2) {
                     Kicker(text: String(localized: "The lead"), color: accent)
-                    Spacer()
                     Text([item.publisher, PlaceDates.short(item.date)].filter { !$0.isEmpty }.joined(separator: " · "))
                         .font(.caption).foregroundStyle(Palette.muted)
                 }
@@ -462,6 +481,17 @@ struct LeadStory: View {
             .shadow(color: .black.opacity(0.06), radius: 10, y: 4)
         }
         .buttonStyle(.plain)
+        .overlay(alignment: .topTrailing) {
+            if let subject {
+                HStack(spacing: Space.m) {
+                    CommentButton(subject: subject, accent: accent, compact: true)
+                    ThumbsBar(subject: subject, accent: accent)
+                }
+                .padding(.horizontal, Space.s).padding(.vertical, 6)
+                .background(Palette.card, in: Capsule())
+                .padding(Space.m)
+            }
+        }
         .accessibilityIdentifier("places.lead")
     }
 }
@@ -470,6 +500,7 @@ struct LeadStory: View {
 struct MapEntryCard: View {
     let entry: MapEntry
     let accent: Color
+    var subject: CommentSubject?
     @Environment(\.openURL) private var openURL
 
     var body: some View {
@@ -501,6 +532,12 @@ struct MapEntryCard: View {
                            readOn: entry.readOn, accent: accent)
             }
             if let provenance = entry.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
+            if let subject {
+                HStack(spacing: Space.l) {
+                    CommentButton(subject: subject, accent: accent, compact: true)
+                    ThumbsBar(subject: subject, accent: accent)
+                }
+            }
         }
         .padding(Space.m)
         .frame(maxWidth: .infinity, alignment: .leading)
