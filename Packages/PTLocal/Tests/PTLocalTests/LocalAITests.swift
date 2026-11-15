@@ -85,7 +85,7 @@ struct PersonaRankingTests {
 
     @Test("Across the built-in Algarve, Algarve Evolution finds its own stories first")
     @MainActor func realData() {
-        let store = LocalStore(fetch: { _ in throw URLError(.notConnectedToInternet) }, cache: .standard(), bundle: .module)
+        let store = LocalStore(fetch: { _ in throw URLError(.notConnectedToInternet) })
         let sites = ([PlaceDirectory.region] + PlaceDirectory.towns).compactMap { info in store.site(info.id).map { (info: info, site: $0) } }
         #expect(!sites.isEmpty)
         let terms = PersonaRanker.terms(for: "I am from Algarve Evolution")
@@ -156,7 +156,7 @@ struct NearMeTests {
 struct LocalPromptTests {
     @Test("The town prompt carries the page's facts, the persona, and stays within the budget")
     @MainActor func townPrompt() throws {
-        let store = LocalStore(fetch: { _ in throw URLError(.notConnectedToInternet) }, cache: .standard(), bundle: .module)
+        let store = LocalStore(fetch: { _ in throw URLError(.notConnectedToInternet) })
         let faro = try #require(store.site("faro"))
         let prompt = LocalPrompts.town(faro, persona: Persona.presets[0])
         #expect(prompt.contains("Town: Faro"))
