@@ -2,6 +2,14 @@
 
 > From conductor.a.ios@promptugal.dinis (started by the VoiceDebrief iOS conductor at Dinis's word, voice memo of 15 November 2026, 11:22). First plan for the pivot: PrompTugal becomes the case study for our stack (the app, sgit vaults, append lanes, agents) by running an agentic newsroom per Portuguese city. Copy to conductor.3@web-summit, which holds the PT news websites.
 
+## 0. Already settled on the web side (from conductor@web-summit.dinis, 15 Nov)
+
+- Dinis's answer on local sites (14 Nov): https://web-summit.sgit.ai/articles/promptugal-by-place.html (brief with infographics: https://web-summit.sgit.ai/people/dinis/local-sites/, answering Vicky's plan at https://web-summit.sgit.ai/people/vicky/local-sites/).
+- City pages live at `promptugal.news/algarve/` and `promptugal.news/algarve/<town>/`: 17 places (the 16 Algarve municipalities and Quarteira). No subdomains or `/local/` path for now.
+- Brand is always PrompTugal.news; every story passes the PrompTugal test (connects to AI within 2 or 3 steps); three levels of place (Portugal, the Algarve, the towns); each site is a lens on one semantic graph, with a mandate at the top and a centre of gravity per town.
+- The web side (city pages, "is this correct?" pages, `feed.json`) belongs to the PrompTugal.news agents (dev@, ontologist@ for the graph, dev.portugal@ for the Algarve). Outreach messages are **drafted by agents and sent by a person**.
+- Split: this conductor does the app and the command centre; the web side stays with the PrompTugal agents; conductor@web-summit keeps the brief.
+
 ## 1. The minimum city newsroom
 
 One newsroom per city (concelho). Each is a small set of agents, one sgit vault per city, and append lanes between them. Nothing talks to anything except through a vault or a lane, so every step leaves a signed, replayable trail: that trail is what we demo.
@@ -9,9 +17,9 @@ One newsroom per city (concelho). Each is a small set of agents, one sgit vault 
 | Agent | Role | Reads | Writes | Cadence |
 | --- | --- | --- | --- | --- |
 | **Researcher** (`researcher.<city>`) | Maps the town: companies, people (public roles only), events, the câmara and juntas, associations, venues. Every fact carries its source URL and the date it was seen. | Public web, council agendas and atas, event listings, company sites | `graph/` in the city vault (entities, edges, sources) | Daily sweep; on demand from the editor |
-| **Verifier / outreach** (`outreach.<city>`) | Turns each graph entity into a short "is this correct?" message to the entity itself, with the sources shown. Records replies: confirmed, corrected, declined, no answer. | `graph/`, replies on its inbox lane | `outreach/` (asks, replies, consent state); updates `graph/` confidence | Batches under a rate policy; never more than one ask per entity per N days |
-| **Reporter** (`reporter.<city>`) | Writes short local items from what is confirmed or clearly sourced: what is on this week, what the câmara decided, who opened. Every item links out to its sources. | `graph/`, `outreach/`, council feeds | `drafts/` | Several times a day |
-| **Editor** (`editor.<city>`) | Applies the policies (below), checks sources resolve, merges or bounces drafts, publishes the city page and feed, sends work back to the researcher. The one agent that can publish. | `drafts/`, policy file | `published/` (the city's page and `feed.json`), `board/` | Hourly |
+| **Verifier / outreach** (`outreach.<city>`) | Drafts, for each graph entity, a short "is this correct?" message to the entity itself, with the sources shown; a person sends it. Records replies: confirmed, corrected, declined, no answer. | `graph/`, replies on its inbox lane | `outreach/` (drafted asks, replies, consent state); updates `graph/` confidence | Batches for a person to send, under a rate policy; never more than one ask per entity per N days |
+| **Reporter** (`reporter.<city>`) | Writes short local items from what is confirmed or clearly sourced: what is on this week, what the câmara decided, who opened. Every item passes the PrompTugal test and links out to its sources. | `graph/`, `outreach/`, council feeds | `drafts/` | Several times a day |
+| **Editor** (`editor.<city>`) | Applies the policies (below), checks sources resolve, merges or bounces drafts, hands the city page and feed to the PrompTugal.news build, sends work back to the researcher. The one agent that can publish. | `drafts/`, policy file | `published/` (the city's page and `feed.json`), `board/` | Hourly |
 
 That is four. Shared across cities, not per city: a **regional desk** (one per region, Algarve first) that dedups across towns and spots stories bigger than one town, and the **conductor** that starts, watches and stops the agents. Humans sit at two points only: the city's owner of record (who reads the editor's board) and anyone answering an outreach ask.
 
@@ -41,7 +49,7 @@ Each agent runs under a policy file in the city vault (`policy/<agent>.json`), s
 
 ### First cities
 
-The Algarve, starting with the town of the first showcase company (Algarve Evolution), then the towns Vicky H's agents are already researching. Each city is a copy of the same vault template plus a city id, so adding a town is a script, not a project.
+The Algarve, starting with the town of the first showcase company (Algarve Evolution), then the towns Vicky H's agents are already researching. The 17 places are fixed (the 16 municipalities and Quarteira); each is a copy of the same vault template plus a town id, so adding a town is a script, not a project.
 
 ## 2. What the PrompTugal app needs
 
@@ -64,11 +72,11 @@ What you see depends on which conductor you connect to.
 
 ### C. Outreach
 
-- The "is this correct?" page each entity receives is web (the city site), not the app. The app shows the outreach queue, replies and consent state, and lets a person approve a batch before it goes.
+- The "is this correct?" page each entity receives is web (built by the PrompTugal.news agents), not the app. The app shows the drafted queue, replies and consent state, and is where a person reviews and sends each batch (agents draft, a person sends).
 
 ### D. The public side (news app, later)
 
-- A **local** tab: pick your town, read its page, every item linking to its sources. Reads `published/feed.json` the same way the news app reads `promptugal.news` feeds today.
+- A **local** tab: Portugal, the Algarve, then the town; read its page, every item linking to its sources. Reads `published/feed.json` the same way the news app reads `promptugal.news` feeds today.
 
 ## 3. What we reuse
 
@@ -93,7 +101,7 @@ The plan for the code: lift VoiceDebrief's report reader and agent conversation 
 3. **Team app: Command centre** (connect a conductor, list, talk to one). Green in `ios.yml`, to TestFlight.
 4. **City vault template** (`graph/`, `outreach/`, `drafts/`, `published/`, `board/`, `policy/`) and one real city with the researcher running.
 5. **Team app: Newsroom per city** (graph, map, board, policy trail).
-6. **Outreach** pages on the city site (with conductor.3@web-summit) and the queue in the app.
+6. **Outreach** queue in the app; the pages are the PrompTugal.news agents' work.
 7. **News app: local tab**, once a city has a week of published items.
 
 ## 5. What I need from Dinis
@@ -102,9 +110,8 @@ The plan for the code: lift VoiceDebrief's report reader and agent conversation 
 2. **The first city.** Which town is first: the town of Algarve Evolution, or one Vicky's agents already cover?
 3. **Vicky's agents.** Where her town-by-town research lands (a vault or repo), and whether her researcher becomes our `researcher.<city>` or feeds it.
 4. **A conductor report vault** to test against: the read key handed to the app the way VoiceDebrief gets it (in person or by QR, never in a commit or a chat).
-5. **Who sends outreach.** The sender name and reply address for "is this correct?" messages, and whether the first batch needs your approval each time.
-6. **Where the city pages live:** under promptugal.news (`/local/<city>/`) or a domain per city. That decides what conductor.3@web-summit builds.
-7. **The policy owner key:** whether city policies are signed by your key or by a per-city owner key we create.
+5. **Who sends outreach.** Agents draft and a person sends (settled); which person, and the reply address.
+6. **The policy owner key:** whether city policies are signed by your key or by a per-city owner key we create.
 
 ## Not done
 
