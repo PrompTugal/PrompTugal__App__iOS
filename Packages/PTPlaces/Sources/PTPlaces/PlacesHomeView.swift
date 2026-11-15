@@ -32,6 +32,7 @@ public struct PlacesHomeView: View {
                     caseStudies
                     nationalEdition
                     townMosaic
+                    connected
                     latestStories
                     agentsStrip
                     footer
@@ -226,6 +227,17 @@ public struct PlacesHomeView: View {
                     .buttonStyle(.plain)
                 }
             }
+        }
+        .padding(.horizontal, gutter)
+    }
+
+    // MARK: Everything is connected
+
+    private var connected: some View {
+        VStack(alignment: .leading, spacing: Space.m) {
+            SectionHead(title: String(localized: "Everything is connected"),
+                        subtitle: String(localized: "Towns joined where their AI maps name the same organisation. Tap a town."))
+            ConnectedTownsView(store: store)
         }
         .padding(.horizontal, gutter)
     }

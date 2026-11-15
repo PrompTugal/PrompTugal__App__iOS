@@ -169,3 +169,27 @@ struct GraphLayoutTests {
         #expect(Color(hexString: "red") == nil)
     }
 }
+
+@Suite("PTPlaces: towns connected by what their AI maps share")
+struct ConnectionsTests {
+    @Test("names match across spellings, brackets and short forms")
+    func keys() {
+        #expect(PlaceConnections.keys("Universidade do Algarve (UAlg)").contains("universidade do algarve"))
+        #expect(PlaceConnections.keys("MARREAL underwater observatory, Sagres (UAlg, CINTAL, CCMAR, INESC-TEC)").contains("universidade do algarve"))
+        #expect(PlaceConnections.keys("NERA, Associação Empresarial da Região do Algarve").contains("nera"))
+        #expect(PlaceConnections.keys("Universidade do Algarve and CCMAR, Sagres marine biology laboratory").contains("universidade do algarve"))
+        #expect(PlaceConnections.keys("ICArEHB (UAlg research centre)").contains("universidade do algarve") == false)
+    }
+
+    @Test("two towns that name the same organisation are linked, once")
+    func links() {
+        let faro = PlaceFile(id: "faro", name: "Faro", aiMap: [MapEntry(name: "Universidade do Algarve (UAlg)"), MapEntry(name: "Algarve Evolution")])
+        let lagos = PlaceFile(id: "lagos", name: "Lagos", aiMap: [MapEntry(name: "Algarve Evolution")])
+        let sagres = PlaceFile(id: "vila-do-bispo", name: "Vila do Bispo", aiMap: [MapEntry(name: "MARREAL observatory (UAlg, CCMAR)")])
+        let links = PlaceConnections.links([faro, lagos, sagres])
+        #expect(links.count == 2)
+        #expect(links.contains(TownLink(a: "faro", b: "lagos", shared: ["Algarve Evolution"])))
+        #expect(links.contains(TownLink(a: "faro", b: "vila-do-bispo", shared: ["Universidade do Algarve"])))
+        #expect(PlaceConnections.hubs([faro, lagos, sagres]).count == 2)
+    }
+}

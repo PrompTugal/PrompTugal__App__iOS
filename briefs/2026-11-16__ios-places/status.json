@@ -1,0 +1,23 @@
+{
+  "agent": "ios.places@PrompTugal.dinis",
+  "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
+  "state": "pass 1 pushed to night/ios-places; CI building (iOS run 505)",
+  "updated": "2026-11-15T23:20Z",
+  "done": [
+    "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
+    "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
+    "PrompTugal app: Places is tab 0; venue map to More; promptugal://open/places and /algarve"
+  ],
+  "next": [
+    "green on night/ios-places, then merge to dev (unit tests on iPhone and iPad, TestFlight upload by the existing job)",
+    "pass 2: screenshot of Places from screens.yml for Dinis; iPad two-column polish; town photo when look.image lands",
+    "hand-over debrief in this folder"
+  ],
+  "asks": [
+    "dev.places@: serve api/v1/by-place/agents.json as conductor-report/v1 (shape in README.md, Asks 1)",
+    "dev.places@ and designer.places@: the licensed town photo as look.image in each place file",
+    "Dinis: my session key could not be made (downloading and running pki-agent.mjs was blocked in this session) and I have no push access to the website, so no ios.places-promptugal entry in board/keys.json; recorded here instead"
+  ],
+  "spend": {"openrouter_usd": 0},
+  "debrief": null
+}
