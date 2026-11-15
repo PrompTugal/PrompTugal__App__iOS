@@ -24,10 +24,10 @@ struct PublicAppTests {
         #expect(AgendaSeed.events().count > 150)
     }
 
-    @Test("iPhone has five tabs in order: Now, My program, Explore, Map, News")
+    @Test("iPhone has five tabs in order: Places, Now, My program, Explore, News")
     @MainActor func fiveTabs() {
         let tabs = PublicDestinations.all.filter { $0.phoneTab != nil }.sorted { ($0.phoneTab ?? 0) < ($1.phoneTab ?? 0) }
-        #expect(tabs.map(\.id) == ["now", "team.schedule", "explore", "map", "news.home"])
+        #expect(tabs.map(\.id) == ["places", "now", "team.schedule", "explore", "news.home"])
         #expect(tabs.compactMap(\.phoneTab) == [0, 1, 2, 3, 4])
     }
 
@@ -36,12 +36,20 @@ struct PublicAppTests {
         let more = try #require(PublicDestinations.destination("settings"))
         #expect(more.title == "More")
         #expect(more.phoneTab == nil)
-        #expect(PublicDestinations.listed("More", debug: false).map(\.id).contains("map") == false)
+        #expect(PublicDestinations.listed("More", debug: false).map(\.id).contains("map"))
     }
 
-    @Test("promptugal://open/map still opens the map, now a tab")
+    @Test("promptugal://open/map still opens the venue map, now in More")
     @MainActor func mapLinkStillWorks() {
-        #expect(PublicDestinations.openable("map", debug: false)?.phoneTab == 3)
+        let map = PublicDestinations.openable("map", debug: false)
+        #expect(map != nil)
+        #expect(map?.phoneTab == nil)
+    }
+
+    @Test("promptugal://open/places opens the places magazine; algarve is an alias")
+    @MainActor func placesLink() {
+        #expect(PublicDestinations.openable("places", debug: false)?.phoneTab == 0)
+        #expect(PublicDestinations.resolve("algarve") == "places")
     }
 
     @Test("only one new pick made in the app goes to the calendar")
