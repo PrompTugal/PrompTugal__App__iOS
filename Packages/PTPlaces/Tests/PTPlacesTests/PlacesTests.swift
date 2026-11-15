@@ -220,3 +220,17 @@ struct DashboardTests {
         #expect(AgentStatus(agent: "place.faro@PrompTugal.dinis").role == "place.faro")
     }
 }
+
+@Suite("PTPlaces: pick my town")
+struct FollowTests {
+    @Test("follow toggles in order and survives a round trip")
+    func toggle() {
+        var raw = ""
+        raw = PlaceFollows.toggle("loule", in: raw)
+        raw = PlaceFollows.toggle("faro", in: raw)
+        #expect(PlaceFollows.ids(raw) == ["loule", "faro"])
+        raw = PlaceFollows.toggle("loule", in: raw)
+        #expect(PlaceFollows.ids(raw) == ["faro"])
+        #expect(PlaceFollows.ids(" , faro,,") == ["faro"])
+    }
+}

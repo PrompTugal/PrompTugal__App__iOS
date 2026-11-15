@@ -97,6 +97,8 @@ public struct PlaceDetailView: View {
                 HStack(spacing: Space.s) {
                     Kicker(text: "PrompTugal.news · \(place.name)", color: .white.opacity(0.9))
                     StatusPill(status: place.status, onDark: true)
+                    Spacer()
+                    if place.isTown { FollowButton(id: place.id, accent: accent, onDark: true) }
                 }
                 Text(place.name)
                     .font(.system(size: wide ? 84 : 56, weight: .black, design: .serif))
