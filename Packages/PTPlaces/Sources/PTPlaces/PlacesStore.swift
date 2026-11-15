@@ -16,7 +16,8 @@ public final class PlacesStore {
     /// Every agent's status in one file (the Team app's Agents dashboard reads it too).
     public static let dashboardURL = URL(string: "https://promptugal.news/api/v1/newsroom/dashboard.json")!
 
-    public static func placeURL(_ id: String) -> URL { site.appendingPathComponent("data/by-place/\(id).json") }
+    /// JSON first (Dinis, 15 Nov): the place under /api/v1/, the same shape as data/by-place/<id>.json plus provenance and articles.
+    public static func placeURL(_ id: String) -> URL { site.appendingPathComponent("api/v1/by-place/\(id).json") }
     public static func statusURL(_ role: String) -> URL { site.appendingPathComponent("board/team/\(role)/status.json") }
     public static func pageURL(_ place: PlaceSummary) -> URL {
         place.path.isEmpty ? site : site.appendingPathComponent(place.path)

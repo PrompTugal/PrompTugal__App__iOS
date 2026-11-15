@@ -53,7 +53,7 @@ public struct PlaceSummary: Decodable, Sendable, Equatable, Identifiable, Hashab
         updated = c.string("updated") ?? ""
         aiNews = c.int("ai_news") ?? 0
         aiMap = c.int("ai_map") ?? 0
-        at = c.lenient([Double].self, "at")
+        at = c.seat("at")
     }
 
     public var isTown: Bool { kind == "municipality" || kind == "city" }
@@ -80,6 +80,8 @@ public struct PlaceFile: Decodable, Sendable, Equatable, Identifiable {
     public var gaps: [String]
     public var voice: Voice?
     public var identity: Identity?
+    /// PrompTugal.news's own signed articles about the place (api/v1/by-place/<id>.json only).
+    public var articles: [PlaceArticle] = []
 
     public init(id: String, name: String, kind: String = "municipality", parent: String = "algarve", status: String = "researching",
                 updated: String = "", by: String = "", mandate: String = "", gravity: Gravity? = nil, look: Look? = nil,
@@ -109,6 +111,7 @@ public struct PlaceFile: Decodable, Sendable, Equatable, Identifiable {
         gaps = c.lenientArray("gaps")
         voice = c.lenient(Voice.self, "voice")
         identity = c.lenient(Identity.self, "identity")
+        articles = c.lenientArray("articles")
     }
 
     /// The news, the closest to AI first (fewest steps), then the newest.
@@ -154,8 +157,9 @@ public struct Look: Decodable, Sendable, Equatable {
     public var accent: String
     public var landmark: String
     public var motif: String
-    /// A licensed photo of the town, once the site serves one (asked of dev.places@ and designer.places@).
+    /// A licensed photo of the town, once the site serves one: its URL, and its credit line (licence, author).
     public var image: String?
+    public var imageCredit: String?
 
     public init(accent: String, landmark: String = "", motif: String = "", image: String? = nil) {
         self.accent = accent; self.landmark = landmark; self.motif = motif; self.image = image
@@ -166,7 +170,18 @@ public struct Look: Decodable, Sendable, Equatable {
         accent = c.string("accent") ?? ""
         landmark = c.string("landmark") ?? ""
         motif = c.string("motif") ?? ""
-        image = c.string("image") ?? c.string("photo")
+        if let photo = c.lenient(Photo.self, "image") ?? c.lenient(Photo.self, "photo") {
+            image = photo.url
+            imageCredit = [photo.author, photo.licence].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+        } else {
+            image = c.string("image")
+        }
+    }
+
+    private struct Photo: Decodable {
+        var url: String?
+        var author: String?
+        var licence: String?
     }
 }
 
@@ -181,6 +196,7 @@ public struct NewsItem: Decodable, Sendable, Equatable, Hashable, Identifiable {
     public var aiPath: String
     /// Steps from AI in the graph: 0 is about AI itself (the PrompTugal test allows up to 3).
     public var steps: Int?
+    public var provenance: Provenance?
 
     public var id: String { url + "|" + title }
 
@@ -200,6 +216,50 @@ public struct NewsItem: Decodable, Sendable, Equatable, Hashable, Identifiable {
         readOn = c.string("read_on") ?? ""
         aiPath = c.string("ai_path") ?? ""
         steps = c.int("steps")
+        provenance = c.lenient(Provenance.self, "provenance")
+    }
+}
+
+/// Where a story or map entry was read, when, by which agent, and the signed file it lives in.
+public struct Provenance: Decodable, Sendable, Equatable, Hashable {
+    public var sourceURL: String
+    public var readOn: String
+    public var readBy: String
+    public var file: String
+    /// "valid", "unchecked"...
+    public var signature: String
+    public var siteKey: String
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: AnyKey.self)
+        sourceURL = c.string("source_url") ?? ""
+        readOn = c.string("read_on") ?? ""
+        readBy = c.string("read_by") ?? ""
+        file = c.string("file") ?? ""
+        signature = c.string("signature") ?? ""
+        siteKey = c.string("site_key") ?? ""
+    }
+}
+
+/// One of PrompTugal.news's own articles about a place.
+public struct PlaceArticle: Decodable, Sendable, Equatable, Hashable, Identifiable {
+    public var title: String
+    public var summary: String
+    public var author: String
+    public var date: String
+    public var url: String
+    public var signature: String
+
+    public var id: String { url }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: AnyKey.self)
+        title = try c.decode(String.self, forKey: AnyKey("title"))
+        summary = c.string("summary") ?? ""
+        author = c.string("author") ?? ""
+        date = c.string("date") ?? ""
+        url = c.string("url") ?? ""
+        signature = c.string("signature") ?? ""
     }
 }
 
@@ -213,6 +273,7 @@ public struct MapEntry: Decodable, Sendable, Equatable, Hashable, Identifiable {
     public var readOn: String
     public var aiPath: String
     public var steps: Int?
+    public var provenance: Provenance?
 
     public var id: String { name + "|" + type }
 
@@ -232,6 +293,7 @@ public struct MapEntry: Decodable, Sendable, Equatable, Hashable, Identifiable {
         readOn = c.string("read_on") ?? ""
         aiPath = c.string("ai_path") ?? ""
         steps = c.int("steps")
+        provenance = c.lenient(Provenance.self, "provenance")
     }
 }
 
@@ -323,6 +385,13 @@ extension KeyedDecodingContainer where Key == AnyKey {
     func int(_ key: String) -> Int? {
         if let i = lenient(Int.self, key) { return i }
         if let s = lenient(String.self, key) { return Int(s) }
+        return nil
+    }
+
+    /// A seat as [lon, lat] or {"lon", "lat"} (the index changed shape on 15 November).
+    func seat(_ key: String) -> [Double]? {
+        if let pair = lenient([Double].self, key), pair.count == 2 { return pair }
+        if let point = lenient([String: Double].self, key), let lon = point["lon"], let lat = point["lat"] { return [lon, lat] }
         return nil
     }
 

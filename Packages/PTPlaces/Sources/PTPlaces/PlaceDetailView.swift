@@ -33,6 +33,7 @@ public struct PlaceDetailView: View {
                         gravity
                         children
                         news
+                        articles
                         aiMap
                         events
                         agents(place)
@@ -91,6 +92,13 @@ public struct PlaceDetailView: View {
     private func hero(_ place: PlaceSummary) -> some View {
         ZStack(alignment: .bottomLeading) {
             SatelliteView(place: place, pitch: 62, heading: 25)
+            if let image = file?.look?.image, let url = URL(string: image) {
+                AsyncImage(url: url) { phase in
+                    if let picture = phase.image { picture.resizable().scaledToFill() } else { Color.clear }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+            }
             LinearGradient(colors: [.black.opacity(0.25), .clear, accent.opacity(0.55), accent.opacity(0.95)],
                            startPoint: .top, endPoint: .bottom)
             VStack(alignment: .leading, spacing: Space.s) {
@@ -110,6 +118,9 @@ public struct PlaceDetailView: View {
                     if !look.motif.isEmpty {
                         Text(look.motif).font(.caption).italic().foregroundStyle(.white.opacity(0.75))
                     }
+                }
+                if let credit = file?.look?.imageCredit, !credit.isEmpty {
+                    Text(String(localized: "Photo: \(credit)")).font(.caption2).foregroundStyle(.white.opacity(0.7))
                 }
                 if algarvio, let lede = file?.voice?.lede, !lede.isEmpty {
                     Text(lede).font(.system(.headline, design: .serif).italic()).foregroundStyle(.white)
@@ -219,6 +230,39 @@ public struct PlaceDetailView: View {
                                 .frame(minHeight: 220)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // MARK: Our own articles
+
+    @ViewBuilder private var articles: some View {
+        let items = file?.articles ?? []
+        if !items.isEmpty {
+            VStack(alignment: .leading, spacing: Space.m) {
+                SectionHead(title: String(localized: "Our articles"),
+                            subtitle: String(localized: "Written by PrompTugal.news's agents, each one signed"), accent: accent)
+                ForEach(items) { article in
+                    Button {
+                        if let url = URL(string: article.url) { openURL(url) }
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(article.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                            if !article.summary.isEmpty {
+                                Text(article.summary).font(.subheadline).foregroundStyle(Palette.muted).multilineTextAlignment(.leading)
+                            }
+                            HStack(spacing: 6) {
+                                Image(systemName: "signature")
+                                Text([article.author, PlaceDates.short(article.date)].filter { !$0.isEmpty }.joined(separator: " · "))
+                            }
+                            .font(.caption).foregroundStyle(accent)
+                        }
+                        .padding(Space.l)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius))
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -400,6 +444,7 @@ struct LeadStory: View {
                     .padding(Space.m)
                     .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 }
+                if let provenance = item.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
                 HStack {
                     Label(String(localized: "Read at the source"), systemImage: "arrow.up.right.square")
                     Spacer()
@@ -455,11 +500,33 @@ struct MapEntryCard: View {
                 SourceLine(title: URL(string: entry.sourceURL)?.host() ?? entry.sourceURL, url: entry.sourceURL,
                            readOn: entry.readOn, accent: accent)
             }
+            if let provenance = entry.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
         }
         .padding(Space.m)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius))
         .overlay(RoundedRectangle(cornerRadius: Space.radius).stroke(Palette.rule, lineWidth: 0.5))
+    }
+}
+
+/// Who read it, when, and whether the file it lives in carries a valid site signature.
+struct ProvenanceLine: View {
+    let provenance: Provenance
+    let accent: Color
+
+    var body: some View {
+        let valid = provenance.signature == "valid"
+        HStack(spacing: 6) {
+            Image(systemName: valid ? "checkmark.seal.fill" : "seal").foregroundStyle(valid ? Palette.green : Palette.muted)
+            Text([provenance.readBy.split(separator: "@").first.map(String.init) ?? "",
+                  provenance.readOn.isEmpty ? "" : String(localized: "read \(PlaceDates.short(provenance.readOn))"),
+                  valid ? String(localized: "signed \(provenance.siteKey)") : String(localized: "signature \(provenance.signature)")]
+                .filter { !$0.isEmpty }.joined(separator: " · "))
+                .lineLimit(2)
+        }
+        .font(.caption2)
+        .foregroundStyle(Palette.muted)
+        .accessibilityElement(children: .combine)
     }
 }
 

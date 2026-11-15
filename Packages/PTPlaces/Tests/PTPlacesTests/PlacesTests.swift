@@ -234,3 +234,23 @@ struct FollowTests {
         #expect(PlaceFollows.ids(" , faro,,") == ["faro"])
     }
 }
+
+@Suite("PTPlaces: the /api/v1 shape (16 Nov)")
+struct APIShapeTests {
+    @Test("a seat as {lon, lat}, a photo as an object, provenance and articles all read")
+    func apiShape() throws {
+        let summary = try decode(PlaceSummary.self, """
+        {"id":"faro","name":"Faro","at":{"lon":-7.935,"lat":37.019}}
+        """)
+        #expect(summary.at == [-7.935, 37.019])
+        let file = try decode(PlaceFile.self, """
+        {"id":"faro","name":"Faro","look":{"accent":"#0B5C7A","image":{"url":"https://promptugal.news/assets/places/faro.webp","author":"designer.places@","licence":"AI-made"}},
+         "ai_news":[{"title":"t","provenance":{"source_url":"https://s","read_on":"2026-11-15","read_by":"place.faro@PrompTugal.dinis","file":"f","signature":"valid","site_key":"site.faro-promptugal"}}],
+         "articles":[{"title":"A","summary":"s","author":"place.faro@","date":"15 November 2026","url":"https://promptugal.news/articles/a/","signature":"x.sig"}]}
+        """)
+        #expect(file.look?.image == "https://promptugal.news/assets/places/faro.webp")
+        #expect(file.look?.imageCredit == "designer.places@ · AI-made")
+        #expect(file.aiNews.first?.provenance?.signature == "valid")
+        #expect(file.articles.first?.title == "A")
+    }
+}
