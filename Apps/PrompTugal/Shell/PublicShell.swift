@@ -2,6 +2,7 @@ import PTAgenda
 import PTCore
 import PTExplore
 import PTNews
+import PTPlaces
 import PTWeb
 import SwiftUI
 
@@ -144,6 +145,12 @@ struct PublicShell: View {
 
     /// <scheme>://open/<destination id>, e.g. <scheme>://open/team.schedule. Old ids still land somewhere sensible.
     private func route(_ url: URL) {
+        // promptugal://login#key=<packed>: the person key from a sign-in link (the website's link with the app's scheme).
+        if url.scheme == AppLinks.scheme, url.host == "login" {
+            open("places")
+            Task { _ = await PersonSession.shared.signIn(with: url.absoluteString) }
+            return
+        }
         guard url.scheme == AppLinks.scheme, url.host == "open" else { return }
         let id = url.pathComponents.dropFirst().joined(separator: "/")
         guard PublicDestinations.openable(id, debug: debug) != nil else { return }

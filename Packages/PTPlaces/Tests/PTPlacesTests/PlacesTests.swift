@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 import SwiftUI
 import Testing
 @testable import PTPlaces
@@ -252,5 +253,54 @@ struct APIShapeTests {
         #expect(file.look?.imageCredit == "designer.places@ · AI-made")
         #expect(file.aiNews.first?.provenance?.signature == "valid")
         #expect(file.articles.first?.title == "A")
+    }
+}
+
+// A throwaway key made for this test with Node's crypto, the same steps as the website's person-key.mjs
+// (issue, link, seal). It protects nothing.
+private let testLink = "https://promptugal.news/login/#key=eyJ2IjoxLCJwIjoidGVzdGVyIiwiZiI6InNoYTI1Njo5ZmI3NzFiNzkxN2YzYTA3IiwiZSI6WyJzMU42YUJxM2p1T1BXSTVkX3FPYUlYdS02eTk1WDFaVnMyTXhPdXdOb0xZIiwiTmdlS3NmUkdSZFVQUktiRUowT1pnMjZBSmlIcXRlcFdMZldyaElXUWNaVSIsIlZuczRyTlFpdDVPZDhUazlGV2E4X3ppQ1IzRFpKUE04ejhCSkpfNmVpekkiXSwicyI6WyJDSW96TXhMOUpCczFVX20tVXBZV0o0dUpXcDRHWHZOMWYweHZyNVoxZEVVIiwibzFaQTk5Q1RLekFpVDJMaGJ4all0QlIzMTRwQ3UyQU1BSkZpclg3Zk9HcyIsIllCVkhJQjNDb29IVmNRbTlLZGtjRUNEcnBlMWdjeFNKR1FtSDV5WlhkNzgiXX0"
+private let testEnvelope = #"{"v": "ws-ecies-1", "to": "tester", "key": "sha256:9fb771b7917f3a07", "by": "conductor@PrompTugal.dinis", "at": "2026-11-15T23:50:00Z", "epk": {"kty": "EC", "crv": "P-256", "x": "iH4wNGuN2ON6jgWy6mfbfOf3LbCRb93Ed2Fx7TYB3Wg", "y": "aWC7apwvq0Yi3DxvACJxazwqsGjoNK6HcI15M2cgSSA"}, "iv": "9QzNa11+Utg1bC8h", "ct": "n86wklesw+so9+9fKzd82vx5EnPWzwupP25/M8LT9/stPa8/qmSOECLcq8P1LBBoiOA="}"#
+private let testRegister = #"{"keys": [{"person": "tester", "fingerprint": "sha256:9fb771b7917f3a07", "status": "active", "encrypt": {"kty": "EC", "crv": "P-256", "x": "NgeKsfRGRdUPRKbEJ0OZg26AJiHqtepWLfWrhIWQcZU", "y": "Vns4rNQit5Od8Tk9FWa8_ziCR3DZJPM8z8BJJ_6eizI"}, "sign": {"kty": "EC", "crv": "P-256", "x": "o1ZA99CTKzAiT2LhbxjYtBR314pCu2AMAJFirX7fOGs", "y": "YBVHIB3CooHVcQm9KdkcECDrpe1gcxSJGQmH5yZXd78"}}]}"#
+private let testSignX = "o1ZA99CTKzAiT2LhbxjYtBR314pCu2AMAJFirX7fOGs"
+private let testSignY = "YBVHIB3CooHVcQm9KdkcECDrpe1gcxSJGQmH5yZXd78"
+
+@Suite("PTPlaces: sign-in with the person key")
+struct PersonKeyTests {
+    @Test("a sign-in link reads, its fingerprint checks, and it proves against the register")
+    func link() throws {
+        let key = try PersonKey(link: testLink)
+        #expect(key.person == "tester")
+        let register = try JSONDecoder().decode(PersonKeyRegister.self, from: Data(testRegister.utf8))
+        try key.prove(against: register)
+        #expect(try PersonKey(link: String(testLink.split(separator: "=").last!)).fingerprint == key.fingerprint)
+    }
+
+    @Test("a reply sealed by Node (ws-ecies-1) opens on the device")
+    func openFromNode() throws {
+        let key = try PersonKey(link: testLink)
+        let envelope = try JSONDecoder().decode(SealedEnvelope.self, from: Data(testEnvelope.utf8))
+        let plain = try JSONSerialization.jsonObject(with: key.open(envelope)) as? [String: String]
+        #expect(plain?["text"] == "Olá from the conductor")
+    }
+
+    @Test("what the device signs verifies with the public signing key (raw r||s, SHA-256)")
+    func sign() throws {
+        let key = try PersonKey(link: testLink)
+        let signature = try key.sign("comment on loule")
+        let x = try #require(Base64URL.decode(testSignX)), y = try #require(Base64URL.decode(testSignY))
+        let pub = try P256.Signing.PublicKey(rawRepresentation: x + y)
+        let raw = try P256.Signing.ECDSASignature(rawRepresentation: try #require(Data(base64Encoded: signature)))
+        #expect(pub.isValidSignature(raw, for: Data("comment on loule".utf8)))
+    }
+
+    @Test("a link with no key, a bad fingerprint or a replaced key is refused")
+    func refusals() throws {
+        #expect(throws: PersonKey.Failure.noKeyInLink) { try PersonKey(link: "https://promptugal.news/login/") }
+        let key = try PersonKey(link: testLink)
+        let replaced = testRegister.replacingOccurrences(of: "\"active\"", with: "\"replaced\"")
+        let register = try JSONDecoder().decode(PersonKeyRegister.self, from: Data(replaced.utf8))
+        #expect(throws: PersonKey.Failure.replaced) { try key.prove(against: register) }
+        let empty = try JSONDecoder().decode(PersonKeyRegister.self, from: Data(#"{"keys":[]}"#.utf8))
+        #expect(throws: PersonKey.Failure.notInRegister) { try key.prove(against: empty) }
     }
 }

@@ -68,6 +68,7 @@ public struct PlacesHomeView: View {
                     .font(.system(wide ? .title2 : .title3, design: .serif).italic())
                     .foregroundStyle(Palette.red)
                 Spacer()
+                PersonBadge()
             }
             Rectangle().fill(Palette.ink).frame(height: 2)
             HStack {
