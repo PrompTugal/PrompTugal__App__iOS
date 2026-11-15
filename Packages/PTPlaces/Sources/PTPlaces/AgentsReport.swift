@@ -7,8 +7,9 @@ import Foundation
 // Where a place's report comes from, in order:
 //   1. https://promptugal.news/api/v1/by-place/agents.json, a conductor-report/v1 with `newsroom` per agent
 //      (asked of dev.places@; not served yet);
-//   2. else built here from the record the website already serves: board/team/<role>/status.json for the place
-//      agent, its parent place, and the by-place team. Nothing is invented: a role with no status file is left out.
+//   2. else built here from the record the website already serves: api/v1/newsroom/dashboard.json (every agent's
+//      status in one file), else board/team/<role>/status.json, for the place agent, its parent place, and the
+//      by-place team. Nothing is invented: a role with no record is left out.
 
 public struct AgentsReport: Codable, Sendable, Equatable {
     public var v: Int
@@ -136,9 +137,30 @@ public struct ReportMessage: Codable, Sendable, Equatable, Hashable, Identifiabl
 
 // MARK: - The record the website already serves
 
-/// board/team/<role>/status.json on promptugal.news.
+/// api/v1/newsroom/dashboard.json: every agent's status in one file (57 agents on 16 Nov), the same fields as status.json.
+public struct NewsroomDashboard: Decodable, Sendable, Equatable {
+    public var built: String
+    public var agents: [AgentStatus]
+
+    public init(built: String = "", agents: [AgentStatus]) { self.built = built; self.agents = agents }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: AnyKey.self)
+        built = c.string("built") ?? ""
+        agents = c.lenientArray("agents")
+    }
+
+    /// The agents by role ("place.loule", "dev.places").
+    public var byRole: [String: AgentStatus] {
+        Dictionary(agents.map { ($0.role, $0) }, uniquingKeysWith: { a, _ in a })
+    }
+}
+
+/// board/team/<role>/status.json on promptugal.news, and each entry of the newsroom dashboard.
 public struct AgentStatus: Decodable, Sendable, Equatable {
     public var agent: String
+    /// "place.loule"; from the dashboard, or derived from the agent id.
+    public var role: String
     public var focus: String
     public var state: String
     public var updated: String
@@ -151,11 +173,13 @@ public struct AgentStatus: Decodable, Sendable, Equatable {
                 next: [String] = [], asks: [String] = [], debrief: String? = nil) {
         self.agent = agent; self.focus = focus; self.state = state; self.updated = updated; self.done = done
         self.next = next; self.asks = asks; self.debrief = debrief
+        self.role = agent.split(separator: "@").first.map(String.init) ?? agent
     }
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: AnyKey.self)
         agent = try c.decode(String.self, forKey: AnyKey("agent"))
+        role = c.string("role") ?? (agent.split(separator: "@").first.map(String.init) ?? agent)
         focus = c.string("focus") ?? ""
         state = c.string("state") ?? ""
         updated = c.string("updated") ?? ""

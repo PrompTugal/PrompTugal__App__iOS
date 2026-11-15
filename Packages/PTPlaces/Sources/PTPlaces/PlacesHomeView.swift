@@ -283,7 +283,11 @@ public struct PlacesHomeView: View {
                                         .overlay(Circle().stroke(Palette.paper, lineWidth: 2))
                                 }
                                 Text(place.name).font(.caption2.weight(.semibold)).lineLimit(1)
-                                Text(place.status).font(.caption2).foregroundStyle(Palette.muted)
+                                if let record = store.placeAgentStatus(place) {
+                                    Text(PlaceDates.ago(record.updated)).font(.caption2).foregroundStyle(Palette.muted).lineLimit(1)
+                                } else {
+                                    Text(place.status).font(.caption2).foregroundStyle(Palette.muted)
+                                }
                             }
                             .frame(width: 76)
                         }
@@ -292,7 +296,7 @@ public struct PlacesHomeView: View {
                 }
                 .padding(.vertical, 4)
             }
-            Text(String(localized: "\(store.places.filter { !$0.agent.isEmpty }.count) place agents at work. Open a place to see what its agent is doing now, from its own status record."))
+            Text(String(localized: "\(store.places.filter { !$0.agent.isEmpty }.count) place agents, \(store.agentCount) agents in the whole newsroom. Open a place to see what its agent is doing now, from its own record."))
                 .font(.footnote).foregroundStyle(Palette.muted)
         }
         .padding(.horizontal, gutter)

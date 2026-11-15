@@ -193,3 +193,30 @@ struct ConnectionsTests {
         #expect(PlaceConnections.hubs([faro, lagos, sagres]).count == 2)
     }
 }
+
+@Suite("PTPlaces: the newsroom dashboard")
+struct DashboardTests {
+    @Test("dashboard.json decodes into status records by role")
+    func dashboard() throws {
+        let json = """
+        {"about":"x","built":"2026-11-16T00:10Z","agents":[
+         {"role":"place.loule","agent":"place.loule@PrompTugal.dinis","focus":"loule","state":"live; pass 4 released","minute":10,"scheduled":true,
+          "updated":"2026-11-16T00:10Z","stale":false,"last_wake":null,"done":["a","b"],"next":["c"],"asks":[],"grid":"..."},
+         {"role":"dev.places","agent":"dev.places@PrompTugal.dinis","state":"steps live","updated":"2026-11-15T22:35Z"},
+         {"role":"broken"}],
+         "schedule":[]}
+        """
+        let board = try JSONDecoder().decode(NewsroomDashboard.self, from: Data(json.utf8))
+        #expect(board.agents.count == 2)
+        #expect(board.byRole["place.loule"]?.done == ["a", "b"])
+        let loule = PlaceSummary(id: "loule", name: "Loulé", parent: "algarve")
+        let report = PlaceAgents.report(place: loule, statuses: board.byRole)
+        #expect(report.agents.map(\.name) == ["place.loule", "dev.places"])
+        #expect(report.agents.first?.status == "working")
+    }
+
+    @Test("a status made in code derives its role from the agent id")
+    func role() {
+        #expect(AgentStatus(agent: "place.faro@PrompTugal.dinis").role == "place.faro")
+    }
+}

@@ -13,6 +13,8 @@ public final class PlacesStore {
     public static let listURL = URL(string: "https://promptugal.news/data/by-place/places.json")!
     /// conductor-report/v1 for the by-place team, once dev.places@ serves it (asked; 404 until then).
     public static let agentsURL = URL(string: "https://promptugal.news/api/v1/by-place/agents.json")!
+    /// Every agent's status in one file (the Team app's Agents dashboard reads it too).
+    public static let dashboardURL = URL(string: "https://promptugal.news/api/v1/newsroom/dashboard.json")!
 
     public static func placeURL(_ id: String) -> URL { site.appendingPathComponent("data/by-place/\(id).json") }
     public static func statusURL(_ role: String) -> URL { site.appendingPathComponent("board/team/\(role)/status.json") }
@@ -23,6 +25,7 @@ public final class PlacesStore {
     public let index = RemoteFeed<PlaceIndex>(name: "places.index", url: PlacesStore.indexURL)
     public let list = RemoteFeed<PlaceIndex>(name: "places.list", url: PlacesStore.listURL)
     public let teamReport = RemoteFeed<AgentsReport>(name: "places.agents", url: PlacesStore.agentsURL)
+    public let dashboard = RemoteFeed<NewsroomDashboard>(name: "places.dashboard", url: PlacesStore.dashboardURL)
     public private(set) var files: [String: RemoteFeed<PlaceFile>] = [:]
     public private(set) var statuses: [String: RemoteFeed<AgentStatus>] = [:]
 
@@ -30,6 +33,7 @@ public final class PlacesStore {
         index.freshFor = 300
         list.freshFor = 3_600
         teamReport.freshFor = 300
+        dashboard.freshFor = 120
     }
 
     /// The places in the website's order, with each town's seat merged in from places.json.
@@ -55,7 +59,8 @@ public final class PlacesStore {
     public func load(force: Bool = false) async {
         async let a: Void = index.load(force: force)
         async let b: Void = list.load(force: force)
-        _ = await (a, b)
+        async let c: Void = dashboard.load(force: force)
+        _ = await (a, b, c)
         await withTaskGroup(of: Void.self) { group in
             for place in places {
                 let placeFeed = feed(for: place.id)
@@ -85,15 +90,19 @@ public final class PlacesStore {
             report.agents = served.agents(for: place.id)
             return report
         }
+        let fromDashboard = dashboard.value?.byRole ?? [:]
         let found = PlaceAgents.roles(for: place).reduce(into: [String: AgentStatus]()) { result, role in
-            if let status = statuses[role]?.value { result[role] = status }
+            if let status = fromDashboard[role] ?? statuses[role]?.value { result[role] = status }
         }
         return found.isEmpty ? nil : PlaceAgents.report(place: place, statuses: found)
     }
 
     public func loadAgents(for place: PlaceSummary, force: Bool = false) async {
-        await teamReport.load(force: force)
+        async let report: Void = teamReport.load(force: force)
+        async let board: Void = dashboard.load(force: force)
+        _ = await (report, board)
         if let served = teamReport.value, !served.agents(for: place.id).isEmpty { return }
+        if let board = dashboard.value?.byRole, board["place.\(place.id)"] != nil { return }
         await withTaskGroup(of: Void.self) { group in
             for role in PlaceAgents.roles(for: place) {
                 let statusFeed = status(for: role)
@@ -104,7 +113,13 @@ public final class PlacesStore {
 
     /// How many agents work on the by-place sites, from the team list (place-agents) and the shared roles found.
     public var agentCount: Int {
-        places.filter { !$0.agent.isEmpty }.count + PlaceAgents.sharedRoles.filter { statuses[$0]?.value != nil }.count
+        if let board = dashboard.value { return board.agents.count }
+        return places.filter { !$0.agent.isEmpty }.count + PlaceAgents.sharedRoles.filter { statuses[$0]?.value != nil }.count
+    }
+
+    /// A place agent's record from the dashboard (state, updated), for the home's faces.
+    public func placeAgentStatus(_ place: PlaceSummary) -> AgentStatus? {
+        dashboard.value?.byRole["place.\(place.id)"]
     }
 
     private func status(for role: String) -> RemoteFeed<AgentStatus> {
