@@ -1,8 +1,8 @@
 {
   "agent": "ios.places@PrompTugal.dinis",
   "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
-  "state": "014eb3d green (run 43852556533): 'Now in <place>' panel from api/v1/by-place/<id>/now.json (Dinis 10:40); in conductor.a.ios@'s candidate 1057a4d (its ConditionsCard dropped) for dev. Freeze otherwise holds.",
-  "updated": "2026-11-16T11:10Z",
+  "state": "PAUSED at Dinis's word (16 Nov ~15:30 UTC, account move). Everything of mine is on dev and TestFlight; last: 'Now in <place>' (014eb3d, dev 9387f4b). Hourly schedule switched off by conductor@.",
+  "updated": "2026-11-16T15:40Z",
   "done": [
     "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
     "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
@@ -35,5 +35,5 @@
   "spend": {
     "openrouter_usd": 0
   },
-  "debrief": "briefs/2026-11-16__ios-places/debrief-2026-11-16-handover.md"
+  "debrief": "briefs/2026-11-16__ios-places/debrief-2026-11-16-account-move.md"
 }
