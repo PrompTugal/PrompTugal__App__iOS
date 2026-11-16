@@ -156,6 +156,8 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
     private let lock = NSLock()
     private var failAt: Set<Int>
     private(set) var written: [String] = []
+    private(set) var urls: [String] = []
+    private(set) var tokens: [String] = []
     private var calls = 0
     init(failAt: Set<Int> = []) { self.failAt = failAt }
     func write(_ request: URLRequest) async throws -> Int {
@@ -164,6 +166,8 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
         if failAt.remove(calls) != nil { return 503 }
         let body = try JSONSerialization.jsonObject(with: request.httpBody ?? Data()) as? [String: String]
         written.append(body?["payload"] ?? "")
+        urls.append(request.url?.absoluteString ?? "")
+        tokens.append(body?["append_token"] ?? "")
         return 200
     }
 }
@@ -304,16 +308,93 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
         }
     }
 
-    @Test func noLaneAndRepliesSayWhy() async throws {
+    @Test func aPastedLaneThatIsMissingSaysSo() async throws {
         let transport = TalkTransport(link: { nil }, transport: FakeTransport(), retry: false, app: "t")
         #expect(!(await transport.isConnected()))
         await #expect(throws: TalkTransport.Failure.noLane) { try await transport.send(Data("{}".utf8), signedBy: P256.Signing.PrivateKey()) }
-        await #expect(throws: TalkTransport.Failure.repliesNotAgreed) { _ = try await transport.replies(for: "dinis") }
+        #expect(try await transport.replies(for: "dinis").isEmpty)
     }
 
     @Test func aRefusalWithoutRetryThrowsTheLanesAnswer() async throws {
         let (_, _, link) = try makeLane()
         let transport = TalkTransport(link: { link }, transport: FakeTransport(failAt: [1]), retry: false, app: "t")
         await #expect(throws: TalkSendError.refused(503)) { try await transport.send(Data("{}".utf8), signedBy: P256.Signing.PrivateKey()) }
+    }
+}
+
+/// An inbox.json as the site publishes it, for a test key.
+private func inboxJSON(privateKey: SecKey, fingerprint: String? = nil, host: String = "https://dev.send.sgraph.ai") throws -> Data {
+    let publicKey = try #require(SecKeyCopyPublicKey(privateKey))
+    let spki = try #require(SealedLane.spki(of: publicKey))
+    let pem = "-----BEGIN PUBLIC KEY-----\n" + spki.base64EncodedString(options: [.lineLength64Characters, .endLineWithLineFeed]) + "\n-----END PUBLIC KEY-----\n"
+    let object: [String: Any] = [
+        "agent": "conductor@PrompTugal.dinis", "endpoint": host, "vault_id": "axmydi66",
+        "recipient": ["fingerprint": fingerprint ?? TalkTransportTestSupport.fingerprint(spki), "encrypt": pem],
+        "public_lane": ["append_token": String(repeating: "cd", count: 32)],
+        "talk_lane": ["append_token": String(repeating: "ef", count: 32), "note": "write-only"],
+    ]
+    return try JSONSerialization.data(withJSONObject: object)
+}
+
+private enum TalkTransportTestSupport {
+    static func fingerprint(_ spki: Data) -> String {
+        "sha256:" + TalkWire.sha256Hex(spki).prefix(16)
+    }
+}
+
+@Suite struct CommentLaneTests {
+    @Test func aCommentIsSealedAsItIsToTheTalkLaneFromInboxJSON() async throws {
+        let key = try makeKeyPair()
+        let inbox = try inboxJSON(privateKey: key)
+        let fake = FakeTransport()
+        let transport = TalkTransport.comments(fetch: { url in
+            #expect(url == TalkTransport.inboxURL)
+            return inbox
+        }, transport: fake, retry: false, app: "t")
+        #expect(await transport.isConnected())
+        let payload = Data(#"{"kind":"promptugal/comment/v1","place":"faro","text":"Hello"}"#.utf8)
+        try await transport.send(payload, signedBy: P256.Signing.PrivateKey())
+        #expect(fake.written.count == 1)
+        #expect(try SealedLane.open(payload: fake.written[0], with: key) == payload)
+        #expect(fake.urls == ["https://dev.send.sgraph.ai/api/vault/append/write/axmydi66"])
+        #expect(fake.tokens == [String(repeating: "ef", count: 32)])
+    }
+
+    @Test func aKeyThatDoesNotMatchItsFingerprintOrAnotherHostIsRefused() async throws {
+        let key = try makeKeyPair()
+        let wrong = try inboxJSON(privateKey: key, fingerprint: "sha256:0000000000000000")
+        await #expect(throws: TalkTransport.Failure.self) {
+            try await TalkTransport.comments(fetch: { _ in wrong }, transport: FakeTransport(), retry: false, app: "t")
+                .send(Data("{}".utf8), signedBy: P256.Signing.PrivateKey())
+        }
+        let elsewhere = try inboxJSON(privateKey: key, host: "https://evil.example")
+        await #expect(throws: TalkTransport.Failure.self) {
+            try await TalkTransport.comments(fetch: { _ in elsewhere }, transport: FakeTransport(), retry: false, app: "t")
+                .send(Data("{}".utf8), signedBy: P256.Signing.PrivateKey())
+        }
+        #expect(throws: TalkTransport.Failure.inbox("no talk_lane.append_token")) {
+            try ConductorInbox.parse(Data(#"{"vault_id":"axmydi66","recipient":{"encrypt":"x"}}"#.utf8))
+        }
+    }
+
+    @Test func repliesAreTheEnvelopesForThePersonOrUnaddressed() async throws {
+        let replies = Data(#"""
+        {"version":"v1","replies":[
+          {"v":1,"to":"dinis","epk":"a","iv":"b","ct":"c"},
+          {"v":1,"to":"someone-else","epk":"a","iv":"b","ct":"c"},
+          {"v":1,"to":"sha256:1234567890abcdef","epk":"a","iv":"b","ct":"c"},
+          {"v":1,"epk":"a","iv":"b","ct":"c"},
+          "not an object"
+        ]}
+        """#.utf8)
+        let transport = TalkTransport.comments(fetch: { url in
+            #expect(url == TalkTransport.repliesURL)
+            return replies
+        }, transport: FakeTransport(), retry: false, app: "t")
+        let mine = try await transport.replies(for: "dinis")
+        let tos = try mine.map { (try JSONSerialization.jsonObject(with: $0) as? [String: Any])?["to"] as? String }
+        #expect(tos == ["dinis", "sha256:1234567890abcdef", nil])
+        #expect(try TalkTransport.replies(in: Data(#"{"version":"v1","replies":[]}"#.utf8), for: "x").isEmpty)
+        #expect(throws: TalkTransport.Failure.self) { try TalkTransport.replies(in: Data("[]".utf8), for: "x") }
     }
 }

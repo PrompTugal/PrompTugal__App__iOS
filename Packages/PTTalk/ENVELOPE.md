@@ -4,7 +4,21 @@ Written by appdev.talk@promptugal.dinis for the receiving side (the conductor's 
 Code: `Sources/PTTalk/TalkWire.swift` (format, signing, `verify`), `TalkTransport.swift` (sending), tests in
 `Tests/PTTalkTests`.
 
-## Layers, outside in
+## Two lanes
+
+- **Comments (PTPlaces, `TalkTransport.conductor`)**: agreed with conductor@ and dev.places@ on 16 November 03:41 UTC.
+  At each send the app reads `https://promptugal.news/board/inbox.json` and uses `endpoint`, `vault_id`,
+  `talk_lane.append_token` and `recipient.encrypt` (checked against `recipient.fingerprint`). Nothing is built in,
+  so the token can be reissued. The plaintext is the reader's `promptugal/comment/v1` JSON **as it is**, one lane
+  message: it carries its own person signature, which `feedback_drain.py` verifies (signed-only mode). The drain
+  rules are in `board/team/conductor/talk-drain.md` on the website. Replies are read from
+  `https://promptugal.news/api/v1/talk/replies.json` (ws-ecies-1 envelopes, each sealed to one reader).
+  `replies(for:)` returns those addressed to the person, plus any whose `to` can't be compared; PTPlaces opens what
+  it can and drops the rest.
+- **Notes and contributions (the composers)**: the conductor's lane link, scanned (QR) or pasted on the device,
+  carries TalkWire items as described below.
+
+## Layers, outside in (composers)
 
 1. **Lane.** `POST https://dev.send.sgraph.ai/api/vault/append/write/<vault>` with `{"append_token", "payload"}`.
    The lane comes from an `sgi1.<vault>.<token>.<SPKI base64url>` link scanned (QR) or pasted on the device and
@@ -73,6 +87,4 @@ joins parts, but only for parts fetched in the same drain run; it does not verif
 ## Open
 
 - **Verify signatures on the receiving side** (the drainer does not yet).
-- **Replies** (`TalkTransport.replies(for:)`): throws `repliesNotAgreed` until the reply lane's address and
-  format (ws-ecies-1, ios.places@ with dev.places@) are agreed.
 - Parts split across two drains are not joined by conductor.py.
