@@ -54,8 +54,18 @@ public final class PersonaStore {
                 defaults.removeObject(forKey: Self.key)
             }
             terms = persona.map { PersonaRanker.terms(for: $0.text) } ?? []
+            suggested = []
+            suggestionProblem = nil
         }
     }
+
+    /// Extra words Apple Intelligence suggested for this persona, on the device; they count less than the reader's own.
+    public private(set) var suggested: [PersonaTerm] = []
+    public private(set) var suggesting = false
+    public private(set) var suggestionProblem: String?
+
+    /// The reader's terms, then the model's.
+    public var allTerms: [PersonaTerm] { terms + suggested }
 
     /// The persona's terms, worked out once per change.
     public private(set) var terms: [PersonaTerm] = []
@@ -71,8 +81,25 @@ public final class PersonaStore {
 
     public var isOn: Bool { persona != nil }
 
-    public func match(_ story: PlaceSite.News) -> PersonaMatch { PersonaRanker.match(story, terms: terms) }
-    public func match(_ entry: PlaceSite.MapEntry) -> PersonaMatch { PersonaRanker.match(entry, terms: terms) }
+    public func match(_ story: PlaceSite.News) -> PersonaMatch { PersonaRanker.match(story, terms: allTerms) }
+    public func match(_ entry: PlaceSite.MapEntry) -> PersonaMatch { PersonaRanker.match(entry, terms: allTerms) }
+
+    /// Asks Apple's on-device model for more words that fit the persona, to widen the ranking. Nothing leaves the device.
+    public func suggest() async {
+        guard let persona, !suggesting else { return }
+        suggesting = true
+        suggestionProblem = nil
+        defer { suggesting = false }
+        do {
+            let answer = try await LocalModel.stream(instructions: PersonaRanker.suggestInstructions,
+                                                     prompt: "The reader says: \"\(persona.text)\"") { _ in }
+            guard self.persona?.text == persona.text else { return }
+            suggested = PersonaRanker.suggestedTerms(from: answer, existing: terms)
+            if suggested.isEmpty { suggestionProblem = "Apple Intelligence suggested no new words." }
+        } catch {
+            suggestionProblem = error.localizedDescription
+        }
+    }
 }
 
 // MARK: - Ranking
@@ -218,6 +245,33 @@ public enum PersonaRanker {
             } else if !placeWords.contains(word), !out.contains(where: { $0.label == word }) {
                 out.append(PersonaTerm(label: word, needles: [word.count >= 4 ? word + "*" : word], weight: 2))
             }
+        }
+        return out
+    }
+
+    static let suggestInstructions = """
+    You turn what a reader says about themselves into search words for local news about AI and technology in the \
+    Algarve, Portugal. Answer with 6 to 10 English words or two-word phrases, lowercase, separated by commas, and \
+    nothing else. Topics, sectors and kinds of organisation only: no place names, no people's names, no sentences.
+    """
+
+    /// The model's comma-separated answer as extra terms (weight 1): cleaned, without place names, filler or anything
+    /// the reader's own terms already cover; at most ten.
+    public static func suggestedTerms(from answer: String, existing: [PersonaTerm]) -> [PersonaTerm] {
+        var out: [PersonaTerm] = []
+        let pieces = answer.split { $0 == "," || $0 == "\n" || $0 == ";" || $0 == "•" }
+        for piece in pieces {
+            let words = tokens(String(piece)).filter { !stopwords.contains($0) && !placeWords.contains($0) && $0.count >= 3 }
+            guard !words.isEmpty, words.count <= 3 else { continue }
+            let phrase = words.joined(separator: " ")
+            guard phrase.count <= 30 else { continue }
+            let covered = (existing + out).contains { term in
+                term.label == phrase || (words.count == 1 && term.needles.contains { needleMatches(word: phrase, needle: $0) })
+            }
+            if covered { continue }
+            let needle = words.count == 1 && phrase.count >= 4 ? phrase + "*" : phrase
+            out.append(PersonaTerm(label: phrase, needles: [needle], weight: 1))
+            if out.count == 10 { break }
         }
         return out
     }

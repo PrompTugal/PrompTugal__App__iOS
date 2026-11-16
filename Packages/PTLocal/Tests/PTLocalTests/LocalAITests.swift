@@ -179,3 +179,31 @@ struct LocalPromptTests {
         #expect(!status.text.isEmpty)
     }
 }
+
+@Suite("Apple Intelligence's persona words")
+struct PersonaSuggestionTests {
+    @Test("A comma list becomes weight-1 terms, without places, filler, sentences or repeats of the reader's own")
+    func parses() {
+        let existing = PersonaRanker.terms(for: "I invest in health tech")
+        let answer = "Biotech, venture capital, Faro, medical devices, digital health, startups, the, hospitals and clinics in the region of Algarve today, telemedicine\nwearables"
+        let terms = PersonaRanker.suggestedTerms(from: answer, existing: existing)
+        let labels = terms.map(\.label)
+        #expect(!labels.contains("biotech"))           // already a health needle
+        #expect(labels.contains("venture capital"))
+        #expect(!labels.contains("faro"))
+        #expect(labels.contains("medical devices"))
+        #expect(labels.contains("startups"))
+        #expect(labels.contains("telemedicine"))
+        #expect(labels.contains("wearables"))
+        #expect(!labels.contains { $0.split(separator: " ").count > 3 })
+        #expect(terms.allSatisfy { $0.weight == 1 })
+        #expect(terms.first { $0.label == "telemedicine" }?.needles == ["telemedicine*"])
+    }
+
+    @Test("At most ten, and nothing from an empty answer")
+    func limits() {
+        let many = (1...30).map { "topic\($0)" }.joined(separator: ", ")
+        #expect(PersonaRanker.suggestedTerms(from: many, existing: []).count == 10)
+        #expect(PersonaRanker.suggestedTerms(from: "", existing: []).isEmpty)
+    }
+}

@@ -236,6 +236,7 @@ public struct PersonaBanner: View {
                         Text("Persona mode: \(persona.label)").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                         Text(explanation(persona))
                             .font(.caption).foregroundStyle(Palette.muted)
+                        suggestions
                     }
                     Spacer(minLength: Space.s)
                     VStack(spacing: Space.xs) {
@@ -258,6 +259,31 @@ public struct PersonaBanner: View {
             }
         }
         .sheet(isPresented: $picking) { PersonaPicker() }
+    }
+
+    /// Apple Intelligence can widen the ranking with words of its own; they are shown, and marked as its.
+    @ViewBuilder
+    private var suggestions: some View {
+        if !personas.suggested.isEmpty {
+            Label("Apple Intelligence added, on this device: " + personas.suggested.map(\.label).joined(separator: ", "),
+                  systemImage: "sparkles")
+                .font(.caption2).foregroundStyle(Palette.blue)
+        } else if personas.suggesting {
+            HStack(spacing: 4) {
+                ProgressView().controlSize(.mini)
+                Text("Apple Intelligence is thinking of more words…").font(.caption2).foregroundStyle(Palette.muted)
+            }
+        } else if LocalModel.status.isAvailable {
+            Button {
+                Task { await personas.suggest() }
+            } label: {
+                Label("Widen with Apple Intelligence", systemImage: "sparkles").font(.caption)
+            }
+            .buttonStyle(.borderless)
+        }
+        if let problem = personas.suggestionProblem {
+            Text(problem).font(.caption2).foregroundStyle(Palette.amber)
+        }
     }
 
     private func explanation(_ persona: Persona) -> String {
@@ -351,8 +377,8 @@ public struct PersonaForYouCard: View {
 
     public var body: some View {
         if let persona = personas.persona {
-            let stories = PersonaRanker.stories(in: sites, terms: personas.terms, limit: 6)
-            let entries = PersonaRanker.entries(in: sites, terms: personas.terms, limit: 6)
+            let stories = PersonaRanker.stories(in: sites, terms: personas.allTerms, limit: 6)
+            let entries = PersonaRanker.entries(in: sites, terms: personas.allTerms, limit: 6)
             TitledCard("For you", kicker: persona.label) {
                 if stories.isEmpty && entries.isEmpty {
                     Text("Nothing in the Algarve's news matches “\(persona.text)” yet. Try other words: a topic, a sector or an organisation's name.")
