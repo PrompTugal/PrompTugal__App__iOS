@@ -48,7 +48,7 @@ The shared macOS runners were flooded: about 30 `ios.yml` runs in an hour, each 
 
 From the storm incident's connectors: the app reads IPMA's open data directly (warnings for area FAR, the whole Algarve; daily forecasts for Faro 1080500, Loulé 1080800, Portimão 1081100, Sagres 1081505; station observations). The website team is asked for the local layer the app cannot get alone: per place, live signals (warnings, transport, council notices) with source and read time, and the dots connected to stories, organisations and events.
 
-## Where it stands (04:27, for the morning)
+## Where it stands (05:50, for the morning)
 
 TestFlight builds of the news app (news.promptugal.reader), all from dev:
 
@@ -58,8 +58,19 @@ TestFlight builds of the news app (news.promptugal.reader), all from dev:
 | 650 | 0.4.111 | 03:02 | Places tab (ios.places@), live agents board and strips, maps, Apple Intelligence persona / near me, IPMA conditions, talk to the conductor, reading credit, CI status, wired into Places |
 | 654 | 0.4.112 | 03:29 | Version label in the sidebar and More; future story dates show the day; no summit cards on Now; four map styles on the Algarve page; live board round; credit "where it goes" |
 | 656 | 0.4.113 | 04:08 | Live board iPad layout; captioned 3D flights from Loulé |
-| next | | ~04:50 | Place comments on the agreed comment lane, replies read back; no summit onboarding, opens on Places |
+| 660 | 0.4.115 | 05:14 | Place comments on the agreed comment lane, replies read back; no summit onboarding, opens on Places |
+| 662 | 0.4.117 | 05:34 | VoiceOver on the live agents board |
+| 664 | 0.4.118 | 05:54 | "Across Portugal": the 7 district capitals the website added (Lisboa, Porto, Braga, Aveiro, Vila Real, Bragança, Viana do Castelo) get their own row and stay out of the Algarve's numbers, mosaic, map and connections |
 
 CI: night builds ~35 → ~7 min (only what changed, no Release build); dev tests iPhone only and uploads the news app first; push to processed 19–44 min when a Mac is free.
 
 Open, for Dinis: the App Store name and subtitle (proposal: "PrompTugal.news", "Local news, town by town, every fact sourced"; set with testflight-ops set-app-info once approved); larger macOS runners or a self-hosted Mac if builds must be faster still.
+
+## Morning summary (for Dinis)
+
+- **Install the newest build** (664, 0.4.118, "Across Portugal"); 662 is fine except the district capitals would show among the Algarve towns.
+- **Demo path**: Places opens first → the Algarve (four map styles, 3D flight from Loulé) → a town (IPMA conditions, live newsroom strip, Apple Intelligence summary, comments) → Places home: live agents board, persona ("I'm from Algarve Evolution"), near me → More: Newsroom, Reading credit ("where your credit goes", planned payouts labelled), CI status (update available), Ask and summarise, Talk to the conductor.
+- **Honest labels**: simulated steps carry the Simulated badge; every screen says live, this device's copy or built-in copy; Apple Intelligence falls back openly on devices without it.
+- **Freeze**: live@ and ai@ stopped; only wrong-data or crash fixes reach dev before the demo.
+- **Waiting on you**: App Store name and subtitle (proposal "PrompTugal.news", "Local news, town by town, every fact sourced"); faster Mac runners or a self-hosted Mac.
+- **Open after the demo**: signature check on the receiving side of the lanes; joining multi-part messages across drains.
