@@ -18,7 +18,7 @@ public struct AskAndSummariseView: View {
     public var body: some View {
         Page(maxWidth: 900) {
             ScreenHeader(kicker: "PrompTugal.news · on this device", title: "Ask and summarise",
-                         summary: "Apple Intelligence reads the Algarve's town pages on your device: a town in one paragraph, a story in two sentences, why a story is about AI. Tell it who you are and the news reorders for you.")
+                         summary: "Apple Intelligence reads the Algarve's town pages on your device: a town in one paragraph, a story in two sentences, why a story is about AI. Tell it who you are and the news reorders for you. The weather and IPMA's warnings, live, for the town you are in.")
             modelCard
             HStack(spacing: 6) {
                 if store.phase == .loading { ProgressView().controlSize(.mini) }
@@ -75,6 +75,7 @@ public struct AskAndSummariseView: View {
                 Text("This town's page has not loaded yet.").font(.footnote).foregroundStyle(Palette.muted)
             }
         }
+        ConditionsCard(placeID: townID)
         if let site {
             TownSummaryCard(site: site)
             let stories = PersonaRanker.order(site.aiNews) { personas.match($0).score }

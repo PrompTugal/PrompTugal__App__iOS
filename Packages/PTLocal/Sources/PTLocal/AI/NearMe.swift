@@ -12,16 +12,19 @@ public struct NearestTown: Sendable, Hashable {
     /// Within the region: the reader is in or near one of the 17 places.
     public var isLocal: Bool { distance <= NearMe.localRadius }
 
-    public var distanceText: String {
-        let km = distance / 1000
-        return km < 1 ? "under 1 km" : km < 10 ? String(format: "%.1f km", km) : "\(Int(km.rounded())) km"
-    }
+    public var distanceText: String { NearMe.text(distance: distance) }
 }
 
 public enum NearMe {
     /// Farther than this from every town (about the width of the Algarve's municipalities), the screen says the reader
     /// is not in the Algarve rather than pretend a town is local.
     public static let localRadius: Double = 30_000
+
+    /// "under 1 km", "4.2 km", "68 km".
+    public static func text(distance: Double) -> String {
+        let km = distance / 1000
+        return km < 1 ? "under 1 km" : km < 10 ? String(format: "%.1f km", km) : "\(Int(km.rounded())) km"
+    }
 
     /// The great-circle distance in metres (haversine, mean Earth radius). Pure, so tests need no location services.
     public static func distance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
