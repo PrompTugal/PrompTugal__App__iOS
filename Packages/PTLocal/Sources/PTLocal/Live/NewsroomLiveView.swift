@@ -11,6 +11,7 @@ public struct NewsroomLiveView: View {
     @State private var replay: Double?
     @Namespace private var storyChip
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     /// `selecting` opens the board with that agent selected ("place.faro").
     public init(selecting role: String? = nil) {
@@ -31,30 +32,34 @@ public struct NewsroomLiveView: View {
                 summary(LiveSummary.make(dashboard, extras: model.extras, now: model.lastPoll ?? Date()))
             }
             if model.dashboard != nil {
-                NewsroomBoard(model: model, selected: $selected, highlighted: highlighted, replay: replay)
-                NewsroomBoardLegend()
-                if let extras = model.extras, !extras.gridHours.isEmpty {
-                    ReplayControl(extras: extras, position: $replay)
-                }
-                if let role = selected, let agent = model.agent(role) {
-                    selectedCard(agent)
-                        .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
-                }
-                storyCard
-                NavigationLink {
-                    AlgarveMapsView()
-                } label: {
-                    Card {
-                        Label("The towns, four ways", systemImage: "map").font(.headline)
-                        Text("The Algarve on the map, in 3D flying town to town, as a tile grid, and as a cartogram sized by what each agent found.")
-                            .font(.footnote).foregroundStyle(Palette.muted)
+                if sizeClass == .regular {
+                    // iPad: the board with the selected agent and the ticker beside it, so a tap and its story sit
+                    // side by side on the big screen.
+                    HStack(alignment: .top, spacing: Space.l) {
+                        VStack(alignment: .leading, spacing: Space.m) { boardBlock }
+                            .frame(maxWidth: .infinity)
+                        VStack(alignment: .leading, spacing: Space.m) {
+                            selectedOrHint
+                            LiveTicker(model: model, selected: $selected)
+                        }
+                        .frame(width: 380)
                     }
-                }
-                .buttonStyle(.plain)
-                Columns {
-                    LiveTicker(model: model, selected: $selected)
-                } trailing: {
+                    storyCard
+                    mapsLink
                     if let extras = model.extras { WakeGrid(model: model, extras: extras, selected: $selected) }
+                } else {
+                    boardBlock
+                    if let role = selected, let agent = model.agent(role) {
+                        selectedCard(agent)
+                            .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                    }
+                    storyCard
+                    mapsLink
+                    Columns {
+                        LiveTicker(model: model, selected: $selected)
+                    } trailing: {
+                        if let extras = model.extras { WakeGrid(model: model, extras: extras, selected: $selected) }
+                    }
                 }
                 GapNote(title: "What is real here",
                         text: "Every node, pulse and line is read from promptugal.news/api/v1/newsroom/dashboard.json and the place files. Handoffs are the dashboard's 24-hour counts, drawn as a flow, not one particle per handoff. Times an agent wrote ahead of the clock are shown as now.")
@@ -68,6 +73,42 @@ public struct NewsroomLiveView: View {
         .animation(reduceMotion ? nil : .spring(duration: 0.35), value: selected)
         .task { await model.run() }
         .refreshable { await model.poll() }
+    }
+
+    // MARK: Blocks
+
+    @ViewBuilder private var boardBlock: some View {
+        NewsroomBoard(model: model, selected: $selected, highlighted: highlighted, replay: replay)
+        NewsroomBoardLegend()
+        if let extras = model.extras, !extras.gridHours.isEmpty {
+            ReplayControl(extras: extras, position: $replay)
+        }
+    }
+
+    @ViewBuilder private var selectedOrHint: some View {
+        if let role = selected, let agent = model.agent(role) {
+            selectedCard(agent)
+                .transition(reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.97)))
+        } else {
+            Card {
+                Label("Tap any agent on the board", systemImage: "hand.tap").font(.headline)
+                Text("Its own words on what it is doing, its last wake, where it fired today and, for a town, its newest stories.")
+                    .font(.footnote).foregroundStyle(Palette.muted)
+            }
+        }
+    }
+
+    private var mapsLink: some View {
+        NavigationLink {
+            AlgarveMapsView()
+        } label: {
+            Card {
+                Label("The towns, four ways", systemImage: "map").font(.headline)
+                Text("The Algarve on the map, in 3D flying town to town, as a tile grid, and as a cartogram sized by what each agent found.")
+                    .font(.footnote).foregroundStyle(Palette.muted)
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Status line
