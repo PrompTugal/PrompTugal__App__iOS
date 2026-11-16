@@ -435,7 +435,8 @@ def build(out):
                                    if 'AppShell(' in admin.root_scene() else
                                    '<p class="notice"><strong>Not reachable yet.</strong> The app still opens on the old website view at launch; <code>AppShell</code> is not the root view in <code>PrompTugalApp.swift</code>. Until it is, the screens below are compiled into the app but nobody can open them, and the product pages count none of their features as in the beta.</p>'),
                   code_areas=admin.areas_html(facts['areas']),
-                  latest_build=admin.latest_build_html(admin.latest_build(os.environ.get('IOS_BUILD_JSON')), REPO_URL))
+                  latest_build=admin.latest_build_html(admin.latest_build(os.environ.get('IOS_BUILD_JSON')), REPO_URL),
+                  ci_status=admin.ci_status_html(admin.ci_status(os.environ.get('CI_STATUS_JSON')), REPO_URL))
 
     if out.exists():
         shutil.rmtree(out)
@@ -488,6 +489,8 @@ def build(out):
     (out / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n')
     build_json = admin.latest_build(os.environ.get('IOS_BUILD_JSON'))
     (out / 'ios-build.json').write_text(json.dumps(build_json or {'available': False}, indent=2) + '\n')
+    ci = admin.ci_status(os.environ.get('CI_STATUS_JSON'))
+    (out / 'ci-status.json').write_text(json.dumps(ci or {'schema': 1, 'available': False, 'pipelines': []}, indent=2) + '\n')
     (out / 'version.json').write_text(json.dumps(
         {key: facts[key] for key in ('release', 'version', 'build', 'site_commit')}, indent=2) + '\n')
     return facts, pages

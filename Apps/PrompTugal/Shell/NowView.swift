@@ -66,12 +66,16 @@ struct NowView: View {
                         InterviewsStrip()
                         tomorrow(model, now: now)
                     case .after:
-                        thanks(count: model.pickCount)
+                        // The summit is over (Dinis, 16 Nov): no "Thanks for coming", no Practical; Now is the towns and
+                        // the news. The talks stay in More (My program) and Explore.
+                        EmptyView()
                     }
                 }
                 MyTownsCard(openPlaces: { open("places") })
                 LatestNewsCard()
-                PracticalCard()
+                if model.phase != .after {
+                    PracticalCard()
+                }
             }
         }
         .background(Palette.paper.ignoresSafeArea())
@@ -433,7 +437,7 @@ private struct LatestNewsCard: View {
                                 .multilineTextAlignment(.leading)
                         }
                         if let published = story.published {
-                            Text(published, format: .relative(presentation: .named))
+                            StoryWhen(date: published)
                                 .font(.caption2).foregroundStyle(Palette.muted)
                         }
                     }
@@ -442,6 +446,22 @@ private struct LatestNewsCard: View {
                 .buttonStyle(.plain)
             }
         })
+    }
+}
+
+/// When a story was published: "3 hours ago", "yesterday"; a date in the future (a date-only string read as midnight
+/// somewhere ahead of Lisbon, or a feed's wrong zone) shows as the day, "15 Nov", never "in 6 hours".
+struct StoryWhen: View {
+    let date: Date
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { context in
+            if date > context.date {
+                Text(date, format: .dateTime.day().month(.abbreviated))
+            } else {
+                Text(date, format: .relative(presentation: .named))
+            }
+        }
     }
 }
 

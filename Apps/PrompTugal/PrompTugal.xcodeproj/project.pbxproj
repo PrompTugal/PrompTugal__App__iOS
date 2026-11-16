@@ -21,6 +21,7 @@
 		96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */ = {isa = PBXBuildFile; productRef = F72F20E84309FB59E1978852 /* PTExplore */; };
 		5A1C0F3E9B2D4C6E8F0A1B2C /* PTPlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 5A1C0F3E9B2D4C6E8F0A1B2D /* PTPlaces */; };
 		A1C0DE5E0C0A1F0000000001 /* PTLocal in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE5E0C0A1F0000000003 /* PTLocal */; };
+		A1C0DE5E0C0A1F0000000101 /* PTTalk in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE5E0C0A1F0000000103 /* PTTalk */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +169,7 @@
 				96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */,
 				5A1C0F3E9B2D4C6E8F0A1B2C /* PTPlaces in Frameworks */,
 				A1C0DE5E0C0A1F0000000001 /* PTLocal in Frameworks */,
+				A1C0DE5E0C0A1F0000000101 /* PTTalk in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,6 +281,7 @@
 				F72F20E84309FB59E1978852 /* PTExplore */,
 				5A1C0F3E9B2D4C6E8F0A1B2D /* PTPlaces */,
 				A1C0DE5E0C0A1F0000000003 /* PTLocal */,
+				A1C0DE5E0C0A1F0000000103 /* PTTalk */,
 			);
 			productName = PrompTugal;
 			productReference = 0D08D33B90E2593AC336F1CD;
@@ -446,6 +449,9 @@
 				74304D6E9A5485D46D560243 /* XCLocalSwiftPackageReference "../../Packages/PTExplore" */,
 				5A1C0F3E9B2D4C6E8F0A1B2E /* XCLocalSwiftPackageReference "../../Packages/PTPlaces" */,
 				A1C0DE5E0C0A1F0000000002 /* XCLocalSwiftPackageReference "../../Packages/PTLocal" */,
+				A1C0DE5E0C0A1F0000000105 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */,
+				A1C0DE5E0C0A1F0000000104 /* XCLocalSwiftPackageReference "../../Packages/PTLanes" */,
+				A1C0DE5E0C0A1F0000000102 /* XCLocalSwiftPackageReference "../../Packages/PTTalk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6184002F36CB9470245CDFFC /* Products */;
@@ -613,6 +619,8 @@
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal reads the sign-in QR code your conductor gives you, only when you ask it to.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal records an interview when you ask it to, to send as a draft to the newsroom.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal transcribes your recorded interview on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -646,6 +654,8 @@
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal reads the sign-in QR code your conductor gives you, only when you ask it to.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal records an interview when you ask it to, to send as a draft to the newsroom.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal transcribes your recorded interview on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIFileSharingEnabled = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -908,6 +918,18 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTLocal;
 		};
+		A1C0DE5E0C0A1F0000000105 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTVaultUI;
+		};
+		A1C0DE5E0C0A1F0000000104 /* XCLocalSwiftPackageReference "../../Packages/PTLanes" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTLanes;
+		};
+		A1C0DE5E0C0A1F0000000102 /* XCLocalSwiftPackageReference "../../Packages/PTTalk" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTTalk;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -965,6 +987,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A1C0DE5E0C0A1F0000000002 /* XCLocalSwiftPackageReference "../../Packages/PTLocal" */;
 			productName = PTLocal;
+		};
+		A1C0DE5E0C0A1F0000000103 /* PTTalk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1C0DE5E0C0A1F0000000102 /* XCLocalSwiftPackageReference "../../Packages/PTTalk" */;
+			productName = PTTalk;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

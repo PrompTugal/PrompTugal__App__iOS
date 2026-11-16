@@ -234,7 +234,9 @@ private struct PublicSidebar: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Kicker("PrompTugal")
-                Text("Lisbon · 9–12 Nov").font(.caption).foregroundStyle(Palette.muted)
+                Text(verbatim: "PrompTugal.news · the Algarve").font(.caption).foregroundStyle(Palette.muted)
+                Text(verbatim: AppVersion.label).font(.caption2.monospacedDigit()).foregroundStyle(Palette.muted)
+                    .accessibilityIdentifier("pt.version")
             }
         }
         .accessibilityElement(children: .combine)
@@ -352,4 +354,9 @@ enum PublicLaunch {
 
 #Preview("Shell · iPad") {
     PublicShell().padPreview()
+}
+
+/// The app's version and build as the testers see it in TestFlight: "v0.4.110 (641)".
+enum AppVersion {
+    static var label: String { "v\(BuildInfo.current.appVersion) (\(BuildInfo.current.appBuild))" }
 }

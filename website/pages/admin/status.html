@@ -1,0 +1,23 @@
+<!--
+title: CI status · PrompTugal for iOS
+description: How long a push takes to reach production: the latest runs of the iOS, release and website workflows and of the PrompTugal.news deploy, their durations, and the latest TestFlight build of each app.
+robots: noindex
+order: 15
+-->
+<section class="band">
+  <div class="wrap prose">
+    <p class="kicker">Developer area</p>
+    <h1>CI status: from push to production</h1>
+    <p>A push to <code>dev</code> goes two ways. The website workflow tags a release and deploys this site; it is live when the deploy job reads the new release back from the live <code>version.json</code>. The iOS workflow builds and tests on a Mac, then signs the apps from the release commit and uploads them to TestFlight; App Store Connect then processes each build before testers can install it. “Push to live” below is the time from the push to each of those moments.</p>
+    <p>This page is the copy from the last site build. The live copy, rewritten about every ten minutes by <code>ci-status.yml</code>, is <a href="https://raw.githubusercontent.com/PrompTugal/PrompTugal__App__iOS/ci-status/ci-status.json"><code>ci-status.json</code> on the <code>ci-status</code> branch</a>; the app’s Status screen (More, then CI status) reads it and says how long ago it was checked, and whether the build on the device has a newer one in TestFlight. This build’s copy is <a href="../ci-status.json"><code>ci-status.json</code></a>.</p>
+  </div>
+</section>
+
+<section class="band band-alt" id="status">
+  <div class="wrap">
+    <p class="kicker">Latest runs</p>
+    <h2>Push to live, and what ran</h2>
+    {{ci_status}}
+    <p class="muted">Durations are from when GitHub started the run to its last update. A run still going shows how long it has run so far. Read with the workflow’s own token by <code>scripts/ci-status/collect.py</code>; see <a href="ci.html">CI</a> for what each workflow does.</p>
+  </div>
+</section>

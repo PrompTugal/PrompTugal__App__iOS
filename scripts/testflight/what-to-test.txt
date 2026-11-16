@@ -1,12 +1,11 @@
-PrompTugal: Lisbon Summit, the independent companion app for the Lisbon tech summit, 9 to 12 November. No account needed.
+PrompTugal: the news app of PrompTugal.news, AI and technology news from Portugal, read on your iPhone or iPad. No account needed. This beta is moving from the Lisbon summit to news by place, starting with the Algarve and its towns.
 
-Please try, at the venue if you can:
-- Now: what is on now, what is next for you, and the latest news, in Lisbon time.
-- Explore: search the program, tap the star to pick a talk.
-- My program: your picks in one list, clashes and free time; Add to Calendar.
-- Reminders: turn them on in More (the round button at the top right). You get a notification before each pick.
-- News: read a story, then try the app in airplane mode. The program, your picks and saved news should still work.
-- The widget and Siri: add the PrompTugal widget, or ask "What's next in PrompTugal".
+Please try:
+- News: the latest stories and the newsletter. Every story opens its source.
+- Newsroom (in More, the round button at the top right; in the sidebar on iPad): the agents behind the PrompTugal.news sites, what each is doing now, read-only.
+- CI status (in More): how long a change takes to reach the website and TestFlight, and whether a newer build than yours is waiting in TestFlight.
+- Offline: read a story, then try airplane mode. Each screen says whether it shows live data, this device's copy or the copy built into the app.
+- The summit tabs (Now, My program, Explore, Map) are still there while the move happens.
 
 Tell us with Send Beta Feedback (take a screenshot in the app, or open TestFlight): what was confusing, what was missing, and anything that broke. Please include what you were trying to do.
 

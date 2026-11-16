@@ -297,3 +297,5 @@ a.card:hover { border-color: var(--red); }
   .night-shots { grid-template-columns: minmax(0, 1fr); }
   .night-iphone { max-width: 220px; justify-self: center; width: 100%; }
 }
+.status.bad { color: var(--red); }
+.status.run { color: var(--muted); border-style: dotted; }

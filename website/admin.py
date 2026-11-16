@@ -664,6 +664,111 @@ def latest_build_html(data, repo_url):
             + (f'<p>Artifacts of that run (GitHub keeps them for a limited time):</p><ul>{arts}</ul>' if arts else ''))
 
 
+# --- CI status (from scripts/ci-status/collect.py) ---------------------------
+
+def ci_status(path):
+    """The JSON collect.py wrote, or None when there is none, it does not parse or it has no pipelines."""
+    if not path:
+        return None
+    try:
+        data = json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) and isinstance(data.get('pipelines'), list) and data['pipelines'] else None
+
+
+def duration(seconds):
+    """1m 25s, 2h 05m; a dash for no value."""
+    if not isinstance(seconds, (int, float)) or seconds < 0:
+        return '–'
+    s = int(seconds)
+    if s < 60:
+        return f'{s}s'
+    if s < 3600:
+        return f'{s // 60}m {s % 60:02d}s'
+    return f'{s // 3600}h {(s % 3600) // 60:02d}m'
+
+
+def _when(value):
+    return esc(str(value or '')[:16].replace('T', ' ')) + ' UTC' if value else '–'
+
+
+def _run_status(run):
+    if run.get('running'):
+        return '<span class="status run">running</span>' if run.get('status') == 'in_progress' else \
+               f'<span class="status run">{esc(str(run.get("status") or "queued"))}</span>'
+    conclusion = str(run.get('conclusion') or 'unknown')
+    cls = {'success': 'on', 'failure': 'bad', 'timed_out': 'bad', 'startup_failure': 'bad'}.get(conclusion, 'soon')
+    return f'<span class="status {cls}">{esc(conclusion)}</span>'
+
+
+def _push_to_live(run):
+    live = run.get('pushToLive') or {}
+    if live.get('seconds') is not None:
+        return f'<strong>{duration(live["seconds"])}</strong>'
+    if live.get('uploadSeconds') is not None:
+        return f'uploaded in {duration(live["uploadSeconds"])}'
+    return ''
+
+
+def ci_status_html(data, repo_url):
+    """The status page's bands: the push-to-live tiles, the TestFlight builds and the latest runs per pipeline."""
+    if not data:
+        return ('<p class="notice">No CI status in this site build. The site build runs '
+                '<code>scripts/ci-status/collect.py</code> with the workflow’s token; the live copy is on the '
+                '<code>ci-status</code> branch.</p>')
+    tiles = []
+    for p in data['pipelines']:
+        if p.get('available') and not p.get('liveLabel'):
+            continue   # durations only (the release workflow): no push-to-live tile
+        t = p.get('pushToLive') or {}
+        label = p.get('liveLabel') or 'production'
+        if not p.get('available'):
+            detail = esc(p.get('reason') or 'not readable')
+        elif t:
+            detail = f'median {duration(t.get("medianSeconds"))}, fastest {duration(t.get("fastestSeconds"))} over {t.get("samples")} pushes'
+        else:
+            detail = 'no timed push in the latest runs'
+        up = p.get('pushToUpload') or {}
+        if up:
+            detail += f'; upload to TestFlight: latest {duration(up.get("latestSeconds"))}, median {duration(up.get("medianSeconds"))}'
+        tiles.append(f'<div><dt>{esc(p["title"])}: push to {esc(label)}</dt><dd>{duration(t.get("latestSeconds"))}</dd>'
+                     f'<dd class="muted">{detail}</dd></div>')
+    apps = (data.get('testflight') or {}).get('apps') or {}
+    if apps:
+        rows = ''.join(
+            f'<tr><td><code>{esc(k)}</code></td><td>{esc(str(a.get("version")))}</td><td><strong>{esc(str(a.get("build")))}</strong></td>'
+            f'<td>{_when(a.get("uploadedAt"))}</td><td>{"processed" if a.get("processed") else "processing or unknown"}</td>'
+            f'<td><a href="{esc(str(a.get("runUrl") or repo_url))}">run {esc(str(a.get("runNumber") or ""))}</a></td></tr>'
+            for k, a in sorted(apps.items()))
+        flight = ('<div class="table-wrap"><table><thead><tr><th scope="col">App</th><th scope="col">Version</th>'
+                  '<th scope="col">Build</th><th scope="col">Uploaded</th><th scope="col">TestFlight</th><th scope="col">From</th>'
+                  f'</tr></thead><tbody>{rows}</tbody></table></div>')
+    else:
+        flight = f'<p class="muted">No TestFlight upload found ({esc((data.get("testflight") or {}).get("reason") or "none in the latest dev runs")}).</p>'
+    blocks = []
+    for p in data['pipelines']:
+        if not p.get('available'):
+            blocks.append(f'<h3 id="ci-{esc(p["id"])}">{esc(p["title"])}</h3><p class="muted">Not readable: {esc(p.get("reason") or "")}.</p>')
+            continue
+        rows = ''.join(
+            f'<tr><td><a href="{esc(str(r.get("url") or ""))}">#{esc(str(r.get("number")))}</a></td><td>{_run_status(r)}</td>'
+            f'<td><code>{esc(str(r.get("branch") or ""))}</code> <span class="muted">{esc(str(r.get("event") or ""))}</span></td>'
+            f'<td>{_when(r.get("startedAt"))}</td><td>{duration(r.get("durationSeconds"))}{" so far" if r.get("running") else ""}</td>'
+            f'<td>{_push_to_live(r)}</td>'
+            f'<td><a href="https://github.com/{esc(p["repo"])}/commit/{esc(str(r.get("commit") or ""))}"><code>{esc(str(r.get("shortCommit") or ""))}</code></a> '
+            f'{esc(str(r.get("title") or ""))}</td></tr>'
+            for r in p.get('runs') or [])
+        blocks.append(f'<h3 id="ci-{esc(p["id"])}">{esc(p["title"])} <a class="muted" href="{esc(str(p.get("url") or ""))}"><code>{esc(str(p.get("workflow") or ""))}</code></a></h3>'
+                      '<div class="table-wrap"><table><thead><tr><th scope="col">Run</th><th scope="col">Result</th>'
+                      '<th scope="col">Branch</th><th scope="col">Started</th><th scope="col">Took</th><th scope="col">Push to live</th>'
+                      f'<th scope="col">Commit</th></tr></thead><tbody>{rows}</tbody></table></div>')
+    return (f'<p class="lede">Checked {_when(data.get("generatedAt"))}, when this page was built.</p>'
+            f'<dl class="kv">{"".join(tiles)}</dl>'
+            f'<h3 id="testflight">Latest TestFlight build per app</h3>{flight}'
+            + ''.join(blocks))
+
+
 # --- screenshots (from the screens workflow's artifact) ---------------------
 
 DEVICES = {'iphone': 'iPhone', 'ipad': 'iPad'}
