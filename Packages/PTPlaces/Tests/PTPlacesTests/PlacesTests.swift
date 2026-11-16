@@ -427,3 +427,30 @@ struct RegionSplitTests {
         #expect(store.portugalCities.map(\.id) == ["porto"])
     }
 }
+
+@Suite("PTPlaces: now in a place (IPMA, hourly)")
+struct NowTests {
+    @Test("now.json as served on 16 Nov decodes into the panel's values")
+    func now() throws {
+        let now = try decode(PlaceNow.self, """
+        {"place":"faro","read_at":"2026-11-16T09:40:37Z",
+         "station":{"name":"Faro (Aeródromo)","id":1200554,"km":4,"reading":{"at":"2026-11-16T09:00Z","temp_c":15,"humidity_pct":93,"wind_kmh":9.4,"rain_mm":0},"source":"https://api.ipma.pt/x.json","page":"https://www.ipma.pt/en/otempo/obs.superficie/"},
+         "forecast":{"place":"Faro","days":[{"date":"2026-11-16","t_min_c":11.8,"t_max_c":20.2,"rain_prob_pct":2,"weather_type":3},{"date":"2026-11-17"}]},
+         "warnings":{"active":[{"type":"rough sea","level":"yellow","start":"2026-11-18T12:00:00","end":"2026-11-19T07:00:00"},{"type":"x","level":"green"}]},
+         "fire_risk":{"days":[{"date":"2026-11-16","level":"low"}]},
+         "uv":{"index":3},
+         "sea":{"waves_max_m":0.7,"sea_temp_max_c":19.7},
+         "airport":{"name":"Faro airport","airline":[{"callsign":"A"},{"callsign":"B"},{"callsign":"C"}]},
+         "reads":{}}
+        """)
+        #expect(now.station?.tempC == 15)
+        #expect(now.today?.maxC == 20.2)
+        #expect(now.warnings.map(\.type) == ["rough sea"])
+        #expect(now.fireRisk == "low")
+        #expect(now.uv == 3)
+        #expect(now.sea?.wavesMaxM == 0.7)
+        #expect(now.flights == 3)
+        #expect(now.pages["station"] == "https://www.ipma.pt/en/otempo/obs.superficie/")
+        #expect(now.isEmpty == false)
+    }
+}
