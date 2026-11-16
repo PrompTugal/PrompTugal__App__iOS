@@ -14,7 +14,8 @@ private func makeKeyPair(bits: Int = 2048) throws -> SecKey {
 /// A lane link for a fresh key pair (not a real lane: the right shape only).
 private func makeLane() throws -> (lane: SealedLane, privateKey: SecKey, link: String) {
     let key = try makeKeyPair()
-    let spki = try #require(SealedLane.spki(of: try #require(SecKeyCopyPublicKey(key))))
+    let publicKey = try #require(SecKeyCopyPublicKey(key))
+    let spki = try #require(SealedLane.spki(of: publicKey))
     let link = SealedLane.link(vault: "testvault", token: String(repeating: "ab", count: 24), spki: spki)
     return (try #require(SealedLane.parse(link)), key, link)
 }
@@ -143,7 +144,8 @@ private func makeLane() throws -> (lane: SealedLane, privateKey: SecKey, link: S
         let request = try lane.writeRequest(payload: payload)
         #expect(request.url?.absoluteString == "https://dev.send.sgraph.ai/api/vault/append/write/testvault")
         #expect(request.httpMethod == "POST")
-        let body = try #require(try JSONSerialization.jsonObject(with: try #require(request.httpBody)) as? [String: String])
+        let httpBody = try #require(request.httpBody)
+        let body = try #require(try JSONSerialization.jsonObject(with: httpBody) as? [String: String])
         #expect(body["append_token"] == String(repeating: "ab", count: 24))
         #expect(body["payload"] == payload)
     }
@@ -269,7 +271,8 @@ private final class FakeTransport: LaneTransport, @unchecked Sendable {
         let messages = try TalkWire.messages(item: "c1", purpose: .conductor, to: "conductor", text: "x", app: "t",
                                              signer: TalkWire.Signer(key: key))
         let (header, body) = try TalkWire.split(messages[0])
-        let sig = try #require(Data(base64Encoded: try #require(header.sig)))
+        let sigText = try #require(header.sig)
+        let sig = try #require(Data(base64Encoded: sigText))
         #expect(sig.count == 64)
         let text = String(decoding: header.signedText(body: body), as: UTF8.self)
         #expect(text.split(separator: "\n").count == 9)
