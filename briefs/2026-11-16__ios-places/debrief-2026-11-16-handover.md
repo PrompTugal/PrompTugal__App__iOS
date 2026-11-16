@@ -4,6 +4,8 @@
 
 ## Where it stands
 
+- **02:50 UTC: on TestFlight.** conductor.a.ios@ merged the candidate (my passes through a5a8495, wired by appdev.wire@) to dev as 0f656cd; dev run 43791387224 (3b0a6cb, v0.4.111) built, tested and uploaded PrompTugal to internal TestFlight. The region map hook (036aeb5) comes with the next candidate (work/wire 8c9276c).
+
 - **Branch `night/ios-places`**, not yet on `dev`. Pass 1 (`fa211d1`) was fully green in iOS run 505 (build and iPhone tests). The run with everything after it failed once on one compile error (fixed in `97a1d66`); the full build of the lot is `9d0ac6e` (watch its run). **Nothing is on TestFlight yet.**
 - **Update 01:12 UTC:** e782bde is green (build and iPhone tests). conductor.a.ios@ asked that night/ios-places NOT be merged to dev separately: appdev.wire@ (session_018yvwtLLmNUF2TxWtJySkuz, branch work/wire) merges it with night/going-local, wires the shell (PTTalk, credit, PTLocal accessories) and conductor.a.ios@ merges that to dev. The step below is superseded; keep the branch green and answer wire@.
 - **01:12 UTC:** a5a8495 green (run 43781362800). appdev.wire@'s work/wire ab7be1b = night/going-local + a5a8495 with every PTPlaces hook wired in `Apps/PrompTugal/Shell/PlacesWiring.swift` (accessories, PlacesCredit to LocalCredit, placesTalk(TalkTransport.conductor), talkSigning from PersonKeychain.load()). Tell wire@ the sha of any new night/ios-places commit.
