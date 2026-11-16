@@ -9,7 +9,7 @@ name: iOS
 # all of it (briefs/2026-11-10__ci-on-one-mac):
 #
 #   mac       per affected app: build once, unit tests on an iPhone and an iPad simulator
-#             (dev, pull requests and workflow_dispatch; night/** pushes build only), the
+#             (pull requests and workflow_dispatch; dev pushes: iPhone only; night/** pushes build only), the
 #             Release build for a device (unsigned); then each affected package's tests
 #   quick     manual runs only: Debug build and iPhone tests, no Release build, no iPad
 #   result    one stable check name that is green when everything above is
@@ -176,7 +176,10 @@ jobs:
       PUBLISH: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/dev' && needs.changes.outputs.has_upload == 'true') && 'true' || 'false' }}
       # Unit tests on dev, pull requests and manual runs; night/** and split/** pushes build only.
       RUN_TESTS: ${{ (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && 'true' || 'false' }}
-      DEVICES: ${{ inputs.quick && 'iPhone' || 'iPhone iPad' }}
+      # A push to dev tests on the iPhone simulator only, so the upload starts ~7-9 min sooner (Dinis, 16 Nov:
+      # "shorten these steps"). The iPad simulator still runs on pull requests and full manual runs
+      # (workflow_dispatch, quick off): run one before a release that must be checked on iPad.
+      DEVICES: ${{ (inputs.quick || (github.event_name == 'push' && github.ref == 'refs/heads/dev')) && 'iPhone' || 'iPhone iPad' }}
       # The unsigned Release build for a device: dev, pull requests, tags and full manual runs. A push to a
       # work branch (night/**, split/**) skips it to get the build back fast; dev still catches a
       # Release-only error before anything uploads.
@@ -200,7 +203,7 @@ jobs:
         run: .github/scripts/mac-job.sh test iPhone
 
       - name: Tests on the iPad simulator
-        if: ${{ !cancelled() && env.RUN_TESTS == 'true' && !inputs.quick }}
+        if: ${{ !cancelled() && env.RUN_TESTS == 'true' && contains(env.DEVICES, 'iPad') }}
         timeout-minutes: 60
         run: .github/scripts/mac-job.sh test iPad
 

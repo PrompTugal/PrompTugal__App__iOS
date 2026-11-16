@@ -202,7 +202,8 @@ struct PersonaSuggestionTests {
 
     @Test("At most ten, and nothing from an empty answer")
     func limits() {
-        let many = (1...30).map { "topic\($0)" }.joined(separator: ", ")
+        // Words that are not prefixes of each other ("topic1" would cover "topic10" through its "topic1*" needle).
+        let many = (0..<26).map { "subject" + String(UnicodeScalar(UInt8(97 + $0))) }.joined(separator: ", ")
         #expect(PersonaRanker.suggestedTerms(from: many, existing: []).count == 10)
         #expect(PersonaRanker.suggestedTerms(from: "", existing: []).isEmpty)
     }
