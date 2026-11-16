@@ -175,3 +175,36 @@ struct ForecastRow: View {
         return parts.isEmpty ? "No forecast details." : "Today: " + parts.joined(separator: ", ")
     }
 }
+
+/// One line of conditions for a town, for tight places (Near me): the worst active warning, else the latest
+/// temperature and wind, with IPMA named as the source.
+public struct ConditionsLine: View {
+    public let placeID: String
+    @State private var store = ConditionsStore.shared
+
+    public init(placeID: String) { self.placeID = placeID }
+
+    public var body: some View {
+        if let town = PlaceDirectory.info(placeID) {
+            let c = store.conditions(for: town)
+            HStack(spacing: 6) {
+                if let warning = c.warnings.first {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(warning.level == .yellow ? Palette.amber : Palette.red)
+                    Text("\(warning.level.label) warning: \(warning.typeEnglish)").fontWeight(.semibold)
+                }
+                if let o = c.reading?.observation {
+                    if let t = o.temperature { Text(String(format: "%.0f°C", t)) }
+                    if let kmh = o.windKmh {
+                        Image(systemName: "location.north.fill").rotationEffect(.degrees(o.wind?.arrowDegrees ?? 0)).foregroundStyle(Palette.blue)
+                        Text("\(Int(kmh.rounded())) km/h")
+                    }
+                }
+                Text("· IPMA").foregroundStyle(Palette.muted)
+            }
+            .font(.caption)
+            .foregroundStyle(Palette.ink)
+            .task { await store.refresh() }
+            .accessibilityElement(children: .combine)
+        }
+    }
+}

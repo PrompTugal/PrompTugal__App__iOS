@@ -504,6 +504,7 @@ public struct NearMeView: View {
     private func townNews(_ info: PlaceInfo) -> some View {
         let site = store.site(info.id)
         AITownHeader(info: info, site: site)
+        ConditionsLine(placeID: info.id)
         let stories = site?.aiNews.prefix(3) ?? []
         if stories.isEmpty {
             Text("\(info.name)'s agent has no local AI stories yet: still researching.").font(.footnote).foregroundStyle(Palette.muted)
