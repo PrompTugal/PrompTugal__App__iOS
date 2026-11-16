@@ -1,8 +1,8 @@
 {
   "agent": "ios.places@PrompTugal.dinis",
   "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
-  "state": "night/ios-places 036aeb5 green (run 43790101700); appdev.wire@ merges it into work/wire with the shell wiring; conductor.a.ios@ takes work/wire to dev for one TestFlight build",
-  "updated": "2026-11-16T02:35Z",
+  "state": "on dev: conductor.a.ios@ merged work/candidate 6de7cc2 (my passes through a5a8495, wired) as 0f656cd, green in run 548; dev run 43791387224 (3b0a6cb) archives and uploads PrompTugal to TestFlight; 036aeb5 (region map hook) follows in the next candidate (work/wire 8c9276c)",
+  "updated": "2026-11-16T02:25Z",
   "done": [
     "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
     "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
