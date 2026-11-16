@@ -234,7 +234,7 @@ public struct PersonaBanner: View {
                     Image(systemName: "person.crop.circle.badge.checkmark").font(.title2).foregroundStyle(Palette.green)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Persona mode: \(persona.label)").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
-                        Text("“\(persona.text)”. What matters to you comes first and is marked “For you”. Ranked on this device by keywords\(personas.terms.isEmpty ? "" : " (" + personas.terms.map(\.label).prefix(5).joined(separator: ", ") + ")").")
+                        Text(explanation(persona))
                             .font(.caption).foregroundStyle(Palette.muted)
                     }
                     Spacer(minLength: Space.s)
@@ -258,6 +258,12 @@ public struct PersonaBanner: View {
             }
         }
         .sheet(isPresented: $picking) { PersonaPicker() }
+    }
+
+    private func explanation(_ persona: Persona) -> String {
+        let words = personas.terms.map(\.label).prefix(5).joined(separator: ", ")
+        let ranked = words.isEmpty ? "Ranked on this device by keywords." : "Ranked on this device by keywords (\(words))."
+        return "“\(persona.text)”. What matters to you comes first and is marked “For you”. " + ranked
     }
 }
 
@@ -340,7 +346,7 @@ public struct PersonaForYouCard: View {
     public init(store: LocalStore = .shared) { self.store = store }
 
     private var sites: [(info: PlaceInfo, site: PlaceSite)] {
-        ([PlaceDirectory.region] + PlaceDirectory.towns).compactMap { info in store.site(info.id).map { (info, $0) } }
+        ([PlaceDirectory.region] + PlaceDirectory.towns).compactMap { info in store.site(info.id).map { (info: info, site: $0) } }
     }
 
     public var body: some View {
@@ -421,7 +427,10 @@ public struct NearMeView: View {
             case .asking:
                 Text("Asking for your location, only while you use the app…").font(.footnote).foregroundStyle(Palette.muted)
             case .locating:
-                HStack { ProgressView().controlSize(.small); Text("Finding the nearest town…").font(.footnote).foregroundStyle(Palette.muted) }
+                HStack {
+                    ProgressView().controlSize(.small)
+                    Text("Finding the nearest town…").font(.footnote).foregroundStyle(Palette.muted)
+                }
             case .denied:
                 Text("Location is off for PrompTugal. Pick your town instead, or allow it in Settings.").font(.footnote).foregroundStyle(Palette.amber)
             case .failed(let why):
