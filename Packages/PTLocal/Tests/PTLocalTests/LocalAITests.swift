@@ -179,3 +179,87 @@ struct LocalPromptTests {
         #expect(!status.text.isEmpty)
     }
 }
+
+@Suite("Apple Intelligence's persona words")
+struct PersonaSuggestionTests {
+    @Test("A comma list becomes weight-1 terms, without places, filler, sentences or repeats of the reader's own")
+    func parses() {
+        let existing = PersonaRanker.terms(for: "I invest in health tech")
+        let answer = "Biotech, venture capital, Faro, medical devices, digital health, startups, the, hospitals and clinics in the region of Algarve today, telemedicine\nwearables"
+        let terms = PersonaRanker.suggestedTerms(from: answer, existing: existing)
+        let labels = terms.map(\.label)
+        #expect(!labels.contains("biotech"))           // already a health needle
+        #expect(labels.contains("venture capital"))
+        #expect(!labels.contains("faro"))
+        #expect(labels.contains("medical devices"))
+        #expect(labels.contains("startups"))
+        #expect(labels.contains("telemedicine"))
+        #expect(labels.contains("wearables"))
+        #expect(!labels.contains { $0.split(separator: " ").count > 3 })
+        #expect(terms.allSatisfy { $0.weight == 1 })
+        #expect(terms.first { $0.label == "telemedicine" }?.needles == ["telemedicine*"])
+    }
+
+    @Test("At most ten, and nothing from an empty answer")
+    func limits() {
+        // Words that are not prefixes of each other ("topic1" would cover "topic10" through its "topic1*" needle).
+        let many = (0..<26).map { "subject" + String(UnicodeScalar(UInt8(97 + $0))) }.joined(separator: ", ")
+        #expect(PersonaRanker.suggestedTerms(from: many, existing: []).count == 10)
+        #expect(PersonaRanker.suggestedTerms(from: "", existing: []).isEmpty)
+    }
+}
+
+@Suite("Personas from the data")
+struct PersonaFromDataTests {
+    @Test("Names with an acronym split into name and acronym")
+    func split() {
+        #expect(Persona.splitName("Universidade do Algarve (UAlg)") == ("Universidade do Algarve", "UAlg"))
+        #expect(Persona.splitName("Algarve Evolution") == ("Algarve Evolution", nil))
+        #expect(Persona.splitName("(UAlg)") == ("UAlg", nil))
+    }
+
+    @Test("The built-in Algarve offers its most-mentioned organisations, Algarve Evolution among them")
+    @MainActor func fromData() {
+        let store = LocalStore(fetch: { _ in throw URLError(.notConnectedToInternet) })
+        let sites = PlaceDirectory.all.compactMap { store.site($0.id) }
+        let personas = Persona.fromData(sites)
+        #expect(!personas.isEmpty)
+        #expect(personas.count <= 5)
+        #expect(personas.contains { $0.label == "Algarve Evolution" })
+        #expect(Set(personas.map(\.id)).count == personas.count)
+    }
+
+    @Test("Other names of the organisation match as the same term, counted once")
+    func aliases() {
+        let ualg = Persona(id: "org", label: "Universidade do Algarve", text: "I am from Universidade do Algarve",
+                           keywords: ["Universidade do Algarve", "University of the Algarve", "UAlg"])
+        let terms = PersonaRanker.terms(for: ualg)
+        #expect(terms.filter { $0.weight == 5 }.count == 1)
+        let story = PlaceSite.News.fixture(title: "A course at the University of the Algarve")
+        #expect(PersonaRanker.match(story, terms: terms).score == 15)
+        let acronym = PlaceSite.News.fixture(title: "UAlg opens an AI lab")
+        #expect(PersonaRanker.match(acronym, terms: terms).isMatch)
+    }
+
+    @Test("A startup persona ranks its own town's matches higher and says so")
+    func townBoost() {
+        let faro = PlaceDirectory.info("faro")!
+        let persona = Persona.startup(in: faro)
+        #expect(persona.townID == "faro")
+        let terms = PersonaRanker.terms(for: persona)
+        #expect(terms.map(\.label) == ["startups"])
+        let match = PersonaRanker.match(PlaceSite.News.fixture(title: "A startup opens"), terms: terms)
+        let boosted = PersonaRanker.boost(match, in: faro, town: "faro")
+        #expect(boosted.score == match.score + 4)
+        #expect(boosted.matched.last == "in Faro")
+        #expect(PersonaRanker.boost(match, in: PlaceDirectory.info("lagos")!, town: "faro") == match)
+        #expect(PersonaRanker.boost(.none, in: faro, town: "faro") == .none)
+    }
+}
+
+extension PlaceSite.News {
+    static func fixture(title: String) -> PlaceSite.News {
+        let data = try! JSONSerialization.data(withJSONObject: ["title": title, "url": "https://example.org/\(title.count)"])
+        return try! JSONDecoder().decode(PlaceSite.News.self, from: data)
+    }
+}

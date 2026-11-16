@@ -236,6 +236,7 @@ public struct PersonaBanner: View {
                         Text("Persona mode: \(persona.label)").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                         Text(explanation(persona))
                             .font(.caption).foregroundStyle(Palette.muted)
+                        suggestions
                     }
                     Spacer(minLength: Space.s)
                     VStack(spacing: Space.xs) {
@@ -258,6 +259,31 @@ public struct PersonaBanner: View {
             }
         }
         .sheet(isPresented: $picking) { PersonaPicker() }
+    }
+
+    /// Apple Intelligence can widen the ranking with words of its own; they are shown, and marked as its.
+    @ViewBuilder
+    private var suggestions: some View {
+        if !personas.suggested.isEmpty {
+            Label("Apple Intelligence added, on this device: " + personas.suggested.map(\.label).joined(separator: ", "),
+                  systemImage: "sparkles")
+                .font(.caption2).foregroundStyle(Palette.blue)
+        } else if personas.suggesting {
+            HStack(spacing: 4) {
+                ProgressView().controlSize(.mini)
+                Text("Apple Intelligence is thinking of more words…").font(.caption2).foregroundStyle(Palette.muted)
+            }
+        } else if LocalModel.status.isAvailable {
+            Button {
+                Task { await personas.suggest() }
+            } label: {
+                Label("Widen with Apple Intelligence", systemImage: "sparkles").font(.caption)
+            }
+            .buttonStyle(.borderless)
+        }
+        if let problem = personas.suggestionProblem {
+            Text(problem).font(.caption2).foregroundStyle(Palette.amber)
+        }
     }
 
     private func explanation(_ persona: Persona) -> String {
@@ -295,6 +321,13 @@ public struct PersonaPicker: View {
                 } footer: {
                     Text("Kept on this device only. Stories and organisations are ranked here by the words you use; Apple Intelligence, where the device has it, writes a briefing for you.")
                 }
+                Section {
+                    ForEach(fromData) { persona in personaRow(persona) }
+                } header: {
+                    Text("From the Algarve's data")
+                } footer: {
+                    Text("The organisations the towns' AI maps and stories mention most, and a startup in your town.")
+                }
                 Section("Or pick one") {
                     ForEach(Persona.presets) { persona in
                         Button {
@@ -327,6 +360,29 @@ public struct PersonaPicker: View {
         }
     }
 
+    /// The most-mentioned organisations, and a startup in the town near the reader (or Faro).
+    private var fromData: [Persona] {
+        let sites = PlaceDirectory.all.compactMap { LocalStore.shared.site($0.id) }
+        let town = NearMeLocator.shared.townID.flatMap(PlaceDirectory.info) ?? PlaceDirectory.info("faro")!
+        return Persona.fromData(sites) + [Persona.startup(in: town)]
+    }
+
+    private func personaRow(_ persona: Persona) -> some View {
+        Button {
+            personas.persona = persona
+            dismiss()
+        } label: {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(persona.label).foregroundStyle(Palette.ink)
+                    Text("“\(persona.text)”").font(.caption).foregroundStyle(Palette.muted)
+                }
+                Spacer()
+                if personas.persona?.id == persona.id { Image(systemName: "checkmark").foregroundStyle(Palette.green) }
+            }
+        }
+    }
+
     private func useTyped() {
         let text = typed.trimmingCharacters(in: .whitespacesAndNewlines)
         guard text.count >= 3 else { return }
@@ -351,8 +407,8 @@ public struct PersonaForYouCard: View {
 
     public var body: some View {
         if let persona = personas.persona {
-            let stories = PersonaRanker.stories(in: sites, terms: personas.terms, limit: 6)
-            let entries = PersonaRanker.entries(in: sites, terms: personas.terms, limit: 6)
+            let stories = PersonaRanker.stories(in: sites, terms: personas.allTerms, limit: 6, town: persona.townID)
+            let entries = PersonaRanker.entries(in: sites, terms: personas.allTerms, limit: 6, town: persona.townID)
             TitledCard("For you", kicker: persona.label) {
                 if stories.isEmpty && entries.isEmpty {
                     Text("Nothing in the Algarve's news matches “\(persona.text)” yet. Try other words: a topic, a sector or an organisation's name.")
@@ -478,6 +534,7 @@ public struct NearMeView: View {
     private func townNews(_ info: PlaceInfo) -> some View {
         let site = store.site(info.id)
         AITownHeader(info: info, site: site)
+        ConditionsLine(placeID: info.id)
         let stories = site?.aiNews.prefix(3) ?? []
         if stories.isEmpty {
             Text("\(info.name)'s agent has no local AI stories yet: still researching.").font(.footnote).foregroundStyle(Palette.muted)

@@ -19,12 +19,13 @@ enum PlacesWiring {
     }
 }
 
-/// The places home's extra section: the newsroom in action, then the persona and near me.
+/// The places home's extra section: the newsroom in action, the persona and its reordered stories, then near me.
 struct PlacesHomeLayers: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Space.xl) {
             NewsroomLiveSection()
             PersonaBanner()
+            PersonaForYouCard()
             NearMeView()
         }
     }

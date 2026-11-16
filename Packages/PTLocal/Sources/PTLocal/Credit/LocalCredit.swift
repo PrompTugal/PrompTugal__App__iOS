@@ -87,6 +87,8 @@ public final class LocalCredit {
         topUps = LocalTopUps()
         topUps.credit = self
         if opened == nil { write() }
+        // write() clears `problem` when it saves; the unreadable-ledger note must survive that first save.
+        if let trouble { problem = trouble }
     }
 
     /// Call once at launch: listens for App Store transactions finished elsewhere and reads the live prices.
