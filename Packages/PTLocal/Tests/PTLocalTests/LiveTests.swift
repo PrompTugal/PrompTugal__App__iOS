@@ -329,3 +329,17 @@ struct ReplayTests {
         #expect(LiveReplay.perHour(extras) == [2, 1, 1])
     }
 }
+
+@Suite("Ticker filters")
+struct TickerFilterTests {
+    @Test("Towns, desks and asks split the ticker")
+    func filters() {
+        let town = LiveEvent(date: now, role: "place.faro", kind: .update, text: "t", origin: .latest)
+        let desk = LiveEvent(date: now, role: "abp", kind: .wake, text: "d", origin: .latest)
+        let ask = LiveEvent(date: now, role: "abp", kind: .ask, text: "a", origin: .watched)
+        #expect(TickerFilter.all.includes(town) && TickerFilter.all.includes(ask))
+        #expect(TickerFilter.towns.includes(town) && !TickerFilter.towns.includes(desk))
+        #expect(TickerFilter.desks.includes(desk) && !TickerFilter.desks.includes(ask) && !TickerFilter.desks.includes(town))
+        #expect(TickerFilter.asks.includes(ask) && !TickerFilter.asks.includes(desk))
+    }
+}

@@ -99,6 +99,12 @@ public struct NewsroomLiveView: View {
                     if fired.commits24h > 0 { CountPill(count: fired.commits24h, label: "commits", color: Palette.blue) }
                 }
             }
+            if let id = agent.placeID, let site = model.places[id], !site.aiNews.isEmpty {
+                Text("Its latest stories").font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
+                ForEach(Self.latest(site, limit: 3)) { story in
+                    StoryRow(story: story, town: nil)
+                }
+            }
             if let id = agent.placeID, PlaceDirectory.info(id) != nil, id != PlaceDirectory.country.id {
                 NavigationLink {
                     if id == PlaceDirectory.region.id { AlgarveView() } else { TownView(id: id) }
@@ -108,6 +114,12 @@ public struct NewsroomLiveView: View {
                 .font(.footnote)
             }
         }
+    }
+
+    /// A site's newest stories first.
+    static func latest(_ site: PlaceSite, limit: Int) -> [PlaceSite.News] {
+        let sorted = site.aiNews.sorted { a, b in (a.date ?? "") > (b.date ?? "") }
+        return Array(sorted.prefix(limit))
     }
 
     // MARK: This story, these agents
@@ -179,16 +191,37 @@ public struct NewsroomLiveView: View {
 
 // MARK: - Ticker
 
+/// What the ticker shows: everything, the town agents, the desks, or what waits on a person.
+enum TickerFilter: String, CaseIterable, Identifiable {
+    case all = "All", towns = "Towns", desks = "Desks", asks = "Asks"
+    var id: Self { self }
+
+    func includes(_ event: LiveEvent) -> Bool {
+        switch self {
+        case .all: return true
+        case .towns: return event.role.hasPrefix("place.")
+        case .desks: return !event.role.hasPrefix("place.") && event.kind != .ask
+        case .asks: return event.kind == .ask
+        }
+    }
+}
+
 /// The latest wakes and changes, newest first; lines seen to change while watching slide in at the top.
 struct LiveTicker: View {
     let model: LiveNewsroom
     @Binding var selected: String?
     @State private var showAll = false
+    @State private var filter: TickerFilter = .all
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        let events = showAll ? model.events : Array(model.events.prefix(12))
+        let matching = model.events.filter { filter.includes($0) }
+        let events = showAll ? matching : Array(matching.prefix(12))
         TitledCard("What the agents just did", kicker: kicker) {
+            Picker("Show", selection: $filter) {
+                ForEach(TickerFilter.allCases) { Text($0.rawValue).tag($0) }
+            }
+            .pickerStyle(.segmented)
             TimelineView(.periodic(from: .now, by: 30)) { context in
                 VStack(alignment: .leading, spacing: Space.s) {
                     ForEach(events) { event in
@@ -199,8 +232,11 @@ struct LiveTicker: View {
                 }
             }
             .animation(reduceMotion ? nil : .spring(duration: 0.45), value: model.events.first?.id)
-            if model.events.count > 12 {
-                Button(showAll ? "Show fewer" : "Show all \(model.events.count)") { showAll.toggle() }.font(.footnote)
+            if matching.count > 12 {
+                Button(showAll ? "Show fewer" : "Show all \(matching.count)") { showAll.toggle() }.font(.footnote)
+            }
+            if matching.isEmpty {
+                Text("Nothing of this kind yet.").font(.caption).foregroundStyle(Palette.muted)
             }
         }
     }
