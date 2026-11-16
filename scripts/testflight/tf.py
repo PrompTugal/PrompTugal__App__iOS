@@ -7,6 +7,9 @@
     tf.py set-test-info     --build 151 [--whats-new FILE] [--review-file FILE] [--yes]
     tf.py submit-beta-review --build 151 [--yes]
     tf.py expire            --build 4 [--yes]
+    tf.py set-app-info      [--file scripts/testflight/app-info.json] [--yes]
+                            app name and subtitle (on the editable appInfo) and the TestFlight
+                            beta app description, from the file
 
 Every action that changes App Store Connect only prints its plan unless --yes is given.
 Environment: ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_P8_BASE64 (or ASC_KEY_PATH); BUNDLE_ID
@@ -70,6 +73,60 @@ def plan_whats_new(build_id, existing_loc_id, locale, text):
     return ("POST", "/v1/betaBuildLocalizations",
             {"data": {"type": "betaBuildLocalizations", "attributes": {"locale": locale, "whatsNew": text},
                       "relationships": {"build": {"data": ref("builds", build_id)}}}})
+
+
+# App Store limits: name and subtitle 30 characters, beta app description 4000.
+APP_INFO_LIMITS = {"name": 30, "subtitle": 30, "betaDescription": 4000}
+# appInfo states whose localizations can still be edited. A live appInfo (READY_FOR_DISTRIBUTION) cannot:
+# the name then changes with the next version, on the new appInfo Apple makes for it.
+EDITABLE_APP_INFO_STATES = ("PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "REJECTED", "METADATA_REJECTED",
+                            "INVALID_BINARY", "DEVELOPER_ACTION_NEEDED", "READY_FOR_REVIEW")
+
+
+def app_info_problems(info):
+    """What is wrong with app-info.json: missing fields and values over Apple's limits."""
+    problems = []
+    if not (info.get("locale") or "").strip():
+        problems.append("locale is empty")
+    for field, limit in APP_INFO_LIMITS.items():
+        value = info.get(field)
+        if value is None:
+            continue
+        if not isinstance(value, str) or not value.strip():
+            problems.append(f"{field} is empty (leave it out to keep what App Store Connect has)")
+        elif len(value) > limit:
+            problems.append(f"{field} is {len(value)} characters; the limit is {limit}")
+    if not any(info.get(f) is not None for f in APP_INFO_LIMITS):
+        problems.append("nothing to set: give name, subtitle and/or betaDescription")
+    return problems
+
+
+def editable_app_info(infos):
+    """The appInfo whose localizations can be edited, or None. Apple calls the state appStoreState (older) or state."""
+    for i in infos:
+        at = i.get("attributes", {})
+        if (at.get("state") or at.get("appStoreState")) in EDITABLE_APP_INFO_STATES:
+            return i
+    return None
+
+
+def plan_app_info_localization(app_info_id, existing_loc_id, locale, attrs):
+    if existing_loc_id:
+        return ("PATCH", f"/v1/appInfoLocalizations/{existing_loc_id}",
+                {"data": {"type": "appInfoLocalizations", "id": existing_loc_id, "attributes": attrs}})
+    return ("POST", "/v1/appInfoLocalizations",
+            {"data": {"type": "appInfoLocalizations", "attributes": dict(attrs, locale=locale),
+                      "relationships": {"appInfo": {"data": ref("appInfos", app_info_id)}}}})
+
+
+def plan_beta_app_localization(app, existing_loc_id, locale, description):
+    attrs = {"description": description[:4000]}
+    if existing_loc_id:
+        return ("PATCH", f"/v1/betaAppLocalizations/{existing_loc_id}",
+                {"data": {"type": "betaAppLocalizations", "id": existing_loc_id, "attributes": attrs}})
+    return ("POST", "/v1/betaAppLocalizations",
+            {"data": {"type": "betaAppLocalizations", "attributes": dict(attrs, locale=locale),
+                      "relationships": {"app": {"data": ref("apps", app)}}}})
 
 
 # Placeholders whose line is dropped from the notes when the value is not set.
@@ -334,6 +391,55 @@ def cmd_set_info(a, app, name):
     run_plan(a, f"Set test information for build {a.build}", steps, lines)
 
 
+def cmd_set_app_info(a, app, name):
+    """Name and subtitle on the editable appInfo, and the TestFlight beta app description. Reads first; changes with --yes."""
+    info = json.load(open(a.file))
+    problems = app_info_problems(info)
+    if problems:
+        die(f"{os.path.basename(a.file)}: " + "; ".join(problems))
+    locale = info["locale"].strip()
+    steps, lines = [], [f"App record now named \"{name}\" (`{a.bundle}`), locale {locale}, from {os.path.basename(a.file)}."]
+    store = {f: info[f].strip() for f in ("name", "subtitle") if info.get(f) is not None}
+    if store:
+        infos = call("GET", f"/v1/apps/{app}/appInfos")["data"]
+        editable = editable_app_info(infos)
+        states = ", ".join(str(i["attributes"].get("state") or i["attributes"].get("appStoreState")) for i in infos) or "none"
+        if not editable:
+            lines.append(f"**No editable appInfo** (states: {states}). The name and subtitle change with the next App Store "
+                         "version; skipped.")
+            if a.yes:
+                die("no editable appInfo; nothing applied")
+        else:
+            locs = call("GET", f"/v1/appInfos/{editable['id']}/appInfoLocalizations")["data"]
+            loc = next((l for l in locs if l["attributes"].get("locale") == locale), None)
+            now = loc["attributes"] if loc else {}
+            for f, v in store.items():
+                lines.append(f"{f}: \"{now.get(f) or ''}\" -> \"{v}\"" + (" (unchanged)" if now.get(f) == v else ""))
+            if any(now.get(f) != v for f, v in store.items()):
+                steps.append(plan_app_info_localization(editable["id"], loc["id"] if loc else None, locale, store))
+    if info.get("betaDescription") is not None:
+        text = info["betaDescription"].strip()
+        locs = call("GET", f"/v1/apps/{app}/betaAppLocalizations")["data"]
+        loc = next((l for l in locs if l["attributes"].get("locale") == locale), None)
+        old = (loc["attributes"].get("description") if loc else None) or ""
+        if old == text:
+            lines.append("TestFlight beta app description: unchanged.")
+        else:
+            lines.append(f"TestFlight beta app description ({len(old)} -> {len(text)} characters):")
+            lines += [f"    was > {l}" for l in old.splitlines()[:6]]
+            lines += [f"    new > {l}" for l in text.splitlines()[:12]]
+            steps.append(plan_beta_app_localization(app, loc["id"] if loc else None, locale, text))
+    if not steps:
+        say("### Set app info")
+        say("")
+        for l in lines:
+            say(f"- {l}")
+        say("")
+        say("**Nothing to change.**")
+        return
+    run_plan(a, f"Set app info for {name}", steps, lines)
+
+
 def call_soft(path):
     """GET that returns (json, None) or (None, error text), never exits. Read-only."""
     if not _tok["v"] or time.time() - _tok["at"] > 600:
@@ -479,6 +585,7 @@ def main(argv=None):
         s = sub.add_parser(n); s.add_argument("--build", required=True); s.add_argument("--yes", action="store_true")
     s = sub.add_parser("set-test-info"); s.add_argument("--build", required=True); s.add_argument("--yes", action="store_true")
     s.add_argument("--whats-new"); s.add_argument("--review-file"); s.add_argument("--locale", default="en-US")
+    s = sub.add_parser("set-app-info"); s.add_argument("--file", default=os.path.join(HERE, "app-info.json")); s.add_argument("--yes", action="store_true")
     a = p.parse_args(argv)
     for v in ("ASC_KEY_ID", "ASC_ISSUER_ID"):
         if not os.environ.get(v):
@@ -495,7 +602,7 @@ def main(argv=None):
     if a.cmd == "public-link":
         return cmd_public_link(a, app, name)
     {"status": cmd_status, "add-to-group": cmd_add, "expire": cmd_expire, "submit-beta-review": cmd_submit,
-     "set-test-info": cmd_set_info,
+     "set-test-info": cmd_set_info, "set-app-info": cmd_set_app_info,
      "remove-from-group": lambda a, app, name: cmd_add(a, app, name, remove=True)}[a.cmd](a, app, name)
 
 

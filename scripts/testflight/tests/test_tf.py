@@ -80,5 +80,42 @@ class ReviewInfo(unittest.TestCase):
         self.assertEqual(missing, ["demoAccountName", "demoAccountPassword"])
 
 
+class AppInfo(unittest.TestCase):
+    def test_repository_file_is_valid(self):
+        import json
+        info = json.load(open(os.path.join(os.path.dirname(__file__), "..", "app-info.json")))
+        self.assertEqual(tf.app_info_problems(info), [])
+
+    def test_limits_and_empties(self):
+        problems = tf.app_info_problems({"locale": "en-US", "name": "x" * 31, "subtitle": " "})
+        self.assertTrue(any("name is 31 characters" in p for p in problems))
+        self.assertTrue(any("subtitle is empty" in p for p in problems))
+        self.assertTrue(any("nothing to set" in p for p in tf.app_info_problems({"locale": "en-US"})))
+        self.assertTrue(any("locale" in p for p in tf.app_info_problems({"name": "A"})))
+
+    def test_editable_app_info(self):
+        live = {"id": "1", "attributes": {"appStoreState": "READY_FOR_DISTRIBUTION"}}
+        draft = {"id": "2", "attributes": {"state": "PREPARE_FOR_SUBMISSION"}}
+        self.assertEqual(tf.editable_app_info([live, draft])["id"], "2")
+        self.assertIsNone(tf.editable_app_info([live]))
+
+    def test_app_info_localization_update_and_create(self):
+        m, p, b = tf.plan_app_info_localization("I", "L", "en-US", {"name": "N", "subtitle": "S"})
+        self.assertEqual((m, p), ("PATCH", "/v1/appInfoLocalizations/L"))
+        self.assertEqual(b["data"]["attributes"], {"name": "N", "subtitle": "S"})
+        m, p, b = tf.plan_app_info_localization("I", None, "en-US", {"name": "N"})
+        self.assertEqual((m, p), ("POST", "/v1/appInfoLocalizations"))
+        self.assertEqual(b["data"]["attributes"], {"name": "N", "locale": "en-US"})
+        self.assertEqual(b["data"]["relationships"]["appInfo"]["data"], {"type": "appInfos", "id": "I"})
+
+    def test_beta_app_localization_update_and_create(self):
+        m, p, b = tf.plan_beta_app_localization("A", "L", "en-US", "d" * 5000)
+        self.assertEqual((m, p), ("PATCH", "/v1/betaAppLocalizations/L"))
+        self.assertEqual(len(b["data"]["attributes"]["description"]), 4000)
+        m, p, b = tf.plan_beta_app_localization("A", None, "en-US", "d")
+        self.assertEqual((m, p), ("POST", "/v1/betaAppLocalizations"))
+        self.assertEqual(b["data"]["relationships"]["app"]["data"], {"type": "apps", "id": "A"})
+
+
 if __name__ == "__main__":
     unittest.main()
