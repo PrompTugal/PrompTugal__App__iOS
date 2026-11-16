@@ -1,6 +1,7 @@
 import PTAgenda
 import PTCore
 import PTLocal
+import PTTalk
 import SwiftUI
 
 /// More: reminders, the welcome screen again, version, links, the independence note. The debug switch exists only in DEBUG builds.
@@ -22,10 +23,28 @@ struct PublicSettingsView: View {
                     Label("Newsroom", systemImage: "person.3.sequence")
                 }
                 .accessibilityIdentifier("pt.more.newsroom")
+                NavigationLink {
+                    CIStatusView()
+                } label: {
+                    Label("CI status", systemImage: "gauge.with.dots.needle.67percent")
+                }
+                .accessibilityIdentifier("pt.more.ci-status")
+                NavigationLink {
+                    AskAndSummariseView()
+                } label: {
+                    Label("Ask and summarise", systemImage: "sparkles")
+                }
+                .accessibilityIdentifier("pt.more.ask")
+                NavigationLink {
+                    LocalCreditView()
+                } label: {
+                    Label("Reading credit", systemImage: "sterlingsign.circle")
+                }
+                .accessibilityIdentifier("pt.more.credit")
             } header: {
                 Text("PrompTugal.news by place")
             } footer: {
-                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. Read-only.")
+                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. CI status: how long a push takes to reach the website and TestFlight, and whether this build is the latest. Ask and summarise: Apple Intelligence on this device, persona mode and the town near you. Read-only.")
             }
             StandSection()
             Section {
@@ -51,6 +70,8 @@ struct PublicSettingsView: View {
             } footer: {
                 Text("The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.")
             }
+            // PTTalk: notes and contributions to the conductor; only offers to connect until its lane link is pasted.
+            TalkSection()
             Section {
                 LabeledContent("Version") {
                     versionText

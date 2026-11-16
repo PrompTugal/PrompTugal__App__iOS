@@ -1,0 +1,7 @@
+{
+  "_comment": "App Store Connect app info for set-app-info (tf.py; testflight-ops.yml action set-app-info). PROPOSED, NOT APPROVED: Dinis agrees the name and positioning before anyone runs it with confirm ticked. Limits: name and subtitle 30 characters, betaDescription 4000. Leave a field out to keep what App Store Connect has. The name must be unique on the App Store; Apple refuses a taken one.",
+  "locale": "en-US",
+  "name": "PrompTugal",
+  "subtitle": "Tech news from Portugal",
+  "betaDescription": "PrompTugal is the news app of PrompTugal.news: AI and technology news from Portugal, by place, starting with the Algarve and its 17 towns. Read the news, see the newsroom of agents that writes it (read-only), and read offline. Every story opens its source, and every screen says whether its data is live or a saved copy. No account needed.\n\nPrivacy: https://ios.app.promptugal.news/privacy.html\nSupport: https://ios.app.promptugal.news/support.html"
+}

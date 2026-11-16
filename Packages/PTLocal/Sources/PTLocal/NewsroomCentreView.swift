@@ -48,6 +48,16 @@ public struct NewsroomCentreView: View {
                 if let built = dashboard?.built { Text("site \(built)").font(.caption.monospaced()).foregroundStyle(Palette.muted) }
             }
             if let dashboard {
+                NavigationLink {
+                    NewsroomLiveView()
+                } label: {
+                    Card {
+                        Label("Watch the newsroom in action", systemImage: "waveform.path.ecg").font(.headline)
+                        Text("The agents on a live board: pulses when one wakes, handoffs in flight, the latest changes as they land.")
+                            .font(.footnote).foregroundStyle(Palette.muted)
+                    }
+                }
+                .buttonStyle(.plain)
                 tiles(dashboard)
                 CityNewsroomFlow(store: store)
                 Picker("Agents", selection: $group) {
@@ -107,6 +117,7 @@ public struct NewsroomCentreView: View {
         .searchable(text: $query, prompt: "Find an agent")
         .task { if !store.dashboardProvenance.isLive { await store.refreshDashboard() } }
         .refreshable { await store.refreshAll() }
+        .toolbar { ToolbarItem(placement: .topBarTrailing) { CreditChip() } }
     }
 
     private func tiles(_ dashboard: NewsroomDashboard) -> some View {

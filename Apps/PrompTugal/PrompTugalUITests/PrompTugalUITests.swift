@@ -19,7 +19,7 @@ final class PrompTugalUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["-PTDestination", "now", "-PTSampleData", "-debug.enabled", "NO"]
         app.launch()
-        for tab in ["Now", "My program", "Explore", "Map", "News"] {
+        for tab in ["Places", "News", "Now", "Explore"] {
             let button = app.tabBars.buttons[tab]
             XCTAssertTrue(button.waitForExistence(timeout: 10), "no \(tab) tab")
             button.tap()

@@ -13,11 +13,13 @@
             <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="A8782B35500E350FE24C0CEB" BuildableName="PrompTugalTests.xctest" BlueprintName="PrompTugalTests" ReferencedContainer="container:PrompTugal.xcodeproj"/>
          </TestableReference>
       </Testables>
+      <StoreKitConfigurationFileReference identifier="../../../Team/Sources/Store/PrompTugal.storekit"/>
    </TestAction>
    <LaunchAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" launchStyle="0" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" debugDocumentVersioning="YES" allowLocationSimulation="YES">
       <BuildableProductRunnable runnableDebuggingMode="0">
          <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="C42BBFBFA7E400E628E67134" BuildableName="PrompTugal.app" BlueprintName="PrompTugal" ReferencedContainer="container:PrompTugal.xcodeproj"/>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference identifier="../../../Team/Sources/Store/PrompTugal.storekit"/>
    </LaunchAction>
    <ProfileAction buildConfiguration="Release" useCustomWorkingDirectory="NO" debugDocumentVersioning="YES"/>
    <AnalyzeAction buildConfiguration="Debug"/>
