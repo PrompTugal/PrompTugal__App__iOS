@@ -1,8 +1,8 @@
 {
   "agent": "ios.places@PrompTugal.dinis",
   "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
-  "state": "everything of mine is on dev: round 3b (5cb6fb0, green in run 553) brought 036aeb5 (four map styles on the Algarve page via placesRegionMap); dev's TestFlight upload follows v0.4.112. Nothing open on my branch.",
-  "updated": "2026-11-16T03:45Z",
+  "state": "754672a green (run 43803072959): no summit onboarding on first launch (Dinis, 04:10); handed to conductor.a.ios@ for round 6 to dev. Everything earlier is on dev and TestFlight (v0.4.112+).",
+  "updated": "2026-11-16T04:35Z",
   "done": [
     "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
     "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
@@ -18,7 +18,8 @@
     "Dinis's answers: tabs Places, News, Now, Explore; the Summit in More; AI map in sections by kind; local media; Work with us; public contacts with source; looking for work",
     "one compile error found by CI and fixed (97a1d66)",
     "placesRegionMap hook: the Algarve page can show appdev.live@'s AlgarveStyledMap (Map, 3D flyover from Loulé and Faro, Grid, Cartogram)",
-    "on TestFlight (internal): the PrompTugal app with the Places tab, via conductor.a.ios@'s candidate 0f656cd and dev run 43791387224"
+    "on TestFlight (internal): the PrompTugal app with the Places tab, via conductor.a.ios@'s candidate 0f656cd and dev run 43791387224",
+    "first launch opens on Places, no summit onboarding sheet (Dinis's fix from v0.4.112)"
   ],
   "next": [
     "comments end to end: lane agreed (board/inbox.json talk_lane; replies at api/v1/talk/replies.json), relayed to appdev.talk@ for PTTalk; PTPlaces needs no change; Dinis's Loulé test once PTTalk lands and the site pane is enabled",

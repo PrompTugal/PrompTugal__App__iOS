@@ -410,3 +410,20 @@ struct PlaceAgentsFileTests {
         #expect(report.agents.map(\.name) == ["place.loule", "dev.places"])
     }
 }
+
+@Suite("PTPlaces: the Algarve's towns and the cities across Portugal")
+struct RegionSplitTests {
+    @Test("district capitals are not Algarve towns; Quarteira (inside Loulé) is")
+    @MainActor func split() throws {
+        let store = PlacesStore()
+        store.index.preview(try decode(PlaceIndex.self, """
+        {"places":[{"id":"portugal","name":"Portugal","kind":"country","parent":""},
+         {"id":"algarve","name":"The Algarve","kind":"region","parent":"portugal"},
+         {"id":"loule","name":"Loulé","kind":"municipality","parent":"algarve"},
+         {"id":"quarteira","name":"Quarteira","kind":"city","parent":"loule"},
+         {"id":"porto","name":"Porto","kind":"city","parent":"portugal","at":{"lon":-8.611,"lat":41.15}}]}
+        """))
+        #expect(store.algarveTowns.map(\.id) == ["loule", "quarteira"])
+        #expect(store.portugalCities.map(\.id) == ["porto"])
+    }
+}

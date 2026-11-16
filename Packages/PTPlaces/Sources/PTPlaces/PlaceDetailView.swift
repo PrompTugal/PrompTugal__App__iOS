@@ -215,7 +215,7 @@ public struct PlaceDetailView: View {
         let kids = store.children(of: id)
         if !kids.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: id == "portugal" ? String(localized: "The regions") : String(localized: "The towns"), accent: accent)
+                SectionHead(title: id == "portugal" ? String(localized: "Regions and cities") : String(localized: "The towns"), accent: accent)
                 if id == "algarve" {
                     Group {
                         if let regionMap {
