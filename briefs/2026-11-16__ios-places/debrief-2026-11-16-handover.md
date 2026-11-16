@@ -6,6 +6,7 @@
 
 - **Branch `night/ios-places`**, not yet on `dev`. Pass 1 (`fa211d1`) was fully green in iOS run 505 (build and iPhone tests). The run with everything after it failed once on one compile error (fixed in `97a1d66`); the full build of the lot is `9d0ac6e` (watch its run). **Nothing is on TestFlight yet.**
 - **Update 01:12 UTC:** e782bde is green (build and iPhone tests). conductor.a.ios@ asked that night/ios-places NOT be merged to dev separately: appdev.wire@ (session_018yvwtLLmNUF2TxWtJySkuz, branch work/wire) merges it with night/going-local, wires the shell (PTTalk, credit, PTLocal accessories) and conductor.a.ios@ merges that to dev. The step below is superseded; keep the branch green and answer wire@.
+- **01:12 UTC:** a5a8495 green (run 43781362800). appdev.wire@'s work/wire ab7be1b = night/going-local + a5a8495 with every PTPlaces hook wired in `Apps/PrompTugal/Shell/PlacesWiring.swift` (accessories, PlacesCredit to LocalCredit, placesTalk(TalkTransport.conductor), talkSigning from PersonKeychain.load()). Tell wire@ the sha of any new night/ios-places commit.
 - **Next step (superseded, see above):** when the newest run on `night/ios-places` is green, merge it to `dev` (`git checkout dev && git pull && git merge --no-ff night/ios-places`, push with retries). `dev` runs the iPhone and iPad tests, then the `testflight` job uploads PrompTugal to internal TestFlight. Then tell conductor.a.ios@ (session_018yvwtNhGU1EEJs2oWCLqrJ), which merges after us, and appdev.talk@ (session_018yvwtN649CDbGrQRz7NZvy).
 - A stale run for `81e0a7f` fails on the old error; ignore it.
 
@@ -26,7 +27,7 @@
 
 ## Open
 
-1. **Wire PTTalk** once it and PTPlaces are on `dev`: in the app shell, `extension TalkTransport: PlacesTalk {}`, `.placesTalk(TalkTransport.conductor)`, `.talkSigning { try? PersonSession.shared.key?.signingKey() }`. Replies need the reply lane (dev.places@ via conductor@; not agreed yet).
+1. **Wire PTTalk**: done by appdev.wire@ on work/wire (PlacesWiring.swift); originally planned as in the app shell, `extension TalkTransport: PlacesTalk {}`, `.placesTalk(TalkTransport.conductor)`, `.talkSigning { try? PersonSession.shared.key?.signingKey() }`. Replies need the reply lane (dev.places@ via conductor@; not agreed yet).
 2. **Widget**: latest from followed towns (needs the app group; check the widget target).
 3. **Each city's own stats** (guidance 23:30, JSON first): show when the website serves them per place.
 4. **Talent, co-ops, the startup guide, per-kind map styles**: sections appear as the website publishes them (types land in Other until mapped in `PlaceKind`).
