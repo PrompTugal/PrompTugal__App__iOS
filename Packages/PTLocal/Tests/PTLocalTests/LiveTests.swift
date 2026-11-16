@@ -373,3 +373,17 @@ struct NewestStoriesTests {
         #expect(StoryAgents.newest(site, limit: 2).map(\.title) == ["New", "Old"])
     }
 }
+
+@Suite("3D flight order")
+struct TourOrderTests {
+    @Test("Loulé, then Faro, then the rest west to east")
+    func order() {
+        let towns = PlaceDirectory.towns.map {
+            AlgarveMapTown(id: $0.id, name: $0.name, latitude: $0.latitude, longitude: $0.longitude, accentHex: nil, live: false, stories: 0)
+        }
+        let ids = AlgarveTour.order(towns).map(\.id)
+        #expect(ids.count == 17)
+        #expect(Array(ids.prefix(3)) == ["loule", "faro", "vila-do-bispo"])
+        #expect(ids.last == "vila-real-de-santo-antonio")
+    }
+}

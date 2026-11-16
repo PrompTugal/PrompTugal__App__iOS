@@ -189,6 +189,17 @@ struct AlgarveFlatStyle: View {
 
 // MARK: - 3D flight
 
+/// The flight's order: the case-study towns first (Loulé, then Faro), then the rest west to east.
+public enum AlgarveTour {
+    public static let featured = ["loule", "faro"]
+
+    public static func order(_ towns: [AlgarveMapTown], first: [String] = featured) -> [AlgarveMapTown] {
+        let lead = first.compactMap { id in towns.first { $0.id == id } }
+        let rest = towns.filter { !first.contains($0.id) }.sorted { $0.longitude < $1.longitude }
+        return lead + rest
+    }
+}
+
 /// The terrain in 3D (satellite imagery with realistic elevation), the camera pitched and flying from town to town,
 /// west to east, pausing over each with its agent's latest. Reduce Motion: no tour, step with the buttons.
 struct AlgarveFlightMap: View {
@@ -202,8 +213,8 @@ struct AlgarveFlightMap: View {
     static let overview = MapCamera(centerCoordinate: CLLocationCoordinate2D(latitude: 37.05, longitude: -8.15),
                                     distance: 140_000, heading: 0, pitch: 55)
 
-    /// West to east, as the coast runs.
-    private var tour: [AlgarveMapTown] { towns.sorted { $0.longitude < $1.longitude } }
+    /// The case studies first, then west to east as the coast runs.
+    private var tour: [AlgarveMapTown] { AlgarveTour.order(towns) }
 
     static func camera(for town: AlgarveMapTown, step: Int) -> MapCamera {
         // Look north over the town from the sea side, turning a little each stop so the hills move.
