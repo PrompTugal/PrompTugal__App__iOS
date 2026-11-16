@@ -329,3 +329,61 @@ struct ReplayTests {
         #expect(LiveReplay.perHour(extras) == [2, 1, 1])
     }
 }
+
+@Suite("Ticker filters")
+struct TickerFilterTests {
+    @Test("Towns, desks and asks split the ticker")
+    func filters() {
+        let town = LiveEvent(date: now, role: "place.faro", kind: .update, text: "t", origin: .latest)
+        let desk = LiveEvent(date: now, role: "abp", kind: .wake, text: "d", origin: .latest)
+        let ask = LiveEvent(date: now, role: "abp", kind: .ask, text: "a", origin: .watched)
+        #expect(TickerFilter.all.includes(town) && TickerFilter.all.includes(ask))
+        #expect(TickerFilter.towns.includes(town) && !TickerFilter.towns.includes(desk))
+        #expect(TickerFilter.desks.includes(desk) && !TickerFilter.desks.includes(ask) && !TickerFilter.desks.includes(town))
+        #expect(TickerFilter.asks.includes(ask) && !TickerFilter.asks.includes(desk))
+    }
+}
+
+@Suite("Live summary")
+struct LiveSummaryTests {
+    @Test("Headline numbers come from the dashboard")
+    func summary() throws {
+        let d = try JSONDecoder().decode(NewsroomDashboard.self, from: Data(before.utf8))
+        let extras = try JSONDecoder().decode(LiveDashboardExtras.self, from: Data(before.utf8))
+        let s = LiveSummary.make(d, extras: extras, now: now)
+        #expect(s.agents == 2)
+        // faro updated 22:40 and abp's last sign 22:00 are both older than 30 minutes at 23:30.
+        #expect(s.activeNow == 0)
+        #expect(s.firedHours24h == 2)
+        #expect(s.handoffs24h == 3)
+        #expect(s.asksWaiting == 0)
+        let later = LiveSummary.make(d, extras: extras, now: ISO8601DateFormatter().date(from: "2026-11-15T22:50:00Z")!)
+        #expect(later.activeNow == 1)
+    }
+}
+
+@Suite("Newest stories")
+struct NewestStoriesTests {
+    @Test("A site's stories come newest first")
+    func newest() throws {
+        let site = try JSONDecoder().decode(PlaceSite.self, from: Data("""
+        {"id":"faro","name":"Faro","ai_news":[{"title":"Old","url":"https://e.org/1","date":"2026-09-01"},
+         {"title":"New","url":"https://e.org/2","date":"2026-11-06"},{"title":"Undated","url":"https://e.org/3"}]}
+        """.utf8))
+        #expect(StoryAgents.newest(site, limit: 2).map(\.title) == ["New", "Old"])
+    }
+}
+
+@Suite("3D flight order")
+struct TourOrderTests {
+    @Test("Loulé, then Faro, then the rest west to east")
+    func order() {
+        let towns = PlaceDirectory.towns.map {
+            AlgarveMapTown(id: $0.id, name: $0.name, latitude: $0.latitude, longitude: $0.longitude, accentHex: nil, live: false, stories: 0)
+        }
+        let ids = AlgarveTour.order(towns).map(\.id)
+        #expect(ids.count == 17)
+        #expect(Array(ids.prefix(3)) == ["loule", "faro", "vila-do-bispo"])
+        #expect(ids.last == "vila-real-de-santo-antonio")
+    }
+}

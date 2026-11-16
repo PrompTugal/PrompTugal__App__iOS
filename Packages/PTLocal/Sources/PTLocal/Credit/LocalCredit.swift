@@ -156,9 +156,12 @@ public final class LocalCredit {
     /// `CreditKind.named`. The app shell injects it, e.g.
     /// `PlacesCredit.charge = { LocalCredit.shared.charge(action: $0, ref: $1, date: $2, title: $3) }`.
     @discardableResult
-    public func charge(action: String, ref: String, date: String? = nil, title: String) -> Bool {
-        charge(kind: .named(action, ref: ref, date: date, title: title))
+    public func charge(action: String, ref: String, date: String? = nil, title: String, outlet: String? = nil) -> Bool {
+        charge(kind: .named(action, ref: ref, date: date, title: title, outlet: outlet))
     }
+
+    /// Where your credit goes: what your reading of each outlet's stories was worth. Planned, not paid.
+    public var byOutlet: [OutletLine] { book.byOutlet() }
 
     /// The same, for the price shown before spending: "2p", "free", or "read" when already paid this session.
     public func costText(action: String, ref: String, date: String? = nil) -> String {

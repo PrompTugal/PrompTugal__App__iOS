@@ -48,6 +48,18 @@ struct PlaceLayers: View {
     }
 }
 
+/// The Algarve page's map: appdev.live@'s styled map (Map, 3D flight, Grid, Cartogram) in place of PTPlaces' satellite
+/// map. The towns come from PTLocal's store (built-in snapshot, then live) and the newsroom dashboard for each agent's
+/// last sign of life; a tap pushes that town's page through PTPlaces' `open`.
+struct RegionMapLayer: View {
+    let open: (String) -> Void
+    @State private var store = LocalStore.shared
+
+    var body: some View {
+        AlgarveStyledMap(towns: AlgarveMapTown.fromLocalStore(store)) { id in open(id) }
+    }
+}
+
 /// PTTalk's transport already has PlacesTalk's two methods (send(_:signedBy:), replies(for:)): this is the whole adapter.
 extension TalkTransport: @retroactive PlacesTalk {}
 
@@ -56,6 +68,7 @@ extension View {
     func placesLayers() -> some View {
         placesHomeAccessory { AnyView(PlacesHomeLayers()) }
             .placeAccessory { id in AnyView(PlaceLayers(placeID: id)) }
+            .placesRegionMap { open in AnyView(RegionMapLayer(open: open)) }
             // Place comments go to the conductor's lane through PTTalk; without a pasted lane link they say so.
             .placesTalk(TalkTransport.conductor)
             // PTTalk's composers sign with the person key PTPlaces' sign-in keeps (read from the Keychain, off the main actor).
