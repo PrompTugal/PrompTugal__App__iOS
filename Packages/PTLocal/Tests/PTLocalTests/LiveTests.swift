@@ -387,3 +387,22 @@ struct TourOrderTests {
         #expect(ids.last == "vila-real-de-santo-antonio")
     }
 }
+
+@Suite("Board accessibility")
+struct BoardAccessibilityTests {
+    @Test("VoiceOver reads towns west to east first, then the desks, and leaves out outsiders")
+    func order() {
+        let roles = ["abp", "place.faro", "place.lagos", "place.algarve", "viz.places"]
+        let nodes = NewsroomLayout.nodes(roles: roles, handoffs: [(from: "curator", to: "abp")])
+        let spoken = NewsroomLayout.spokenOrder(nodes).map(\.id)
+        #expect(spoken == ["place.lagos", "place.faro", "place.algarve", "viz.places", "abp"])
+    }
+
+    @Test("A node says who it is, its status, how recently it was seen and what it says")
+    func label() throws {
+        let d = try JSONDecoder().decode(NewsroomDashboard.self, from: Data(before.utf8))
+        let node = try #require(NewsroomLayout.nodes(roles: d.agents.map(\.role), handoffs: []).first { $0.id == "place.faro" })
+        let text = NewsroomLayout.spoken(node, agent: d.agents.first { $0.role == "place.faro" }, now: now)
+        #expect(text == "Faro, town agent, Idle, last sign of life 50 min ago, second pass")
+    }
+}

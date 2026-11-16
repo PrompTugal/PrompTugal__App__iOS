@@ -39,9 +39,17 @@ struct NewsroomBoard: View {
                     })
             }
         }
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .contain)
         .accessibilityLabel(accessibilitySummary(nodes: nodes))
-        .accessibilityHint("Shows the agents below as a list. Tap a node to see what that agent reports.")
+        .accessibilityChildren {
+            // One element per agent for VoiceOver: towns west to east, then the region, the desks; each selectable.
+            ForEach(NewsroomLayout.spokenOrder(nodes)) { node in
+                Rectangle()
+                    .accessibilityLabel(NewsroomLayout.spoken(node, agent: model.agent(node.id), now: Date()))
+                    .accessibilityAddTraits(selected == node.id ? [.isButton, .isSelected] : [.isButton])
+                    .accessibilityAction { selected = node.id }
+            }
+        }
     }
 
     // MARK: Model
