@@ -36,7 +36,7 @@ struct ReplayControl: View {
                 let gap: CGFloat = 2
                 let w = (size.width - gap * CGFloat(hours - 1)) / CGFloat(hours)
                 for (i, count) in counts.enumerated() {
-                    let h = max(2, size.height * CGFloat(count) / CGFloat(top))
+                    let h: CGFloat = max(2, size.height * CGFloat(count) / CGFloat(top))
                     let rect = CGRect(x: CGFloat(i) * (w + gap), y: size.height - h, width: w, height: h)
                     let current = position.map { Int($0) == i } ?? false
                     context.fill(Path(roundedRect: rect, cornerRadius: 2),
@@ -45,11 +45,9 @@ struct ReplayControl: View {
             }
             .frame(height: 36)
             .accessibilityHidden(true)
-            Slider(value: Binding(get: { position ?? Double(hours) - 0.01 },
-                                  set: { stop(); position = min(max(0, $0), Double(hours) - 0.01) }),
-                   in: 0...(Double(hours) - 0.01))
+            Slider(value: scrub, in: 0...upper)
                 .accessibilityLabel("Hour of the replay")
-                .accessibilityValue(position.map { "\(extras.gridHours[min(hours - 1, Int($0))]):00 UTC" } ?? "Live")
+                .accessibilityValue(spokenHour)
             HStack {
                 Text((extras.gridHours.first ?? "") + ":00")
                 Spacer()
@@ -71,6 +69,22 @@ struct ReplayControl: View {
                 try? await Task.sleep(for: .milliseconds(50))
             }
         }
+    }
+
+    private var upper: Double { Double(hours) - 0.01 }
+
+    private var scrub: Binding<Double> {
+        Binding(get: { position ?? upper },
+                set: { value in
+                    stop()
+                    position = min(max(0, value), upper)
+                })
+    }
+
+    private var spokenHour: String {
+        guard let position else { return "Live" }
+        let i = min(hours - 1, max(0, Int(position)))
+        return extras.gridHours[i] + ":00 UTC"
     }
 
     private func label(_ counts: [Int]) -> String {

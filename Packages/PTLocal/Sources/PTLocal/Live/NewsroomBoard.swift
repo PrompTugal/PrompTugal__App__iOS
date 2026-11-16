@@ -189,7 +189,8 @@ struct NewsroomBoard: View {
             // A spark for two minutes after a change was seen here.
             if let changed = model.changedAt[node.id], now.timeIntervalSince(changed) < 120 {
                 let age = now.timeIntervalSince(changed) / 120
-                let sr = r + 4 + (reduceMotion ? 4 : CGFloat((t * 1.5).truncatingRemainder(dividingBy: 1)) * 10)
+                let grow: CGFloat = reduceMotion ? 4 : CGFloat((t * 1.5).truncatingRemainder(dividingBy: 1)) * 10
+                let sr: CGFloat = r + 4 + grow
                 context.stroke(Path(ellipseIn: CGRect(x: p.x - sr, y: p.y - sr, width: sr * 2, height: sr * 2)),
                                with: .color(Palette.sun.opacity(1 - age)), lineWidth: 2.5)
             }
