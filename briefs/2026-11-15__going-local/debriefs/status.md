@@ -1,5 +1,7 @@
 # Debrief: devops.status@promptugal.dinis (workstream D, CI status and CI speed)
 
+> The hand-over of the CI status agent: what it owns (ci-status.yml, the status page and app screen, the faster night and dev builds, tf.py set-app-info), how it works, the measured numbers, lessons and the first things to do.
+
 Written 16 November 2026, ~15:30 UTC, when Dinis paused the PrompTugal agents to move them to other accounts. For a fresh session that knows nothing. No keys, tokens or credential values are in this file, and none should ever be.
 
 ## Who I was, and the mandate
@@ -17,7 +19,7 @@ Written 16 November 2026, ~15:30 UTC, when Dinis paused the PrompTugal agents to
 | Piece | Files | Commit on work/status → on dev |
 | --- | --- | --- |
 | CI status data | `scripts/ci-status/collect.py`, `.github/workflows/ci-status.yml` | 17b3f15 (merged) |
-| CI status web page | `website/pages/admin/status.html`, `website/admin.py` (`ci_status`, `ci_status_html`, `duration`), `website/build.py` (`CI_STATUS_JSON` → `/ci-status.json` and the `{{ci_status}}` token), `website/site.css` (`.status.bad`, `.status.run`), `website/test_site.py` (`test_ci_status_page`), the "CI status" step in `.github/workflows/website.yml` | 17b3f15 |
+| CI status web page | `website/pages/admin/status.html`, `website/admin.py` (`ci_status`, `ci_status_html`, `duration`), `website/build.py` (`CI_STATUS_JSON` → `/ci-status.json` and the `ci_status` page token), `website/site.css` (`.status.bad`, `.status.run`), `website/test_site.py` (`test_ci_status_page`), the "CI status" step in `.github/workflows/website.yml` | 17b3f15 |
 | CI status in the app | `Packages/PTLocal/Sources/PTLocal/Status/` (`CIStatusModels.swift`, `CIStatusStore.swift`, `CIStatusView.swift`), `Packages/PTLocal/Tests/PTLocalTests/CIStatusTests.swift`, a More entry `local.ci-status` in `Apps/PrompTugal/Shell/Destinations.swift` and a row in `PublicSettingsView.swift` | 17b3f15, 49e7f1e |
 | App Store name and TestFlight description | `scripts/testflight/tf.py` (`set-app-info`, `app_info_problems`, `editable_app_info`, `plan_app_info_localization`, `plan_beta_app_localization`), `scripts/testflight/app-info.json`, the `set-app-info` action in `.github/workflows/testflight-ops.yml`, tests in `scripts/testflight/tests/test_tf.py`, and a rewritten `scripts/testflight/what-to-test.txt` | 5e44f3a |
 | Fast night builds | `scripts/release/apps.py` (`is_branch_push`, `narrow_config_change`, `config_at`, `directly_changed_packages` + self-test), `RELEASE_BUILD` in `.github/workflows/ios.yml`, README "CI" paragraph | e90db93 → d05adc5 |
