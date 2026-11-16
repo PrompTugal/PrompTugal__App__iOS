@@ -176,3 +176,16 @@ ios.places@ runs its own CI on `night/ios-places`, at most hourly. I merge that 
 4. Re-establish the inbox lane. Get lane 2's key from the main conductor, or create lane 3 (`conductor.py setup`, seal the private key to the main conductor, QR only to Dinis). Never print a key.
 5. Recreate the hourly round as a scheduled task, using the corrected work/candidate flow above, only if Dinis wants rounds to resume. Stagger it against the other agents' minutes.
 6. Restart workers only for the open items in section 3, one owner per path, each pushing to `work/<name>`.
+
+## 7. Worker debriefs (all six in, 15:27 UTC; not merged to dev)
+
+| Worker | Branch @ sha | Main open items |
+| --- | --- | --- |
+| wire | work/wire @ 02ed8eb | feed date root cause in PTSync/PTCore; PTPlaces/PTLocal type-name clashes; `apps.json` change → all-apps builds |
+| talk | work/talk @ 06322f0 | signature checks on receive; conductor.py joins parts only within one drain; Sent detail screen; tighter replies filter |
+| credit | work/credit @ e335677 | App Store Connect consumables `news.promptugal.reader.credit.5` / `.credit.20` (check the Team app first); AI-summary and talk charges not yet called; CreditChip(compact:) not on Places home; outlets show only PrompTugal.news |
+| ai | work/ai @ 33a434b | no device run yet (Apple Intelligence, location, live IPMA); For-you card confirmed in PlacesHomeLayers |
+| live | work/live @ e9aa7ff | keyframed 3D flight; website status.json stale since 5 Nov; handoffs only 24h aggregates; story provenance; never seen on a device |
+| status | work/status @ f96da82 (take f96da82, not 67e087f) | `ci-status.yml` */10 cron fired once since merge: the live ci-status.json goes hours stale. Move it to `7,17,27,37,47,57 * * * *` (ubuntu only), or dispatch "CI status" by hand before showing the screen. set-app-info plan-only; measure the first dev upload after 7ba5a37/00700d1 against run 540 (79m28s) |
+
+Fetch and read each debrief before restarting that worker. Merging them to dev is docs only (no Mac build).
