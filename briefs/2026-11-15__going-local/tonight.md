@@ -61,6 +61,7 @@ TestFlight builds of the news app (news.promptugal.reader), all from dev:
 | 660 | 0.4.115 | 05:14 | Place comments on the agreed comment lane, replies read back; no summit onboarding, opens on Places |
 | 662 | 0.4.117 | 05:34 | VoiceOver on the live agents board |
 | 664 | 0.4.118 | 05:54 | "Across Portugal": the 7 district capitals the website added (Lisboa, Porto, Braga, Aveiro, Vila Real, Bragança, Viana do Castelo) get their own row and stay out of the Algarve's numbers, mosaic, map and connections |
+| 667 | 0.4.120 | 11:44 | "Now in <place>" on every Algarve place (Dinis, 10:40): IPMA station, forecast, warnings, fire risk, UV, sea, flights near Faro, from the website's now.json; the older ConditionsCard dropped so the weather shows once |
 
 CI: night builds ~35 → ~7 min (only what changed, no Release build); dev tests iPhone only and uploads the news app first; push to processed 19–44 min when a Mac is free.
 
@@ -68,7 +69,7 @@ Open, for Dinis: the App Store name and subtitle (proposal: "PrompTugal.news", "
 
 ## Morning summary (for Dinis)
 
-- **Install the newest build** (664, 0.4.118, "Across Portugal"); 662 is fine except the district capitals would show among the Algarve towns.
+- **Install the newest build** (667, 0.4.120, "Now in <place>"; 664 is the fallback); 662 is fine except the district capitals would show among the Algarve towns.
 - **Demo path**: Places opens first → the Algarve (four map styles, 3D flight from Loulé) → a town (IPMA conditions, live newsroom strip, Apple Intelligence summary, comments) → Places home: live agents board, persona ("I'm from Algarve Evolution"), near me → More: Newsroom, Reading credit ("where your credit goes", planned payouts labelled), CI status (update available), Ask and summarise, Talk to the conductor.
 - **Honest labels**: simulated steps carry the Simulated badge; every screen says live, this device's copy or built-in copy; Apple Intelligence falls back openly on devices without it.
 - **Freeze**: live@ and ai@ stopped; only wrong-data or crash fixes reach dev before the demo.
