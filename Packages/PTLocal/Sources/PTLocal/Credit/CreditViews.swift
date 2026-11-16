@@ -12,15 +12,20 @@ import SwiftUI
 public struct CreditChip: View {
     @State private var credit = LocalCredit.shared
     @State private var showing = false
+    /// Compact: the amount alone, for tight headers such as the Places home.
+    let compact: Bool
 
-    public init() {}
+    public init() { compact = false }
+
+    /// `CreditChip(compact: true)`: the smallest form, for the Places home (the app shell places it).
+    public init(compact: Bool) { self.compact = compact }
 
     public var body: some View {
         Button {
             showing = true
         } label: {
             HStack(spacing: 4) {
-                Image(systemName: "sterlingsign.circle")
+                if !compact { Image(systemName: "sterlingsign.circle") }
                 Text(credit.balanceText)
                     .monospacedDigit()
                     .contentTransition(.numericText(value: Double(credit.balance)))
@@ -88,6 +93,7 @@ public struct LocalCreditView: View {
         List {
             balance
             topUpSection
+            outletsSection
             historySection
             pricesSection
         }
@@ -199,6 +205,43 @@ public struct LocalCreditView: View {
         }
     }
 
+    // MARK: Where your credit goes
+
+    private var outletsSection: some View {
+        Section {
+            let lines = credit.byOutlet
+            if lines.isEmpty {
+                Text("Nothing yet. Stories you pay to read show here, by the outlet that published them.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+            ForEach(lines) { line in
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(line.outlet)
+                        Text(outletDetail(line)).font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Text(credit.money(line.worth)).monospacedDigit()
+                }
+                .font(.subheadline)
+                .accessibilityElement(children: .combine)
+            }
+        } header: {
+            HStack {
+                Text("Where your credit goes")
+                Spacer()
+                PlannedBadge()
+            }
+        } footer: {
+            Text("What your reading of each outlet's stories was worth on this device. Sharing reading revenue with the local media whose stories you read is planned, not yet in place: no money has been sent to any outlet.")
+        }
+    }
+
+    private func outletDetail(_ line: OutletLine) -> String {
+        let reads = line.reads == 1 ? "1 paid read" : "\(line.reads) paid reads"
+        return line.declined == 0 ? reads : "\(reads), \(line.declined) not charged"
+    }
+
     // MARK: History
 
     private var historySection: some View {
@@ -255,6 +298,7 @@ struct CreditEntryRow: View {
                 Text(entry.text).lineLimit(2).strikethrough(declined)
                 HStack(spacing: 6) {
                     Text(entry.at, format: .dateTime.day().month().hour().minute())
+                    if let outlet = entry.outlet { Text(outlet) }
                     if let type = entry.pageType { Text(type + (entry.tier.map { " · \($0)" } ?? "")) }
                     if let reason = entry.reason { Text(reason) }
                 }
@@ -289,5 +333,19 @@ struct CreditEntryRow: View {
         case .topUp, .start: .green
         case .refund: .orange
         }
+    }
+}
+
+/// Marks a figure that describes a plan, not something done: payouts to outlets are not made yet.
+public struct PlannedBadge: View {
+    public init() {}
+    public var body: some View {
+        Label("Planned, not yet paid", systemImage: "calendar.badge.clock")
+            .font(.caption2.weight(.bold))
+            .textCase(nil)
+            .padding(.horizontal, 6).padding(.vertical, 2)
+            .foregroundStyle(Palette.amber)
+            .background(Palette.amber.opacity(0.14), in: Capsule())
+            .accessibilityLabel("Planned, not yet paid: no money has been sent to outlets")
     }
 }
