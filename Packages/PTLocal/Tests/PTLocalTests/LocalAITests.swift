@@ -207,3 +207,58 @@ struct PersonaSuggestionTests {
         #expect(PersonaRanker.suggestedTerms(from: "", existing: []).isEmpty)
     }
 }
+
+@Suite("Personas from the data")
+struct PersonaFromDataTests {
+    @Test("Names with an acronym split into name and acronym")
+    func split() {
+        #expect(Persona.splitName("Universidade do Algarve (UAlg)") == ("Universidade do Algarve", "UAlg"))
+        #expect(Persona.splitName("Algarve Evolution") == ("Algarve Evolution", nil))
+        #expect(Persona.splitName("(UAlg)") == ("UAlg", nil))
+    }
+
+    @Test("The built-in Algarve offers its most-mentioned organisations, Algarve Evolution among them")
+    @MainActor func fromData() {
+        let store = LocalStore(fetch: { _ in throw URLError(.notConnectedToInternet) })
+        let sites = PlaceDirectory.all.compactMap { store.site($0.id) }
+        let personas = Persona.fromData(sites)
+        #expect(!personas.isEmpty)
+        #expect(personas.count <= 5)
+        #expect(personas.contains { $0.label == "Algarve Evolution" })
+        #expect(Set(personas.map(\.id)).count == personas.count)
+    }
+
+    @Test("Other names of the organisation match as the same term, counted once")
+    func aliases() {
+        let ualg = Persona(id: "org", label: "Universidade do Algarve", text: "I am from Universidade do Algarve",
+                           keywords: ["Universidade do Algarve", "University of the Algarve", "UAlg"])
+        let terms = PersonaRanker.terms(for: ualg)
+        #expect(terms.filter { $0.weight == 5 }.count == 1)
+        let story = PlaceSite.News.fixture(title: "A course at the University of the Algarve")
+        #expect(PersonaRanker.match(story, terms: terms).score == 15)
+        let acronym = PlaceSite.News.fixture(title: "UAlg opens an AI lab")
+        #expect(PersonaRanker.match(acronym, terms: terms).isMatch)
+    }
+
+    @Test("A startup persona ranks its own town's matches higher and says so")
+    func townBoost() {
+        let faro = PlaceDirectory.info("faro")!
+        let persona = Persona.startup(in: faro)
+        #expect(persona.townID == "faro")
+        let terms = PersonaRanker.terms(for: persona)
+        #expect(terms.map(\.label) == ["startups"])
+        let match = PersonaRanker.match(PlaceSite.News.fixture(title: "A startup opens"), terms: terms)
+        let boosted = PersonaRanker.boost(match, in: faro, town: "faro")
+        #expect(boosted.score == match.score + 4)
+        #expect(boosted.matched.last == "in Faro")
+        #expect(PersonaRanker.boost(match, in: PlaceDirectory.info("lagos")!, town: "faro") == match)
+        #expect(PersonaRanker.boost(.none, in: faro, town: "faro") == .none)
+    }
+}
+
+extension PlaceSite.News {
+    static func fixture(title: String) -> PlaceSite.News {
+        let data = try! JSONSerialization.data(withJSONObject: ["title": title, "url": "https://example.org/\(title.count)"])
+        return try! JSONDecoder().decode(PlaceSite.News.self, from: data)
+    }
+}
