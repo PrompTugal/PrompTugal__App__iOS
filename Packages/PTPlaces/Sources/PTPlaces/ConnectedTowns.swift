@@ -103,14 +103,14 @@ struct ConnectedTownsView: View {
     let store: PlacesStore
     @State private var focus: String?
 
-    private var files: [PlaceFile] { store.towns.compactMap { store.file($0.id) } }
+    private var files: [PlaceFile] { store.algarveTowns.compactMap { store.file($0.id) } }
 
     var body: some View {
         let links = PlaceConnections.links(files)
         let hubs = PlaceConnections.hubs(files)
         VStack(alignment: .leading, spacing: Space.m) {
             GeometryReader { geo in
-                let points = Self.project(store.towns, in: geo.size)
+                let points = Self.project(store.algarveTowns, in: geo.size)
                 ZStack {
                     Canvas { context, _ in
                         for link in links {
@@ -124,7 +124,7 @@ struct ConnectedTownsView: View {
                                            lineWidth: CGFloat(min(1 + link.shared.count, 6)))
                         }
                     }
-                    ForEach(store.towns) { place in
+                    ForEach(store.algarveTowns) { place in
                         if let p = points[place.id] {
                             let accent = PlaceTheme.accent(store.file(place.id), id: place.id)
                             let degree = links.filter { $0.a == place.id || $0.b == place.id }.count

@@ -34,6 +34,7 @@ public struct PlacesHomeView: View {
                     if let homeAccessory { homeAccessory() }
                     nationalEdition
                     townMosaic
+                    acrossPortugal
                     connected
                     latestStories
                     workWithUs
@@ -127,10 +128,10 @@ public struct PlacesHomeView: View {
                         .frame(maxWidth: 720, alignment: .leading)
                 }
                 HStack(spacing: Space.m) {
-                    heroStat(store.towns.count, String(localized: "towns"))
-                    heroStat(store.towns.reduce(0) { $0 + $1.aiNews }, String(localized: "local AI stories"))
-                    heroStat(store.towns.reduce(0) { $0 + $1.aiMap }, String(localized: "on the AI map"))
-                    heroStat(store.towns.filter(\.isLive).count, String(localized: "live"))
+                    heroStat(store.algarveTowns.count, String(localized: "towns"))
+                    heroStat(store.algarveTowns.reduce(0) { $0 + $1.aiNews }, String(localized: "local AI stories"))
+                    heroStat(store.algarveTowns.reduce(0) { $0 + $1.aiMap }, String(localized: "on the AI map"))
+                    heroStat(store.algarveTowns.filter(\.isLive).count, String(localized: "live"))
                 }
                 .padding(.top, 4)
                 if let region {
@@ -220,11 +221,11 @@ public struct PlacesHomeView: View {
 
     private var townMosaic: some View {
         VStack(alignment: .leading, spacing: Space.m) {
-            SectionHead(title: String(localized: "The 17 towns"),
+            SectionHead(title: String(localized: "The \(store.algarveTowns.count) towns"),
                         subtitle: String(localized: "Each town in its own colours, its agent, its AI map"))
             let columns = [GridItem(.adaptive(minimum: wide ? 200 : 150), spacing: Space.m)]
             LazyVGrid(columns: columns, spacing: Space.m) {
-                ForEach(Array(store.towns.enumerated()), id: \.element.id) { index, place in
+                ForEach(Array(store.algarveTowns.enumerated()), id: \.element.id) { index, place in
                     NavigationLink(value: PlaceRoute(place.id)) {
                         TownTile(place: place, file: store.file(place.id), seed: index)
                     }
@@ -233,6 +234,30 @@ public struct PlacesHomeView: View {
             }
         }
         .padding(.horizontal, gutter)
+    }
+
+    // MARK: Across Portugal (the district capitals, 16 Nov)
+
+    @ViewBuilder private var acrossPortugal: some View {
+        let cities = store.portugalCities
+        if !cities.isEmpty {
+            VStack(alignment: .leading, spacing: Space.m) {
+                SectionHead(title: String(localized: "Across Portugal"),
+                            subtitle: String(localized: "The district capitals, each with its own agent and AI map"), accent: Palette.red)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: Space.m) {
+                        ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
+                            NavigationLink(value: PlaceRoute(place.id)) {
+                                TownTile(place: place, file: store.file(place.id), seed: index + 3)
+                                    .frame(width: wide ? 220 : 170)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, gutter)
+        }
     }
 
     // MARK: Everything is connected
@@ -356,7 +381,7 @@ struct RegionMap: View {
     }
 
     private var pins: [Pin] {
-        store.towns.compactMap { place in PlaceTheme.coordinate(place).map { Pin(place: place, coordinate: $0) } }
+        store.algarveTowns.compactMap { place in PlaceTheme.coordinate(place).map { Pin(place: place, coordinate: $0) } }
     }
 
     private struct Pin: Identifiable {

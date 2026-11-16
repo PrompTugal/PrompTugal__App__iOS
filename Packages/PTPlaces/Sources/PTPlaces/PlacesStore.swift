@@ -51,6 +51,20 @@ public final class PlacesStore {
     }
 
     public var towns: [PlaceSummary] { places.filter(\.isTown) }
+
+    /// The Algarve's towns: the 16 municipalities and the places inside them (Quarteira), not the district capitals
+    /// the website added across Portugal on 16 Nov.
+    public var algarveTowns: [PlaceSummary] {
+        let all = places
+        let parentOf = Dictionary(all.map { ($0.id, $0.parent) }, uniquingKeysWith: { a, _ in a })
+        return all.filter { $0.isTown && ($0.parent == "algarve" || parentOf[$0.parent] == "algarve") }
+    }
+
+    /// Cities across Portugal outside the Algarve (the district capitals), from the same index.
+    public var portugalCities: [PlaceSummary] {
+        let algarve = Set(algarveTowns.map(\.id))
+        return towns.filter { !algarve.contains($0.id) }
+    }
     public func place(_ id: String) -> PlaceSummary? { places.first { $0.id == id } }
     public func children(of id: String) -> [PlaceSummary] { places.filter { $0.parent == id } }
     public func file(_ id: String) -> PlaceFile? { files[id]?.value }
