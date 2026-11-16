@@ -48,36 +48,41 @@ public final class LocalCredit {
     public init(directory: URL? = nil, fetch: @escaping LocalFetch = LocalStore.liveFetch, cache: LocalDiskCache = .standard(),
                 bundle: Bundle = LocalResources.bundle, now: Date = .now) {
         let folder = directory ?? URL.applicationSupportDirectory.appendingPathComponent("PrompTugal", isDirectory: true)
-        file = folder.appendingPathComponent("local-credit.json")
+        let ledgerFile = folder.appendingPathComponent("local-credit.json")
+        file = ledgerFile
         self.fetch = fetch
         self.cache = cache
 
-        // Prices: this device's last live copy, else the copy built into the app.
+        // Prices: this device's last live copy, else the copy built into the app. Locals first: with @Observable,
+        // reading a stored property before every one is set is a use of `self`.
+        let loaded: MeterConfig
+        let provenance: Provenance
         if let data = cache.load(key: Self.cacheKey), let saved = try? JSONDecoder().decode(MeterConfig.self, from: data) {
-            config = saved
-            priceProvenance = .cached(cache.modified(key: Self.cacheKey))
+            loaded = saved
+            provenance = .cached(cache.modified(key: Self.cacheKey))
         } else if let built = MeterConfig.builtIn(bundle: bundle) {
-            config = built
-            priceProvenance = .snapshot("prices " + (built.version ?? "in the app"))
+            loaded = built
+            provenance = .snapshot("prices " + (built.version ?? "in the app"))
         } else {
-            config = .fallback
-            priceProvenance = .snapshot("prices v0.1.1514")
+            loaded = .fallback
+            provenance = .snapshot("prices v0.1.1514")
         }
+        config = loaded
+        priceProvenance = provenance
 
         var opened: CreditBook?
         var trouble: String?
-        if let data = try? Data(contentsOf: file) {
+        if let data = try? Data(contentsOf: ledgerFile) {
             opened = try? CreditBook.decode(data)
             if opened == nil {
                 // A ledger that cannot be read is kept beside the new one, never overwritten.
-                let aside = file.deletingPathExtension().appendingPathExtension("unreadable-\(Int(now.timeIntervalSince1970)).json")
-                try? FileManager.default.moveItem(at: file, to: aside)
+                let aside = ledgerFile.deletingPathExtension().appendingPathExtension("unreadable-\(Int(now.timeIntervalSince1970)).json")
+                try? FileManager.default.moveItem(at: ledgerFile, to: aside)
                 trouble = "The credit history on this device could not be read. It was kept as \(aside.lastPathComponent) and a new one started."
             }
         }
         // The site's starting balance (meter.json `start`, in pence), once, when this device's ledger is new.
-        let startingCredit = CreditMoney.micro(pence: config.start)
-        book = opened ?? CreditBook(startingCredit: startingCredit, at: now)
+        book = opened ?? CreditBook(startingCredit: CreditMoney.micro(pence: loaded.start), at: now)
         problem = trouble
         topUps = LocalTopUps()
         topUps.credit = self
