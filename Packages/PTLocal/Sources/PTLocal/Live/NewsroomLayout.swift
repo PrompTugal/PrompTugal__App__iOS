@@ -95,6 +95,47 @@ public enum NewsroomLayout {
         return out
     }
 
+    /// The order VoiceOver reads the board in: the towns west to east, then the region and country, the place desks,
+    /// the other desks; whoever is outside the dashboard is left out (there is nothing to open).
+    public static func spokenOrder(_ nodes: [Node]) -> [Node] {
+        func rank(_ kind: Kind) -> Int {
+            switch kind {
+            case .town: 0
+            case .region: 1
+            case .country: 2
+            case .placeDesk: 3
+            case .desk: 4
+            case .outside: 5
+            }
+        }
+        return nodes.filter { $0.kind != .outside }.sorted { a, b in
+            let ra = rank(a.kind), rb = rank(b.kind)
+            if ra != rb { return ra < rb }
+            return a.point.x < b.point.x
+        }
+    }
+
+    /// What VoiceOver says for a node: "Faro, town agent, Working, last sign of life 4 min ago, third pass live".
+    public static func spoken(_ node: Node, agent: NewsroomDashboard.Agent?, now: Date) -> String {
+        var parts: [String] = [node.label]
+        switch node.kind {
+        case .town: parts.append("town agent")
+        case .region: parts.append("region agent")
+        case .country: parts.append("country agent")
+        case .placeDesk, .desk: parts.append("desk " + node.id)
+        case .outside: parts.append("outside the newsroom")
+        }
+        if let agent {
+            parts.append(agent.status.rawValue)
+            if let sign = agent.lastSign(now: now) {
+                let minutes = max(0, Int(now.timeIntervalSince(sign) / 60))
+                parts.append(minutes < 1 ? "active now" : minutes < 120 ? "last sign of life \(minutes) min ago" : "last sign of life \(minutes / 60) h ago")
+            }
+            if let state = agent.state { parts.append(state) }
+        }
+        return parts.joined(separator: ", ")
+    }
+
     /// The node a handoff's name refers to: a role, an agent address, or someone outside.
     public static func nodeID(for name: String, roles: Set<String>) -> String {
         match(name, in: roles) ?? outsideID(name)
