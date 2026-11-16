@@ -343,3 +343,21 @@ struct TickerFilterTests {
         #expect(TickerFilter.asks.includes(ask) && !TickerFilter.asks.includes(desk))
     }
 }
+
+@Suite("Live summary")
+struct LiveSummaryTests {
+    @Test("Headline numbers come from the dashboard")
+    func summary() throws {
+        let d = try JSONDecoder().decode(NewsroomDashboard.self, from: Data(before.utf8))
+        let extras = try JSONDecoder().decode(LiveDashboardExtras.self, from: Data(before.utf8))
+        let s = LiveSummary.make(d, extras: extras, now: now)
+        #expect(s.agents == 2)
+        // faro updated 22:40 and abp's last sign 22:00 are both older than 30 minutes at 23:30.
+        #expect(s.activeNow == 0)
+        #expect(s.firedHours24h == 2)
+        #expect(s.handoffs24h == 3)
+        #expect(s.asksWaiting == 0)
+        let later = LiveSummary.make(d, extras: extras, now: ISO8601DateFormatter().date(from: "2026-11-15T22:50:00Z")!)
+        #expect(later.activeNow == 1)
+    }
+}

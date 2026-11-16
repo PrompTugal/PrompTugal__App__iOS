@@ -27,6 +27,9 @@ public struct NewsroomLiveView: View {
             ScreenHeader(kicker: "Command centre · live", title: "The newsroom in action",
                          summary: "Every agent behind PrompTugal.news, read every minute from the newsroom's own dashboard. A pulse is an agent that showed a sign of life in the last half hour; a spark, one you saw change. Read-only.")
             status
+            if let dashboard = model.dashboard {
+                summary(LiveSummary.make(dashboard, extras: model.extras, now: model.lastPoll ?? Date()))
+            }
             if model.dashboard != nil {
                 NewsroomBoard(model: model, selected: $selected, highlighted: highlighted, replay: replay)
                 NewsroomBoardLegend()
@@ -82,6 +85,17 @@ public struct NewsroomLiveView: View {
                     Text("site \(built)").font(.caption.monospaced()).foregroundStyle(Palette.muted)
                 }
             }
+        }
+    }
+
+    // MARK: Headline numbers
+
+    private func summary(_ s: LiveSummary) -> some View {
+        StatGrid(minimum: 120) {
+            StatTile(label: "Active now", value: "\(s.activeNow) of \(s.agents)", detail: "sign of life in 30 min", tone: s.activeNow > 0 ? .good : .neutral)
+            StatTile(label: "Agent-hours fired", value: "\(s.firedHours24h)", detail: "last 24 hours")
+            StatTile(label: "Handoffs", value: "\(s.handoffs24h)", detail: "last 24 hours")
+            StatTile(label: "Waiting on a person", value: "\(s.asksWaiting)", tone: s.asksWaiting > 0 ? .warn : .neutral)
         }
     }
 
