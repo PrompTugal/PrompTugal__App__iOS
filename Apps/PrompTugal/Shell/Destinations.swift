@@ -95,6 +95,9 @@ enum PublicDestinations {
         // How long a push takes to reach the site and TestFlight, and whether this device's build is the latest (PTLocal/Status).
         ShellDestination(id: "local.ci-status", title: String(localized: "CI status"), symbol: "gauge.with.dots.needle.67percent", group: "More",
                          summary: String(localized: "From push to production, read-only")) { AnyView(CIStatusView()) },
+        // Apple Intelligence on the device, persona mode and Near me over the by-place data (PTLocal/AI, appdev.ai@).
+        ShellDestination(id: "local.ask", title: String(localized: "Ask and summarise"), symbol: "sparkles", group: "More",
+                         summary: String(localized: "Apple Intelligence on this device, persona mode, near me")) { AnyView(AskAndSummariseView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",

@@ -1,3 +1,7 @@
 // Settings for the PrompTugal app target. Values set in the project file win over these.
 // Your own team and overrides, never committed: copy Config/Local.xcconfig.example.
 #include? "../../Config/Local.xcconfig"
+
+// PTLocal's on-device summaries and persona briefing use Apple's Foundation Models (iOS 26) while the app supports
+// iOS 18: weak-link it so the app still launches where the framework does not exist (as RiskMandate does).
+OTHER_LDFLAGS = $(inherited) -weak_framework FoundationModels

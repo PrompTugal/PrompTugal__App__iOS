@@ -29,10 +29,16 @@ struct PublicSettingsView: View {
                     Label("CI status", systemImage: "gauge.with.dots.needle.67percent")
                 }
                 .accessibilityIdentifier("pt.more.ci-status")
+                NavigationLink {
+                    AskAndSummariseView()
+                } label: {
+                    Label("Ask and summarise", systemImage: "sparkles")
+                }
+                .accessibilityIdentifier("pt.more.ask")
             } header: {
                 Text("PrompTugal.news by place")
             } footer: {
-                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. CI status: how long a push takes to reach the website and TestFlight, and whether this build is the latest. Read-only.")
+                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. CI status: how long a push takes to reach the website and TestFlight, and whether this build is the latest. Ask and summarise: Apple Intelligence on this device, persona mode and the town near you. Read-only.")
             }
             StandSection()
             Section {
