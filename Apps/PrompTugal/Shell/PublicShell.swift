@@ -90,7 +90,9 @@ struct PublicShell: View {
             tab = PublicDestinations.resolve(tab) ?? "places"
             if let id = PublicLaunch.destination { open(id) }
             // Never in UI tests or store screenshots (a launch destination); `-PTOnboarding` forces it in DEBUG.
-            if PublicLaunch.onboarding || (!onboardingSeen && PublicLaunch.destination == nil) { onboarding = true }
+            // The summit is over and the app is by place (Dinis, 16 Nov ~04:10: "we should not be asked that on the first
+            // load"): first launch lands on Places with no sheet. The summit onboarding stays reachable with -PTOnboarding (DEBUG).
+            if PublicLaunch.onboarding { onboarding = true }
         }
         .accessibilityIdentifier("public-shell")
     }
