@@ -361,3 +361,15 @@ struct LiveSummaryTests {
         #expect(later.activeNow == 1)
     }
 }
+
+@Suite("Newest stories")
+struct NewestStoriesTests {
+    @Test("A site's stories come newest first")
+    func newest() throws {
+        let site = try JSONDecoder().decode(PlaceSite.self, from: Data("""
+        {"id":"faro","name":"Faro","ai_news":[{"title":"Old","url":"https://e.org/1","date":"2026-09-01"},
+         {"title":"New","url":"https://e.org/2","date":"2026-11-06"},{"title":"Undated","url":"https://e.org/3"}]}
+        """.utf8))
+        #expect(StoryAgents.newest(site, limit: 2).map(\.title) == ["New", "Old"])
+    }
+}

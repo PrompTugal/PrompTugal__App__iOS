@@ -115,7 +115,7 @@ public struct NewsroomLiveView: View {
             }
             if let id = agent.placeID, let site = model.places[id], !site.aiNews.isEmpty {
                 Text("Its latest stories").font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
-                ForEach(Self.latest(site, limit: 3)) { story in
+                ForEach(StoryAgents.newest(site, limit: 3)) { story in
                     StoryRow(story: story, town: nil)
                 }
             }
@@ -130,11 +130,6 @@ public struct NewsroomLiveView: View {
         }
     }
 
-    /// A site's newest stories first.
-    static func latest(_ site: PlaceSite, limit: Int) -> [PlaceSite.News] {
-        let sorted = site.aiNews.sorted { a, b in (a.date ?? "") > (b.date ?? "") }
-        return Array(sorted.prefix(limit))
-    }
 
     // MARK: This story, these agents
 

@@ -18,6 +18,12 @@ public enum StoryAgents {
         public let note: String
     }
 
+    /// A site's newest stories first (by the date each story carries).
+    public static func newest(_ site: PlaceSite, limit: Int) -> [PlaceSite.News] {
+        let sorted = site.aiNews.sorted { a, b in (a.date ?? "") > (b.date ?? "") }
+        return Array(sorted.prefix(limit))
+    }
+
     public static func credits(for story: PlaceSite.News, places: [String: PlaceSite],
                                dashboard: NewsroomDashboard?) -> [Credit] {
         var out: [Credit] = []
