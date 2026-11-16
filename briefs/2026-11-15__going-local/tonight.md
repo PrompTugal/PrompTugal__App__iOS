@@ -34,3 +34,16 @@ Item 9 (the investment map) and the website-side dynamic data go to the PrompTug
 - Anything simulated carries the visible "Simulated" badge (`SimulatedBadge` in PTLocal). Never let a screen claim something real that is not.
 - Every story opens its source. Every screen says whether its data is live, this device's copy, or the built-in copy (`ProvenanceLabel`).
 - Green CI before `dev`: a push to `dev` that changes an app builds and uploads to TestFlight.
+
+## CI rule (00:35, Dinis: "builds must go fast, I need to test quickly")
+
+The shared macOS runners were flooded: about 30 `ios.yml` runs in an hour, each 25+ minutes, most cancelled by the next push. From now:
+
+- Workers push only to `work/<name>` (no CI there) and tell the conductor "ready at <sha>". No `night/*` pushes, no manual dispatches.
+- The conductor merges the ready work into `night/going-local` and runs **one** build an hour for everyone; green goes to `dev`.
+- ios.places@ pushes `night/ios-places` at most hourly.
+- devops.status@ measures where the 25 minutes go and cuts the night builds (only the apps whose paths changed, Debug, iPhone only, caching). Changing `apps.json` currently makes every branch build all four apps until it lands on `dev`.
+
+## Local conditions (00:35)
+
+From the storm incident's connectors: the app reads IPMA's open data directly (warnings for area FAR, the whole Algarve; daily forecasts for Faro 1080500, Loulé 1080800, Portimão 1081100, Sagres 1081505; station observations). The website team is asked for the local layer the app cannot get alone: per place, live signals (warnings, transport, council notices) with source and read time, and the dots connected to stories, organisations and events.
