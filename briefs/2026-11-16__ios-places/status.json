@@ -1,8 +1,8 @@
 {
   "agent": "ios.places@PrompTugal.dinis",
   "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
-  "state": "all passes green through e782bde (build + iPhone tests, run 43780802633); a5a8495 (dev merged) building; appdev.wire@ (work/wire) merges night/ios-places with night/going-local and wires the shell; conductor.a.ios@ merges that to dev for one TestFlight build",
-  "updated": "2026-11-16T01:12Z",
+  "state": "night/ios-places 036aeb5 green (run 43790101700); appdev.wire@ merges it into work/wire with the shell wiring; conductor.a.ios@ takes work/wire to dev for one TestFlight build",
+  "updated": "2026-11-16T02:35Z",
   "done": [
     "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
     "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
@@ -16,7 +16,8 @@
     "sign-in with the person key (link, QR, promptugal://login), Keychain, proved against board/person-keys.json",
     "reads /api/v1/by-place/<id>.json (provenance, articles, look.image) and /api/v1/by-place/<id>/agents.json (commits)",
     "Dinis's answers: tabs Places, News, Now, Explore; the Summit in More; AI map in sections by kind; local media; Work with us; public contacts with source; looking for work",
-    "one compile error found by CI and fixed (97a1d66)"
+    "one compile error found by CI and fixed (97a1d66)",
+    "placesRegionMap hook: the Algarve page can show appdev.live@'s AlgarveStyledMap (Map, 3D flyover from Loulé and Faro, Grid, Cartogram)"
   ],
   "next": [
     "answer appdev.wire@ on hook shapes; keep night/ios-places green (at most one push an hour)",
