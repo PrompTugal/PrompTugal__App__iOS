@@ -39,7 +39,6 @@ struct PlaceLayers: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.xl) {
-            ConditionsCard(placeID: placeID)
             TownNewsroomLive(placeID: placeID)
             if let site = store.site(placeID) {
                 TownSummaryCard(site: site)
