@@ -50,3 +50,17 @@ public struct SealedLane: Sendable, Hashable {
         return LaneCrypto.spki(fromPKCS1: pkcs1)
     }
 }
+
+extension SealedLane {
+    /// A lane from its published parts (a vault's `board/inbox.json`): the vault, its write-only append token, the
+    /// recipient's RSA public key (SPKI PEM) and, when published, that key's fingerprint, which must match. Only
+    /// dev.send.sgraph.ai is allowed as the endpoint.
+    public static func make(vault: String, token: String, publicKeyPEM: String, fingerprint: String?,
+                            endpoint: URL = URL(string: "https://dev.send.sgraph.ai")!) throws -> SealedLane {
+        var descriptor: [String: Any] = ["schema": "promptugal-lane/v1", "name": "Conductor", "vault": vault,
+                                         "endpoint": endpoint.absoluteString, "append_token": token, "public_key": publicKeyPEM]
+        if let fingerprint { descriptor["fingerprint"] = fingerprint }
+        let data = try JSONSerialization.data(withJSONObject: descriptor)
+        return SealedLane(address: try LaneAddress.parse(data))
+    }
+}
