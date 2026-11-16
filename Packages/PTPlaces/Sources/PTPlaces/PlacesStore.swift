@@ -29,6 +29,7 @@ public final class PlacesStore {
     public let dashboard = RemoteFeed<NewsroomDashboard>(name: "places.dashboard", url: PlacesStore.dashboardURL)
     public private(set) var files: [String: RemoteFeed<PlaceFile>] = [:]
     public private(set) var statuses: [String: RemoteFeed<AgentStatus>] = [:]
+    public private(set) var placeAgents: [String: RemoteFeed<PlaceAgentsFile>] = [:]
 
     public init() {
         index.freshFor = 300
@@ -92,16 +93,19 @@ public final class PlacesStore {
             return report
         }
         let fromDashboard = dashboard.value?.byRole ?? [:]
+        let fromPlace = placeAgents[place.id]?.value?.byRole ?? [:]
         let found = PlaceAgents.roles(for: place).reduce(into: [String: AgentStatus]()) { result, role in
-            if let status = fromDashboard[role] ?? statuses[role]?.value { result[role] = status }
+            if let status = fromPlace[role] ?? fromDashboard[role] ?? statuses[role]?.value { result[role] = status }
         }
         return found.isEmpty ? nil : PlaceAgents.report(place: place, statuses: found)
     }
 
     public func loadAgents(for place: PlaceSummary, force: Bool = false) async {
+        let own = placeAgentsFeed(place.id)
         async let report: Void = teamReport.load(force: force)
         async let board: Void = dashboard.load(force: force)
-        _ = await (report, board)
+        async let file: Void = own.load(force: force)
+        _ = await (report, board, file)
         if let served = teamReport.value, !served.agents(for: place.id).isEmpty { return }
         if let board = dashboard.value?.byRole, board["place.\(place.id)"] != nil { return }
         await withTaskGroup(of: Void.self) { group in
@@ -121,6 +125,15 @@ public final class PlacesStore {
     /// A place agent's record from the dashboard (state, updated), for the home's faces.
     public func placeAgentStatus(_ place: PlaceSummary) -> AgentStatus? {
         dashboard.value?.byRole["place.\(place.id)"]
+    }
+
+    /// api/v1/by-place/<id>/agents.json: the record of the agents behind one place, with their commits.
+    private func placeAgentsFeed(_ id: String) -> RemoteFeed<PlaceAgentsFile> {
+        if let feed = placeAgents[id] { return feed }
+        let feed = RemoteFeed<PlaceAgentsFile>(name: "places.\(id).agents", url: Self.site.appendingPathComponent("api/v1/by-place/\(id)/agents.json"))
+        feed.freshFor = 120
+        placeAgents[id] = feed
+        return feed
     }
 
     private func status(for role: String) -> RemoteFeed<AgentStatus> {

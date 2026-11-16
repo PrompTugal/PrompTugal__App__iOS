@@ -158,7 +158,7 @@ struct AgentCard: View {
             }
             let done = agent.done ?? []
             let next = agent.next ?? []
-            if !done.isEmpty || !next.isEmpty {
+            if !done.isEmpty || !next.isEmpty || !(agent.commits ?? []).isEmpty {
                 DisclosureGroup(isExpanded: $expanded) {
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(Array(done.enumerated()), id: \.offset) { _, line in
@@ -167,11 +167,18 @@ struct AgentCard: View {
                         ForEach(Array(next.enumerated()), id: \.offset) { _, line in
                             Label { Text(line).font(.caption) } icon: { Image(systemName: "arrow.right").foregroundStyle(accent) }
                         }
+                        ForEach(agent.commits ?? [], id: \.self) { commit in
+                            Link(destination: URL(string: commit.url) ?? PlacesStore.site) {
+                                Label { Text(commit.subject).font(.caption2).lineLimit(2) } icon: {
+                                    Image(systemName: "arrow.triangle.branch").foregroundStyle(Palette.muted)
+                                }
+                            }
+                        }
                     }
                     .foregroundStyle(Palette.ink)
                     .padding(.top, 4)
                 } label: {
-                    Text(String(localized: "\(done.count) done · \(next.count) next")).font(.caption.weight(.semibold)).foregroundStyle(accent)
+                    Text(String(localized: "\(done.count) done · \(next.count) next · \((agent.commits ?? []).count) commits")).font(.caption.weight(.semibold)).foregroundStyle(accent)
                 }
             }
         }

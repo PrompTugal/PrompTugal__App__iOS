@@ -98,7 +98,7 @@ struct PlaceAgentsTests {
     @Test("the roles read for a place: itself, its parent, then the shared team")
     func roles() {
         let roles = PlaceAgents.roles(for: loule)
-        #expect(Array(roles.prefix(3)) == ["place.loule", "place.algarve", "dev.places"])
+        #expect(Array(roles.prefix(3)) == ["place.loule", "place.algarve", "conductor"])
         #expect(roles.contains("ios.places"))
     }
 
@@ -390,5 +390,23 @@ struct ContactTests {
         let talent = try decode(MapEntry.self, #"{"name":"A","type":"person","looking_for_work":true}"#)
         #expect(talent.lookingForWork)
         #expect(PlaceKind.of(talent.type) == .talent)
+    }
+}
+
+@Suite("PTPlaces: the agents file per place")
+struct PlaceAgentsFileTests {
+    @Test("api/v1/by-place/<id>/agents.json decodes; roles come from the agent ids; commits ride along")
+    func file() throws {
+        let file = try decode(PlaceAgentsFile.self, """
+        {"place":"loule","count":2,"agents":[
+         {"agent":"place.loule@PrompTugal.dinis","role":"place","state":"live","updated":"2026-11-16T00:10Z","done":["a"],"next":[],"asks":[],
+          "commits":[{"hash":"abc123456","date":"2026-11-16T00:09:00Z","subject":"pass 4","url":"https://github.com/x/commit/abc"}]},
+         {"agent":"dev.places@PrompTugal.dinis","role":"shared","state":"steps live","updated":"2026-11-15T22:35Z"}]}
+        """)
+        #expect(file.byRole.keys.sorted() == ["dev.places", "place.loule"])
+        let loule = PlaceSummary(id: "loule", name: "Loulé", parent: "algarve")
+        let report = PlaceAgents.report(place: loule, statuses: file.byRole)
+        #expect(report.agents.first?.commits?.first?.subject == "pass 4")
+        #expect(report.agents.map(\.name) == ["place.loule", "dev.places"])
     }
 }

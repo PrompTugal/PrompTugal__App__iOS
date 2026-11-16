@@ -64,15 +64,16 @@ public struct ReportAgent: Codable, Sendable, Equatable, Hashable, Identifiable 
     /// What it has done, newest last (from status.json `done`; not in v1, harmless to add).
     public var done: [String]?
     public var next: [String]?
+    public var commits: [AgentCommit]?
 
     public init(id: String, name: String, kind: String = "session", role: String = "", status: String = "working",
                 doing: String = "", waitingFor: String? = nil, parent: String? = nil, lastActive: String? = nil,
                 lane: String? = nil, account: String? = nil, newsroom: String? = nil, newsroomRole: String? = nil,
-                policy: String? = nil, done: [String]? = nil, next: [String]? = nil) {
+                policy: String? = nil, done: [String]? = nil, next: [String]? = nil, commits: [AgentCommit]? = nil) {
         self.id = id; self.name = name; self.kind = kind; self.role = role; self.status = status; self.doing = doing
         self.waitingFor = waitingFor; self.parent = parent; self.lastActive = lastActive; self.lane = lane
         self.account = account; self.newsroom = newsroom; self.newsroomRole = newsroomRole; self.policy = policy
-        self.done = done; self.next = next
+        self.done = done; self.next = next; self.commits = commits
     }
 
     public init(from decoder: Decoder) throws {
@@ -93,6 +94,7 @@ public struct ReportAgent: Codable, Sendable, Equatable, Hashable, Identifiable 
         policy = c.string("policy")
         done = c.lenient([String].self, "done")
         next = c.lenient([String].self, "next")
+        commits = c.lenient([AgentCommit].self, "commits")
     }
 
     /// "place.loule" from "place.loule@PrompTugal.dinis".
@@ -168,6 +170,8 @@ public struct AgentStatus: Decodable, Sendable, Equatable {
     public var next: [String]
     public var asks: [String]
     public var debrief: String?
+    /// Its latest commits on this place (api/v1/by-place/<id>/agents.json only).
+    public var commits: [AgentCommit] = []
 
     public init(agent: String, focus: String = "", state: String = "", updated: String = "", done: [String] = [],
                 next: [String] = [], asks: [String] = [], debrief: String? = nil) {
@@ -187,17 +191,56 @@ public struct AgentStatus: Decodable, Sendable, Equatable {
         next = c.lenientArray("next")
         asks = c.lenientArray("asks")
         debrief = c.string("debrief")
+        commits = c.lenientArray("commits")
+    }
+}
+
+public struct AgentCommit: Codable, Sendable, Equatable, Hashable {
+    public var hash: String
+    public var date: String
+    public var subject: String
+    public var url: String
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: AnyKey.self)
+        hash = c.string("hash") ?? ""
+        date = c.string("date") ?? ""
+        subject = c.string("subject") ?? ""
+        url = c.string("url") ?? ""
+    }
+}
+
+/// api/v1/by-place/<id>/agents.json (dev.places@): the place's own agent, then the shared agents, from the record.
+/// Its `role` says place or shared, so each entry's role is taken from its agent id instead.
+public struct PlaceAgentsFile: Decodable, Sendable, Equatable {
+    public var place: String
+    public var agents: [AgentStatus]
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: AnyKey.self)
+        place = c.string("place") ?? ""
+        agents = (c.lenientArray("agents") as [AgentStatus]).map { status in
+            var status = status
+            status.role = status.agent.split(separator: "@").first.map(String.init) ?? status.agent
+            return status
+        }
+    }
+
+    public var byRole: [String: AgentStatus] {
+        Dictionary(agents.map { ($0.role, $0) }, uniquingKeysWith: { a, _ in a })
     }
 }
 
 /// Builds a conductor-report/v1 for one place from status files. Pure, so it is tested.
 public enum PlaceAgents {
     /// The by-place team that works on every place (their status files, where they exist).
-    public static let sharedRoles = ["dev.places", "designer.places", "viz.places", "data.places", "detective.places",
-                                     "ios.places", "ontologist", "abp"]
+    public static let sharedRoles = ["conductor", "dev.places", "designer.places", "viz.places", "data.places", "detective.places",
+                                     "ios.places", "datasci.places", "ontologist", "abp"]
 
     /// What each shared role does for a place, in a few words (from the briefs; shown beside the record).
     public static let roleLabels: [String: String] = [
+        "conductor": "starts and watches the agents",
+        "datasci.places": "serves the data and the API",
         "dev.places": "builds the page",
         "designer.places": "designs the look",
         "viz.places": "draws the newsroom",
@@ -238,7 +281,7 @@ public enum PlaceAgents {
                 id: status.agent, name: role, kind: "session", role: agentRole, status: statusWord(status),
                 doing: status.state, waitingFor: status.asks.first, parent: role == own ? parent.flatMap { statuses[$0]?.agent } : nil,
                 lastActive: status.updated, newsroom: role == own ? place.id : (role == parent ? place.parent : nil),
-                newsroomRole: newsroomRole, done: status.done, next: status.next))
+                newsroomRole: newsroomRole, done: status.done, next: status.next, commits: status.commits.isEmpty ? nil : status.commits))
         }
         let ownID = statuses[own]?.agent
         for agent in agents where agent.id != ownID {
