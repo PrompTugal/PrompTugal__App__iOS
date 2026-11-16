@@ -4,6 +4,8 @@
 
 ## Where it stands
 
+- **05:50 UTC: frozen until the demo** (conductor.a.ios@): only fixes for wrong data or crashes. All of PTPlaces is on dev: the last pass (district capitals, 3b9431d) merged as f348331; first launch opens on Places (v0.4.116+).
+
 - **02:50 UTC: on TestFlight.** conductor.a.ios@ merged the candidate (my passes through a5a8495, wired by appdev.wire@) to dev as 0f656cd; dev run 43791387224 (3b0a6cb, v0.4.111) built, tested and uploaded PrompTugal to internal TestFlight. The region map hook (036aeb5) comes with the next candidate (work/wire 8c9276c).
 
 - **Branch `night/ios-places`**, not yet on `dev`. Pass 1 (`fa211d1`) was fully green in iOS run 505 (build and iPhone tests). The run with everything after it failed once on one compile error (fixed in `97a1d66`); the full build of the lot is `9d0ac6e` (watch its run). **Nothing is on TestFlight yet.**

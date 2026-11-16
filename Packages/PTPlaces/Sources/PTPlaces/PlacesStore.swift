@@ -30,6 +30,16 @@ public final class PlacesStore {
     public private(set) var files: [String: RemoteFeed<PlaceFile>] = [:]
     public private(set) var statuses: [String: RemoteFeed<AgentStatus>] = [:]
     public private(set) var placeAgents: [String: RemoteFeed<PlaceAgentsFile>] = [:]
+    public private(set) var nows: [String: RemoteFeed<PlaceNow>] = [:]
+
+    /// api/v1/by-place/<id>/now.json: IPMA and flights, refreshed hourly on the site.
+    public func nowFeed(_ id: String) -> RemoteFeed<PlaceNow> {
+        if let feed = nows[id] { return feed }
+        let feed = RemoteFeed<PlaceNow>(name: "places.\(id).now", url: Self.site.appendingPathComponent("api/v1/by-place/\(id)/now.json"))
+        feed.freshFor = 600
+        nows[id] = feed
+        return feed
+    }
 
     public init() {
         index.freshFor = 300

@@ -32,6 +32,7 @@ public struct PlaceDetailView: View {
                 if let place {
                     hero(place)
                     VStack(alignment: .leading, spacing: Space.xl) {
+                        nowPanel(place)
                         mandate
                         talkRow(place)
                         if let accessory { accessory(id) }
@@ -84,11 +85,13 @@ public struct PlaceDetailView: View {
         }
         .refreshable {
             await store.loadPlace(id, force: true)
+            await store.nowFeed(id).load(force: true)
             if let place { await store.loadAgents(for: place, force: true) }
         }
         .task {
             if store.places.isEmpty { await store.load() }
             await store.loadPlace(id)
+            await store.nowFeed(id).load()
             if let place { await store.loadAgents(for: place) }
         }
         .navigationDestination(item: $opened) { route in PlaceDetailView(id: route.id) }
@@ -140,6 +143,15 @@ public struct PlaceDetailView: View {
         }
         .frame(height: wide ? 520 : 440)
         .clipped()
+    }
+
+    // MARK: Now (IPMA and flights, hourly)
+
+    @ViewBuilder private func nowPanel(_ place: PlaceSummary) -> some View {
+        if let now = store.nows[place.id]?.value, !now.isEmpty {
+            PlaceNowCard(now: now, placeName: place.name, accent: accent)
+                .padding(.top, Space.l)
+        }
     }
 
     // MARK: Talk to us
