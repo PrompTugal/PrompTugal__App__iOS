@@ -24,9 +24,14 @@ public struct AlgarveMapTown: Identifiable, Hashable, Sendable {
     /// When the town's agent last showed a sign of life, if known.
     public let agentLastSign: Date?
     public let agent: String?
+    /// What the town's agent says it is doing, in its own words.
+    public let agentLine: String?
+    /// The town's newest story headline.
+    public let latestStory: String?
 
     public init(id: String, name: String, latitude: Double, longitude: Double, accentHex: String?, live: Bool,
-                stories: Int, mapped: Int = 0, agentLastSign: Date? = nil, agent: String? = nil) {
+                stories: Int, mapped: Int = 0, agentLastSign: Date? = nil, agent: String? = nil,
+                agentLine: String? = nil, latestStory: String? = nil) {
         self.id = id
         self.name = name
         self.latitude = latitude
@@ -37,6 +42,8 @@ public struct AlgarveMapTown: Identifiable, Hashable, Sendable {
         self.mapped = mapped
         self.agentLastSign = agentLastSign
         self.agent = agent
+        self.agentLine = agentLine
+        self.latestStory = latestStory
     }
 
     public var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }
@@ -47,10 +54,12 @@ public struct AlgarveMapTown: Identifiable, Hashable, Sendable {
         PlaceDirectory.towns.map { info in
             let site = store.site(info.id)
             let agent = store.dashboard?.agent(forPlace: info.id)
+            let newest = site.map { StoryAgents.newest($0, limit: 1) }?.first
             return AlgarveMapTown(id: info.id, name: info.name, latitude: info.latitude, longitude: info.longitude,
                                   accentHex: site?.look?.accent, live: site?.isLive == true,
                                   stories: site?.aiNews.count ?? 0, mapped: site?.aiMap.count ?? 0,
-                                  agentLastSign: agent?.lastSign(now: now), agent: agent?.handle)
+                                  agentLastSign: agent?.lastSign(now: now), agent: agent?.handle,
+                                  agentLine: agent?.state, latestStory: newest?.title)
         }
     }
 }
@@ -180,6 +189,17 @@ struct AlgarveFlatStyle: View {
 
 // MARK: - 3D flight
 
+/// The flight's order: the case-study towns first (Loulé, then Faro), then the rest west to east.
+public enum AlgarveTour {
+    public static let featured = ["loule", "faro"]
+
+    public static func order(_ towns: [AlgarveMapTown], first: [String] = featured) -> [AlgarveMapTown] {
+        let lead = first.compactMap { id in towns.first { $0.id == id } }
+        let rest = towns.filter { !first.contains($0.id) }.sorted { $0.longitude < $1.longitude }
+        return lead + rest
+    }
+}
+
 /// The terrain in 3D (satellite imagery with realistic elevation), the camera pitched and flying from town to town,
 /// west to east, pausing over each with its agent's latest. Reduce Motion: no tour, step with the buttons.
 struct AlgarveFlightMap: View {
@@ -193,8 +213,8 @@ struct AlgarveFlightMap: View {
     static let overview = MapCamera(centerCoordinate: CLLocationCoordinate2D(latitude: 37.05, longitude: -8.15),
                                     distance: 140_000, heading: 0, pitch: 55)
 
-    /// West to east, as the coast runs.
-    private var tour: [AlgarveMapTown] { towns.sorted { $0.longitude < $1.longitude } }
+    /// The case studies first, then west to east as the coast runs.
+    private var tour: [AlgarveMapTown] { AlgarveTour.order(towns) }
 
     static func camera(for town: AlgarveMapTown, step: Int) -> MapCamera {
         // Look north over the town from the sea side, turning a little each stop so the hills move.
@@ -277,6 +297,14 @@ struct AlgarveFlightMap: View {
                     StatusChip(live: town.live)
                 }
                 Text("\(town.stories) stories · \(town.mapped) on the AI map").font(.caption.monospacedDigit())
+                if let story = town.latestStory {
+                    Label(story, systemImage: "newspaper")
+                        .font(.system(.footnote, design: .serif, weight: .semibold))
+                        .lineLimit(2)
+                }
+                if let line = town.agentLine {
+                    Text(line).font(.caption).italic().lineLimit(2).foregroundStyle(Palette.muted)
+                }
                 if let agent = town.agent {
                     HStack(spacing: 4) {
                         Text(agent).font(.caption2.monospaced())
@@ -289,6 +317,7 @@ struct AlgarveFlightMap: View {
             }
             .foregroundStyle(Palette.ink)
             .padding(Space.s)
+            .frame(maxWidth: 320, alignment: .leading)
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
         .buttonStyle(.plain)

@@ -224,7 +224,15 @@ struct NewsroomBoard: View {
                     .foregroundStyle(node.kind == .outside ? Palette.muted : Palette.ink)
                 var labelLayer = context
                 labelLayer.opacity = dim ? 0.55 : 1
-                labelLayer.draw(label, at: CGPoint(x: p.x, y: p.y + r + 2), anchor: .top)
+                // Towns in the upper half of their band take their name above, the rest below, so neighbours
+                // along the coast do not write over each other.
+                let band = NewsroomLayout.townBand
+                let above = node.kind == .town && node.point.y < band.midY
+                if above {
+                    labelLayer.draw(label, at: CGPoint(x: p.x, y: p.y - r - 2), anchor: .bottom)
+                } else {
+                    labelLayer.draw(label, at: CGPoint(x: p.x, y: p.y + r + 2), anchor: .top)
+                }
             }
         }
     }
@@ -237,7 +245,11 @@ struct NewsroomBoard: View {
     private func showsLabel(_ node: NewsroomLayout.Node, activity: Double) -> Bool {
         if selected == node.id || highlighted.contains(node.id) { return true }
         switch node.kind {
-        case .town, .region, .country, .outside, .placeDesk: return true
+        case .region, .country, .outside, .placeDesk: return true
+        case .town:
+            // On a phone 17 names do not fit side by side: name the live sites and the busy agents; tap for the rest.
+            let live = node.placeID.flatMap { model.places[$0]?.isLive } ?? false
+            return !compact || live || activity > 0.5
         case .desk: return !compact || activity > 0.05
         }
     }
