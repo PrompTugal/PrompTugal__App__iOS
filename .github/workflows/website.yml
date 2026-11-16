@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: read   # the latest iOS build panel reads the release workflow's runs and artifacts
+      actions: read   # the latest iOS build panel and the CI status page read runs, jobs and artifacts
     steps:
       - uses: actions/checkout@v4
         with:
@@ -107,8 +107,17 @@ jobs:
           done
           find "$RUNNER_TEMP/screens" -name '*.png' | sed 's|.*/||' | sort
 
+      - name: CI status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # The status page (admin/status.html) and ci-status.json: the latest runs and push-to-live times.
+        # Never fails the site: collect.py writes what it could read. The live copy is ci-status.yml's.
+        run: |
+          python3 scripts/ci-status/collect.py --out "$RUNNER_TEMP/ci-status.json" || echo '{"available": false}' > "$RUNNER_TEMP/ci-status.json"
+
       - name: Build
         env:
+          CI_STATUS_JSON: ${{ runner.temp }}/ci-status.json
           SITE_COMMIT: ${{ needs.release.outputs.sha || github.sha }}
           IOS_BUILD_JSON: ${{ runner.temp }}/ios-build.json
           SCREENS_DIR: ${{ runner.temp }}/screens

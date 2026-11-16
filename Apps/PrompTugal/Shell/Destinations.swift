@@ -92,6 +92,9 @@ enum PublicDestinations {
         // The reading meter: the same prices as promptugal.news, the history of charges, App Store top-ups.
         ShellDestination(id: "local.credit", title: String(localized: "Reading credit"), symbol: "sterlingsign.circle", group: "More",
                          summary: String(localized: "Your balance, what you read, top up")) { AnyView(LocalCreditView()) },
+        // How long a push takes to reach the site and TestFlight, and whether this device's build is the latest (PTLocal/Status).
+        ShellDestination(id: "local.ci-status", title: String(localized: "CI status"), symbol: "gauge.with.dots.needle.67percent", group: "More",
+                         summary: String(localized: "From push to production, read-only")) { AnyView(CIStatusView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",
