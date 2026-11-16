@@ -2,6 +2,7 @@ import PTAgenda
 import PTCore
 import PTDeck
 import PTExplore
+import PTLocal
 import PTNews
 import PTWeb
 import SwiftUI
@@ -85,6 +86,9 @@ enum PublicDestinations {
     // MARK: More (the iPad sidebar; on iPhone a sheet from the round button on every tab)
 
     static let more: [ShellDestination] = [
+        // The newsroom behind PrompTugal.news by place (read-only). The Places reader itself is PTPlaces (ios.places@).
+        ShellDestination(id: "local.newsroom", title: String(localized: "Newsroom"), symbol: "person.3.sequence", group: "More",
+                         summary: String(localized: "The agents behind the sites, read-only")) { AnyView(NewsroomCentreView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",

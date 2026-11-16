@@ -1,0 +1,245 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "olhao",
+  "name": "Olhão",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.olhao@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Olhão: AI and technology in Olhão, a fishing port and Ria Formosa town where the sea, aquaculture and biotech lead, and what reaches Olhão from the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "Olhão is a fishing port on the Ria Formosa, and its technology story runs through the sea. The fish-farming pilot station of IPMA, the collaborative laboratory S2AQUAcoLAB and the aquafeed company SPAROS sit in the municipality, and a Blue Hub for the sea economy is being built in the fishing port. The AI path is real but narrow: precision nutrition and digital aquaculture, plus a council that has talked of AI for waste routes.",
+    "sources": [
+      {
+        "title": "IPMA: Estação Piloto de Piscicultura de Olhão",
+        "url": "https://www.ipma.pt/pt/pescas/eppo",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Barlavento: S2AQUAcoLAB faz cinco anos com ciência europeia e futuro em aberto",
+        "url": "https://www.barlavento.pt/?p=393061",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Barlavento: Olhão dirige secção de municípios Cidades Inteligentes da ANMP",
+        "url": "https://www.barlavento.pt/?p=251038",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#0B5E7A",
+    "landmark": "The Mercados de Olhão, the red brick market halls on the Ria Formosa waterfront",
+    "motif": "tidal blue, fish scales, the white cubist rooftops and the boats of the Ria"
+  },
+  "ai_news": [
+    {
+      "title": "DigiATLA kicks off in Olhão: seven partners start work on digital aquaculture",
+      "summary": "Partners from Portugal, Spain, France and Ireland met at the S2AQUA facilities in Olhão on 3 and 4 February 2026 and visited the fish-farming pilot station. The project plans digital training, an online knowledge repository and pilot demonstrations of Industry 4.0 tools.",
+      "date": "2026-02-09",
+      "publisher": "Interreg Atlantic Area programme",
+      "url": "https://www.atlanticarea.eu/news-events/news/digiatla-project-holds-kick-off-meeting-in-olhao-portugal",
+      "read_on": "2026-11-15",
+      "ai_path": "Digital and Industry 4.0 tools for fish farms, led from Olhão with SPAROS (which runs its own AI project) as a partner. Neither the programme nor Barlavento mentions AI.",
+      "steps": 2
+    },
+    {
+      "title": "Olhão's aquaculture lab leads a EUR 2.1 million digital project and awaits its new Blue Hub home",
+      "summary": "S2AQUAcoLAB marked five years in 2026. It leads DigiATLA, a European project on digital skills and precision nutrition in Atlantic aquaculture, and its new headquarters is under construction at the Hub Azul in Olhão's fishing port.",
+      "date": "2026-02-25",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=393061",
+      "read_on": "2026-11-15",
+      "ai_path": "The lab lists AI among its research lines (2022 report), and DigiATLA brings Industry 4.0 and precision nutrition to fish farms, the same ground where SPAROS is adding AI. The article itself does not mention AI.",
+      "steps": 2
+    },
+    {
+      "title": "Conference at Olhão's library asks what AI means for health, economy and education",
+      "summary": "The Rotary Club of Olhão held a free conference on AI and society at the Mariano Gago municipal library, with the council's support and a panel for each of the three areas.",
+      "date": "2024-04-04",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=344439",
+      "read_on": "2026-11-15",
+      "ai_path": "An event about AI itself, held in Olhão.",
+      "steps": 0
+    },
+    {
+      "title": "Olhão joins the national smart-cities section and says it is working on AI for waste routes",
+      "summary": "The council joined the leadership of the municipal association's smart-cities section in January 2023 and said it was working on smart parking and on using AI to optimise urban waste collection routes.",
+      "date": "2023-01-19",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=251038",
+      "read_on": "2026-11-15",
+      "ai_path": "A council stating it uses AI to plan waste collection. A 2023 statement of intent: we found no later report on its progress.",
+      "steps": 0
+    },
+    {
+      "title": "Altice Labs opens its Algarve hub in Olhão with an AI retina project already running",
+      "summary": "The Olhão hub opened in May 2021 with projects under way alongside the University of Algarve, among them AI algorithms for retina study.",
+      "date": "2021-05-12",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=273323",
+      "read_on": "2026-11-15",
+      "ai_path": "An R&D hub in Olhão reporting AI work directly. Older than 2025: we found no later update.",
+      "steps": 0
+    }
+  ],
+  "sources": [
+    {
+      "name": "Barlavento",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Sul Informação",
+      "url": "https://www.sulinformacao.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Postal do Algarve",
+      "url": "https://postal.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Câmara Municipal de Olhão",
+      "url": "https://www.cm-olhao.pt/",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "IPMA, Estação Piloto de Piscicultura de Olhão",
+      "url": "https://www.ipma.pt/pt/pescas/eppo",
+      "kind": "other",
+      "feed": null
+    },
+    {
+      "name": "Interreg Atlantic Area: DigiATLA",
+      "url": "https://www.atlanticarea.eu/discover-our-projects/approved-projects/digiatla",
+      "kind": "other",
+      "feed": null
+    },
+    {
+      "name": "PRR transparency portal",
+      "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/",
+      "kind": "other",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "SPAROS Lda",
+      "type": "company",
+      "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/03/C05-i14.01/2025.P27062/",
+      "what": "Aquafeed company in Olhão with a PRR-funded project, IA@SPAROS, to bring AI tools into feed production and into decisions on data, science and administration.",
+      "source_url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/03/C05-i14.01/2025.P27062/",
+      "read_on": "2026-11-15",
+      "ai_path": "Its own PRR project adds AI to production and decision support.",
+      "steps": 0
+    },
+    {
+      "name": "S2AQUAcoLAB",
+      "type": "organisation",
+      "url": "https://www.ipma.pt/pt/pescas/eppo/colab/",
+      "what": "Collaborative laboratory for sustainable and smart aquaculture, founded in 2021 and based in Olhão. It lists technological developments, from robotics to AI, among its research lines, and leads DigiATLA.",
+      "source_url": "https://www.barlavento.pt/s2aquacolab-quer-elevar-a-aquacultura-nacional-a-um-novo-nivel/",
+      "read_on": "2026-11-15",
+      "ai_path": "Names AI as a research line (2022 report); leads digital aquaculture work.",
+      "steps": 1
+    },
+    {
+      "name": "DigiATLA",
+      "type": "organisation",
+      "url": "https://www.atlanticarea.eu/discover-our-projects/approved-projects/digiatla",
+      "what": "Interreg Atlantic Area project (1 January 2026 to 30 June 2028, about EUR 2.13 million) on digital capacity and precision nutrition in aquaculture, led by S2AQUA with SPAROS, IPMA and universities in Vigo, Galway and France.",
+      "source_url": "https://www.atlanticarea.eu/discover-our-projects/approved-projects/digiatla",
+      "read_on": "2026-11-15",
+      "ai_path": "Industry 4.0 and precision nutrition in fish farming, with SPAROS (AI project of its own) as a partner. The official page does not mention AI.",
+      "steps": 2
+    },
+    {
+      "name": "IPMA, Estação Piloto de Piscicultura de Olhão (EPPO)",
+      "type": "institution",
+      "url": "https://www.ipma.pt/pt/pescas/eppo",
+      "what": "National pilot fish-farming station at Marim in the Ria Formosa Natural Park, for research, pilot-scale demonstration and technology transfer to industry.",
+      "source_url": "https://www.ipma.pt/pt/pescas/eppo",
+      "read_on": "2026-11-15",
+      "ai_path": "Hosts the lab where AI and digital aquaculture research is tested. Its page mentions no AI.",
+      "steps": 2
+    },
+    {
+      "name": "Altice Labs, Olhão hub",
+      "type": "company",
+      "url": "https://www.barlavento.pt/?p=273323",
+      "what": "Altice Labs opened its Algarve hub in Olhão on 12 May 2021. Projects were already running, some with the University of Algarve, including AI algorithms for studying the retina.",
+      "source_url": "https://www.barlavento.pt/?p=273323",
+      "read_on": "2026-11-15",
+      "ai_path": "Reported AI work on retina images with the University of Algarve (2021 report).",
+      "steps": 0
+    },
+    {
+      "name": "Câmara Municipal de Olhão",
+      "type": "public body",
+      "url": "https://www.barlavento.pt/?p=251038",
+      "what": "Council that said in 2023 it was working on AI-optimised waste routes and smart parking, and in 2026 launched the digital commerce project Olhão com Alma.",
+      "source_url": "https://www.barlavento.pt/?p=251038",
+      "read_on": "2026-11-15",
+      "ai_path": "Stated use of AI for waste collection routes (2023).",
+      "steps": 0
+    }
+  ],
+  "extras": [
+    {
+      "label": "Olhão com Alma",
+      "value": "Digital commerce project presented on 15 April 2026: local marketplace, merchant tools, smart lockers, parking support. The article does not mention AI.",
+      "source_url": "https://www.barlavento.pt/olhao-com-alma-digitalizacao-comercio-local/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Blue Hub (Hub Azul) of Olhão",
+      "value": "PRR-funded sea-economy centre being built in the fishing port, by a consortium of the council, University of Algarve, IPMA, Docapesca and S2AQUAcoLAB.",
+      "source_url": "https://www.barlavento.pt/?p=389394",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Fishing port tender",
+      "value": "Docapesca launched a EUR 707,000 tender in January 2026 to rehabilitate the port's quay bridges.",
+      "source_url": "https://www.barlavento.pt/municipio-saud-investimento-docapesca-porto-pesca-olhao/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Iberian Technology Summit",
+      "value": "First edition held in Olhão on 28 to 30 April 2023, with about 400 participants. No later edition found.",
+      "source_url": "https://www.barlavento.pt/olhao-estreou-primeira-iberian-technology-summit/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Startup Olhão and ANJE Hub",
+      "value": "The council and ANJE signed a three-year protocol in June 2026 to launch a Startup Olhão project and an ANJE Hub, with the sea economy as a target sector. The article does not mention technology or AI.",
+      "source_url": "https://www.barlavento.pt/olhao-anje-criar-startup-hub-empresarial/",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.olhao-promptugal",
+    "signed_by": "place.olhao@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No dated local AI news from 2025 or 2026 yet: the newest items are about digital aquaculture, not AI by name. To look for: council press releases, S2AQUAcoLAB and SPAROS announcements.",
+    "Postal do Algarve blocks bots and the council site (cm-olhao.pt) showed only a loading screen, so neither was read. No RSS feeds found.",
+    "No upcoming AI events found in Olhão; the council's agenda and the Blue Hub's opening should be checked.",
+    "Whether the Blue Hub opened as planned in June 2026 is not confirmed by any source we found.",
+    "Altice Labs Olhão: confirmed as of 2021 only; no current update found on its AI work.",
+    "A Startup Olhão scheme and an ANJE Hub are planned (June 2026): once they publish members or programmes, any AI startups there belong on the map."
+  ],
+  "voice": {
+    "lede": "Olhão, where the fish are smarter than the brochures and the algorithms are still learning to gut a sardine.",
+    "mandate": "PrompTugal.news Olhão: pá, here we follow the AI and tech of the Ria Formosa town, from the fish farms to the council, and whatever sails in from the Algarve, Portugal and the world. Independent, and every fact has its source, ó pá.",
+    "gravity": "Olhão is a fishing port on the Ria Formosa, and its tech goes through the sea. The fish-farming station, the S2AQUAcoLAB lab and the feed company SPAROS are here, and a Blue Hub is going up in the port. The AI path is narrow but real: precision nutrition for fish, plus a council that once talked of AI for the bin lorries.",
+    "gaps_intro": "What we still did not find, mesmo a sério:"
+  }
+}

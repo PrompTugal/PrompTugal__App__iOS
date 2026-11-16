@@ -1,0 +1,196 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "lagoa",
+  "name": "Lagoa",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.lagoa@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Lagoa: AI and technology in Lagoa, a tourism, wine and congress municipality whose AI work so far comes from its council and its parishes, and what reaches Lagoa from the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "Lagoa lives on tourism, with wine (a Lagoa DOC), a fishing past in Ferragudo, Carvoeiro and Benagil, and a growing business of congresses and events. Its AI is public-sector first: the council runs a Smart City portal and an IT team that has been working on AI with data-protection and processing limits in mind, and one parish has put an AI assistant on its website. No AI company headquartered in the municipality has turned up in public sources yet.",
+    "sources": [
+      {
+        "title": "Lagoa, Algarve (Wikipedia): economy, parishes, venues",
+        "url": "https://en.wikipedia.org/wiki/Lagoa,_Algarve",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Lagoa council news feed: congress hosting, wine tourism forum, congress centre regulation",
+        "url": "https://www.cm-lagoa.pt/pages/321.rss",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "CCDR Algarve: report of the Digitalisation and ICT innovation platform meeting (28 February 2025)",
+        "url": "https://www.ccdr-alg.pt/site/sites/default/files/inline-files/20250722_relat%C3%B3rio%20pic%20digitaliza%C3%A7%C3%A3o%20%26%20tic%2028-02-2025.pdf",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#9A4A12",
+    "landmark": "The Benagil sea cave with its open roof",
+    "motif": "ochre cliffs, sea caves, vines and whitewashed Ferragudo"
+  },
+  "ai_news": [
+    {
+      "title": "A student's AI model predicts air quality for Lagoa's council",
+      "summary": "A student from the Instituto Politécnico de Beja built a machine learning prototype during an internship with the council. It combines data from 10 municipal monitoring stations with historical weather data to predict European Air Quality Index classes. The council says it supports its environmental monitoring and smart city strategy, and the teachers plan a scientific paper with Lagoa as partner.",
+      "date": "2025-12-05",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/estudante-prototipo-ia-qualidade-ar-lagoa/",
+      "read_on": "2026-11-15",
+      "ai_path": "The prototype is itself an AI model (machine learning) used by a municipality.",
+      "steps": 0
+    },
+    {
+      "title": "Ferragudo's parish council gives its website an AI assistant called Ferrukas",
+      "summary": "Alongside a new official app, the Ferragudo parish council added an AI virtual assistant to its website. It answers common questions, helps people find documents and points them to services. The article does not say who built it.",
+      "date": "2025-05-28",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/ferragudo-reforca-presenca-digital-e-lanca-aplicacao-movel/",
+      "read_on": "2026-11-15",
+      "ai_path": "A public body in Lagoa runs an AI assistant for citizens.",
+      "steps": 0
+    },
+    {
+      "title": "Lagoa hosts the pilot of an AI tool that picks sites for recycling points",
+      "summary": "The Algarve waste operator ALGAR built the tool with the start-up NILG.AI, which weighs factors such as population density and accessibility. The pilot runs in Lagoa under a Sociedade Ponto Verde programme. ALGAR reports 14 candidate sites found in four hours and the decision time falling from 12 days to 2.",
+      "date": "2025-05-20",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=373304",
+      "read_on": "2026-11-15",
+      "ai_path": "An AI site-selection tool is piloted in the municipality of Lagoa.",
+      "steps": 0
+    },
+    {
+      "title": "A Lagoa council IT lead put an AI model for Algarve councils on the regional agenda",
+      "summary": "At a CCDR Algarve innovation meeting on digitalisation and ICT, the coordinator of SmartCity:Lagoa described the limits of bringing AI into local government: processing capacity, data protection law, offline data handling and the need for a data centre. The programme also lists a talk on a large language model solution for the Algarve's municipalities.",
+      "date": "2025-02-28",
+      "publisher": "CCDR Algarve",
+      "url": "https://www.ccdr-alg.pt/site/sites/default/files/inline-files/20250722_relat%C3%B3rio%20pic%20digitaliza%C3%A7%C3%A3o%20%26%20tic%2028-02-2025.pdf",
+      "read_on": "2026-11-15",
+      "ai_path": "A Lagoa municipal team presents AI and large language model work for local government.",
+      "steps": 0
+    }
+  ],
+  "sources": [
+    {
+      "name": "Município de Lagoa, news",
+      "url": "https://www.cm-lagoa.pt/comunicacao/noticias",
+      "kind": "council",
+      "feed": "https://www.cm-lagoa.pt/pages/321.rss"
+    },
+    {
+      "name": "Município de Lagoa, events",
+      "url": "https://www.cm-lagoa.pt/comunicacao/eventos",
+      "kind": "council",
+      "feed": "https://www.cm-lagoa.pt/pages/322.rss"
+    },
+    {
+      "name": "Smart City Lagoa portal",
+      "url": "https://smartcity.cm-lagoa.pt/v2/portal",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Barlavento, Lagoa section",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Sul Informação",
+      "url": "https://www.sulinformacao.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "CCDR Algarve, innovation platform (EREI Algarve)",
+      "url": "https://www.ccdr-alg.pt/",
+      "kind": "other",
+      "feed": null
+    }
+  ],
+  "events": [
+    {
+      "title": "Encontro Anual de Boas Práticas de Sustentabilidade do Município de Lagoa 2026",
+      "date": "2026-11-25",
+      "url": "https://www.cm-lagoa.pt/municipio/camara-municipal/apoio-ao-executivo/calendario-das-reunioes-de-camara/evento-3/encontro-anual-de-boas-praticas-de-sustentabilidade-do-municipio-de-lagoa-2026",
+      "read_on": "2026-11-15",
+      "ai_path": null
+    }
+  ],
+  "ai_map": [
+    {
+      "name": "Município de Lagoa, SmartCity:Lagoa",
+      "type": "public body",
+      "url": "https://smartcity.cm-lagoa.pt/v2/portal",
+      "what": "The council runs a Smart City portal and an AI air quality prototype built with a polytechnic student, and its IT coordinator has spoken publicly about AI limits in local government.",
+      "source_url": "https://www.barlavento.pt/estudante-prototipo-ia-qualidade-ar-lagoa/",
+      "read_on": "2026-11-15",
+      "ai_path": "Uses an AI model for air quality forecasts.",
+      "steps": 0
+    },
+    {
+      "name": "Junta de Freguesia de Ferragudo",
+      "type": "public body",
+      "url": "https://www.barlavento.pt/ferragudo-reforca-presenca-digital-e-lanca-aplicacao-movel/",
+      "what": "The parish council runs Ferrukas, an AI virtual assistant on its website, and an official app. A PRR-funded digital neighbourhood project is under way in the village.",
+      "source_url": "https://www.barlavento.pt/ferragudo-reforca-presenca-digital-e-lanca-aplicacao-movel/",
+      "read_on": "2026-11-15",
+      "ai_path": "Operates an AI assistant for citizens.",
+      "steps": 0
+    },
+    {
+      "name": "Instituto Politécnico de Beja, partner of the Lagoa air quality work",
+      "type": "institution",
+      "url": "https://www.barlavento.pt/estudante-prototipo-ia-qualidade-ar-lagoa/",
+      "what": "Based in Beja, not in Lagoa: listed because its teachers plan a scientific paper with Lagoa council as institutional partner.",
+      "source_url": "https://www.barlavento.pt/estudante-prototipo-ia-qualidade-ar-lagoa/",
+      "read_on": "2026-11-15",
+      "ai_path": "Supervised the AI prototype and plans to publish it with Lagoa as partner.",
+      "steps": 1
+    }
+  ],
+  "extras": [
+    {
+      "label": "Area",
+      "value": "88.25 km2, four parishes (Estômbar e Parchal, Ferragudo, Lagoa e Carvoeiro, Porches)",
+      "source_url": "https://en.wikipedia.org/wiki/Lagoa,_Algarve",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Population",
+      "value": "22,975 at the 2011 census (the latest figure we have read)",
+      "source_url": "https://en.wikipedia.org/wiki/Lagoa,_Algarve",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Congress centre",
+      "value": "The council started the procedure for a draft regulation of the Centro de Congressos de Lagoa on 3 November 2026 (notice of 9 November)",
+      "source_url": "https://www.cm-lagoa.pt/noticia/edital-n-149-2026-projeto-de-regulamento-do-centro-de-congressos-de-lagoa",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.lagoa-promptugal",
+    "signed_by": "place.lagoa@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI company, startup or research group headquartered in Lagoa has turned up in public sources. Searches by parish (Carvoeiro, Ferragudo, Porches, Estômbar, Parchal) found none. Sources to look for next: the Portuguese company registers by municipality code, the Balcão do Empreendedor, and LinkedIn company pages.",
+    "No Lagoa AI news dated 2026 has been found yet. The newest item is from December 2025.",
+    "Lagoa's council news feed carries no AI items at all in its latest 25 entries (up to 13 November 2026): the council's own AI work is reported by regional press, not by the council.",
+    "Two Lagoa stories fail the PrompTugal test as written and stay out: the City as a Platform innovation prize (March 2025, sensors and data, AI not mentioned) and the Ferragudo augmented reality portal (April 2026, AI not mentioned).",
+    "Left out as not AI: the council's WhatsApp channel for residents and visitors (Barlavento, 28 July 2026), which is part of the council's digital transformation strategy but where no AI or chatbot is mentioned. Search results also mix in AI courses held in Lagoa on the island of São Miguel in the Azores, a different municipality that we do not cover.",
+    "Postal do Algarve could not be read (it shows a bot check), so its Lagoa coverage is missing. Sul Informação refused automated reads. The date of the CCDR report is the meeting date, the report itself was published later in 2025.",
+    "The talk on a large language model solution for the Algarve's municipalities is only a title in a programme: we found no later report of it being built or used."
+  ],
+  "voice": {
+    "lede": "Ó pá, Lagoa: sun, wine, a sea cave with a hole in its roof, and now a council that asks the robots about the air.",
+    "mandate": "PrompTugal.news Lagoa: AI and technology in Lagoa, the land of tourists, wine and congresses, where the council and the parishes got to the robots before the companies did, and what reaches us from the Algarve, Portugal and the world. Independent, and every fact has its source, pois.",
+    "gravity": "Lagoa lives on tourism, with wine (a Lagoa DOC), a fishing past in Ferragudo, Carvoeiro and Benagil, and a growing business of congresses and events. Its AI is public-sector first: the council runs a Smart City portal and an IT team that has been working on AI with data-protection and processing limits in mind, and one parish has put an AI assistant on its website. No AI company headquartered in the municipality has turned up in public sources yet, so if you are one, ó pá, come over.",
+    "gaps_intro": "Here is what we could not find, and yes, we looked behind the fishing boats too."
+  }
+}

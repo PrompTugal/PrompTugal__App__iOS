@@ -1,0 +1,334 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "portimao",
+  "name": "Portimão",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.portimao@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Portimão: AI and technology in Portimão, a council and a water company putting AI to work in public services, a smart-city incubator and a private higher-education institute, and what reaches Portimão from the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "On the public record, Portimão's AI centre of gravity is its own public sector. The council is rolling out an AI-checked online urban-licensing platform and has a digital-transformation grant that lists AI among its areas, and the municipal water company EMARP is using AI acoustic loggers to find leaks. Around that sit a smart-city incubator at the Autódromo Internacional do Algarve, the ISMAT higher-education institute with an AI course unit, and a steady run of local AI talks, books and seminars.",
+    "sources": [
+      {
+        "title": "Portimão usa inteligência artificial para agilizar urbanismo (Barlavento, 3 July 2026)",
+        "url": "https://www.barlavento.pt/portimao-inteligencia-artificial-urbanismo/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "EMARP investe na deteção e reparação de fugas (Barlavento, 21 August 2025)",
+        "url": "https://www.barlavento.pt/emarp-investe-na-detecao-e-reparacao-de-fugas-de-agua-na-rede-publica-de-portimao/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "StartUP Portimão assinala 5º aniversário (Barlavento, 12 August 2022)",
+        "url": "https://www.barlavento.pt/startup-portimao-assinala-5o-aniversario-com-olhos-postos-no-futuro/",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#1A5276",
+    "landmark": "Praia da Rocha",
+    "motif": "the Arade river, sardines on the grill, golden cliffs and a riverside that never quite sleeps"
+  },
+  "ai_news": [
+    {
+      "title": "Portimão hosts its first tourism-and-computing conference, with AI on the programme",
+      "summary": "The first TMCT conference met in Portimão in early November (Barlavento gives 4 to 6 November, O Algarve 5 to 7 November), organised with the council and the local tourism association, with Algarve Evolution, Zoomarine Algarve, Parkalgar and the hospitality school engaged to link it to regional stakeholders. Sessions covered AI in research, education and academic publishing, and an editors' summit looked at AI and research integrity.",
+      "date": "2026-11-10",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/tmct-2026-portimao/",
+      "read_on": "2026-11-15",
+      "ai_path": "A tourism-technology conference whose sessions are partly about AI, with Algarve Evolution among the stakeholders it engaged.",
+      "steps": 1
+    },
+    {
+      "title": "Municipal communication seminar in Portimão is all about AI",
+      "summary": "The 35th International Seminar on Municipal Communication ran at the TEMPO municipal theatre on 29 and 30 October, organised by OmniSinal with the council, on communication challenges in the age of AI, including disinformation and crisis communication.",
+      "date": "2026-10-19",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/portimao-seminario-inteligencia-artificial-comunicacao-municipal/",
+      "read_on": "2026-11-15",
+      "ai_path": "The seminar's theme is AI and its effect on local government communication.",
+      "steps": 0
+    },
+    {
+      "title": "AI and sensors turn Portimão's riverside into an interactive light show",
+      "summary": "At the Noitada Portimão festival on 24 and 25 July, two installations called Magic Wall and Universos Paralelos used AI and real-time motion sensors so visitors could interact with the art.",
+      "date": "2026-07-23",
+      "publisher": "Marketeer",
+      "url": "https://marketeer.sapo.pt/luz-ia-e-arte-digital-vem-ai-um-festival-que-vai-transformar-portimao-numa-experiencia-imersiva/",
+      "read_on": "2026-11-15",
+      "ai_path": "AI is the technology inside the festival's interactive installations.",
+      "steps": 1
+    },
+    {
+      "title": "Portimão council puts AI into online building licensing",
+      "summary": "The council is rolling out a digital urban-management platform whose AI module checks documents at the moment of submission and holds incomplete files. The council says about seven in ten dispatches from its case-handling section ask for corrected documents, and it receives roughly 5,000 licensing requests a year. Staff training began in July with full operation expected in the following months.",
+      "date": "2026-07-03",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/portimao-inteligencia-artificial-urbanismo/",
+      "read_on": "2026-11-15",
+      "ai_path": "The council itself is deploying AI inside a public service.",
+      "steps": 0
+    },
+    {
+      "title": "Portimão entrepreneurs meet to talk leadership, innovation and AI",
+      "summary": "The Future Business Summit on 19 June at Casa Manuel Teixeira Gomes, promoted by StartUP Portimão and the council's business incubator, included a panel on the human factor in the age of AI, covering digital literacy, cybersecurity and AI use in companies.",
+      "date": "2026-06-09",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/empreendedores-future-business-summit-portimao/",
+      "read_on": "2026-11-15",
+      "ai_path": "A local business event with a dedicated AI panel.",
+      "steps": 0
+    },
+    {
+      "title": "Council wins about 938,000 euros to modernise digital services",
+      "summary": "Portimão's application under call ALGARVE-2025-13 was approved, worth about 938,717 euros in total investment. It covers municipal technology infrastructure, platform security, Wi-Fi management and automation of administrative processes. The article lists AI among the project areas but gives no detail on how it will be used.",
+      "date": "2026-03-04",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/portimao-candidatura-transformacao-digital-servicos/",
+      "read_on": "2026-11-15",
+      "ai_path": "A council digital-transformation grant that names AI as one of its project areas.",
+      "steps": 1
+    },
+    {
+      "title": "Portimão presents a practical book on using AI at work",
+      "summary": "The book IA como Copiloto, a 180-page guide on using generative AI tools in everyday work, was presented on 20 February at the auditorium of the Escola de Hotelaria e Turismo de Portimão, with Territórios Criativos moderating a debate called AI: adapt or fall behind.",
+      "date": "2026-02-12",
+      "publisher": "Algarve Primeiro",
+      "url": "https://www.algarveprimeiro.com/d/livro-que-desvenda-utilidades-da-inteligencia-artificial-apresentado-dia-20-em-portimao/65325-1",
+      "read_on": "2026-11-15",
+      "ai_path": "A local launch and debate about using generative AI in the workplace.",
+      "steps": 0
+    },
+    {
+      "title": "Portimão's water company uses AI sensors to hunt leaks",
+      "summary": "EMARP, the municipal water and waste company, bought 20 acoustic loggers from Tecnilab that use AI to monitor the network and send daily alerts on probable leaks, starting at Urbanização Monte Canelas in Mexilhoeira Grande. A separate campaign by B.Efficient covers 130 km of mains. Both are funded by the Fundo Ambiental.",
+      "date": "2025-08-21",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/emarp-investe-na-detecao-e-reparacao-de-fugas-de-agua-na-rede-publica-de-portimao/",
+      "read_on": "2026-11-15",
+      "ai_path": "A municipal utility has bought AI-driven monitoring hardware.",
+      "steps": 0
+    }
+  ],
+  "sources": [
+    {
+      "name": "Barlavento: Portimão",
+      "url": "https://www.barlavento.pt/algarve/portimao/",
+      "kind": "press",
+      "feed": "https://www.barlavento.pt/feed/"
+    },
+    {
+      "name": "Viva Portimão (the city's news and events)",
+      "url": "https://vivaportimao.pt",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Câmara Municipal de Portimão",
+      "url": "https://www.cm-portimao.pt",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "ISMAT events calendar",
+      "url": "https://www.ismat.pt/en/events-calendar",
+      "kind": "university",
+      "feed": null
+    },
+    {
+      "name": "Algarve Primeiro",
+      "url": "https://www.algarveprimeiro.com",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Sul Informação (Portimão campus and council items)",
+      "url": "https://www.sulinformacao.pt",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "O Algarve",
+      "url": "https://oalgarve.pt",
+      "kind": "press",
+      "feed": null
+    }
+  ],
+  "events": [
+    {
+      "title": "ISMAT: workshop and demonstration on 3D garment scanning",
+      "date": "2026-12-02",
+      "url": "https://www.ismat.pt/en/events-calendar/ismat-hosts-workshop-and-demonstration-on-3d-garment-scanning",
+      "read_on": "2026-11-15",
+      "ai_path": null
+    },
+    {
+      "title": "Fabricating Futures: workshop by CITAI-FABXR ISMAT (3D printing, biofabrication, advanced manufacturing)",
+      "date": "2026-12-08 to 2026-12-09",
+      "url": "https://www.ismat.pt/en/events-calendar/fabricating-futures-workshop-by-citai-fabxr-ismat",
+      "read_on": "2026-11-15",
+      "ai_path": null
+    }
+  ],
+  "ai_map": [
+    {
+      "name": "Câmara Municipal de Portimão",
+      "type": "public body",
+      "url": "https://www.cm-portimao.pt",
+      "what": "Is rolling out an online urban-management platform with an AI module that checks licensing documents on submission, and has an approved digital-transformation grant that lists AI among its areas.",
+      "source_url": "https://www.barlavento.pt/portimao-inteligencia-artificial-urbanismo/",
+      "read_on": "2026-11-15",
+      "ai_path": "The council deploys AI in a public service.",
+      "steps": 0
+    },
+    {
+      "name": "EMARP (Portimão municipal water and waste company)",
+      "type": "public body",
+      "url": "https://emarp.pt",
+      "what": "Bought 20 AI acoustic loggers to monitor the water network for leaks and run two Fundo Ambiental leak-control projects.",
+      "source_url": "https://www.barlavento.pt/emarp-investe-na-detecao-e-reparacao-de-fugas-de-agua-na-rede-publica-de-portimao/",
+      "read_on": "2026-11-15",
+      "ai_path": "A utility using AI monitoring on its network.",
+      "steps": 0
+    },
+    {
+      "name": "Tecnilab",
+      "type": "company",
+      "what": "Supplier of the AI acoustic loggers bought by EMARP. Its own location is not stated in the source.",
+      "source_url": "https://www.barlavento.pt/emarp-investe-na-detecao-e-reparacao-de-fugas-de-agua-na-rede-publica-de-portimao/",
+      "read_on": "2026-11-15",
+      "ai_path": "Sells the AI-driven leak-monitoring hardware that Portimão's water company installed.",
+      "steps": 1
+    },
+    {
+      "name": "B.Efficient",
+      "type": "company",
+      "what": "Runs EMARP's active leak-detection campaign over 130 km of the public water network. Its location is not stated in the source.",
+      "source_url": "https://www.barlavento.pt/emarp-investe-na-detecao-e-reparacao-de-fugas-de-agua-na-rede-publica-de-portimao/",
+      "read_on": "2026-11-15",
+      "ai_path": "Works on the same programme as the AI loggers, so AI monitoring and field detection go together.",
+      "steps": 2
+    },
+    {
+      "name": "ISMAT, Instituto Superior Manuel Teixeira Gomes",
+      "type": "institution",
+      "url": "https://www.ismat.pt",
+      "what": "Higher-education institution in Portimão run by COFAC. Its computer engineering degree has a 6 ECTS Inteligência Artificial unit in the third year.",
+      "source_url": "https://www.ismat.pt/pt/licenciaturas/engenharia-informatica-pt",
+      "read_on": "2026-11-15",
+      "ai_path": "Teaches AI as part of a computing degree.",
+      "steps": 0
+    },
+    {
+      "name": "CITAI-FABXR ISMAT",
+      "type": "institution",
+      "what": "ISMAT research and making group that runs the Fabricating Futures workshop on 3D printing, biofabrication and advanced manufacturing.",
+      "source_url": "https://www.ismat.pt/en/events-calendar/fabricating-futures-workshop-by-citai-fabxr-ismat",
+      "read_on": "2026-11-15",
+      "ai_path": "An ISMAT technology lab, with AI links not yet confirmed in the sources read.",
+      "steps": 3
+    },
+    {
+      "name": "StartUP Portimão",
+      "type": "organisation",
+      "what": "Business incubator at the Autódromo Internacional do Algarve, opened in 2017 by the council, the Autódromo and Territórios Criativos, focused on smart cities, energy, mobility and tourism. In 2022 it reported 25 startups hosted. It promoted the June 2026 Future Business Summit with an AI panel.",
+      "source_url": "https://www.barlavento.pt/startup-portimao-assinala-5o-aniversario-com-olhos-postos-no-futuro/",
+      "read_on": "2026-11-15",
+      "ai_path": "A smart-city incubator whose community hosts AI discussions.",
+      "steps": 2
+    },
+    {
+      "name": "Portimão Cowork Space",
+      "type": "community",
+      "url": "https://cm-portimao.pt/portimao-cowork",
+      "what": "Council coworking space whose entrepreneurs were expected at the June 2026 Future Business Summit AI panel.",
+      "source_url": "https://www.barlavento.pt/empreendedores-future-business-summit-portimao/",
+      "read_on": "2026-11-15",
+      "ai_path": "A local entrepreneur community that took part in an AI-themed business event.",
+      "steps": 2
+    },
+    {
+      "name": "Territórios Criativos",
+      "type": "organisation",
+      "what": "Partner of StartUP Portimão's founding and moderator of the February 2026 AI como Copiloto debate.",
+      "source_url": "https://www.algarveprimeiro.com/d/livro-que-desvenda-utilidades-da-inteligencia-artificial-apresentado-dia-20-em-portimao/65325-1",
+      "read_on": "2026-11-15",
+      "ai_path": "Moderated a public debate on AI at work.",
+      "steps": 1
+    },
+    {
+      "name": "Algarve Evolution",
+      "type": "organisation",
+      "what": "Regional association named as one of the stakeholders engaged to link the November 2026 TMCT conference in Portimão to regional business, institutional and education partners. Its exact role is not stated in the source.",
+      "source_url": "https://oalgarve.pt/tmct-2026-em-portimao-debate-inovacao-e-tecnologia-no-turismo-e-hospitalidade/",
+      "read_on": "2026-11-15",
+      "ai_path": "Engaged around a Portimão conference with AI sessions.",
+      "steps": 2
+    },
+    {
+      "name": "Parkalgar",
+      "type": "organisation",
+      "what": "Manages the Autódromo Internacional do Algarve in Portimão, is a member of the Celerator technology park association with the University of Algarve, and was engaged around the TMCT conference.",
+      "source_url": "https://oalgarve.pt/tmct-2026-em-portimao-debate-inovacao-e-tecnologia-no-turismo-e-hospitalidade/",
+      "read_on": "2026-11-15",
+      "ai_path": "Engaged around a Portimão conference with AI sessions, and part of a technology-park association.",
+      "steps": 2
+    },
+    {
+      "name": "Zoomarine Algarve",
+      "type": "company",
+      "what": "Visitor attraction named as one of the stakeholders engaged around the TMCT conference. Its exact role is not stated in the source.",
+      "source_url": "https://oalgarve.pt/tmct-2026-em-portimao-debate-inovacao-e-tecnologia-no-turismo-e-hospitalidade/",
+      "read_on": "2026-11-15",
+      "ai_path": "A local business engaged around a conference with AI sessions.",
+      "steps": 3
+    },
+    {
+      "name": "Escola de Hotelaria e Turismo de Portimão",
+      "type": "institution",
+      "what": "Hospitality school that hosted the February 2026 presentation of the AI como Copiloto book and was engaged around the TMCT conference.",
+      "source_url": "https://www.algarveprimeiro.com/d/livro-que-desvenda-utilidades-da-inteligencia-artificial-apresentado-dia-20-em-portimao/65325-1",
+      "read_on": "2026-11-15",
+      "ai_path": "Hosted a public launch and debate on using generative AI at work.",
+      "steps": 1
+    }
+  ],
+  "extras": [
+    {
+      "label": "Licensing volume the council's AI platform targets",
+      "value": "about 5,000 requests a year",
+      "source_url": "https://www.barlavento.pt/portimao-inteligencia-artificial-urbanismo/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Water network under active leak detection",
+      "value": "130 km",
+      "source_url": "https://www.barlavento.pt/emarp-investe-na-detecao-e-reparacao-de-fugas-de-agua-na-rede-publica-de-portimao/",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.portimao-promptugal",
+    "signed_by": "place.portimao@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI company or startup headquartered in Portimão turned up in the sources read: the AI map is mostly public bodies, an incubator and a school. A company search (a business register and the StartUP Portimão member list) is the next step.",
+    "Speakers named at the June 2026 AI panel came from Tecnologias Imaginadas, JFA Training and Thinkerdots, but no source read places those firms in Portimão, so they are not on the map yet.",
+    "postal.pt, Sul Informação, Visit Portimão, Algarve Vivo and EMARP's own site showed a bot challenge or refused access, so they were not used. Their Portimão AI stories (the Filosofia na Cidade talk on 6 March 2026, the council's earlier AI items) need a source we can open.",
+    "The Celerator technology park beside the Autódromo (a 7.2 million euro mobility and energy hub, 2022 report) and the UAlg and Microsoft AI course have no confirmed Portimão AI path yet, so they are left out.",
+    "The council's own site shows no news feed or RSS: Viva Portimão is the place to watch, and we found no feed there.",
+    "No dated AI event after 15 November 2026 was found in Portimão. The two ISMAT workshops listed are general technology events.",
+    "Reports of the TMCT conference give different dates (4 to 6 and 5 to 7 November), so the page says early November. Algarve Evolution's exact role in it is not stated."
+  ],
+  "voice": {
+    "lede": "Ó pá, Portimão: sardines on the grill, sun on the cliffs and, believe it or not, a council that lets a robot check your building papers.",
+    "mandate": "PrompTugal.news Portimão: the AI and tech news of the town where the Arade meets the sea, from a council with a clever licensing robot to a water company with ears for leaks, plus what reaches us from the Algarve, Portugal and the world. We are independent, and every fact has its source, pá.",
+    "gravity": "Portimão's brainpower is, chiça, mostly public. The câmara is teaching a robot to read licensing papers and has a grant with AI in the small print, EMARP has AI ears on the pipes, and the incubator at the racetrack and ISMAT keep the young ones busy. The rest is talks, books and seminars, and we like a good tertúlia.",
+    "gaps_intro": "Here is what we could not find, and no, we did not look under the sardines."
+  }
+}

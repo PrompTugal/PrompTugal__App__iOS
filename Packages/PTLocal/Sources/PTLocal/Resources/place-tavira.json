@@ -1,0 +1,161 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "tavira",
+  "name": "Tavira",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "live",
+  "updated": "2026-11-15",
+  "by": "place.tavira@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Tavira: AI and technology in Tavira, a town whose digital footprint today is public-sector data platforms and a small tech community, and what reaches Tavira from the Algarve, Portugal and the world. Independent, and every fact sourced.",
+  "gravity": {
+    "text": "On the sources we could open, Tavira's technology story is institutional rather than commercial. The council is one of six eastern Algarve municipalities in the Algarve 6.0 urban management data platform, it installed connected parking sensors in 2026, and a tech community called Tavira Works appears in the regional network. We found no AI company headquartered in the municipality, so the centre of gravity is data infrastructure that AI could later use.",
+    "sources": [
+      {
+        "title": "Algarve 6.0 Smart Territorial Hub, project sheet (Câmara Municipal de Tavira)",
+        "url": "https://cm-tavira.pt/site/wp-content/uploads/2025/05/FichaPRR_AMA_TERRITORIOS_INTELIGENTES_FGU-1.pdf",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Novos sensores melhoram estacionamento acessível em Tavira (Barlavento)",
+        "url": "https://www.barlavento.pt/?p=397074",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Algarve Tech Hub, CCDR Algarve slides (July 2025)",
+        "url": "https://www.ccdr-alg.pt/site/sites/default/files/inline-files/20250730_algarvetech-hub.pdf",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#A4452C",
+    "landmark": "The seven-arched Roman Bridge over the Gilão river",
+    "motif": "terracotta rooftops, white salt-pan light, a river town"
+  },
+  "ai_news": [
+    {
+      "title": "Tavira puts smart sensors on accessible parking spaces",
+      "summary": "Under a protocol with the National Institute for Rehabilitation, the council installed sensors at four public services that report in real time whether a reserved space is free, with the data shown in the Acessibilidades 360 program and app. The article does not claim any AI.",
+      "date": "2026-04-15",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=397074",
+      "read_on": "2026-11-15",
+      "ai_path": "Connected sensors produce live data, a data platform collects it, and analytics or AI models are the usual next layer. The source itself does not mention AI.",
+      "steps": 3
+    },
+    {
+      "title": "Tavira is one of six municipalities in the Algarve 6.0 urban data platform",
+      "summary": "The project sheet describes an urban management platform for Olhão, Alcoutim, Loulé, São Brás de Alportel, Tavira and Vila Real de Santo António, joining sensors and ten service areas such as waste, water, air quality, noise, flood marks and monitoring of isolated elderly people. Investment listed: 102,615 euros, all co-financed.",
+      "date": "2025-05",
+      "publisher": "Câmara Municipal de Tavira (project sheet, dated by the upload month in its URL)",
+      "url": "https://cm-tavira.pt/site/wp-content/uploads/2025/05/FichaPRR_AMA_TERRITORIOS_INTELIGENTES_FGU-1.pdf",
+      "read_on": "2026-11-15",
+      "ai_path": "A shared platform that centralises sensor data across six councils is the data base on which AI analysis of waste, water or ageing care would run. The sheet does not mention AI.",
+      "steps": 2
+    }
+  ],
+  "sources": [
+    {
+      "name": "Câmara Municipal de Tavira (news feed)",
+      "url": "https://cm-tavira.pt/site/",
+      "kind": "council",
+      "feed": "https://cm-tavira.pt/site/feed/"
+    },
+    {
+      "name": "Barlavento",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": "https://www.barlavento.pt/feed/"
+    },
+    {
+      "name": "Postal do Algarve",
+      "url": "https://postal.pt/",
+      "kind": "press",
+      "feed": "https://postal.pt/feed"
+    },
+    {
+      "name": "Sul Informação",
+      "url": "https://www.sulinformacao.pt/",
+      "kind": "press",
+      "feed": "https://www.sulinformacao.pt/feed/"
+    },
+    {
+      "name": "Portugal Resident",
+      "url": "https://www.portugalresident.com/",
+      "kind": "press",
+      "feed": "https://www.portugalresident.com/feed/"
+    },
+    {
+      "name": "CCDR Algarve",
+      "url": "https://www.ccdr-alg.pt/",
+      "kind": "other",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "Câmara Municipal de Tavira",
+      "type": "public body",
+      "url": "https://cm-tavira.pt/site/",
+      "what": "The council is a partner in the Algarve 6.0 urban management data platform and runs parking sensors linked to the Acessibilidades 360 app.",
+      "source_url": "https://cm-tavira.pt/site/wp-content/uploads/2025/05/FichaPRR_AMA_TERRITORIOS_INTELIGENTES_FGU-1.pdf",
+      "read_on": "2026-11-15",
+      "ai_path": "A public buyer of sensor and data platforms, the layer AI services are built on.",
+      "steps": 2
+    },
+    {
+      "name": "Tavira Works",
+      "type": "community",
+      "url": "https://www.ccdr-alg.pt/site/sites/default/files/inline-files/20250730_algarvetech-hub.pdf",
+      "what": "Listed by name among the tech communities in the Algarve Tech Hub network in the regional development agency's July 2025 slides.",
+      "source_url": "https://www.ccdr-alg.pt/site/sites/default/files/inline-files/20250730_algarvetech-hub.pdf",
+      "read_on": "2026-11-15",
+      "ai_path": "A local tech community inside the network that also lists an Artificial Intelligence Algarve community, so AI talk reaches Tavira through it.",
+      "steps": 2
+    },
+    {
+      "name": "Centro Ciência Viva de Tavira",
+      "type": "institution",
+      "url": "https://www.barlavento.pt/tavira-acolheu-encontro-escolar-regional-de-robotica-submarina/",
+      "what": "Science centre that co-hosted, with the IPMA mollusc research station and council support, a regional school meeting of the ROV4ALL project in May 2022, where students built small remotely operated underwater robots.",
+      "source_url": "https://www.barlavento.pt/tavira-acolheu-encontro-escolar-regional-de-robotica-submarina/",
+      "read_on": "2026-11-15",
+      "ai_path": "School robotics and programming build the skills pipeline that AI work draws on. The article describes remotely operated vehicles and mentions no AI.",
+      "steps": 3
+    }
+  ],
+  "extras": [
+    {
+      "label": "Earlier digital operation",
+      "value": "#ALGARVEMAISDIGITAL (2017 to 2023): Tavira's share covered a digital archive, incident management and event management, with a total eligible cost of 93,835.40 euros across Algarve councils.",
+      "source_url": "https://cm-tavira.pt/site/wp-content/uploads/2025/05/Ficha-ALGARVEMAISDIGITAL.pdf",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Algarve Evolution and Tavira",
+      "value": "Our Algarve Evolution page records that the Faro-based association was listed among the organisers, with Tavira Works, of an Algarve Tech Afterwork held in Tavira. We could not open the listing ourselves, so we rely on that page.",
+      "source_url": "https://promptugal.news/portugal/algarve-evolution/",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.tavira-promptugal",
+    "signed_by": "place.tavira@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI company, startup or university group headquartered in Tavira was found on any page we could open. A first pass is not proof of absence: the company registry (Racius, Informa D&B) and LinkedIn were not searched.",
+    "Postal do Algarve served a bot check on its article pages, so its Tavira AI-related pieces (an AI-based city discovery tool, smart sensors) were not read and are not used.",
+    "Tavira does not appear in the national AI licensing pilot for councils: the RTP report we read names only Coimbra and carries no date.",
+    "No dated events: the Tavira Algarve Tech Afterwork listing is on a platform we do not read. Look for events on the council agenda, Tavira Works and Algarve Evolution's own pages.",
+    "The council's own news feed (cm-tavira.pt/site/feed/) loads but held no items when read, so it adds nothing yet. Its news page needs a look by hand or another route.",
+    "Not yet checked from first-hand pages: the Level Up business centre and incubator in Tavira (run by EMPET, per search results we could not open), hotel and tourism groups, schools, and any Centro Ciência Viva programme on AI (none found in search, only robotics and programming)."
+  ],
+  "voice": {
+    "lede": "Tavira, ó pá, where the river is calmer than any server room and the seven arches have seen more migrations than your cloud provider.",
+    "mandate": "PrompTugal.news Tavira: we keep an eye on AI and tech in Tavira, the town of terracotta roofs, and on whatever arrives from the Algarve, Portugal and the world. Independent, and every fact comes with its receipt.",
+    "gravity": "Here the tech is quiet and civic, nada de barulho. The câmara is part of a six-council data platform, put sensors on the parking spaces in 2026, and Tavira Works keeps the community lights on. No AI company found at home yet, so the centre of gravity is the plumbing AI could drink from later.",
+    "gaps_intro": "Ainda não sabemos tudo, and a good Tavira lunch takes its time. Here is what we have not found yet:"
+  }
+}

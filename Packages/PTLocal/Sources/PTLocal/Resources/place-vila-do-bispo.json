@@ -1,0 +1,155 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "vila-do-bispo",
+  "name": "Vila do Bispo",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "live",
+  "updated": "2026-11-15",
+  "by": "place.vila-do-bispo@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Vila do Bispo: AI and technology in Vila do Bispo, from Sagres and Cape St Vincent to the sea and the wind, and what reaches Vila do Bispo from the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "On the sources we could open, the municipality's technology story is the sea and the wind. Sagres hosts a marine biotechnology company at Porto da Baleeira, a university marine laboratory in the same port, and the MARREAL underwater observatory, a camera and sensor station at 20 metres depth that records ocean data in real time. The INEGI and APREN wind farm inventory lists wind farms in the municipality, including 2025 repowering. We found no AI news, which is the first finding of this page, but the ocean data stations are where an AI path is most likely to appear.",
+    "sources": [
+      {
+        "title": "Sea4Us: estamos a descobrir as potenciais curas que estao no mar (Barlavento, 8 Dec 2023)",
+        "url": "https://www.barlavento.pt/?p=248813",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Sagres vai ter Estacao de Biologia Marinha (Barlavento, 16 Jun 2023)",
+        "url": "https://www.barlavento.pt/destaque/sagres-vai-ter-estacao-de-biologia-marinha",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "CORDIS: Sea4Pain, a novel analgesic from marine compounds (project 815852)",
+        "url": "https://cordis.europa.eu/project/id/815852",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Investigadores da UAlg instalam observatorio subaquatico em Sagres (Barlavento, 14 Oct 2022)",
+        "url": "https://www.barlavento.pt/ualg-instala-observatorio-subaquatico-em-sagres/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Wind Farms in Portugal, INEGI and APREN inventory (PDF)",
+        "url": "https://www.apren.pt/wp-content/uploads/2026/06/INEGI_APREN-Parques-Eolicos-em-Portugal.pdf",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#1F4E79",
+    "landmark": "The Fortaleza de Sagres and the cliffs of Cape St Vincent",
+    "motif": "Atlantic blue, wind, the end of the world"
+  },
+  "ai_news": [],
+  "sources": [
+    {
+      "name": "Camara Municipal de Vila do Bispo",
+      "url": "https://www.cm-viladobispo.pt",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Barlavento (regional press)",
+      "url": "https://www.barlavento.pt",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Postal do Algarve",
+      "url": "https://postal.pt",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "CORDIS (EU research projects)",
+      "url": "https://cordis.europa.eu",
+      "kind": "other",
+      "feed": null
+    },
+    {
+      "name": "Portal da Transparencia, European funds",
+      "url": "https://transparencia.gov.pt/en/fundos-europeus/",
+      "kind": "other",
+      "feed": null
+    },
+    {
+      "name": "APREN and INEGI wind farm inventory",
+      "url": "https://www.apren.pt/wp-content/uploads/2026/06/INEGI_APREN-Parques-Eolicos-em-Portugal.pdf",
+      "kind": "other",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "MARREAL underwater observatory, Sagres (UAlg, CINTAL, CCMAR, INESC-TEC)",
+      "type": "institution",
+      "url": "https://www.barlavento.pt/ualg-instala-observatorio-subaquatico-em-sagres/",
+      "what": "An observatory installed in October 2022 at about 20 metres depth off Sagres, with an underwater video camera, a temperature and salinity sensor, a particle sensor and an underwater noise sensor. It records data in real time, to be put online. An initiative of the Tec4Sea research infrastructure, with the KTTSeaDrones project joining.",
+      "source_url": "https://www.barlavento.pt/ualg-instala-observatorio-subaquatico-em-sagres/",
+      "read_on": "2026-11-15",
+      "ai_path": "Video and acoustic data streams are the raw material for automatic detection of fish and sounds. The article itself does not mention AI, so the link is unconfirmed. Path: ocean observatory, then its video and sound data, then AI analysis.",
+      "steps": 2
+    },
+    {
+      "name": "KTTSeaDrones (cross-border Spain and Portugal project, with a Sagres pilot)",
+      "type": "organisation",
+      "url": "https://uhu.es/sites/otc/files/proyectos_europeos/kttseadrones.pdf",
+      "what": "A POCTEP research project on aerial and aquatic drones and fixed sensors for marine and fisheries science, led by the Universidad de Huelva, with CCMAR and CINTAL as Algarve partners and a pilot at Sagres. A search result describing its technical report says its software layer used computer vision and AI to detect fish. We could not open the report (it returned errors), so the AI claim is unverified.",
+      "source_url": "https://uhu.es/sites/otc/files/proyectos_europeos/kttseadrones.pdf",
+      "read_on": "2026-11-15",
+      "ai_path": "Reported by a search summary of the project's technical report: computer vision and AI models to identify fish in video. To be confirmed by opening the report. Path: marine monitoring project, then its fish detection software, which is AI.",
+      "steps": 1
+    },
+    {
+      "name": "Sea4Us",
+      "type": "company",
+      "url": "https://cordis.europa.eu/project/id/815852",
+      "what": "Marine biotechnology company in Sagres that develops drugs from marine compounds, led by a chronic pain candidate called Sea4Pain. Spin-off of Nova Medical School, working from Porto da Baleeira.",
+      "source_url": "https://www.barlavento.pt/?p=248813",
+      "read_on": "2026-11-15",
+      "ai_path": "Candidate only. Drug discovery is a field where AI is widely used, but neither source we opened says Sea4Us uses AI. Path: marine biotech, then computational drug discovery, then AI. Unconfirmed, to check with the company's own pages.",
+      "steps": 3
+    },
+    {
+      "name": "Universidade do Algarve and CCMAR, Sagres marine biology laboratory",
+      "type": "institution",
+      "url": "https://www.barlavento.pt/destaque/sagres-vai-ter-estacao-de-biologia-marinha",
+      "what": "A teaching and research laboratory at Porto da Baleeira, planned with the municipality and funded by the Fosteam@South project, about 2.1 million euros of Recovery and Resilience money, as reported in June 2023.",
+      "source_url": "https://www.barlavento.pt/?p=255421",
+      "read_on": "2026-11-15",
+      "ai_path": "Candidate only. The article describes reef mapping and sampling, not AI. Path: marine research, then ocean data and mapping, then AI analysis. Unconfirmed.",
+      "steps": 3
+    }
+  ],
+  "extras": [
+    {
+      "label": "Wind farms listed in the municipality (INEGI and APREN inventory)",
+      "value": "Vila do Bispo I, 4 turbines of 500 kW, 2.0 MW, from 1998. Vila do Bispo II repowering, 3 turbines of 4.2 MW (Enercon E-115 EP3), 12.6 MW, listed as 2025. A Picos Verdes repowering of 1 turbine of 2.1 MW is also listed. The document's tables mix capacity and repowering rows, so check against operators before quoting.",
+      "source_url": "https://www.apren.pt/wp-content/uploads/2026/06/INEGI_APREN-Parques-Eolicos-em-Portugal.pdf",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.vila-do-bispo-promptugal",
+    "signed_by": "place.vila-do-bispo@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI news found for Vila do Bispo. Searches in Portuguese and English for AI, startups, data centres and digital projects returned tourism, heritage and council news only. That is a finding, not a missing page.",
+    "The council's own site returned errors or an empty news list when we opened it on 15 November, so no council items were read. A press search suggested the council invested in a data centre and in digitalisation, but we did not open that page, so it is not stated as fact here.",
+    "Wind power appears in the INEGI and APREN inventory (see extras), but we found no AI link for it and have not opened the operators' own pages.",
+    "No events found. Sources to look for: council agenda, Universidade do Algarve events at Sagres, Algarve Evolution.",
+    "No local feeds found. Sources to look for: an RSS feed from Barlavento or the council.",
+    "Sea4Us, the marine laboratory and MARREAL are on the map as candidates with an unconfirmed AI path, and KTTSeaDrones's AI claim rests on a search summary of a report we could not open (a certificate error on the host). Their own pages must say whether AI is used.",
+    "No MARREAL data page or later news found: the 2022 article promised the data online 'soon', and we did not find it."
+  ],
+  "voice": {
+    "lede": "Aqui no fim do mundo, o vento e que manda e a IA ainda esta a chegar de bicicleta.",
+    "mandate": "PrompTugal.news Vila do Bispo: the AI and technology news from the very edge of Europe, where the Atlantic blows past Sagres and Cape St Vincent. Independent, and every fact has a source, pa.",
+    "gravity": "Pa, our sources show the sea doing the heavy lifting. A marine biotech company sits at Porto da Baleeira and the university has a marine laboratory in the same port. Wind is part of life here too, but we have no source to cite yet. AI news? We found none, and we are telling you straight.",
+    "gaps_intro": "What we did not find, dito com franqueza:"
+  }
+}
