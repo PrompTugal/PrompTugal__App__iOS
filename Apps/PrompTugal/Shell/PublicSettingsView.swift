@@ -1,6 +1,7 @@
 import PTAgenda
 import PTCore
 import PTLocal
+import PTTalk
 import SwiftUI
 
 /// More: reminders, the welcome screen again, version, links, the independence note. The debug switch exists only in DEBUG builds.
@@ -51,6 +52,8 @@ struct PublicSettingsView: View {
             } footer: {
                 Text("The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.")
             }
+            // PTTalk: notes and contributions to the conductor; only offers to connect until its lane link is pasted.
+            TalkSection()
             Section {
                 LabeledContent("Version") {
                     versionText
