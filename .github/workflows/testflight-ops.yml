@@ -12,6 +12,8 @@ name: TestFlight ops
 #                        + review-notes.txt; contact and demo keys from secrets)
 #   submit-beta-review   build
 #   expire               build
+#   set-app-info         app name and subtitle (editable appInfo) and the TestFlight beta app
+#                        description, from scripts/testflight/app-info.json (no build needed)
 
 on:
   workflow_dispatch:
@@ -20,7 +22,7 @@ on:
         description: What to do
         type: choice
         required: true
-        options: [status, inspect, groups, public-link, certificates, set-whats-new, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire]
+        options: [status, inspect, groups, public-link, certificates, set-whats-new, add-to-group, remove-from-group, set-test-info, submit-beta-review, expire, set-app-info]
       build:
         description: Build number (as in TestFlight). Not needed for status.
         type: string
@@ -105,6 +107,7 @@ jobs:
               [ -n "$BUILD" ] || { echo "::error::build is required"; exit 1; }
               args=(set-test-info --build "$BUILD" --whats-new scripts/testflight/what-to-test.txt \
                     --review-file scripts/testflight/review-info.json "${flag[@]}") ;;
+            set-app-info) args=(set-app-info --file scripts/testflight/app-info.json "${flag[@]}") ;;
             submit-beta-review|expire)
               [ -n "$BUILD" ] || { echo "::error::build is required"; exit 1; }
               args=("$ACTION" --build "$BUILD" "${flag[@]}") ;;

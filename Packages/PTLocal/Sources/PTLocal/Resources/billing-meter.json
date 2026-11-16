@@ -1,0 +1,174 @@
+{
+  "about": "The reading meter's config for promptugal.news, made by newsroom/build/features/billing.mjs from data/billing/prices.json and data/billing/topup.json. sg-meter-core (assets/components/sg-meter/v1/v1.5/v1.5.0/sg-meter-core.js) reads it as window.SG_METER_CONFIG; assets/meter/meter.js adds the page's kind (page-type, and its freshness tier when the type decays).",
+  "meter": "sg-meter v1.5.0",
+  "version": "v0.1.1514",
+  "storageKey": "web-summit.newsroom.meter.v1",
+  "start": 500,
+  "symbol": "£",
+  "currency": "GBP",
+  "newDays": 7,
+  "depth": true,
+  "minDepth": 0.1,
+  "floor": 1,
+  "prices": {
+    "article": 6,
+    "article_fresh": 12,
+    "article_new": 9,
+    "article_current": 6,
+    "article_archive": 3,
+    "company": 3,
+    "company_fresh": 6,
+    "company_new": 5,
+    "company_current": 3,
+    "company_archive": 2,
+    "topic": 3,
+    "topic_fresh": 6,
+    "topic_new": 5,
+    "topic_current": 3,
+    "topic_archive": 2,
+    "story": 2,
+    "story_fresh": 4,
+    "story_new": 3,
+    "story_current": 2,
+    "story_archive": 1,
+    "event": 2,
+    "event_fresh": 4,
+    "event_new": 3,
+    "event_current": 2,
+    "event_archive": 1,
+    "index": 2,
+    "index_fresh": 4,
+    "index_new": 3,
+    "index_current": 2,
+    "index_archive": 1,
+    "person": 1,
+    "organisation": 1,
+    "place": 1,
+    "evidence": 1,
+    "data": 1,
+    "site": 1,
+    "account": 0
+  },
+  "types": {
+    "article": {
+      "as": "article",
+      "base": 6,
+      "decays": true
+    },
+    "company": {
+      "as": "analysis",
+      "base": 3,
+      "decays": true
+    },
+    "topic": {
+      "as": "analysis",
+      "base": 3,
+      "decays": true
+    },
+    "story": {
+      "as": "story",
+      "base": 2,
+      "decays": true
+    },
+    "event": {
+      "as": "story",
+      "base": 2,
+      "decays": true
+    },
+    "index": {
+      "as": "story",
+      "base": 2,
+      "decays": true
+    },
+    "person": {
+      "as": "evidence",
+      "base": 1,
+      "decays": false
+    },
+    "organisation": {
+      "as": "evidence",
+      "base": 1,
+      "decays": false
+    },
+    "place": {
+      "as": "evidence",
+      "base": 1,
+      "decays": false
+    },
+    "evidence": {
+      "as": "evidence",
+      "base": 1,
+      "decays": false
+    },
+    "data": {
+      "as": "evidence",
+      "base": 1,
+      "decays": false
+    },
+    "site": {
+      "as": "site",
+      "base": 1,
+      "decays": false
+    },
+    "account": {
+      "as": "account",
+      "base": 0,
+      "decays": false
+    }
+  },
+  "tiers": [
+    {
+      "tier": "fresh",
+      "max_days": 1,
+      "multiplier": 2
+    },
+    {
+      "tier": "new",
+      "max_days": 7,
+      "multiplier": 1.5
+    },
+    {
+      "tier": "current",
+      "max_days": 30,
+      "multiplier": 1
+    },
+    {
+      "tier": "archive",
+      "max_days": null,
+      "multiplier": 0.5
+    }
+  ],
+  "rating": {
+    "price": [
+      0,
+      0.5,
+      1,
+      1.5,
+      2
+    ],
+    "more": [
+      -3,
+      -1,
+      0,
+      3,
+      6
+    ]
+  },
+  "topup": {
+    "amount": 500,
+    "link": "https://buy.stripe.com/6oUfZ9ez65vVgU2fY15os04?client_reference_id=web-summit-newsroom"
+  },
+  "returns_to": "https://newsroom.sgit.ai/account/topped-up.html?session_id={CHECKOUT_SESSION_ID}",
+  "our_return": "https://web-summit.newsroom.sgit.ai/account/topped-up.html?session_id={CHECKOUT_SESSION_ID}",
+  "verified": false,
+  "links": {
+    "account": "account/index.html",
+    "topup": "account/top-up.html",
+    "how": "account/billing.html"
+  },
+  "links2": {
+    "newsroom": "account/index.html",
+    "personas": "account/index.html"
+  },
+  "autoKeep": true
+}
