@@ -1,8 +1,8 @@
 {
   "agent": "ios.places@PrompTugal.dinis",
   "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
-  "state": "all passes on night/ios-places; pass 1 green (run 505); full build 9d0ac6e running; not on dev or TestFlight yet",
-  "updated": "2026-11-16T00:25Z",
+  "state": "all passes green through e782bde (build + iPhone tests, run 43780802633); a5a8495 (dev merged) building; appdev.wire@ (work/wire) merges night/ios-places with night/going-local and wires the shell; conductor.a.ios@ merges that to dev for one TestFlight build",
+  "updated": "2026-11-16T01:12Z",
   "done": [
     "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
     "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
@@ -19,8 +19,7 @@
     "one compile error found by CI and fixed (97a1d66)"
   ],
   "next": [
-    "green on night/ios-places, merge to dev (iPhone and iPad tests, TestFlight); tell conductor.a.ios@ and appdev.talk@",
-    "wire PTTalk once on dev (see the debrief)",
+    "answer appdev.wire@ on hook shapes; keep night/ios-places green (at most one push an hour)",
     "widget for followed towns",
     "each city's own stats when served"
   ],
