@@ -18,7 +18,7 @@ import XCTest
 /// screenshot is still attached for it (screens.yml reports the ones it requires: now, team.schedule, explore, news.home).
 final class ScreensTests: XCTestCase {
     /// ux's list, in store order.
-    static let destinations = ["now", "team.schedule", "explore", "explore.talk", "news.home", "explore.people", "explore.graph", "map"]
+    static let destinations = ["now", "team.schedule", "explore", "explore.talk", "news.home", "explore.people", "explore.graph", "map", "places"]
 
     @MainActor func test01_now() { shoot(1, "now") }
     @MainActor func test02_team_schedule() { shoot(2, "team.schedule") }
@@ -28,9 +28,10 @@ final class ScreensTests: XCTestCase {
     @MainActor func test06_explore_people() { shoot(6, "explore.people") }
     @MainActor func test07_explore_graph() { shoot(7, "explore.graph") }
     @MainActor func test08_map() { shoot(8, "map") }
+    @MainActor func test09_places() { shoot(9, "places") }
 
     func testListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.destinations.count, 8)
+        XCTAssertEqual(Self.destinations.count, 9)
     }
 
     override func setUp() {

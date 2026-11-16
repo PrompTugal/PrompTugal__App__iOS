@@ -177,7 +177,10 @@ jobs:
       # Unit tests on dev, pull requests and manual runs; night/** and split/** pushes build only.
       RUN_TESTS: ${{ (github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && 'true' || 'false' }}
       DEVICES: ${{ inputs.quick && 'iPhone' || 'iPhone iPad' }}
-      RELEASE_BUILD: ${{ inputs.quick && 'false' || 'true' }}
+      # The unsigned Release build for a device: dev, pull requests, tags and full manual runs. A push to a
+      # work branch (night/**, split/**) skips it to get the build back fast; dev still catches a
+      # Release-only error before anything uploads.
+      RELEASE_BUILD: ${{ (inputs.quick || (github.event_name == 'push' && github.ref != 'refs/heads/dev' && github.ref != 'refs/heads/main')) && 'false' || 'true' }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5

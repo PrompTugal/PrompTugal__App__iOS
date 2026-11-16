@@ -542,6 +542,33 @@ class SiteTest(unittest.TestCase):
             self.assertIn(want, out)
         self.assertEqual(json.loads((self.clean / 'ios-build.json').read_text()), {'available': False})
 
+    def test_ci_status_page(self):
+        self.assertIsNone(admin.ci_status(None))
+        bad = self.tmp / 'ci-bad.json'
+        bad.write_text('{"schema": 1, "available": false, "pipelines": []}')
+        self.assertIsNone(admin.ci_status(bad))
+        bad.write_text('not json')
+        self.assertIsNone(admin.ci_status(bad))
+        self.assertIn('No CI status', admin.ci_status_html(None, build.REPO_URL))
+        self.assertEqual([admin.duration(s) for s in (None, 9, 85, 3720)], ['–', '9s', '1m 25s', '1h 02m'])
+        run = {'id': 1, 'number': 202, 'url': 'https://github.com/x/y/actions/runs/1', 'event': 'push', 'branch': 'dev',
+               'status': 'completed', 'conclusion': 'success', 'startedAt': '2026-11-15T23:25:31Z', 'durationSeconds': 89,
+               'running': False, 'commit': 'abcdef1234', 'shortCommit': 'abcdef1', 'title': 'Merge <work>',
+               'pushToLive': {'seconds': 88}}
+        good = self.tmp / 'ci-good.json'
+        good.write_text(json.dumps({'schema': 1, 'generatedAt': '2026-11-15T23:31:00Z', 'pipelines': [
+            {'id': 'website', 'title': 'Product site', 'repo': 'x/y', 'workflow': 'website.yml', 'available': True,
+             'liveLabel': 'live', 'runs': [run], 'pushToLive': {'latestSeconds': 88, 'medianSeconds': 85, 'fastestSeconds': 67, 'samples': 7}},
+            {'id': 'news', 'title': 'News deploy', 'repo': 'x/z', 'workflow': None, 'available': False, 'reason': 'GitHub answered 403', 'runs': []}],
+            'testflight': {'available': True, 'apps': {'promptugal': {'version': '0.4.98', 'build': '601', 'uploadedAt': '2026-11-11T20:39:51Z',
+                                                                      'processed': True, 'runNumber': 501, 'runUrl': 'https://github.com/x/y/actions/runs/9'}}}}))
+        out = admin.ci_status_html(admin.ci_status(good), build.REPO_URL)
+        for want in ('Checked 2026-11-15 23:31 UTC', '1m 28s', 'median 1m 25s', '<strong>601</strong>', 'processed',
+                     'GitHub answered 403', '#202', 'Merge &lt;work&gt;', 'status on'):
+            self.assertIn(want, out)
+        self.assertTrue((self.clean / 'admin' / 'status.html').exists())
+        self.assertFalse(json.loads((self.clean / 'ci-status.json').read_text())['available'])
+
     def test_build_log_checkpoints_are_published(self):
         for source in sorted((build.WEBSITE / 'build-log').glob('*.md')):
             page = self.clean / 'admin' / 'build-log' / f'{source.stem}.html'
