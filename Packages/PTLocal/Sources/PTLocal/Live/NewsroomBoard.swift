@@ -9,6 +9,9 @@ struct NewsroomBoard: View {
     let model: LiveNewsroom
     @Binding var selected: String?
     var highlighted: Set<String> = []
+    /// When set, the board replays the last 24 hours: the position in the dashboard's hour grid (0 = its first hour),
+    /// and each agent lights up in the hours it fired, instead of by its last sign of life.
+    var replay: Double? = nil
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -159,7 +162,7 @@ struct NewsroomBoard: View {
         for node in nodes {
             let p = at(node.point)
             let r = radius(node)
-            let activity = model.activity(node.id, now: now)
+            let activity = lit(node.id, now: now)
             let seed = Double(abs(node.id.hashValue % 1000)) / 1000
             let dim = dimmed(node)
 
@@ -225,6 +228,11 @@ struct NewsroomBoard: View {
         }
     }
 
+    private func lit(_ role: String, now: Date) -> Double {
+        guard let replay else { return model.activity(role, now: now) }
+        return LiveReplay.activity(fired: model.extras?.agents[role]?.fired ?? [], at: replay)
+    }
+
     private func showsLabel(_ node: NewsroomLayout.Node, activity: Double) -> Bool {
         if selected == node.id || highlighted.contains(node.id) { return true }
         switch node.kind {
@@ -253,7 +261,7 @@ struct NewsroomBoard: View {
 
     private func accessibilitySummary(nodes: [NewsroomLayout.Node]) -> String {
         let now = Date()
-        let active = nodes.filter { model.activity($0.id, now: now) > 0 }.count
+        let active = nodes.filter { lit($0.id, now: now) > 0 }.count
         return "The newsroom board: \(nodes.count) agents, \(active) active in the last half hour, \(model.dashboard?.handoffs.count ?? 0) handoff routes."
     }
 }

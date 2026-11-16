@@ -8,6 +8,7 @@ public struct NewsroomLiveView: View {
     @State private var model = LiveNewsroom.shared
     @State private var selected: String?
     @State private var story: TownStory?
+    @State private var replay: Double?
     @Namespace private var storyChip
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -27,8 +28,11 @@ public struct NewsroomLiveView: View {
                          summary: "Every agent behind PrompTugal.news, read every minute from the newsroom's own dashboard. A pulse is an agent that showed a sign of life in the last half hour; a spark, one you saw change. Read-only.")
             status
             if model.dashboard != nil {
-                NewsroomBoard(model: model, selected: $selected, highlighted: highlighted)
+                NewsroomBoard(model: model, selected: $selected, highlighted: highlighted, replay: replay)
                 NewsroomBoardLegend()
+                if let extras = model.extras, !extras.gridHours.isEmpty {
+                    ReplayControl(extras: extras, position: $replay)
+                }
                 if let role = selected, let agent = model.agent(role) {
                     selectedCard(agent)
                         .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))

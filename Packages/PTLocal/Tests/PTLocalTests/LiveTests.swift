@@ -307,3 +307,25 @@ struct AlgarveMapComponentTests {
         #expect(AlgarveAbstractMap.shortName(id: "faro", name: "Faro") == "Faro")
     }
 }
+
+@Suite("Replay")
+struct ReplayTests {
+    @Test("An agent is lit in the hours it fired and fades after")
+    func activity() {
+        let fired = [false, true, false, false, false]
+        #expect(LiveReplay.activity(fired: fired, at: 0.5) == 0)
+        #expect(LiveReplay.activity(fired: fired, at: 1.2) == 1)
+        #expect(abs(LiveReplay.activity(fired: fired, at: 2.75) - 0.5) < 0.0001)
+        #expect(LiveReplay.activity(fired: fired, at: 3.6) == 0)
+        #expect(LiveReplay.activity(fired: [], at: 1) == 0)
+    }
+
+    @Test("Per-hour counts add up the agents that fired")
+    func perHour() throws {
+        let extras = LiveDashboardExtras(gridHours: ["00", "01", "02"], agents: [
+            "a": .init(fired: [true, false, true], commits24h: 0),
+            "b": .init(fired: [true, true, false], commits24h: 0),
+        ])
+        #expect(LiveReplay.perHour(extras) == [2, 1, 1])
+    }
+}
