@@ -16,6 +16,15 @@ struct PublicSettingsView: View {
 
     var body: some View {
         Form {
+            // Which build this is, first thing in More (on iPad the sidebar header shows it too).
+            Section {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(verbatim: "PrompTugal.news · the Algarve").font(.subheadline.weight(.semibold))
+                    Text(verbatim: AppVersion.label).font(.caption.monospacedDigit()).foregroundStyle(Palette.muted)
+                        .accessibilityIdentifier("pt.more.version")
+                }
+                .accessibilityElement(children: .combine)
+            }
             Section {
                 NavigationLink {
                     NewsroomCentreView()

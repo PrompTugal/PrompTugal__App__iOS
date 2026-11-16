@@ -280,4 +280,55 @@ struct CreditLedgerTests {
         #expect(credit.costText(action: "story", ref: "https://e.org/x") == "read")
         #expect(credit.cost(of: .named("story", ref: "y", date: "2026-11-16", title: "Y"), now: now) == 40_000)
     }
+
+    @Test("A paid read is attributed to its outlet: the publisher, else the host without www")
+    func outlets() throws {
+        #expect(CreditKind.outletName(publisher: " Barlavento ", url: "https://x.pt/a") == "Barlavento")
+        #expect(CreditKind.outletName(publisher: nil, url: "https://www.sulinformacao.pt/2026/11/x") == "sulinformacao.pt")
+        #expect(CreditKind.outletName(publisher: "", url: "https://promptugal.news/articles/a/") == "PrompTugal.news")
+        #expect(CreditKind.outletName(publisher: nil, url: "faro") == nil)
+        #expect(CreditKind.outletName(publisher: nil, url: "mailto:a@b.pt") == nil)
+        #expect(CreditKind.story(url: "https://www.barlavento.pt/x", title: "X", date: nil).outlet == "barlavento.pt")
+        #expect(CreditKind.named("article", ref: "https://promptugal.news/a/", title: "A").outlet == "PrompTugal.news")
+        // Not reads: never attributed, even with a story's address as the ref.
+        #expect(CreditKind.aiSummary(of: "https://www.barlavento.pt/x", title: "X").outlet == nil)
+        #expect(CreditKind.contribution("a photo").outlet == nil)
+        #expect(CreditKind.town(id: "faro", name: "Faro").outlet == nil)
+    }
+
+    @Test("Where your credit goes: per outlet, paid reads less the declined ones, most first")
+    func byOutlet() throws {
+        let credit = makeCredit()
+        let now = try #require(MeterConfig.parseDate("2026-11-16T12:00:00Z"))
+        credit.charge(kind: .story(url: "https://www.barlavento.pt/a", title: "A", date: "2026-11-16"), now: now)   // 4p
+        credit.charge(kind: .story(url: "https://www.barlavento.pt/b", title: "B", date: "2026-11-01"), now: now)   // 2p
+        credit.charge(kind: .story(url: "https://sulinformacao.pt/c", title: "C", date: "2026-11-16", publisher: "Sul Informação"), now: now)
+        credit.charge(kind: .aiSummary(of: "faro", title: "Faro"), now: now)
+        let lines = credit.byOutlet
+        #expect(lines.map(\.outlet) == ["barlavento.pt", "Sul Informação"])
+        #expect(lines.first?.worth == 60_000)
+        #expect(lines.first?.reads == 2)
+
+        let c = try #require(credit.history.first { $0.ref == "https://sulinformacao.pt/c" })
+        #expect(c.outlet == "Sul Informação")
+        credit.decline(c, reason: "It was a test")
+        let after = credit.byOutlet
+        let sul = try #require(after.first { $0.outlet == "Sul Informação" })
+        #expect(sul.worth == 0)
+        #expect(sul.declined == 1)
+        #expect(credit.history.first?.outlet == "Sul Informação")    // the refund carries it too
+    }
+
+    @Test("A ledger saved before outlets existed still opens")
+    func oldLedger() throws {
+        let json = """
+        {"v":1,"entries":[{"id":"s","at":"2026-11-16T00:00:00Z","kind":"start","text":"Starting credit","amount":5000000,"balance":5000000},
+        {"id":"c","at":"2026-11-16T00:01:00Z","kind":"charge","text":"A town","amount":-10000,"balance":4990000,"action":"town","pageType":"place","ref":"faro"}]}
+        """
+        let book = try CreditBook.decode(Data(json.utf8))
+        #expect(book.balance == 4_990_000)
+        #expect(book.entries.last?.outlet == nil)
+        #expect(book.byOutlet().isEmpty)
+    }
 }
+

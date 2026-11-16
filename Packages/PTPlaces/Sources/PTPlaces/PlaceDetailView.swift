@@ -14,6 +14,9 @@ public struct PlaceDetailView: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openURL) private var openURL
     @Environment(\.placeAccessory) private var accessory
+    @Environment(\.placesRegionMap) private var regionMap
+    /// A place opened from the region map hook.
+    @State private var opened: PlaceRoute?
 
     public init(id: String) { self.id = id }
 
@@ -88,6 +91,7 @@ public struct PlaceDetailView: View {
             await store.loadPlace(id)
             if let place { await store.loadAgents(for: place) }
         }
+        .navigationDestination(item: $opened) { route in PlaceDetailView(id: route.id) }
         .accessibilityIdentifier("places.detail.\(id)")
     }
 
@@ -213,9 +217,15 @@ public struct PlaceDetailView: View {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: id == "portugal" ? String(localized: "The regions") : String(localized: "The towns"), accent: accent)
                 if id == "algarve" {
-                    RegionMap(store: store, interactive: true)
-                        .frame(height: wide ? 460 : 340)
-                        .clipShape(RoundedRectangle(cornerRadius: Space.radius))
+                    Group {
+                        if let regionMap {
+                            regionMap { opened = PlaceRoute($0) }
+                        } else {
+                            RegionMap(store: store, interactive: true)
+                        }
+                    }
+                    .frame(height: wide ? 460 : 340)
+                    .clipShape(RoundedRectangle(cornerRadius: Space.radius))
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: wide ? 200 : 150), spacing: Space.m)], spacing: Space.m) {
                     ForEach(Array(kids.enumerated()), id: \.element.id) { index, kid in

@@ -11,8 +11,11 @@ public struct ConditionsCard: View {
     public init(placeID: String) { self.placeID = placeID }
 
     public var body: some View {
-        if let town = PlaceDirectory.info(placeID) ?? (placeID == PlaceDirectory.region.id ? PlaceDirectory.towns.first : nil) {
-            content(store.conditions(for: town))
+        // A town reads its own; the Algarve page reads Faro's (the region's warnings are the same); Portugal shows none,
+        // since IPMA's Algarve warnings and stations would not be true for the whole country.
+        if let town = placeID == PlaceDirectory.region.id ? PlaceDirectory.info("faro")
+                      : PlaceDirectory.towns.first(where: { $0.id == placeID }) {
+            content(store.conditions(for: town), regionWide: placeID == PlaceDirectory.region.id)
                 .task(id: placeID) {
                     while !Task.isCancelled {
                         await store.refresh()
@@ -23,8 +26,8 @@ public struct ConditionsCard: View {
     }
 
     @ViewBuilder
-    private func content(_ c: TownConditions) -> some View {
-        TitledCard("Conditions now", kicker: "\(c.town.name) · IPMA") {
+    private func content(_ c: TownConditions, regionWide: Bool) -> some View {
+        TitledCard("Conditions now", kicker: regionWide ? "The Algarve · readings near Faro · IPMA" : "\(c.town.name) · IPMA") {
             if c.warnings.isEmpty && store.provenance != .none {
                 Label("No IPMA warnings above green for the Algarve.", systemImage: "checkmark.shield")
                     .font(.footnote).foregroundStyle(Palette.green)

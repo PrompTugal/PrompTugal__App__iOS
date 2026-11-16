@@ -61,9 +61,24 @@ public struct CreditEntry: Codable, Equatable, Identifiable, Sendable {
     public var source: String?
     /// Why a charge was declined.
     public var reason: String?
+    /// The outlet whose story this was ("Barlavento", "PrompTugal.news"); nil for other things. Older ledgers have
+    /// none. What an outlet's stories were worth is shown; payouts to outlets are planned, not yet made.
+    public var outlet: String?
 
     /// True for a top-up that moved no money: Xcode's StoreKit test file or the App Store sandbox (TestFlight).
     public var isTestPurchase: Bool { kind == .topUp && source != "appstore:production" }
+}
+
+/// One outlet's line in "Where your credit goes".
+public struct OutletLine: Identifiable, Equatable, Sendable {
+    public let outlet: String
+    /// Paid reads of its stories, and how many of those were declined.
+    public var reads: Int
+    public var declined: Int
+    /// Micro-credits: what those reads were worth, less what was given back.
+    public var worth: Int
+
+    public var id: String { outlet }
 }
 
 /// The ledger as a value: this device's append-only log. The balance is the sum of the amounts.
@@ -114,6 +129,7 @@ public struct CreditBook: Codable, Equatable, Sendable {
             $0.pageType = kind.pageType
             $0.tier = tier
             $0.ref = kind.ref
+            $0.outlet = kind.outlet
         }
     }
 
@@ -143,7 +159,27 @@ public struct CreditBook: Codable, Equatable, Sendable {
             $0.pageType = charge.pageType
             $0.ref = charge.id
             $0.reason = reason
+            $0.outlet = charge.outlet
         }
+    }
+
+    /// What your reading of each outlet's stories was worth on this device: paid reads less the ones declined. Most
+    /// first. This is an attribution, not a payment: nothing is sent to any outlet yet.
+    public func byOutlet() -> [OutletLine] {
+        var lines: [String: OutletLine] = [:]
+        for entry in entries {
+            guard let outlet = entry.outlet, entry.kind == .charge || entry.kind == .refund else { continue }
+            var line = lines[outlet] ?? OutletLine(outlet: outlet, reads: 0, declined: 0, worth: 0)
+            if entry.kind == .charge {
+                line.reads += 1
+                line.worth += -entry.amount
+            } else {
+                line.declined += 1
+                line.worth -= entry.amount
+            }
+            lines[outlet] = line
+        }
+        return lines.values.sorted { ($0.worth, $1.outlet) > ($1.worth, $0.outlet) }
     }
 
     @discardableResult

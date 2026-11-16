@@ -90,7 +90,9 @@ struct PublicShell: View {
             tab = PublicDestinations.resolve(tab) ?? "places"
             if let id = PublicLaunch.destination { open(id) }
             // Never in UI tests or store screenshots (a launch destination); `-PTOnboarding` forces it in DEBUG.
-            if PublicLaunch.onboarding || (!onboardingSeen && PublicLaunch.destination == nil) { onboarding = true }
+            // The summit is over and the app is by place (Dinis, 16 Nov ~04:10: "we should not be asked that on the first
+            // load"): first launch lands on Places with no sheet. The summit onboarding stays reachable with -PTOnboarding (DEBUG).
+            if PublicLaunch.onboarding { onboarding = true }
         }
         .accessibilityIdentifier("public-shell")
     }
@@ -234,7 +236,9 @@ private struct PublicSidebar: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Kicker("PrompTugal")
-                Text("Lisbon · 9–12 Nov").font(.caption).foregroundStyle(Palette.muted)
+                Text(verbatim: "PrompTugal.news · the Algarve").font(.caption).foregroundStyle(Palette.muted)
+                Text(verbatim: AppVersion.label).font(.caption2.monospacedDigit()).foregroundStyle(Palette.muted)
+                    .accessibilityIdentifier("pt.version")
             }
         }
         .accessibilityElement(children: .combine)
@@ -352,4 +356,9 @@ enum PublicLaunch {
 
 #Preview("Shell · iPad") {
     PublicShell().padPreview()
+}
+
+/// The app's version and build as the testers see it in TestFlight: "v0.4.110 (641)".
+enum AppVersion {
+    static var label: String { "v\(BuildInfo.current.appVersion) (\(BuildInfo.current.appBuild))" }
 }

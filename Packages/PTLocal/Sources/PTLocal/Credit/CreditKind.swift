@@ -25,24 +25,44 @@ public struct CreditKind: Hashable, Sendable, Identifiable {
     /// True when reading the same thing again in the same session is not a second charge (the site's rule for
     /// pages). Asking a question or sending a contribution is charged each time.
     public let oncePerSession: Bool
+    /// Whose work was read: the outlet a paid read is attributed to ("Barlavento", "PrompTugal.news"), from the
+    /// story's publisher or its URL's host. Nil for things that are not someone's story (an AI summary, a
+    /// contribution). Revenue to outlets is planned, not yet paid: see "Where your credit goes".
+    public let outlet: String?
 
     public var id: String { action + ":" + (ref ?? "-") }
 
     public init(pageType: String, action: String, ref: String? = nil, pageDate: String? = nil, title: String,
-                oncePerSession: Bool = true) {
+                oncePerSession: Bool = true, outlet: String? = nil) {
         self.pageType = pageType
         self.action = action
         self.ref = ref
         self.pageDate = pageDate
         self.title = title
         self.oncePerSession = oncePerSession && ref != nil
+        // Only reads are someone's work: a story or a site page. An AI summary or a question is not attributed, even
+        // when its ref is a story's address.
+        let isRead = action == Action.story || action.hasPrefix("page.")
+        self.outlet = Self.outletName(publisher: outlet, url: isRead ? ref : nil)
+    }
+
+    /// The outlet's name: the publisher as the data gives it, else the host of a web address without "www."
+    /// (promptugal.news reads as "PrompTugal.news"). Nil when there is neither.
+    public static func outletName(publisher: String?, url: String?) -> String? {
+        if let name = publisher?.trimmingCharacters(in: .whitespacesAndNewlines), !name.isEmpty { return name }
+        guard let url, let components = URLComponents(string: url),
+              let scheme = components.scheme?.lowercased(), scheme == "https" || scheme == "http",
+              var host = components.host?.lowercased(), !host.isEmpty else { return nil }
+        if host.hasPrefix("www.") { host.removeFirst(4) }
+        if host == "promptugal.news" || host.hasSuffix(".promptugal.news") { return "PrompTugal.news" }
+        return host
     }
 
     // MARK: The app's kinds
 
     /// A story from a town (its source opened from the app).
-    public static func story(url: String, title: String, date: String?) -> CreditKind {
-        CreditKind(pageType: "story", action: "story", ref: url, pageDate: date, title: title)
+    public static func story(url: String, title: String, date: String?, publisher: String? = nil) -> CreditKind {
+        CreditKind(pageType: "story", action: "story", ref: url, pageDate: date, title: title, outlet: publisher)
     }
 
     /// A town's page, or the region's (the Algarve, Portugal).
@@ -77,8 +97,8 @@ public struct CreditKind: Hashable, Sendable, Identifiable {
 
     /// Any page of the site's kinds, by its page-type (article, company, topic, story, event, index, person,
     /// organisation, place, evidence, data, site, account) and its date.
-    public static func page(type: String, ref: String, date: String? = nil, title: String) -> CreditKind {
-        CreditKind(pageType: type, action: "page." + type, ref: ref, pageDate: date, title: title)
+    public static func page(type: String, ref: String, date: String? = nil, title: String, outlet: String? = nil) -> CreditKind {
+        CreditKind(pageType: type, action: "page." + type, ref: ref, pageDate: date, title: title, outlet: outlet)
     }
 
     /// The actions other packages name by string (PTPlaces stays PTCore-only and calls a closure the app injects).
@@ -93,13 +113,13 @@ public struct CreditKind: Hashable, Sendable, Identifiable {
 
     /// A kind from plain strings: the action ("story", "ai.summary", "contribution", "talk", or any site page-type),
     /// what was read (a story's URL, a place id), the page's date and the words for the history.
-    public static func named(_ action: String, ref: String, date: String? = nil, title: String) -> CreditKind {
+    public static func named(_ action: String, ref: String, date: String? = nil, title: String, outlet: String? = nil) -> CreditKind {
         switch action {
-        case Action.story: .story(url: ref, title: title, date: date)
+        case Action.story: .story(url: ref, title: title, date: date, publisher: outlet)
         case Action.aiSummary: .aiSummary(of: ref, title: title)
         case Action.contribution: .contribution(title)
         case Action.talk: .talk(to: ref)
-        default: .page(type: action, ref: ref, date: date, title: title)
+        default: .page(type: action, ref: ref, date: date, title: title, outlet: outlet)
         }
     }
 
@@ -120,6 +140,6 @@ public struct CreditKind: Hashable, Sendable, Identifiable {
         let date = now.addingTimeInterval(-ageDays * 86_400 + 60)
         let formatter = ISO8601DateFormatter()
         return CreditKind(pageType: pageType, action: action, ref: ref, pageDate: formatter.string(from: date), title: title,
-                          oncePerSession: oncePerSession)
+                          oncePerSession: oncePerSession, outlet: outlet)
     }
 }
