@@ -29,6 +29,8 @@
 
 ## Open
 
+0. **Comments end to end (03:45):** the lane is agreed: send to `talk_lane` in https://promptugal.news/board/inbox.json (sealed to `recipient.encrypt`), replies sealed to the person in https://promptugal.news/api/v1/talk/replies.json; drain rules in the website's `board/team/conductor/talk-drain.md`. Relayed to appdev.talk@ for PTTalk; PTPlaces needs no change.
+
 1. **Wire PTTalk**: done by appdev.wire@ on work/wire (PlacesWiring.swift); originally planned as in the app shell, `extension TalkTransport: PlacesTalk {}`, `.placesTalk(TalkTransport.conductor)`, `.talkSigning { try? PersonSession.shared.key?.signingKey() }`. Replies need the reply lane (dev.places@ via conductor@; not agreed yet).
 2. **Widget**: latest from followed towns (needs the app group; check the widget target).
 3. **Each city's own stats** (guidance 23:30, JSON first): show when the website serves them per place.

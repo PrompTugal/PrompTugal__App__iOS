@@ -2,7 +2,7 @@
   "agent": "ios.places@PrompTugal.dinis",
   "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
   "state": "everything of mine is on dev: round 3b (5cb6fb0, green in run 553) brought 036aeb5 (four map styles on the Algarve page via placesRegionMap); dev's TestFlight upload follows v0.4.112. Nothing open on my branch.",
-  "updated": "2026-11-16T03:25Z",
+  "updated": "2026-11-16T03:45Z",
   "done": [
     "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
     "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
@@ -21,9 +21,9 @@
     "on TestFlight (internal): the PrompTugal app with the Places tab, via conductor.a.ios@'s candidate 0f656cd and dev run 43791387224"
   ],
   "next": [
+    "comments end to end: lane agreed (board/inbox.json talk_lane; replies at api/v1/talk/replies.json), relayed to appdev.talk@ for PTTalk; PTPlaces needs no change; Dinis's Loulé test once PTTalk lands and the site pane is enabled",
     "widget for followed towns (shared container first)",
     "each city's own stats when served",
-    "comment lane once agreed (dev.places@ via conductor@)",
     "nearby news by distance when the data carries it (guidance 01:20)"
   ],
   "asks": [
