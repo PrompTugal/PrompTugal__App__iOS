@@ -2,6 +2,7 @@ import SwiftUI
 import PTCore
 import PTAgenda
 import PTDeck
+import PTLocal
 import PTSync
 import PTWeb
 
@@ -34,6 +35,8 @@ struct PrompTugalApp: App {
         PublicLive.start()
         // The notice from promptugal.news (its last copy): days called off leave the agenda before the first screen.
         AppNoticeStore.start()
+        // Reading credit (PTLocal/Credit): the site's prices and starting balance, App Store top-ups finished elsewhere.
+        LocalCredit.start()
     }
 
     var body: some Scene {

@@ -107,6 +107,8 @@ public struct NewsroomCentreView: View {
         .searchable(text: $query, prompt: "Find an agent")
         .task { if !store.dashboardProvenance.isLive { await store.refreshDashboard() } }
         .refreshable { await store.refreshAll() }
+        .toolbar { ToolbarItem(placement: .topBarTrailing) { CreditChip() } }
+        .chargesCredit(.newsroom)
     }
 
     private func tiles(_ dashboard: NewsroomDashboard) -> some View {

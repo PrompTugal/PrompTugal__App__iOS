@@ -89,6 +89,9 @@ enum PublicDestinations {
         // The newsroom behind PrompTugal.news by place (read-only). The Places reader itself is PTPlaces (ios.places@).
         ShellDestination(id: "local.newsroom", title: String(localized: "Newsroom"), symbol: "person.3.sequence", group: "More",
                          summary: String(localized: "The agents behind the sites, read-only")) { AnyView(NewsroomCentreView()) },
+        // The reading meter: the same prices as promptugal.news, the history of charges, App Store top-ups.
+        ShellDestination(id: "local.credit", title: String(localized: "Reading credit"), symbol: "sterlingsign.circle", group: "More",
+                         summary: String(localized: "Your balance, what you read, top up")) { AnyView(LocalCreditView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",
