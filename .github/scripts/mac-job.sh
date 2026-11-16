@@ -49,6 +49,9 @@ finish() {
 }
 field() { python3 -c 'import json,sys; print(json.loads(sys.argv[1]).get(sys.argv[2], ""))' "$1" "$2"; }
 entries() { python3 -c 'import json,sys; [print(json.dumps(e)) for e in json.loads(sys.argv[1] or "[]")]' "${1:-[]}"; }
+# The upload list with the apps in UPLOAD_FIRST (default promptugal, the app on Dinis's iPad) first, the rest
+# in apps.json order: his build reaches TestFlight before the others' archives and uploads.
+upload_order() { python3 -c 'import json,sys; l=json.loads(sys.argv[1] or "[]"); f=sys.argv[2].split(); print(json.dumps(sorted(l, key=lambda e: f.index(e["app"]) if e["app"] in f else len(f))))' "${1:-[]}" "${UPLOAD_FIRST-promptugal}"; }
 in_list() { python3 -c 'import json,sys; sys.exit(0 if any(e["app"] == sys.argv[2] for e in json.loads(sys.argv[1] or "[]")) else 1)' "${1:-[]}" "$2"; }
 app_entry() { python3 -c 'import json,sys; print(json.dumps(next(e for e in json.loads(sys.argv[1]) if e["app"] == sys.argv[2])))' "$APPS_JSON" "$1"; }
 # The scripts write KEY=value lines to $GITHUB_ENV for later steps; inside one step, export them.
@@ -236,7 +239,7 @@ case "${1:?phase}" in
           "$key" "$EXPECTED_BUNDLE" "$MARKETING_VERSION" "$BUILD_NUMBER" "$pub/$key/uploaded.json"
       ) || fail "$key: TestFlight"
       [ -f "$pub/$key/uploaded.json" ] && uploaded+=("$pub/$key/uploaded.json")
-    done < <(entries "${UPLOAD_JSON:-[]}")
+    done < <(entries "$(upload_order "${UPLOAD_JSON:-[]}")")
     list=$(python3 -c 'import json,sys; print(json.dumps([json.load(open(f)) for f in sys.argv[1:]], separators=(",", ":")))' ${uploaded[@]+"${uploaded[@]}"})
     echo "uploaded=$list" >> "${GITHUB_OUTPUT:-/dev/null}"
     echo "uploaded: $list"
