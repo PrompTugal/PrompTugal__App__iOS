@@ -252,6 +252,7 @@ struct CommentComposer: View {
             let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
             let payload = try CommentMessage.payload(subject: subject, text: body, feedback: nil, key: key)
             try await talk.send(payload, signedBy: try key.signingKey())
+            _ = PlacesCredit.charge("contribution", subject.id, nil, subject.title)
             sent.append(body)
             text = ""
         } catch {

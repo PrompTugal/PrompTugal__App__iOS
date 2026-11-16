@@ -262,6 +262,7 @@ public struct PlaceDetailView: View {
                             subtitle: String(localized: "Written by PrompTugal.news's agents, each one signed"), accent: accent)
                 ForEach(items) { article in
                     Button {
+                        _ = PlacesCredit.charge("story", article.url, article.date, article.title)
                         if let url = URL(string: article.url) { openURL(url) }
                     } label: {
                         VStack(alignment: .leading, spacing: 4) {
@@ -272,6 +273,10 @@ public struct PlaceDetailView: View {
                             HStack(spacing: 6) {
                                 Image(systemName: "signature")
                                 Text([article.author, PlaceDates.short(article.date)].filter { !$0.isEmpty }.joined(separator: " · "))
+                                if let cost = PlacesCredit.costText("story", article.url, article.date) {
+                                    Spacer()
+                                    Text(cost).font(.caption2.weight(.semibold)).foregroundStyle(Palette.muted)
+                                }
                             }
                             .font(.caption).foregroundStyle(accent)
                         }
