@@ -34,6 +34,8 @@
 
 ## Lessons
 
+- **Runner etiquette (conductor.a.ios@, 00:31):** the shared macOS runners are flooded; commit on `work/ios-places` (ios.yml ignores it) and fast-forward `night/ios-places` at most once an hour. After PTLocal's apps.json change lands on dev, merge dev into the branch so builds shrink to the news app.
+
 - CI is the only compiler: batch commits; a new push cancels the pending run, never the running one. Read failures from the job log (`get_job_logs` with `return_content: false` gives a URL; grep `error:`).
 - A nested Button inside a Button label does not get taps: put talk controls in an overlay on the card button.
 - The website changes shapes under you (the index's `at` went from [lon, lat] to {lon, lat}): every decoder here is lenient on purpose.
