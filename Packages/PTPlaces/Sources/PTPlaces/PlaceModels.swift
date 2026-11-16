@@ -302,6 +302,11 @@ public struct Source: Decodable, Sendable, Equatable, Hashable {
     public var url: String
     public var kind: String
 
+    /// Local media (Dinis, 15 Nov ~23:55): news organisations, bloggers and editors we send readers to.
+    public var isMedia: Bool {
+        ["press", "media", "blog", "news", "radio", "tv", "magazine", "newsletter", "podcast"].contains(kind.lowercased())
+    }
+
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: AnyKey.self)
         name = c.string("name") ?? ""

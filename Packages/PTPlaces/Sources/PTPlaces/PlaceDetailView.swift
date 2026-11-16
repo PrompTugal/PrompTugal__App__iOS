@@ -39,6 +39,7 @@ public struct PlaceDetailView: View {
                         articles
                         aiMap
                         events
+                        localMedia
                         agents(place)
                         gaps
                         provenance(place)
@@ -328,6 +329,37 @@ public struct PlaceDetailView: View {
                 .foregroundStyle(on ? .white : accent)
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: Local media
+
+    @ViewBuilder private var localMedia: some View {
+        let media = (file?.sources ?? []).filter(\.isMedia)
+        if !media.isEmpty {
+            VStack(alignment: .leading, spacing: Space.m) {
+                SectionHead(title: String(localized: "Local media"),
+                            subtitle: String(localized: "The newsrooms, bloggers and editors who cover this place. We link to them first; read them."), accent: accent)
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: wide ? 240 : 160), spacing: Space.m)], spacing: Space.m) {
+                    ForEach(media, id: \.self) { source in
+                        Button {
+                            if let url = URL(string: source.url) { openURL(url) }
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Image(systemName: "newspaper.fill").foregroundStyle(accent)
+                                Text(source.name).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                                    .multilineTextAlignment(.leading).lineLimit(2)
+                                Text(URL(string: source.url)?.host() ?? source.url).font(.caption2).foregroundStyle(Palette.muted).lineLimit(1)
+                            }
+                            .padding(Space.m)
+                            .frame(maxWidth: .infinity, minHeight: 96, alignment: .topLeading)
+                            .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius))
+                            .overlay(RoundedRectangle(cornerRadius: Space.radius).stroke(Palette.rule, lineWidth: 0.5))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
     }
 
     // MARK: Events

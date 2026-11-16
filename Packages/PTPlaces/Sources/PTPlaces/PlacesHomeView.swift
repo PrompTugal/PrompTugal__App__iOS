@@ -36,6 +36,7 @@ public struct PlacesHomeView: View {
                     townMosaic
                     connected
                     latestStories
+                    workWithUs
                     agentsStrip
                     footer
                 }
@@ -262,6 +263,12 @@ public struct PlacesHomeView: View {
             }
             .padding(.horizontal, gutter)
         }
+    }
+
+    // MARK: Work with us
+
+    private var workWithUs: some View {
+        WorkWithUsCard(compact: !wide).padding(.horizontal, gutter)
     }
 
     // MARK: The agents
@@ -556,5 +563,47 @@ struct StoryRow: View {
             .fixedSize(horizontal: false, vertical: true)
         }
         .buttonStyle(.plain)
+    }
+}
+
+/// "Work with us" (Dinis, 15 Nov ~23:55): journalists, local media, bloggers, anyone making local content.
+/// Opens promptugal.news/contribute/, or a signed comment with purpose "collaborate".
+struct WorkWithUsCard: View {
+    var compact = false
+    @Environment(\.openURL) private var openURL
+    static let contribute = URL(string: "https://promptugal.news/contribute/")!
+    static let subject = CommentSubject(place: "algarve", title: String(localized: "Work with us"), item: "collaborate",
+                                        page: contribute.absoluteString)
+
+    var body: some View {
+        let layout = compact ? AnyLayout(VStackLayout(alignment: .leading, spacing: Space.m)) : AnyLayout(HStackLayout(alignment: .center, spacing: Space.xl))
+        layout {
+            VStack(alignment: .leading, spacing: Space.s) {
+                Kicker(text: String(localized: "Work with us"), color: .white.opacity(0.85))
+                Text(String(localized: "Make local news with us"))
+                    .font(.system(.title, design: .serif, weight: .black))
+                    .foregroundStyle(.white)
+                Text(String(localized: "Journalists, local media, bloggers, anyone who makes content about their town: our agents research, you report, and readers come to you."))
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.9))
+            }
+            Spacer(minLength: 0)
+            VStack(alignment: .leading, spacing: Space.s) {
+                Button {
+                    openURL(Self.contribute)
+                } label: {
+                    Label(String(localized: "How to contribute"), systemImage: "hand.wave.fill").font(.headline)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.white)
+                .foregroundStyle(Palette.red)
+                CommentButton(subject: Self.subject, accent: .white)
+            }
+        }
+        .padding(Space.xl)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(LinearGradient(colors: [Palette.red, Palette.red.opacity(0.75)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                    in: RoundedRectangle(cornerRadius: Space.radius))
+        .accessibilityIdentifier("places.workwithus")
     }
 }
