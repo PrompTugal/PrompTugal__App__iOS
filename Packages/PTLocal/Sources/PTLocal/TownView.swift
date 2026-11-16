@@ -42,7 +42,6 @@ public struct TownView: View {
         }
         .refreshable { await store.refreshAll() }
         .task { if store.dashboard == nil { await store.refreshDashboard() } }
-        .chargesCredit(.town(id: id, name: info?.name ?? site?.name ?? id))
     }
 
     @ViewBuilder
@@ -52,8 +51,6 @@ public struct TownView: View {
             HStack(spacing: Space.s) {
                 Kicker("PrompTugal.news · \(site.name)", color: accent)
                 StatusChip(live: site.isLive)
-                Spacer()
-                CreditChip()
             }
             Text(site.name).font(Typo.display).foregroundStyle(Palette.ink).accessibilityAddTraits(.isHeader)
             if let landmark = site.look?.landmark {

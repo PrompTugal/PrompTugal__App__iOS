@@ -145,10 +145,17 @@ public final class LocalCredit {
         return true
     }
 
-    /// For packages that cannot name `CreditKind` in a closure: the site's page-type, a ref and the page's date.
+    /// The closure shape for packages that do not import PTLocal (PTPlaces): plain strings in, as
+    /// `CreditKind.named`. The app shell injects it, e.g.
+    /// `PlacesCredit.charge = { LocalCredit.shared.charge(action: $0, ref: $1, date: $2, title: $3) }`.
     @discardableResult
-    public func charge(pageType: String, ref: String, date: String? = nil, title: String) -> Bool {
-        charge(kind: .page(type: pageType, ref: ref, date: date, title: title))
+    public func charge(action: String, ref: String, date: String? = nil, title: String) -> Bool {
+        charge(kind: .named(action, ref: ref, date: date, title: title))
+    }
+
+    /// The same, for the price shown before spending: "2p", "free", or "read" when already paid this session.
+    public func costText(action: String, ref: String, date: String? = nil) -> String {
+        costText(of: .named(action, ref: ref, date: date, title: ""))
     }
 
     /// Gives a charge back, with the reason (the site's "Don't charge me").

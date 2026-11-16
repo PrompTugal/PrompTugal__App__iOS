@@ -15,11 +15,7 @@ public struct AlgarveView: View {
     public var body: some View {
         Page {
             header
-            HStack {
-                ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
-                Spacer()
-                CreditChip()
-            }
+            ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
             StatGrid(minimum: 120) {
                 StatTile(label: "Places", value: "\(PlaceDirectory.towns.count)", detail: "first wave")
                 StatTile(label: "Live sites", value: "\(store.liveTownCount)", detail: "the rest researching", tone: .good)
@@ -75,7 +71,6 @@ public struct AlgarveView: View {
         }
         .task { if !store.placeProvenance.isLive { await store.refreshAll() } }
         .refreshable { await store.refreshAll() }
-        .chargesCredit(.town(id: PlaceDirectory.region.id, name: "The Algarve"))
     }
 
     private var header: some View {
@@ -198,26 +193,17 @@ struct StatusChip: View {
 struct StoryRow: View {
     let story: PlaceSite.News
     let town: String?
-    @Environment(\.openURL) private var openURL
-
-    /// What opening this story costs (the site's `story` price by its date), charged when the source opens.
-    private var creditKind: CreditKind { .story(url: story.url, title: story.title, date: story.date) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             if let town { Kicker(town) }
             if let url = story.sourceURL {
-                Button {
-                    LocalCredit.shared.charge(kind: creditKind)
-                    openURL(url)
-                } label: {
+                Link(destination: url) {
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
                         Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                         Image(systemName: "arrow.up.right").font(.caption2).foregroundStyle(Palette.muted)
-                        CostTag(creditKind)
                     }
                 }
-                .buttonStyle(.plain)
             } else {
                 Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
             }

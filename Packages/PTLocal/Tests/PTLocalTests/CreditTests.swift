@@ -262,6 +262,22 @@ struct CreditLedgerTests {
     func priceList() {
         let credit = makeCredit()
         let prices = CreditKind.priceList.map { credit.cost(of: $0.kind) }
-        #expect(prices == [40_000, 20_000, 10_000, 10_000, 30_000, 60_000, 10_000, 10_000])
+        #expect(prices == [40_000, 30_000, 20_000, 10_000, 30_000, 60_000, 10_000, 0])
+    }
+
+    @Test("The string hook (for PTPlaces' injected closure) maps to the same kinds and prices")
+    func named() throws {
+        let credit = makeCredit()
+        let now = try #require(MeterConfig.parseDate("2026-11-16T12:00:00Z"))
+        #expect(CreditKind.named("story", ref: "https://e.org/x", date: "2026-11-16", title: "X")
+                == .story(url: "https://e.org/x", title: "X", date: "2026-11-16"))
+        #expect(CreditKind.named("ai.summary", ref: "faro", title: "Faro") == .aiSummary(of: "faro", title: "Faro"))
+        #expect(CreditKind.named("contribution", ref: "-", title: "a photo") == .contribution("a photo"))
+        #expect(CreditKind.named("place", ref: "faro", title: "Faro").pageType == "place")
+        #expect(credit.costText(action: "ai.summary", ref: "faro") == "3p")
+        #expect(credit.charge(action: "story", ref: "https://e.org/x", date: "2026-11-16", title: "X"))
+        #expect(!credit.charge(action: "story", ref: "https://e.org/x", date: "2026-11-16", title: "X"))
+        #expect(credit.costText(action: "story", ref: "https://e.org/x") == "read")
+        #expect(credit.cost(of: .named("story", ref: "y", date: "2026-11-16", title: "Y"), now: now) == 40_000)
     }
 }

@@ -4,16 +4,13 @@ import Foundation
 /// charges what promptugal.news charges for the same kind of reading. Other packages (PTPlaces, the AI and Talk
 /// screens) build one of these and pass it to `LocalCredit.shared.charge(kind:)`.
 ///
-/// | In the app | Priced as (site page-type) | Why |
+/// | In the app | Priced as (site page-type) | Paid? |
 /// | --- | --- | --- |
-/// | a story from a town, opened | `story`, by the story's date | the site's story: assembled by agents, decays |
-/// | a town or region page | `place` | the site's town pages are `place` pages (1p, no decay) |
-/// | the newsroom | `site` | the site's newsroom page is a `site` page |
-/// | an AI summary or "explain the AI path" | `topic` (analysis), base price | work a reader cannot do from one page |
-/// | a question to a town's agent | `article`, base price | an answer is judgement, the site's dearest kind |
-/// | a contribution sent (photo, video, interview) | `evidence` | a capture with its source: the floor |
-/// | the live view, the CI status | `data` | reading how the newsroom runs: the floor |
-/// | your reading account, top up | `account` | the meter's own pages are free |
+/// | a story's full detail, opened | `story`, by the story's date (1p to 4p) | yes |
+/// | an on-device AI summary or "explain the AI path" | `topic` (analysis), base price (3p) | yes, once per thing per session |
+/// | a question to a town's agent | `article`, base price (6p) | yes, each question |
+/// | a contribution sent (photo, video, interview) | `evidence` (1p) | yes, each one |
+/// | browsing places, lists, the newsroom | (`town`, `newsroom`, `data` kinds exist, priced as the site's `place`, `site`, `data`) | free: not charged by the app |
 public struct CreditKind: Hashable, Sendable, Identifiable {
     /// The site's page-type this is priced as (a key of `types` in meter.json).
     public let pageType: String
@@ -84,16 +81,38 @@ public struct CreditKind: Hashable, Sendable, Identifiable {
         CreditKind(pageType: type, action: "page." + type, ref: ref, pageDate: date, title: title)
     }
 
-    /// The rows of the app's price list: one example of each kind of reading in the app.
+    /// The actions other packages name by string (PTPlaces stays PTCore-only and calls a closure the app injects).
+    /// What is paid (conductor, 16 Nov): opening a story's full detail, an on-device AI summary, a contribution, a
+    /// question to an agent. Browsing lists is free.
+    public enum Action {
+        public static let story = "story"
+        public static let aiSummary = "ai.summary"
+        public static let contribution = "contribution"
+        public static let talk = "talk"
+    }
+
+    /// A kind from plain strings: the action ("story", "ai.summary", "contribution", "talk", or any site page-type),
+    /// what was read (a story's URL, a place id), the page's date and the words for the history.
+    public static func named(_ action: String, ref: String, date: String? = nil, title: String) -> CreditKind {
+        switch action {
+        case Action.story: .story(url: ref, title: title, date: date)
+        case Action.aiSummary: .aiSummary(of: ref, title: title)
+        case Action.contribution: .contribution(title)
+        case Action.talk: .talk(to: ref)
+        default: .page(type: action, ref: ref, date: date, title: title)
+        }
+    }
+
+    /// The rows of the app's price list: what is paid in the app. Browsing lists is free.
     public static var priceList: [(label: String, kind: CreditKind)] { [
         ("A story, the day it was published", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 0)),
+        ("A story, a few days old", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 3)),
         ("A story, two weeks old", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 14)),
-        ("A town or the Algarve", .town(id: "example", name: "A town")),
-        ("The newsroom", .newsroom),
+        ("A story, older than a month", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 45)),
         ("An AI summary", .aiSummary(of: "example", title: "a town")),
         ("A question to a town's agent", .talk(to: "a town")),
         ("A contribution (photo, video, interview)", .contribution("a photo")),
-        ("The live view or the CI status", .data("example", title: "Live")),
+        ("Browsing places, lists and the newsroom", .page(type: "account", ref: "browse", title: "Browsing")),
     ] }
 
     /// The same kind dated this many days ago (for the price list).
