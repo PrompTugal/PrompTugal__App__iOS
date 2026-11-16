@@ -1,0 +1,214 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "alcoutim",
+  "name": "Alcoutim",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.alcoutim@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Alcoutim: AI and technology in Alcoutim, an inland, low-density municipality on the Guadiana where connectivity, sensors and digital inclusion are the road to AI, and what reaches Alcoutim from the Algarve, Portugal and the world. Independent. Every fact sourced.",
+  "gravity": {
+    "text": "Alcoutim is an inland municipality on the Guadiana, on the border with Spain, and its public investment is about infrastructure and basic services: a bridge to Sanlucar de Guadiana, a rebuilt water network in Martim Longo, social housing and a more accessible council website. Its technology story today is the public kind: it is one of six Algarve municipalities building a shared sensor and data platform, and it hosts the national centre that studies desertification. A town this size has no AI companies we could find, so the path to AI runs through data and connectivity first.",
+    "sources": [
+      {
+        "title": "Município de Alcoutim: PRR projects (Transparência)",
+        "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/beneficiario/506772446/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Algarve 6.0 Smart Territorial Hub (PRR project page)",
+        "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/01/C19-i08/2024.P13557/",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Government creates a centre to study desertification, based in Alcoutim (Observador, from Lusa)",
+        "url": "https://observador.pt/2018/07/19/governo-cria-centro-para-estudar-e-procurar-solucoes-de-combate-a-desertificacao/",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#2F5D50",
+    "landmark": "Alcoutim castle above the Guadiana",
+    "motif": "slate green river, quiet border town, schist hills"
+  },
+  "ai_news": [
+    {
+      "title": "Alcoutim turns the old EPAC granary into a business and coworking centre",
+      "summary": "The council's Celeiro de Ideias application was approved on 27 August 2026 under Algarve 2030. Eligible investment is 1,269,828.22 euros, with 761,896.94 euros of FEDER co-funding, and works are due to end on 30 September 2028. It is meant for microbusinesses, freelancers, startups and local artisans.",
+      "date": "2026-09-25",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/alcoutim-vai-transformar-antigo-celeiro-da-epac-em-centro-empresarial/",
+      "read_on": "2026-11-15",
+      "ai_path": "A coworking and startup space is where founders and remote workers who build with AI would sit in a low-density town. The article mentions no technology or AI, so this is a place to watch, not a claim.",
+      "steps": 3
+    },
+    {
+      "title": "Alcoutim gets shared electric bikes run by a digital platform",
+      "summary": "With Fundacao Galp, the council opened a system of 14 electric bicycles at four stations, open to residents and visitors. The investment is above 100,000 euros and a digital management and usage platform, built by the company CME, runs it.",
+      "date": "2026-06-12",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=401815",
+      "read_on": "2026-11-15",
+      "ai_path": "A usage platform for shared bikes produces mobility data, which is the raw material for AI planning of low-density transport. This is a weak, third-step link: the article does not mention AI.",
+      "steps": 3
+    },
+    {
+      "title": "Alcoutim pays for its senior teleassistance service itself",
+      "summary": "The council decided in March 2026 to fund a new edition of the + Proximo service with its own money, about 80,000 euros, after no support decision came. It gives people aged 65 or over who live isolated a wearable alarm button and a fixed unit on the home phone, and the Tavira humanitarian centre of the Portuguese Red Cross installs the kit and visits.",
+      "date": "2026-03-25",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/alcoutim-financia-projeto-proximo-apoio-idosos-isolamento/",
+      "read_on": "2026-11-15",
+      "ai_path": "Connected alarm devices for isolated seniors are the digital inclusion layer where remote monitoring and AI risk detection would come next, as in the Smart Territorial Hub's elderly monitoring vertical. The article does not mention AI.",
+      "steps": 3
+    }
+  ],
+  "sources": [
+    {
+      "name": "Municipio de Alcoutim",
+      "url": "https://cm-alcoutim.pt/",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Transparencia: PRR beneficiary page for Alcoutim",
+      "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/beneficiario/506772446/",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Barlavento",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Sul Informacao",
+      "url": "https://www.sulinformacao.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Postal do Algarve",
+      "url": "https://postal.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "CCDesert, the desertification competence centre (INIAV)",
+      "url": "https://www.iniav.pt/images/Investigacao_Inovacao/Centros-Competencias/CCDesert/poster.pdf",
+      "kind": "other",
+      "feed": null
+    },
+    {
+      "name": "The Things Network Algarve (LoRaWAN community)",
+      "url": "https://www.thethingsnetwork.org/community/algarve/",
+      "kind": "other",
+      "feed": null
+    },
+    {
+      "name": "Associacao Odiana (Baixo Guadiana development)",
+      "url": "https://baixoguadiana.com/",
+      "kind": "business",
+      "feed": null
+    },
+    {
+      "name": "Algarve Primeiro",
+      "url": "https://www.algarveprimeiro.com/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Jornal do Algarve",
+      "url": "https://jornaldoalgarve.pt/",
+      "kind": "press",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "Algarve 6.0 Smart Territorial Hub (Alcoutim, Olhao, Loule, Sao Bras de Alportel, Tavira, Vila Real de Santo Antonio)",
+      "type": "public body",
+      "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/01/C19-i08/2024.P13557/",
+      "what": "A PRR project of six municipalities to build an urban management platform with sensors and a LoRaWAN network, including monitoring of isolated elderly residents. Alcoutim's assigned funding is 124.32 thousand euros, and the project is due to end on 30 June 2026.",
+      "source_url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/01/C19-i08/2024.P13557/",
+      "read_on": "2026-11-15",
+      "ai_path": "Sensors and a LoRaWAN network feed one data platform, and a shared data platform is where analytics and AI services get built. The project page does not mention AI.",
+      "steps": 2
+    },
+    {
+      "name": "CCDesert, Centro de Competencias na Luta contra a Desertificacao",
+      "type": "institution",
+      "url": "https://www.iniav.pt/images/Investigacao_Inovacao/Centros-Competencias/CCDesert/poster.pdf",
+      "what": "A national competence centre hosted by Alcoutim since 2018, joining the Government and more than 30 institutions in research, training and knowledge transfer on desertification, and publishing results digitally.",
+      "source_url": "https://observador.pt/2018/07/19/governo-cria-centro-para-estudar-e-procurar-solucoes-de-combate-a-desertificacao/",
+      "read_on": "2026-11-15",
+      "ai_path": "A research network that maps land, soil and climate data is a natural user of AI and remote sensing models. We found no AI work by the centre yet, so this is a lead to check.",
+      "steps": 3
+    },
+    {
+      "name": "CME (digital platform for the Alcoutim shared bikes)",
+      "type": "company",
+      "url": "https://www.barlavento.pt/?p=401815",
+      "what": "The company named as developer of the digital management and usage platform of the shared electric bikes opened in June 2026.",
+      "source_url": "https://www.barlavento.pt/?p=401815",
+      "read_on": "2026-11-15",
+      "ai_path": "A software platform that collects usage data is a step from data products and AI features. The article does not say CME uses AI.",
+      "steps": 3
+    },
+    {
+      "name": "Celeiro de Ideias (former EPAC granary business centre)",
+      "type": "public body",
+      "url": "https://www.barlavento.pt/alcoutim-vai-transformar-antigo-celeiro-da-epac-em-centro-empresarial/",
+      "what": "Municipal project to rehabilitate the old granary beside the EN 122.1 as an entrepreneurship and coworking centre, completion planned for 30 September 2028.",
+      "source_url": "https://www.barlavento.pt/alcoutim-vai-transformar-antigo-celeiro-da-epac-em-centro-empresarial/",
+      "read_on": "2026-11-15",
+      "ai_path": "A future home for startups and freelancers is where local AI builders could appear. No AI tenant is announced.",
+      "steps": 3
+    },
+    {
+      "name": "+ Proximo teleassistance (Alcoutim council with the Tavira humanitarian centre of the Portuguese Red Cross)",
+      "type": "organisation",
+      "url": "https://www.barlavento.pt/alcoutim-financia-projeto-proximo-apoio-idosos-isolamento/",
+      "what": "Teleassistance for isolated people aged 65 or over, running since 2020, now paid by the council.",
+      "source_url": "https://www.barlavento.pt/alcoutim-financia-projeto-proximo-apoio-idosos-isolamento/",
+      "read_on": "2026-11-15",
+      "ai_path": "Alarm devices and a support centre produce the data and the connection on which AI monitoring of isolated seniors would be built. No AI is mentioned.",
+      "steps": 3
+    }
+  ],
+  "extras": [
+    {
+      "label": "PRR funding assigned to the council",
+      "value": "11 projects, about 13.07 million euros in total, including the Alcoutim to Sanlucar de Guadiana bridge (10.64 million) and the council website accessibility project (10 thousand euros)",
+      "source_url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/beneficiario/506772446/",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Celeiro de Ideias funding",
+      "value": "1,269,828.22 euros eligible, 761,896.94 euros FEDER, priority 5 of Algarve 2030, approved 27 Aug 2026",
+      "source_url": "https://www.barlavento.pt/alcoutim-vai-transformar-antigo-celeiro-da-epac-em-centro-empresarial/",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.alcoutim-promptugal",
+    "signed_by": "place.alcoutim@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI company, startup or AI event based in Alcoutim turned up in this first pass. That is a finding: for a municipality of this size the AI path runs through the council, the PRR sensor platform and regional bodies. Next to look at: Algarve Evolution and the Universidade do Algarve for projects reaching the Guadiana, and Associacao Odiana's Vilas em Movimento work.",
+    "The council's own site (cm-alcoutim.pt) loaded as a page with no readable news list and exposes no RSS feed. We need its news page URL or a feed, or a council bulletin per month.",
+    "Postal do Algarve, Sul Informacao and Portugal Resident refuse automated reading (a bot check or a 403), so their pages are not used. Barlavento reads fine and now carries two items. Still to verify at a readable source: a council protocol with MEO for the SmartAL remote support system and the Medigraf telemedicine system (search snippets point to October 2018, so it may be old news). The SmartAL terms page names MEO as operator and mentions no AI, and does not link the platform to Alcoutim.",
+    "No source yet on mobile and fibre coverage in Alcoutim, on digital inclusion training or on Wi-Fi in the villages. Look for ANACOM coverage data and the council's PRR digital items.",
+    "The Things Network Algarve lists a free LoRaWAN community for the region, but its page does not mention Alcoutim. Whether the council's LoRaWAN network will be open to community use is an open question."
+  ],
+  "voice": {
+    "lede": "Ai, Alcoutim: a vila onde o rio e quase Espanha e a fibra ainda vem devagarinho, mas os sensores ja chegaram.",
+    "mandate": "PrompTugal.news Alcoutim: AI and technology, bem la no interior, ali onde o Guadiana faz de fronteira e a internet tem de aprender a nadar. Also what reaches us from the Algarve, Portugal and the world. Independent, and every fact has its source, pois claro.",
+    "gravity": "Here we do not have a hundred startups, ca estamos mais para pontes, agua e sensores. A bridge to Spain, a rebuilt water pipe in Martim Longo, and a shared sensor platform with five other municipalities. Before the AI, the data. Before the data, the cable, fogo!",
+    "gaps_intro": "Pois, nem tudo se encontra. Here is what we are still looking for, com calma, que a pressa e inimiga da perfeicao:"
+  }
+}

@@ -20,6 +20,7 @@
 		41F3140167275E1411C25A46 /* PTSync in Frameworks */ = {isa = PBXBuildFile; productRef = 25F7334D79311F8220A3AB98 /* PTSync */; };
 		96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */ = {isa = PBXBuildFile; productRef = F72F20E84309FB59E1978852 /* PTExplore */; };
 		5A1C0F3E9B2D4C6E8F0A1B2C /* PTPlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 5A1C0F3E9B2D4C6E8F0A1B2D /* PTPlaces */; };
+		A1C0DE5E0C0A1F0000000001 /* PTLocal in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE5E0C0A1F0000000003 /* PTLocal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +167,7 @@
 				41F3140167275E1411C25A46 /* PTSync in Frameworks */,
 				96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */,
 				5A1C0F3E9B2D4C6E8F0A1B2C /* PTPlaces in Frameworks */,
+				A1C0DE5E0C0A1F0000000001 /* PTLocal in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +278,7 @@
 				25F7334D79311F8220A3AB98 /* PTSync */,
 				F72F20E84309FB59E1978852 /* PTExplore */,
 				5A1C0F3E9B2D4C6E8F0A1B2D /* PTPlaces */,
+				A1C0DE5E0C0A1F0000000003 /* PTLocal */,
 			);
 			productName = PrompTugal;
 			productReference = 0D08D33B90E2593AC336F1CD;
@@ -442,6 +445,7 @@
 				68F21D0D111DF6468DFC0904 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */,
 				74304D6E9A5485D46D560243 /* XCLocalSwiftPackageReference "../../Packages/PTExplore" */,
 				5A1C0F3E9B2D4C6E8F0A1B2E /* XCLocalSwiftPackageReference "../../Packages/PTPlaces" */,
+				A1C0DE5E0C0A1F0000000002 /* XCLocalSwiftPackageReference "../../Packages/PTLocal" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6184002F36CB9470245CDFFC /* Products */;
@@ -900,6 +904,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTPlaces;
 		};
+		A1C0DE5E0C0A1F0000000002 /* XCLocalSwiftPackageReference "../../Packages/PTLocal" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTLocal;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -952,6 +960,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5A1C0F3E9B2D4C6E8F0A1B2E /* XCLocalSwiftPackageReference "../../Packages/PTPlaces" */;
 			productName = PTPlaces;
+		};
+		A1C0DE5E0C0A1F0000000003 /* PTLocal */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A1C0DE5E0C0A1F0000000002 /* XCLocalSwiftPackageReference "../../Packages/PTLocal" */;
+			productName = PTLocal;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

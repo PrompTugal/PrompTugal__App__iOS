@@ -1,0 +1,179 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "albufeira",
+  "name": "Albufeira",
+  "kind": "municipality",
+  "parent": "algarve",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.albufeira@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Albufeira: AI and technology in Albufeira, a tourism and hospitality town, and what reaches Albufeira from the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "Albufeira's council puts creativity and tourism first in its business incubator, and it runs a free coworking space for remote workers inside a seafront hotel. Tourism and hospitality are the centre of gravity, so the AI that matters here is the AI that hotels and tourism companies adopt, with the path written down each time. On the public side, the council says it uses an AI-based urban management platform.",
+    "sources": [
+      {
+        "title": "Startup Albufeira, Município de Albufeira",
+        "url": "https://www.cm-albufeira.pt/startup-albufeira",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Albufeira Digital Nomads, Município de Albufeira",
+        "url": "https://www.cm-albufeira.pt/albufeira-digital-nomads",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Conferência em Albufeira reúne especialistas e analisa mudanças no urbanismo, Barlavento",
+        "url": "https://www.barlavento.pt/?p=402125",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#0A5C7A",
+    "landmark": "The Old Town and its seafront beaches",
+    "motif": "deep Atlantic blue, whitewash, sun and sea"
+  },
+  "ai_news": [
+    {
+      "title": "Albufeira council says it runs an AI-based urban management platform",
+      "summary": "Reporting on a conference about the new urbanism decree, Barlavento quotes the council naming a platform that uses artificial intelligence among its measures to make urban processes quicker and easier to reach. The article gives no technical detail.",
+      "date": "2026-06-16",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=402125",
+      "read_on": "2026-11-15",
+      "ai_path": "The council itself says it uses AI in urban management.",
+      "steps": 0
+    },
+    {
+      "title": "Albufeira town hall hosts a conference on AI in urban planning",
+      "summary": "A day-long conference in the council's main hall on 15 June 2026 looked at the new urbanism decree and the effect of AI and automatic decision-making on urban processes, with a University of Porto speaker on AI in territorial management.",
+      "date": "2026-06-11",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=401664",
+      "read_on": "2026-11-15",
+      "ai_path": "The conference was partly about AI in urban processes.",
+      "steps": 0
+    },
+    {
+      "title": "A hotel group with an Albufeira hotel adopts an AI guest-messaging app",
+      "summary": "The vendor Quinta says Jupiter Hotel Group deployed its AI guest communication app, Velma. The group's hotels include one in Albufeira. This is a vendor's own page, so treat it as a claim by the supplier.",
+      "date": "2024-05-02",
+      "publisher": "Quinta (vendor blog)",
+      "url": "https://www.quinta.im/blog/ai-has-landed-on-jupiter-hotel-group/",
+      "read_on": "2026-11-15",
+      "ai_path": "A hospitality group with an Albufeira hotel uses an AI app to talk to guests.",
+      "steps": 1
+    }
+  ],
+  "sources": [
+    {
+      "name": "Município de Albufeira, news",
+      "url": "https://www.cm-albufeira.pt/noticias",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Albufeira Smart City portal",
+      "url": "https://smartcity.cm-albufeira.pt/v2/portal",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Startup Albufeira (council incubator)",
+      "url": "https://www.cm-albufeira.pt/startup-albufeira",
+      "kind": "business",
+      "feed": null
+    },
+    {
+      "name": "Barlavento",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Sul Informação",
+      "url": "https://www.sulinformacao.pt/",
+      "kind": "press",
+      "feed": null
+    },
+    {
+      "name": "Postal do Algarve (needs a human check first: it showed a bot challenge)",
+      "url": "https://postal.pt/algarve/",
+      "kind": "press",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "Município de Albufeira",
+      "type": "public body",
+      "url": "https://www.cm-albufeira.pt",
+      "what": "The council says it uses an AI-based urban management platform, and it runs a smart city portal for occurrence management.",
+      "source_url": "https://www.barlavento.pt/?p=402125",
+      "read_on": "2026-11-15",
+      "ai_path": "The council says it uses AI in urban processes.",
+      "steps": 0
+    },
+    {
+      "name": "Jupiter Hotel Group (Jupiter Albufeira Hotel)",
+      "type": "company",
+      "url": "https://www.quinta.im/blog/ai-has-landed-on-jupiter-hotel-group/",
+      "what": "A hotel group with a hotel in Albufeira that the vendor Quinta lists as a user of its AI guest communication app.",
+      "source_url": "https://www.quinta.im/blog/ai-has-landed-on-jupiter-hotel-group/",
+      "read_on": "2026-11-15",
+      "ai_path": "Hotel group uses an AI guest-messaging app, named by the vendor.",
+      "steps": 1
+    }
+  ],
+  "extras": [
+    {
+      "label": "Council coworking",
+      "value": "Albufeira Digital Nomads: a free coworking space run by the council at a seafront hotel, subject to space. The page does not mention AI.",
+      "source_url": "https://www.cm-albufeira.pt/albufeira-digital-nomads",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Council incubator",
+      "value": "Startup Albufeira has two poles, creativity and tourism, and local products and gastronomy, with a preference for tourism ideas. The page does not mention AI.",
+      "source_url": "https://www.cm-albufeira.pt/startup-albufeira",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Algarve Tech Hub Summit 2024",
+      "value": "Held in Albufeira on 23 to 25 October 2024, organised by Algarve STP, Algarve Evolution and the University of the Algarve with the council. The article we read does not mention AI.",
+      "source_url": "https://www.barlavento.pt/?p=358515",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Digital urbanism counter",
+      "value": "On 4 February 2026 the council launched an online service for urban planning requests, with sign-in by Chave Móvel Digital. The article does not mention AI and does not link it to the AI platform the council names later.",
+      "source_url": "https://www.barlavento.pt/?p=391318",
+      "read_on": "2026-11-15"
+    },
+    {
+      "label": "Dengun Founders Program",
+      "value": "A free six-week online accelerator by the Algarve tech company Dengun, announced in October 2024, with AI one of five focus areas. The article does not mention Albufeira, so we hold the Albufeira demo-day lead until a readable source confirms it.",
+      "source_url": "https://www.barlavento.pt/dengun-lanca-programa-de-aceleracao-inovador-para-startups-globais/",
+      "read_on": "2026-11-15"
+    }
+  ],
+  "identity": {
+    "key_id": "site.albufeira-promptugal",
+    "signed_by": "place.albufeira@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No Albufeira-based AI company or startup is confirmed yet. The AI map holds only the council and one hotel group whose AI use is stated by its supplier.",
+    "Postal do Algarve, the best local paper, showed a bot challenge, so we could not read its stories on Vibeslist (an AI recommendation app reported as debuting in Albufeira in 2026), the Dengun Founders Program in Albufeira and the Algarve Tech Hub Summit. They are leads to confirm, not facts.",
+    "No event with an AI path is listed for the coming weeks. Organisers' own pages (Algarve Evolution, Algarve STP, UAlg) are the next sources to read.",
+    "We have no named hotel or tourism company in Albufeira that describes its own AI use. Next: hotel groups' and AHETA's own pages, and tourism-tech vendors' customer lists.",
+    "The council's news page showed no AI or technology items in late October and early November 2026, and has no feed we could find.",
+    "Sul Informação and the council's Smart City portal refused our reader (403 or empty), so the Smart City platform's apps (incident management, beach occupancy) are unconfirmed here."
+  ],
+  "voice": {
+    "lede": "Sol, sea and a chatbot to book your sunbed: this is Albufeira, where tourism is the main business and AI is turning up at the front desk.",
+    "mandate": "PrompTugal.news Albufeira: we follow the AI and tech in Albufeira, the town of beaches, bars and bookings, and whatever washes in from the Algarve, Portugal and the world. Independent, every fact sourced, no sunburn.",
+    "gravity": "Albufeira runs on visitors, so hotels and tourism come first. The council has a coworking space inside a seafront hotel and an incubator that prefers tourism ideias, and it says an AI platform now helps with urban planning. Pois, not bad for a town famous for its beaches.",
+    "gaps_intro": "Ora bem, what we could not find yet, and where we will look next:"
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "$schema": "../schemas/by-place.schema.json",
+  "id": "quarteira",
+  "name": "Quarteira",
+  "kind": "city",
+  "parent": "loule",
+  "status": "researching",
+  "updated": "2026-11-15",
+  "by": "place.quarteira@PrompTugal.dinis",
+  "mandate": "PrompTugal.news Quarteira: AI and technology in Quarteira, a beach and golf city whose parish holds Vilamoura, and what reaches Quarteira from Loulé, the Algarve, Portugal and the world. Independent; every fact sourced.",
+  "gravity": {
+    "text": "Quarteira is a coastal city and civil parish in the municipality of Loulé, a fishing village that became a city in 1999. Its economy leans on tourism and golf, and its parish holds Vilamoura, described as Europe's largest private tourist development. Decisions that touch its technology, from urban planning to the Quarteira Lab sensors, are taken by the Loulé council.",
+    "sources": [
+      {
+        "title": "Quarteira (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Quarteira",
+        "read_on": "2026-11-15"
+      },
+      {
+        "title": "Bairros Comerciais Digitais Loulé e Quarteira (Barlavento, 11 March 2026)",
+        "url": "https://www.barlavento.pt/bairros-comerciais-digitais-loule-quarteira/",
+        "read_on": "2026-11-15"
+      }
+    ]
+  },
+  "look": {
+    "accent": "#0B5C7A",
+    "landmark": "The Fort of Armação on the Quarteira seafront",
+    "motif": "old fishing village turned beach city, sea blue, golf greens and a marina next door"
+  },
+  "ai_news": [
+    {
+      "title": "Loulé council says it has already bought AI tools to speed up planning permits",
+      "summary": "At a meeting with hundreds of planning professionals, the Loulé council announced AI tools among other measures to cut licensing delays. The mayor said technology alone will not fix the problem while internal bureaucratic obstacles remain. The article does not name the tools or the supplier.",
+      "date": "2026-07-28",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/?p=405832",
+      "read_on": "2026-11-15",
+      "ai_path": "The council that governs Quarteira has contracted AI tools to process planning files, so permits in Quarteira are handled with AI support.",
+      "steps": 1
+    },
+    {
+      "title": "Digital Commercial Neighbourhoods of Loulé and Quarteira: online shops, Wi-Fi, digital displays, no AI yet",
+      "summary": "A PRR-funded project gives Quarteira's merchants online sales platforms, extra Wi-Fi, digital street displays and vouchers for digital services. The article mentions no AI. It matters for us as the digital base on which AI tools would later sit.",
+      "date": "2026-03-11",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/bairros-comerciais-digitais-loule-quarteira/",
+      "read_on": "2026-11-15",
+      "ai_path": "Local shops moving online produce customer and sales data and need digital skills, the ground on which AI tools for retail are adopted. No AI is claimed by the project.",
+      "steps": 3
+    },
+    {
+      "title": "Old Course Vilamoura adds Trackman ball tracking, first in the Algarve",
+      "summary": "The Old Course and the Els Club in Vilamoura joined Trackman's virtual golf platform, with ball-tracking for the range, coaching, fitting and indoor simulator rounds. The partnership was facilitated by DETAILS, which manages Arrow Global's hospitality and golf assets. The article mentions no AI, only the accuracy of the data. Kept as context from Vilamoura.",
+      "date": "2025-03-06",
+      "publisher": "The Golf Wire",
+      "url": "https://thegolfwire.com/vilamoura-trackman-algarve",
+      "read_on": "2026-11-15",
+      "ai_path": "Radar sensors turn every shot into data, the raw material of analytics and coaching models. No AI is claimed by the source.",
+      "steps": 3
+    },
+    {
+      "title": "Quarteira Lab counts walkers and cyclists to feed a data platform",
+      "summary": "As part of the Quarteira Lab decarbonisation project run by the Loulé council, a counter for people and bicycles was installed at a junction on Avenida Dr. Carlos Mota Pinto. The data goes to an aggregating platform and is meant to reach digital panels and a mobile app. The article mentions no AI. This is an older item kept for context.",
+      "date": "2020-05-05",
+      "publisher": "Barlavento",
+      "url": "https://www.barlavento.pt/quarteira-lab-implementa-sistema-de-contagem-de-pessoas-e-bicicletas/",
+      "read_on": "2026-11-15",
+      "ai_path": "Street sensors feed a data platform, and such platforms are what analytics and AI models are trained and run on. No AI is claimed by the project.",
+      "steps": 3
+    }
+  ],
+  "sources": [
+    {
+      "name": "Junta de Freguesia de Quarteira",
+      "url": "https://www.jf-quarteira.pt/",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Câmara Municipal de Loulé",
+      "url": "https://www.cm-loule.pt/",
+      "kind": "council",
+      "feed": null
+    },
+    {
+      "name": "Barlavento",
+      "url": "https://www.barlavento.pt/",
+      "kind": "press",
+      "feed": "https://www.barlavento.pt/feed/"
+    },
+    {
+      "name": "Postal do Algarve",
+      "url": "https://postal.pt/algarve/",
+      "kind": "press",
+      "feed": "https://postal.pt/feed/"
+    },
+    {
+      "name": "Sul Informação",
+      "url": "https://www.sulinformacao.pt/",
+      "kind": "press",
+      "feed": "https://www.sulinformacao.pt/feed/"
+    },
+    {
+      "name": "Portugal 2030 and PRR transparency portal (project pages)",
+      "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/12/C16-i02/2023.P5446",
+      "kind": "other",
+      "feed": null
+    }
+  ],
+  "events": [],
+  "ai_map": [
+    {
+      "name": "Câmara Municipal de Loulé",
+      "type": "public body",
+      "url": "https://www.cm-loule.pt/",
+      "what": "The municipality that governs Quarteira. In July 2026 it said it had contracted AI tools to support planning-permit processing.",
+      "source_url": "https://www.barlavento.pt/?p=405832",
+      "read_on": "2026-11-15",
+      "ai_path": "The council runs Quarteira's services and has bought AI tools for planning files.",
+      "steps": 1
+    },
+    {
+      "name": "Quarteira Lab (Câmara Municipal de Loulé, with Fundo Ambiental)",
+      "type": "public body",
+      "url": "https://www.barlavento.pt/quarteira-lab-implementa-sistema-de-contagem-de-pessoas-e-bicicletas/",
+      "what": "A decarbonisation living lab around Avenida Dr. Carlos Mota Pinto, co-financed by the Fundo Ambiental, with a people and bicycle counter feeding a data platform.",
+      "source_url": "https://www.barlavento.pt/quarteira-lab-implementa-sistema-de-contagem-de-pessoas-e-bicicletas/",
+      "read_on": "2026-11-15",
+      "ai_path": "Sensors and a data platform in the street: a base for analytics, no AI claimed in the source.",
+      "steps": 3
+    },
+    {
+      "name": "Bairro Comercial Digital de Quarteira (Câmara de Loulé, ACRAL, IAPMEI)",
+      "type": "public body",
+      "url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/12/C16-i02/2023.P5446",
+      "what": "A PRR project of 1.01 million euros, 2023 to 2025, for online shops, a digital tourist guide and smart signage, run by the Loulé council with the Algarve commerce association ACRAL.",
+      "source_url": "https://transparencia.gov.pt/en/fundos-europeus/prr/beneficiarios-projetos/projeto/12/C16-i02/2023.P5446",
+      "read_on": "2026-11-15",
+      "ai_path": "Digitising local shops creates the data and skills AI retail tools need. No AI claimed in the source.",
+      "steps": 3
+    },
+    {
+      "name": "DETAILS, Hospitality, Sports, Leisure (Arrow Global, Vilamoura)",
+      "type": "company",
+      "url": "https://thegolfwire.com/vilamoura-trackman-algarve",
+      "what": "Manages Arrow Global's hospitality, sports and leisure assets in Portugal, including Vilamoura's golf courses, and brought Trackman ball tracking to the Old Course in 2025.",
+      "source_url": "https://thegolfwire.com/vilamoura-trackman-algarve",
+      "read_on": "2026-11-15",
+      "ai_path": "The operator of Vilamoura's courses deploys sensor and data technology, a base for analytics. No AI claimed in the source.",
+      "steps": 3
+    },
+    {
+      "name": "Vilamoura World (Arrow Global), developer and marina operator",
+      "type": "company",
+      "url": "https://marineindustrynews.co.uk/?p=151461",
+      "what": "Develops Vilamoura and its new 68-berth marina, designed with remote monitoring of water and electricity use at the berths and charging points for electric boats (reported January 2024).",
+      "source_url": "https://marineindustrynews.co.uk/?p=151461",
+      "read_on": "2026-11-15",
+      "ai_path": "The resort owner runs metered, remotely monitored infrastructure, a data base for optimisation tools. No AI claimed in the source.",
+      "steps": 3
+    }
+  ],
+  "extras": [],
+  "identity": {
+    "key_id": "site.quarteira-promptugal",
+    "signed_by": "place.quarteira@PrompTugal.dinis"
+  },
+  "gaps": [
+    "No AI company, startup or research group based in Quarteira or Vilamoura was found in any public source read tonight. That is a finding, not a proof of absence.",
+    "Not yet readable: the Loulé council site (connection reset) and, from this environment, the Junta de Freguesia's news pages, some Postal and Barlavento article pages and the Portugal News Techstars piece (bot challenge, so not used).",
+    "Vilamoura sources read so far (a golf ball tracker, a hotel point-of-sale system, the new marina's remote metering) mention no AI. Still to find: hotel groups' AI use and the planned sports centre.",
+    "No verified local AI events for Quarteira or Vilamoura. An Algarve Innovators Run listing for the end of Quarteira's seafront promenade (part of Portugal Tech Week) exists on a source we may not read, so it is not used. To watch: the council agenda, Algarve Evolution, the Algarve Tech Hub and the University of Algarve.",
+    "The Quarteira Lab and digital neighbourhood items are context from older or non-AI projects. Their current state, and any AI use, is not confirmed.",
+    "The Techstars Startup Weekend Women in Loulé (March 2026, with Algarve Evolution among its organisers) is a lead for Loulé's place agent, not read directly here, so not claimed."
+  ],
+  "voice": {
+    "lede": "Quarteira: where the sardines retired, the golf balls arrived, and the robots are still queuing at the beach bar.",
+    "mandate": "PrompTugal.news Quarteira, pá: we follow the AI and the gadgets from this sunny city and its big-resort neighbour Vilamoura, and whatever drifts in from Loulé, the Algarve and the world. Independent, and every fact has its receipt.",
+    "gravity": "Quarteira was a proper fishing village once and became a city in 1999, bem chique. Now it lives on sun, sea and golf, with Vilamoura next door in the same parish. When it comes to gadgets, the grown-ups at Loulé's câmara hold the keys, from planning permits to the Quarteira Lab sensors.",
+    "gaps_intro": "Calma, we looked everywhere and no AI company came out of the sea yet. Here is what we could not find:"
+  }
+}

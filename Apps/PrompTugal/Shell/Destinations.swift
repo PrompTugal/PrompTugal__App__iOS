@@ -2,6 +2,7 @@ import PTAgenda
 import PTCore
 import PTDeck
 import PTExplore
+import PTLocal
 import PTNews
 import PTPlaces
 import PTWeb
@@ -94,6 +95,9 @@ enum PublicDestinations {
                          summary: String(localized: "Where each talk was, and the walks between them")) {
             AnyView(VenueMapView())
         },
+        // The newsroom behind PrompTugal.news by place (read-only). The Places reader itself is PTPlaces (ios.places@).
+        ShellDestination(id: "local.newsroom", title: String(localized: "Newsroom"), symbol: "person.3.sequence", group: "More",
+                         summary: String(localized: "The agents behind the sites, read-only")) { AnyView(NewsroomCentreView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",

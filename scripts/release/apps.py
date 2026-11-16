@@ -157,6 +157,48 @@ def files_between(base, head):
     return relevant(r.stdout.split()) if r.returncode == 0 else None
 
 
+def is_branch_push(env):
+    """A push to a work branch (night/**, split/**, ...): not dev or main, not a pull request, tag or manual run."""
+    ref = env.get("REF", "")
+    return env.get("EVENT_NAME") == "push" and ref.startswith("refs/heads/") and ref not in ("refs/heads/dev", "refs/heads/main")
+
+
+def narrow_config_change(files, base_cfg, head_cfg, all_paths):
+    """On a branch push, apps.json alone no longer means every app. It stands for what changed in it:
+    each package whose entry is new or changed (as a file in that package) and each app whose entry is
+    new or changed (as a file in that app's first path). A change to the "all" list itself still means
+    everything. Other paths in "all" (workflows, scripts) are left as they are. Returns the new file list."""
+    if "apps.json" not in files or base_cfg is None or head_cfg is None:
+        return files
+    if base_cfg.get("all") != head_cfg.get("all"):
+        return files
+    out = [f for f in files if f != "apps.json"]
+    old_pk, old_apps = base_cfg.get("packages", {}), base_cfg.get("apps", {})
+    for name, entry in head_cfg.get("packages", {}).items():
+        if old_pk.get(name) != entry:
+            out.append(entry["path"].rstrip("/") + "/Package.swift")
+    for key, entry in head_cfg.get("apps", {}).items():
+        if old_apps.get(key) != entry:
+            first = (entry.get("paths") or [os.path.dirname(entry.get("project", key))])[0]
+            out.append(first.rstrip("/") + "/apps.json")
+    return sorted(set(out))
+
+
+def config_at(rev):
+    r = sh("git", "show", f"{rev}:apps.json")
+    if r.returncode != 0:
+        return None
+    try:
+        return json.loads(r.stdout)
+    except ValueError:
+        return None
+
+
+def directly_changed_packages(cfg, files):
+    """Packages with a changed file of their own (not the ones that only depend on one)."""
+    return {n for n, p in cfg.get("packages", {}).items() if any(under(f, p["path"]) for f in files)}
+
+
 PLATFORM = {"packages": None}   # packages from scripts/apps/affected.py, when it gave them
 
 
@@ -381,6 +423,11 @@ def main_plan():
         if rng:
             base, head = rng
             files = files_between(base, head)
+            if files is not None and is_branch_push(env):
+                narrowed = narrow_config_change(files, config_at(base), config_at(head), cfg.get("all", []))
+                if narrowed != files:
+                    lines.append("Branch push: `apps.json` counts only for the apps and packages whose entries changed.")
+                files = narrowed
             platform_set = platform_affected(files)
             how = f"`{base[:7]}..{head[:7]}`, {len(files) if files is not None else '?'} changed files" + \
                   (" (scripts/apps/affected.py)" if platform_set is not None else "")
@@ -410,6 +457,14 @@ def main_plan():
 
     exists = os.path.exists
     rows, pkgs, notes = plan(cfg, env, files, platform_set, exists, variables)
+    # A branch push tests only the packages it changed itself; dev, pull requests, tags and manual runs
+    # still test every package that depends on a change. The apps that use them are still built.
+    if is_branch_push(env) and files is not None and not any(under(f, a) for f in files for a in cfg.get("all", [])):
+        direct = directly_changed_packages(cfg, files)
+        if {p["name"] for p in pkgs} - direct:
+            lines.append("Branch push: testing only the packages it changed itself (" +
+                         (", ".join(f"`{n}`" for n in sorted(direct)) or "none") + "); dev tests their dependents too.")
+        pkgs = [p for p in pkgs if p["name"] in direct]
     apps = cfg["apps"]
     build = [matrix_entry(r["app"], apps[r["app"]], variables, bases.get(r["app"])) for r in rows if r["build"]]
     upload = [matrix_entry(r["app"], apps[r["app"]], variables, bases.get(r["app"])) for r in rows if r["upload"]]
@@ -532,6 +587,22 @@ def self_test():
     rows, _, _ = plan(cfg, {"EVENT_NAME": "workflow_run", "REF": "refs/heads/main"}, [], {"team", "riskmandate"}, exists, {})
     check("release run uploads like a dev push", {r["app"]: (r["build"], r["upload"]) for r in rows},
           {"team": (True, True), "promptugal": (False, False), "riskmandate": (False, False)})
+    # Branch pushes: apps.json counts only for what changed in it.
+    head = json.loads(json.dumps(cfg))
+    head["packages"]["PTLocal"] = {"path": "Packages/PTLocal", "deps": ["PTCore"]}
+    head["apps"]["team"] = dict(head["apps"]["team"], packages=["PTLanes", "PTAgenda", "PTLocal"])
+    narrowed = narrow_config_change(["apps.json", "Packages/PTLocal/Sources/A.swift"], cfg, head, cfg.get("all", []))
+    check("branch push: apps.json narrows to the changed entries", narrowed,
+          ["Apps/Team/apps.json", "Packages/PTLocal/Package.swift", "Packages/PTLocal/Sources/A.swift"])
+    check("branch push: narrowed apps.json builds only the app whose entry changed",
+          sorted(affected_by_files(head, [f for f in narrowed])), ["team"])
+    changed_all = dict(head, all=list(cfg.get("all", [])) + ["Tools/"])
+    check("a change to the all list still means everything", narrow_config_change(["apps.json"], cfg, changed_all, []), ["apps.json"])
+    check("no base config: unchanged", narrow_config_change(["apps.json"], None, head, []), ["apps.json"])
+    check("branch push detection", [is_branch_push({"EVENT_NAME": "push", "REF": r}) for r in
+                                    ("refs/heads/night/x", "refs/heads/dev", "refs/heads/main", "refs/tags/v1")] +
+          [is_branch_push({"EVENT_NAME": "pull_request", "REF": "refs/heads/night/x"})], [True, False, False, False, False])
+    check("directly changed packages only", sorted(directly_changed_packages(cfg, ["Packages/PTCore/Sources/X.swift"])), ["PTCore"])
     print("self-test:", "ok" if ok else "FAILED")
     return 0 if ok else 1
 
