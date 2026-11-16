@@ -37,11 +37,15 @@ struct PrompTugalApp: App {
         AppNoticeStore.start()
         // Reading credit (PTLocal/Credit): the site's prices and starting balance, App Store top-ups finished elsewhere.
         LocalCredit.start()
+        // The places reader (PTPlaces) charges through that same ledger (Shell/PlacesWiring.swift).
+        PlacesWiring.start()
     }
 
     var body: some Scene {
         WindowGroup {
             PublicShell()
+                // PTLocal's layers on PTPlaces' screens, above every navigation stack so pushed place pages get them.
+                .placesLayers()
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { PublicLive.foreground() }

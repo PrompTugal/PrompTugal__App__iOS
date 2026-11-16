@@ -2,10 +2,11 @@ import PTAgenda
 import PTCore
 import PTExplore
 import PTNews
+import PTPlaces
 import PTWeb
 import SwiftUI
 
-/// Root view of the public app. iPhone: five tabs (Now, My program, Explore, Map, News), with More as a sheet from the
+/// Root view of the public app. iPhone: four tabs (Places, News, Now, Explore), with More as a sheet from the
 /// round button at the top right of every tab; iPad: a sidebar with the same five, then More and Reminders. Every
 /// screen comes from `PublicDestinations`. No team names, no lanes, no sample data, and no debug screen in a Release build.
 struct PublicShell: View {
@@ -16,8 +17,8 @@ struct PublicShell: View {
 
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
-    @SceneStorage("shell.selection") private var selection = "now"
-    @SceneStorage("shell.tab") private var tab = "now"
+    @SceneStorage("shell.selection") private var selection = "places"
+    @SceneStorage("shell.tab") private var tab = "places"
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     /// ONB-1: the first-run screen, shown once.
     @AppStorage("onboarding.seen") private var onboardingSeen = false
@@ -83,10 +84,10 @@ struct PublicShell: View {
         }
         .onAppear {
             // A restored selection from an older build may name a screen that moved or no longer exists.
-            if PublicDestinations.openable(selection, debug: debug) == nil { selection = "now" }
-            selection = PublicDestinations.resolve(selection) ?? "now"
-            if PublicDestinations.destination(tab)?.phoneTab == nil { tab = "now" }
-            tab = PublicDestinations.resolve(tab) ?? "now"
+            if PublicDestinations.openable(selection, debug: debug) == nil { selection = "places" }
+            selection = PublicDestinations.resolve(selection) ?? "places"
+            if PublicDestinations.destination(tab)?.phoneTab == nil { tab = "places" }
+            tab = PublicDestinations.resolve(tab) ?? "places"
             if let id = PublicLaunch.destination { open(id) }
             // Never in UI tests or store screenshots (a launch destination); `-PTOnboarding` forces it in DEBUG.
             if PublicLaunch.onboarding || (!onboardingSeen && PublicLaunch.destination == nil) { onboarding = true }
@@ -144,6 +145,12 @@ struct PublicShell: View {
 
     /// <scheme>://open/<destination id>, e.g. <scheme>://open/team.schedule. Old ids still land somewhere sensible.
     private func route(_ url: URL) {
+        // promptugal://login#key=<packed>: the person key from a sign-in link (the website's link with the app's scheme).
+        if url.scheme == AppLinks.scheme, url.host == "login" {
+            open("places")
+            Task { _ = await PersonSession.shared.signIn(with: url.absoluteString) }
+            return
+        }
         guard url.scheme == AppLinks.scheme, url.host == "open" else { return }
         let id = url.pathComponents.dropFirst().joined(separator: "/")
         guard PublicDestinations.openable(id, debug: debug) != nil else { return }

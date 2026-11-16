@@ -35,6 +35,12 @@ struct PublicSettingsView: View {
                     Label("Ask and summarise", systemImage: "sparkles")
                 }
                 .accessibilityIdentifier("pt.more.ask")
+                NavigationLink {
+                    LocalCreditView()
+                } label: {
+                    Label("Reading credit", systemImage: "sterlingsign.circle")
+                }
+                .accessibilityIdentifier("pt.more.credit")
             } header: {
                 Text("PrompTugal.news by place")
             } footer: {

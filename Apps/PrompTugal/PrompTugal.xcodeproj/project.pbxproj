@@ -19,6 +19,7 @@
 		E61982BA70FD0A0841506D63 /* PTDeck in Frameworks */ = {isa = PBXBuildFile; productRef = BA97653A6021BA60AD1358C3 /* PTDeck */; };
 		41F3140167275E1411C25A46 /* PTSync in Frameworks */ = {isa = PBXBuildFile; productRef = 25F7334D79311F8220A3AB98 /* PTSync */; };
 		96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */ = {isa = PBXBuildFile; productRef = F72F20E84309FB59E1978852 /* PTExplore */; };
+		5A1C0F3E9B2D4C6E8F0A1B2C /* PTPlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 5A1C0F3E9B2D4C6E8F0A1B2D /* PTPlaces */; };
 		A1C0DE5E0C0A1F0000000001 /* PTLocal in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE5E0C0A1F0000000003 /* PTLocal */; };
 		A1C0DE5E0C0A1F0000000101 /* PTTalk in Frameworks */ = {isa = PBXBuildFile; productRef = A1C0DE5E0C0A1F0000000103 /* PTTalk */; };
 /* End PBXBuildFile section */
@@ -166,6 +167,7 @@
 				E61982BA70FD0A0841506D63 /* PTDeck in Frameworks */,
 				41F3140167275E1411C25A46 /* PTSync in Frameworks */,
 				96EBAAC776C340EC141E0E69 /* PTExplore in Frameworks */,
+				5A1C0F3E9B2D4C6E8F0A1B2C /* PTPlaces in Frameworks */,
 				A1C0DE5E0C0A1F0000000001 /* PTLocal in Frameworks */,
 				A1C0DE5E0C0A1F0000000101 /* PTTalk in Frameworks */,
 			);
@@ -277,6 +279,7 @@
 				BA97653A6021BA60AD1358C3 /* PTDeck */,
 				25F7334D79311F8220A3AB98 /* PTSync */,
 				F72F20E84309FB59E1978852 /* PTExplore */,
+				5A1C0F3E9B2D4C6E8F0A1B2D /* PTPlaces */,
 				A1C0DE5E0C0A1F0000000003 /* PTLocal */,
 				A1C0DE5E0C0A1F0000000103 /* PTTalk */,
 			);
@@ -444,6 +447,7 @@
 				6AC76268297E1BF2D587C5D3 /* XCLocalSwiftPackageReference "../../Packages/PTDeck" */,
 				68F21D0D111DF6468DFC0904 /* XCLocalSwiftPackageReference "../../Packages/PTSync" */,
 				74304D6E9A5485D46D560243 /* XCLocalSwiftPackageReference "../../Packages/PTExplore" */,
+				5A1C0F3E9B2D4C6E8F0A1B2E /* XCLocalSwiftPackageReference "../../Packages/PTPlaces" */,
 				A1C0DE5E0C0A1F0000000002 /* XCLocalSwiftPackageReference "../../Packages/PTLocal" */,
 				A1C0DE5E0C0A1F0000000105 /* XCLocalSwiftPackageReference "../../Packages/PTVaultUI" */,
 				A1C0DE5E0C0A1F0000000104 /* XCLocalSwiftPackageReference "../../Packages/PTLanes" */,
@@ -614,7 +618,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera to scan a QR code you are given.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal reads the sign-in QR code your conductor gives you, only when you ask it to.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal records an interview when you ask it to, to send as a draft to the newsroom.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal transcribes your recorded interview on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
@@ -649,7 +653,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.news";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSCalendarsWriteOnlyAccessUsageDescription = "PrompTugal adds the sessions you pick to your calendar when you ask it to.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal uses the camera to scan a QR code you are given.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "PrompTugal reads the sign-in QR code your conductor gives you, only when you ask it to.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PrompTugal records an interview when you ask it to, to send as a draft to the newsroom.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "PrompTugal transcribes your recorded interview on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
@@ -906,6 +910,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTExplore;
 		};
+		5A1C0F3E9B2D4C6E8F0A1B2E /* XCLocalSwiftPackageReference "../../Packages/PTPlaces" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/PTPlaces;
+		};
 		A1C0DE5E0C0A1F0000000002 /* XCLocalSwiftPackageReference "../../Packages/PTLocal" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/PTLocal;
@@ -969,6 +977,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 74304D6E9A5485D46D560243 /* XCLocalSwiftPackageReference "../../Packages/PTExplore" */;
 			productName = PTExplore;
+		};
+		5A1C0F3E9B2D4C6E8F0A1B2D /* PTPlaces */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A1C0F3E9B2D4C6E8F0A1B2E /* XCLocalSwiftPackageReference "../../Packages/PTPlaces" */;
+			productName = PTPlaces;
 		};
 		A1C0DE5E0C0A1F0000000003 /* PTLocal */ = {
 			isa = XCSwiftPackageProductDependency;

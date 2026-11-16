@@ -2,6 +2,7 @@ import PTAgenda
 import PTCore
 import PTExplore
 import PTNews
+import PTPlaces
 import PTWeb
 import SwiftUI
 
@@ -35,6 +36,7 @@ extension EnvironmentValues {
 /// Every user-facing string is written exactly as in the ux spec, so the String Catalog keys match.
 struct NowView: View {
     @Environment(ReaderStore.self) private var reader
+    @Environment(\.openDestination) private var open
     /// A talk opened from a row: the same native sheet as Explore and My program.
     @State private var opened: TalkSheetItem?
     var body: some View {
@@ -67,6 +69,7 @@ struct NowView: View {
                         thanks(count: model.pickCount)
                     }
                 }
+                MyTownsCard(openPlaces: { open("places") })
                 LatestNewsCard()
                 PracticalCard()
             }

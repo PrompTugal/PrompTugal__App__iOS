@@ -4,10 +4,12 @@ import PTDeck
 import PTExplore
 import PTLocal
 import PTNews
+import PTPlaces
 import PTWeb
 import SwiftUI
 
-/// The public app's screens: five tabs (Now, My program, Explore, Map, News) and More, a sheet from the round button. The ids are the Team app's ids where a screen is the
+/// The public app's screens: four tabs (Places, News, Now, Explore) and More, a sheet from the round button. Places (PrompTugal.news by
+/// place: Portugal, the Algarve and its 17 towns) opens first since 16 November 2026; the summit's venue Map moved to More. The ids are the Team app's ids where a screen is the
 /// same, so `promptugal://open/<id>` links and reminders keep working; the ids of screens that moved are aliases.
 @MainActor
 enum PublicDestinations {
@@ -28,6 +30,8 @@ enum PublicDestinations {
         "explore.places": "explore",
         "explore.talk": "explore",
         "explore.graph": "explore",
+        "algarve": "places",
+        "places.algarve": "places",
     ]
 
     /// Where Explore opens for each id that leads there (the App Store screenshots use these ids).
@@ -67,25 +71,30 @@ enum PublicDestinations {
     // MARK: The five tabs
 
     static let tabs: [ShellDestination] = [
-        ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
-                         summary: String(localized: "What is on now, what is next for you, what is new"), phoneTab: 0) { AnyView(NowView()) },
-        ShellDestination(id: "team.schedule", title: String(localized: "My program"), symbol: "star", group: "Tabs", kind: .hybrid,
-                         summary: String(localized: "The talks you picked, clashes and free time"), phoneTab: 1) { AnyView(MyProgramScreen()) },
-        ShellDestination(id: "explore", title: String(localized: "Explore"), symbol: "magnifyingglass", group: "Tabs",
-                         summary: String(localized: "Talks, speakers, companies and places"), phoneTab: 2, wrapsStack: false) {
-            AnyView(ExploreView())
-        },
-        ShellDestination(id: "map", title: String(localized: "Map"), symbol: "map", group: "Tabs",
-                         summary: String(localized: "Where each talk is, and the walks between them"), phoneTab: 3) {
-            AnyView(VenueMapView())
+        ShellDestination(id: "places", title: String(localized: "Places"), symbol: "map.fill", group: "Tabs",
+                         summary: String(localized: "Portugal, the Algarve and its 17 towns: local AI news, the AI map, the agents"), phoneTab: 0) {
+            AnyView(PlacesHomeView())
         },
         ShellDestination(id: "news.home", title: String(localized: "News"), symbol: "newspaper", group: "Tabs",
-                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 4) { AnyView(NewsHomeView()) },
+                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 1) { AnyView(NewsHomeView()) },
+        ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
+                         summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 2) { AnyView(NowView()) },
+        ShellDestination(id: "explore", title: String(localized: "Explore"), symbol: "magnifyingglass", group: "Tabs",
+                         summary: String(localized: "Talks, speakers, companies and places"), phoneTab: 3, wrapsStack: false) {
+            AnyView(ExploreView())
+        },
     ]
 
     // MARK: More (the iPad sidebar; on iPhone a sheet from the round button on every tab)
 
     static let more: [ShellDestination] = [
+        // "Forget about the Summit" (Dinis, 15 Nov ~23:45): it is one of the events covered; its screens live in More.
+        ShellDestination(id: "team.schedule", title: String(localized: "My program"), symbol: "star", group: "More", kind: .hybrid,
+                         summary: String(localized: "The talks you picked at the Summit, clashes and free time")) { AnyView(MyProgramScreen()) },
+        ShellDestination(id: "map", title: String(localized: "Venue map"), symbol: "map", group: "More",
+                         summary: String(localized: "Where each talk was, and the walks between them")) {
+            AnyView(VenueMapView())
+        },
         // The newsroom behind PrompTugal.news by place (read-only). The Places reader itself is PTPlaces (ios.places@).
         ShellDestination(id: "local.newsroom", title: String(localized: "Newsroom"), symbol: "person.3.sequence", group: "More",
                          summary: String(localized: "The agents behind the sites, read-only")) { AnyView(NewsroomCentreView()) },
