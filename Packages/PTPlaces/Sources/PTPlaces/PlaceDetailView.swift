@@ -570,7 +570,16 @@ struct MapEntryCard: View {
                     .background(ConnectionsGraph.color(entry.type, accent: accent), in: Circle())
                 VStack(alignment: .leading, spacing: 0) {
                     Text(entry.name).font(.headline).foregroundStyle(Palette.ink)
-                    Text(entry.type.capitalized).font(.caption2.weight(.semibold)).foregroundStyle(Palette.muted)
+                    HStack(spacing: 6) {
+                        Text(entry.type.capitalized).font(.caption2.weight(.semibold)).foregroundStyle(Palette.muted)
+                        if entry.lookingForWork {
+                            Text(String(localized: "Looking for work"))
+                                .font(.caption2.weight(.bold))
+                                .padding(.horizontal, 6).padding(.vertical, 1)
+                                .background(Palette.green, in: Capsule())
+                                .foregroundStyle(.white)
+                        }
+                    }
                 }
                 Spacer(minLength: 0)
                 if let url = URL(string: entry.url), !entry.url.isEmpty {
@@ -590,6 +599,9 @@ struct MapEntryCard: View {
                            readOn: entry.readOn, accent: accent)
             }
             if let provenance = entry.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
+            ForEach(entry.contacts.filter(\.showable), id: \.self) { contact in
+                ContactRow(contact: contact, accent: accent)
+            }
             if let subject {
                 HStack(spacing: Space.l) {
                     CommentButton(subject: subject, accent: accent, compact: true)
@@ -601,6 +613,37 @@ struct MapEntryCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius))
         .overlay(RoundedRectangle(cornerRadius: Space.radius).stroke(Palette.rule, lineWidth: 0.5))
+    }
+}
+
+/// A public contact: tap to call, mail or open; its source page and read date beside it.
+struct ContactRow: View {
+    let contact: PublicContact
+    let accent: Color
+    @Environment(\.openURL) private var openURL
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if !contact.label.isEmpty { Text(contact.label).font(.caption.weight(.semibold)).foregroundStyle(Palette.ink) }
+            HStack(spacing: Space.m) {
+                if !contact.phone.isEmpty, let url = URL(string: "tel:" + contact.phone.filter { $0.isNumber || $0 == "+" }) {
+                    Button { openURL(url) } label: { Label(contact.phone, systemImage: "phone.fill") }
+                }
+                if !contact.email.isEmpty, let url = URL(string: "mailto:" + contact.email) {
+                    Button { openURL(url) } label: { Label(contact.email, systemImage: "envelope.fill") }
+                }
+                if !contact.url.isEmpty, let url = URL(string: contact.url) {
+                    Button { openURL(url) } label: { Label(url.host() ?? contact.url, systemImage: "globe") }
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(accent)
+            .buttonStyle(.plain)
+            SourceLine(title: String(localized: "Published at \(URL(string: contact.sourceURL)?.host() ?? contact.sourceURL)"),
+                       url: contact.sourceURL, readOn: contact.readOn, accent: Palette.muted)
+        }
+        .padding(Space.s)
+        .background(accent.opacity(0.06), in: RoundedRectangle(cornerRadius: 10))
     }
 }
 

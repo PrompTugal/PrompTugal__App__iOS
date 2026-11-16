@@ -375,3 +375,20 @@ struct KindTests {
         #expect(groups.map(\.kind) == [.government, .startups])
     }
 }
+
+@Suite("PTPlaces: public contacts and talent")
+struct ContactTests {
+    @Test("a contact shows only with its source page; talent can say it is looking for work")
+    func contacts() throws {
+        let entry = try decode(MapEntry.self, """
+        {"name":"Câmara Municipal de Loulé","type":"public body",
+         "contacts":[{"label":"Geral","phone":"+351 289 400 600","source_url":"https://www.cm-loule.pt/contactos","read_on":"2026-11-16"},
+                     {"email":"x@example.org"}]}
+        """)
+        #expect(entry.contacts.count == 2)
+        #expect(entry.contacts.filter(\.showable).count == 1)
+        let talent = try decode(MapEntry.self, #"{"name":"A","type":"person","looking_for_work":true}"#)
+        #expect(talent.lookingForWork)
+        #expect(PlaceKind.of(talent.type) == .talent)
+    }
+}

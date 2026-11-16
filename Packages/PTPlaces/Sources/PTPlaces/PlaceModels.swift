@@ -274,6 +274,10 @@ public struct MapEntry: Decodable, Sendable, Equatable, Hashable, Identifiable {
     public var aiPath: String
     public var steps: Int?
     public var provenance: Provenance?
+    /// Public contacts only (published on a public site, above all a public body's), each with the page it came from.
+    public var contacts: [PublicContact] = []
+    /// Talent that agreed to be listed and says it is looking for work.
+    public var lookingForWork = false
 
     public var id: String { name + "|" + type }
 
@@ -294,7 +298,33 @@ public struct MapEntry: Decodable, Sendable, Equatable, Hashable, Identifiable {
         aiPath = c.string("ai_path") ?? ""
         steps = c.int("steps")
         provenance = c.lenient(Provenance.self, "provenance")
+        contacts = c.lenientArray("contacts")
+        if contacts.isEmpty, let one = c.lenient(PublicContact.self, "contact") { contacts = [one] }
+        lookingForWork = c.lenient(Bool.self, "looking_for_work") ?? c.lenient(Bool.self, "open_to_work") ?? false
     }
+}
+
+/// A contact published on a public website, shown with its source (website CLAUDE.md, Dinis 15 Nov ~23:55).
+/// One without a source page is not shown.
+public struct PublicContact: Decodable, Sendable, Equatable, Hashable {
+    public var label: String
+    public var email: String
+    public var phone: String
+    public var url: String
+    public var sourceURL: String
+    public var readOn: String
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: AnyKey.self)
+        label = c.string("label") ?? c.string("name") ?? ""
+        email = c.string("email") ?? ""
+        phone = c.string("phone") ?? c.string("tel") ?? ""
+        url = c.string("url") ?? c.string("web") ?? ""
+        sourceURL = c.string("source_url") ?? c.string("source") ?? ""
+        readOn = c.string("read_on") ?? ""
+    }
+
+    public var showable: Bool { !sourceURL.isEmpty && !(email.isEmpty && phone.isEmpty && url.isEmpty) }
 }
 
 public struct Source: Decodable, Sendable, Equatable, Hashable {
