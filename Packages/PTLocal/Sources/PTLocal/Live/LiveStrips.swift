@@ -89,7 +89,7 @@ public struct NewsroomLiveSection: View {
         return VStack(alignment: .leading, spacing: Space.m) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("The newsroom, live").font(.system(.title2, design: .serif, weight: .black)).foregroundStyle(Palette.ink)
-                Text(model.dashboard == nil ? "Reading the agents…" : "\(working) of \(model.dashboard?.agents.count ?? 0) agents active in the last half hour")
+                Text(Self.subtitle(working: working, total: model.dashboard?.agents.count))
                     .font(.system(.subheadline, design: .serif).italic()).foregroundStyle(Palette.red)
             }
             Rectangle().fill(Palette.ink).frame(height: 2)
@@ -134,14 +134,23 @@ public struct NewsroomLiveSection: View {
         }
     }
 
+    static func subtitle(working: Int, total: Int?) -> String {
+        guard let total else { return "Reading the agents…" }
+        return "\(working) of \(total) agents active in the last half hour"
+    }
+
     /// The agents with the latest sign of life first.
     static func recentAgents(_ dashboard: NewsroomDashboard?, now: Date, limit: Int) -> [NewsroomDashboard.Agent] {
-        let agents = dashboard?.agents ?? []
-        return Array(agents
-            .compactMap { agent in agent.lastSign(now: now).map { (agent, $0) } }
-            .sorted { $0.1 != $1.1 ? $0.1 > $1.1 : $0.0.role < $1.0.role }
-            .map { $0.0 }
-            .prefix(limit))
+        struct Seen { let agent: NewsroomDashboard.Agent; let at: Date }
+        var seen: [Seen] = []
+        for agent in dashboard?.agents ?? [] {
+            if let at = agent.lastSign(now: now) { seen.append(Seen(agent: agent, at: at)) }
+        }
+        seen.sort { a, b in
+            if a.at != b.at { return a.at > b.at }
+            return a.agent.role < b.agent.role
+        }
+        return seen.prefix(limit).map(\.agent)
     }
 }
 
