@@ -1887,103 +1887,103 @@
         }
       }
     },
-    "PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by Web Summit.": {
+    "PrompTugal.news is independent. It is not affiliated with, endorsed by or sponsored by any event, company or organisation it covers.": {
       "extractionState": "manual",
       "localizations": {
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal مستقل. وهو غير تابع لـ Web Summit ولا معتمد منها ولا مدعوم من جهتها."
+            "value": "PrompTugal.news مستقل. وهو غير تابع لأي حدث أو شركة أو منظمة يغطيها، ولا معتمد منها ولا مدعوم من جهتها."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal ist unabhängig. Es steht in keiner Verbindung zu Web Summit und wird weder von Web Summit unterstützt noch gesponsert."
+            "value": "PrompTugal.news ist unabhängig. Es steht in keiner Verbindung zu den Veranstaltungen, Unternehmen oder Organisationen, über die es berichtet, und wird von ihnen weder unterstützt noch gesponsert."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal is independent. It is not affiliated with, endorsed by or sponsored by Web Summit."
+            "value": "PrompTugal.news is independent. It is not affiliated with, endorsed by or sponsored by any event, company or organisation it covers."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal es independiente. No está afiliado a Web Summit, ni respaldado ni patrocinado por esta."
+            "value": "PrompTugal.news es independiente. No está afiliado a ningún evento, empresa u organización sobre los que informa, ni respaldado ni patrocinado por ellos."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal est indépendant. Il n’est ni affilié à Web Summit, ni approuvé ou parrainé par lui."
+            "value": "PrompTugal.news est indépendant. Il n’est affilié à aucun événement, entreprise ou organisation dont il parle, ni approuvé ou parrainé par eux."
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal स्वतंत्र है। यह Web Summit से संबद्ध नहीं है, और न ही उसके द्वारा समर्थित या प्रायोजित है।"
+            "value": "PrompTugal.news स्वतंत्र है। यह जिन कार्यक्रमों, कंपनियों या संगठनों को कवर करता है, उनसे संबद्ध नहीं है, और न ही उनके द्वारा समर्थित या प्रायोजित है।"
           }
         },
         "hr": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal je neovisan. Nije povezan s Web Summitom, niti ga Web Summit podupire ili sponzorira."
+            "value": "PrompTugal.news je neovisan. Nije povezan ni s jednim događajem, tvrtkom ili organizacijom o kojima izvještava, niti ga oni podupiru ili sponzoriraju."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal è indipendente. Non è affiliata a Web Summit, né approvata o sponsorizzata da Web Summit."
+            "value": "PrompTugal.news è indipendente. Non è affiliato, approvato o sponsorizzato da alcun evento, azienda o organizzazione di cui parla."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugalは独立したサービスであり、Web Summitとは提携、承認、後援の関係にありません。"
+            "value": "PrompTugal.news は独立したメディアです。取り上げるイベント、企業、団体とは提携しておらず、それらによる承認や後援も受けていません。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal은 독립 서비스예요. Web Summit과 제휴, 승인, 후원 관계가 없어요."
+            "value": "PrompTugal.news는 독립적입니다. 다루는 행사, 기업 또는 단체와 제휴하지 않으며, 그들의 승인이나 후원을 받지 않습니다."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal is onafhankelijk. Het is niet verbonden aan Web Summit en wordt niet door Web Summit goedgekeurd of gesponsord."
+            "value": "PrompTugal.news is onafhankelijk. Het is niet verbonden aan, goedgekeurd door of gesponsord door een evenement, bedrijf of organisatie waarover het bericht."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal jest niezależny. Nie jest powiązany z Web Summit ani przez niego popierany czy sponsorowany."
+            "value": "PrompTugal.news jest niezależny. Nie jest powiązany z żadnym wydarzeniem, firmą ani organizacją, o których pisze, ani przez nie popierany czy sponsorowany."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "O PrompTugal é independente. Não é afiliado, apoiado nem patrocinado pela Web Summit."
+            "value": "O PrompTugal.news é independente. Não é afiliado, endossado nem patrocinado por nenhum evento, empresa ou organização que cobre."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "O PrompTugal é independente. Não é afiliado, apoiado nem patrocinado pela Web Summit."
+            "value": "O PrompTugal.news é independente. Não é afiliado, apoiado nem patrocinado por nenhum evento, empresa ou organização que noticia."
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal este independent. Nu este afiliat, aprobat sau sponsorizat de Web Summit."
+            "value": "PrompTugal.news este independent. Nu este afiliat, susținut sau sponsorizat de niciun eveniment, companie sau organizație despre care scrie."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "PrompTugal 是独立的，与 Web Summit 没有隶属、认可或赞助关系。"
+            "value": "PrompTugal.news 是独立的。它与所报道的任何活动、公司或组织均无关联，也未获得其认可或赞助。"
           }
         }
       }

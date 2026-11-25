@@ -73,9 +73,71 @@ One component, `SourceStamp` (PTCore, proposal 1), used at the top of every data
 - Badge sits top-trailing of the block and never scrolls away from its block. It is not removable by any setting.
 - VoiceOver: "Simulated: a replay, not live data".
 
+## Locality first (Dinis, 25 Nov ~23:35, via c.ios)
+
+The frame for everything: **you are somewhere**. The towns, then the Algarve, then Portugal. News starts in a town and bubbles up. The summit is gone from the app's identity entirely.
+
+### Places home, led by the map
+
+The map *is* the front page, not a hero above it.
+
+1. **Masthead**, one line: "PrompTugal.news" and today's date. The source stamp sits under the rule.
+2. **The map, full width, 60 % of the screen height** (`containerRelativeFrame(.vertical) { $0 * 0.6 }`, at least 320 pt, iPad up to 640). It is interactive (pan, pinch) and every town is a pin in its own colour. The pin size grows with that town's stories this week (three sizes, not a continuous scale). A pin with news in the last 24 hours gets a soft ring pulse, once on load, never looping. Tap a pin: a small sheet with the town's name, its latest headline and "Open Faro".
+3. **Level switch over the map**, a segmented control: **Towns · Algarve · Portugal**. Same map, the camera moves. Towns shows the 17 Algarve pins. Algarve shows the region's outline with its total. Portugal shows the district capitals plus the Algarve as one cluster.
+4. **"Bubbling up" strip** directly under the map (see below).
+5. Then the stories, town by town: one card per town with news, ordered by newest story, each with the 4 pt town colour rule.
+6. **Data sources** card (see below), then the footer.
+
+Moves *out* of the first screen: the case studies, the national edition block, "work with us", the agents strip. They go below the stories or into the Newsroom. On iPad: map left (60 % of the width), bubbling-up and stories in a column on the right.
+
+### The bubbling-up visual
+
+How one town's story becomes regional, then national news. Three stacked rows, read bottom to top, as a quiet diagram rather than a chart:
+
+```
+  Portugal    ●───────────────  2 stories reached national news
+     ▲
+  Algarve     ● ● ●───────────  5 stories across the region
+     ▲
+  Towns       ● ● ● ● ● ● ● ●  23 stories in 11 towns
+```
+
+- Each dot is a story, filled in **its town's colour**. A dot that has risen a level appears again in the row above, joined to its original by a thin rule-coloured line. So you can follow Faro's story up to Portugal by colour.
+- Rows are labelled in `Typo.kicker`, counts in `Typo.data`. The rows have no background, only hairline rules between them.
+- Tap a dot: the story. VoiceOver reads each row as a sentence ("Algarve: 5 stories across the region, from Faro, Loulé and Lagos").
+- On a town page, the same component, but cut down: that town's row only, with its risen stories marked "also in Algarve" / "also national" as small chips.
+- Data: a story's level comes from the by-place feeds (the story appears in the town's, the Algarve's or Portugal's `by-place/{id}.json`). **No inferred levels**: if the feeds do not say it, the dot stays in its town row.
+- Component: `BubbleUpView` in PTCore, taking `[Level: [Dot(id, colour, risesTo)]]`, so PTPlaces only supplies the data. (A future proposal for c.ios, after SourceStamp lands.)
+
+### Data sources card
+
+The sites and feeds behind a page (promptugal.news, data, weather/IPMA, events, civic, bulletins, live cameras, library), shown as a **card style**, the same on the home page, a town page and in the Newsroom.
+
+```
+┌───────────────────────────────────────────┐
+│ Data sources · 8                          │
+│                                           │
+│ ● promptugal.news   news by place         │
+│   Live · 2 min ago                        │
+│ ● IPMA              weather, warnings     │
+│   Saved copy · read 24 Nov, 18:40         │
+│ ● civic             council notices       │
+│   Built-in · read 21 Nov                  │
+│ …                                         │
+│ See all 30 public collectors  →           │
+└───────────────────────────────────────────┘
+```
+
+- Plain `Card`. Kicker "Data sources" with a count.
+- One row per source: the dot in the **status colour** (ok, warn) as in `SourceStamp`, the source's name in `Typo.headline` weight at body size, what it gives in muted, and its `SourceStamp` line underneath. Tap a row: the source's public page (brand blue link icon trailing).
+- At most 5 rows on iPhone, then "See all". On iPad, two columns.
+- Media sources (`Source.isMedia`: press, radio, blogs) are listed separately as **"Local media we send you to"**, so the reader can tell our data feeds from the reporting we link out to.
+- It is honest by construction: a source that is stale shows amber, even on the home page. With the data collectors stopped at 21 Nov (bigger-pass.md), this card will show that today, and it should.
+- Component: `DataSourcesCard` in PTCore, taking `[DataSource(name, gives, url, state: SourceState)]`. Uses `SourceStamp`.
+
 ## Do not
 
-- No "Web Summit" text anywhere (audit 1, 2).
+- No "Web Summit" text anywhere. The More note is reworded in PTCore (869a8c9 onwards); the Places home footer is ios.places's to change.
 - No sign-in, comment or "connect" chrome in this App Store version (already hidden in c2; keep `PersonBadge` behind `placesComments`).
 - No full-screen colour behind body text. No light weights for titles.
 
