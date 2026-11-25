@@ -88,11 +88,11 @@ struct CouncilNoticesBlock: View {
                 ForEach(open) { notice in
                     if let link = notice.link { NoticeRow(notice: notice, link: link) }
                 }
-                if let notices, !open.isEmpty {
-                    ProvenanceLabel(provenance: notices.provenance, phase: .idle, readAt: notices.value.readDate,
+                if let layer = notices, !open.isEmpty {
+                    ProvenanceLabel(provenance: layer.provenance, phase: .idle, readAt: layer.value.readDate,
                                     host: "civic.promptugal.news")
                 }
-                if let file { councilLine(file) }
+                if let layer = file { councilLine(layer) }
                 Text("PrompTugal.news Civic is independent, not a council or government site.")
                     .font(.caption).foregroundStyle(Palette.muted)
             }
