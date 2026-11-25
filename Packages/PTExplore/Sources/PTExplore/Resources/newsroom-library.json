@@ -1,0 +1,1774 @@
+{
+ "license": {
+  "name": "CC BY 4.0",
+  "url": "https://creativecommons.org/licenses/by/4.0/",
+  "holder": "PrompTugal.news",
+  "note": "What the library makes: the catalogue, its cards, indexes and graph. Each item keeps its source's licence, linked on its card."
+ },
+ "about": "Every item in the library, one line each: enough to search and to find its card. The full record is at each item's api address.",
+ "count": 82,
+ "items": [
+  {
+   "id": "WS26-2026-0001",
+   "call_number": "WS26 2026/0001",
+   "title": "Web Summit 2026 | Day Three",
+   "kind": "replay-day",
+   "publisher": "Web Summit (its YouTube channel, @websummit)",
+   "published": "2026-11-12",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=-MGZdAtbTrs",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "day:2026-11-12",
+    "organisation:web-summit"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0001/",
+   "api": "/api/v1/items/WS26-2026-0001.json"
+  },
+  {
+   "id": "WS26-2026-0002",
+   "call_number": "WS26 2026/0002",
+   "title": "Important event update (Web Summit, 10 November 2026)",
+   "kind": "organiser-statement",
+   "publisher": "Web Summit",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://websummit.com/blog/web-summit/important-event-update-2026/",
+   "licence": "https://websummit.com/terms-and-conditions/",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "day:2026-11-11",
+    "event:storm-charles",
+    "organisation:web-summit"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0002/",
+   "api": "/api/v1/items/WS26-2026-0002.json"
+  },
+  {
+   "id": "WS26-2026-0003",
+   "call_number": "WS26 2026/0003",
+   "title": "Arrive early tomorrow: stage talks start at 9am (Web Summit, 11 November 2026)",
+   "kind": "organiser-statement",
+   "publisher": "Web Summit",
+   "published": "2026-11-11",
+   "collection": "ws26",
+   "url": "https://websummit.com/blog/web-summit/web-summit-2026-thursday-schedule-update/",
+   "licence": "https://websummit.com/terms-and-conditions/",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "day:2026-11-12",
+    "event:storm-charles",
+    "organisation:web-summit"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0003/",
+   "api": "/api/v1/items/WS26-2026-0003.json"
+  },
+  {
+   "id": "WS26-2026-0004",
+   "call_number": "WS26 2026/0004",
+   "title": "Check out the 2026 programme (12 November)",
+   "kind": "organiser-page",
+   "publisher": "Web Summit",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://websummit.com/schedule/date/2026-11-12/",
+   "licence": "https://websummit.com/terms-and-conditions/",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "day:2026-11-12",
+    "organisation:web-summit"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0004/",
+   "api": "/api/v1/items/WS26-2026-0004.json"
+  },
+  {
+   "id": "WS26-2026-0005",
+   "call_number": "WS26 2026/0005",
+   "title": "PITCH semi-final (session page)",
+   "kind": "organiser-page",
+   "publisher": "Web Summit",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://websummit.com/sessions/lis26/c739a1a1-3d8e-4a81-8648-53a0f5ea9013/pitch-semi-final/",
+   "licence": "https://websummit.com/terms-and-conditions/",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "day:2026-11-12",
+    "organisation:web-summit"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0005/",
+   "api": "/api/v1/items/WS26-2026-0005.json"
+  },
+  {
+   "id": "WS26-2026-0006",
+   "call_number": "WS26 2026/0006",
+   "title": "Web Summit returns Thursday with rescheduled sessions after storm cancellation",
+   "kind": "press-recap",
+   "publisher": "The Next Web",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://thenextweb.com/news/web-summit-day-2-cancelled-storm-charles-lisbon",
+   "licence": "https://thenextweb.com/terms-and-conditions",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "day:2026-11-11",
+    "event:storm-charles"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0006/",
+   "api": "/api/v1/items/WS26-2026-0006.json"
+  },
+  {
+   "id": "WS26-2026-0007",
+   "call_number": "WS26 2026/0007",
+   "title": "Web Summit a washout as attendees count the cost of unused €1,595 tickets",
+   "kind": "press-recap",
+   "publisher": "The Irish Times",
+   "published": "2026-11-11",
+   "collection": "ws26",
+   "url": "https://www.irishtimes.com/business/2026/11/11/as-heavy-rain-lashes-lisbon-web-summits-wednesday-schedule-is-washed-away/",
+   "licence": "https://www.irishtimes.com/policy-and-terms/terms-conditions/",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "day:2026-11-11",
+    "event:storm-charles"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0007/",
+   "api": "/api/v1/items/WS26-2026-0007.json"
+  },
+  {
+   "id": "WS26-2026-0008",
+   "call_number": "WS26 2026/0008",
+   "title": "Storm Charles archive (data.promptugal.news)",
+   "kind": "data-set",
+   "publisher": "data.promptugal.news, from the Storm Charles incident site (storm-charles.promptugal.news)",
+   "published": "2026-11-17",
+   "collection": "ws26",
+   "url": "https://data.promptugal.news/sources/storm-charles-archive/",
+   "licence": "https://www.apache.org/licenses/LICENSE-2.0",
+   "tags": [],
+   "about": [
+    "event:storm-charles",
+    "event:web-summit-lisbon-2026",
+    "place:lisbon"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0008/",
+   "api": "/api/v1/items/WS26-2026-0008.json"
+  },
+  {
+   "id": "WS26-2026-0009",
+   "call_number": "WS26 2026/0009",
+   "title": "Brazil on Web Summit's stages: officials, founders and a pavilion",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/brazil-on-the-stages.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Brazil",
+    "the summit",
+    "delegations",
+    "practical guide"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0009/",
+   "api": "/api/v1/items/WS26-2026-0009.json"
+  },
+  {
+   "id": "WS26-2026-0010",
+   "call_number": "WS26 2026/0010",
+   "title": "Brazil's startup mission comes to Web Summit Lisbon",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/brazil-startup-mission.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Brazil",
+    "delegations",
+    "ApexBrasil",
+    "Sebrae",
+    "the summit"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0010/",
+   "api": "/api/v1/items/WS26-2026-0010.json"
+  },
+  {
+   "id": "WS26-2026-0011",
+   "call_number": "WS26 2026/0011",
+   "title": "Europe in Pavilion 4: the Commission's week at Web Summit",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/europe-in-pavilion-4.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Europe",
+    "European Commission",
+    "the summit",
+    "funding"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0011/",
+   "api": "/api/v1/items/WS26-2026-0011.json"
+  },
+  {
+   "id": "WS26-2026-0012",
+   "call_number": "WS26 2026/0012",
+   "title": "Following robotics at Web Summit: from the lineup to Técnico's stand",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/following-robotics-at-web-summit.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "AI",
+    "robotics",
+    "the summit"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0012/",
+   "api": "/api/v1/items/WS26-2026-0012.json"
+  },
+  {
+   "id": "WS26-2026-0013",
+   "call_number": "WS26 2026/0013",
+   "title": "Gender in Tech report: 84% see women in leadership",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/gender-in-tech-report-2026.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "announcements",
+    "Web Summit",
+    "women in tech",
+    "survey"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0013/",
+   "api": "/api/v1/items/WS26-2026-0013.json"
+  },
+  {
+   "id": "WS26-2026-0014",
+   "call_number": "WS26 2026/0014",
+   "title": "Lisbon's universities at Web Summit: two stands and a pitch day",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/lisbon-universities-at-web-summit.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Portugal",
+    "universities",
+    "startups",
+    "the summit"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0014/",
+   "api": "/api/v1/items/WS26-2026-0014.json"
+  },
+  {
+   "id": "WS26-2026-0015",
+   "call_number": "WS26 2026/0015",
+   "title": "Road 2 Web Summit: Portugal's startups head for Lisbon",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/road-2-web-summit-2026.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Portugal",
+    "startups",
+    "Startup Portugal",
+    "the summit"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0015/",
+   "api": "/api/v1/items/WS26-2026-0015.json"
+  },
+  {
+   "id": "WS26-2026-0016",
+   "call_number": "WS26 2026/0016",
+   "title": "Tuesday 10 November: Europe on stage, universities pitching, first-timers meeting",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/tuesday-10-november-three-ways-in.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "Europe",
+    "Portugal",
+    "practical guide"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0016/",
+   "api": "/api/v1/items/WS26-2026-0016.json"
+  },
+  {
+   "id": "WS26-2026-0017",
+   "call_number": "WS26 2026/0017",
+   "title": "Web Summit 2026 in numbers: 70,000 people, 10,000 startups",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/web-summit-2026-in-numbers.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "announcements",
+    "the summit",
+    "Web Summit",
+    "survey"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0017/",
+   "api": "/api/v1/items/WS26-2026-0017.json"
+  },
+  {
+   "id": "WS26-2026-0018",
+   "call_number": "WS26 2026/0018",
+   "title": "From 400 people to 71,386: Web Summit before 2026",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/web-summit-before-2026.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "past events",
+    "Web Summit",
+    "history"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0018/",
+   "api": "/api/v1/items/WS26-2026-0018.json"
+  },
+  {
+   "id": "WS26-2026-0019",
+   "call_number": "WS26 2026/0019",
+   "title": "Web Summit's ten Lisbon years: 2.5 billion euros, says EY",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/web-summit-ten-lisbon-years.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Portugal",
+    "Web Summit",
+    "economy",
+    "startups"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0019/",
+   "api": "/api/v1/items/WS26-2026-0019.json"
+  },
+  {
+   "id": "WS26-2026-0020",
+   "call_number": "WS26 2026/0020",
+   "title": "Wednesday 11 November: a day for startups going abroad",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/wednesday-11-november-going-abroad.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Europe",
+    "the summit",
+    "practical guide",
+    "funding",
+    "AI"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0020/",
+   "api": "/api/v1/items/WS26-2026-0020.json"
+  },
+  {
+   "id": "WS26-2026-0021",
+   "call_number": "WS26 2026/0021",
+   "title": "Web Summit Lisbon: your first day, from airport to arena",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-06",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/your-first-day-at-web-summit.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "practical guide",
+    "transport",
+    "registration"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0021/",
+   "api": "/api/v1/items/WS26-2026-0021.json"
+  },
+  {
+   "id": "WS26-2026-0022",
+   "call_number": "WS26 2026/0022",
+   "title": "How many Brazilian startups came to Web Summit last year?",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-07",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/brazil-last-year-counts.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Brazil",
+    "startups",
+    "Web Summit",
+    "counts"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0022/",
+   "api": "/api/v1/items/WS26-2026-0022.json"
+  },
+  {
+   "id": "WS26-2026-0023",
+   "call_number": "WS26 2026/0023",
+   "title": "Driving to Web Summit? Road closures and drop-off points",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-07",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/driving-to-web-summit.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "practical guide",
+    "transport",
+    "road closures"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0023/",
+   "api": "/api/v1/items/WS26-2026-0023.json"
+  },
+  {
+   "id": "WS26-2026-0024",
+   "call_number": "WS26 2026/0024",
+   "title": "Plan your week by field: which summit day is yours",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-07",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/plan-your-week-by-field.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Web Summit",
+    "schedule",
+    "planning"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0024/",
+   "api": "/api/v1/items/WS26-2026-0024.json"
+  },
+  {
+   "id": "WS26-2026-0025",
+   "call_number": "WS26 2026/0025",
+   "title": "A map of Web Summit's buildings, and what each holds",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-07",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/venue-map.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "how this newsroom is made",
+    "the summit",
+    "maps"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0025/",
+   "api": "/api/v1/items/WS26-2026-0025.json"
+  },
+  {
+   "id": "WS26-2026-0026",
+   "call_number": "WS26 2026/0026",
+   "title": "Five AI builders on Web Summit's speaker list worth knowing",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-08",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/five-ai-builders-to-know.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "connections",
+    "the summit",
+    "ai",
+    "speakers",
+    "replit",
+    "manus ai",
+    "minimax",
+    "modelbest",
+    "you.com"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0026/",
+   "api": "/api/v1/items/WS26-2026-0026.json"
+  },
+  {
+   "id": "WS26-2026-0027",
+   "call_number": "WS26 2026/0027",
+   "title": "Eleven health startups at Web Summit, by the problem they tackle",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-08",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/health-startups-by-problem.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "connections",
+    "the summit",
+    "health",
+    "healthtech",
+    "startups",
+    "telemedicine",
+    "diagnostics"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0027/",
+   "api": "/api/v1/items/WS26-2026-0027.json"
+  },
+  {
+   "id": "WS26-2026-0028",
+   "call_number": "WS26 2026/0028",
+   "title": "Who builds an AI agent's parts? Startups at Web Summit",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-08",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/who-builds-the-parts-of-an-ai-agent.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "AI agents",
+    "startups",
+    "the summit"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0028/",
+   "api": "/api/v1/items/WS26-2026-0028.json"
+  },
+  {
+   "id": "WS26-2026-0029",
+   "call_number": "WS26 2026/0029",
+   "title": "Sports tech at Web Summit: IBM's startup challenge ends in Lisbon",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-09",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/ibm-sports-tech-challenge.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "sports tech",
+    "startups",
+    "IBM"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0029/",
+   "api": "/api/v1/items/WS26-2026-0029.json"
+  },
+  {
+   "id": "WS26-2026-0030",
+   "call_number": "WS26 2026/0030",
+   "title": "Portugal on the programme: a masterclass, a meetup and three announcements",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-09",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/portugal-on-the-programme.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "[Portugal",
+    "Startup Portugal",
+    "Unicorn Factory Lisboa",
+    "Discord",
+    "Road 2 Web Summit",
+    "schedule",
+    "practical]"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0030/",
+   "api": "/api/v1/items/WS26-2026-0030.json"
+  },
+  {
+   "id": "WS26-2026-0031",
+   "call_number": "WS26 2026/0031",
+   "title": "Web Summit's press conferences, day by day",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-09",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/press-conferences-day-by-day.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "press conferences",
+    "announcements",
+    "schedule"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0031/",
+   "api": "/api/v1/items/WS26-2026-0031.json"
+  },
+  {
+   "id": "WS26-2026-0032",
+   "call_number": "WS26 2026/0032",
+   "title": "Beyond Lisbon: where Road 2 Web Summit's 78 startups come from",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-09",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/road-2-web-summit-beyond-lisbon.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "[Portugal",
+    "Road 2 Web Summit",
+    "Startup Portugal",
+    "startups",
+    "regions",
+    "Porto",
+    "Braga",
+    "Azores",
+    "Madeira]"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0032/",
+   "api": "/api/v1/items/WS26-2026-0032.json"
+  },
+  {
+   "id": "WS26-2026-0033",
+   "call_number": "WS26 2026/0033",
+   "title": "Web Summit's nineteen passes: who is who, by colour",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-09",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/web-summit-passes-and-colours.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Web Summit",
+    "practical"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0033/",
+   "api": "/api/v1/items/WS26-2026-0033.json"
+  },
+  {
+   "id": "WS26-2026-0034",
+   "call_number": "WS26 2026/0034",
+   "title": "Web Summit wristbands: where the queues are short, and when",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-09",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/web-summit-wristband-queues.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Web Summit",
+    "practical",
+    "getting there"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0034/",
+   "api": "/api/v1/items/WS26-2026-0034.json"
+  },
+  {
+   "id": "WS26-2026-0035",
+   "call_number": "WS26 2026/0035",
+   "title": "Where to find Portugal at Web Summit: Pavilion 1, stand E145",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-09",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/where-to-find-portugal.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "[Portugal",
+    "AICEP",
+    "Portugal Stand",
+    "Pavilion 1",
+    "Road 2 Web Summit",
+    "investment",
+    "practical]"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0035/",
+   "api": "/api/v1/items/WS26-2026-0035.json"
+  },
+  {
+   "id": "WS26-2026-0036",
+   "call_number": "WS26 2026/0036",
+   "title": "Glovo's restaurant partners meet 80 AI agents on WhatsApp, GetVocal says",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/glovo-restaurant-agents-getvocal.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "connections",
+    "the summit",
+    "ai agents",
+    "agents at work",
+    "getvocal",
+    "glovo",
+    "delivery",
+    "whatsapp"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0036/",
+   "api": "/api/v1/items/WS26-2026-0036.json"
+  },
+  {
+   "id": "WS26-2026-0037",
+   "call_number": "WS26 2026/0037",
+   "title": "AI agents are spreading faster than their security, Gravitee's survey finds",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/gravitee-agent-security-survey.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "AI agents",
+    "security",
+    "survey",
+    "press conferences"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0037/",
+   "api": "/api/v1/items/WS26-2026-0037.json"
+  },
+  {
+   "id": "WS26-2026-0038",
+   "call_number": "WS26 2026/0038",
+   "title": "Web Summit calls off Wednesday on the government's advice",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/red-wind-warning-lisbon-wednesday.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "Lisbon",
+    "weather",
+    "IPMA",
+    "practical"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0038/",
+   "api": "/api/v1/items/WS26-2026-0038.json"
+  },
+  {
+   "id": "WS26-2026-0039",
+   "call_number": "WS26 2026/0039",
+   "title": "Web Summit's cancelled Day 2: what is known about refunds",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/web-summit-day-2-refunds.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "Storm Charles",
+    "tickets",
+    "refunds",
+    "practical"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0039/",
+   "api": "/api/v1/items/WS26-2026-0039.json"
+  },
+  {
+   "id": "WS26-2026-0040",
+   "call_number": "WS26 2026/0040",
+   "title": "What Lovable deleted: its CEO on rebuilding an AI coding agent",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/what-lovable-deleted.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "ai and robotics",
+    "ai agents",
+    "agents at work",
+    "coding agents",
+    "lovable",
+    "web summit speakers"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0040/",
+   "api": "/api/v1/items/WS26-2026-0040.json"
+  },
+  {
+   "id": "WS26-2026-0041",
+   "call_number": "WS26 2026/0041",
+   "title": "How WPP turns call transcripts into reviewed Jira plans",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/wpp-call-transcripts-to-jira.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "connections",
+    "the summit",
+    "ai agents",
+    "agents at work",
+    "mastra",
+    "wpp",
+    "jira",
+    "software delivery"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0041/",
+   "api": "/api/v1/items/WS26-2026-0041.json"
+  },
+  {
+   "id": "WS26-2026-0042",
+   "call_number": "WS26 2026/0042",
+   "title": "Four startups pitch on Thursday's Centre Stage: what each does",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-11",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/breakout-startups-thursday-centre-stage.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "connections",
+    "the summit",
+    "startups",
+    "pitch",
+    "robotics",
+    "fintech",
+    "ai agents",
+    "brazil"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "withdrawn",
+   "page": "/item/WS26-2026-0042/",
+   "api": "/api/v1/items/WS26-2026-0042.json"
+  },
+  {
+   "id": "WS26-2026-0043",
+   "call_number": "WS26 2026/0043",
+   "title": "Getting around Lisbon on Wednesday: what operators and the government say",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-11",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/getting-around-lisbon-wednesday.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "Storm Charles",
+    "Lisbon",
+    "transport",
+    "practical"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0043/",
+   "api": "/api/v1/items/WS26-2026-0043.json"
+  },
+  {
+   "id": "WS26-2026-0044",
+   "call_number": "WS26 2026/0044",
+   "title": "Manus 2.0 gives each agent its own email, phone and wallet",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-11",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/manus-2-0-agents-own-email-phone-wallet.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "connections",
+    "the summit",
+    "ai agents",
+    "manus ai",
+    "product launch"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0044/",
+   "api": "/api/v1/items/WS26-2026-0044.json"
+  },
+  {
+   "id": "WS26-2026-0045",
+   "call_number": "WS26 2026/0045",
+   "title": "Thursday at Web Summit: a practical guide to the last day",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-11",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/thursday-last-day-guide.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "the summit",
+    "practical guide",
+    "weather",
+    "transport",
+    "schedule"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0045/",
+   "api": "/api/v1/items/WS26-2026-0045.json"
+  },
+  {
+   "id": "WS26-2026-0046",
+   "call_number": "WS26 2026/0046",
+   "title": "Discord opens its first engineering hub outside San Francisco, in Lisbon",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-12",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/discord-lisbon-engineering-hub.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "[Portugal",
+    "Discord",
+    "Lisbon",
+    "engineering",
+    "jobs",
+    "investment",
+    "Web Summit]"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0046/",
+   "api": "/api/v1/items/WS26-2026-0046.json"
+  },
+  {
+   "id": "WS26-2026-0047",
+   "call_number": "WS26 2026/0047",
+   "title": "Humanos wins Road 2 Web Summit's top prize, 15,000 euros",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-13",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/humanos-road-2-web-summit-winner.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "[Portugal",
+    "Humanos",
+    "eDynamics",
+    "Road 2 Web Summit",
+    "Startup Portugal",
+    "Galp",
+    "AI agents",
+    "prizes]"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0047/",
+   "api": "/api/v1/items/WS26-2026-0047.json"
+  },
+  {
+   "id": "WS26-2026-0048",
+   "call_number": "WS26 2026/0048",
+   "title": "Loulé agency 3WX launches Best Number One, a free start page",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-14",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/best-number-one-3wx-loule.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Portugal",
+    "Algarve",
+    "Loulé",
+    "3WX",
+    "Best Number One",
+    "Web Summit 2026",
+    "web tools"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0048/",
+   "api": "/api/v1/items/WS26-2026-0048.json"
+  },
+  {
+   "id": "WS26-2026-0049",
+   "call_number": "WS26 2026/0049",
+   "title": "Know the Reach: an Algarve musician's AI music video",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-16",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/know-the-reach-ai-music-video.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Portugal",
+    "Algarve",
+    "Loulé",
+    "RiskMandate",
+    "AI",
+    "music",
+    "video",
+    "Web Summit 2026"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0049/",
+   "api": "/api/v1/items/WS26-2026-0049.json"
+  },
+  {
+   "id": "WS26-2026-0050",
+   "call_number": "WS26 2026/0050",
+   "title": "Six people and 250 agents: the team behind PrompTugal.news",
+   "kind": "article",
+   "publisher": "PrompTugal.news",
+   "published": "2026-11-16",
+   "collection": "ws26",
+   "url": "https://promptugal.news/articles/six-people-250-agents-promptugal-news.html",
+   "licence": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": [
+    "Portugal",
+    "Algarve",
+    "Loulé",
+    "Quarteira",
+    "RiskMandate",
+    "AI agents",
+    "PrompTugal.news",
+    "Web Summit 2026"
+   ],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0050/",
+   "api": "/api/v1/items/WS26-2026-0050.json"
+  },
+  {
+   "id": "WS26-2026-0051",
+   "call_number": "WS26 2026/0051",
+   "title": "Web Summit 2026 | Opening Night",
+   "kind": "replay-day",
+   "publisher": "Web Summit (YouTube channel @websummit)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=dJi_pXLxwno",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "organisation:web-summit"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0051/",
+   "api": "/api/v1/items/WS26-2026-0051.json"
+  },
+  {
+   "id": "WS26-2026-0052",
+   "call_number": "WS26 2026/0052",
+   "title": "Web Summit 2026 | Day One",
+   "kind": "replay-day",
+   "publisher": "Web Summit (YouTube channel @websummit)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=S9RHQGNIaFY",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "organisation:web-summit"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0052/",
+   "api": "/api/v1/items/WS26-2026-0052.json"
+  },
+  {
+   "id": "WS26-2026-0053",
+   "call_number": "WS26 2026/0053",
+   "title": "Replit Live: Web Summit Lisbon 2026 | Day 1",
+   "kind": "recording",
+   "publisher": "Replit (YouTube channel @replit)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=XMEf-M9k5yw",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0053/",
+   "api": "/api/v1/items/WS26-2026-0053.json"
+  },
+  {
+   "id": "WS26-2026-0054",
+   "call_number": "WS26 2026/0054",
+   "title": "Web Summit Lisbon: Day 1",
+   "kind": "recording",
+   "publisher": "Make (YouTube channel @itsmake)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=uXTIOZpQ3uQ",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0054/",
+   "api": "/api/v1/items/WS26-2026-0054.json"
+  },
+  {
+   "id": "WS26-2026-0055",
+   "call_number": "WS26 2026/0055",
+   "title": "قطر في قمة الويب لشبونة 2026- Qatar at Web Summit Lisbon 2026",
+   "kind": "recording",
+   "publisher": "Government Communications Office (YouTube channel @GCOQatar)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=MO1681bMX-c",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0055/",
+   "api": "/api/v1/items/WS26-2026-0055.json"
+  },
+  {
+   "id": "WS26-2026-0056",
+   "call_number": "WS26 2026/0056",
+   "title": "CONHEÇA AS TECNOLOGIAS DESENVOLVIDAS NA PARAÍBA PARA O MUNDO - WEB SUMMIT 2026  - AO VIVO DE LISBOA",
+   "kind": "recording",
+   "publisher": "SECTIES PB (YouTube channel @Cienciaetecnologiagovpb)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=NH2Mpu3vcSE",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0056/",
+   "api": "/api/v1/items/WS26-2026-0056.json"
+  },
+  {
+   "id": "WS26-2026-0057",
+   "call_number": "WS26 2026/0057",
+   "title": "Verus and Confrmo at Web Summit Lisbon 2026 | Private messaging, verified identity",
+   "kind": "recording",
+   "publisher": "Verus (YouTube channel @veruscoms)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=c0pl5x6i248",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0057/",
+   "api": "/api/v1/items/WS26-2026-0057.json"
+  },
+  {
+   "id": "WS26-2026-0058",
+   "call_number": "WS26 2026/0058",
+   "title": "🔴 DIRETO | NAMA BABY na WEB SUMMIT 2026",
+   "kind": "recording",
+   "publisher": "RVTV (YouTube channel @RVTV.DIGITAL)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=JzLsTw-BCIA",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0058/",
+   "api": "/api/v1/items/WS26-2026-0058.json"
+  },
+  {
+   "id": "WS26-2026-0059",
+   "call_number": "WS26 2026/0059",
+   "title": "China's 'impossible to ignore' tech rise on display at Web Summit in Lisbon • FRANCE 24 English",
+   "kind": "press-video",
+   "publisher": "FRANCE 24 English (YouTube channel @France24_en)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=LsCsHpkPgpc",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0059/",
+   "api": "/api/v1/items/WS26-2026-0059.json"
+  },
+  {
+   "id": "WS26-2026-0060",
+   "call_number": "WS26 2026/0060",
+   "title": "AI, robotics and more: CGTN explores the future at Web Summit 2026",
+   "kind": "press-video",
+   "publisher": "CGTN Europe (YouTube channel @CGTNEurope)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=hsrThTM-oIM",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0060/",
+   "api": "/api/v1/items/WS26-2026-0060.json"
+  },
+  {
+   "id": "WS26-2026-0061",
+   "call_number": "WS26 2026/0061",
+   "title": "La Web Summit enciende en Lisboa su décima edición con la vista puesta en China y la IA",
+   "kind": "press-video",
+   "publisher": "AGENCIA EFE (YouTube channel @efeagenciaefe)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=hhoqFc60Kog",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0061/",
+   "api": "/api/v1/items/WS26-2026-0061.json"
+  },
+  {
+   "id": "WS26-2026-0062",
+   "call_number": "WS26 2026/0062",
+   "title": "Cloudflare CEO on 'Uncle Jensen's crazy credit card'",
+   "kind": "press-video",
+   "publisher": "CNBC International Live (YouTube channel @CNBCInternationalLive)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=D8tZOrwLP0c",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0062/",
+   "api": "/api/v1/items/WS26-2026-0062.json"
+  },
+  {
+   "id": "WS26-2026-0063",
+   "call_number": "WS26 2026/0063",
+   "title": "Décima edição da Web Summit em Lisboa. O que podemos esperar?",
+   "kind": "press-video",
+   "publisher": "Renascença (YouTube channel @renascencavmais)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=6vvcyQyhS98",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0063/",
+   "api": "/api/v1/items/WS26-2026-0063.json"
+  },
+  {
+   "id": "WS26-2026-0064",
+   "call_number": "WS26 2026/0064",
+   "title": "Websummit Portugal reúne 200 expositores brasileiros",
+   "kind": "press-video",
+   "publisher": "Canal Rural (YouTube channel @CanalruralBr)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=RpB4VY_ymGI",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0064/",
+   "api": "/api/v1/items/WS26-2026-0064.json"
+  },
+  {
+   "id": "WS26-2026-0065",
+   "call_number": "WS26 2026/0065",
+   "title": "Web Summit 2026: Is the AI Funding Boom Cooling for European Startups?",
+   "kind": "press-video",
+   "publisher": "The Spotlight: Beyond Profession (YouTube channel @thespotlight_beyondprofession)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=89tY8-exU5k",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0065/",
+   "api": "/api/v1/items/WS26-2026-0065.json"
+  },
+  {
+   "id": "WS26-2026-0066",
+   "call_number": "WS26 2026/0066",
+   "title": "Robots Take the Stage at Web Summit: Is Europe Ready for Physical AI?",
+   "kind": "press-video",
+   "publisher": "The Spotlight: Beyond Profession (YouTube channel @thespotlight_beyondprofession)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=dQCc5UGakQo",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0066/",
+   "api": "/api/v1/items/WS26-2026-0066.json"
+  },
+  {
+   "id": "WS26-2026-0067",
+   "call_number": "WS26 2026/0067",
+   "title": "Web Summit 2026 - Global Tech Leaders Gather in Lisbon as Artificial Intelligence Takes Centre Stage",
+   "kind": "press-video",
+   "publisher": "VOICE OF NEPAL TV - VON (YouTube channel @VOICEOFNEPALTV)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=CH9axjGRt3w",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0067/",
+   "api": "/api/v1/items/WS26-2026-0067.json"
+  },
+  {
+   "id": "WS26-2026-0068",
+   "call_number": "WS26 2026/0068",
+   "title": "«Não compreendo porque não suspendem a Web Summit, que tem 60 a 70 mil pessoas»",
+   "kind": "press-video",
+   "publisher": "NOW Canal (YouTube channel @now_canal_oficial)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=Fi3odaoiJz8",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "event:storm-charles"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0068/",
+   "api": "/api/v1/items/WS26-2026-0068.json"
+  },
+  {
+   "id": "WS26-2026-0069",
+   "call_number": "WS26 2026/0069",
+   "title": "Resposta a intempéries: 'Exército e Forças Armadas são agentes de proteção civil'",
+   "kind": "press-video",
+   "publisher": "NOW Canal (YouTube channel @now_canal_oficial)",
+   "published": "2026-11-10",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=SzwxoCkwNBg",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "event:storm-charles"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0069/",
+   "api": "/api/v1/items/WS26-2026-0069.json"
+  },
+  {
+   "id": "WS26-2026-0070",
+   "call_number": "WS26 2026/0070",
+   "title": "Web Summit Lisbon 2026 - Opening Ceremony Insights",
+   "kind": "recording",
+   "publisher": "The 1% Insight (YouTube channel @the1percentinsight)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=8YmUaGZgUvk",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0070/",
+   "api": "/api/v1/items/WS26-2026-0070.json"
+  },
+  {
+   "id": "WS26-2026-0071",
+   "call_number": "WS26 2026/0071",
+   "title": "Web Summit 2026: a noite de abertura em Lisboa",
+   "kind": "recording",
+   "publisher": "KuriakosTV (YouTube channel @KuriakosTV)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=Wj5qKQ-7fms",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0071/",
+   "api": "/api/v1/items/WS26-2026-0071.json"
+  },
+  {
+   "id": "WS26-2026-0072",
+   "call_number": "WS26 2026/0072",
+   "title": "Marketing to Agents, Owning Distribution and a New Era of Media | Web Summit Lisbon 2026 - Day On...",
+   "kind": "press-video",
+   "publisher": "Trend 7 Media | B2B Tech Marketing (YouTube channel @trend7media)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=x1lYTcbv5oo",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0072/",
+   "api": "/api/v1/items/WS26-2026-0072.json"
+  },
+  {
+   "id": "WS26-2026-0073",
+   "call_number": "WS26 2026/0073",
+   "title": "Web Summit 2026 LIVE: Inside the technologies shaping our future",
+   "kind": "press-video",
+   "publisher": "CGTN Europe (YouTube channel @CGTNEurope)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=EbjYYT8NEFk",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0073/",
+   "api": "/api/v1/items/WS26-2026-0073.json"
+  },
+  {
+   "id": "WS26-2026-0074",
+   "call_number": "WS26 2026/0074",
+   "title": "Inside Web Summit Lisbon 2026 | A Dancing Robot and a Packed House",
+   "kind": "press-video",
+   "publisher": "Portugal Resident (YouTube channel @PortugalResident_newspaper)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=J4lZ8NBTRE0",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0074/",
+   "api": "/api/v1/items/WS26-2026-0074.json"
+  },
+  {
+   "id": "WS26-2026-0075",
+   "call_number": "WS26 2026/0075",
+   "title": "[Web Summit 2026] Buyers Seek Out the Seoul Pavilion as SBA Brings 12 Seoul Startups to Lisbon",
+   "kind": "press-video",
+   "publisher": "AVING NEWS _ 에이빙 뉴스 (YouTube channel @aving)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=0W_0evgSPyw",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0075/",
+   "api": "/api/v1/items/WS26-2026-0075.json"
+  },
+  {
+   "id": "WS26-2026-0076",
+   "call_number": "WS26 2026/0076",
+   "title": "Web Summit: «Este evento está num declínio manifesto»",
+   "kind": "press-video",
+   "publisher": "NOW Canal (YouTube channel @now_canal_oficial)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=QYgwlDYXmXI",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0076/",
+   "api": "/api/v1/items/WS26-2026-0076.json"
+  },
+  {
+   "id": "WS26-2026-0077",
+   "call_number": "WS26 2026/0077",
+   "title": "2026 Web Summit Recap (Replit Live)",
+   "kind": "recording",
+   "publisher": "Replit (YouTube channel @replit)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=KFeWGru3Or4",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0077/",
+   "api": "/api/v1/items/WS26-2026-0077.json"
+  },
+  {
+   "id": "WS26-2026-0078",
+   "call_number": "WS26 2026/0078",
+   "title": "Web Summit Lisbon: It's a wrap 🇵🇹",
+   "kind": "recording",
+   "publisher": "Make (YouTube channel @itsmake)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=TC_Qikn9A8M",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0078/",
+   "api": "/api/v1/items/WS26-2026-0078.json"
+  },
+  {
+   "id": "WS26-2026-0079",
+   "call_number": "WS26 2026/0079",
+   "title": "As três lições que trouxemos da Web Summit",
+   "kind": "recording",
+   "publisher": "The Next Big Idea (YouTube channel @thenextbigidea)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=1SGj6-dLYOs",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0079/",
+   "api": "/api/v1/items/WS26-2026-0079.json"
+  },
+  {
+   "id": "WS26-2026-0080",
+   "call_number": "WS26 2026/0080",
+   "title": "Web Summit 2026",
+   "kind": "recording",
+   "publisher": "Fala Portugal (YouTube channel @FalaPortugal)",
+   "published": null,
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=mKqVddiim_o",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0080/",
+   "api": "/api/v1/items/WS26-2026-0080.json"
+  },
+  {
+   "id": "WS26-2026-0081",
+   "call_number": "WS26 2026/0081",
+   "title": "Is NVIDIA bigger than its founder?",
+   "kind": "talk-video",
+   "publisher": "Web Summit (YouTube channel @websummit)",
+   "published": "2026-11-12",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=c4nlV5UByTk",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "organisation:web-summit"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0081/",
+   "api": "/api/v1/items/WS26-2026-0081.json"
+  },
+  {
+   "id": "WS26-2026-0082",
+   "call_number": "WS26 2026/0082",
+   "title": "Web Summit 2026 | Event Highlights",
+   "kind": "recording",
+   "publisher": "Web Summit (YouTube channel @websummit)",
+   "published": "2026-11-18",
+   "collection": "ws26",
+   "url": "https://www.youtube.com/watch?v=dMEvephN1mg",
+   "licence": "https://www.youtube.com/t/terms",
+   "tags": [],
+   "about": [
+    "event:web-summit-lisbon-2026",
+    "organisation:web-summit"
+   ],
+   "status": "held",
+   "page": "/item/WS26-2026-0082/",
+   "api": "/api/v1/items/WS26-2026-0082.json"
+  }
+ ]
+}

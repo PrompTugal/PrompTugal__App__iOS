@@ -32,8 +32,14 @@ public enum ExploreSearch {
         }.map(\.0)
     }
 
-    /// Talks by day and time, everything else by title.
+    /// Dated entries (stories, library items, videos) newest first; talks by day and time; everything else by title.
     static func ordered(_ a: ExploreItem, _ b: ExploreItem) -> Bool {
+        switch (a.date, b.date) {
+        case let (da?, db?) where da != db: return da > db
+        case (_?, nil): return true
+        case (nil, _?): return false
+        default: break
+        }
         switch (a.day, b.day) {
         case let (da?, db?) where da != db: return da < db
         case (_?, nil): return true

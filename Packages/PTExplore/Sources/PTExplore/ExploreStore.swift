@@ -21,21 +21,41 @@ public final class ExploreStore {
         self.source = source
     }
 
+    /// The newsroom's Explore: stories, companies, places and the library, from the newsroom's own sites.
+    public static func newsroom(source: any ExploreSource = NewsroomExploreSource()) -> ExploreStore {
+        let store = ExploreStore(source: source)
+        store.kinds = ExploreKind.newsroom
+        store.kind = .article
+        return store
+    }
+
     public func load() async {
         if index == nil { phase = .loading }
         do {
             index = try await source.index()
             phase = .loaded
+            if !shownKinds.contains(kind), let first = shownKinds.first { kind = first }
         } catch is CancellationError {
         } catch {
             phase = index == nil ? .failed(error.localizedDescription) : .loaded
         }
     }
 
-    /// Search across Talks, Speakers, Companies and Places, grouped, at most `limit` per group.
+    /// Where the entries came from: live, this device's copy or the built-in copy.
+    public var origin: ExploreOrigin? { index?.origin }
+
+    /// The kinds that have entries (all of `kinds` until the index is read): no empty segment.
+    public var shownKinds: [ExploreKind] {
+        guard let index else { return kinds }
+        let present = Set(index.items.map(\.kind))
+        let shown = kinds.filter { present.contains($0) }
+        return shown.isEmpty ? kinds : shown
+    }
+
+    /// Search across the shown kinds, grouped, at most `limit` per group.
     public func grouped(limit: Int = 30) -> [(kind: ExploreKind, items: [ExploreItem])] {
         guard let index else { return [] }
-        return kinds.compactMap { kind in
+        return shownKinds.compactMap { kind in
             let hits = ExploreSearch.search(index, query: query, kind: kind)
             return hits.isEmpty ? nil : (kind, Array(hits.prefix(limit)))
         }
