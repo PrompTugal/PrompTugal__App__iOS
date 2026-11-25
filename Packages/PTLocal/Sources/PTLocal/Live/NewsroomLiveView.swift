@@ -45,6 +45,7 @@ public struct NewsroomLiveView: View {
                         .frame(width: 380)
                     }
                     storyCard
+                    NewsroomRunsCard(model: model)
                     mapsLink
                     if let extras = model.extras { WakeGrid(model: model, extras: extras, selected: $selected) }
                 } else {
@@ -54,6 +55,7 @@ public struct NewsroomLiveView: View {
                             .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
                     }
                     storyCard
+                    NewsroomRunsCard(model: model)
                     mapsLink
                     Columns {
                         LiveTicker(model: model, selected: $selected)
@@ -62,7 +64,7 @@ public struct NewsroomLiveView: View {
                     }
                 }
                 GapNote(title: "What is real here",
-                        text: "Every node, pulse and line is read from promptugal.news/api/v1/newsroom/dashboard.json and the place files. Handoffs are the dashboard's 24-hour counts, drawn as a flow, not one particle per handoff. Times an agent wrote ahead of the clock are shown as now.")
+                        text: "Every node, pulse and line is read from promptugal.news/api/v1/newsroom/dashboard.json and the place files; the pipeline and runs from /api/v1/newsroom/status.json. Handoffs are the dashboard's 24-hour counts, drawn as a flow, not one particle per handoff. Times an agent wrote ahead of the clock are shown as now.")
             } else {
                 StateView(phase: model.phase, hasData: false, title: "newsroom") {
                     Task { await model.poll() }
