@@ -26,7 +26,6 @@ PrompTugal.news is local news for Portugal, town by town. It starts with the Alg
 
 PLACES
 • Portugal, the Algarve and each town: its latest stories, the organisations on its map, and what is happening there now
-• "Now in" a town: what the newsroom's live data says about the place right now, with its source and read time
 • Maps of the Algarve in several styles, with each town coloured by how much news it has
 • Near me: the closest town and its news (your location stays on your phone)
 
@@ -74,7 +73,7 @@ The newsroom board can replay the last 24 hours of the agents' real activity (la
 
 Answer stays **Data Not Collected**, on one condition: a public user cannot send anything. In c1 the place comments, thumbs votes ("Sign in with your person key") and More > "Connect to the newsroom" are still visible; nothing is sent without a person key and a pasted lane link, but a reviewer sees an unusable sign-in. See the open question below.
 
-What leaves the device in c1 for a public user: plain GETs of public files from promptugal.news, ios.app.promptugal.news and raw.githubusercontent.com (CI status), and api.ipma.pt (weather). Location, Apple Intelligence, reading credit and the ledger stay on the device. No analytics, crash reporting, ads or third-party SDKs.
+What leaves the device in c2d for a public user: plain GETs of public files from promptugal.news and its data sites, ios.app.promptugal.news and raw.githubusercontent.com. Location, Apple Intelligence and the on-device reading count stay on the device. No analytics, crash reporting, ads or third-party SDKs.
 
 ## Age rating (**manual**)
 
@@ -87,7 +86,7 @@ What leaves the device in c1 for a public user: plain GETs of public files from 
 
 ## Screenshots (**manual**, or screens.yml)
 
-The 0.4.24 screenshots show the summit agenda and must be replaced: 6.9", 6.5" and iPad 13". Places home, the Algarve map, a town with "Now in", a story with its source, Newsroom. `screens.yml` still shoots the summit destinations (explore.talk, team.schedule, map) and needs its list changed first.
+The 0.4.24 screenshots show the summit agenda and must be replaced: 6.9", 6.5" and iPad 13". Places home, the Algarve map, a town page, a story with its source, Newsroom. `screens.yml` still shoots the summit destinations (explore.talk, team.schedule, map) and needs its list changed first.
 
 ## Open, for Dinis
 
