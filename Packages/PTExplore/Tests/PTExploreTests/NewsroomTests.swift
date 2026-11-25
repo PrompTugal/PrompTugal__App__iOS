@@ -183,7 +183,9 @@ struct NewsroomOriginTests {
         let source = NewsroomExploreSource(cache: cache, fetch: { data(for: $0) }, builtIn: { _ in nil })
         let index = try await source.index()
         #expect(index.origin?.kind == .live)
-        #expect(index.items.count == 3 + 2 + 1 + 3)
+        // 3 stories, 2 companies, 1 place, 3 library entries (one library item is the same video).
+        let expected = 9
+        #expect(index.items.count == expected)
         #expect(cache.load(key: NewsroomWire.Part.videos.fileName) != nil)
     }
 
