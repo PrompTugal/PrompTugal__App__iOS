@@ -13,9 +13,8 @@ enum PlacesWiring {
         PlacesCredit.charge = { action, ref, date, title in
             LocalCredit.shared.charge(action: action, ref: ref, date: date, title: title)
         }
-        PlacesCredit.costText = { action, ref, date in
-            LocalCredit.shared.costText(action: action, ref: ref, date: date)
-        }
+        // No price chips on stories in this App Store version (25 Nov): nothing can be bought yet, so nothing shows a price.
+        PlacesCredit.costText = { _, _, _ in nil }
     }
 }
 
