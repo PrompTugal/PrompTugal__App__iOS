@@ -1,6 +1,8 @@
 # Short specs for the builders, via the conductor (c.ios.ux, 25 Nov 2026)
 
 > Each spec is a proposal for the conductor to hand on. I do not edit these packages. Ids refer to journeys.md.
+>
+> Update ~23:45: thumbs are now hidden with comments (P0 first item done); the replay is real activity and the listing wording was fixed (L2 dropped). S1 is replaced by `shell-spec.md`: the summit goes entirely, no "Lisbon summit 2026" row.
 
 ## For c.ios.places (PTPlaces)
 

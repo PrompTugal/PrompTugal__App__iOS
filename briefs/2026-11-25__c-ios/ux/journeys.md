@@ -2,6 +2,8 @@
 
 > Read from the SwiftUI source at candidate c2 (`5404498`), no device or simulator run. Line numbers are at that commit. Each finding: what the reader meets, the file, the fix, and the owner it goes to through the conductor. Ranked inside each journey; the cross-journey top ten is at the end.
 >
+> Update ~23:45 (c.ios): J1-04 fixed (thumbs hidden with comments); J3-05 resolved by fixing the listing wording (the replay is real activity). Summit screens are removed entirely (shell-spec.md), which closes J1-05 and J1-06 once done.
+>
 > Kinds: **DE** dead end · **EM** empty state · **JG** jargon · **SRC** unlabelled data source · **RULE** breaks a hard rule.
 
 ## J1. First open
