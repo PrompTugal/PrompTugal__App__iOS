@@ -547,6 +547,7 @@ struct StoryTile: View {
                 Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
                 Spacer(minLength: 0)
                 StepsBadge(steps: item.steps, accent: accent)
+                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent)
             }
             .padding(Space.l)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

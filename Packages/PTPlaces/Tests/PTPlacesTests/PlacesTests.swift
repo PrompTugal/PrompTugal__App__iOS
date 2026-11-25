@@ -586,3 +586,50 @@ struct OriginTests {
         #expect(PlacesOrigin.describe(pinned: false, phase: .failed("x"), fetched: nil, dataDate: nil, now: now).kind == .missing)
     }
 }
+
+@Suite("PTPlaces: a town page's news and events (api/v1/by-place/<id>.json, 25 Nov)")
+struct TownPageTests {
+    let json = """
+    {"id":"faro","name":"Faro","kind":"municipality","parent":"algarve","updated":"2026-11-16",
+     "ai_news":[
+      {"title":"Older","summary":"s","date":"2026-11-06","publisher":"Sul Informação","url":"https://www.sulinformacao.pt/a","read_on":"2026-11-07","steps":0,
+       "license":{"name":"the source's terms","url":"https://www.sulinformacao.pt/"}},
+      {"title":"Newest","summary":"s","date":"2026-11-16","url":"https://www.barlavento.pt/b","steps":2,"hold":"held under R12",
+       "provenance":{"source_url":"https://www.barlavento.pt/b","publisher":"Barlavento","read_on":"2026-11-16","signature":"valid"}},
+      {"title":"No link, not shown","date":"2026-11-20","publisher":"X"},
+      {"title":"Not a web link, not shown","date":"2026-11-19","url":"mailto:a@b.pt"},
+      {"title":"Host as outlet","date":"2026-11-12","url":"https://postal.pt/c"}
+     ],
+     "events":[
+      {"title":"Month of AI","date":"2026-11-01 to 2026-11-30","url":"https://www.cm-faro.pt/e1","read_on":"2026-11-15"},
+      {"title":"No date","date":"date not shown","provenance":{"source_url":"https://www.unicornfactorylisboa.com/","read_on":"2026-11-16"}},
+      {"title":"Later","date":"2026-11-25","note":null,"provenance":{"source_url":"https://startupportugal.com/","publisher":null,"read_on":"2026-11-16"}},
+      {"date":"2026-11-30","url":"https://no-title.pt"}
+     ]}
+    """
+
+    @Test("news shows newest first, only with a web source link, with its outlet")
+    func news() throws {
+        let file = try decode(PlaceFile.self, json)
+        #expect(file.aiNews.count == 5)
+        let shown = file.newsNewestFirst
+        #expect(shown.map(\.title) == ["Newest", "Host as outlet", "Older"])
+        #expect(shown[0].outlet == "Barlavento")
+        #expect(shown[0].readOn == "2026-11-16")
+        #expect(shown[1].outlet == "postal.pt")
+        #expect(shown[2].outlet == "Sul Informação")
+        #expect(shown.allSatisfy { $0.sourceLink != nil })
+    }
+
+    @Test("events: latest date first, unreadable dates last, links from provenance, host as outlet")
+    func events() throws {
+        let file = try decode(PlaceFile.self, json)
+        let events = file.eventsNewestFirst
+        #expect(events.map(\.title) == ["Later", "Month of AI", "No date"])
+        #expect(events[0].url == "https://startupportugal.com/")
+        #expect(events[0].outlet == "startupportugal.com")
+        #expect(events[0].readOn == "2026-11-16")
+        #expect(events[1].outlet == "www.cm-faro.pt")
+        #expect(events[2].sourceLink?.host() == "www.unicornfactorylisboa.com")
+    }
+}

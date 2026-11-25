@@ -124,6 +124,23 @@ public struct PlaceFile: Decodable, Sendable, Equatable, Identifiable {
 
     /// The news, newest first.
     public var newsByDate: [NewsItem] { aiNews.sorted { $0.date > $1.date } }
+
+    /// What the town page shows: the stories with a source link, newest first.
+    public var newsNewestFirst: [NewsItem] { newsByDate.filter { $0.sourceLink != nil } }
+
+    /// The events, the latest date first; an event whose date does not read goes last, in the file's order.
+    public var eventsNewestFirst: [PlaceEvent] {
+        events.enumerated().sorted { a, b in
+            let da = PlaceDates.parse(String(a.element.date.prefix(10)))
+            let db = PlaceDates.parse(String(b.element.date.prefix(10)))
+            switch (da, db) {
+            case let (x?, y?): return x != y ? x > y : a.offset < b.offset
+            case (_?, nil): return true
+            case (nil, _?): return false
+            case (nil, nil): return a.offset < b.offset
+            }
+        }.map(\.element)
+    }
 }
 
 public struct Gravity: Decodable, Sendable, Equatable {
@@ -211,12 +228,27 @@ public struct NewsItem: Decodable, Sendable, Equatable, Hashable, Identifiable {
         title = try c.decode(String.self, forKey: AnyKey("title"))
         summary = c.string("summary") ?? ""
         date = c.string("date") ?? ""
-        publisher = c.string("publisher") ?? ""
-        url = c.string("url") ?? ""
-        readOn = c.string("read_on") ?? ""
+        provenance = c.lenient(Provenance.self, "provenance")
+        publisher = c.string("publisher") ?? provenance?.publisher ?? ""
+        url = c.string("url") ?? provenance?.sourceURL ?? ""
+        readOn = c.string("read_on") ?? provenance?.readOn ?? ""
         aiPath = c.string("ai_path") ?? ""
         steps = c.int("steps")
-        provenance = c.lenient(Provenance.self, "provenance")
+    }
+
+    /// The story's source link as a web URL, or nil (a story without one is not shown).
+    public var sourceLink: URL? { PlaceLinks.web(url) }
+
+    /// Who published it: the outlet, else the source's host.
+    public var outlet: String { publisher.isEmpty ? (sourceLink?.host() ?? "") : publisher }
+}
+
+/// Links the place agents write, kept only when they are web links.
+enum PlaceLinks {
+    static func web(_ text: String) -> URL? {
+        guard let url = URL(string: text.trimmingCharacters(in: .whitespaces)),
+              let scheme = url.scheme?.lowercased(), scheme == "https" || scheme == "http", url.host() != nil else { return nil }
+        return url
     }
 }
 
@@ -229,9 +261,11 @@ public struct Provenance: Decodable, Sendable, Equatable, Hashable {
     /// "valid", "unchecked"...
     public var signature: String
     public var siteKey: String
+    public var publisher: String?
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: AnyKey.self)
+        publisher = c.string("publisher")
         sourceURL = c.string("source_url") ?? ""
         readOn = c.string("read_on") ?? ""
         readBy = c.string("read_by") ?? ""
@@ -353,16 +387,28 @@ public struct PlaceEvent: Decodable, Sendable, Equatable, Hashable, Identifiable
     public var readOn: String
     public var aiPath: String
 
+    /// Who runs the event or publishes its page, when the agent wrote it down.
+    public var publisher: String = ""
+    public var note: String = ""
+
     public var id: String { title + "|" + date }
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: AnyKey.self)
         title = try c.decode(String.self, forKey: AnyKey("title"))
+        let provenance = c.lenient(Provenance.self, "provenance")
         date = c.string("date") ?? ""
-        url = c.string("url") ?? ""
-        readOn = c.string("read_on") ?? ""
+        url = c.string("url") ?? provenance?.sourceURL ?? ""
+        readOn = c.string("read_on") ?? provenance?.readOn ?? ""
         aiPath = c.string("ai_path") ?? ""
+        publisher = c.string("publisher") ?? c.string("organiser") ?? provenance?.publisher ?? ""
+        note = c.string("note") ?? ""
     }
+
+    public var sourceLink: URL? { PlaceLinks.web(url) }
+
+    /// The organiser, else the host of the event's page.
+    public var outlet: String { publisher.isEmpty ? (sourceLink?.host() ?? "") : publisher }
 }
 
 /// The page rewritten in an exaggerated local Algarvio voice, facts unchanged (a clearly labelled toggle).
