@@ -14,6 +14,8 @@ public final class ExploreStore {
     public private(set) var phase: Phase = .idle
     public var query = ""
     public var kind: ExploreKind = .event
+    /// The kinds the screen offers (segments and search groups). The app can leave Talks out.
+    public var kinds: [ExploreKind] = ExploreKind.browsable
 
     public init(source: any ExploreSource = PublishedExploreSource()) {
         self.source = source
@@ -33,7 +35,7 @@ public final class ExploreStore {
     /// Search across Talks, Speakers, Companies and Places, grouped, at most `limit` per group.
     public func grouped(limit: Int = 30) -> [(kind: ExploreKind, items: [ExploreItem])] {
         guard let index else { return [] }
-        return ExploreKind.browsable.compactMap { kind in
+        return kinds.compactMap { kind in
             let hits = ExploreSearch.search(index, query: query, kind: kind)
             return hits.isEmpty ? nil : (kind, Array(hits.prefix(limit)))
         }
