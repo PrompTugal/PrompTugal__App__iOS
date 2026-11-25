@@ -116,7 +116,8 @@ public struct NewsroomLiveView: View {
     private var status: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             HStack(spacing: Space.s) {
-                ProvenanceLabel(provenance: model.provenance, phase: model.phase)
+                ProvenanceLabel(provenance: model.provenance, phase: model.phase,
+                                readAt: model.dashboard?.updated)
                 Spacer(minLength: Space.s)
                 if let last = model.lastPoll {
                     let left = max(0, Int(60 - context.date.timeIntervalSince(last)))

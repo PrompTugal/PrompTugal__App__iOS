@@ -478,7 +478,7 @@ public struct AlgarveMapsView: View {
         Page {
             ScreenHeader(kicker: "PrompTugal.news · the Algarve", title: "The towns, four ways",
                          summary: "The 17 places of the Algarve: on the map, in 3D over the terrain, as a grid that keeps the region's shape, and as a cartogram where each town grows with what its agent has found.")
-            ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
+            ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase, readAt: store.placesReadAt)
             AlgarveStyledMap(towns: AlgarveMapTown.fromLocalStore(store)) { opened = $0 }
         }
         .navigationTitle("Algarve maps")
