@@ -1,0 +1,702 @@
+{
+  "type": "company",
+  "count": 115,
+  "items": [
+    {
+      "id": "0xbow",
+      "label": "0xbow",
+      "api": "https://promptugal.news/api/v1/companies/0xbow.json",
+      "page": "https://promptugal.news/companies/0xbow/index.html"
+    },
+    {
+      "id": "1password",
+      "label": "1Password",
+      "api": "https://promptugal.news/api/v1/companies/1password.json",
+      "page": "https://promptugal.news/companies/1password/index.html"
+    },
+    {
+      "id": "ai-infinity",
+      "label": "AI Infinity",
+      "api": "https://promptugal.news/api/v1/companies/ai-infinity.json",
+      "page": "https://promptugal.news/companies/ai-infinity/index.html"
+    },
+    {
+      "id": "aicep",
+      "label": "AICEP - Portugal Trade & Invest",
+      "api": "https://promptugal.news/api/v1/companies/aicep.json",
+      "page": "https://promptugal.news/companies/aicep/index.html"
+    },
+    {
+      "id": "air-apps",
+      "label": "Air Apps",
+      "api": "https://promptugal.news/api/v1/companies/air-apps.json",
+      "page": "https://promptugal.news/companies/air-apps/index.html"
+    },
+    {
+      "id": "airia",
+      "label": "Airia",
+      "api": "https://promptugal.news/api/v1/companies/airia.json",
+      "page": "https://promptugal.news/companies/airia/index.html"
+    },
+    {
+      "id": "aisle",
+      "label": "AISLE",
+      "api": "https://promptugal.news/api/v1/companies/aisle.json",
+      "page": "https://promptugal.news/companies/aisle/index.html"
+    },
+    {
+      "id": "akamai",
+      "label": "Akamai",
+      "api": "https://promptugal.news/api/v1/companies/akamai.json",
+      "page": "https://promptugal.news/companies/akamai/index.html"
+    },
+    {
+      "id": "altegio",
+      "label": "Altegio",
+      "api": "https://promptugal.news/api/v1/companies/altegio.json",
+      "page": "https://promptugal.news/companies/altegio/index.html"
+    },
+    {
+      "id": "andreessen-horowitz",
+      "label": "Andreessen Horowitz (a16z)",
+      "api": "https://promptugal.news/api/v1/companies/andreessen-horowitz.json",
+      "page": "https://promptugal.news/companies/andreessen-horowitz/index.html"
+    },
+    {
+      "id": "arima",
+      "label": "Arima",
+      "api": "https://promptugal.news/api/v1/companies/arima.json",
+      "page": "https://promptugal.news/companies/arima/index.html"
+    },
+    {
+      "id": "atlassian",
+      "label": "Atlassian",
+      "api": "https://promptugal.news/api/v1/companies/atlassian.json",
+      "page": "https://promptugal.news/companies/atlassian/index.html"
+    },
+    {
+      "id": "austriacard",
+      "label": "AustriaCard",
+      "api": "https://promptugal.news/api/v1/companies/austriacard.json",
+      "page": "https://promptugal.news/companies/austriacard/index.html"
+    },
+    {
+      "id": "c4ail",
+      "label": "Centre for AI Leadership (C4AIL)",
+      "api": "https://promptugal.news/api/v1/companies/c4ail.json",
+      "page": "https://promptugal.news/companies/c4ail/index.html"
+    },
+    {
+      "id": "cerebras",
+      "label": "Cerebras",
+      "api": "https://promptugal.news/api/v1/companies/cerebras.json",
+      "page": "https://promptugal.news/companies/cerebras/index.html"
+    },
+    {
+      "id": "chatplace",
+      "label": "ChatPlace",
+      "api": "https://promptugal.news/api/v1/companies/chatplace.json",
+      "page": "https://promptugal.news/companies/chatplace/index.html"
+    },
+    {
+      "id": "cisco-outshift",
+      "label": "Cisco (Outshift by Cisco)",
+      "api": "https://promptugal.news/api/v1/companies/cisco-outshift.json",
+      "page": "https://promptugal.news/companies/cisco-outshift/index.html"
+    },
+    {
+      "id": "cloudflare",
+      "label": "Cloudflare",
+      "api": "https://promptugal.news/api/v1/companies/cloudflare.json",
+      "page": "https://promptugal.news/companies/cloudflare/index.html"
+    },
+    {
+      "id": "cnext",
+      "label": "Cnext",
+      "api": "https://promptugal.news/api/v1/companies/cnext.json",
+      "page": "https://promptugal.news/companies/cnext/index.html"
+    },
+    {
+      "id": "cognizant",
+      "label": "Cognizant",
+      "api": "https://promptugal.news/api/v1/companies/cognizant.json",
+      "page": "https://promptugal.news/companies/cognizant/index.html"
+    },
+    {
+      "id": "conscium",
+      "label": "Conscium",
+      "api": "https://promptugal.news/api/v1/companies/conscium.json",
+      "page": "https://promptugal.news/companies/conscium/index.html"
+    },
+    {
+      "id": "contents",
+      "label": "Contents",
+      "api": "https://promptugal.news/api/v1/companies/contents.json",
+      "page": "https://promptugal.news/companies/contents/index.html"
+    },
+    {
+      "id": "crowdstrike",
+      "label": "CrowdStrike",
+      "api": "https://promptugal.news/api/v1/companies/crowdstrike.json",
+      "page": "https://promptugal.news/companies/crowdstrike/index.html"
+    },
+    {
+      "id": "crystal-intelligence",
+      "label": "Crystal Intelligence",
+      "api": "https://promptugal.news/api/v1/companies/crystal-intelligence.json",
+      "page": "https://promptugal.news/companies/crystal-intelligence/index.html"
+    },
+    {
+      "id": "data-protection-commission",
+      "label": "Data Protection Commission (Ireland)",
+      "api": "https://promptugal.news/api/v1/companies/data-protection-commission.json",
+      "page": "https://promptugal.news/companies/data-protection-commission/index.html"
+    },
+    {
+      "id": "datadog",
+      "label": "Datadog",
+      "api": "https://promptugal.news/api/v1/companies/datadog.json",
+      "page": "https://promptugal.news/companies/datadog/index.html"
+    },
+    {
+      "id": "defined-ai",
+      "label": "Defined.ai",
+      "api": "https://promptugal.news/api/v1/companies/defined-ai.json",
+      "page": "https://promptugal.news/companies/defined-ai/index.html"
+    },
+    {
+      "id": "delinea",
+      "label": "Delinea",
+      "api": "https://promptugal.news/api/v1/companies/delinea.json",
+      "page": "https://promptugal.news/companies/delinea/index.html"
+    },
+    {
+      "id": "delta-labs",
+      "label": "Delta Labs",
+      "api": "https://promptugal.news/api/v1/companies/delta-labs.json",
+      "page": "https://promptugal.news/companies/delta-labs/index.html"
+    },
+    {
+      "id": "deque",
+      "label": "Deque Systems",
+      "api": "https://promptugal.news/api/v1/companies/deque.json",
+      "page": "https://promptugal.news/companies/deque/index.html"
+    },
+    {
+      "id": "descope",
+      "label": "Descope",
+      "api": "https://promptugal.news/api/v1/companies/descope.json",
+      "page": "https://promptugal.news/companies/descope/index.html"
+    },
+    {
+      "id": "dig-in",
+      "label": "DIG-IN",
+      "api": "https://promptugal.news/api/v1/companies/dig-in.json",
+      "page": "https://promptugal.news/companies/dig-in/index.html"
+    },
+    {
+      "id": "directus",
+      "label": "Directus",
+      "api": "https://promptugal.news/api/v1/companies/directus.json",
+      "page": "https://promptugal.news/companies/directus/index.html"
+    },
+    {
+      "id": "easydmarc",
+      "label": "EasyDMARC",
+      "api": "https://promptugal.news/api/v1/companies/easydmarc.json",
+      "page": "https://promptugal.news/companies/easydmarc/index.html"
+    },
+    {
+      "id": "elastic",
+      "label": "Elastic",
+      "api": "https://promptugal.news/api/v1/companies/elastic.json",
+      "page": "https://promptugal.news/companies/elastic/index.html"
+    },
+    {
+      "id": "emergence-ai",
+      "label": "Emergence",
+      "api": "https://promptugal.news/api/v1/companies/emergence-ai.json",
+      "page": "https://promptugal.news/companies/emergence-ai/index.html"
+    },
+    {
+      "id": "european-commission",
+      "label": "European Commission",
+      "api": "https://promptugal.news/api/v1/companies/european-commission.json",
+      "page": "https://promptugal.news/companies/european-commission/index.html"
+    },
+    {
+      "id": "exa",
+      "label": "Exa",
+      "api": "https://promptugal.news/api/v1/companies/exa.json",
+      "page": "https://promptugal.news/companies/exa/index.html"
+    },
+    {
+      "id": "exein",
+      "label": "Exein",
+      "api": "https://promptugal.news/api/v1/companies/exein.json",
+      "page": "https://promptugal.news/companies/exein/index.html"
+    },
+    {
+      "id": "factorial",
+      "label": "Factorial",
+      "api": "https://promptugal.news/api/v1/companies/factorial.json",
+      "page": "https://promptugal.news/companies/factorial/index.html"
+    },
+    {
+      "id": "feedzai",
+      "label": "Feedzai",
+      "api": "https://promptugal.news/api/v1/companies/feedzai.json",
+      "page": "https://promptugal.news/companies/feedzai/index.html"
+    },
+    {
+      "id": "fido",
+      "label": "FIDO",
+      "api": "https://promptugal.news/api/v1/companies/fido.json",
+      "page": "https://promptugal.news/companies/fido/index.html"
+    },
+    {
+      "id": "firefox-enterprise-mozilla",
+      "label": "Firefox Enterprise by Mozilla",
+      "api": "https://promptugal.news/api/v1/companies/firefox-enterprise-mozilla.json",
+      "page": "https://promptugal.news/companies/firefox-enterprise-mozilla/index.html"
+    },
+    {
+      "id": "fretefy",
+      "label": "FRETEFY TECNOLOGIA S.A.",
+      "api": "https://promptugal.news/api/v1/companies/fretefy.json",
+      "page": "https://promptugal.news/companies/fretefy/index.html"
+    },
+    {
+      "id": "gcore",
+      "label": "Gcore",
+      "api": "https://promptugal.news/api/v1/companies/gcore.json",
+      "page": "https://promptugal.news/companies/gcore/index.html"
+    },
+    {
+      "id": "genspark",
+      "label": "Genspark",
+      "api": "https://promptugal.news/api/v1/companies/genspark.json",
+      "page": "https://promptugal.news/companies/genspark/index.html"
+    },
+    {
+      "id": "getvocal-ai",
+      "label": "GetVocal AI",
+      "api": "https://promptugal.news/api/v1/companies/getvocal-ai.json",
+      "page": "https://promptugal.news/companies/getvocal-ai/index.html"
+    },
+    {
+      "id": "google-cloud",
+      "label": "Google Cloud",
+      "api": "https://promptugal.news/api/v1/companies/google-cloud.json",
+      "page": "https://promptugal.news/companies/google-cloud/index.html"
+    },
+    {
+      "id": "hablla",
+      "label": "Hablla",
+      "api": "https://promptugal.news/api/v1/companies/hablla.json",
+      "page": "https://promptugal.news/companies/hablla/index.html"
+    },
+    {
+      "id": "hexamind",
+      "label": "Hexamind",
+      "api": "https://promptugal.news/api/v1/companies/hexamind.json",
+      "page": "https://promptugal.news/companies/hexamind/index.html"
+    },
+    {
+      "id": "ibm",
+      "label": "IBM",
+      "api": "https://promptugal.news/api/v1/companies/ibm.json",
+      "page": "https://promptugal.news/companies/ibm/index.html"
+    },
+    {
+      "id": "itrecruiter",
+      "label": "iTRecruiter",
+      "api": "https://promptugal.news/api/v1/companies/itrecruiter.json",
+      "page": "https://promptugal.news/companies/itrecruiter/index.html"
+    },
+    {
+      "id": "jetbrains",
+      "label": "JetBrains",
+      "api": "https://promptugal.news/api/v1/companies/jetbrains.json",
+      "page": "https://promptugal.news/companies/jetbrains/index.html"
+    },
+    {
+      "id": "just-travel",
+      "label": "Just Travel",
+      "api": "https://promptugal.news/api/v1/companies/just-travel.json",
+      "page": "https://promptugal.news/companies/just-travel/index.html"
+    },
+    {
+      "id": "keewano",
+      "label": "Keewano",
+      "api": "https://promptugal.news/api/v1/companies/keewano.json",
+      "page": "https://promptugal.news/companies/keewano/index.html"
+    },
+    {
+      "id": "kiggu",
+      "label": "Kiggu",
+      "api": "https://promptugal.news/api/v1/companies/kiggu.json",
+      "page": "https://promptugal.news/companies/kiggu/index.html"
+    },
+    {
+      "id": "kpmg-portugal",
+      "label": "KPMG",
+      "api": "https://promptugal.news/api/v1/companies/kpmg-portugal.json",
+      "page": "https://promptugal.news/companies/kpmg-portugal/index.html"
+    },
+    {
+      "id": "launchdarkly",
+      "label": "LaunchDarkly",
+      "api": "https://promptugal.news/api/v1/companies/launchdarkly.json",
+      "page": "https://promptugal.news/companies/launchdarkly/index.html"
+    },
+    {
+      "id": "lawvu",
+      "label": "LawVu",
+      "api": "https://promptugal.news/api/v1/companies/lawvu.json",
+      "page": "https://promptugal.news/companies/lawvu/index.html"
+    },
+    {
+      "id": "ledger",
+      "label": "Ledger",
+      "api": "https://promptugal.news/api/v1/companies/ledger.json",
+      "page": "https://promptugal.news/companies/ledger/index.html"
+    },
+    {
+      "id": "legalfly",
+      "label": "LEGALFLY",
+      "api": "https://promptugal.news/api/v1/companies/legalfly.json",
+      "page": "https://promptugal.news/companies/legalfly/index.html"
+    },
+    {
+      "id": "legora",
+      "label": "Legora",
+      "api": "https://promptugal.news/api/v1/companies/legora.json",
+      "page": "https://promptugal.news/companies/legora/index.html"
+    },
+    {
+      "id": "linux-foundation-aaif",
+      "label": "Linux Foundation (Agentic AI Foundation)",
+      "api": "https://promptugal.news/api/v1/companies/linux-foundation-aaif.json",
+      "page": "https://promptugal.news/companies/linux-foundation-aaif/index.html"
+    },
+    {
+      "id": "make",
+      "label": "Make",
+      "api": "https://promptugal.news/api/v1/companies/make.json",
+      "page": "https://promptugal.news/companies/make/index.html"
+    },
+    {
+      "id": "manageengine",
+      "label": "ManageEngine",
+      "api": "https://promptugal.news/api/v1/companies/manageengine.json",
+      "page": "https://promptugal.news/companies/manageengine/index.html"
+    },
+    {
+      "id": "manus-ai",
+      "label": "Manus AI",
+      "api": "https://promptugal.news/api/v1/companies/manus-ai.json",
+      "page": "https://promptugal.news/companies/manus-ai/index.html"
+    },
+    {
+      "id": "mastra",
+      "label": "Mastra",
+      "api": "https://promptugal.news/api/v1/companies/mastra.json",
+      "page": "https://promptugal.news/companies/mastra/index.html"
+    },
+    {
+      "id": "melious-ai",
+      "label": "Melious AI GmbH",
+      "api": "https://promptugal.news/api/v1/companies/melious-ai.json",
+      "page": "https://promptugal.news/companies/melious-ai/index.html"
+    },
+    {
+      "id": "meo",
+      "label": "MEO",
+      "api": "https://promptugal.news/api/v1/companies/meo.json",
+      "page": "https://promptugal.news/companies/meo/index.html"
+    },
+    {
+      "id": "mobbeel",
+      "label": "Mobbeel",
+      "api": "https://promptugal.news/api/v1/companies/mobbeel.json",
+      "page": "https://promptugal.news/companies/mobbeel/index.html"
+    },
+    {
+      "id": "mobile-brain",
+      "label": "Mobile Brain",
+      "api": "https://promptugal.news/api/v1/companies/mobile-brain.json",
+      "page": "https://promptugal.news/companies/mobile-brain/index.html"
+    },
+    {
+      "id": "naporta",
+      "label": "naPorta",
+      "api": "https://promptugal.news/api/v1/companies/naporta.json",
+      "page": "https://promptugal.news/companies/naporta/index.html"
+    },
+    {
+      "id": "ncsc-uk",
+      "label": "National Cyber Security Centre (UK)",
+      "api": "https://promptugal.news/api/v1/companies/ncsc-uk.json",
+      "page": "https://promptugal.news/companies/ncsc-uk/index.html"
+    },
+    {
+      "id": "neo",
+      "label": "Neo",
+      "api": "https://promptugal.news/api/v1/companies/neo.json",
+      "page": "https://promptugal.news/companies/neo/index.html"
+    },
+    {
+      "id": "neo4j",
+      "label": "Neo4j",
+      "api": "https://promptugal.news/api/v1/companies/neo4j.json",
+      "page": "https://promptugal.news/companies/neo4j/index.html"
+    },
+    {
+      "id": "nordvpn",
+      "label": "NordVPN",
+      "api": "https://promptugal.news/api/v1/companies/nordvpn.json",
+      "page": "https://promptugal.news/companies/nordvpn/index.html"
+    },
+    {
+      "id": "ola-doutor",
+      "label": "Olá Doutor",
+      "api": "https://promptugal.news/api/v1/companies/ola-doutor.json",
+      "page": "https://promptugal.news/companies/ola-doutor/index.html"
+    },
+    {
+      "id": "open-vsx",
+      "label": "Open VSX (Eclipse Foundation)",
+      "api": "https://promptugal.news/api/v1/companies/open-vsx.json",
+      "page": "https://promptugal.news/companies/open-vsx/index.html"
+    },
+    {
+      "id": "orb",
+      "label": "Orb",
+      "api": "https://promptugal.news/api/v1/companies/orb.json",
+      "page": "https://promptugal.news/companies/orb/index.html"
+    },
+    {
+      "id": "pitchbook",
+      "label": "PitchBook",
+      "api": "https://promptugal.news/api/v1/companies/pitchbook.json",
+      "page": "https://promptugal.news/companies/pitchbook/index.html"
+    },
+    {
+      "id": "polyai",
+      "label": "PolyAI",
+      "api": "https://promptugal.news/api/v1/companies/polyai.json",
+      "page": "https://promptugal.news/companies/polyai/index.html"
+    },
+    {
+      "id": "prelude",
+      "label": "Prelude",
+      "api": "https://promptugal.news/api/v1/companies/prelude.json",
+      "page": "https://promptugal.news/companies/prelude/index.html"
+    },
+    {
+      "id": "primitive",
+      "label": "Primitive",
+      "api": "https://promptugal.news/api/v1/companies/primitive.json",
+      "page": "https://promptugal.news/companies/primitive/index.html"
+    },
+    {
+      "id": "prisma",
+      "label": "Prisma",
+      "api": "https://promptugal.news/api/v1/companies/prisma.json",
+      "page": "https://promptugal.news/companies/prisma/index.html"
+    },
+    {
+      "id": "prohound",
+      "label": "ProHound",
+      "api": "https://promptugal.news/api/v1/companies/prohound.json",
+      "page": "https://promptugal.news/companies/prohound/index.html"
+    },
+    {
+      "id": "proofpoint",
+      "label": "Proofpoint",
+      "api": "https://promptugal.news/api/v1/companies/proofpoint.json",
+      "page": "https://promptugal.news/companies/proofpoint/index.html"
+    },
+    {
+      "id": "proton",
+      "label": "Proton",
+      "api": "https://promptugal.news/api/v1/companies/proton.json",
+      "page": "https://promptugal.news/companies/proton/index.html"
+    },
+    {
+      "id": "qase",
+      "label": "Qase",
+      "api": "https://promptugal.news/api/v1/companies/qase.json",
+      "page": "https://promptugal.news/companies/qase/index.html"
+    },
+    {
+      "id": "qualcomm",
+      "label": "Qualcomm",
+      "api": "https://promptugal.news/api/v1/companies/qualcomm.json",
+      "page": "https://promptugal.news/companies/qualcomm/index.html"
+    },
+    {
+      "id": "rapidoc",
+      "label": "Rapidoc",
+      "api": "https://promptugal.news/api/v1/companies/rapidoc.json",
+      "page": "https://promptugal.news/companies/rapidoc/index.html"
+    },
+    {
+      "id": "raras-health",
+      "label": "Raras Health",
+      "api": "https://promptugal.news/api/v1/companies/raras-health.json",
+      "page": "https://promptugal.news/companies/raras-health/index.html"
+    },
+    {
+      "id": "replit",
+      "label": "Replit",
+      "api": "https://promptugal.news/api/v1/companies/replit.json",
+      "page": "https://promptugal.news/companies/replit/index.html"
+    },
+    {
+      "id": "risiq",
+      "label": "Risiq GmbH",
+      "api": "https://promptugal.news/api/v1/companies/risiq.json",
+      "page": "https://promptugal.news/companies/risiq/index.html"
+    },
+    {
+      "id": "roost",
+      "label": "ROOST (Robust Open Online Safety Tools)",
+      "api": "https://promptugal.news/api/v1/companies/roost.json",
+      "page": "https://promptugal.news/companies/roost/index.html"
+    },
+    {
+      "id": "runpod",
+      "label": "Runpod",
+      "api": "https://promptugal.news/api/v1/companies/runpod.json",
+      "page": "https://promptugal.news/companies/runpod/index.html"
+    },
+    {
+      "id": "rws",
+      "label": "RWS Group",
+      "api": "https://promptugal.news/api/v1/companies/rws.json",
+      "page": "https://promptugal.news/companies/rws/index.html"
+    },
+    {
+      "id": "sageox",
+      "label": "SageOx",
+      "api": "https://promptugal.news/api/v1/companies/sageox.json",
+      "page": "https://promptugal.news/companies/sageox/index.html"
+    },
+    {
+      "id": "scrut-automation",
+      "label": "Scrut Automation",
+      "api": "https://promptugal.news/api/v1/companies/scrut-automation.json",
+      "page": "https://promptugal.news/companies/scrut-automation/index.html"
+    },
+    {
+      "id": "sensay",
+      "label": "Sensay",
+      "api": "https://promptugal.news/api/v1/companies/sensay.json",
+      "page": "https://promptugal.news/companies/sensay/index.html"
+    },
+    {
+      "id": "shakers",
+      "label": "Shakers",
+      "api": "https://promptugal.news/api/v1/companies/shakers.json",
+      "page": "https://promptugal.news/companies/shakers/index.html"
+    },
+    {
+      "id": "sheerme",
+      "label": "sheerME",
+      "api": "https://promptugal.news/api/v1/companies/sheerme.json",
+      "page": "https://promptugal.news/companies/sheerme/index.html"
+    },
+    {
+      "id": "spacecomputer",
+      "label": "SpaceComputer",
+      "api": "https://promptugal.news/api/v1/companies/spacecomputer.json",
+      "page": "https://promptugal.news/companies/spacecomputer/index.html"
+    },
+    {
+      "id": "sphere",
+      "label": "Sphere",
+      "api": "https://promptugal.news/api/v1/companies/sphere.json",
+      "page": "https://promptugal.news/companies/sphere/index.html"
+    },
+    {
+      "id": "startup-portugal",
+      "label": "Startup Portugal",
+      "api": "https://promptugal.news/api/v1/companies/startup-portugal.json",
+      "page": "https://promptugal.news/companies/startup-portugal/index.html"
+    },
+    {
+      "id": "strawberry",
+      "label": "Strawberry",
+      "api": "https://promptugal.news/api/v1/companies/strawberry.json",
+      "page": "https://promptugal.news/companies/strawberry/index.html"
+    },
+    {
+      "id": "sumsub",
+      "label": "Sumsub",
+      "api": "https://promptugal.news/api/v1/companies/sumsub.json",
+      "page": "https://promptugal.news/companies/sumsub/index.html"
+    },
+    {
+      "id": "temporal",
+      "label": "Temporal",
+      "api": "https://promptugal.news/api/v1/companies/temporal.json",
+      "page": "https://promptugal.news/companies/temporal/index.html"
+    },
+    {
+      "id": "testmu-ai",
+      "label": "TestMu AI",
+      "api": "https://promptugal.news/api/v1/companies/testmu-ai.json",
+      "page": "https://promptugal.news/companies/testmu-ai/index.html"
+    },
+    {
+      "id": "the-hacking-games",
+      "label": "The Hacking Games",
+      "api": "https://promptugal.news/api/v1/companies/the-hacking-games.json",
+      "page": "https://promptugal.news/companies/the-hacking-games/index.html"
+    },
+    {
+      "id": "topsec-cloud-solutions",
+      "label": "Topsec Cloud Solutions",
+      "api": "https://promptugal.news/api/v1/companies/topsec-cloud-solutions.json",
+      "page": "https://promptugal.news/companies/topsec-cloud-solutions/index.html"
+    },
+    {
+      "id": "trent-ai",
+      "label": "Trent AI",
+      "api": "https://promptugal.news/api/v1/companies/trent-ai.json",
+      "page": "https://promptugal.news/companies/trent-ai/index.html"
+    },
+    {
+      "id": "trustscale",
+      "label": "TrustScale",
+      "api": "https://promptugal.news/api/v1/companies/trustscale.json",
+      "page": "https://promptugal.news/companies/trustscale/index.html"
+    },
+    {
+      "id": "twilio",
+      "label": "Twilio",
+      "api": "https://promptugal.news/api/v1/companies/twilio.json",
+      "page": "https://promptugal.news/companies/twilio/index.html"
+    },
+    {
+      "id": "vtex",
+      "label": "VTEX",
+      "api": "https://promptugal.news/api/v1/companies/vtex.json",
+      "page": "https://promptugal.news/companies/vtex/index.html"
+    },
+    {
+      "id": "you-com",
+      "label": "You.com (Recursive & You.com)",
+      "api": "https://promptugal.news/api/v1/companies/you-com.json",
+      "page": "https://promptugal.news/companies/you-com/index.html"
+    }
+  ],
+  "license": {
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "by": "PrompTugal.news",
+    "scope": "what PrompTugal.news made in this file; an item taken from someone else carries its own license"
+  }
+}

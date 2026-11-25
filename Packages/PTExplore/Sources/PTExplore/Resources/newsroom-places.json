@@ -1,0 +1,654 @@
+{
+  "type": "place",
+  "count": 107,
+  "items": [
+    {
+      "id": "acores",
+      "label": "Azores",
+      "api": "https://promptugal.news/api/v1/places/acores.json",
+      "page": "https://promptugal.news/places/acores/index.html"
+    },
+    {
+      "id": "albufeira",
+      "label": "Albufeira",
+      "api": "https://promptugal.news/api/v1/places/albufeira.json",
+      "page": "https://promptugal.news/places/albufeira/index.html"
+    },
+    {
+      "id": "alcoutim",
+      "label": "Alcoutim",
+      "api": "https://promptugal.news/api/v1/places/alcoutim.json",
+      "page": "https://promptugal.news/places/alcoutim/index.html"
+    },
+    {
+      "id": "algarve",
+      "label": "Algarve",
+      "api": "https://promptugal.news/api/v1/places/algarve.json",
+      "page": "https://promptugal.news/places/algarve/index.html"
+    },
+    {
+      "id": "aljezur",
+      "label": "Aljezur",
+      "api": "https://promptugal.news/api/v1/places/aljezur.json",
+      "page": "https://promptugal.news/places/aljezur/index.html"
+    },
+    {
+      "id": "almancil",
+      "label": "Almancil",
+      "api": "https://promptugal.news/api/v1/places/almancil.json",
+      "page": "https://promptugal.news/places/almancil/index.html"
+    },
+    {
+      "id": "armenia",
+      "label": "Armenia",
+      "api": "https://promptugal.news/api/v1/places/armenia.json",
+      "page": "https://promptugal.news/places/armenia/index.html"
+    },
+    {
+      "id": "australia",
+      "label": "Australia",
+      "api": "https://promptugal.news/api/v1/places/australia.json",
+      "page": "https://promptugal.news/places/australia/index.html"
+    },
+    {
+      "id": "austria",
+      "label": "Austria",
+      "api": "https://promptugal.news/api/v1/places/austria.json",
+      "page": "https://promptugal.news/places/austria/index.html"
+    },
+    {
+      "id": "aveiro",
+      "label": "Aveiro",
+      "api": "https://promptugal.news/api/v1/places/aveiro.json",
+      "page": "https://promptugal.news/places/aveiro/index.html"
+    },
+    {
+      "id": "barking-and-dagenham",
+      "label": "Barking and Dagenham",
+      "api": "https://promptugal.news/api/v1/places/barking-and-dagenham.json",
+      "page": "https://promptugal.news/places/barking-and-dagenham/index.html"
+    },
+    {
+      "id": "barnet",
+      "label": "Barnet",
+      "api": "https://promptugal.news/api/v1/places/barnet.json",
+      "page": "https://promptugal.news/places/barnet/index.html"
+    },
+    {
+      "id": "beato-innovation-district",
+      "label": "Beato Innovation District",
+      "api": "https://promptugal.news/api/v1/places/beato-innovation-district.json",
+      "page": "https://promptugal.news/places/beato-innovation-district/index.html"
+    },
+    {
+      "id": "beja",
+      "label": "Beja",
+      "api": "https://promptugal.news/api/v1/places/beja.json",
+      "page": "https://promptugal.news/places/beja/index.html"
+    },
+    {
+      "id": "belgium",
+      "label": "Belgium",
+      "api": "https://promptugal.news/api/v1/places/belgium.json",
+      "page": "https://promptugal.news/places/belgium/index.html"
+    },
+    {
+      "id": "bexley",
+      "label": "Bexley",
+      "api": "https://promptugal.news/api/v1/places/bexley.json",
+      "page": "https://promptugal.news/places/bexley/index.html"
+    },
+    {
+      "id": "braga",
+      "label": "Braga",
+      "api": "https://promptugal.news/api/v1/places/braga.json",
+      "page": "https://promptugal.news/places/braga/index.html"
+    },
+    {
+      "id": "braganca",
+      "label": "Bragança",
+      "api": "https://promptugal.news/api/v1/places/braganca.json",
+      "page": "https://promptugal.news/places/braganca/index.html"
+    },
+    {
+      "id": "brazil",
+      "label": "Brazil",
+      "api": "https://promptugal.news/api/v1/places/brazil.json",
+      "page": "https://promptugal.news/places/brazil/index.html"
+    },
+    {
+      "id": "brent",
+      "label": "Brent",
+      "api": "https://promptugal.news/api/v1/places/brent.json",
+      "page": "https://promptugal.news/places/brent/index.html"
+    },
+    {
+      "id": "bromley",
+      "label": "Bromley",
+      "api": "https://promptugal.news/api/v1/places/bromley.json",
+      "page": "https://promptugal.news/places/bromley/index.html"
+    },
+    {
+      "id": "brussels",
+      "label": "Brussels",
+      "api": "https://promptugal.news/api/v1/places/brussels.json",
+      "page": "https://promptugal.news/places/brussels/index.html"
+    },
+    {
+      "id": "camden",
+      "label": "Camden",
+      "api": "https://promptugal.news/api/v1/places/camden.json",
+      "page": "https://promptugal.news/places/camden/index.html"
+    },
+    {
+      "id": "canada",
+      "label": "Canada",
+      "api": "https://promptugal.news/api/v1/places/canada.json",
+      "page": "https://promptugal.news/places/canada/index.html"
+    },
+    {
+      "id": "castelo-branco",
+      "label": "Castelo Branco",
+      "api": "https://promptugal.news/api/v1/places/castelo-branco.json",
+      "page": "https://promptugal.news/places/castelo-branco/index.html"
+    },
+    {
+      "id": "castro-marim",
+      "label": "Castro Marim",
+      "api": "https://promptugal.news/api/v1/places/castro-marim.json",
+      "page": "https://promptugal.news/places/castro-marim/index.html"
+    },
+    {
+      "id": "china",
+      "label": "China",
+      "api": "https://promptugal.news/api/v1/places/china.json",
+      "page": "https://promptugal.news/places/china/index.html"
+    },
+    {
+      "id": "coimbra",
+      "label": "Coimbra",
+      "api": "https://promptugal.news/api/v1/places/coimbra.json",
+      "page": "https://promptugal.news/places/coimbra/index.html"
+    },
+    {
+      "id": "colombia",
+      "label": "Colombia",
+      "api": "https://promptugal.news/api/v1/places/colombia.json",
+      "page": "https://promptugal.news/places/colombia/index.html"
+    },
+    {
+      "id": "croydon",
+      "label": "Croydon",
+      "api": "https://promptugal.news/api/v1/places/croydon.json",
+      "page": "https://promptugal.news/places/croydon/index.html"
+    },
+    {
+      "id": "czechia",
+      "label": "Czechia",
+      "api": "https://promptugal.news/api/v1/places/czechia.json",
+      "page": "https://promptugal.news/places/czechia/index.html"
+    },
+    {
+      "id": "dublin",
+      "label": "Dublin",
+      "api": "https://promptugal.news/api/v1/places/dublin.json",
+      "page": "https://promptugal.news/places/dublin/index.html"
+    },
+    {
+      "id": "ealing",
+      "label": "Ealing",
+      "api": "https://promptugal.news/api/v1/places/ealing.json",
+      "page": "https://promptugal.news/places/ealing/index.html"
+    },
+    {
+      "id": "enfield",
+      "label": "Enfield",
+      "api": "https://promptugal.news/api/v1/places/enfield.json",
+      "page": "https://promptugal.news/places/enfield/index.html"
+    },
+    {
+      "id": "estadio-da-tapadinha",
+      "label": "Estádio da Tapadinha",
+      "api": "https://promptugal.news/api/v1/places/estadio-da-tapadinha.json",
+      "page": "https://promptugal.news/places/estadio-da-tapadinha/index.html"
+    },
+    {
+      "id": "european-union",
+      "label": "European Union",
+      "api": "https://promptugal.news/api/v1/places/european-union.json",
+      "page": "https://promptugal.news/places/european-union/index.html"
+    },
+    {
+      "id": "evora",
+      "label": "Évora",
+      "api": "https://promptugal.news/api/v1/places/evora.json",
+      "page": "https://promptugal.news/places/evora/index.html"
+    },
+    {
+      "id": "faro",
+      "label": "Faro",
+      "api": "https://promptugal.news/api/v1/places/faro.json",
+      "page": "https://promptugal.news/places/faro/index.html"
+    },
+    {
+      "id": "france",
+      "label": "France",
+      "api": "https://promptugal.news/api/v1/places/france.json",
+      "page": "https://promptugal.news/places/france/index.html"
+    },
+    {
+      "id": "germany",
+      "label": "Germany",
+      "api": "https://promptugal.news/api/v1/places/germany.json",
+      "page": "https://promptugal.news/places/germany/index.html"
+    },
+    {
+      "id": "greenwich",
+      "label": "Greenwich",
+      "api": "https://promptugal.news/api/v1/places/greenwich.json",
+      "page": "https://promptugal.news/places/greenwich/index.html"
+    },
+    {
+      "id": "guarda",
+      "label": "Guarda",
+      "api": "https://promptugal.news/api/v1/places/guarda.json",
+      "page": "https://promptugal.news/places/guarda/index.html"
+    },
+    {
+      "id": "hackney",
+      "label": "Hackney",
+      "api": "https://promptugal.news/api/v1/places/hackney.json",
+      "page": "https://promptugal.news/places/hackney/index.html"
+    },
+    {
+      "id": "hammersmith-and-fulham",
+      "label": "Hammersmith and Fulham",
+      "api": "https://promptugal.news/api/v1/places/hammersmith-and-fulham.json",
+      "page": "https://promptugal.news/places/hammersmith-and-fulham/index.html"
+    },
+    {
+      "id": "haringey",
+      "label": "Haringey",
+      "api": "https://promptugal.news/api/v1/places/haringey.json",
+      "page": "https://promptugal.news/places/haringey/index.html"
+    },
+    {
+      "id": "harrow",
+      "label": "Harrow",
+      "api": "https://promptugal.news/api/v1/places/harrow.json",
+      "page": "https://promptugal.news/places/harrow/index.html"
+    },
+    {
+      "id": "havering",
+      "label": "Havering",
+      "api": "https://promptugal.news/api/v1/places/havering.json",
+      "page": "https://promptugal.news/places/havering/index.html"
+    },
+    {
+      "id": "hillingdon",
+      "label": "Hillingdon",
+      "api": "https://promptugal.news/api/v1/places/hillingdon.json",
+      "page": "https://promptugal.news/places/hillingdon/index.html"
+    },
+    {
+      "id": "hotel-pestana-alvor-praia",
+      "label": "Hotel Pestana Alvor Praia",
+      "api": "https://promptugal.news/api/v1/places/hotel-pestana-alvor-praia.json",
+      "page": "https://promptugal.news/places/hotel-pestana-alvor-praia/index.html"
+    },
+    {
+      "id": "hounslow",
+      "label": "Hounslow",
+      "api": "https://promptugal.news/api/v1/places/hounslow.json",
+      "page": "https://promptugal.news/places/hounslow/index.html"
+    },
+    {
+      "id": "hungary",
+      "label": "Hungary",
+      "api": "https://promptugal.news/api/v1/places/hungary.json",
+      "page": "https://promptugal.news/places/hungary/index.html"
+    },
+    {
+      "id": "india",
+      "label": "India",
+      "api": "https://promptugal.news/api/v1/places/india.json",
+      "page": "https://promptugal.news/places/india/index.html"
+    },
+    {
+      "id": "ireland",
+      "label": "Ireland",
+      "api": "https://promptugal.news/api/v1/places/ireland.json",
+      "page": "https://promptugal.news/places/ireland/index.html"
+    },
+    {
+      "id": "islington",
+      "label": "Islington",
+      "api": "https://promptugal.news/api/v1/places/islington.json",
+      "page": "https://promptugal.news/places/islington/index.html"
+    },
+    {
+      "id": "israel",
+      "label": "Israel",
+      "api": "https://promptugal.news/api/v1/places/israel.json",
+      "page": "https://promptugal.news/places/israel/index.html"
+    },
+    {
+      "id": "italy",
+      "label": "Italy",
+      "api": "https://promptugal.news/api/v1/places/italy.json",
+      "page": "https://promptugal.news/places/italy/index.html"
+    },
+    {
+      "id": "kensington-and-chelsea",
+      "label": "Kensington and Chelsea",
+      "api": "https://promptugal.news/api/v1/places/kensington-and-chelsea.json",
+      "page": "https://promptugal.news/places/kensington-and-chelsea/index.html"
+    },
+    {
+      "id": "kingston-upon-thames",
+      "label": "Kingston upon Thames",
+      "api": "https://promptugal.news/api/v1/places/kingston-upon-thames.json",
+      "page": "https://promptugal.news/places/kingston-upon-thames/index.html"
+    },
+    {
+      "id": "lagoa",
+      "label": "Lagoa",
+      "api": "https://promptugal.news/api/v1/places/lagoa.json",
+      "page": "https://promptugal.news/places/lagoa/index.html"
+    },
+    {
+      "id": "lagos",
+      "label": "Lagos",
+      "api": "https://promptugal.news/api/v1/places/lagos.json",
+      "page": "https://promptugal.news/places/lagos/index.html"
+    },
+    {
+      "id": "lambeth",
+      "label": "Lambeth",
+      "api": "https://promptugal.news/api/v1/places/lambeth.json",
+      "page": "https://promptugal.news/places/lambeth/index.html"
+    },
+    {
+      "id": "leiria",
+      "label": "Leiria",
+      "api": "https://promptugal.news/api/v1/places/leiria.json",
+      "page": "https://promptugal.news/places/leiria/index.html"
+    },
+    {
+      "id": "lewisham",
+      "label": "Lewisham",
+      "api": "https://promptugal.news/api/v1/places/lewisham.json",
+      "page": "https://promptugal.news/places/lewisham/index.html"
+    },
+    {
+      "id": "lisbon",
+      "label": "Lisbon",
+      "api": "https://promptugal.news/api/v1/places/lisbon.json",
+      "page": "https://promptugal.news/places/lisbon/index.html"
+    },
+    {
+      "id": "lithuania",
+      "label": "Lithuania",
+      "api": "https://promptugal.news/api/v1/places/lithuania.json",
+      "page": "https://promptugal.news/places/lithuania/index.html"
+    },
+    {
+      "id": "london",
+      "label": "London",
+      "api": "https://promptugal.news/api/v1/places/london.json",
+      "page": "https://promptugal.news/places/london/index.html"
+    },
+    {
+      "id": "loule",
+      "label": "Loulé",
+      "api": "https://promptugal.news/api/v1/places/loule.json",
+      "page": "https://promptugal.news/places/loule/index.html"
+    },
+    {
+      "id": "luxembourg",
+      "label": "Luxembourg",
+      "api": "https://promptugal.news/api/v1/places/luxembourg.json",
+      "page": "https://promptugal.news/places/luxembourg/index.html"
+    },
+    {
+      "id": "madeira",
+      "label": "Madeira",
+      "api": "https://promptugal.news/api/v1/places/madeira.json",
+      "page": "https://promptugal.news/places/madeira/index.html"
+    },
+    {
+      "id": "meo-arena-and-fil",
+      "label": "MEO Arena and FIL",
+      "api": "https://promptugal.news/api/v1/places/meo-arena-and-fil.json",
+      "page": "https://promptugal.news/places/meo-arena-and-fil/index.html"
+    },
+    {
+      "id": "merton",
+      "label": "Merton",
+      "api": "https://promptugal.news/api/v1/places/merton.json",
+      "page": "https://promptugal.news/places/merton/index.html"
+    },
+    {
+      "id": "monchique",
+      "label": "Monchique",
+      "api": "https://promptugal.news/api/v1/places/monchique.json",
+      "page": "https://promptugal.news/places/monchique/index.html"
+    },
+    {
+      "id": "netherlands",
+      "label": "Netherlands",
+      "api": "https://promptugal.news/api/v1/places/netherlands.json",
+      "page": "https://promptugal.news/places/netherlands/index.html"
+    },
+    {
+      "id": "new-zealand",
+      "label": "New Zealand",
+      "api": "https://promptugal.news/api/v1/places/new-zealand.json",
+      "page": "https://promptugal.news/places/new-zealand/index.html"
+    },
+    {
+      "id": "newham",
+      "label": "Newham",
+      "api": "https://promptugal.news/api/v1/places/newham.json",
+      "page": "https://promptugal.news/places/newham/index.html"
+    },
+    {
+      "id": "olhao",
+      "label": "Olhão",
+      "api": "https://promptugal.news/api/v1/places/olhao.json",
+      "page": "https://promptugal.news/places/olhao/index.html"
+    },
+    {
+      "id": "portalegre",
+      "label": "Portalegre",
+      "api": "https://promptugal.news/api/v1/places/portalegre.json",
+      "page": "https://promptugal.news/places/portalegre/index.html"
+    },
+    {
+      "id": "portimao",
+      "label": "Portimão",
+      "api": "https://promptugal.news/api/v1/places/portimao.json",
+      "page": "https://promptugal.news/places/portimao/index.html"
+    },
+    {
+      "id": "porto",
+      "label": "Porto",
+      "api": "https://promptugal.news/api/v1/places/porto.json",
+      "page": "https://promptugal.news/places/porto/index.html"
+    },
+    {
+      "id": "portugal",
+      "label": "Portugal",
+      "api": "https://promptugal.news/api/v1/places/portugal.json",
+      "page": "https://promptugal.news/places/portugal/index.html"
+    },
+    {
+      "id": "ptw-palace",
+      "label": "PTW Palace",
+      "api": "https://promptugal.news/api/v1/places/ptw-palace.json",
+      "page": "https://promptugal.news/places/ptw-palace/index.html"
+    },
+    {
+      "id": "quarteira",
+      "label": "Quarteira",
+      "api": "https://promptugal.news/api/v1/places/quarteira.json",
+      "page": "https://promptugal.news/places/quarteira/index.html"
+    },
+    {
+      "id": "redbridge",
+      "label": "Redbridge",
+      "api": "https://promptugal.news/api/v1/places/redbridge.json",
+      "page": "https://promptugal.news/places/redbridge/index.html"
+    },
+    {
+      "id": "richmond-upon-thames",
+      "label": "Richmond upon Thames",
+      "api": "https://promptugal.news/api/v1/places/richmond-upon-thames.json",
+      "page": "https://promptugal.news/places/richmond-upon-thames/index.html"
+    },
+    {
+      "id": "royal-dublin-society",
+      "label": "Royal Dublin Society",
+      "api": "https://promptugal.news/api/v1/places/royal-dublin-society.json",
+      "page": "https://promptugal.news/places/royal-dublin-society/index.html"
+    },
+    {
+      "id": "santarem",
+      "label": "Santarém",
+      "api": "https://promptugal.news/api/v1/places/santarem.json",
+      "page": "https://promptugal.news/places/santarem/index.html"
+    },
+    {
+      "id": "sao-bras-de-alportel",
+      "label": "São Brás de Alportel",
+      "api": "https://promptugal.news/api/v1/places/sao-bras-de-alportel.json",
+      "page": "https://promptugal.news/places/sao-bras-de-alportel/index.html"
+    },
+    {
+      "id": "setubal",
+      "label": "Setúbal",
+      "api": "https://promptugal.news/api/v1/places/setubal.json",
+      "page": "https://promptugal.news/places/setubal/index.html"
+    },
+    {
+      "id": "silves",
+      "label": "Silves",
+      "api": "https://promptugal.news/api/v1/places/silves.json",
+      "page": "https://promptugal.news/places/silves/index.html"
+    },
+    {
+      "id": "singapore",
+      "label": "Singapore",
+      "api": "https://promptugal.news/api/v1/places/singapore.json",
+      "page": "https://promptugal.news/places/singapore/index.html"
+    },
+    {
+      "id": "southwark",
+      "label": "Southwark",
+      "api": "https://promptugal.news/api/v1/places/southwark.json",
+      "page": "https://promptugal.news/places/southwark/index.html"
+    },
+    {
+      "id": "spain",
+      "label": "Spain",
+      "api": "https://promptugal.news/api/v1/places/spain.json",
+      "page": "https://promptugal.news/places/spain/index.html"
+    },
+    {
+      "id": "sutton",
+      "label": "Sutton",
+      "api": "https://promptugal.news/api/v1/places/sutton.json",
+      "page": "https://promptugal.news/places/sutton/index.html"
+    },
+    {
+      "id": "sweden",
+      "label": "Sweden",
+      "api": "https://promptugal.news/api/v1/places/sweden.json",
+      "page": "https://promptugal.news/places/sweden/index.html"
+    },
+    {
+      "id": "switzerland",
+      "label": "Switzerland",
+      "api": "https://promptugal.news/api/v1/places/switzerland.json",
+      "page": "https://promptugal.news/places/switzerland/index.html"
+    },
+    {
+      "id": "tavira",
+      "label": "Tavira",
+      "api": "https://promptugal.news/api/v1/places/tavira.json",
+      "page": "https://promptugal.news/places/tavira/index.html"
+    },
+    {
+      "id": "tower-hamlets",
+      "label": "Tower Hamlets",
+      "api": "https://promptugal.news/api/v1/places/tower-hamlets.json",
+      "page": "https://promptugal.news/places/tower-hamlets/index.html"
+    },
+    {
+      "id": "united-kingdom",
+      "label": "United Kingdom",
+      "api": "https://promptugal.news/api/v1/places/united-kingdom.json",
+      "page": "https://promptugal.news/places/united-kingdom/index.html"
+    },
+    {
+      "id": "united-states",
+      "label": "United States",
+      "api": "https://promptugal.news/api/v1/places/united-states.json",
+      "page": "https://promptugal.news/places/united-states/index.html"
+    },
+    {
+      "id": "viana-do-castelo",
+      "label": "Viana do Castelo",
+      "api": "https://promptugal.news/api/v1/places/viana-do-castelo.json",
+      "page": "https://promptugal.news/places/viana-do-castelo/index.html"
+    },
+    {
+      "id": "vila-do-bispo",
+      "label": "Vila do Bispo",
+      "api": "https://promptugal.news/api/v1/places/vila-do-bispo.json",
+      "page": "https://promptugal.news/places/vila-do-bispo/index.html"
+    },
+    {
+      "id": "vila-real",
+      "label": "Vila Real",
+      "api": "https://promptugal.news/api/v1/places/vila-real.json",
+      "page": "https://promptugal.news/places/vila-real/index.html"
+    },
+    {
+      "id": "vila-real-de-santo-antonio",
+      "label": "Vila Real de Santo António",
+      "api": "https://promptugal.news/api/v1/places/vila-real-de-santo-antonio.json",
+      "page": "https://promptugal.news/places/vila-real-de-santo-antonio/index.html"
+    },
+    {
+      "id": "viseu",
+      "label": "Viseu",
+      "api": "https://promptugal.news/api/v1/places/viseu.json",
+      "page": "https://promptugal.news/places/viseu/index.html"
+    },
+    {
+      "id": "waltham-forest",
+      "label": "Waltham Forest",
+      "api": "https://promptugal.news/api/v1/places/waltham-forest.json",
+      "page": "https://promptugal.news/places/waltham-forest/index.html"
+    },
+    {
+      "id": "wandsworth",
+      "label": "Wandsworth",
+      "api": "https://promptugal.news/api/v1/places/wandsworth.json",
+      "page": "https://promptugal.news/places/wandsworth/index.html"
+    },
+    {
+      "id": "westminster",
+      "label": "Westminster",
+      "api": "https://promptugal.news/api/v1/places/westminster.json",
+      "page": "https://promptugal.news/places/westminster/index.html"
+    }
+  ],
+  "license": {
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "by": "PrompTugal.news",
+    "scope": "what PrompTugal.news made in this file; an item taken from someone else carries its own license"
+  }
+}

@@ -17,32 +17,28 @@ extension EnvironmentValues {
     }
 }
 
-/// Explore (ux spec EXP-1): PTExplore's screen with the app's views plugged in: the agenda list for Talks (PTExplore cannot
-/// see PTAgenda), the shared talk detail with the pick star and Add to Calendar, the graph card once there are three picks,
-/// and the graph itself. The screen brings its own navigation stack.
+/// Explore (ux spec EXP-1), rebuilt for the newsroom (25 Nov): PTExplore's screen on the newsroom's own sites (stories,
+/// companies and places from promptugal.news, the library and the videos), each list ending with the "Lisbon summit 2026"
+/// row (the summit's index) and the newsroom's graph. No Talks (Dinis, 25 Nov: the summit is over; My program in More keeps
+/// the picks) and no "summit graph" card. The screen brings its own navigation stack.
 struct ExploreView: View {
     @Environment(\.exploreStart) private var start
-    @Environment(ReaderStore.self) private var reader
     @Environment(\.openMore) private var openMore
-    @State private var opened: TalkSheetItem?
 
     var body: some View {
-        ExploreScreen(hooks: hooks, start: start)
+        ExploreScreen(store: ExploreStore.newsroom(), hooks: hooks, start: start)
             // A different start (a link to another segment) builds the screen again at that segment.
             .id(Self.key(start))
-            .talkSheet($opened)
     }
 
     private var hooks: ExploreHooks {
         ExploreHooks(
-            talks: { AnyView(AgendaView(title: String(localized: "Explore"), openSession: { opened = TalkSheetItem(talk: TalkRef($0)) })) },
-            header: { AnyView(GraphCard(picks: reader.saved.count)) },
             graph: { AnyView(GraphExplorerView()) },
             talkActions: AppTalks.actions,
             leadingToolbar: { AnyView(LanguageButton()) },
             trailingToolbar: moreButton,
-            // No Talks in Explore (Dinis, 25 Nov): the summit agenda is over; My program in More keeps the picks.
-            showsTalks: false)
+            showsTalks: false,
+            showsSummit: true)
     }
 
     /// The More button on iPhone; nil on iPad, where More is in the sidebar.
@@ -57,39 +53,11 @@ struct ExploreView: View {
         case .speakers: "speakers"
         case .companies: "companies"
         case .places: "places"
+        case .stories: "stories"
+        case .library: "library"
+        case .summit: "summit"
         case .talk(let ref): "talk:" + (ref ?? "")
         case .graph: "graph"
-        }
-    }
-}
-
-/// EXP-G: the graph, offered once the person has three or more picks (no empty graphs). The scoped graph (only the people
-/// and companies behind the picks) is not built yet, so the card opens the full graph and says so.
-private struct GraphCard: View {
-    let picks: Int
-
-    var body: some View {
-        if picks >= 3 {
-            NavigationLink {
-                GraphExplorerView()
-            } label: {
-                Card {
-                    HStack(spacing: Space.m) {
-                        Image(systemName: "point.3.connected.trianglepath.dotted").font(.title2).foregroundStyle(Palette.red)
-                            .accessibilityHidden(true)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Explore the summit graph").font(Typo.headline).foregroundStyle(Palette.ink)
-                            Text("Companies, people and events").font(.footnote).foregroundStyle(Palette.muted)
-                        }
-                        Spacer(minLength: Space.s)
-                        Image(systemName: "chevron.forward").font(.footnote).foregroundStyle(Palette.muted)
-                            .accessibilityHidden(true)
-                    }
-                }
-            }
-            .buttonStyle(.plain)
-            .padding(.horizontal, Space.l)
-            .accessibilityIdentifier("pt.explore.graph")
         }
     }
 }
