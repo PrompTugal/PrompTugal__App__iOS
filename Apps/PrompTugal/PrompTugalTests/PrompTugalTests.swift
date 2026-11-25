@@ -43,11 +43,13 @@ struct PublicAppTests {
         #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("local.ci-status"))
     }
 
-    @Test("promptugal://open/map still opens the venue map, now in More")
-    @MainActor func mapLinkStillWorks() {
-        let map = PublicDestinations.openable("map", debug: false)
-        #expect(map != nil)
-        #expect(map?.phoneTab == nil)
+    @Test("old summit links (map, team.schedule) open Places; place:<id> opens a town")
+    @MainActor func summitLinksOpenPlaces() {
+        #expect(PublicDestinations.openable("map", debug: false)?.id == "places")
+        #expect(PublicDestinations.openable("team.schedule", debug: false)?.id == "places")
+        #expect(PublicDestinations.openable("place:loule", debug: false)?.id == "place:loule")
+        #expect(PublicDestinations.openable("place:faro#now", debug: false)?.id == "place:faro")
+        #expect(PublicDestinations.listed("More", debug: false).map(\.id).contains("local.sources"))
     }
 
     @Test("promptugal://open/places opens the places magazine; algarve is an alias")
