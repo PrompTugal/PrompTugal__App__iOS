@@ -214,8 +214,8 @@ public struct NewsItem: Decodable, Sendable, Equatable, Hashable, Identifiable {
     /// Steps from AI in the graph: 0 is about AI itself (the PrompTugal test allows up to 3).
     public var steps: Int?
     public var provenance: Provenance?
-    /// Set when the site's rights desk holds the item ("held under R12 ... not to be shown"): the app then shows only
-    /// the headline, outlet, date and source link, never the summary or anything drawn from the story.
+    /// Set when the site's rights desk holds the item ("held under R12 ..."). Dinis, 25 Nov: a held item shows its
+    /// headline, summary, outlet, date and source link ("Read it at <outlet>"), without the AI path or steps.
     public var hold: String?
 
     public var id: String { url + "|" + title }

@@ -573,13 +573,11 @@ struct LeadStory: View {
                     .foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-                if !item.isHeld {
-                    Text(item.summary)
-                        .font(.system(.body, design: .serif))
-                        .foregroundStyle(Palette.ink.opacity(0.85))
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+                Text(item.summary)
+                    .font(.system(.body, design: .serif))
+                    .foregroundStyle(Palette.ink.opacity(0.85))
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
                 if !item.isHeld, !item.aiPath.isEmpty {
                     HStack(alignment: .top, spacing: Space.s) {
                         Image(systemName: "point.topleft.down.to.point.bottomright.curvepath").foregroundStyle(accent)

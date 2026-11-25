@@ -354,7 +354,7 @@ public struct PlacesHomeView: View {
     private var footer: some View {
         VStack(alignment: .leading, spacing: Space.s) {
             Rectangle().fill(Palette.rule).frame(height: 1)
-            Text(String(localized: "Every fact on these pages comes from promptugal.news, with its source and the date it was read. Independent of Web Summit."))
+            Text(String(localized: "Every fact on these pages comes from promptugal.news, with its source and the date it was read."))
                 .font(.caption).foregroundStyle(Palette.muted)
             Button {
                 openURL(PlacesStore.site.appendingPathComponent("algarve/"))
@@ -459,10 +459,9 @@ struct CaseStudyCard: View {
                 if let lead = file?.newsByWeight.first {
                     StepsBadge(steps: lead.steps, accent: accent)
                     Text(lead.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).lineLimit(3)
+                    Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
                     if lead.isHeld {
                         ReadAtLine(outlet: lead.outlet, readOn: "", accent: accent, held: true)
-                    } else {
-                        Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
                     }
                 } else if let mandate = file?.mandate {
                     Text(mandate).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(4)
@@ -548,9 +547,7 @@ struct StoryTile: View {
                     Text(PlaceDates.short(item.date)).font(.caption2).foregroundStyle(Palette.muted)
                 }
                 Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).lineLimit(4)
-                if !item.isHeld {
-                    Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
-                }
+                Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
                 Spacer(minLength: 0)
                 if !item.isHeld { StepsBadge(steps: item.steps, accent: accent) }
                 ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent, held: item.isHeld)

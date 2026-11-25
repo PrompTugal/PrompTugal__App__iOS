@@ -37,3 +37,7 @@ The live index has all 17 and the old code had no limit: the likely cause is an 
 with "Read it at <outlet>": no summary, AI path, steps badge or provenance block, on the town page (lead and tiles),
 the case-study cards and "Latest from the towns". since.json rows already show only those fields. PTLocal also
 renders by-place stories (LocalStore, Live views): not mine, the conductor may want the same rule there.
+
+**Revised (Dinis via c.ios, ~23:35):** held items show headline, summary, outlet, date and the source link ("Read it at
+<outlet>"); the AI path, steps badge and provenance block stay hidden. "Independent of Web Summit." removed from the
+home footer: no Web Summit anywhere in PTPlaces.
