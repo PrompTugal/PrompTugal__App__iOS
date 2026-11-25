@@ -219,6 +219,10 @@ struct StoryRow: View {
             if let path = story.aiPath {
                 Text(path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3)
             }
+            if story.isHeld, let url = story.sourceURL {
+                Link(destination: url) { Label(story.readItAt, systemImage: "arrow.up.right.square") }
+                    .font(.caption.weight(.semibold))
+            }
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
