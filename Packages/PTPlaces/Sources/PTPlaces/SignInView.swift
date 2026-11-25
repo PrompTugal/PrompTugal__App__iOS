@@ -79,10 +79,15 @@ public final class PersonSession {
 public struct PersonBadge: View {
     @State private var session = PersonSession.shared
     @State private var showing = false
+    @Environment(\.placesComments) private var shown
 
     public init() {}
 
     public var body: some View {
+        if shown { badge }
+    }
+
+    private var badge: some View {
         Button { showing = true } label: {
             if let person = session.person {
                 Label(person, systemImage: session.proved ? "person.badge.key.fill" : "person.badge.key")

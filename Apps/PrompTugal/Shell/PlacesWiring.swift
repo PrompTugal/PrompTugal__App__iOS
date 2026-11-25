@@ -13,9 +13,8 @@ enum PlacesWiring {
         PlacesCredit.charge = { action, ref, date, title in
             LocalCredit.shared.charge(action: action, ref: ref, date: date, title: title)
         }
-        PlacesCredit.costText = { action, ref, date in
-            LocalCredit.shared.costText(action: action, ref: ref, date: date)
-        }
+        // No price chips on stories in this App Store version (25 Nov): nothing can be bought yet, so nothing shows a price.
+        PlacesCredit.costText = { _, _, _ in nil }
     }
 }
 
@@ -70,6 +69,9 @@ extension View {
             .placesRegionMap { open in AnyView(RegionMapLayer(open: open)) }
             // Place comments go to the conductor's lane through PTTalk; without a pasted lane link they say so.
             .placesTalk(TalkTransport.conductor)
+            // Comments and sign-in hidden in this App Store version (Dinis, 25 Nov): a reviewer cannot hold a person key
+            // or a lane link, and the privacy answer stays "Data Not Collected". Back behind an owner unlock later.
+            .placesComments(false)
             // PTTalk's composers sign with the person key PTPlaces' sign-in keeps (read from the Keychain, off the main actor).
             .talkSigning { try? PersonKeychain.load()?.signingKey() }
     }

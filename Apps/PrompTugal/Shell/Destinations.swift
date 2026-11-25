@@ -36,8 +36,8 @@ enum PublicDestinations {
 
     /// Where Explore opens for each id that leads there (the App Store screenshots use these ids).
     static let exploreStarts: [String: ExploreStart] = [
-        "explore": .talks,
-        "reader.agenda": .talks,
+        "explore": .speakers,
+        "reader.agenda": .speakers,
         "explore.people": .speakers,
         "explore.companies": .companies,
         "explore.places": .places,
@@ -80,7 +80,7 @@ enum PublicDestinations {
         ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
                          summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 2) { AnyView(NowView()) },
         ShellDestination(id: "explore", title: String(localized: "Explore"), symbol: "magnifyingglass", group: "Tabs",
-                         summary: String(localized: "Talks, speakers, companies and places"), phoneTab: 3, wrapsStack: false) {
+                         summary: String(localized: "Speakers, companies and places"), phoneTab: 3, wrapsStack: false) {
             AnyView(ExploreView())
         },
     ]
@@ -88,11 +88,12 @@ enum PublicDestinations {
     // MARK: More (the iPad sidebar; on iPhone a sheet from the round button on every tab)
 
     static let more: [ShellDestination] = [
-        // "Forget about the Summit" (Dinis, 15 Nov ~23:45): it is one of the events covered; its screens live in More.
+        // Not listed (Dinis, 25 Nov: "move away from the Web Summit"; the App Store build lists no summit, CI or credit
+        // screens). They stay routable for old links until the next version removes them.
         ShellDestination(id: "team.schedule", title: String(localized: "My program"), symbol: "star", group: "More", kind: .hybrid,
-                         summary: String(localized: "The talks you picked at the Summit, clashes and free time")) { AnyView(MyProgramScreen()) },
+                         summary: String(localized: "The talks you picked at the Summit, clashes and free time"), listed: false) { AnyView(MyProgramScreen()) },
         ShellDestination(id: "map", title: String(localized: "Venue map"), symbol: "map", group: "More",
-                         summary: String(localized: "Where each talk was, and the walks between them")) {
+                         summary: String(localized: "Where each talk was, and the walks between them"), listed: false) {
             AnyView(VenueMapView())
         },
         // The newsroom behind PrompTugal.news by place (read-only). The Places reader itself is PTPlaces (ios.places@).
@@ -100,17 +101,17 @@ enum PublicDestinations {
                          summary: String(localized: "The agents behind the sites, read-only")) { AnyView(NewsroomCentreView()) },
         // The reading meter: the same prices as promptugal.news, the history of charges, App Store top-ups.
         ShellDestination(id: "local.credit", title: String(localized: "Reading credit"), symbol: "sterlingsign.circle", group: "More",
-                         summary: String(localized: "Your balance, what you read, top up")) { AnyView(LocalCreditView()) },
+                         summary: String(localized: "Your balance, what you read, top up"), listed: false) { AnyView(LocalCreditView()) },
         // How long a push takes to reach the site and TestFlight, and whether this device's build is the latest (PTLocal/Status).
         ShellDestination(id: "local.ci-status", title: String(localized: "CI status"), symbol: "gauge.with.dots.needle.67percent", group: "More",
-                         summary: String(localized: "From push to production, read-only")) { AnyView(CIStatusView()) },
+                         summary: String(localized: "From push to production, read-only"), listed: false) { AnyView(CIStatusView()) },
         // Apple Intelligence on the device, persona mode and Near me over the by-place data (PTLocal/AI, appdev.ai@).
         ShellDestination(id: "local.ask", title: String(localized: "Ask and summarise"), symbol: "sparkles", group: "More",
                          summary: String(localized: "Apple Intelligence on this device, persona mode, near me")) { AnyView(AskAndSummariseView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
         ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",
-                         summary: String(localized: "Before each pick")) { AnyView(ReminderSettingsView()) },
+                         summary: String(localized: "Before each pick"), listed: false) { AnyView(ReminderSettingsView()) },
     ]
 
     // MARK: Opened by id or from another screen, never in a tab or the sidebar

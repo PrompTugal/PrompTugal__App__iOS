@@ -7,7 +7,7 @@ import SwiftUI
 
 /// Where Explore opens. The shell sets it from the id that was opened (explore, explore.people, explore.talk, ...).
 private struct ExploreStartKey: EnvironmentKey {
-    static let defaultValue: ExploreStart = .talks
+    static let defaultValue: ExploreStart = .speakers
 }
 
 extension EnvironmentValues {
@@ -38,9 +38,11 @@ struct ExploreView: View {
             talks: { AnyView(AgendaView(title: String(localized: "Explore"), openSession: { opened = TalkSheetItem(talk: TalkRef($0)) })) },
             header: { AnyView(GraphCard(picks: reader.saved.count)) },
             graph: { AnyView(GraphExplorerView()) },
-            talkActions: AppTalks.actions,
+            talkActions: TalkActions(),  // no Pick or Add to Calendar: the summit is over (25 Nov)
             leadingToolbar: { AnyView(LanguageButton()) },
-            trailingToolbar: moreButton)
+            trailingToolbar: moreButton,
+            // No Talks in Explore (Dinis, 25 Nov): the summit agenda is over; My program in More keeps the picks.
+            showsTalks: false)
     }
 
     /// The More button on iPhone; nil on iPad, where More is in the sidebar.

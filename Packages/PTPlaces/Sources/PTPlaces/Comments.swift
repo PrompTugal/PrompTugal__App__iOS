@@ -31,6 +31,22 @@ extension View {
     public func placesTalk(_ talk: (any PlacesTalk)?) -> some View { environment(\.placesTalk, talk) }
 }
 
+private struct PlacesCommentsKey: EnvironmentKey {
+    static let defaultValue = true
+}
+
+extension EnvironmentValues {
+    /// False hides every Comment button and the Sign in badge (the App Store build, until comments work end to end).
+    public var placesComments: Bool {
+        get { self[PlacesCommentsKey.self] }
+        set { self[PlacesCommentsKey.self] = newValue }
+    }
+}
+
+extension View {
+    public func placesComments(_ shown: Bool) -> some View { environment(\.placesComments, shown) }
+}
+
 /// What a comment is about: a place, or one story or map entry on it.
 public struct CommentSubject: Hashable, Sendable, Identifiable {
     public var place: String
@@ -95,8 +111,13 @@ struct CommentButton: View {
     let accent: Color
     var compact = false
     @State private var composing = false
+    @Environment(\.placesComments) private var shown
 
     var body: some View {
+        if shown { button }
+    }
+
+    private var button: some View {
         Button { composing = true } label: {
             if compact {
                 Image(systemName: "text.bubble")
@@ -119,12 +140,18 @@ struct ThumbsBar: View {
     let subject: CommentSubject
     let accent: Color
     @AppStorage("places.thumbs") private var thumbs = ""
+    @Environment(\.placesComments) private var shown
 
     private var current: String? {
         thumbs.split(separator: ";").first { $0.hasPrefix(subject.id + "=") }.map { String($0.split(separator: "=").last ?? "") }
     }
 
     var body: some View {
+        // Hidden with comments (App Store build): a vote leaves the device, and the privacy answer is Data Not Collected.
+        if shown { bar }
+    }
+
+    private var bar: some View {
         HStack(spacing: Space.m) {
             thumb("up", "hand.thumbsup")
             thumb("down", "hand.thumbsdown")
