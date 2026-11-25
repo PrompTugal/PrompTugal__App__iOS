@@ -1,6 +1,6 @@
 # App Store submission: PrompTugal.news (draft, c.ios, 25 Nov 2026)
 
-> Approved and on sale since 25 Nov: 0.4.24 (205), the Lisbon Summit build of 8 Nov. This is the pack for the next version, built from candidate c1 (Explore without Talks, top-ups hidden until the products exist). Dinis enters the parts marked **manual** in App Store Connect; the name and subtitle can go through testflight-ops `set-app-info` once the new version exists in App Store Connect.
+> Approved and on sale since 25 Nov: 0.4.24 (205), the Lisbon Summit build of 8 Nov. This is the pack for the next version, built from candidate c2c (Explore without Talks; top-ups, comments, sign-in, talk and votes hidden; no summit, CI or credit screens listed in More). Dinis enters the parts marked **manual** in App Store Connect; the name and subtitle can go through testflight-ops `set-app-info` once the new version exists in App Store Connect.
 
 ## Version and build
 
@@ -26,7 +26,7 @@ PrompTugal.news is local news for Portugal, town by town. It starts with the Alg
 
 PLACES
 • Portugal, the Algarve and each town: its latest stories, the organisations on its map, and what is happening there now
-• "Now in" a town: the nearest weather station, the forecast and warnings from IPMA, fire risk, UV and the sea
+• "Now in" a town: what the newsroom's live data says about the place right now, with its source and read time
 • Maps of the Algarve in several styles, with each town coloured by how much news it has
 • Near me: the closest town and its news (your location stays on your phone)
 
@@ -43,25 +43,25 @@ ON YOUR DEVICE
 • On iPhones with Apple Intelligence, a short summary of a town or a story, made on the device
 • No account, no tracking, no ads
 
-PrompTugal.news is independent.
+PrompTugal.news: local news from Portugal, every story with its source.
 ```
 
 ## Keywords (100)
 
 ```
-Portugal,Algarve,local,news,towns,Faro,Lagos,Tavira,Loulé,Portimão,weather,IPMA,sourced,AI,regional
+Portugal,Algarve,local,news,towns,Faro,Lagos,Tavira,Loulé,Portimão,map,sourced,AI,regional,newsroom
 ```
 
 ## What's new
 
 ```
-PrompTugal.news is now local news, town by town: the Algarve's 17 towns and Portugal's district capitals, "Now in" each place, maps, and the newsroom of agents behind the stories. Every story opens its source.
+PrompTugal.news is now local news, town by town: the Algarve's 17 towns and Portugal's district capitals, maps, and the newsroom of agents behind the stories. Every story opens its source.
 ```
 
 ## App Review notes
 
 ```
-PrompTugal.news reads public news and place data from promptugal.news and public weather data from IPMA (api.ipma.pt). No account or login is needed and there is nothing to purchase in this version.
+PrompTugal.news reads public news and place data from promptugal.news and its public data sites. No account or login is needed and there is nothing to purchase in this version.
 
 Location (when in use) is only used on the device to find the nearest town for "Near me"; it is never sent anywhere.
 

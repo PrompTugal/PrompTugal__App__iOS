@@ -7,34 +7,11 @@ order: 6
 <section class="band">
   <div class="wrap prose">
     <p class="kicker">Support</p>
-    <h1>Using PrompTugal {{version}}</h1>
-    <p class="lede">Help for testers of the iPhone and iPad beta. The app needs iOS or iPadOS {{min_ios}} or later.</p>
+    <h1>Using PrompTugal.news {{version}}</h1>
+    <p class="lede">Help for PrompTugal.news on iPhone and iPad. The app needs iOS or iPadOS {{min_ios}} or later.</p>
 
-    <h2 id="beta">Get the beta</h2>
-    <p>PrompTugal is a native app for both iPhone and iPad. Today there are two ways to install the beta: build it from Xcode (see <a href="#source">build from source</a>), or accept a TestFlight invitation from the team. There is no public TestFlight link yet; when there is one, it will be posted here. The App Store comes later.</p>
-    <ol class="steps">
-      <li>Install <a href="https://apps.apple.com/app/testflight/id899247664">TestFlight</a> from the App Store.</li>
-      <li>Open the invitation email on your iPhone or iPad and tap <strong>View in TestFlight</strong>.</li>
-      <li>Tap <strong>Install</strong>. Updates arrive in TestFlight as new builds are approved.</li>
-    </ol>
-    <p>Installing a new build over an older one keeps your saved sessions and your edited website list.</p>
-
-    <h2 id="websites">Edit the website shortcuts</h2>
-    <p>On iPad the sidebar sits beside the page, and the sidebar button hides or shows it. On iPhone, or in a narrow window, the same button opens the list in a sheet.</p>
-    <ol class="steps">
-      <li>Open PrompTugal once so it copies its default list into Files.</li>
-      <li>In the Files app, open <strong>On My iPhone</strong> (or <strong>On My iPad</strong>) → <strong>PrompTugal</strong> → <code>Websites.json</code>.</li>
-      <li>Edit or replace the file, then quit and reopen PrompTugal.</li>
-    </ol>
-    <p>The first entry opens at launch and the order of the list is the order of the sidebar. Each entry needs a unique <code>id</code>, a <code>name</code>, an HTTPS <code>url</code>, an SF Symbols <code>icon</code> and a <code>color</code> (red, orange, green, teal, blue, indigo or purple). For example:</p>
-    <pre><code>{
-  "id": "my-site",
-  "name": "example.com",
-  "url": "https://example.com/",
-  "icon": "globe",
-  "color": "green"
-}</code></pre>
-    <p>If the file cannot be read, the app shows the default list with a notice. Delete the file and reopen the app to get the defaults back.</p>
+    <h2 id="beta">Get the app</h2>
+    <p>PrompTugal.news is free on the App Store for iPhone and iPad. Test builds also go out through <a href="https://apps.apple.com/app/testflight/id899247664">TestFlight</a> to people the team invites; you can also build it yourself (see <a href="#source">build from source</a>).</p>
 
     <h2 id="offline">Read offline</h2>
     <p>Open the app once while you are online so it can save a copy of the news and place data. After that it works without a connection, and every screen says whether it shows live data, the saved copy or the copy built into the app. If a refresh fails, the saved copy stays on screen with the date it was read.</p>
@@ -48,7 +25,7 @@ order: 6
       <dt>Is there a team version?</dt>
       <dd>The PrompTugal team has its own app for its people and agents. It is a separate app, not in the App Store, and not part of this one. <a href="apps.html">The three apps</a>.</dd>
       <dt>Where does the news come from?</dt>
-      <dd>From PrompTugal.news, an independent newsroom in Portugal, and its public data sites. Every story links to its source, and every screen says whether it shows live data, the copy saved on your phone or the copy built into the app.</dd>
+      <dd>From PrompTugal.news, a newsroom in Portugal run by AI agents with people in charge, and its public data sites. Every story links to its source, and every screen says whether it shows live data, the copy saved on your phone or the copy built into the app.</dd>
       <dt>Why does the app ask for my location?</dt>
       <dd>Only for "Near me", and only while you use the app: it finds the nearest town on your phone. The location is never sent anywhere. You can say no and pick towns yourself.</dd>
       <dt>Where do I report a problem?</dt>

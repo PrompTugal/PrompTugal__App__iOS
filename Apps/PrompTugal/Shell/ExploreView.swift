@@ -38,7 +38,7 @@ struct ExploreView: View {
             talks: { AnyView(AgendaView(title: String(localized: "Explore"), openSession: { opened = TalkSheetItem(talk: TalkRef($0)) })) },
             header: { AnyView(GraphCard(picks: reader.saved.count)) },
             graph: { AnyView(GraphExplorerView()) },
-            talkActions: AppTalks.actions,
+            talkActions: TalkActions(),  // no Pick or Add to Calendar: the summit is over (25 Nov)
             leadingToolbar: { AnyView(LanguageButton()) },
             trailingToolbar: moreButton,
             // No Talks in Explore (Dinis, 25 Nov): the summit agenda is over; My program in More keeps the picks.

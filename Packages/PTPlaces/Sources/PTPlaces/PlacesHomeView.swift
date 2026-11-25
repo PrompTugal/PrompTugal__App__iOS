@@ -340,7 +340,7 @@ public struct PlacesHomeView: View {
     private var footer: some View {
         VStack(alignment: .leading, spacing: Space.s) {
             Rectangle().fill(Palette.rule).frame(height: 1)
-            Text(String(localized: "Every fact on these pages comes from promptugal.news, with its source and the date it was read. PrompTugal.news is an independent newsroom."))
+            Text(String(localized: "Every fact on these pages comes from promptugal.news, with its source and the date it was read."))
                 .font(.caption).foregroundStyle(Palette.muted)
             Button {
                 openURL(PlacesStore.site.appendingPathComponent("algarve/"))
