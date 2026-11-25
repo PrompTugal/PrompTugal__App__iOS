@@ -25,3 +25,10 @@ Tests: `FreshnessTests`, `NewsroomStatusTests`, `TownLayersTests` (fixtures incl
 ## Added after the first ready: rights hold (Dinis, 25 Nov ~23:35, via c.ios)
 
 - `PlaceSite.News` decodes `hold`. A held story keeps headline, summary, outlet, date and source link, with "Read it at <outlet>"; its AI path and steps are dropped at decode time, so no row, ranking or prompt can use them. Held summaries are used in on-device summaries; "Explain the AI path" is hidden for held stories. Tests in `RightsHoldTests`. Today every Faro item in the live by-place file is held.
+
+## Batch 2: Data sources (Dinis via c.ios, 25 Nov ~23:35)
+
+- `public struct DataSourcesView` (the screen) and `public struct DataSourcesCard` (a small card for the places home that pushes the screen). Both in `DataSources/`.
+- One card per site (13): what it covers, its count, its freshness by its own read time, and a link to the site. Weather, events and signals are counted from data.promptugal.news's catalogue (`/api/v1/index.json`), which also lists its 30 sources with cadence, state, headline and last read, each linking to its page. Startups has no small feed (its facts.json is 1.25 MB), so its card says so and links to the site.
+- `DataSourcesStore.shared`: one small feed per site, in parallel, at most every 10 minutes, cached. Tests in `DataSourcesTests`.
+- Shell (the conductor's): add `DataSourcesView()` to More and `DataSourcesCard()` to `PlacesHomeLayers`.
