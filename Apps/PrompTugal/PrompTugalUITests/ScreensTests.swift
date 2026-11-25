@@ -14,21 +14,21 @@ import XCTest
 ///   -PTHideTerm <text>    hides events and news containing the text (Debug only), from PT_HIDE_TERM when not empty
 ///   -PTSeedPicks <ids>    seeded picks, from the environment variable PT_SEED_PICKS when it is not empty
 ///
-/// The ids come from ux (c.ios.ux, 25 Nov 2026: local news town by town, sent to design for agreement). A destination that does not
+/// The ids come from ux (c.ios.ux, 25 Nov 2026: local news town by town, agreed with c.ios.design: the news first, then who makes it). A destination that does not
 /// exist yet opens whatever the shell shows by default, so a screenshot is still attached for it. The summit screens
 /// (team.schedule, explore.talk, explore.people, explore.graph, map) are no longer shot. A town page and the Algarve map
 /// have no destination id yet (asked for through the conductor); they join this list once they do.
-/// Run screens.yml with ids "places,now,local.newsroom,news.home,explore", ids_required "places,now,local.newsroom,news.home",
+/// Run screens.yml with ids "places,now,news.home,local.newsroom,explore.stories", ids_required "places,now,news.home,local.newsroom",
 /// seed_picks empty and now empty (a date in the summit week puts Now in its summit state).
 final class ScreensTests: XCTestCase {
     /// ux's list, in store order.
-    static let destinations = ["places", "now", "local.newsroom", "news.home", "explore"]
+    static let destinations = ["places", "now", "news.home", "local.newsroom", "explore.stories"]
 
     @MainActor func test01_places() { shoot(1, "places") }
     @MainActor func test02_now() { shoot(2, "now") }
-    @MainActor func test03_local_newsroom() { shoot(3, "local.newsroom") }
-    @MainActor func test04_news_home() { shoot(4, "news.home") }
-    @MainActor func test05_explore() { shoot(5, "explore") }
+    @MainActor func test03_news_home() { shoot(3, "news.home") }
+    @MainActor func test04_local_newsroom() { shoot(4, "local.newsroom") }
+    @MainActor func test05_explore_stories() { shoot(5, "explore.stories") }
 
     func testListMatchesTheTestMethods() {
         XCTAssertEqual(Self.destinations.count, 5)

@@ -45,6 +45,10 @@
 
 **S4. "How we source" screen.** Defines: live / saved / built-in; "Simulated" and "Replay"; the seal; "read on"; "steps from AI"; and links to `FeedClient.disclosure`. Reached from More and by tapping any provenance line.
 
-**S5. Screenshot hook (screenshots.md).** DEBUG-only launch argument `-PTPlace <id>` that pushes that place's page on the Places tab after launch, and `-PTPlaceMap` for the Algarve styled map. Then add destination aliases if preferred (`places.town`, `places.map`) so `ScreensTests` can name them.
+**S5. Screenshot routes in `Shell/Destinations.swift` (agreed with c.ios.design).**
+- `local.maps`: a `more` (or `routable`, `listed: false`) destination, title "Algarve maps", symbol `map`, view `AnyView(AlgarveMapsView())` (PTLocal, `Live/AlgarveMapStyles.swift:471`, already public). Read-only, shows its provenance line.
+- `place:<id>` (e.g. `place:loule`, `place:faro`): in `destination(_:)`, when the resolved id starts with `place:`, return a `routable` `ShellDestination` built on the fly: id unchanged, title the place name, `phoneTab: nil`, view `AnyView(PlaceDetailView(id: <id>))` inside the Places stack so the layers (`placesLayers()`) apply. Unknown ids fall back to `places`. This also gives `promptugal://open/place:loule` links.
+- `place:<id>#now` and `place:<id>#lead`: the same page scrolled to the "Now in" card or to the lead story (a `ScrollViewReader` anchor in PTPlaces; the shell passes the fragment through an environment value). Needs c.ios.places for the anchors; until then `place:<id>` alone is enough for the town shot.
+- Screenshot order once they exist (design): `places`, `place:loule`, `place:loule#lead`, `local.maps`, `now`, `news.home`, `local.newsroom`. I add them to `ScreensTests` when the ids are on a candidate.
 
 **N1. Sources first in News (J3-01).** Above `SitePage` for an article (News feed, lead, Now's Latest news): a native header with the title and "Sources" (publisher, host, ↗) read from `articles.json`. Owner PTNews; the Now card is in the shell.
