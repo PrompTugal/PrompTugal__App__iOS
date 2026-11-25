@@ -89,7 +89,7 @@ struct SinceItem: Decodable, Sendable, Equatable, Hashable, Identifiable {
         let provenance = c.lenient(Origin.self, "provenance")
         let link = c.string("url") ?? provenance?.sourceURL ?? ""
         // Every story links to its source: an item with no link is not shown.
-        guard URL(string: link)?.scheme?.hasPrefix("http") == true else {
+        guard PlaceLinks.web(link) != nil else {
             throw DecodingError.dataCorruptedError(forKey: AnyKey("url"), in: c, debugDescription: "no source link")
         }
         url = link
