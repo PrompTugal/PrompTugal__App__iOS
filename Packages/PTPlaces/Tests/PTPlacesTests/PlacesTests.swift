@@ -619,6 +619,10 @@ struct TownPageTests {
         #expect(shown[1].outlet == "postal.pt")
         #expect(shown[2].outlet == "Sul Informação")
         #expect(shown.allSatisfy { $0.sourceLink != nil })
+        #expect(shown[0].isHeld)
+        #expect(shown[0].hold == "held under R12")
+        #expect(shown[1].isHeld == false)
+        #expect(NewsItem(title: "made in code").isHeld == false)
     }
 
     @Test("events: latest date first, unreadable dates last, links from provenance, host as outlet")

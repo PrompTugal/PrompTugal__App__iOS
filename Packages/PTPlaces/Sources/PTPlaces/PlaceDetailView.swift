@@ -527,12 +527,13 @@ struct ReadAtLine: View {
     let outlet: String
     let readOn: String
     let accent: Color
+    /// A held item: "Read it at <outlet>", as the only way to its content.
+    var held = false
 
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: "arrow.up.right.square")
-            Text(outlet.isEmpty ? String(localized: "Read at the source") : String(localized: "Read at \(outlet)"))
-                .lineLimit(1)
+            Text(label).lineLimit(1)
             Spacer(minLength: Space.s)
             if !readOn.isEmpty {
                 Text(String(localized: "read on \(PlaceDates.short(readOn))"))
@@ -542,6 +543,11 @@ struct ReadAtLine: View {
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(accent)
+    }
+
+    private var label: String {
+        if outlet.isEmpty { return held ? String(localized: "Read it at the source") : String(localized: "Read at the source") }
+        return held ? String(localized: "Read it at \(outlet)") : String(localized: "Read at \(outlet)")
     }
 }
 
@@ -567,12 +573,14 @@ struct LeadStory: View {
                     .foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(item.summary)
-                    .font(.system(.body, design: .serif))
-                    .foregroundStyle(Palette.ink.opacity(0.85))
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                if !item.aiPath.isEmpty {
+                if !item.isHeld {
+                    Text(item.summary)
+                        .font(.system(.body, design: .serif))
+                        .foregroundStyle(Palette.ink.opacity(0.85))
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                if !item.isHeld, !item.aiPath.isEmpty {
                     HStack(alignment: .top, spacing: Space.s) {
                         Image(systemName: "point.topleft.down.to.point.bottomright.curvepath").foregroundStyle(accent)
                         VStack(alignment: .leading, spacing: 4) {
@@ -583,9 +591,8 @@ struct LeadStory: View {
                     .padding(Space.m)
                     .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 }
-                if let provenance = item.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
-                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent)
-                    .font(.footnote.weight(.semibold))
+                if !item.isHeld, let provenance = item.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
+                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent, held: item.isHeld)
             }
             .padding(Space.xl)
             .background(Palette.card)

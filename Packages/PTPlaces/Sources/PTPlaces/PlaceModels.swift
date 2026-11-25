@@ -214,8 +214,12 @@ public struct NewsItem: Decodable, Sendable, Equatable, Hashable, Identifiable {
     /// Steps from AI in the graph: 0 is about AI itself (the PrompTugal test allows up to 3).
     public var steps: Int?
     public var provenance: Provenance?
+    /// Set when the site's rights desk holds the item ("held under R12 ... not to be shown"): the app then shows only
+    /// the headline, outlet, date and source link, never the summary or anything drawn from the story.
+    public var hold: String?
 
     public var id: String { url + "|" + title }
+    public var isHeld: Bool { !(hold ?? "").trimmingCharacters(in: .whitespaces).isEmpty }
 
     public init(title: String, summary: String = "", date: String = "", publisher: String = "", url: String = "",
                 readOn: String = "", aiPath: String = "", steps: Int? = nil) {
@@ -234,6 +238,7 @@ public struct NewsItem: Decodable, Sendable, Equatable, Hashable, Identifiable {
         readOn = c.string("read_on") ?? provenance?.readOn ?? ""
         aiPath = c.string("ai_path") ?? ""
         steps = c.int("steps")
+        hold = c.string("hold")
     }
 
     /// The story's source link as a web URL, or nil (a story without one is not shown).

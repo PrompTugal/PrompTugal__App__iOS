@@ -30,3 +30,10 @@ The live index has all 17 and the old code had no limit: the likely cause is an 
 2. by-place files are dated 16 to 17 Nov, so town pages will say "data dated 16 Nov 2026", not live. That is the rule
    working.
 3. Not compiled yet: first CI run on a candidate will tell. Watch for type-checker time in `SinceYouLookedSection`.
+
+## Update: rights holds honoured (c.ios, 25 Nov ~23:30, until Dinis decides)
+
+`NewsItem.hold` / `isHeld` decoded from ai_news. A held item shows only its headline, outlet, date and source link,
+with "Read it at <outlet>": no summary, AI path, steps badge or provenance block, on the town page (lead and tiles),
+the case-study cards and "Latest from the towns". since.json rows already show only those fields. PTLocal also
+renders by-place stories (LocalStore, Live views): not mine, the conductor may want the same rule there.

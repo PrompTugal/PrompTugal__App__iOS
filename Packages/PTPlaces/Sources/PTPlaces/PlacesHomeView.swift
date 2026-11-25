@@ -459,7 +459,11 @@ struct CaseStudyCard: View {
                 if let lead = file?.newsByWeight.first {
                     StepsBadge(steps: lead.steps, accent: accent)
                     Text(lead.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).lineLimit(3)
-                    Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
+                    if lead.isHeld {
+                        ReadAtLine(outlet: lead.outlet, readOn: "", accent: accent, held: true)
+                    } else {
+                        Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
+                    }
                 } else if let mandate = file?.mandate {
                     Text(mandate).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(4)
                 }
@@ -544,10 +548,12 @@ struct StoryTile: View {
                     Text(PlaceDates.short(item.date)).font(.caption2).foregroundStyle(Palette.muted)
                 }
                 Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).lineLimit(4)
-                Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
+                if !item.isHeld {
+                    Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
+                }
                 Spacer(minLength: 0)
-                StepsBadge(steps: item.steps, accent: accent)
-                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent)
+                if !item.isHeld { StepsBadge(steps: item.steps, accent: accent) }
+                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent, held: item.isHeld)
             }
             .padding(Space.l)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -593,10 +599,14 @@ struct StoryRow: View {
                             .font(.caption2).foregroundStyle(Palette.muted)
                     }
                     Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
-                    if !item.aiPath.isEmpty {
-                        Text(item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                    if item.isHeld {
+                        ReadAtLine(outlet: item.outlet, readOn: "", accent: accent, held: true)
+                    } else {
+                        if !item.aiPath.isEmpty {
+                            Text(item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                        }
+                        StepsBadge(steps: item.steps, accent: accent)
                     }
-                    StepsBadge(steps: item.steps, accent: accent)
                 }
                 Spacer(minLength: 0)
             }
