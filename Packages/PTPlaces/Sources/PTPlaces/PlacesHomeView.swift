@@ -29,6 +29,7 @@ public struct PlacesHomeView: View {
                 if store.places.isEmpty {
                     loadingOrError
                 } else {
+                    SinceYouLookedSection(store: store, wide: wide)
                     regionHero
                     caseStudies
                     if let homeAccessory { homeAccessory() }
