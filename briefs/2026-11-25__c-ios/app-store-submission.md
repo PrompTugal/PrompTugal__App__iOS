@@ -37,7 +37,7 @@ EVERY FACT SOURCED
 
 THE NEWSROOM, IN THE OPEN
 • PrompTugal.news is written by a newsroom of AI agents with people in charge. See which agent covers each town and what it did today (read-only)
-• Anything shown as a replay or a simulation is labelled "Simulated"
+• Replays of the newsroom's real activity say so, and anything simulated is labelled "Simulated"
 
 ON YOUR DEVICE
 • On iPhones with Apple Intelligence, a short summary of a town or a story, made on the device
@@ -67,12 +67,12 @@ Location (when in use) is only used on the device to find the nearest town for "
 
 Apple Intelligence summaries run on the device with Apple's Foundation Models where available; on other devices the app says so and shows the source text.
 
-Screens marked "Simulated" are replays of the newsroom's activity, labelled as such.
+The newsroom board can replay the last 24 hours of the agents' real activity (labelled as a replay); anything simulated carries a "Simulated" badge.
 ```
 
 ## App Privacy (**manual**)
 
-Answer stays **Data Not Collected**, on one condition: a public user cannot send anything. In c1 the place comments ("Sign in with your person key") and More > "Connect to the newsroom" are still visible; nothing is sent without a person key and a pasted lane link, but a reviewer sees an unusable sign-in. See the open question below.
+Answer stays **Data Not Collected**, on one condition: a public user cannot send anything. In c1 the place comments, thumbs votes ("Sign in with your person key") and More > "Connect to the newsroom" are still visible; nothing is sent without a person key and a pasted lane link, but a reviewer sees an unusable sign-in. See the open question below.
 
 What leaves the device in c1 for a public user: plain GETs of public files from promptugal.news, ios.app.promptugal.news and raw.githubusercontent.com (CI status), and api.ipma.pt (weather). Location, Apple Intelligence, reading credit and the ledger stay on the device. No analytics, crash reporting, ads or third-party SDKs.
 

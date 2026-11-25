@@ -140,12 +140,18 @@ struct ThumbsBar: View {
     let subject: CommentSubject
     let accent: Color
     @AppStorage("places.thumbs") private var thumbs = ""
+    @Environment(\.placesComments) private var shown
 
     private var current: String? {
         thumbs.split(separator: ";").first { $0.hasPrefix(subject.id + "=") }.map { String($0.split(separator: "=").last ?? "") }
     }
 
     var body: some View {
+        // Hidden with comments (App Store build): a vote leaves the device, and the privacy answer is Data Not Collected.
+        if shown { bar }
+    }
+
+    private var bar: some View {
         HStack(spacing: Space.m) {
             thumb("up", "hand.thumbsup")
             thumb("down", "hand.thumbsdown")
