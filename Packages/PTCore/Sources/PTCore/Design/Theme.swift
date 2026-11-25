@@ -18,6 +18,14 @@ public enum Palette {
     /// Blue for "web" badges and links to the web twin.
     public static let blue = Color(light: 0x1F4FA3, dark: 0x8FB4FF)
 
+    /// The website's brand blue (promptugal.news `--brand`), for links, buttons and "open the source".
+    public static let brand = Color(light: 0x1B4597, dark: 0x93B1FF)
+    /// Named by meaning, so status colours follow what they say, not their hue.
+    /// Live data, a check that passed.
+    public static let ok = green
+    /// A saved or built-in copy, stale data, a partial result.
+    public static let warn = amber
+
     /// Categorical colours for charts, in a fixed order, so a series keeps its colour across screens.
     public static let series: [Color] = [red, green, blue, amber,
                                   Color(light: 0x6B3FA0, dark: 0xC5A3FF),
