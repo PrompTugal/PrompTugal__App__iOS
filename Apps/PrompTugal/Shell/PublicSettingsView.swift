@@ -79,8 +79,7 @@ struct PublicSettingsView: View {
             } footer: {
                 Text("The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.")
             }
-            // PTTalk: notes and contributions to the conductor; only offers to connect until its lane link is pasted.
-            TalkSection()
+            // PTTalk's "Connect to the newsroom" is hidden in this App Store version (Dinis, 25 Nov), like place comments.
             Section {
                 LabeledContent("Version") {
                     versionText
