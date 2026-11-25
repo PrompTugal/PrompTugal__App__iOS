@@ -136,6 +136,15 @@ struct ListTests {
         #expect(store.isSearching)
     }
 
+    @MainActor @Test("Without Talks, a search skips talks")
+    func groupedWithoutTalks() async throws {
+        let store = ExploreStore(source: StubSource(stored: try makeIndex()))
+        await store.load()
+        store.kinds = ExploreKind.browsable.filter { $0 != .event }
+        store.query = "masterclass"
+        #expect(store.grouped().map(\.kind) == [.place])
+    }
+
     @Test("The speakers of a talk are the people who speak at it")
     func speakers() throws {
         let detail = try ExploreDetail.decode(Data(eventRecord.utf8), kind: .event)

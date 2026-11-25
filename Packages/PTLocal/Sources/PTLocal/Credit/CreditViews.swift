@@ -92,7 +92,9 @@ public struct LocalCreditView: View {
     public var body: some View {
         List {
             balance
-            topUpSection
+            // Top-ups show only once the App Store has the products (none in App Store Connect yet, 25 Nov):
+            // no purchase screen that cannot sell anything.
+            if !topUps.products.isEmpty { topUpSection }
             outletsSection
             historySection
             pricesSection
@@ -130,7 +132,7 @@ public struct LocalCreditView: View {
                 Text("\(credit.book.reads) things read · \(credit.money(credit.book.spent)) spent · \(credit.money(credit.book.toppedUp)) topped up")
                     .font(.footnote).foregroundStyle(.secondary)
                 if credit.isBelowZero {
-                    Text("Below zero: nothing is blocked. Top up when you like.")
+                    Text("Below zero: nothing is blocked.")
                         .font(.footnote).foregroundStyle(Palette.amber)
                 }
                 if let problem = credit.problem {
