@@ -29,8 +29,9 @@ public struct PlacesHomeView: View {
                 if store.places.isEmpty {
                     loadingOrError
                 } else {
+                    PlacesMapHero(store: store, wide: wide)
                     SinceYouLookedSection(store: store, wide: wide)
-                    regionHero
+                    BubblingUpSection(store: store, wide: wide)
                     caseStudies
                     if let homeAccessory { homeAccessory() }
                     nationalEdition
@@ -113,60 +114,6 @@ public struct PlacesHomeView: View {
             }
             .frame(maxWidth: .infinity, minHeight: 300)
         }
-    }
-
-    // MARK: The region hero: the Algarve from above, its towns pinned in their colours
-
-    private var regionHero: some View {
-        let region = store.place("algarve")
-        let file = store.file("algarve")
-        return ZStack(alignment: .bottomLeading) {
-            RegionMap(store: store, interactive: false)
-                .frame(height: wide ? 520 : 400)
-            Scrim(strength: 0.85).allowsHitTesting(false)
-            VStack(alignment: .leading, spacing: Space.s) {
-                Kicker(text: String(localized: "The region"), color: .white.opacity(0.85))
-                Text(region?.name ?? "The Algarve")
-                    .font(.system(size: wide ? 64 : 44, weight: .black, design: .serif))
-                    .foregroundStyle(.white)
-                if let mandate = file?.mandate, !mandate.isEmpty {
-                    Text(mandate)
-                        .font(wide ? .title3 : .subheadline)
-                        .foregroundStyle(.white.opacity(0.92))
-                        .lineLimit(wide ? 3 : 4)
-                        .frame(maxWidth: 720, alignment: .leading)
-                }
-                HStack(spacing: Space.m) {
-                    heroStat(store.algarveTowns.count, String(localized: "towns"))
-                    heroStat(store.algarveTowns.reduce(0) { $0 + $1.aiNews }, String(localized: "local AI stories"))
-                    heroStat(store.algarveTowns.reduce(0) { $0 + $1.aiMap }, String(localized: "on the AI map"))
-                    heroStat(store.algarveTowns.filter(\.isLive).count, String(localized: "live"))
-                }
-                .padding(.top, 4)
-                if let region {
-                    NavigationLink(value: PlaceRoute(region.id)) {
-                        Label(String(localized: "Open the Algarve"), systemImage: "arrow.right.circle.fill")
-                            .font(.headline)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.white)
-                    .foregroundStyle(Palette.ink)
-                    .padding(.top, 4)
-                }
-            }
-            .padding(gutter)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: wide ? Space.radius : 0))
-        .padding(.horizontal, wide ? gutter : 0)
-        .accessibilityIdentifier("places.hero")
-    }
-
-    private func heroStat(_ value: Int, _ label: String) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("\(value)").font(.system(.title, design: .serif, weight: .bold)).monospacedDigit()
-            Text(label).font(.caption2.weight(.semibold)).textCase(.uppercase).opacity(0.8)
-        }
-        .foregroundStyle(.white)
     }
 
     // MARK: Case studies

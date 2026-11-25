@@ -41,3 +41,14 @@ renders by-place stories (LocalStore, Live views): not mine, the conductor may w
 **Revised (Dinis via c.ios, ~23:35):** held items show headline, summary, outlet, date and the source link ("Read it at
 <outlet>"); the AI path, steps badge and provenance block stay hidden. "Independent of Web Summit." removed from the
 home footer: no Web Summit anywhere in PTPlaces.
+
+## Map first, locality as the frame (Dinis via c.ios, ~23:35)
+
+- **PlacesMapHero** (`LocalFrame.swift`), right under the masthead: a 420 pt (560 on iPad) map, segmented
+  "The Algarve" (17 towns) / "Portugal" (17 capitals plus the Algarve), every pin a NavigationLink to its place, a chip
+  row under it doing the same, and the origin line. It replaces the old satellite region hero.
+- **From the town up** (`BubblingUpSection`): the featured town (first followed town with a story, else the town of the
+  newest town story), a three-step ladder Portugal / its region / the town with how many since.json items reach each
+  ring, then the town's newest stories each with its trail (town › region › country, each a link to that place).
+- Home order: masthead, map, Since you last looked, From the town up, case studies, then the rest.
+- Ring matching is exact (`rings.contains(id)`), tested with `vila-real` against `vila-real-de-santo-antonio`.

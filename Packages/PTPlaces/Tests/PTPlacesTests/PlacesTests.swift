@@ -637,3 +637,34 @@ struct TownPageTests {
         #expect(events[2].sourceLink?.host() == "www.unicornfactorylisboa.com")
     }
 }
+
+@Suite("PTPlaces: news bubbling up from the town (since.json rings)")
+struct BubblingTests {
+    @Test("rings match exactly, so Vila Real never collects Vila Real de Santo António's stories")
+    func reaching() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        #expect(feed.items(reaching: "vila-real").map(\.title) == ["Vila Real story"])
+        #expect(feed.items(reaching: "vila-real-de-santo-antonio").map(\.title) == ["VRSA story"])
+        #expect(feed.items(reaching: "algarve").map(\.title) == ["VRSA story"])
+        #expect(feed.items(reaching: "portugal").count == 3)
+    }
+
+    @Test("a story's trail runs town, region, country; unknown ids still get a name")
+    func trail() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        #expect(feed.trail(for: feed.items[0]).map(\.name) == ["Vila Real de Santo António", "Algarve", "Portugal"])
+        #expect(feed.trail(for: feed.items[1]).map(\.id) == ["portugal"])
+        let noRings = SinceItem(date: "2026-11-20", title: "t", url: "https://a.pt", place: "vila-real")
+        #expect(feed.trail(for: noRings).map(\.id) == ["vila-real"])
+    }
+
+    @Test("town stories leave out the country's; the featured town is the first followed one with a story")
+    func featured() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        #expect(Set(feed.townItems.map(\.title)) == ["VRSA story", "Vila Real story"])
+        #expect(feed.featuredTown(followed: ["faro", "vila-real"]) == "vila-real")
+        let any = try #require(feed.featuredTown(followed: []))
+        #expect(["vila-real", "vila-real-de-santo-antonio"].contains(any))
+        #expect(SinceFeed().featuredTown(followed: ["faro"]) == nil)
+    }
+}
