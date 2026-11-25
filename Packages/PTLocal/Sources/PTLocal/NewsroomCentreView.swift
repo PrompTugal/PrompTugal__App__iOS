@@ -43,7 +43,8 @@ public struct NewsroomCentreView: View {
             ScreenHeader(kicker: "Command centre", title: "The newsroom",
                          summary: "Every agent behind PrompTugal.news: what it is doing, what it did last, what it needs. Read-only.")
             HStack {
-                ProvenanceLabel(provenance: store.dashboardProvenance, phase: store.dashboardPhase)
+                ProvenanceLabel(provenance: store.dashboardProvenance, phase: store.dashboardPhase,
+                                readAt: dashboard?.updated)
                 Spacer()
                 if let built = dashboard?.built { Text("site \(built)").font(.caption.monospaced()).foregroundStyle(Palette.muted) }
             }

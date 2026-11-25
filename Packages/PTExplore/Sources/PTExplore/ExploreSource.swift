@@ -47,6 +47,10 @@ public struct ExploreDiskCache: Sendable {
     }
 
     public func load(key: String) -> Data? { try? Data(contentsOf: file(key)) }
+    /// When the stored copy was written, if there is one.
+    public func modified(key: String) -> Date? {
+        (try? FileManager.default.attributesOfItem(atPath: file(key).path))?[.modificationDate] as? Date
+    }
     public func clear() { try? FileManager.default.removeItem(at: directory) }
 }
 
@@ -66,29 +70,39 @@ public struct PublishedExploreSource: ExploreSource {
         self.fetch = fetch
     }
 
-    /// Fetches `path`, stores it, and returns it; on failure returns the stored copy or rethrows.
-    private func data(_ path: String, key: String) async throws -> Data {
+    /// Fetches `path`, stores it, and returns it with where it came from; on failure returns the stored copy or rethrows.
+    private func read(_ path: String, key: String) async throws -> (data: Data, origin: ExploreOrigin) {
         do {
             let data = try await fetch(base.appendingPathComponent(path))
             cache.store(data, key: key)
-            return data
+            return (data, ExploreOrigin(kind: .live, date: Date()))
         } catch {
             if error is CancellationError { throw error }
-            if let stored = cache.load(key: key) { return stored }
+            if let stored = cache.load(key: key) {
+                return (stored, ExploreOrigin(kind: .cached, date: cache.modified(key: key)))
+            }
             throw error
         }
     }
 
     public func index() async throws -> ExploreIndex {
-        let docs = try await data("api/v1/search-docs.json", key: "search-docs.json")
+        let docs = try await read("api/v1/search-docs.json", key: "search-docs.json")
+        var index = try ExploreWire.index(searchDocs: docs.data, places: nil, base: base)
+        index.origin = docs.origin
         // Places are a bonus: the index is still useful without them.
-        let places = try? await data("api/v1/places.json", key: "places.json")
-        return try ExploreWire.index(searchDocs: docs, places: places, base: base)
+        if let places = try? await read("api/v1/places.json", key: "places.json") {
+            let withPlaces = try ExploreWire.index(searchDocs: docs.data, places: places.data, base: base)
+            index.items = withPlaces.items
+            index.origin = docs.origin.combined(with: places.origin)
+        }
+        return index
     }
 
     public func detail(for item: ExploreItem) async throws -> ExploreDetail {
         let path = "api/v1/\(item.kind.folder)/\(item.slug).json"
-        let raw = try await data(path, key: "detail.\(item.kind.rawValue).\(item.slug).json")
-        return try ExploreDetail.decode(raw, kind: item.kind)
+        let got = try await read(path, key: "detail.\(item.kind.rawValue).\(item.slug).json")
+        var detail = try ExploreDetail.decode(got.data, kind: item.kind)
+        detail.origin = got.origin
+        return detail
     }
 }

@@ -41,9 +41,11 @@ public enum LocalPrompts {
         lines.append("Town: \(site.name) (\(site.isLive ? "live site" : "still being researched by its agent")). Updated \(site.updated).")
         if !site.mandate.isEmpty { lines.append("Mandate: \(site.mandate)") }
         if let gravity = site.gravity?.text, !gravity.isEmpty { lines.append("Centre of gravity: \(gravity)") }
-        if !site.aiNews.isEmpty {
+        // Stories under a rights hold are not given to the model: nothing may be drawn from them.
+        let shown = site.aiNews.filter { !$0.isHeld }
+        if !shown.isEmpty {
             lines.append("Local AI stories:")
-            for story in site.aiNews {
+            for story in shown {
                 var line = "- \(story.title)"
                 if let date = story.date { line += " (\(date)\(story.publisher.map { ", " + $0 } ?? ""))" }
                 if let summary = story.summary { line += ": \(summary)" }
@@ -91,7 +93,7 @@ public enum LocalPrompts {
         var lines = ["The reader says: \"\(persona.text)\""]
         if !stories.isEmpty {
             lines.append("Stories that match, best first:")
-            for item in stories {
+            for item in stories where !item.story.isHeld {
                 lines.append("- [\(item.town)] \(item.story.title)\(item.story.summary.map { ": " + $0 } ?? "")")
             }
         }

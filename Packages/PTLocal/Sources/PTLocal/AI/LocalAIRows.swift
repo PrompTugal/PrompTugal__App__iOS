@@ -45,6 +45,10 @@ public struct AIStoryRow: View {
                 if let path = story.aiPath {
                     Text(path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3)
                 }
+                if story.isHeld, let url = story.sourceURL {
+                    Link(destination: url) { Label(story.readItAt, systemImage: "arrow.up.right.square") }
+                        .font(.caption.weight(.semibold))
+                }
             }
             .padding(.leading, match.isMatch ? Space.s : 0)
             .overlay(alignment: .leading) {
@@ -52,7 +56,8 @@ public struct AIStoryRow: View {
             }
             .accessibilityElement(children: .combine)
             Spacer(minLength: 0)
-            StorySummaryButton(story: story, town: town ?? townForAI)
+            // A held story is not summarised or explained on the device: nothing may be drawn from it.
+            if !story.isHeld { StorySummaryButton(story: story, town: town ?? townForAI) }
         }
         .padding(.vertical, 4)
     }

@@ -1,5 +1,6 @@
 // swift-tools-version: 6.0
-// PTExplore: talks, speakers, companies and places. Depends on PTCore only. Apple SDK only.
+// PTExplore: the newsroom's stories, companies, places, library and videos, and the Lisbon summit 2026 index.
+// Depends on PTCore only. Apple SDK only.
 import PackageDescription
 
 let package = Package(
