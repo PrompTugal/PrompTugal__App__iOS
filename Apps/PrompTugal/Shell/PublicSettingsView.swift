@@ -75,7 +75,7 @@ struct PublicSettingsView: View {
             } header: {
                 Text("About")
             } footer: {
-                Text("PrompTugal.news is an independent newsroom in Portugal.")
+                Text("PrompTugal.news: local news from Portugal. Every story links to its source.")
                     .accessibilityIdentifier("pt.notAffiliated")
             }
             #if DEBUG
