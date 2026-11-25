@@ -99,8 +99,43 @@ public struct PlaceSite: Decodable, Sendable, Identifiable, Hashable {
         public let readOn: String?
         public let aiPath: String?
         public let steps: Int?
+        /// Set when the site's rights desk holds the item ("held under R12 ... not to be shown"). A held story keeps
+        /// only its headline, outlet, date and source link: its summary, AI path and steps are dropped when decoded,
+        /// so no screen, ranking or on-device prompt can show or use them.
+        public let hold: String?
 
-        enum CodingKeys: String, CodingKey { case title, summary, date, publisher, url, steps, readOn = "read_on", aiPath = "ai_path" }
+        enum CodingKeys: String, CodingKey {
+            case title, summary, date, publisher, url, steps, hold, readOn = "read_on", aiPath = "ai_path"
+        }
+
+        public init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            title = try c.decode(String.self, forKey: .title)
+            url = try c.decode(String.self, forKey: .url)
+            date = try? c.decode(String.self, forKey: .date)
+            publisher = try? c.decode(String.self, forKey: .publisher)
+            readOn = try? c.decode(String.self, forKey: .readOn)
+            let held = (try? c.decode(String.self, forKey: .hold))?.trimmingCharacters(in: .whitespacesAndNewlines)
+            hold = (held?.isEmpty ?? true) ? nil : held
+            if hold == nil {
+                summary = try? c.decode(String.self, forKey: .summary)
+                aiPath = try? c.decode(String.self, forKey: .aiPath)
+                steps = try? c.decode(Int.self, forKey: .steps)
+            } else {
+                summary = nil
+                aiPath = nil
+                steps = nil
+            }
+        }
+
+        public var isHeld: Bool { hold != nil }
+
+        /// "Read it at Barlavento": for a held story, the only way to its content.
+        public var readItAt: String {
+            let outlet = (publisher ?? "").trimmingCharacters(in: .whitespaces)
+            if !outlet.isEmpty { return "Read it at \(outlet)" }
+            return "Read it at \(sourceURL?.host() ?? "the source")"
+        }
 
         /// "direct" or "1 step", "2 steps".
         public var stepsLabel: String? {

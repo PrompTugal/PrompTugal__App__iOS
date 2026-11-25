@@ -1,0 +1,473 @@
+{
+ "about": "The seed catalogue of videos.promptugal.news: every video in the Web Summit Lisbon 2026 collection, one record each. Copied by hand by videos.b@PrompTugal.dinis on 18 November 2026 from the video items of social.watch@PrompTugal.dinis's coverage record (PrompTugal__News__Website, board/team/social.watch/coverage.json at commit 142060e23205fa62b316f800a2e66b95f8a0ab66), found in its sweeps of 10 November 2026 and checked then with YouTube's oEmbed (title and channel). Nothing here was read again from YouTube or from websummit.com. It is replaced by library.promptugal.news's and data.promptugal.news's APIs when they publish videos (both answered 404 on 18 November 2026, about 15:25 UTC). From 18 November, about 15:50 UTC, the library's catalogue is a source too: the Day Three replay comes from it, credited on its card.",
+ "updated": "2026-11-18T16:10Z",
+ "platforms": {
+  "youtube": {
+   "name": "YouTube",
+   "terms": "https://www.youtube.com/t/terms",
+   "embed_host": "https://www.youtube-nocookie.com",
+   "how": "The platform's own player, in YouTube's privacy-enhanced mode, loaded only when the reader presses play."
+  },
+  "cnbc": {
+   "name": "CNBC",
+   "terms": "https://www.cnbc.com/nbcuniversal-terms-of-service/",
+   "embed_host": null,
+   "how": "Link only: we embed from YouTube alone."
+  }
+ },
+ "count": 32,
+ "videos": [
+  {
+   "id": "yt-dJi_pXLxwno",
+   "title": "Web Summit 2026 | Opening Night",
+   "channel": "Web Summit",
+   "kind": "official-replay",
+   "day": "2026-11-09",
+   "published": "2026-11-09",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-dJi_pXLxwno.json",
+   "page": "https://videos.promptugal.news/videos/yt-dJi_pXLxwno/"
+  },
+  {
+   "id": "yt-S9RHQGNIaFY",
+   "title": "Web Summit 2026 | Day One",
+   "channel": "Web Summit",
+   "kind": "official-replay",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-S9RHQGNIaFY.json",
+   "page": "https://videos.promptugal.news/videos/yt-S9RHQGNIaFY/"
+  },
+  {
+   "id": "yt--MGZdAtbTrs",
+   "title": "Web Summit 2026 | Day Three",
+   "channel": "Web Summit",
+   "kind": "official-replay",
+   "day": "2026-11-12",
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt--MGZdAtbTrs.json",
+   "page": "https://videos.promptugal.news/videos/yt--MGZdAtbTrs/"
+  },
+  {
+   "id": "yt-XMEf-M9k5yw",
+   "title": "Replit Live: Web Summit Lisbon 2026 | Day 1",
+   "channel": "Replit",
+   "kind": "recording",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-XMEf-M9k5yw.json",
+   "page": "https://videos.promptugal.news/videos/yt-XMEf-M9k5yw/"
+  },
+  {
+   "id": "yt-uXTIOZpQ3uQ",
+   "title": "Web Summit Lisbon: Day 1",
+   "channel": "Make",
+   "kind": "recording",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-uXTIOZpQ3uQ.json",
+   "page": "https://videos.promptugal.news/videos/yt-uXTIOZpQ3uQ/"
+  },
+  {
+   "id": "yt-c0pl5x6i248",
+   "title": "Verus and Confrmo at Web Summit Lisbon 2026 | Private messaging, verified identity",
+   "channel": "Verus",
+   "kind": "recording",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-c0pl5x6i248.json",
+   "page": "https://videos.promptugal.news/videos/yt-c0pl5x6i248/"
+  },
+  {
+   "id": "yt-MO1681bMX-c",
+   "title": "قطر في قمة الويب لشبونة 2026- Qatar at Web Summit Lisbon 2026",
+   "channel": "Government Communications Office (Qatar)",
+   "kind": "recording",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-MO1681bMX-c.json",
+   "page": "https://videos.promptugal.news/videos/yt-MO1681bMX-c/"
+  },
+  {
+   "id": "yt-NH2Mpu3vcSE",
+   "title": "CONHEÇA AS TECNOLOGIAS DESENVOLVIDAS NA PARAÍBA PARA O MUNDO - WEB SUMMIT 2026 - AO VIVO DE LISBOA",
+   "channel": "SECTIES PB",
+   "kind": "recording",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-NH2Mpu3vcSE.json",
+   "page": "https://videos.promptugal.news/videos/yt-NH2Mpu3vcSE/"
+  },
+  {
+   "id": "yt-JzLsTw-BCIA",
+   "title": "🔴 DIRETO | NAMA BABY na WEB SUMMIT 2026",
+   "channel": "RVTV",
+   "kind": "recording",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-JzLsTw-BCIA.json",
+   "page": "https://videos.promptugal.news/videos/yt-JzLsTw-BCIA/"
+  },
+  {
+   "id": "yt-6vvcyQyhS98",
+   "title": "Décima edição da Web Summit em Lisboa. O que podemos esperar?",
+   "channel": "Renascença",
+   "kind": "press",
+   "day": null,
+   "published": "2026-11-09",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-6vvcyQyhS98.json",
+   "page": "https://videos.promptugal.news/videos/yt-6vvcyQyhS98/"
+  },
+  {
+   "id": "yt-LsCsHpkPgpc",
+   "title": "China's 'impossible to ignore' tech rise on display at Web Summit in Lisbon",
+   "channel": "FRANCE 24 English",
+   "kind": "press",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-LsCsHpkPgpc.json",
+   "page": "https://videos.promptugal.news/videos/yt-LsCsHpkPgpc/"
+  },
+  {
+   "id": "yt-hsrThTM-oIM",
+   "title": "AI, robotics and more: CGTN explores the future at Web Summit 2026",
+   "channel": "CGTN Europe",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-hsrThTM-oIM.json",
+   "page": "https://videos.promptugal.news/videos/yt-hsrThTM-oIM/"
+  },
+  {
+   "id": "yt-hhoqFc60Kog",
+   "title": "La Web Summit enciende en Lisboa su décima edición con la vista puesta en China y la IA",
+   "channel": "AGENCIA EFE",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-hhoqFc60Kog.json",
+   "page": "https://videos.promptugal.news/videos/yt-hhoqFc60Kog/"
+  },
+  {
+   "id": "yt-D8tZOrwLP0c",
+   "title": "Cloudflare CEO on 'Uncle Jensen's crazy credit card'",
+   "channel": "CNBC International Live",
+   "kind": "press",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-D8tZOrwLP0c.json",
+   "page": "https://videos.promptugal.news/videos/yt-D8tZOrwLP0c/"
+  },
+  {
+   "id": "cnbc-2026-11-10-tech-ceos",
+   "title": "Tech CEOs discuss AI build out at Web Summit in Lisbon",
+   "channel": "CNBC (Squawk Box Europe)",
+   "kind": "press",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.cnbc.com/nbcuniversal-terms-of-service/"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/cnbc-2026-11-10-tech-ceos.json",
+   "page": "https://videos.promptugal.news/videos/cnbc-2026-11-10-tech-ceos/"
+  },
+  {
+   "id": "yt-dQCc5UGakQo",
+   "title": "Robots Take the Stage at Web Summit: Is Europe Ready for Physical AI?",
+   "channel": "The Spotlight: Beyond Profession",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-dQCc5UGakQo.json",
+   "page": "https://videos.promptugal.news/videos/yt-dQCc5UGakQo/"
+  },
+  {
+   "id": "yt-89tY8-exU5k",
+   "title": "Web Summit 2026: Is the AI Funding Boom Cooling for European Startups?",
+   "channel": "The Spotlight: Beyond Profession",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-89tY8-exU5k.json",
+   "page": "https://videos.promptugal.news/videos/yt-89tY8-exU5k/"
+  },
+  {
+   "id": "yt-RpB4VY_ymGI",
+   "title": "Websummit Portugal reúne 200 expositores brasileiros",
+   "channel": "Canal Rural",
+   "kind": "press",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-RpB4VY_ymGI.json",
+   "page": "https://videos.promptugal.news/videos/yt-RpB4VY_ymGI/"
+  },
+  {
+   "id": "yt-CH9axjGRt3w",
+   "title": "Web Summit 2026 – Global Tech Leaders Gather in Lisbon as Artificial Intelligence Takes Centre Stage",
+   "channel": "VOICE OF NEPAL TV - VON",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-CH9axjGRt3w.json",
+   "page": "https://videos.promptugal.news/videos/yt-CH9axjGRt3w/"
+  },
+  {
+   "id": "yt-Fi3odaoiJz8",
+   "title": "«Não compreendo porque não suspendem a Web Summit, que tem 60 a 70 mil pessoas»",
+   "channel": "NOW Canal",
+   "kind": "press",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-Fi3odaoiJz8.json",
+   "page": "https://videos.promptugal.news/videos/yt-Fi3odaoiJz8/"
+  },
+  {
+   "id": "yt-SzwxoCkwNBg",
+   "title": "Resposta a intempéries: 'Exército e Forças Armadas são agentes de proteção civil'",
+   "channel": "NOW Canal",
+   "kind": "press",
+   "day": "2026-11-10",
+   "published": "2026-11-10",
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-SzwxoCkwNBg.json",
+   "page": "https://videos.promptugal.news/videos/yt-SzwxoCkwNBg/"
+  },
+  {
+   "id": "yt-8YmUaGZgUvk",
+   "title": "Web Summit Lisbon 2026 - Opening Ceremony Insights",
+   "channel": "The 1% Insight",
+   "kind": "recording",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-8YmUaGZgUvk.json",
+   "page": "https://videos.promptugal.news/videos/yt-8YmUaGZgUvk/"
+  },
+  {
+   "id": "yt-Wj5qKQ-7fms",
+   "title": "Web Summit 2026: a noite de abertura em Lisboa",
+   "channel": "KuriakosTV",
+   "kind": "recording",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-Wj5qKQ-7fms.json",
+   "page": "https://videos.promptugal.news/videos/yt-Wj5qKQ-7fms/"
+  },
+  {
+   "id": "yt-x1lYTcbv5oo",
+   "title": "Marketing to Agents, Owning Distribution and a New Era of Media | Web Summit Lisbon 2026 - Day On...",
+   "channel": "Trend 7 Media | B2B Tech Marketing",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-x1lYTcbv5oo.json",
+   "page": "https://videos.promptugal.news/videos/yt-x1lYTcbv5oo/"
+  },
+  {
+   "id": "yt-EbjYYT8NEFk",
+   "title": "Web Summit 2026 LIVE: Inside the technologies shaping our future",
+   "channel": "CGTN Europe",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-EbjYYT8NEFk.json",
+   "page": "https://videos.promptugal.news/videos/yt-EbjYYT8NEFk/"
+  },
+  {
+   "id": "yt-J4lZ8NBTRE0",
+   "title": "Inside Web Summit Lisbon 2026 | A Dancing Robot and a Packed House",
+   "channel": "Portugal Resident",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-J4lZ8NBTRE0.json",
+   "page": "https://videos.promptugal.news/videos/yt-J4lZ8NBTRE0/"
+  },
+  {
+   "id": "yt-0W_0evgSPyw",
+   "title": "[Web Summit 2026] Buyers Seek Out the Seoul Pavilion as SBA Brings 12 Seoul Startups to Lisbon",
+   "channel": "AVING NEWS _ 에이빙 뉴스",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-0W_0evgSPyw.json",
+   "page": "https://videos.promptugal.news/videos/yt-0W_0evgSPyw/"
+  },
+  {
+   "id": "yt-QYgwlDYXmXI",
+   "title": "Web Summit: «Este evento está num declínio manifesto»",
+   "channel": "NOW Canal",
+   "kind": "press",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-QYgwlDYXmXI.json",
+   "page": "https://videos.promptugal.news/videos/yt-QYgwlDYXmXI/"
+  },
+  {
+   "id": "yt-KFeWGru3Or4",
+   "title": "2026 Web Summit Recap (Replit Live)",
+   "channel": "Replit",
+   "kind": "recording",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-KFeWGru3Or4.json",
+   "page": "https://videos.promptugal.news/videos/yt-KFeWGru3Or4/"
+  },
+  {
+   "id": "yt-TC_Qikn9A8M",
+   "title": "Web Summit Lisbon: It's a wrap 🇵🇹",
+   "channel": "Make",
+   "kind": "recording",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-TC_Qikn9A8M.json",
+   "page": "https://videos.promptugal.news/videos/yt-TC_Qikn9A8M/"
+  },
+  {
+   "id": "yt-1SGj6-dLYOs",
+   "title": "As três lições que trouxemos da Web Summit",
+   "channel": "The Next Big Idea",
+   "kind": "recording",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-1SGj6-dLYOs.json",
+   "page": "https://videos.promptugal.news/videos/yt-1SGj6-dLYOs/"
+  },
+  {
+   "id": "yt-mKqVddiim_o",
+   "title": "Web Summit 2026",
+   "channel": "Fala Portugal",
+   "kind": "recording",
+   "day": null,
+   "published": null,
+   "license": {
+    "name": "the platform's terms",
+    "url": "https://www.youtube.com/t/terms"
+   },
+   "json": "https://videos.promptugal.news/api/v1/videos/yt-mKqVddiim_o.json",
+   "page": "https://videos.promptugal.news/videos/yt-mKqVddiim_o/"
+  }
+ ],
+ "license_of_this_record": {
+  "name": "CC BY 4.0",
+  "url": "https://creativecommons.org/licenses/by/4.0/"
+ }
+}

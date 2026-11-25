@@ -1,6 +1,23 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%lld sources": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld sources"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld fontes"
+          }
+        }
+      }
+    },
     "Announcement": {
       "extractionState": "manual",
       "localizations": {
@@ -203,6 +220,57 @@
         }
       }
     },
+    "Built-in copy of %@: connect to update": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Built-in copy of %@: connect to update"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia incluída na app de %@: ligue-se para atualizar"
+          }
+        }
+      }
+    },
+    "By": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por"
+          }
+        }
+      }
+    },
+    "Call number": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Call number"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cota"
+          }
+        }
+      }
+    },
     "Category": {
       "extractionState": "manual",
       "localizations": {
@@ -300,6 +368,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "类别"
+          }
+        }
+      }
+    },
+    "Channel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Channel"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Canal"
           }
         }
       }
@@ -916,6 +1001,40 @@
         }
       }
     },
+    "Explore loads once online, then works offline. %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explore loads once online, then works offline. %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Explorar carrega uma vez com ligação e depois funciona sem ela. %@"
+          }
+        }
+      }
+    },
+    "How its companies, places and stories connect": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How its companies, places and stories connect"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como se ligam as empresas, os lugares e as histórias"
+          }
+        }
+      }
+    },
     "Kind": {
       "extractionState": "manual",
       "localizations": {
@@ -1013,6 +1132,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "类型"
+          }
+        }
+      }
+    },
+    "Library": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Library"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biblioteca"
+          }
+        }
+      }
+    },
+    "Lisbon summit 2026": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisbon summit 2026"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cimeira de Lisboa 2026"
+          }
+        }
+      }
+    },
+    "Live from PrompTugal.news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live from PrompTugal.news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto do PrompTugal.news"
           }
         }
       }
@@ -1219,6 +1389,23 @@
         }
       }
     },
+    "Not loaded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not loaded"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não carregado"
+          }
+        }
+      }
+    },
     "Note": {
       "extractionState": "manual",
       "localizations": {
@@ -1421,6 +1608,40 @@
         }
       }
     },
+    "Offline: the last copy this device read": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline: the last copy this device read"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem ligação: a última cópia lida neste dispositivo"
+          }
+        }
+      }
+    },
+    "Open on %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open on %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir em %@"
+          }
+        }
+      }
+    },
     "Open on promptugal.news": {
       "extractionState": "manual",
       "localizations": {
@@ -1518,6 +1739,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "在 promptugal.news 上打开"
+          }
+        }
+      }
+    },
+    "Open the original": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the original"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir o original"
           }
         }
       }
@@ -1938,6 +2176,57 @@
         }
       }
     },
+    "Published": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Published"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicado"
+          }
+        }
+      }
+    },
+    "Publisher": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editor"
+          }
+        }
+      }
+    },
+    "Region": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Region"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Região"
+          }
+        }
+      }
+    },
     "Registration": {
       "extractionState": "manual",
       "localizations": {
@@ -2241,6 +2530,23 @@
         }
       }
     },
+    "Search stories, companies, places, library": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search stories, companies, places, library"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pesquisar histórias, empresas, lugares, biblioteca"
+          }
+        }
+      }
+    },
     "Search talks, speakers, companies, places": {
       "extractionState": "manual",
       "localizations": {
@@ -2338,6 +2644,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "搜索演讲、嘉宾、公司、地点"
+          }
+        }
+      }
+    },
+    "Search the summit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search the summit"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pesquisar a cimeira"
           }
         }
       }
@@ -2645,6 +2968,23 @@
         }
       }
     },
+    "Sources": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fontes"
+          }
+        }
+      }
+    },
     "Speakers": {
       "extractionState": "manual",
       "localizations": {
@@ -2742,6 +3082,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "演讲嘉宾"
+          }
+        }
+      }
+    },
+    "Stories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stories"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Histórias"
+          }
+        }
+      }
+    },
+    "Summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Summary"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumo"
           }
         }
       }
@@ -2948,6 +3322,40 @@
         }
       }
     },
+    "The newsroom's graph": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The newsroom's graph"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O grafo da redação"
+          }
+        }
+      }
+    },
+    "The November summit's index: people, organisations and companies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The November summit's index: people, organisations and companies"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O índice da cimeira de novembro: pessoas, organizações e empresas"
+          }
+        }
+      }
+    },
     "The summit data loads once online, then works offline. %@": {
       "extractionState": "manual",
       "localizations": {
@@ -3150,6 +3558,23 @@
         }
       }
     },
+    "Town": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Town"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localidade"
+          }
+        }
+      }
+    },
     "Track": {
       "extractionState": "manual",
       "localizations": {
@@ -3348,6 +3773,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "重试"
+          }
+        }
+      }
+    },
+    "Video": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vídeo"
+          }
+        }
+      }
+    },
+    "Watch on YouTube": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Watch on YouTube"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver no YouTube"
           }
         }
       }

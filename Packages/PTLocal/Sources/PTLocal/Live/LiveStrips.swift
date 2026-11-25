@@ -130,7 +130,8 @@ public struct NewsroomLiveSection: View {
             NavigationLink { NewsroomLiveView() } label: {
                 Label("Watch the newsroom in action", systemImage: "waveform.path.ecg").font(.footnote.weight(.semibold))
             }
-            ProvenanceLabel(provenance: model.provenance, phase: model.phase)
+            ProvenanceLabel(provenance: model.provenance, phase: model.phase,
+                            readAt: model.dashboard?.updated)
         }
     }
 

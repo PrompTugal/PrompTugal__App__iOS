@@ -2,6 +2,7 @@ import Foundation
 import CryptoKit
 import SwiftUI
 import Testing
+import PTCore
 @testable import PTPlaces
 
 // Trimmed copies of what promptugal.news serves on 15 November 2026.
@@ -426,6 +427,29 @@ struct RegionSplitTests {
         #expect(store.algarveTowns.map(\.id) == ["loule", "quarteira"])
         #expect(store.portugalCities.map(\.id) == ["porto"])
     }
+
+    @Test("every capital shows, also one only places.json has; ids that start with another id stay apart")
+    @MainActor func allCapitals() throws {
+        let store = PlacesStore()
+        store.index.preview(try decode(PlaceIndex.self, """
+        {"built":"2026-11-25","places":[{"id":"portugal","name":"Portugal","kind":"country","parent":null},
+         {"id":"algarve","name":"The Algarve","kind":"region","parent":"portugal"},
+         {"id":"vila-real-de-santo-antonio","name":"Vila Real de Santo António","kind":"municipality","parent":"algarve","updated":"2026-11-16"},
+         {"id":"lisboa","name":"Lisboa","kind":"city","parent":"portugal","updated":"2026-11-17"},
+         {"id":"vila-real","name":"Vila Real","kind":"city","parent":"portugal","updated":"2026-11-17","at":{"lon":-7.746,"lat":41.3}}]}
+        """))
+        store.list.preview(try decode(PlaceIndex.self, """
+        {"places":[{"id":"vila-real-de-santo-antonio","name":"VRSA","kind":"municipality","parent":"algarve","at":[-7.42,37.19]},
+         {"id":"lisboa","name":"Lisboa","kind":"city","parent":"portugal","at":[-9.14,38.72]},
+         {"id":"beja","name":"Beja","kind":"city","parent":"portugal","at":[-7.863,38.015]}]}
+        """))
+        #expect(store.algarveTowns.map(\.id) == ["vila-real-de-santo-antonio"])
+        #expect(store.portugalCities.map(\.id) == ["lisboa", "vila-real", "beja"])
+        #expect(store.place("vila-real-de-santo-antonio")?.name == "Vila Real de Santo António")
+        #expect(store.place("vila-real-de-santo-antonio")?.at == [-7.42, 37.19])
+        #expect(store.place("vila-real")?.at == [-7.746, 41.3])
+        #expect(store.place("lisboa")?.at == [-9.14, 38.72])
+    }
 }
 
 @Suite("PTPlaces: now in a place (IPMA, hourly)")
@@ -452,5 +476,164 @@ struct NowTests {
         #expect(now.flights == 3)
         #expect(now.pages["station"] == "https://www.ipma.pt/en/otempo/obs.superficie/")
         #expect(now.isEmpty == false)
+    }
+}
+
+// MARK: - Since you last looked (api/v1/since.json, 25 Nov)
+
+private let sinceJSON = """
+{"about":"x","version":"v0.1.2280","built":"2026-11-25","days":45,
+ "places":[{"id":"portugal","name":"Portugal","kind":"country","parent":null},
+           {"id":"vila-real","name":"Vila Real","kind":"city","parent":"portugal"},
+           {"id":"vila-real-de-santo-antonio","name":"Vila Real de Santo António","kind":"municipality","parent":"algarve"}],
+ "items":[
+  {"kind":"story","date":"2026-11-17","title":"VRSA story","url":"https://postal.pt/a","publisher":"Postal","place":"vila-real-de-santo-antonio","rings":["vila-real-de-santo-antonio","algarve","portugal"],
+   "license":{"name":"the source's terms","url":"https://postal.pt/"},"provenance":{"source_url":"https://postal.pt/a","read_on":"2026-11-17","kind":"story"}},
+  {"kind":"article","date":"2026-11-24","title":"Our article","url":"https://promptugal.news/articles/a.html","place":null,"rings":["portugal"],
+   "license":{"name":"CC BY 4.0","url":"https://creativecommons.org/licenses/by/4.0/","by":"PrompTugal.news"},"provenance":{"written_by":"journalist-ai@PrompTugal.vicky","published":"2026-11-24","kind":"article"}},
+  {"kind":"story","date":"2026-11-17","title":"Vila Real story","url":"https://example.pt/b","place":"vila-real","rings":["vila-real","portugal"],"provenance":{"publisher":"Diário de Trás-os-Montes"}},
+  {"kind":"story","date":"2026-11-20","title":"No link, dropped","place":"vila-real"},
+  {"kind":"story","date":"2026-11-20","title":"Not a web link, dropped","url":"javascript:alert(1)"},
+  {"date":"2026-11-19","url":"https://x.pt/no-title"},
+  {"kind":"story","date":"2026-11-18","title":"Link only in provenance","provenance":{"source_url":"https://sul.pt/c","publisher":"Sul Informação"},"rings":"bad shape"}
+ ]}
+"""
+
+@Suite("PTPlaces: since you last looked")
+struct SinceTests {
+    @Test("since.json decodes; items without a web link or title are dropped, never the feed")
+    func decodes() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        #expect(feed.built == "2026-11-25")
+        #expect(feed.days == 45)
+        #expect(feed.items.map(\.title) == ["VRSA story", "Our article", "Vila Real story", "Link only in provenance"])
+        let fromProvenance = try #require(feed.items.last)
+        #expect(fromProvenance.url == "https://sul.pt/c")
+        #expect(fromProvenance.byline == "Sul Informação")
+        #expect(fromProvenance.rings.isEmpty)
+        #expect(feed.items[1].isArticle)
+        #expect(feed.items[1].byline == "PrompTugal.news")
+        #expect(feed.items[1].place == nil)
+        #expect(feed.items[2].byline == "Diário de Trás-os-Montes")
+        #expect(feed.items[0].licenseName == "the source's terms")
+    }
+
+    @Test("newest first; place names match exactly, even when one id starts with another")
+    func orderAndPlaces() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        #expect(feed.newestFirst.map(\.title) == ["Our article", "Link only in provenance", "VRSA story", "Vila Real story"])
+        #expect(feed.placeName(for: feed.items[0]) == "Vila Real de Santo António")
+        #expect(feed.placeName(for: feed.items[2]) == "Vila Real")
+        #expect(feed.placeName(for: feed.items[1]) == "Portugal")
+    }
+
+    @Test("the marker keeps the newest day and its items; later days and unseen items of that day are new")
+    func marker() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        let seen = SinceMarker(showing: Array(feed.items.prefix(3)), at: Date(timeIntervalSince1970: 1_000))
+        #expect(seen.day == "2026-11-24")
+        #expect(seen.isNew(feed.items[1]) == false)
+        #expect(seen.isNew(feed.items[0]) == false)
+        let sameDay = SinceItem(date: "2026-11-24", title: "Another that day", url: "https://n.pt/1")
+        let later = SinceItem(date: "2026-11-25", title: "Later", url: "https://n.pt/2")
+        #expect(seen.isNew(sameDay))
+        #expect(seen.isNew(later))
+        let back = try #require(SinceMarker(raw: seen.raw))
+        #expect(back == seen)
+        #expect(SinceMarker(raw: "") == nil)
+        #expect(SinceMarker(raw: "{\"day\":\"\"}") == nil)
+    }
+
+    @Test("the marker round-trips through UserDefaults")
+    func markerStore() throws {
+        let defaults = try #require(UserDefaults(suiteName: "ptplaces.since.test"))
+        defaults.removePersistentDomain(forName: "ptplaces.since.test")
+        #expect(SinceMarker.load(defaults) == nil)
+        let marker = SinceMarker(day: "2026-11-25", ids: ["a|b"], at: Date(timeIntervalSince1970: 5))
+        marker.save(defaults)
+        #expect(SinceMarker.load(defaults) == marker)
+    }
+}
+
+@Suite("PTPlaces: where the data came from")
+struct OriginTests {
+    let now = PlaceDates.parse("2026-11-25T22:00Z")!
+
+    @Test("live only when read from the network and dated within a day")
+    func live() {
+        let o = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-25", now: now)
+        #expect(o.kind == .live)
+        let yesterday = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-24", now: now)
+        #expect(yesterday.kind == .live)
+    }
+
+    @Test("data older than a day says its date, not live")
+    func dated() {
+        let o = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-21", now: now)
+        #expect(o.kind == .dated)
+        #expect(o.text.contains("21 Nov 2026"))
+        #expect(o.warns)
+        let time = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-24T20:00Z", now: now)
+        #expect(time.kind == .dated)
+    }
+
+    @Test("a saved copy, the built-in snapshot, loading and failure each say so")
+    func others() {
+        #expect(PlacesOrigin.describe(pinned: false, phase: .failed("x"), fetched: now, dataDate: "2026-11-25", now: now).kind == .deviceCopy)
+        #expect(PlacesOrigin.describe(pinned: false, phase: .idle, fetched: now, dataDate: nil, now: now).kind == .deviceCopy)
+        #expect(PlacesOrigin.describe(pinned: true, phase: .loaded, fetched: now, dataDate: nil, now: now).kind == .snapshot)
+        #expect(PlacesOrigin.describe(pinned: false, phase: .loading, fetched: nil, dataDate: nil, now: now).kind == .loading)
+        #expect(PlacesOrigin.describe(pinned: false, phase: .failed("x"), fetched: nil, dataDate: nil, now: now).kind == .missing)
+    }
+}
+
+@Suite("PTPlaces: a town page's news and events (api/v1/by-place/<id>.json, 25 Nov)")
+struct TownPageTests {
+    let json = """
+    {"id":"faro","name":"Faro","kind":"municipality","parent":"algarve","updated":"2026-11-16",
+     "ai_news":[
+      {"title":"Older","summary":"s","date":"2026-11-06","publisher":"Sul Informação","url":"https://www.sulinformacao.pt/a","read_on":"2026-11-07","steps":0,
+       "license":{"name":"the source's terms","url":"https://www.sulinformacao.pt/"}},
+      {"title":"Newest","summary":"s","date":"2026-11-16","url":"https://www.barlavento.pt/b","steps":2,"hold":"held under R12",
+       "provenance":{"source_url":"https://www.barlavento.pt/b","publisher":"Barlavento","read_on":"2026-11-16","signature":"valid"}},
+      {"title":"No link, not shown","date":"2026-11-20","publisher":"X"},
+      {"title":"Not a web link, not shown","date":"2026-11-19","url":"mailto:a@b.pt"},
+      {"title":"Host as outlet","date":"2026-11-12","url":"https://postal.pt/c"}
+     ],
+     "events":[
+      {"title":"Month of AI","date":"2026-11-01 to 2026-11-30","url":"https://www.cm-faro.pt/e1","read_on":"2026-11-15"},
+      {"title":"No date","date":"date not shown","provenance":{"source_url":"https://www.unicornfactorylisboa.com/","read_on":"2026-11-16"}},
+      {"title":"Later","date":"2026-11-25","note":null,"provenance":{"source_url":"https://startupportugal.com/","publisher":null,"read_on":"2026-11-16"}},
+      {"date":"2026-11-30","url":"https://no-title.pt"}
+     ]}
+    """
+
+    @Test("news shows newest first, only with a web source link, with its outlet")
+    func news() throws {
+        let file = try decode(PlaceFile.self, json)
+        #expect(file.aiNews.count == 5)
+        let shown = file.newsNewestFirst
+        #expect(shown.map(\.title) == ["Newest", "Host as outlet", "Older"])
+        #expect(shown[0].outlet == "Barlavento")
+        #expect(shown[0].readOn == "2026-11-16")
+        #expect(shown[1].outlet == "postal.pt")
+        #expect(shown[2].outlet == "Sul Informação")
+        #expect(shown.allSatisfy { $0.sourceLink != nil })
+        #expect(shown[0].isHeld)
+        #expect(shown[0].hold == "held under R12")
+        #expect(shown[1].isHeld == false)
+        #expect(NewsItem(title: "made in code").isHeld == false)
+    }
+
+    @Test("events: latest date first, unreadable dates last, links from provenance, host as outlet")
+    func events() throws {
+        let file = try decode(PlaceFile.self, json)
+        let events = file.eventsNewestFirst
+        #expect(events.map(\.title) == ["Later", "Month of AI", "No date"])
+        #expect(events[0].url == "https://startupportugal.com/")
+        #expect(events[0].outlet == "startupportugal.com")
+        #expect(events[0].readOn == "2026-11-16")
+        #expect(events[1].outlet == "www.cm-faro.pt")
+        #expect(events[2].sourceLink?.host() == "www.unicornfactorylisboa.com")
     }
 }

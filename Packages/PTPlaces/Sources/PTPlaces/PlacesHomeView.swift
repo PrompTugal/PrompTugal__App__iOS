@@ -29,6 +29,7 @@ public struct PlacesHomeView: View {
                 if store.places.isEmpty {
                     loadingOrError
                 } else {
+                    SinceYouLookedSection(store: store, wide: wide)
                     regionHero
                     caseStudies
                     if let homeAccessory { homeAccessory() }
@@ -74,7 +75,7 @@ public struct PlacesHomeView: View {
             }
             Rectangle().fill(Palette.ink).frame(height: 2)
             HStack {
-                Text(String(localized: "Portugal · The Algarve · 17 towns"))
+                Text(mastheadLine)
                 Spacer()
                 Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide))
             }
@@ -85,6 +86,14 @@ public struct PlacesHomeView: View {
         }
         .padding(.horizontal, gutter)
         .padding(.top, Space.m)
+    }
+
+    private var mastheadLine: String {
+        let towns = store.algarveTowns.count
+        let capitals = store.portugalCities.count
+        if towns == 0 { return String(localized: "Portugal · The Algarve") }
+        if capitals == 0 { return String(localized: "Portugal · The Algarve · \(towns) towns") }
+        return String(localized: "Portugal · The Algarve · \(towns) towns · \(capitals) district capitals")
     }
 
     @ViewBuilder private var loadingOrError: some View {
@@ -236,28 +245,33 @@ public struct PlacesHomeView: View {
         .padding(.horizontal, gutter)
     }
 
-    // MARK: Across Portugal (the district capitals, 16 Nov)
+    // MARK: Across Portugal (every district capital the index has; the Algarve's numbers keep to the Algarve)
 
     @ViewBuilder private var acrossPortugal: some View {
         let cities = store.portugalCities
         if !cities.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "Across Portugal"),
-                            subtitle: String(localized: "The district capitals, each with its own agent and AI map"), accent: Palette.red)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: Space.m) {
-                        ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
-                            NavigationLink(value: PlaceRoute(place.id)) {
-                                TownTile(place: place, file: store.file(place.id), seed: index + 3)
-                                    .frame(width: wide ? 220 : 170)
-                            }
-                            .buttonStyle(.plain)
+                            subtitle: capitalsSubtitle(cities.count), accent: Palette.red)
+                PlacesOriginLabel(origin: store.index.origin(dataDate: cities.map(\.updated).max()))
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: wide ? 200 : 150), spacing: Space.m)], spacing: Space.m) {
+                    ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
+                        NavigationLink(value: PlaceRoute(place.id)) {
+                            TownTile(place: place, file: store.file(place.id), seed: index + 3)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
+                .accessibilityIdentifier("places.capitals")
             }
             .padding(.horizontal, gutter)
         }
+    }
+
+    private func capitalsSubtitle(_ count: Int) -> String {
+        count == 1
+            ? String(localized: "One district capital so far, with its own agent and AI map")
+            : String(localized: "The \(count) district capitals, each with its own agent and AI map")
     }
 
     // MARK: Everything is connected
@@ -445,7 +459,11 @@ struct CaseStudyCard: View {
                 if let lead = file?.newsByWeight.first {
                     StepsBadge(steps: lead.steps, accent: accent)
                     Text(lead.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).lineLimit(3)
-                    Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
+                    if lead.isHeld {
+                        ReadAtLine(outlet: lead.outlet, readOn: "", accent: accent, held: true)
+                    } else {
+                        Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
+                    }
                 } else if let mandate = file?.mandate {
                     Text(mandate).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(4)
                 }
@@ -530,9 +548,12 @@ struct StoryTile: View {
                     Text(PlaceDates.short(item.date)).font(.caption2).foregroundStyle(Palette.muted)
                 }
                 Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).lineLimit(4)
-                Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
+                if !item.isHeld {
+                    Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
+                }
                 Spacer(minLength: 0)
-                StepsBadge(steps: item.steps, accent: accent)
+                if !item.isHeld { StepsBadge(steps: item.steps, accent: accent) }
+                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent, held: item.isHeld)
             }
             .padding(Space.l)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -578,10 +599,14 @@ struct StoryRow: View {
                             .font(.caption2).foregroundStyle(Palette.muted)
                     }
                     Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
-                    if !item.aiPath.isEmpty {
-                        Text(item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                    if item.isHeld {
+                        ReadAtLine(outlet: item.outlet, readOn: "", accent: accent, held: true)
+                    } else {
+                        if !item.aiPath.isEmpty {
+                            Text(item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                        }
+                        StepsBadge(steps: item.steps, accent: accent)
                     }
-                    StepsBadge(steps: item.steps, accent: accent)
                 }
                 Spacer(minLength: 0)
             }

@@ -199,6 +199,10 @@ public struct StorySummaryButton: View {
         .buttonStyle(.plain)
         .accessibilityLabel("Summarise or explain this story with Apple Intelligence on this device")
         .sheet(isPresented: $showing) { StoryAISheet(story: story, town: town) }
+        // A story under a rights hold is never summarised or explained on the device.
+        .opacity(story.isHeld ? 0 : 1)
+        .disabled(story.isHeld)
+        .accessibilityHidden(story.isHeld)
     }
 }
 
