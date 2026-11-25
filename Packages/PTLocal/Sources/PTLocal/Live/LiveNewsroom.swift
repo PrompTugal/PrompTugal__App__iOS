@@ -22,9 +22,13 @@ public final class LiveNewsroom {
     /// When each agent was last seen to change while watching (or since the last visit).
     public private(set) var changedAt: [String: Date] = [:]
     public private(set) var polls = 0
+    /// The newsroom's status feed (pipeline and runs ledger), read with the place files, every fifth poll.
+    public private(set) var status: NewsroomStatus?
+    public private(set) var statusProvenance: Provenance = .none
 
     public nonisolated static let interval: Duration = .seconds(60)
     nonisolated static let cacheKey = "live-dashboard-previous"
+    nonisolated static let statusCacheKey = "newsroom-status"
 
     @ObservationIgnored private let fetch: LocalFetch
     @ObservationIgnored private let cache: LocalDiskCache
@@ -80,7 +84,10 @@ public final class LiveNewsroom {
             phase = .failed("The newsroom dashboard could not be reached.")
         }
         lastPoll = now
-        if polls % 5 == 0 { await pollPlaces(now: now) }
+        if polls % 5 == 0 {
+            await pollPlaces(now: now)
+            await pollStatus(now: now)
+        }
         polls += 1
     }
 
@@ -110,6 +117,24 @@ public final class LiveNewsroom {
         let fresh = NewsroomDiff.placeChanges(from: before, to: store.places, now: now)
         for role in NewsroomDiff.roles(in: fresh) { changedAt[role] = now }
         events = NewsroomDiff.merge(fresh, into: events)
+    }
+
+    /// The status feed: live, else this device's last copy. One failure keeps the copy already shown.
+    func pollStatus(now: Date) async {
+        var url = URLComponents(url: NewsroomStatus.url, resolvingAgainstBaseURL: false)!
+        url.queryItems = [URLQueryItem(name: "m", value: String(Int(now.timeIntervalSince1970 / 60)))]
+        do {
+            let data = try await fetch(url.url!)
+            status = try JSONDecoder().decode(NewsroomStatus.self, from: data)
+            cache.store(data, key: Self.statusCacheKey)
+            statusProvenance = .live(now)
+        } catch {
+            if status == nil, let data = cache.load(key: Self.statusCacheKey),
+               let stored = try? JSONDecoder().decode(NewsroomStatus.self, from: data) {
+                status = stored
+                statusProvenance = .cached(cache.modified(key: Self.statusCacheKey))
+            }
+        }
     }
 
     // MARK: Reading

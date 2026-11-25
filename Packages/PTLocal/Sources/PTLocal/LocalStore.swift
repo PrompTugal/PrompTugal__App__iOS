@@ -71,6 +71,9 @@ public final class LocalStore {
     public var country: PlaceSite? { places[PlaceDirectory.country.id] }
     public func site(_ id: String) -> PlaceSite? { places[id] }
 
+    /// The newest `updated` stamp across the place files: when the place agents last read their towns.
+    public var placesReadAt: Date? { Freshness.newest(places.values.map(\.updated)) }
+
     public var townSites: [PlaceSite] { PlaceDirectory.towns.compactMap { places[$0.id] } }
     public var liveTownCount: Int { townSites.filter(\.isLive).count }
     public var storyCount: Int { townSites.reduce(0) { $0 + $1.aiNews.count } }
