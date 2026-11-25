@@ -24,12 +24,12 @@ struct PublicAppTests {
         #expect(AgendaSeed.events().count > 150)
     }
 
-    @Test("iPhone has four tabs in order: Places, News, Now, Explore; the Summit's My program is in More")
+    @Test("iPhone has four tabs in order: Places, News, Now, Explore; the summit's My program is no longer listed")
     @MainActor func fourTabs() {
         let tabs = PublicDestinations.all.filter { $0.phoneTab != nil }.sorted { ($0.phoneTab ?? 0) < ($1.phoneTab ?? 0) }
         #expect(tabs.map(\.id) == ["places", "news.home", "now", "explore"])
         #expect(tabs.compactMap(\.phoneTab) == [0, 1, 2, 3])
-        #expect(PublicDestinations.listed("More", debug: false).map(\.id).contains("team.schedule"))
+        #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("team.schedule"))
         #expect(PublicDestinations.openable("team.schedule", debug: false) != nil)
     }
 
@@ -38,7 +38,9 @@ struct PublicAppTests {
         let more = try #require(PublicDestinations.destination("settings"))
         #expect(more.title == "More")
         #expect(more.phoneTab == nil)
-        #expect(PublicDestinations.listed("More", debug: false).map(\.id).contains("map"))
+        #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("map"))
+        #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("local.credit"))
+        #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("local.ci-status"))
     }
 
     @Test("promptugal://open/map still opens the venue map, now in More")

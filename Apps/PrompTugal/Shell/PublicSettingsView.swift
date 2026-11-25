@@ -33,38 +33,15 @@ struct PublicSettingsView: View {
                 }
                 .accessibilityIdentifier("pt.more.newsroom")
                 NavigationLink {
-                    CIStatusView()
-                } label: {
-                    Label("CI status", systemImage: "gauge.with.dots.needle.67percent")
-                }
-                .accessibilityIdentifier("pt.more.ci-status")
-                NavigationLink {
                     AskAndSummariseView()
                 } label: {
                     Label("Ask and summarise", systemImage: "sparkles")
                 }
                 .accessibilityIdentifier("pt.more.ask")
-                NavigationLink {
-                    LocalCreditView()
-                } label: {
-                    Label("Reading credit", systemImage: "sterlingsign.circle")
-                }
-                .accessibilityIdentifier("pt.more.credit")
             } header: {
                 Text("PrompTugal.news by place")
             } footer: {
-                Text("The agents behind the 17 town sites of the Algarve: what each is doing now. CI status: how long a push takes to reach the website and TestFlight, and whether this build is the latest. Ask and summarise: Apple Intelligence on this device, persona mode and the town near you. Read-only.")
-            }
-            StandSection()
-            Section {
-                NavigationLink {
-                    ReminderSettingsView()
-                } label: {
-                    Label("Reminders", systemImage: "bell.badge")
-                }
-                Button { showHow = true } label: {
-                    Label("Show the welcome again", systemImage: "questionmark.circle")
-                }
+                Text("The agents behind the town sites: what each is doing now, read-only. Ask and summarise: Apple Intelligence on this device, persona mode and the town near you.")
             }
             Section {
                 Picker(selection: $appearance) {
@@ -73,11 +50,6 @@ struct PublicSettingsView: View {
                     Label("Appearance", systemImage: "circle.lefthalf.filled")
                 }
                 .accessibilityIdentifier("pt.more.appearance")
-            }
-            Section {
-                PickCalendarToggle()
-            } footer: {
-                Text("The app adds talks and never reads your calendar. Taking a pick off leaves its event in the calendar.")
             }
             // PTTalk's "Connect to the newsroom" is hidden in this App Store version (Dinis, 25 Nov), like place comments.
             Section {
@@ -91,7 +63,7 @@ struct PublicSettingsView: View {
             } header: {
                 Text("About")
             } footer: {
-                Text(SupportLinks.independence)
+                Text("PrompTugal.news is an independent newsroom in Portugal.")
                     .accessibilityIdentifier("pt.notAffiliated")
             }
             #if DEBUG
