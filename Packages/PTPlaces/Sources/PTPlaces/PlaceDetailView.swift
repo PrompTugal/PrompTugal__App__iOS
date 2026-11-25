@@ -253,12 +253,21 @@ public struct PlaceDetailView: View {
 
     // MARK: News
 
+    /// Where this page's data came from, and how old it is.
+    private var origin: PlacesOrigin {
+        guard let feed = store.files[id] else {
+            return PlacesOrigin.describe(pinned: false, phase: .loading, fetched: nil, dataDate: nil)
+        }
+        return feed.origin(dataDate: file?.updated ?? place?.updated)
+    }
+
     @ViewBuilder private var news: some View {
-        let items = file?.newsByWeight ?? []
+        let items = file?.newsNewestFirst ?? []
         if let lead = items.first {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "Local AI news"),
-                            subtitle: String(localized: "Each story passes the PrompTugal test: AI within three steps, with the path written down"), accent: accent)
+                            subtitle: String(localized: "Newest first. Each story passes the PrompTugal test: AI within three steps, with the path written down, and links to its source"), accent: accent)
+                PlacesOriginLabel(origin: origin)
                 LeadStory(item: lead, accent: accent, subject: subject(for: lead))
                 let rest = Array(items.dropFirst())
                 if !rest.isEmpty {
@@ -392,13 +401,15 @@ public struct PlaceDetailView: View {
     // MARK: Events
 
     @ViewBuilder private var events: some View {
-        let items = file?.events ?? []
+        let items = (file?.eventsNewestFirst ?? []).filter { $0.sourceLink != nil }
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "Events"), accent: accent)
+                SectionHead(title: String(localized: "Events"),
+                            subtitle: String(localized: "Latest date first, each with the page it was read from"), accent: accent)
+                PlacesOriginLabel(origin: origin)
                 ForEach(items) { event in
                     Button {
-                        if let url = URL(string: event.url) { openURL(url) }
+                        if let url = event.sourceLink { openURL(url) }
                     } label: {
                         HStack(alignment: .top, spacing: Space.m) {
                             VStack(spacing: 0) {
@@ -414,6 +425,7 @@ public struct PlaceDetailView: View {
                                 if !event.aiPath.isEmpty {
                                     Text(event.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
                                 }
+                                ReadAtLine(outlet: event.outlet, readOn: event.readOn, accent: accent)
                             }
                             Spacer(minLength: 0)
                         }
@@ -510,6 +522,35 @@ public struct PlaceDetailView: View {
 
 // MARK: - Parts
 
+/// "Read at <outlet>" with the day it was read: the link line under every story and event.
+struct ReadAtLine: View {
+    let outlet: String
+    let readOn: String
+    let accent: Color
+    /// A held item: "Read it at <outlet>", as the only way to its content.
+    var held = false
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "arrow.up.right.square")
+            Text(label).lineLimit(1)
+            Spacer(minLength: Space.s)
+            if !readOn.isEmpty {
+                Text(String(localized: "read on \(PlaceDates.short(readOn))"))
+                    .foregroundStyle(Palette.muted)
+                    .lineLimit(1)
+            }
+        }
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(accent)
+    }
+
+    private var label: String {
+        if outlet.isEmpty { return held ? String(localized: "Read it at the source") : String(localized: "Read at the source") }
+        return held ? String(localized: "Read it at \(outlet)") : String(localized: "Read at \(outlet)")
+    }
+}
+
 /// The lead story, set big, with its AI path drawn as a line of steps.
 struct LeadStory: View {
     let item: NewsItem
@@ -537,7 +578,7 @@ struct LeadStory: View {
                     .foregroundStyle(Palette.ink.opacity(0.85))
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-                if !item.aiPath.isEmpty {
+                if !item.isHeld, !item.aiPath.isEmpty {
                     HStack(alignment: .top, spacing: Space.s) {
                         Image(systemName: "point.topleft.down.to.point.bottomright.curvepath").foregroundStyle(accent)
                         VStack(alignment: .leading, spacing: 4) {
@@ -548,16 +589,8 @@ struct LeadStory: View {
                     .padding(Space.m)
                     .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 }
-                if let provenance = item.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
-                HStack {
-                    Label(String(localized: "Read at the source"), systemImage: "arrow.up.right.square")
-                    Spacer()
-                    if !item.readOn.isEmpty {
-                        Text(String(localized: "read on \(PlaceDates.short(item.readOn))")).foregroundStyle(Palette.muted)
-                    }
-                }
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(accent)
+                if !item.isHeld, let provenance = item.provenance { ProvenanceLine(provenance: provenance, accent: accent) }
+                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent, held: item.isHeld)
             }
             .padding(Space.xl)
             .background(Palette.card)

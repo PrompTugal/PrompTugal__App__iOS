@@ -29,7 +29,9 @@ public struct PlacesHomeView: View {
                 if store.places.isEmpty {
                     loadingOrError
                 } else {
-                    regionHero
+                    PlacesMapHero(store: store, wide: wide)
+                    SinceYouLookedSection(store: store, wide: wide)
+                    BubblingUpSection(store: store, wide: wide)
                     caseStudies
                     if let homeAccessory { homeAccessory() }
                     nationalEdition
@@ -74,7 +76,7 @@ public struct PlacesHomeView: View {
             }
             Rectangle().fill(Palette.ink).frame(height: 2)
             HStack {
-                Text(String(localized: "Portugal · The Algarve · 17 towns"))
+                Text(mastheadLine)
                 Spacer()
                 Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide))
             }
@@ -85,6 +87,14 @@ public struct PlacesHomeView: View {
         }
         .padding(.horizontal, gutter)
         .padding(.top, Space.m)
+    }
+
+    private var mastheadLine: String {
+        let towns = store.algarveTowns.count
+        let capitals = store.portugalCities.count
+        if towns == 0 { return String(localized: "Portugal · The Algarve") }
+        if capitals == 0 { return String(localized: "Portugal · The Algarve · \(towns) towns") }
+        return String(localized: "Portugal · The Algarve · \(towns) towns · \(capitals) district capitals")
     }
 
     @ViewBuilder private var loadingOrError: some View {
@@ -104,60 +114,6 @@ public struct PlacesHomeView: View {
             }
             .frame(maxWidth: .infinity, minHeight: 300)
         }
-    }
-
-    // MARK: The region hero: the Algarve from above, its towns pinned in their colours
-
-    private var regionHero: some View {
-        let region = store.place("algarve")
-        let file = store.file("algarve")
-        return ZStack(alignment: .bottomLeading) {
-            RegionMap(store: store, interactive: false)
-                .frame(height: wide ? 520 : 400)
-            Scrim(strength: 0.85).allowsHitTesting(false)
-            VStack(alignment: .leading, spacing: Space.s) {
-                Kicker(text: String(localized: "The region"), color: .white.opacity(0.85))
-                Text(region?.name ?? "The Algarve")
-                    .font(.system(size: wide ? 64 : 44, weight: .black, design: .serif))
-                    .foregroundStyle(.white)
-                if let mandate = file?.mandate, !mandate.isEmpty {
-                    Text(mandate)
-                        .font(wide ? .title3 : .subheadline)
-                        .foregroundStyle(.white.opacity(0.92))
-                        .lineLimit(wide ? 3 : 4)
-                        .frame(maxWidth: 720, alignment: .leading)
-                }
-                HStack(spacing: Space.m) {
-                    heroStat(store.algarveTowns.count, String(localized: "towns"))
-                    heroStat(store.algarveTowns.reduce(0) { $0 + $1.aiNews }, String(localized: "local AI stories"))
-                    heroStat(store.algarveTowns.reduce(0) { $0 + $1.aiMap }, String(localized: "on the AI map"))
-                    heroStat(store.algarveTowns.filter(\.isLive).count, String(localized: "live"))
-                }
-                .padding(.top, 4)
-                if let region {
-                    NavigationLink(value: PlaceRoute(region.id)) {
-                        Label(String(localized: "Open the Algarve"), systemImage: "arrow.right.circle.fill")
-                            .font(.headline)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.white)
-                    .foregroundStyle(Palette.ink)
-                    .padding(.top, 4)
-                }
-            }
-            .padding(gutter)
-        }
-        .clipShape(RoundedRectangle(cornerRadius: wide ? Space.radius : 0))
-        .padding(.horizontal, wide ? gutter : 0)
-        .accessibilityIdentifier("places.hero")
-    }
-
-    private func heroStat(_ value: Int, _ label: String) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("\(value)").font(.system(.title, design: .serif, weight: .bold)).monospacedDigit()
-            Text(label).font(.caption2.weight(.semibold)).textCase(.uppercase).opacity(0.8)
-        }
-        .foregroundStyle(.white)
     }
 
     // MARK: Case studies
@@ -236,28 +192,33 @@ public struct PlacesHomeView: View {
         .padding(.horizontal, gutter)
     }
 
-    // MARK: Across Portugal (the district capitals, 16 Nov)
+    // MARK: Across Portugal (every district capital the index has; the Algarve's numbers keep to the Algarve)
 
     @ViewBuilder private var acrossPortugal: some View {
         let cities = store.portugalCities
         if !cities.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "Across Portugal"),
-                            subtitle: String(localized: "The district capitals, each with its own agent and AI map"), accent: Palette.red)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: Space.m) {
-                        ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
-                            NavigationLink(value: PlaceRoute(place.id)) {
-                                TownTile(place: place, file: store.file(place.id), seed: index + 3)
-                                    .frame(width: wide ? 220 : 170)
-                            }
-                            .buttonStyle(.plain)
+                            subtitle: capitalsSubtitle(cities.count), accent: Palette.red)
+                PlacesOriginLabel(origin: store.index.origin(dataDate: cities.map(\.updated).max()))
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: wide ? 200 : 150), spacing: Space.m)], spacing: Space.m) {
+                    ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
+                        NavigationLink(value: PlaceRoute(place.id)) {
+                            TownTile(place: place, file: store.file(place.id), seed: index + 3)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
+                .accessibilityIdentifier("places.capitals")
             }
             .padding(.horizontal, gutter)
         }
+    }
+
+    private func capitalsSubtitle(_ count: Int) -> String {
+        count == 1
+            ? String(localized: "One district capital so far, with its own agent and AI map")
+            : String(localized: "The \(count) district capitals, each with its own agent and AI map")
     }
 
     // MARK: Everything is connected
@@ -340,7 +301,7 @@ public struct PlacesHomeView: View {
     private var footer: some View {
         VStack(alignment: .leading, spacing: Space.s) {
             Rectangle().fill(Palette.rule).frame(height: 1)
-            Text(String(localized: "Every fact on these pages comes from promptugal.news, with its source and the date it was read. PrompTugal.news is an independent newsroom."))
+            Text(String(localized: "Every fact on these pages comes from promptugal.news, with its source and the date it was read."))
                 .font(.caption).foregroundStyle(Palette.muted)
             Button {
                 openURL(PlacesStore.site.appendingPathComponent("algarve/"))
@@ -446,6 +407,9 @@ struct CaseStudyCard: View {
                     StepsBadge(steps: lead.steps, accent: accent)
                     Text(lead.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).lineLimit(3)
                     Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
+                    if lead.isHeld {
+                        ReadAtLine(outlet: lead.outlet, readOn: "", accent: accent, held: true)
+                    }
                 } else if let mandate = file?.mandate {
                     Text(mandate).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(4)
                 }
@@ -532,7 +496,8 @@ struct StoryTile: View {
                 Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).lineLimit(4)
                 Text(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
                 Spacer(minLength: 0)
-                StepsBadge(steps: item.steps, accent: accent)
+                if !item.isHeld { StepsBadge(steps: item.steps, accent: accent) }
+                ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent, held: item.isHeld)
             }
             .padding(Space.l)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -578,10 +543,14 @@ struct StoryRow: View {
                             .font(.caption2).foregroundStyle(Palette.muted)
                     }
                     Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
-                    if !item.aiPath.isEmpty {
-                        Text(item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                    if item.isHeld {
+                        ReadAtLine(outlet: item.outlet, readOn: "", accent: accent, held: true)
+                    } else {
+                        if !item.aiPath.isEmpty {
+                            Text(item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                        }
+                        StepsBadge(steps: item.steps, accent: accent)
                     }
-                    StepsBadge(steps: item.steps, accent: accent)
                 }
                 Spacer(minLength: 0)
             }
