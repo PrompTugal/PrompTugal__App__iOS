@@ -4,8 +4,8 @@
 
 ## Version and build
 
-- **Version:** the c1 build's version (0.4.124 or the next number the release bot gives). It must match the build's CFBundleShortVersionString.
-- **Build:** the c1 TestFlight build once it is processed (fallback: 667, 0.4.120, which still has the Talks segment and the top-up message).
+- **Version:** the c2d build's version (0.4.124 or the next number the release bot gives). It must match the build's CFBundleShortVersionString.
+- **Build:** the c2d TestFlight build once it is processed.
 
 ## Name and subtitle (30 each)
 
@@ -71,7 +71,7 @@ The newsroom board can replay the last 24 hours of the agents' real activity (la
 
 ## App Privacy (**manual**)
 
-Answer stays **Data Not Collected**, on one condition: a public user cannot send anything. In c1 the place comments, thumbs votes ("Sign in with your person key") and More > "Connect to the newsroom" are still visible; nothing is sent without a person key and a pasted lane link, but a reviewer sees an unusable sign-in. See the open question below.
+Answer: **Data Not Collected**. In c2d a public user cannot send anything: comments, sign-in, thumbs votes and "Connect to the newsroom" are hidden.
 
 What leaves the device in c2d for a public user: plain GETs of public files from promptugal.news and its data sites, ios.app.promptugal.news and raw.githubusercontent.com. Location, Apple Intelligence and the on-device reading count stay on the device. No analytics, crash reporting, ads or third-party SDKs.
 
