@@ -17,6 +17,8 @@ public struct ExploreHooks {
     public var leadingToolbar: (@MainActor () -> AnyView)?
     /// Trailing items for the screen's navigation bar, e.g. the app's More button.
     public var trailingToolbar: (@MainActor () -> AnyView)?
+    /// False leaves Talks out: no Talks segment and no talks in search. The screen then opens on Speakers.
+    public var showsTalks: Bool
 
     public init(talks: (@MainActor () -> AnyView)? = nil,
                 talkDetail: (@MainActor (ExploreItem) -> AnyView)? = nil,
@@ -24,7 +26,8 @@ public struct ExploreHooks {
                 graph: (@MainActor () -> AnyView)? = nil,
                 talkActions: TalkActions = TalkActions(),
                 leadingToolbar: (@MainActor () -> AnyView)? = nil,
-                trailingToolbar: (@MainActor () -> AnyView)? = nil) {
+                trailingToolbar: (@MainActor () -> AnyView)? = nil,
+                showsTalks: Bool = true) {
         self.talks = talks
         self.talkDetail = talkDetail
         self.header = header
@@ -32,6 +35,7 @@ public struct ExploreHooks {
         self.talkActions = talkActions
         self.leadingToolbar = leadingToolbar
         self.trailingToolbar = trailingToolbar
+        self.showsTalks = showsTalks
     }
 }
 
@@ -68,7 +72,8 @@ public struct ExploreScreen: View {
 
     public init(store: ExploreStore? = nil, hooks: ExploreHooks = ExploreHooks(), start: ExploreStart = .talks) {
         let store = store ?? ExploreStore()
-        store.kind = start.kind
+        if !hooks.showsTalks { store.kinds = ExploreKind.browsable.filter { $0 != .event } }
+        store.kind = store.kinds.contains(start.kind) ? start.kind : (store.kinds.first ?? start.kind)
         _store = State(initialValue: store)
         self.hooks = hooks
         self.start = start
@@ -106,6 +111,8 @@ public struct ExploreScreen: View {
     private func openStart() {
         guard !started else { return }
         switch start {
+        case .talk where !hooks.showsTalks:
+            started = true
         case .graph:
             started = true
             if hooks.graph != nil { path.append(ExploreGraphRoute()) }
@@ -135,14 +142,16 @@ public struct ExploreListView: View {
         VStack(spacing: 0) {
             if let header = hooks.header { header().padding(.horizontal, Space.l).padding(.top, Space.s) }
             Picker(String(localized: "Show", bundle: .module), selection: $store.kind) {
-                ForEach(ExploreKind.browsable) { Text($0.title).tag($0) }
+                ForEach(store.kinds) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
             .padding(.horizontal, Space.l)
             .padding(.vertical, Space.s)
             content
         }
-        .searchable(text: $store.query, prompt: String(localized: "Search talks, speakers, companies, places", bundle: .module))
+        .searchable(text: $store.query, prompt: hooks.showsTalks
+                    ? String(localized: "Search talks, speakers, companies, places", bundle: .module)
+                    : String(localized: "Search speakers, companies, places", bundle: .module))
         .task { if store.index == nil { await store.load() } }
         .refreshable { await store.load() }
     }
