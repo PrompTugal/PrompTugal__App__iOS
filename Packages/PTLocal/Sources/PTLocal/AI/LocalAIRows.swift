@@ -56,8 +56,7 @@ public struct AIStoryRow: View {
             }
             .accessibilityElement(children: .combine)
             Spacer(minLength: 0)
-            // A held story is not summarised or explained on the device: nothing may be drawn from it.
-            if !story.isHeld { StorySummaryButton(story: story, town: town ?? townForAI) }
+            StorySummaryButton(story: story, town: town ?? townForAI)
         }
         .padding(.vertical, 4)
     }

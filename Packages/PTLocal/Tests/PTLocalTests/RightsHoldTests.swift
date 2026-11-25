@@ -4,7 +4,7 @@ import Testing
 
 private let heldTown = """
 {"id":"faro","name":"Faro","updated":"2026-11-21","ai_news":[
- {"title":"Held story","summary":"Not to be shown","date":"2026-11-16","publisher":"Barlavento",
+ {"title":"Held story","summary":"Shown though held","date":"2026-11-16","publisher":"Barlavento",
   "url":"https://www.barlavento.pt/a/","ai_path":"Not to be shown either","steps":1,
   "hold":"held under R12 (ABP v1.18.1): not to be published or shown"},
  {"title":"Cleared story","summary":"Shown","date":"2026-11-15","publisher":"Sul Informação",
@@ -15,13 +15,14 @@ private let heldTown = """
 
 @Suite("Rights hold on by-place stories")
 struct RightsHoldTests {
-    @Test("A held story keeps only headline, outlet, date and link; a blank hold is no hold")
+    @Test("A held story keeps headline, summary, outlet, date and link, not its AI path; a blank hold is no hold")
     func decode() throws {
         let site = try JSONDecoder().decode(PlaceSite.self, from: Data(heldTown.utf8))
         let held = site.aiNews[0]
         #expect(held.isHeld)
         #expect(held.title == "Held story" && held.publisher == "Barlavento" && held.date == "2026-11-16")
-        #expect(held.summary == nil && held.aiPath == nil && held.steps == nil && held.stepsLabel == nil)
+        #expect(held.summary == "Shown though held")
+        #expect(held.aiPath == nil && held.steps == nil && held.stepsLabel == nil)
         #expect(held.sourceURL?.absoluteString == "https://www.barlavento.pt/a/")
         #expect(held.readItAt == "Read it at Barlavento")
         let cleared = site.aiNews[1]
@@ -30,12 +31,13 @@ struct RightsHoldTests {
         #expect(site.aiNews[2].readItAt == "Read it at example.pt")
     }
 
-    @Test("Held stories are never given to the on-device model")
+    @Test("Held stories reach the on-device model with their summary, never their AI path")
     func prompts() throws {
         let site = try JSONDecoder().decode(PlaceSite.self, from: Data(heldTown.utf8))
         let prompt = LocalPrompts.town(site)
-        #expect(!prompt.contains("Held story"))
-        #expect(!prompt.contains("Not to be shown"))
+        #expect(prompt.contains("Held story"))
+        #expect(prompt.contains("Shown though held"))
+        #expect(!prompt.contains("Not to be shown either"))
         #expect(prompt.contains("Cleared story"))
     }
 }

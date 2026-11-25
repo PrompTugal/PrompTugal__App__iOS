@@ -22,6 +22,6 @@ Tests: `FreshnessTests`, `NewsroomStatusTests`, `TownLayersTests` (fixtures incl
 - Place files carry only a day in `updated`, so a place read today after 03:00 reads as "Snapshot, read <today>".
 - Notices "still open" are filtered by deadline on the device (the feed lists some already past).
 
-## Added after the first ready: rights hold (at c.ios's word)
+## Added after the first ready: rights hold (Dinis, 25 Nov ~23:35, via c.ios)
 
-- `PlaceSite.News` decodes `hold`. A held story drops its summary, AI path and steps at decode time, so no PTLocal row, ranking or on-device prompt can show or use them. Rows show headline, outlet, date and "Read it at <outlet>" with the source link; the Apple Intelligence button is hidden for held stories and they are left out of the town and persona prompts. Tests in `RightsHoldTests`. Today every Faro item in the live by-place file is held.
+- `PlaceSite.News` decodes `hold`. A held story keeps headline, summary, outlet, date and source link, with "Read it at <outlet>"; its AI path and steps are dropped at decode time, so no row, ranking or prompt can use them. Held summaries are used in on-device summaries; "Explain the AI path" is hidden for held stories. Tests in `RightsHoldTests`. Today every Faro item in the live by-place file is held.

@@ -99,9 +99,9 @@ public struct PlaceSite: Decodable, Sendable, Identifiable, Hashable {
         public let readOn: String?
         public let aiPath: String?
         public let steps: Int?
-        /// Set when the site's rights desk holds the item ("held under R12 ... not to be shown"). A held story keeps
-        /// only its headline, outlet, date and source link: its summary, AI path and steps are dropped when decoded,
-        /// so no screen, ranking or on-device prompt can show or use them.
+        /// Set when the site's rights desk holds the item ("held under R12 ..."). A held story keeps its headline,
+        /// summary, outlet, date and source link (Dinis, 25 Nov); its AI path and steps are dropped when decoded, so no
+        /// screen, ranking or on-device prompt can show or use them.
         public let hold: String?
 
         enum CodingKeys: String, CodingKey {
@@ -117,12 +117,11 @@ public struct PlaceSite: Decodable, Sendable, Identifiable, Hashable {
             readOn = try? c.decode(String.self, forKey: .readOn)
             let held = (try? c.decode(String.self, forKey: .hold))?.trimmingCharacters(in: .whitespacesAndNewlines)
             hold = (held?.isEmpty ?? true) ? nil : held
+            summary = try? c.decode(String.self, forKey: .summary)
             if hold == nil {
-                summary = try? c.decode(String.self, forKey: .summary)
                 aiPath = try? c.decode(String.self, forKey: .aiPath)
                 steps = try? c.decode(Int.self, forKey: .steps)
             } else {
-                summary = nil
                 aiPath = nil
                 steps = nil
             }
@@ -130,7 +129,7 @@ public struct PlaceSite: Decodable, Sendable, Identifiable, Hashable {
 
         public var isHeld: Bool { hold != nil }
 
-        /// "Read it at Barlavento": for a held story, the only way to its content.
+        /// "Read it at Barlavento": for a held story, the way to the full piece.
         public var readItAt: String {
             let outlet = (publisher ?? "").trimmingCharacters(in: .whitespaces)
             if !outlet.isEmpty { return "Read it at \(outlet)" }

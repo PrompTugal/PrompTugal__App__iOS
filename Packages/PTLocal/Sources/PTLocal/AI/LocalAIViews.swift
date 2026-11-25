@@ -150,9 +150,12 @@ struct StoryAISheet: View {
                             Button {
                                 ask.run(instructions: LocalPrompts.storyInstructions, prompt: LocalPrompts.story(story, town: town))
                             } label: { Label("Summarise", systemImage: "text.quote") }
-                            Button {
-                                ask.run(instructions: LocalPrompts.aiPathInstructions, prompt: LocalPrompts.aiPath(story, town: town))
-                            } label: { Label("Explain the AI path", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
+                            // A held story's AI path stays hidden, so there is none to explain.
+                            if !story.isHeld {
+                                Button {
+                                    ask.run(instructions: LocalPrompts.aiPathInstructions, prompt: LocalPrompts.aiPath(story, town: town))
+                                } label: { Label("Explain the AI path", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
+                            }
                         }
                         .buttonStyle(.bordered)
                         .disabled(ask.running)
@@ -199,10 +202,6 @@ public struct StorySummaryButton: View {
         .buttonStyle(.plain)
         .accessibilityLabel("Summarise or explain this story with Apple Intelligence on this device")
         .sheet(isPresented: $showing) { StoryAISheet(story: story, town: town) }
-        // A story under a rights hold is never summarised or explained on the device.
-        .opacity(story.isHeld ? 0 : 1)
-        .disabled(story.isHeld)
-        .accessibilityHidden(story.isHeld)
     }
 }
 
