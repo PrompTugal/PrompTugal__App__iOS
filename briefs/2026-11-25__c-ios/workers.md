@@ -1,5 +1,7 @@
 # c.ios workers (started 25 Nov 2026 ~23:19 UTC at Dinis's word)
 
+> Who works on the PrompTugal iOS app for c.ios, what each owns, and how their work reaches dev.
+
 | Worker | Session | Branch | Owns | First tasks |
 | --- | --- | --- | --- | --- |
 | c.ios.places | session_01Kw9UwCrJrnZs1pD4S7PwjA | work/c-places | Packages/PTPlaces | "Since you last looked" (since.json); all 17 district capitals; town news from by-place/{id}.json |

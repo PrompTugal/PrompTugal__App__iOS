@@ -1,49 +1,45 @@
 <!--
-title: Privacy · PrompTugal for iOS
-description: PrompTugal: Lisbon Summit collects no data. Your picks, settings and reminders stay on your phone; the app only downloads the public agenda and news from promptugal.news. No account, no analytics, no advertising, no tracking.
+title: Privacy · PrompTugal.news for iOS
+description: PrompTugal.news collects no data. It reads public news and place data from promptugal.news and public weather data from IPMA; your location, if you allow it, stays on your phone. No account, no analytics, no advertising, no tracking.
 nav: Privacy
 order: 7
 -->
 <section class="band">
   <div class="wrap prose">
-    <p class="kicker">Privacy · PrompTugal app</p>
+    <p class="kicker">Privacy · PrompTugal.news app</p>
     <h1>The app collects no data</h1>
-    <p class="lede">PrompTugal: Lisbon Summit {{version}} has no account, no analytics, no advertising, no tracking and no third-party SDKs. Nothing you pick, type or set leaves your phone. On the App Store its privacy label reads <strong>Data Not Collected</strong>. This page explains what the app keeps on your device and the one thing it does on the network.</p>
+    <p class="lede">PrompTugal.news {{version}} has no account, no analytics, no advertising, no tracking and no third-party SDKs. Nothing you do in the app is sent to us or to anyone else. On the App Store its privacy label reads <strong>Data Not Collected</strong>.</p>
 
     <h2 id="device">What stays on your device</h2>
     <ul>
-      <li><strong>Your picks, your program and your settings,</strong> in the app’s private storage.</li>
-      <li><strong>A saved copy of the agenda and the news,</strong> so the app works with no signal. A copy of the agenda is also built into the app for the first launch.</li>
-      <li><strong>Reminders.</strong> They are local notifications, scheduled on the device. Nothing is sent to a push server. The app asks for notification permission the first time you pick a talk, or when you turn reminders on in Settings → Reminders, never before.</li>
-      <li><strong>The Home Screen widget and the Siri and Shortcuts answers.</strong> The app keeps a small copy of what is on now and next (session titles, rooms, times, and whether you picked the session) in storage shared only with its own widget and Siri extension on this device. They read that copy and do not use the network.</li>
+      <li><strong>Your towns and settings,</strong> in the app's private storage.</li>
+      <li><strong>A saved copy of the news and place data,</strong> so the app works with no signal. A copy is also built into the app for the first launch, and every screen says which copy it shows.</li>
+      <li><strong>Your location, only if you allow it.</strong> "Near me" asks for location while the app is in use and works out the nearest town on the phone. The location is never sent anywhere and never stored.</li>
+      <li><strong>Apple Intelligence summaries.</strong> On devices that have it, summaries are made on the device with Apple's on-device model. Nothing is sent to a server for them.</li>
+      <li><strong>The reading meter,</strong> if shown, is a count kept on the device. Nothing is charged in this version.</li>
     </ul>
     <p>Deleting the app removes all of it from the device.</p>
 
     <h2 id="network">What the app does on the network</h2>
     <dl class="qa">
-      <dt>Public agenda and news</dt>
-      <dd>The app downloads the public agenda, news and graph from <code>promptugal.news</code>, and refreshes them now and then in the background. These are plain reads of public files, without cookies and without any identifier: nothing about you is sent. This is the only server the app talks to.</dd>
-      <dt>Pages from promptugal.news</dt>
-      <dd>Some talks and stories open as pages from <code>promptugal.news</code> inside the app. Links to any other website open in Safari, under that site’s own privacy policy.</dd>
-      <dt>Calendar</dt>
-      <dd>“Add to Calendar” writes a session to your calendar, only when you ask, with write-only access. The app cannot read your calendar.</dd>
+      <dt>Public news and place data</dt>
+      <dd>The app downloads public files from <code>promptugal.news</code> and its data sites (such as <code>data.promptugal.news</code>), from <code>ios.app.promptugal.news</code>, and public weather data from IPMA (<code>api.ipma.pt</code>). These are plain reads of public files, without cookies and without any identifier: nothing about you is sent.</dd>
+      <dt>Links</dt>
+      <dd>Every story links to its source. Sources and other websites open in Safari, under that site's own privacy policy.</dd>
     </dl>
 
     <h2 id="never">What the app never does</h2>
     <ul>
-      <li>No account, no tracking, no analytics, no advertising, and no third-party SDKs: the app uses Apple’s frameworks only.</li>
-      <li>It does not send your picks, notes or settings anywhere, and it has no server of its own that collects data about you.</li>
-      <li>It does not use the camera, microphone, Face ID, location, contacts or photos, and it does not read your calendar.</li>
+      <li>No account, no tracking, no analytics, no advertising, and no third-party SDKs: the app uses Apple's frameworks only.</li>
+      <li>It does not send your location, your towns or your settings anywhere, and it has no server of its own that collects data about you.</li>
+      <li>It does not use the camera, microphone, contacts or photos, and it does not read your calendar.</li>
       <li>It does not sell or share data, and it does not follow you across other apps or websites.</li>
     </ul>
 
-    <h2 id="team">The team’s own app</h2>
-    <p>The PrompTugal team also has an app of its own, for its people, its agents and its messages, with features such as an AI assistant and an encrypted vault. It is a different app with a different bundle identifier, and it is not in the App Store. Its privacy page is in the <a href="admin/team-privacy.html">developer area</a>. None of those features are in this app.</p>
-
     <h2 id="beta">The beta</h2>
-    <p>The beta is installed through TestFlight. Apple then shares your email address, device model, OS version and any feedback or crash reports you choose to send with the team. <a href="https://www.apple.com/legal/privacy/data/en/testflight/">Apple’s TestFlight privacy notice</a> has the details. Older beta builds may still include features that the App Store version does not have.</p>
+    <p>Test builds are installed through TestFlight. Apple then shares your email address, device model, OS version and any feedback or crash reports you choose to send with the team. <a href="https://www.apple.com/legal/privacy/data/en/testflight/">Apple's TestFlight privacy notice</a>.</p>
 
     <h2 id="check">Checking this, and questions</h2>
-    <p>The whole app is open source on <a href="{{repo_url}}">GitHub</a>. In the app, this page and the support page are linked from Settings → About. Questions about privacy: see <a href="support.html#contact">Contact</a>.</p>
+    <p>The whole app is open source on <a href="{{repo_url}}">GitHub</a>. In the app, this page and the support page are linked from More → About. Questions about privacy: see <a href="support.html#contact">Contact</a>.</p>
   </div>
 </section>
