@@ -19,9 +19,8 @@ public struct ExploreHooks {
     public var trailingToolbar: (@MainActor () -> AnyView)?
     /// False leaves Talks out: no Talks segment and no talks in search. The screen then opens on Speakers.
     public var showsTalks: Bool
-    /// True adds, at the end of each list, the "Lisbon summit 2026" row (the summit's index) and, with `graph`,
-    /// the newsroom's graph. The newsroom's Explore sets it.
-    public var showsSummit: Bool
+    /// True adds, with `graph`, a row for the newsroom's graph at the end of each list. The newsroom's Explore sets it.
+    public var showsGraphRow: Bool
 
     public init(talks: (@MainActor () -> AnyView)? = nil,
                 talkDetail: (@MainActor (ExploreItem) -> AnyView)? = nil,
@@ -31,7 +30,7 @@ public struct ExploreHooks {
                 leadingToolbar: (@MainActor () -> AnyView)? = nil,
                 trailingToolbar: (@MainActor () -> AnyView)? = nil,
                 showsTalks: Bool = true,
-                showsSummit: Bool = false) {
+                showsGraphRow: Bool = false) {
         self.talks = talks
         self.talkDetail = talkDetail
         self.header = header
@@ -40,7 +39,7 @@ public struct ExploreHooks {
         self.leadingToolbar = leadingToolbar
         self.trailingToolbar = trailingToolbar
         self.showsTalks = showsTalks
-        self.showsSummit = showsSummit
+        self.showsGraphRow = showsGraphRow
     }
 }
 
@@ -51,8 +50,6 @@ public enum ExploreStart: Equatable, Sendable {
     case talks, speakers, companies, places
     /// The newsroom's segments.
     case stories, library
-    /// The Lisbon summit 2026 index, behind its row.
-    case summit
     /// A talk's detail. `nil` opens the first talk of 10 Nov (or the first talk there is).
     case talk(ref: String?)
     /// The graph screen from `ExploreHooks.graph`.
@@ -64,23 +61,19 @@ public enum ExploreStart: Equatable, Sendable {
         case .speakers: .person
         case .companies: .company
         case .places: .place
-        case .stories, .summit: .article
+        case .stories: .article
         case .library: .library
         }
     }
 }
 
 struct ExploreGraphRoute: Hashable {}
-struct ExploreSummitRoute: Hashable {}
-/// An entry of the summit index, opened with the summit's store (so its links find the summit's entries).
-struct ExploreSummitItemRoute: Hashable { let item: ExploreItem }
 
-/// The Explore screen: search across the store's kinds (the newsroom's stories, companies, places and library, or the
-/// summit's talks, speakers, companies and places), a segment for each, and a detail page.
+/// The Explore screen: search across the store's kinds (the newsroom's stories, companies, places and library), a
+/// segment for each, and a detail page.
 /// Open it with `ExploreScreen()`; it brings its own navigation stack.
 public struct ExploreScreen: View {
     @State private var store: ExploreStore
-    @State private var summit: ExploreStore
     @State private var path = NavigationPath()
     @State private var started = false
     let hooks: ExploreHooks
@@ -91,7 +84,6 @@ public struct ExploreScreen: View {
         if !hooks.showsTalks { store.kinds.removeAll { $0 == .event } }
         store.kind = store.kinds.contains(start.kind) ? start.kind : (store.kinds.first ?? start.kind)
         _store = State(initialValue: store)
-        _summit = State(initialValue: ExploreStore.summit())
         self.hooks = hooks
         self.start = start
     }
@@ -110,14 +102,6 @@ public struct ExploreScreen: View {
                 }
                 .navigationDestination(for: ExploreGraphRoute.self) { _ in
                     if let graph = hooks.graph { graph() }
-                }
-                .navigationDestination(for: ExploreSummitRoute.self) { _ in
-                    ExploreListView(store: summit, hooks: hooks, inSummit: true)
-                        .navigationTitle(String(localized: "Lisbon summit 2026", bundle: .module))
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .navigationDestination(for: ExploreSummitItemRoute.self) { route in
-                    ExploreDetailView(item: route.item, store: summit, inSummit: true)
                 }
                 .navigationDestination(for: ExploreItem.self) { item in
                     if item.kind == .event, let talkDetail = hooks.talkDetail {
@@ -141,9 +125,6 @@ public struct ExploreScreen: View {
         case .graph:
             started = true
             if hooks.graph != nil { path.append(ExploreGraphRoute()) }
-        case .summit:
-            started = true
-            path.append(ExploreSummitRoute())
         case .talk(let ref):
             guard let index = store.index else { return }
             started = true
@@ -160,22 +141,15 @@ public struct ExploreScreen: View {
 public struct ExploreListView: View {
     @Bindable var store: ExploreStore
     let hooks: ExploreHooks
-    /// The summit's own list: rows open with the summit's store, and no summit row at the end.
-    let inSummit: Bool
 
     public init(store: ExploreStore, hooks: ExploreHooks = ExploreHooks()) {
-        self.init(store: store, hooks: hooks, inSummit: false)
-    }
-
-    init(store: ExploreStore, hooks: ExploreHooks, inSummit: Bool) {
         self.store = store
         self.hooks = hooks
-        self.inSummit = inSummit
     }
 
     public var body: some View {
         VStack(spacing: 0) {
-            if !inSummit, let header = hooks.header { header().padding(.horizontal, Space.l).padding(.top, Space.s) }
+            if let header = hooks.header { header().padding(.horizontal, Space.l).padding(.top, Space.s) }
             picker
             ExploreOriginLine(origin: store.origin, loading: store.phase == .loading)
                 .padding(.horizontal, Space.l)
@@ -203,11 +177,11 @@ public struct ExploreListView: View {
         if store.kinds.contains(.event) {
             return String(localized: "Search talks, speakers, companies, places", bundle: .module)
         }
-        return String(localized: "Search the summit", bundle: .module)
+        return String(localized: "Search speakers, companies, places", bundle: .module)
     }
 
-    /// The summit and graph rows at the end of the newsroom's lists.
-    private var showsFooter: Bool { hooks.showsSummit && !inSummit }
+    /// The graph row at the end of the newsroom's lists.
+    private var showsFooter: Bool { hooks.showsGraphRow && hooks.graph != nil }
 
     @ViewBuilder private var content: some View {
         if store.isSearching {
@@ -246,24 +220,16 @@ public struct ExploreListView: View {
         .listStyle(.plain)
     }
 
-    /// "Lisbon summit 2026" and the newsroom's graph, at the end of each newsroom list.
+    /// The newsroom's graph, at the end of each newsroom list.
     @ViewBuilder private var footer: some View {
         if showsFooter {
             Section {
-                NavigationLink(value: ExploreSummitRoute()) {
-                    footerRow(String(localized: "Lisbon summit 2026", bundle: .module),
-                              String(localized: "The November summit's index: people, organisations and companies", bundle: .module),
-                              symbol: "calendar")
+                NavigationLink(value: ExploreGraphRoute()) {
+                    footerRow(String(localized: "The newsroom's graph", bundle: .module),
+                              String(localized: "How its companies, places and stories connect", bundle: .module),
+                              symbol: "point.3.connected.trianglepath.dotted")
                 }
-                .accessibilityIdentifier("pt.explore.summit")
-                if hooks.graph != nil {
-                    NavigationLink(value: ExploreGraphRoute()) {
-                        footerRow(String(localized: "The newsroom's graph", bundle: .module),
-                                  String(localized: "How its companies, places and stories connect", bundle: .module),
-                                  symbol: "point.3.connected.trianglepath.dotted")
-                    }
-                    .accessibilityIdentifier("pt.explore.graph")
-                }
+                .accessibilityIdentifier("pt.explore.graph")
             }
         }
     }
@@ -330,12 +296,8 @@ public struct ExploreListView: View {
         return groups
     }
 
-    @ViewBuilder private func row(_ item: ExploreItem) -> some View {
-        if inSummit {
-            NavigationLink(value: ExploreSummitItemRoute(item: item)) { rowLabel(item) }
-        } else {
-            NavigationLink(value: item) { rowLabel(item) }
-        }
+    private func row(_ item: ExploreItem) -> some View {
+        NavigationLink(value: item) { rowLabel(item) }
     }
 
     private func rowLabel(_ item: ExploreItem) -> some View {
@@ -363,19 +325,12 @@ public struct ExploreListView: View {
 public struct ExploreDetailView: View {
     let item: ExploreItem
     let store: ExploreStore
-    /// Opened from the summit's index: links to other entries open with the summit's store.
-    let inSummit: Bool
     @State private var detail: ExploreDetail?
     @State private var failed = false
 
     public init(item: ExploreItem, store: ExploreStore) {
-        self.init(item: item, store: store, inSummit: false)
-    }
-
-    init(item: ExploreItem, store: ExploreStore, inSummit: Bool) {
         self.item = item
         self.store = store
-        self.inSummit = inSummit
     }
 
     public var body: some View {
@@ -453,11 +408,7 @@ public struct ExploreDetailView: View {
     /// A row that opens the other entry when the index has it, else plain text.
     @ViewBuilder private func linked<Content: View>(_ link: ExploreDetail.Link, @ViewBuilder label: () -> Content) -> some View {
         if let target = store.index?.item(ref: link.ref) {
-            if inSummit {
-                NavigationLink(value: ExploreSummitItemRoute(item: target)) { label() }
-            } else {
-                NavigationLink(value: target) { label() }
-            }
+            NavigationLink(value: target) { label() }
         } else {
             label()
         }

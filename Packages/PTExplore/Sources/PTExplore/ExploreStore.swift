@@ -29,15 +29,6 @@ public final class ExploreStore {
         return store
     }
 
-    /// The Lisbon summit 2026 index (the people, organisations and companies in promptugal.news's search index),
-    /// kept behind one row now that the summit is over.
-    public static func summit(source: any ExploreSource = PublishedExploreSource()) -> ExploreStore {
-        let store = ExploreStore(source: source)
-        store.kinds = [.person, .organisation, .company]
-        store.kind = .person
-        return store
-    }
-
     public func load() async {
         if index == nil { phase = .loading }
         do {

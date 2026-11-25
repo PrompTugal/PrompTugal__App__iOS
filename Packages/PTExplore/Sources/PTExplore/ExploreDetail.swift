@@ -84,7 +84,7 @@ public struct ExploreDetail: Sendable, Hashable {
             [("role", String(localized: "Role", bundle: .module)), ("organisation", String(localized: "Organisation", bundle: .module))]
         case .company:
             [("what", String(localized: "What it does", bundle: .module)), ("country", String(localized: "Country", bundle: .module)),
-             ("category", String(localized: "Category", bundle: .module)), ("attending_as", String(localized: "At the summit as", bundle: .module))]
+             ("category", String(localized: "Category", bundle: .module))]
         case .organisation:
             []
         case .place:

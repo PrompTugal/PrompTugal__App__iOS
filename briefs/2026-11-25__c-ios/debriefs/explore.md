@@ -12,18 +12,18 @@
 - **Decoding** is lenient (`JSONSerialization`, an entry without id or title is skipped, a broken file gives no entries).
 - **Provenance**: each file is read live, else this device's copy, else the built-in copy (the same five files, taken 25 Nov, in `Resources/newsroom-*.json`, about 160 KB). The worst of the five sets the line under the segments: "Live from PrompTugal.news", "Offline: the last copy this device read" or "Built-in copy of 25 Nov 2026: connect to update". Detail screens carry the same line (the summit source now reports its origin too). An error page never replaces a good copy.
 - **Detail**: a story opens its record (`api/v1/articles/<id>.json`): summary, date, by, town, and a **Sources** section with every source link, plus "Open on promptugal.news". Companies and places use the existing graph records (companies now also list their sources). Library items and videos need no fetch: facts from the list, "Watch on YouTube" or "Open the original", and "Open on library.promptugal.news" / "videos.promptugal.news".
-- **Summit**: one "Lisbon summit 2026" row at the end of each list opens the old index (`ExploreStore.summit()`: people, organisations, companies from `search-docs.json`; empty segments are hidden, and the live file has no people any more, so it shows Organisations and Companies). Next to it, "The newsroom's graph" (PTNews `GraphExplorerView`, the whole newsroom graph, so it still makes sense).
-- **ExploreView** (shell): uses `ExploreStore.newsroom()`, `showsSummit: true`; the "Explore the summit graph" card, the Talks agenda hook and the talk sheet are gone.
-- `ExploreStart` gained `.stories`, `.library`, `.summit`. Starts that point at kinds the newsroom does not have (`.speakers`, `.talk`) open on Stories.
+- **Summit gone** (Dinis, 25 Nov ~23:35, "move away"): no summit row, no summit index, no `ExploreStart.summit`; company details no longer show "At the summit as". Each list ends with "The newsroom's graph" (PTNews `GraphExplorerView`, the whole newsroom graph). `TalkDetailView`, `TalkRef`, `TalkActions` and the older `search-docs.json` reader stay in the package only because the shell's My program and Now open the shared talk detail; Explore no longer uses them.
+- **ExploreView** (shell): uses `ExploreStore.newsroom()`, `showsGraphRow: true`; the "Explore the summit graph" card, the Talks agenda hook, the talk actions and the talk sheet are gone.
+- `ExploreStart` gained `.stories` and `.library`. Starts that point at kinds the newsroom does not have (`.speakers`, `.talk`) open on Stories.
 - Strings: 27 new keys, English and pt-PT only; the other 14 languages fall back to English.
 
 ## Tests
 
-`NewsroomTests.swift`: decoders per file, dedupe, leniency, article record and sources, newest-first order, search across kinds, the newsroom and summit stores, live / cached / built-in / mixed origins, error page, the bundled copy decodes, library detail without fetch. The existing summit tests are unchanged.
+`NewsroomTests.swift`: decoders per file, dedupe, leniency, article record and sources, newest-first order, search across kinds, the newsroom store and hidden empty segments, live / cached / built-in / mixed origins, error page, the bundled copy decodes, library detail without fetch. The existing summit tests are unchanged.
 
 ## Open items for the conductor
 
-1. **Destinations.swift** (not mine): `"explore"` and `"explore.people"` map to `.speakers`, which now falls through to Stories. Worth mapping `"explore"` → `.stories` and adding `"explore.stories"`, `"explore.library"`, `"explore.summit"` for the App Store screenshots (screens.yml).
-2. **"Web Summit" text in content**: some library and video titles and publishers are as their sources publish them ("Web Summit 2026 | Opening Night", channel "Web Summit"). App chrome never says it, but these titles show on screen. If the rule covers quoted titles too, the decoders can rewrite or filter them; say which.
-3. Translations for the other 14 languages.
+1. **Destinations.swift** (conductor, at merge): `"explore"` → `.stories`, plus `"explore.stories"` and `"explore.library"`. `"explore.talk"` and `"explore.people"` now just open Stories.
+2. Third-party titles and publishers stay as their sources publish them (conductor, 25 Nov: quoting, with the source link).
+3. Translations for the other 14 languages (English and pt-PT are enough for now).
 4. The built-in copy is dated 25 Nov; refresh the five files before a release if it matters.

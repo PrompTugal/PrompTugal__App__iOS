@@ -164,10 +164,10 @@ struct NewsroomSearchTests {
         #expect(store.grouped().map(\.kind) == [.article, .place])
     }
 
-    @MainActor @Test("The summit store hides a segment with no entries")
-    func summitHidesEmpty() async throws {
+    @MainActor @Test("A segment with no entries is not offered")
+    func hidesEmpty() async throws {
         let index = ExploreIndex(items: [ExploreItem(id: "company:a", kind: .company, title: "A")])
-        let store = ExploreStore.summit(source: FixedSource(fixed: index))
+        let store = ExploreStore.newsroom(source: FixedSource(fixed: index))
         await store.load()
         #expect(store.shownKinds == [.company])
         #expect(store.kind == .company)

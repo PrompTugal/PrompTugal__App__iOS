@@ -1153,23 +1153,6 @@
         }
       }
     },
-    "Lisbon summit 2026": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lisbon summit 2026"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cimeira de Lisboa 2026"
-          }
-        }
-      }
-    },
     "Live from PrompTugal.news": {
       "extractionState": "manual",
       "localizations": {
@@ -2648,23 +2631,6 @@
         }
       }
     },
-    "Search the summit": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search the summit"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pesquisar a cimeira"
-          }
-        }
-      }
-    },
     "Session": {
       "extractionState": "manual",
       "localizations": {
@@ -3335,23 +3301,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "O grafo da redação"
-          }
-        }
-      }
-    },
-    "The November summit's index: people, organisations and companies": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The November summit's index: people, organisations and companies"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O índice da cimeira de novembro: pessoas, organizações e empresas"
           }
         }
       }

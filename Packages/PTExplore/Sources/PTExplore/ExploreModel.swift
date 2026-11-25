@@ -10,8 +10,8 @@ public enum ExploreKind: String, CaseIterable, Codable, Sendable, Hashable, Iden
 
     public var id: String { rawValue }
 
-    /// The kinds the summit index lets a person browse: Talks, Speakers, Companies, Places. Organisations stay
-    /// in the data and in search results of the others, not as a segment.
+    /// The kinds of the older talks index (search-docs.json), still read by the shared talk detail that My program
+    /// opens. Explore itself no longer offers them.
     public static let browsable: [ExploreKind] = [.event, .person, .company, .place]
 
     /// The kinds the newsroom's Explore offers: Stories, Companies, Places, Library.
@@ -55,8 +55,8 @@ public enum ExploreKind: String, CaseIterable, Codable, Sendable, Hashable, Iden
     }
 }
 
-/// One searchable entry: a story, company, place, library item or video, or (in the summit index) a talk,
-/// speaker, company, organisation or place.
+/// One searchable entry: a story, company, place, library item or video (or, for the shared talk detail, a talk
+/// or speaker).
 public struct ExploreItem: Codable, Sendable, Hashable, Identifiable {
     /// The site's reference, e.g. `event:opening-night`.
     public var id: String
@@ -102,7 +102,7 @@ public struct ExploreItem: Codable, Sendable, Hashable, Identifiable {
     }
 }
 
-/// A label and a value, e.g. "Publisher" and "Web Summit (its YouTube channel)".
+/// A label and a value, e.g. "Publisher" and "A newspaper".
 public struct ExploreFact: Codable, Sendable, Hashable {
     public var label: String
     public var value: String

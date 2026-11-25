@@ -1,5 +1,5 @@
 // swift-tools-version: 6.0
-// PTExplore: the newsroom's stories, companies, places, library and videos, and the Lisbon summit 2026 index.
+// PTExplore: the newsroom's stories, companies, places, library and videos.
 // Depends on PTCore only. Apple SDK only.
 import PackageDescription
 

@@ -182,7 +182,7 @@ public struct NewsroomExploreSource: ExploreSource {
     public let cache: ExploreDiskCache
     /// The built-in copy of a part, or nil. Injected for tests.
     public let builtIn: @Sendable (NewsroomWire.Part) -> Data?
-    /// Reads the details (articles, companies, places, and the summit's people and organisations).
+    /// Reads the details of articles, companies and places from promptugal.news.
     let site: PublishedExploreSource
 
     public init(cache: ExploreDiskCache = .standard(), fetch: @escaping ExploreFetch = ExploreFetchers.live,

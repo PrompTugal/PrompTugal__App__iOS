@@ -18,9 +18,8 @@ extension EnvironmentValues {
 }
 
 /// Explore (ux spec EXP-1), rebuilt for the newsroom (25 Nov): PTExplore's screen on the newsroom's own sites (stories,
-/// companies and places from promptugal.news, the library and the videos), each list ending with the "Lisbon summit 2026"
-/// row (the summit's index) and the newsroom's graph. No Talks (Dinis, 25 Nov: the summit is over; My program in More keeps
-/// the picks) and no "summit graph" card. The screen brings its own navigation stack.
+/// companies and places from promptugal.news, the library and the videos), each list ending with the newsroom's graph.
+/// Nothing from the summit (Dinis, 25 Nov). The screen brings its own navigation stack.
 struct ExploreView: View {
     @Environment(\.exploreStart) private var start
     @Environment(\.openMore) private var openMore
@@ -34,11 +33,10 @@ struct ExploreView: View {
     private var hooks: ExploreHooks {
         ExploreHooks(
             graph: { AnyView(GraphExplorerView()) },
-            talkActions: AppTalks.actions,
             leadingToolbar: { AnyView(LanguageButton()) },
             trailingToolbar: moreButton,
             showsTalks: false,
-            showsSummit: true)
+            showsGraphRow: true)
     }
 
     /// The More button on iPhone; nil on iPad, where More is in the sidebar.
@@ -55,7 +53,6 @@ struct ExploreView: View {
         case .places: "places"
         case .stories: "stories"
         case .library: "library"
-        case .summit: "summit"
         case .talk(let ref): "talk:" + (ref ?? "")
         case .graph: "graph"
         }
