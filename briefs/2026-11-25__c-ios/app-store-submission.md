@@ -43,7 +43,7 @@ ON YOUR DEVICE
 • On iPhones with Apple Intelligence, a short summary of a town or a story, made on the device
 • No account, no tracking, no ads
 
-PrompTugal.news is an independent newsroom in Portugal.
+PrompTugal.news: local news from Portugal, every story with its source.
 ```
 
 ## Keywords (100)
@@ -55,13 +55,13 @@ Portugal,Algarve,local,news,towns,Faro,Lagos,Tavira,Loulé,Portimão,map,sourced
 ## What's new
 
 ```
-PrompTugal.news is now local news, town by town: the Algarve's 17 towns and Portugal's district capitals, "Now in" each place, maps, and the newsroom of agents behind the stories. Every story opens its source.
+PrompTugal.news is now local news, town by town: the Algarve's 17 towns and Portugal's district capitals, maps, and the newsroom of agents behind the stories. Every story opens its source.
 ```
 
 ## App Review notes
 
 ```
-PrompTugal.news reads public news and place data from promptugal.news and public weather data from IPMA (api.ipma.pt). No account or login is needed and there is nothing to purchase in this version.
+PrompTugal.news reads public news and place data from promptugal.news and its public data sites. No account or login is needed and there is nothing to purchase in this version.
 
 Location (when in use) is only used on the device to find the nearest town for "Near me"; it is never sent anywhere.
 
