@@ -30,14 +30,20 @@ enum PublicDestinations {
         "explore.places": "explore",
         "explore.talk": "explore",
         "explore.graph": "explore",
+        "explore.stories": "explore",
+        "explore.library": "explore",
+        "explore.summit": "explore",
         "algarve": "places",
         "places.algarve": "places",
     ]
 
     /// Where Explore opens for each id that leads there (the App Store screenshots use these ids).
     static let exploreStarts: [String: ExploreStart] = [
-        "explore": .speakers,
-        "reader.agenda": .speakers,
+        "explore": .stories,
+        "reader.agenda": .summit,
+        "explore.stories": .stories,
+        "explore.library": .library,
+        "explore.summit": .summit,
         "explore.people": .speakers,
         "explore.companies": .companies,
         "explore.places": .places,
@@ -80,7 +86,7 @@ enum PublicDestinations {
         ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
                          summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 2) { AnyView(NowView()) },
         ShellDestination(id: "explore", title: String(localized: "Explore"), symbol: "magnifyingglass", group: "Tabs",
-                         summary: String(localized: "Speakers, companies and places"), phoneTab: 3, wrapsStack: false) {
+                         summary: String(localized: "Stories, companies, places and the library"), phoneTab: 3, wrapsStack: false) {
             AnyView(ExploreView())
         },
     ]

@@ -7,7 +7,7 @@ import SwiftUI
 
 /// Where Explore opens. The shell sets it from the id that was opened (explore, explore.people, explore.talk, ...).
 private struct ExploreStartKey: EnvironmentKey {
-    static let defaultValue: ExploreStart = .speakers
+    static let defaultValue: ExploreStart = .stories
 }
 
 extension EnvironmentValues {

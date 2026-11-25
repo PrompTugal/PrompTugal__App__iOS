@@ -33,7 +33,7 @@ struct PublicShell: View {
     /// A screen that is not a tab, opened over the iPhone shell (Settings from the gear, a link to Ask).
     @State private var presented: PresentedScreen?
     /// Where Explore opens (a link such as explore.people picks a segment).
-    @State private var exploreStart: ExploreStart = .speakers
+    @State private var exploreStart: ExploreStart = .stories
 
     var body: some View {
         Group {
