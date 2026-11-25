@@ -130,7 +130,7 @@ struct PlacesMapHero: View {
         }
         .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
         .mapControlVisibility(.hidden)
-        .frame(height: wide ? 560 : 420)
+        .containerRelativeFrame(.vertical) { height, _ in min(wide ? 560 : 420, max(260, height * 0.55)) }
         .clipShape(RoundedRectangle(cornerRadius: Space.radius))
     }
 

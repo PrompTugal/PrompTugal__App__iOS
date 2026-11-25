@@ -52,3 +52,12 @@ home footer: no Web Summit anywhere in PTPlaces.
   ring, then the town's newest stories each with its trail (town › region › country, each a link to that place).
 - Home order: masthead, map, Since you last looked, From the town up, case studies, then the rest.
 - Ring matching is exact (`rings.contains(id)`), tested with `vila-real` against `vila-real-de-santo-antonio`.
+
+## Anchors (spec S5) and iPhone SE (26 Nov, after c4 run 573: 43 PTPlaces tests green)
+
+- Public API for the shell: `PlacesDeepLink("place:loule#lead")` (id + `PlaceAnchor` `.now` / `.lead`), set once with
+  `.placesDeepLink(link)` high in the tree (like the other hooks), or `PlaceDetailView(id:anchor:)`. Only the page whose
+  id matches scrolls, so places pushed from it open at the top. It scrolls once, when that section has data (the
+  "Now in" card needs now.json; the lead needs a story with a source link).
+- iPhone SE: the home map is at most 55% of the visible height (260 pt minimum, 420 phone / 560 iPad maximum); the
+  masthead drops the date and wraps when the line does not fit.
