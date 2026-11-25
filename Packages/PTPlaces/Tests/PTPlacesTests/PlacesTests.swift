@@ -427,6 +427,29 @@ struct RegionSplitTests {
         #expect(store.algarveTowns.map(\.id) == ["loule", "quarteira"])
         #expect(store.portugalCities.map(\.id) == ["porto"])
     }
+
+    @Test("every capital shows, also one only places.json has; ids that start with another id stay apart")
+    @MainActor func allCapitals() throws {
+        let store = PlacesStore()
+        store.index.preview(try decode(PlaceIndex.self, """
+        {"built":"2026-11-25","places":[{"id":"portugal","name":"Portugal","kind":"country","parent":null},
+         {"id":"algarve","name":"The Algarve","kind":"region","parent":"portugal"},
+         {"id":"vila-real-de-santo-antonio","name":"Vila Real de Santo António","kind":"municipality","parent":"algarve","updated":"2026-11-16"},
+         {"id":"lisboa","name":"Lisboa","kind":"city","parent":"portugal","updated":"2026-11-17"},
+         {"id":"vila-real","name":"Vila Real","kind":"city","parent":"portugal","updated":"2026-11-17","at":{"lon":-7.746,"lat":41.3}}]}
+        """))
+        store.list.preview(try decode(PlaceIndex.self, """
+        {"places":[{"id":"vila-real-de-santo-antonio","name":"VRSA","kind":"municipality","parent":"algarve","at":[-7.42,37.19]},
+         {"id":"lisboa","name":"Lisboa","kind":"city","parent":"portugal","at":[-9.14,38.72]},
+         {"id":"beja","name":"Beja","kind":"city","parent":"portugal","at":[-7.863,38.015]}]}
+        """))
+        #expect(store.algarveTowns.map(\.id) == ["vila-real-de-santo-antonio"])
+        #expect(store.portugalCities.map(\.id) == ["lisboa", "vila-real", "beja"])
+        #expect(store.place("vila-real-de-santo-antonio")?.name == "Vila Real de Santo António")
+        #expect(store.place("vila-real-de-santo-antonio")?.at == [-7.42, 37.19])
+        #expect(store.place("vila-real")?.at == [-7.746, 41.3])
+        #expect(store.place("lisboa")?.at == [-9.14, 38.72])
+    }
 }
 
 @Suite("PTPlaces: now in a place (IPMA, hourly)")

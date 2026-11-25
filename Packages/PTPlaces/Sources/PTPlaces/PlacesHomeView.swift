@@ -75,7 +75,7 @@ public struct PlacesHomeView: View {
             }
             Rectangle().fill(Palette.ink).frame(height: 2)
             HStack {
-                Text(String(localized: "Portugal · The Algarve · 17 towns"))
+                Text(mastheadLine)
                 Spacer()
                 Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide))
             }
@@ -86,6 +86,14 @@ public struct PlacesHomeView: View {
         }
         .padding(.horizontal, gutter)
         .padding(.top, Space.m)
+    }
+
+    private var mastheadLine: String {
+        let towns = store.algarveTowns.count
+        let capitals = store.portugalCities.count
+        if towns == 0 { return String(localized: "Portugal · The Algarve") }
+        if capitals == 0 { return String(localized: "Portugal · The Algarve · \(towns) towns") }
+        return String(localized: "Portugal · The Algarve · \(towns) towns · \(capitals) district capitals")
     }
 
     @ViewBuilder private var loadingOrError: some View {
@@ -237,28 +245,33 @@ public struct PlacesHomeView: View {
         .padding(.horizontal, gutter)
     }
 
-    // MARK: Across Portugal (the district capitals, 16 Nov)
+    // MARK: Across Portugal (every district capital the index has; the Algarve's numbers keep to the Algarve)
 
     @ViewBuilder private var acrossPortugal: some View {
         let cities = store.portugalCities
         if !cities.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "Across Portugal"),
-                            subtitle: String(localized: "The district capitals, each with its own agent and AI map"), accent: Palette.red)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: Space.m) {
-                        ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
-                            NavigationLink(value: PlaceRoute(place.id)) {
-                                TownTile(place: place, file: store.file(place.id), seed: index + 3)
-                                    .frame(width: wide ? 220 : 170)
-                            }
-                            .buttonStyle(.plain)
+                            subtitle: capitalsSubtitle(cities.count), accent: Palette.red)
+                PlacesOriginLabel(origin: store.index.origin(dataDate: cities.map(\.updated).max()))
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: wide ? 200 : 150), spacing: Space.m)], spacing: Space.m) {
+                    ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
+                        NavigationLink(value: PlaceRoute(place.id)) {
+                            TownTile(place: place, file: store.file(place.id), seed: index + 3)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
+                .accessibilityIdentifier("places.capitals")
             }
             .padding(.horizontal, gutter)
         }
+    }
+
+    private func capitalsSubtitle(_ count: Int) -> String {
+        count == 1
+            ? String(localized: "One district capital so far, with its own agent and AI map")
+            : String(localized: "The \(count) district capitals, each with its own agent and AI map")
     }
 
     // MARK: Everything is connected

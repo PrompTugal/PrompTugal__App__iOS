@@ -52,10 +52,14 @@ public final class PlacesStore {
         since.freshFor = 300
     }
 
-    /// The places in the website's order, with each town's seat merged in from places.json.
+    /// The places in the website's order, with each town's seat merged in from places.json. A place that only
+    /// places.json has (an index saved on the device before the site added it) still shows, after the index's own.
     public var places: [PlaceSummary] {
-        let seats = Dictionary((list.value?.places ?? []).map { ($0.id, $0.at) }, uniquingKeysWith: { a, _ in a })
-        let base = index.value?.places ?? list.value?.places ?? []
+        let listed = list.value?.places ?? []
+        let seats = Dictionary(listed.map { ($0.id, $0.at) }, uniquingKeysWith: { a, _ in a })
+        let indexed = index.value?.places ?? []
+        let known = Set(indexed.map(\.id))
+        let base = indexed + listed.filter { !known.contains($0.id) }
         return base.map { place in
             var place = place
             if place.at == nil { place.at = seats[place.id] ?? nil }
