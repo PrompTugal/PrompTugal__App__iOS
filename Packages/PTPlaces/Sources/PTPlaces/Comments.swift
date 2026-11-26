@@ -122,14 +122,14 @@ struct CommentButton: View {
             if compact {
                 Image(systemName: "text.bubble")
             } else {
-                Label(String(localized: "Comment"), systemImage: "text.bubble")
+                Label(String(localized: "Comment", bundle: .module), systemImage: "text.bubble")
             }
         }
         .font(.footnote.weight(.semibold))
         .foregroundStyle(accent)
         .buttonStyle(.plain)
         .sheet(isPresented: $composing) { CommentComposer(subject: subject, accent: accent) }
-        .accessibilityLabel(String(localized: "Comment on \(subject.title)"))
+        .accessibilityLabel(String(localized: "Comment on \(subject.title)", bundle: .module))
         .accessibilityIdentifier("places.comment")
     }
 }
@@ -168,7 +168,7 @@ struct ThumbsBar: View {
         .buttonStyle(.plain)
         .foregroundStyle(on ? accent : Palette.muted)
         .sensoryFeedback(.selection, trigger: on)
-        .accessibilityLabel(value == "up" ? String(localized: "Useful") : String(localized: "Not useful"))
+        .accessibilityLabel(value == "up" ? String(localized: "Useful", bundle: .module) : String(localized: "Not useful", bundle: .module))
     }
 
     /// The path voted on: the place's page, with the story's source after a # when it is a story.
@@ -210,36 +210,36 @@ struct CommentComposer: View {
                 }
                 if session.key == nil {
                     Section {
-                        Text(String(localized: "Sign in with your person key to comment. Your comment is signed with it, and the agents' replies are sealed to you."))
+                        Text(String(localized: "Sign in with your person key to comment. Your comment is signed with it, and the agents' replies are sealed to you.", bundle: .module))
                             .font(.subheadline)
-                        Button(String(localized: "Sign in")) { signingIn = true }
+                        Button(String(localized: "Sign in", bundle: .module)) { signingIn = true }
                     }
                 } else if talk == nil {
                     Section {
-                        Label(String(localized: "Comments are not connected in this build yet."), systemImage: "bolt.horizontal.circle")
+                        Label(String(localized: "Comments are not connected in this build yet.", bundle: .module), systemImage: "bolt.horizontal.circle")
                             .foregroundStyle(Palette.muted)
                     }
                 } else {
                     Section {
-                        TextField(String(localized: "What should the agents know or fix?"), text: $text, axis: .vertical)
+                        TextField(String(localized: "What should the agents know or fix?", bundle: .module), text: $text, axis: .vertical)
                             .lineLimit(3...10)
                         Button {
                             Task { await send() }
                         } label: {
-                            if sending { ProgressView() } else { Label(String(localized: "Send, signed as \(session.person ?? "")"), systemImage: "paperplane.fill") }
+                            if sending { ProgressView() } else { Label(String(localized: "Send, signed as \(session.person ?? String())", bundle: .module), systemImage: "paperplane.fill") }
                         }
                         .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || sending)
                     } footer: {
-                        Text(String(localized: "Signed with your person key and sent to the conductor. Agents draft the answer; it comes back here, opened only on this device."))
+                        Text(String(localized: "Signed with your person key and sent to the conductor. Agents draft the answer; it comes back here, opened only on this device.", bundle: .module))
                     }
                 }
                 if !sent.isEmpty {
-                    Section(String(localized: "Sent")) {
+                    Section(String(localized: "Sent", bundle: .module)) {
                         ForEach(sent, id: \.self) { Text($0).font(.subheadline) }
                     }
                 }
                 if !replies.isEmpty {
-                    Section(String(localized: "Replies")) {
+                    Section(String(localized: "Replies", bundle: .module)) {
                         ForEach(replies) { reply in
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(reply.text).font(.subheadline)
@@ -253,14 +253,14 @@ struct CommentComposer: View {
                     Section { Label(problem, systemImage: "exclamationmark.triangle").foregroundStyle(Palette.red) }
                 }
             }
-            .navigationTitle(String(localized: "Comment"))
+            .navigationTitle(String(localized: "Comment", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Close")) { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Close", bundle: .module)) { dismiss() } }
                 if talk != nil, session.key != nil {
                     ToolbarItem(placement: .primaryAction) {
                         Button { Task { await loadReplies() } } label: { Image(systemName: "arrow.clockwise") }
-                            .accessibilityLabel(String(localized: "Check for replies"))
+                            .accessibilityLabel(String(localized: "Check for replies", bundle: .module))
                     }
                 }
             }
@@ -283,7 +283,7 @@ struct CommentComposer: View {
             sent.append(body)
             text = ""
         } catch {
-            problem = String(localized: "Not sent: \(error.localizedDescription)")
+            problem = String(localized: "Not sent: \(error.localizedDescription)", bundle: .module)
         }
         sending = false
     }
@@ -294,7 +294,7 @@ struct CommentComposer: View {
             let all = try await talk.replies(for: key.person).compactMap { CommentReply.open($0, with: key) }
             replies = all.filter { $0.place.isEmpty || $0.place == subject.place }
         } catch {
-            problem = String(localized: "Replies could not be read: \(error.localizedDescription)")
+            problem = String(localized: "Replies could not be read: \(error.localizedDescription)", bundle: .module)
         }
     }
 }

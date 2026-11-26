@@ -31,7 +31,7 @@ struct FollowButton: View {
         Button {
             withAnimation(.snappy) { followed = PlaceFollows.toggle(id, in: followed) }
         } label: {
-            Label(on ? String(localized: "Following") : String(localized: "Follow"),
+            Label(on ? String(localized: "Following", bundle: .module) : String(localized: "Follow", bundle: .module),
                   systemImage: on ? "checkmark.circle.fill" : "plus.circle")
                 .font(.subheadline.weight(.semibold))
                 .padding(.horizontal, 12).padding(.vertical, 6)
@@ -61,13 +61,13 @@ public struct MyTownsCard: View {
         }
         VStack(alignment: .leading, spacing: Space.m) {
             HStack {
-                Kicker(text: String(localized: "Your towns"))
+                Kicker(text: String(localized: "Your towns", bundle: .module))
                 Spacer()
-                Button(ids.isEmpty ? String(localized: "Pick") : String(localized: "All places"), action: openPlaces)
+                Button(ids.isEmpty ? String(localized: "Pick", bundle: .module) : String(localized: "All places", bundle: .module), action: openPlaces)
                     .font(.footnote.weight(.semibold))
             }
             if ids.isEmpty {
-                Text(String(localized: "Follow your town in the Algarve: its local AI news shows here."))
+                Text(String(localized: "Follow your town in the Algarve: its local AI news shows here.", bundle: .module))
                     .font(.subheadline).foregroundStyle(Palette.muted)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: Space.s) {
@@ -92,7 +92,7 @@ public struct MyTownsCard: View {
                         if let item = store.file(place.id)?.newsByDate.first {
                             StoryRow(item: item, place: nil, accent: accent)
                         } else {
-                            Text(String(localized: "No local AI story yet.")).font(.caption).foregroundStyle(Palette.muted)
+                            Text(String(localized: "No local AI story yet.", bundle: .module)).font(.caption).foregroundStyle(Palette.muted)
                         }
                     }
                 }

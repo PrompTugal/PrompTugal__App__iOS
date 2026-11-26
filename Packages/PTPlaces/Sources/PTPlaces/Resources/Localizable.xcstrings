@@ -1,0 +1,3899 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "%@ warning: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ warning: %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aviso %1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%@: %lld items": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: %lld items"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$lld notícias"
+          }
+        }
+      }
+    },
+    "%lld done · %lld next · %lld commits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld done · %lld next · %lld commits"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld feitos · %2$lld a seguir · %3$lld commits"
+          }
+        }
+      }
+    },
+    "%lld km away": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld km away"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a %lld km"
+          }
+        }
+      }
+    },
+    "%lld new since %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld new since %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld novas desde %2$@"
+          }
+        }
+      }
+    },
+    "%lld on the map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld on the map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld no mapa"
+          }
+        }
+      }
+    },
+    "%lld place agents, %lld agents in the whole newsroom. Open a place to see what its agent is doing now, from its own record.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld place agents, %lld agents in the whole newsroom. Open a place to see what its agent is doing now, from its own record."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld agentes de lugar, %2$lld agentes em toda a redação. Abra um lugar para ver o que o seu agente está a fazer agora, a partir do seu próprio registo."
+          }
+        }
+      }
+    },
+    "%lld steps from AI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld steps from AI"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A %lld passos da IA"
+          }
+        }
+      }
+    },
+    "%lld stories · %lld on the AI map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld stories · %lld on the AI map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld notícias · %2$lld no mapa de IA"
+          }
+        }
+      }
+    },
+    "%lld%% chance of rain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%% chance of rain"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%% de probabilidade de chuva"
+          }
+        }
+      }
+    },
+    "1 new since %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 new since %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 nova desde %@"
+          }
+        }
+      }
+    },
+    "1 step from AI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 step from AI"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A 1 passo da IA"
+          }
+        }
+      }
+    },
+    "AI itself": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI itself"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A própria IA"
+          }
+        }
+      }
+    },
+    "AI map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa de IA"
+          }
+        }
+      }
+    },
+    "AI stories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI stories"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "notícias de IA"
+          }
+        }
+      }
+    },
+    "Across Portugal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Across Portugal"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por todo o país"
+          }
+        }
+      }
+    },
+    "Across the country, each with where it happened and its source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Across the country, each with where it happened and its source"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De todo o país, cada uma com o lugar onde aconteceu e a sua fonte"
+          }
+        }
+      }
+    },
+    "Algarvio voice (for fun)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algarvio voice (for fun)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voz algarvia (a brincar)"
+          }
+        }
+      }
+    },
+    "All": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos"
+          }
+        }
+      }
+    },
+    "All places": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All places"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos os lugares"
+          }
+        }
+      }
+    },
+    "Also in the news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also in the news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Também nas notícias"
+          }
+        }
+      }
+    },
+    "Article": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Article"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Artigo"
+          }
+        }
+      }
+    },
+    "Articles are in English": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Articles are in English"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os artigos estão em inglês"
+          }
+        }
+      }
+    },
+    "Built-in snapshot, not live": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Built-in snapshot, not live"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia incluída na app, não em direto"
+          }
+        }
+      }
+    },
+    "Case study": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Case study"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caso de estudo"
+          }
+        }
+      }
+    },
+    "Centre of gravity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centre of gravity"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centro de gravidade"
+          }
+        }
+      }
+    },
+    "Check for replies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for replies"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurar respostas"
+          }
+        }
+      }
+    },
+    "Checked against the register": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checked against the register"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verificada no registo"
+          }
+        }
+      }
+    },
+    "Checking the signature on this device": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking the signature on this device"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A verificar a assinatura neste dispositivo"
+          }
+        }
+      }
+    },
+    "City": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "City"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cidade"
+          }
+        }
+      }
+    },
+    "Close": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechar"
+          }
+        }
+      }
+    },
+    "Comment": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentar"
+          }
+        }
+      }
+    },
+    "Comment on %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment on %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentar %@"
+          }
+        }
+      }
+    },
+    "Comments are not connected in this build yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comments are not connected in this build yet."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os comentários ainda não estão ligados nesta versão."
+          }
+        }
+      }
+    },
+    "Companies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Companies"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empresas"
+          }
+        }
+      }
+    },
+    "Country": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Country"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "País"
+          }
+        }
+      }
+    },
+    "Data": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dados"
+          }
+        }
+      }
+    },
+    "Done": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Each town in its own colours, its agent, its AI map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each town in its own colours, its agent, its AI map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada localidade com as suas cores, o seu agente, o seu mapa de IA"
+          }
+        }
+      }
+    },
+    "Events": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Events"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eventos"
+          }
+        }
+      }
+    },
+    "Every fact on these pages comes from promptugal.news, with its source and the date it was read.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every fact on these pages comes from promptugal.news, with its source and the date it was read."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada facto nestas páginas vem de promptugal.news, com a sua fonte e a data em que foi lido."
+          }
+        }
+      }
+    },
+    "Every source the article cites, as published": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every source the article cites, as published"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas as fontes que o artigo cita, tal como publicadas"
+          }
+        }
+      }
+    },
+    "Everything is connected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everything is connected"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tudo está ligado"
+          }
+        }
+      }
+    },
+    "Follow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seguir"
+          }
+        }
+      }
+    },
+    "Follow your town in the Algarve: its local AI news shows here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow your town in the Algarve: its local AI news shows here."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siga a sua terra no Algarve: as notícias locais de IA aparecem aqui."
+          }
+        }
+      }
+    },
+    "Following": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Following"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A seguir"
+          }
+        }
+      }
+    },
+    "From IPMA's open data, read hourly. Not a warning service: follow IPMA and ANEPC.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From IPMA's open data, read hourly. Not a warning service: follow IPMA and ANEPC."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dos dados abertos do IPMA, lidos de hora a hora. Não é um serviço de avisos: siga o IPMA e a ANEPC."
+          }
+        }
+      }
+    },
+    "From promptugal.news, data dated %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From promptugal.news, data dated %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De promptugal.news, dados de %@"
+          }
+        }
+      }
+    },
+    "From the town up": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From the town up"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Da terra para o país"
+          }
+        }
+      }
+    },
+    "Government": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Government"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Governo"
+          }
+        }
+      }
+    },
+    "Government, companies, startups, investors, research and communities doing AI here; the nearer the centre, the fewer steps from AI. Spot something wrong? Comment on it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Government, companies, startups, investors, research and communities doing AI here; the nearer the centre, the fewer steps from AI. Spot something wrong? Comment on it."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Governo, empresas, startups, investidores, investigação e comunidades que fazem IA aqui; quanto mais perto do centro, menos passos até à IA. Viu algum erro? Comente."
+          }
+        }
+      }
+    },
+    "Home": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Início"
+          }
+        }
+      }
+    },
+    "How a story in %@ rises to the region and the country, from the last %lld days": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How a story in %@ rises to the region and the country, from the last %lld days"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como uma notícia de %1$@ sobe à região e ao país, nos últimos %2$lld dias"
+          }
+        }
+      }
+    },
+    "How this page is made": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How this page is made"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como esta página é feita"
+          }
+        }
+      }
+    },
+    "How this was made": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How this was made"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como foi feito"
+          }
+        }
+      }
+    },
+    "How to contribute": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How to contribute"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como contribuir"
+          }
+        }
+      }
+    },
+    "In English, as published · see the translation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In English, as published · see the translation"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em inglês, como publicado · ver a tradução"
+          }
+        }
+      }
+    },
+    "Inner ring: AI itself": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inner ring: AI itself"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anel interior: a própria IA"
+          }
+        }
+      }
+    },
+    "Investors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Investors"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Investidores"
+          }
+        }
+      }
+    },
+    "Journalists, local media, bloggers, anyone who makes content about their town: our agents research, you report, and readers come to you.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Journalists, local media, bloggers, anyone who makes content about their town: our agents research, you report, and readers come to you."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jornalistas, imprensa local, bloguers, quem faz conteúdos sobre a sua terra: os nossos agentes pesquisam, você reporta e os leitores chegam até si."
+          }
+        }
+      }
+    },
+    "Key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chave"
+          }
+        }
+      }
+    },
+    "Key %@, from promptugal.news/board/keys.json": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Key %@, from promptugal.news/board/keys.json"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chave %@, de promptugal.news/board/keys.json"
+          }
+        }
+      }
+    },
+    "Keys": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keys"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaves"
+          }
+        }
+      }
+    },
+    "Latest date first, each with the page it was read from": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest date first, each with the page it was read from"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data mais recente primeiro, cada um com a página onde foi lido"
+          }
+        }
+      }
+    },
+    "Latest from the towns": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest from the towns"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O mais recente das localidades"
+          }
+        }
+      }
+    },
+    "Live": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto"
+          }
+        }
+      }
+    },
+    "Live from promptugal.news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live from promptugal.news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto de promptugal.news"
+          }
+        }
+      }
+    },
+    "Local AI news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local AI news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias locais de IA"
+          }
+        }
+      }
+    },
+    "Local AI news, each story with its source and the path to AI": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local AI news, each story with its source and the path to AI"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias locais de IA, cada uma com a sua fonte e o caminho até à IA"
+          }
+        }
+      }
+    },
+    "Local media": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local media"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imprensa local"
+          }
+        }
+      }
+    },
+    "Looking for work": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for work"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À procura de trabalho"
+          }
+        }
+      }
+    },
+    "Loulé and Faro, where the agents go deepest first": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loulé and Faro, where the agents go deepest first"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loulé e Faro, onde os agentes vão mais fundo primeiro"
+          }
+        }
+      }
+    },
+    "Machine translation, checked · see in English": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Machine translation, checked · see in English"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tradução automática, verificada · ver em inglês"
+          }
+        }
+      }
+    },
+    "Machine translation, not reviewed · see in English": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Machine translation, not reviewed · see in English"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tradução automática, não revista · ver em inglês"
+          }
+        }
+      }
+    },
+    "Make local news with us": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make local news with us"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faça notícias locais connosco"
+          }
+        }
+      }
+    },
+    "Map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa"
+          }
+        }
+      }
+    },
+    "Municipality": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Municipality"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concelho"
+          }
+        }
+      }
+    },
+    "New": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nova"
+          }
+        }
+      }
+    },
+    "Newest first. Each story passes the PrompTugal test: AI within three steps, with the path written down, and links to its source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Newest first. Each story passes the PrompTugal test: AI within three steps, with the path written down, and links to its source"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As mais recentes primeiro. Cada notícia passa o teste PrompTugal: a IA a três passos no máximo, com o caminho escrito, e liga à sua fonte"
+          }
+        }
+      }
+    },
+    "No local AI story yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No local AI story yet."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não há notícias locais de IA."
+          }
+        }
+      }
+    },
+    "No organisation on its AI map is shared with another town yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No organisation on its AI map is shared with another town yet."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma organização do seu mapa de IA aparece ainda noutra localidade."
+          }
+        }
+      }
+    },
+    "Not loaded: promptugal.news could not be reached": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not loaded: promptugal.news could not be reached"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não carregado: não foi possível contactar promptugal.news"
+          }
+        }
+      }
+    },
+    "Not sent: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not sent: %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não enviado: %@"
+          }
+        }
+      }
+    },
+    "Not signed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not signed"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem assinatura"
+          }
+        }
+      }
+    },
+    "Not useful": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not useful"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pouco útil"
+          }
+        }
+      }
+    },
+    "Not yet (offline?)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet (offline?)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não (sem ligação?)"
+          }
+        }
+      }
+    },
+    "Not-for-profits and communities": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not-for-profits and communities"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Associações e comunidades"
+          }
+        }
+      }
+    },
+    "Nothing new since %@. The newest, each with its source:": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing new since %@. The newest, each with its source:"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada de novo desde %@. O mais recente, cada notícia com a sua fonte:"
+          }
+        }
+      }
+    },
+    "Now in %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now in %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora em %@"
+          }
+        }
+      }
+    },
+    "One agent per place, and the team that builds, designs and checks. Powered by AgentiCCells.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One agent per place, and the team that builds, designs and checks. Powered by AgentiCCells."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um agente por lugar, e a equipa que constrói, desenha e verifica. Com AgentiCCells."
+          }
+        }
+      }
+    },
+    "One district capital so far, with its own agent and AI map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One district capital so far, with its own agent and AI map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para já, uma capital de distrito, com o seu agente e mapa de IA"
+          }
+        }
+      }
+    },
+    "Open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir"
+          }
+        }
+      }
+    },
+    "Open %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir %@"
+          }
+        }
+      }
+    },
+    "Open it on promptugal.news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open it on promptugal.news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir em promptugal.news"
+          }
+        }
+      }
+    },
+    "Open on promptugal.news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open on promptugal.news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir em promptugal.news"
+          }
+        }
+      }
+    },
+    "Open promptugal.news/algarve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open promptugal.news/algarve"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir promptugal.news/algarve"
+          }
+        }
+      }
+    },
+    "Orange": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orange"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "laranja"
+          }
+        }
+      }
+    },
+    "Other": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outros"
+          }
+        }
+      }
+    },
+    "Our article": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Our article"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Artigo nosso"
+          }
+        }
+      }
+    },
+    "Our articles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Our articles"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os nossos artigos"
+          }
+        }
+      }
+    },
+    "Outer rings: one, two steps away": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outer rings: one, two steps away"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anéis exteriores: a um, dois passos"
+          }
+        }
+      }
+    },
+    "Photo: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photo: %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotografia: %@"
+          }
+        }
+      }
+    },
+    "Pick": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolher"
+          }
+        }
+      }
+    },
+    "Places": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lugares"
+          }
+        }
+      }
+    },
+    "Portugal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal"
+          }
+        }
+      }
+    },
+    "Portugal · The Algarve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal · The Algarve"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal · O Algarve"
+          }
+        }
+      }
+    },
+    "Portugal · The Algarve · %lld towns": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal · The Algarve · %lld towns"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal · O Algarve · %lld localidades"
+          }
+        }
+      }
+    },
+    "Portugal · The Algarve · %lld towns · %lld district capitals": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal · The Algarve · %lld towns · %lld district capitals"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal · O Algarve · %1$lld localidades · %2$lld capitais de distrito"
+          }
+        }
+      }
+    },
+    "Portugal's AI news, town by town": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal's AI news, town by town"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As notícias de IA de Portugal, terra a terra"
+          }
+        }
+      }
+    },
+    "Published at %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Published at %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicado em %@"
+          }
+        }
+      }
+    },
+    "Read at %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read at %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ler em %@"
+          }
+        }
+      }
+    },
+    "Read at the source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read at the source"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ler na fonte"
+          }
+        }
+      }
+    },
+    "Read by our desk, not tied to one place": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read by our desk, not tied to one place"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lidas pela nossa redação, sem um lugar próprio"
+          }
+        }
+      }
+    },
+    "Read it at %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read it at %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leia-a em %@"
+          }
+        }
+      }
+    },
+    "Read it at the source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read it at the source"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leia-a na fonte"
+          }
+        }
+      }
+    },
+    "Read the full article on promptugal.news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read the full article on promptugal.news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ler o artigo completo em promptugal.news"
+          }
+        }
+      }
+    },
+    "Reading promptugal.news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading promptugal.news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler promptugal.news"
+          }
+        }
+      }
+    },
+    "Reading the agents' status records": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading the agents' status records"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler os registos de estado dos agentes"
+          }
+        }
+      }
+    },
+    "Reading the places from promptugal.news": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading the places from promptugal.news"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler os lugares de promptugal.news"
+          }
+        }
+      }
+    },
+    "Red": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Red"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vermelho"
+          }
+        }
+      }
+    },
+    "Region": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Region"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Região"
+          }
+        }
+      }
+    },
+    "Regions and cities": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regions and cities"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regiões e cidades"
+          }
+        }
+      }
+    },
+    "Replies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replies"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Respostas"
+          }
+        }
+      }
+    },
+    "Replies could not be read: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replies could not be read: %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler as respostas: %@"
+          }
+        }
+      }
+    },
+    "Researching": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Researching"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em pesquisa"
+          }
+        }
+      }
+    },
+    "Scan the QR code": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan the QR code"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ler o código QR"
+          }
+        }
+      }
+    },
+    "Send, signed as %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send, signed as %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar, assinado como %@"
+          }
+        }
+      }
+    },
+    "Sent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sent"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviado"
+          }
+        }
+      }
+    },
+    "Show all %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show all %lld"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar todas (%lld)"
+          }
+        }
+      }
+    },
+    "Show fewer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show fewer"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar menos"
+          }
+        }
+      }
+    },
+    "Sign in": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar sessão"
+          }
+        }
+      }
+    },
+    "Sign in with your person key to comment. Your comment is signed with it, and the agents' replies are sealed to you.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with your person key to comment. Your comment is signed with it, and the agents' replies are sealed to you."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicie sessão com a sua chave pessoal para comentar. O comentário é assinado com ela e as respostas dos agentes são cifradas só para si."
+          }
+        }
+      }
+    },
+    "Sign out": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign out"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminar sessão"
+          }
+        }
+      }
+    },
+    "Signature": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signature"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinatura"
+          }
+        }
+      }
+    },
+    "Signature not checked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signature not checked"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinatura não verificada"
+          }
+        }
+      }
+    },
+    "Signed by %@, checked on this device": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed by %@, checked on this device"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinado por %@, verificado neste dispositivo"
+          }
+        }
+      }
+    },
+    "Signed in an older form that cannot be checked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed in an older form that cannot be checked"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinado num formato antigo que não é possível verificar"
+          }
+        }
+      }
+    },
+    "Signed in as": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed in as"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão iniciada como"
+          }
+        }
+      }
+    },
+    "Signed text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed text"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texto assinado"
+          }
+        }
+      }
+    },
+    "Signed with": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed with"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinado com"
+          }
+        }
+      }
+    },
+    "Signed with a key since handed over (%@), checked on this device": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed with a key since handed over (%@), checked on this device"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinado com uma chave entretanto passada a outro agente (%@), verificado neste dispositivo"
+          }
+        }
+      }
+    },
+    "Signed with your person key and sent to the conductor. Agents draft the answer; it comes back here, opened only on this device.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed with your person key and sent to the conductor. Agents draft the answer; it comes back here, opened only on this device."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinado com a sua chave pessoal e enviado ao condutor. Os agentes preparam a resposta, que volta aqui e só é aberta neste dispositivo."
+          }
+        }
+      }
+    },
+    "Since you last looked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Since you last looked"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desde a última visita"
+          }
+        }
+      }
+    },
+    "Sources": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fontes"
+          }
+        }
+      }
+    },
+    "Sources the agent reads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sources the agent reads"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fontes que o agente lê"
+          }
+        }
+      }
+    },
+    "Startups": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startups"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startups"
+          }
+        }
+      }
+    },
+    "Story": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Story"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícia"
+          }
+        }
+      }
+    },
+    "Talent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Talent"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Talento"
+          }
+        }
+      }
+    },
+    "That is not a sign-in link. Paste the link or scan the QR code your conductor gave you.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That is not a sign-in link. Paste the link or scan the QR code your conductor gave you."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isso não é uma ligação de início de sessão. Cole a ligação ou leia o código QR que o seu condutor lhe deu."
+          }
+        }
+      }
+    },
+    "The %lld district capitals and the Algarve. Tap a place.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The %lld district capitals and the Algarve. Tap a place."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As %lld capitais de distrito e o Algarve. Toque num lugar."
+          }
+        }
+      }
+    },
+    "The %lld district capitals, each with its own agent and AI map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The %lld district capitals, each with its own agent and AI map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As %lld capitais de distrito, cada uma com o seu agente e mapa de IA"
+          }
+        }
+      }
+    },
+    "The %lld towns": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The %lld towns"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As %lld localidades"
+          }
+        }
+      }
+    },
+    "The AI map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O mapa de IA"
+          }
+        }
+      }
+    },
+    "The Algarve": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Algarve"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Algarve"
+          }
+        }
+      }
+    },
+    "The Algarve's %lld towns, each with its own agent. Tap a town.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Algarve's %lld towns, each with its own agent. Tap a town."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As %lld localidades do Algarve, cada uma com o seu agente. Toque numa."
+          }
+        }
+      }
+    },
+    "The agents behind %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The agents behind %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os agentes por trás de %@"
+          }
+        }
+      }
+    },
+    "The article did not load": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The article did not load"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O artigo não carregou"
+          }
+        }
+      }
+    },
+    "The case studies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The case studies"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os casos de estudo"
+          }
+        }
+      }
+    },
+    "The district capitals and the Algarve, each with its own agent. Tap one.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The district capitals and the Algarve, each with its own agent. Tap one."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As capitais de distrito e o Algarve, cada um com o seu agente. Toque num."
+          }
+        }
+      }
+    },
+    "The key does not match its fingerprint.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The key does not match its fingerprint."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A chave não corresponde à sua impressão digital."
+          }
+        }
+      }
+    },
+    "The key in that link could not be read.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The key in that link could not be read."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler a chave dessa ligação."
+          }
+        }
+      }
+    },
+    "The key list comes from the same site as the article: a good signature shows the text was signed with the key listed under that agent's name on promptugal.news, not who holds the key.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The key list comes from the same site as the article: a good signature shows the text was signed with the key listed under that agent's name on promptugal.news, not who holds the key."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A lista de chaves vem do mesmo site que o artigo: uma assinatura válida mostra que o texto foi assinado com a chave registada em nome desse agente em promptugal.news, não quem tem a chave."
+          }
+        }
+      }
+    },
+    "The lead": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The lead"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em destaque"
+          }
+        }
+      }
+    },
+    "The mandate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The mandate"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O mandato"
+          }
+        }
+      }
+    },
+    "The mandate, in Algarvio (same facts)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The mandate, in Algarvio (same facts)"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O mandato, em algarvio (os mesmos factos)"
+          }
+        }
+      }
+    },
+    "The national edition": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The national edition"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A edição nacional"
+          }
+        }
+      }
+    },
+    "The news did not load": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The news did not load"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As notícias não carregaram"
+          }
+        }
+      }
+    },
+    "The newsroom behind it": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The newsroom behind it"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A redação por trás"
+          }
+        }
+      }
+    },
+    "The newsrooms, bloggers and editors who cover this place. We link to them first; read them.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The newsrooms, bloggers and editors who cover this place. We link to them first; read them."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As redações, bloguers e editores que cobrem este lugar. Ligamos primeiro para eles; leia-os."
+          }
+        }
+      }
+    },
+    "The place agent's open questions, shown on purpose": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The place agent's open questions, shown on purpose"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As perguntas em aberto do agente do lugar, mostradas de propósito"
+          }
+        }
+      }
+    },
+    "The place agent: researches and writes %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The place agent: researches and writes %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O agente do lugar: pesquisa e escreve sobre %@"
+          }
+        }
+      }
+    },
+    "The places": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The places"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os lugares"
+          }
+        }
+      }
+    },
+    "The places did not load": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The places did not load"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os lugares não carregaram"
+          }
+        }
+      }
+    },
+    "The register of keys could not be read. Try again online.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The register of keys could not be read. Try again online."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler o registo de chaves. Tente de novo com ligação à Internet."
+          }
+        }
+      }
+    },
+    "The signature does not match this text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The signature does not match this text"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A assinatura não corresponde a este texto"
+          }
+        }
+      }
+    },
+    "The towns": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The towns"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As localidades"
+          }
+        }
+      }
+    },
+    "This device's copy, saved %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device's copy, saved %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia deste dispositivo, guardada a %@"
+          }
+        }
+      }
+    },
+    "This key is not in promptugal.news's register of person keys.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This key is not in promptugal.news's register of person keys."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta chave não está no registo de chaves pessoais de promptugal.news."
+          }
+        }
+      }
+    },
+    "This key was replaced by a newer one. Ask your conductor for a new link.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This key was replaced by a newer one. Ask your conductor for a new link."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta chave foi substituída por uma mais recente. Peça uma nova ligação ao seu condutor."
+          }
+        }
+      }
+    },
+    "Today %lld° to %lld°": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today %lld° to %lld°"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoje entre %1$lld° e %2$lld°"
+          }
+        }
+      }
+    },
+    "Top stories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top stories"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Principais notícias"
+          }
+        }
+      }
+    },
+    "Towns joined where their AI maps name the same organisation. Tap a town.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Towns joined where their AI maps name the same organisation. Tap a town."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localidades ligadas quando os seus mapas de IA referem a mesma organização. Toque numa."
+          }
+        }
+      }
+    },
+    "Try again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar de novo"
+          }
+        }
+      }
+    },
+    "UV index": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UV index"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "índice UV"
+          }
+        }
+      }
+    },
+    "Universities and research": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Universities and research"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Universidades e investigação"
+          }
+        }
+      }
+    },
+    "Updated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updated"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizado"
+          }
+        }
+      }
+    },
+    "Useful": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Useful"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Útil"
+          }
+        }
+      }
+    },
+    "What each one is doing now, from its own record. Powered by AgentiCCells.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What each one is doing now, from its own record. Powered by AgentiCCells."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que cada um está a fazer agora, a partir do seu próprio registo. Com AgentiCCells."
+          }
+        }
+      }
+    },
+    "What should the agents know or fix?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What should the agents know or fix?"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que devem os agentes saber ou corrigir?"
+          }
+        }
+      }
+    },
+    "What the town agents read this week, each with its source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What the town agents read this week, each with its source"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que os agentes das localidades leram esta semana, cada notícia com a sua fonte"
+          }
+        }
+      }
+    },
+    "What we do not know yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What we do not know yet"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que ainda não sabemos"
+          }
+        }
+      }
+    },
+    "Where AI weighs in this place, found from sources, never invented": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where AI weighs in this place, found from sources, never invented"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onde a IA pesa neste lugar, a partir das fontes, nunca inventado"
+          }
+        }
+      }
+    },
+    "Work with us": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Work with us"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trabalhe connosco"
+          }
+        }
+      }
+    },
+    "Written by": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Written by"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escrito por"
+          }
+        }
+      }
+    },
+    "Written by PrompTugal.news's agents, each one signed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Written by PrompTugal.news's agents, each one signed"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escritos pelos agentes do PrompTugal.news, cada um assinado"
+          }
+        }
+      }
+    },
+    "Yellow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yellow"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "amarelo"
+          }
+        }
+      }
+    },
+    "Yes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sim"
+          }
+        }
+      }
+    },
+    "Your comments are signed with this key and sealed to the conductor. Replies are sealed to you and opened only on this device.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your comments are signed with this key and sealed to the conductor. Replies are sealed to you and opened only on this device."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os seus comentários são assinados com esta chave e cifrados para o condutor. As respostas são cifradas para si e só são abertas neste dispositivo."
+          }
+        }
+      }
+    },
+    "Your conductor gives you a sign-in link or its QR code. The key never leaves this device: it is kept in the Keychain and checked against promptugal.news/board/person-keys.json.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your conductor gives you a sign-in link or its QR code. The key never leaves this device: it is kept in the Keychain and checked against promptugal.news/board/person-keys.json."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O seu condutor dá-lhe uma ligação de início de sessão ou o respetivo código QR. A chave nunca sai deste dispositivo: fica guardada no Porta-chaves e é verificada em promptugal.news/board/person-keys.json."
+          }
+        }
+      }
+    },
+    "Your first look: the newest from the last %lld days, each with its source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your first look: the newest from the last %lld days, each with its source"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua primeira visita: o mais recente dos últimos %lld dias, cada notícia com a sua fonte"
+          }
+        }
+      }
+    },
+    "Your person key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your person key"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua chave pessoal"
+          }
+        }
+      }
+    },
+    "Your town, on the map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your town, on the map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua terra, no mapa"
+          }
+        }
+      }
+    },
+    "Your towns": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your towns"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas terras"
+          }
+        }
+      }
+    },
+    "agents": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "agents"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "agentes"
+          }
+        }
+      }
+    },
+    "by place": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "by place"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "por lugar"
+          }
+        }
+      }
+    },
+    "events": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "events"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "eventos"
+          }
+        }
+      }
+    },
+    "fire risk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fire risk"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "risco de incêndio"
+          }
+        }
+      }
+    },
+    "flights near %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "flights near %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "voos perto de %@"
+          }
+        }
+      }
+    },
+    "humidity": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "humidity"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "humidade"
+          }
+        }
+      }
+    },
+    "no published key has the fingerprint %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no published key has the fingerprint %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nenhuma chave publicada tem a impressão digital %@"
+          }
+        }
+      }
+    },
+    "on the AI map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "on the AI map"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no mapa de IA"
+          }
+        }
+      }
+    },
+    "or paste the sign-in link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "or paste the sign-in link"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ou colar a ligação de início de sessão"
+          }
+        }
+      }
+    },
+    "read %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "read %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lido a %@"
+          }
+        }
+      }
+    },
+    "read on %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "read on %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lido a %@"
+          }
+        }
+      }
+    },
+    "sea": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sea"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mar"
+          }
+        }
+      }
+    },
+    "signature %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "signature %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "assinatura %@"
+          }
+        }
+      }
+    },
+    "signed %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "signed %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "assinado %@"
+          }
+        }
+      }
+    },
+    "sources": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sources"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fontes"
+          }
+        }
+      }
+    },
+    "the article has been withdrawn": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the article has been withdrawn"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "o artigo foi retirado"
+          }
+        }
+      }
+    },
+    "the key is marked %@ in the key list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the key is marked %@ in the key list"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a chave está marcada como %@ na lista de chaves"
+          }
+        }
+      }
+    },
+    "the published keys did not load": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the published keys did not load"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "as chaves publicadas não carregaram"
+          }
+        }
+      }
+    },
+    "the signature does not match this text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the signature does not match this text"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a assinatura não corresponde a este texto"
+          }
+        }
+      }
+    },
+    "the signature file could not be read": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the signature file could not be read"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "não foi possível ler o ficheiro da assinatura"
+          }
+        }
+      }
+    },
+    "the signature file did not load": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the signature file did not load"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "o ficheiro da assinatura não carregou"
+          }
+        }
+      }
+    },
+    "the signed text did not load": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the signed text did not load"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "o texto assinado não carregou"
+          }
+        }
+      }
+    },
+    "the signing key is not a P-256 key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the signing key is not a P-256 key"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a chave de assinatura não é uma chave P-256"
+          }
+        }
+      }
+    },
+    "the text has more than one \"built by\" line": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "the text has more than one \"built by\" line"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "o texto tem mais de uma linha \"built by\""
+          }
+        }
+      }
+    },
+    "waves": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "waves"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ondas"
+          }
+        }
+      }
+    },
+    "wind": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wind"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vento"
+          }
+        }
+      }
+    }
+  }
+}

@@ -75,7 +75,7 @@ struct ConnectionsGraph: View {
                 // The place.
                 VStack(spacing: 2) {
                     Text(center).font(.system(.headline, design: .serif, weight: .black)).foregroundStyle(.white)
-                    Text(String(localized: "\(entries.count) on the map")).font(.caption2).foregroundStyle(.white.opacity(0.85))
+                    Text(String(localized: "\(entries.count) on the map", bundle: .module)).font(.caption2).foregroundStyle(.white.opacity(0.85))
                 }
                 .padding(.horizontal, 14).padding(.vertical, 10)
                 .background(accent.gradient, in: Capsule())
@@ -128,8 +128,8 @@ struct ConnectionsGraph: View {
 
     private var legend: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(String(localized: "Inner ring: AI itself")).font(.caption2)
-            Text(String(localized: "Outer rings: one, two steps away")).font(.caption2)
+            Text(String(localized: "Inner ring: AI itself", bundle: .module)).font(.caption2)
+            Text(String(localized: "Outer rings: one, two steps away", bundle: .module)).font(.caption2)
         }
         .foregroundStyle(Palette.muted)
     }

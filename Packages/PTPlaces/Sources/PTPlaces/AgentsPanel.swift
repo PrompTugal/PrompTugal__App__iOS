@@ -38,7 +38,7 @@ struct AgentsPanel: View {
     private var summary: some View {
         let counts = Dictionary(grouping: report.agents, by: \.status).mapValues(\.count)
         return HStack(spacing: Space.l) {
-            BigNumber(value: report.agents.count, label: String(localized: "agents"), accent: accent)
+            BigNumber(value: report.agents.count, label: String(localized: "agents", bundle: .module), accent: accent)
             ForEach(["working", "waiting", "blocked", "done"], id: \.self) { status in
                 if let n = counts[status], n > 0 {
                     HStack(spacing: 4) {
@@ -178,7 +178,7 @@ struct AgentCard: View {
                     .foregroundStyle(Palette.ink)
                     .padding(.top, 4)
                 } label: {
-                    Text(String(localized: "\(done.count) done · \(next.count) next · \((agent.commits ?? []).count) commits")).font(.caption.weight(.semibold)).foregroundStyle(accent)
+                    Text(String(localized: "\(done.count) done · \(next.count) next · \((agent.commits ?? []).count) commits", bundle: .module)).font(.caption.weight(.semibold)).foregroundStyle(accent)
                 }
             }
         }

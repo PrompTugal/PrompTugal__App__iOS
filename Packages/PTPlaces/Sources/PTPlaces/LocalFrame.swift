@@ -52,8 +52,8 @@ enum MapScope: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .algarve: String(localized: "The Algarve")
-        case .portugal: String(localized: "Portugal")
+        case .algarve: String(localized: "The Algarve", bundle: .module)
+        case .portugal: String(localized: "Portugal", bundle: .module)
         }
     }
 
@@ -96,9 +96,9 @@ struct PlacesMapHero: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            SectionHead(title: String(localized: "Your town, on the map"),
+            SectionHead(title: String(localized: "Your town, on the map", bundle: .module),
                         subtitle: subtitle, accent: Palette.red)
-            Picker(String(localized: "Map"), selection: $scope) {
+            Picker(String(localized: "Map", bundle: .module), selection: $scope) {
                 ForEach(MapScope.allCases) { scope in Text(scope.title).tag(scope) }
             }
             .pickerStyle(.segmented)
@@ -111,9 +111,9 @@ struct PlacesMapHero: View {
     private var subtitle: String {
         switch scope {
         case .algarve:
-            String(localized: "The Algarve's \(store.algarveTowns.count) towns, each with its own agent. Tap a town.")
+            String(localized: "The Algarve's \(store.algarveTowns.count) towns, each with its own agent. Tap a town.", bundle: .module)
         case .portugal:
-            String(localized: "The \(store.portugalCities.count) district capitals and the Algarve. Tap a place.")
+            String(localized: "The \(store.portugalCities.count) district capitals and the Algarve. Tap a place.", bundle: .module)
         }
     }
 
@@ -205,8 +205,8 @@ struct BubblingUpSection: View {
         let stories = feed.newestFirst.filter { $0.place == town }
         let region = feed.trail(for: stories.first ?? SinceItem(date: "", title: "", url: "")).dropFirst().first
         return VStack(alignment: .leading, spacing: Space.m) {
-            SectionHead(title: String(localized: "From the town up"),
-                        subtitle: String(localized: "How a story in \(place.name) rises to the region and the country, from the last \(feed.days) days"),
+            SectionHead(title: String(localized: "From the town up", bundle: .module),
+                        subtitle: String(localized: "How a story in \(place.name) rises to the region and the country, from the last \(feed.days) days", bundle: .module),
                         accent: Palette.red)
             ladder(feed, town: place, region: region)
             ForEach(Array(stories.prefix(wide ? 4 : 3))) { item in
@@ -243,7 +243,7 @@ struct BubblingUpSection: View {
             StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
-                    Text(String(localized: "Read at \(item.byline)") + " · " + PlaceDates.short(item.date))
+                    Text(String(localized: "Read at \(item.byline)", bundle: .module) + " · " + PlaceDates.short(item.date))
                         .font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -281,7 +281,7 @@ struct LadderStep: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(String(localized: "\(place.name): \(count) items"))
+        .accessibilityLabel(String(localized: "\(place.name): \(count) items", bundle: .module))
     }
 
     private var name: some View {

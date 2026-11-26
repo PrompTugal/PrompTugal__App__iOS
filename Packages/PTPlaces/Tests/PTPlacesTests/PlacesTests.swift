@@ -864,3 +864,59 @@ enum PTPlacesTestsDecode {
         try JSONDecoder().decode(T.self, from: Data(json.utf8))
     }
 }
+
+// MARK: - English and Portuguese (Dinis, 26 Nov)
+
+@Suite("PTPlaces: Portuguese (Portugal) catalogue and the site's translation memory")
+struct LanguageTests {
+    @Test("memory keys match the site's: normalised English, SHA-256, 16 hex")
+    func keys() {
+        #expect(TMKey.key("PrompTugal.news Faro: AI and technology in Faro.") == "26e6678e7cec55b9")
+        #expect(TMKey.normalise("  Two  spaces\u{00A0}and NBSP \r\n\r\n\r\nthen lines  ") == "Two spaces and NBSP\n\nthen lines")
+        #expect(TMKey.key("  Two  spaces\u{00A0}and NBSP \r\n\r\n\r\nthen lines  ") == "4295c07f14e3c01c")
+        // NFC: a decomposed é keys the same as the composed one.
+        #expect(TMKey.key("Loule\u{0301} decomposed") == "cbeeab8828b29d19")
+        #expect(TMKey.key("Loulé decomposed") == "cbeeab8828b29d19")
+    }
+
+    @Test("a shard decodes leniently: entries without a translation are dropped; ok marks a checked one")
+    func shard() throws {
+        let shard = try PTPlacesTestsDecode.decode(TMShard.self, """
+        {"26e6678e7cec55b9":{"t":"PrompTugal.news Faro: IA e tecnologia em Faro.","by":"translator@PrompTugal.dinis","ok":false},
+         "26aaaaaaaaaaaaaa":{"t":"Verificada","ok":true},
+         "26bbbbbbbbbbbbbb":{"by":"no text"},
+         "26cccccccccccccc":"not an object"}
+        """)
+        #expect(shard.entries.count == 2)
+        #expect(shard.entries["26e6678e7cec55b9"]?.text == "PrompTugal.news Faro: IA e tecnologia em Faro.")
+        #expect(shard.entries["26e6678e7cec55b9"]?.checked == false)
+        #expect(shard.entries["26aaaaaaaaaaaaaa"]?.checked == true)
+    }
+
+    @Test("in English the memory is not used: prose stays as written")
+    @MainActor func englishUntouched() {
+        #expect(PlacesLanguage.isPortuguese == false)
+        #expect(PlacesTranslation.shared.entry("PrompTugal.news Faro: AI and technology in Faro.") == nil)
+        #expect(PlacesTranslation.shared.text("PrompTugal.news Faro: AI and technology in Faro.") == "PrompTugal.news Faro: AI and technology in Faro.")
+    }
+
+    @Test("the catalogue has Portuguese (Portugal) for the interface, format specifiers intact")
+    func catalogue() throws {
+        let path = try #require(Bundle.module.path(forResource: "pt-PT", ofType: "lproj"))
+        let pt = try #require(Bundle(path: path))
+        #expect(pt.localizedString(forKey: "Since you last looked", value: nil, table: nil) == "Desde a última visita")
+        #expect(pt.localizedString(forKey: "Read at %@", value: nil, table: nil) == "Ler em %@")
+        #expect(pt.localizedString(forKey: "Machine translation, not reviewed · see in English", value: nil, table: nil)
+                == "Tradução automática, não revista · ver em inglês")
+        let format = pt.localizedString(forKey: "%lld new since %@", value: nil, table: nil)
+        #expect(String(format: format, 3, "26 nov") == "3 novas desde 26 nov")
+    }
+
+    @Test("the translatable prose is the mandate, the centre of gravity and the story summaries, not the headlines")
+    func prose() throws {
+        let file = try decode(PlaceFile.self, louleJSON)
+        #expect(file.translatableProse.contains("PrompTugal.news Loulé: AI and technology in Loulé."))
+        #expect(file.translatableProse.contains("Institutional more than corporate."))
+        #expect(!file.translatableProse.contains("Council buys AI tools"))
+    }
+}

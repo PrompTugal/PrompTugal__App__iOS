@@ -17,6 +17,8 @@ public struct PlaceDetailView: View {
     @Environment(\.placesRegionMap) private var regionMap
     /// A place opened from the region map hook.
     @State private var opened: PlaceRoute?
+    /// The place's prose in Portuguese, from the site's translation memory.
+    @State private var translation = PlacesTranslation.shared
     /// Where to open the page (spec S5): from the initialiser, else from the app's deep link when it names this place.
     private let anchor: PlaceAnchor?
     @Environment(\.placesDeepLink) private var deepLink
@@ -101,13 +103,13 @@ public struct PlaceDetailView: View {
                     Menu {
                         if file?.voice != nil {
                             Toggle(isOn: $algarvio.animation()) {
-                                Label(String(localized: "Algarvio voice (for fun)"), systemImage: "theatermasks")
+                                Label(String(localized: "Algarvio voice (for fun)", bundle: .module), systemImage: "theatermasks")
                             }
                         }
                         Button {
                             openURL(PlacesStore.pageURL(place))
                         } label: {
-                            Label(String(localized: "Open on promptugal.news"), systemImage: "safari")
+                            Label(String(localized: "Open on promptugal.news", bundle: .module), systemImage: "safari")
                         }
                         ShareLink(item: PlacesStore.pageURL(place))
                     } label: {
@@ -125,6 +127,7 @@ public struct PlaceDetailView: View {
         .task {
             if store.places.isEmpty { await store.load() }
             await store.loadPlace(id)
+            if let file { await translation.load(file.translatableProse) }
             await store.nowFeed(id).load()
             if let place { await store.loadAgents(for: place) }
         }
@@ -165,7 +168,7 @@ public struct PlaceDetailView: View {
                     }
                 }
                 if let credit = file?.look?.imageCredit, !credit.isEmpty {
-                    Text(String(localized: "Photo: \(credit)")).font(.caption2).foregroundStyle(.white.opacity(0.7))
+                    Text(String(localized: "Photo: \(credit)", bundle: .module)).font(.caption2).foregroundStyle(.white.opacity(0.7))
                 }
                 if algarvio, let lede = file?.voice?.lede, !lede.isEmpty {
                     Text(lede).font(.system(.headline, design: .serif).italic()).foregroundStyle(.white)
@@ -205,15 +208,16 @@ public struct PlaceDetailView: View {
 
     @ViewBuilder private var mandate: some View {
         if let file {
-            let text = algarvio ? (file.voice?.mandate ?? file.mandate) : file.mandate
+            let text = algarvio ? (file.voice?.mandate ?? file.mandate) : translation.text(file.mandate)
             HStack(alignment: .top, spacing: Space.m) {
                 Rectangle().fill(accent).frame(width: 5)
                 VStack(alignment: .leading, spacing: Space.s) {
-                    Kicker(text: algarvio ? String(localized: "The mandate, in Algarvio (same facts)") : String(localized: "The mandate"), color: accent)
+                    Kicker(text: algarvio ? String(localized: "The mandate, in Algarvio (same facts)", bundle: .module) : String(localized: "The mandate", bundle: .module), color: accent)
                     Text(text)
                         .font(.system(wide ? .title2 : .title3, design: .serif))
                         .foregroundStyle(Palette.ink)
                         .fixedSize(horizontal: false, vertical: true)
+                    if !algarvio { TranslationNote(entry: translation.entry(file.mandate)) }
                 }
             }
             .padding(.top, Space.l)
@@ -221,10 +225,10 @@ public struct PlaceDetailView: View {
     }
 
     @ViewBuilder private func numbers(_ place: PlaceSummary) -> some View {
-        let stories = BigNumber(value: file?.aiNews.count ?? place.aiNews, label: String(localized: "AI stories"), accent: accent)
-        let map = BigNumber(value: file?.aiMap.count ?? place.aiMap, label: String(localized: "on the AI map"), accent: accent)
-        let events = BigNumber(value: file?.events.count ?? 0, label: String(localized: "events"), accent: accent)
-        let sources = BigNumber(value: file?.sources.count ?? 0, label: String(localized: "sources"), accent: accent)
+        let stories = BigNumber(value: file?.aiNews.count ?? place.aiNews, label: String(localized: "AI stories", bundle: .module), accent: accent)
+        let map = BigNumber(value: file?.aiMap.count ?? place.aiMap, label: String(localized: "on the AI map", bundle: .module), accent: accent)
+        let events = BigNumber(value: file?.events.count ?? 0, label: String(localized: "events", bundle: .module), accent: accent)
+        let sources = BigNumber(value: file?.sources.count ?? 0, label: String(localized: "sources", bundle: .module), accent: accent)
         if wide {
             HStack(spacing: Space.xxl) { stories; map; events; sources }
         } else {
@@ -240,12 +244,13 @@ public struct PlaceDetailView: View {
     @ViewBuilder private var gravity: some View {
         if let gravity = file?.gravity, !gravity.text.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "Centre of gravity"),
-                            subtitle: String(localized: "Where AI weighs in this place, found from sources, never invented"), accent: accent)
-                Text(algarvio ? (file?.voice?.gravity ?? gravity.text) : gravity.text)
+                SectionHead(title: String(localized: "Centre of gravity", bundle: .module),
+                            subtitle: String(localized: "Where AI weighs in this place, found from sources, never invented", bundle: .module), accent: accent)
+                Text(algarvio ? (file?.voice?.gravity ?? gravity.text) : translation.text(gravity.text))
                     .font(.body)
                     .foregroundStyle(Palette.ink)
                     .fixedSize(horizontal: false, vertical: true)
+                if !algarvio { TranslationNote(entry: translation.entry(gravity.text)) }
                 ForEach(gravity.sources, id: \.self) { source in
                     SourceLine(title: source.title, url: source.url, readOn: source.readOn, accent: accent)
                 }
@@ -261,7 +266,7 @@ public struct PlaceDetailView: View {
         let kids = store.children(of: id)
         if !kids.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: id == "portugal" ? String(localized: "Regions and cities") : String(localized: "The towns"), accent: accent)
+                SectionHead(title: id == "portugal" ? String(localized: "Regions and cities", bundle: .module) : String(localized: "The towns", bundle: .module), accent: accent)
                 if id == "algarve" {
                     Group {
                         if let regionMap {
@@ -299,9 +304,10 @@ public struct PlaceDetailView: View {
         let items = file?.newsNewestFirst ?? []
         if let lead = items.first {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "Local AI news"),
-                            subtitle: String(localized: "Newest first. Each story passes the PrompTugal test: AI within three steps, with the path written down, and links to its source"), accent: accent)
+                SectionHead(title: String(localized: "Local AI news", bundle: .module),
+                            subtitle: String(localized: "Newest first. Each story passes the PrompTugal test: AI within three steps, with the path written down, and links to its source", bundle: .module), accent: accent)
                 PlacesOriginLabel(origin: origin)
+                TranslationNote(entry: items.lazy.compactMap { translation.entry($0.summary) }.first)
                 LeadStory(item: lead, accent: accent, subject: subject(for: lead))
                 let rest = Array(items.dropFirst())
                 if !rest.isEmpty {
@@ -323,8 +329,8 @@ public struct PlaceDetailView: View {
         let items = file?.articles ?? []
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "Our articles"),
-                            subtitle: String(localized: "Written by PrompTugal.news's agents, each one signed"), accent: accent)
+                SectionHead(title: String(localized: "Our articles", bundle: .module),
+                            subtitle: String(localized: "Written by PrompTugal.news's agents, each one signed", bundle: .module), accent: accent)
                 ForEach(items) { article in
                     StoryOpen(link: article.url, onOpen: {
                         _ = PlacesCredit.charge("article", article.url, article.date, article.title)
@@ -360,15 +366,15 @@ public struct PlaceDetailView: View {
         let entries = file?.aiMap ?? []
         if !entries.isEmpty, let place {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "The AI map"),
-                            subtitle: String(localized: "Government, companies, startups, investors, research and communities doing AI here; the nearer the centre, the fewer steps from AI. Spot something wrong? Comment on it."), accent: accent)
+                SectionHead(title: String(localized: "The AI map", bundle: .module),
+                            subtitle: String(localized: "Government, companies, startups, investors, research and communities doing AI here; the nearer the centre, the fewer steps from AI. Spot something wrong? Comment on it.", bundle: .module), accent: accent)
                 ConnectionsGraph(center: place.name, entries: entries, accent: accent)
                     .frame(height: wide ? 520 : 380)
                     .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius))
                 let groups = PlaceKind.groups(entries)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: Space.s) {
-                        kindChip(nil, String(localized: "All"), entries.count, "square.grid.2x2.fill")
+                        kindChip(nil, String(localized: "All", bundle: .module), entries.count, "square.grid.2x2.fill")
                         ForEach(groups, id: \.kind) { group in
                             kindChip(group.kind, group.kind.title, group.entries.count, group.kind.symbol)
                         }
@@ -406,8 +412,8 @@ public struct PlaceDetailView: View {
         let media = (file?.sources ?? []).filter(\.isMedia)
         if !media.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "Local media"),
-                            subtitle: String(localized: "The newsrooms, bloggers and editors who cover this place. We link to them first; read them."), accent: accent)
+                SectionHead(title: String(localized: "Local media", bundle: .module),
+                            subtitle: String(localized: "The newsrooms, bloggers and editors who cover this place. We link to them first; read them.", bundle: .module), accent: accent)
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: wide ? 240 : 160), spacing: Space.m)], spacing: Space.m) {
                     ForEach(media, id: \.self) { source in
                         Button {
@@ -437,8 +443,8 @@ public struct PlaceDetailView: View {
         let items = (file?.eventsNewestFirst ?? []).filter { $0.sourceLink != nil }
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "Events"),
-                            subtitle: String(localized: "Latest date first, each with the page it was read from"), accent: accent)
+                SectionHead(title: String(localized: "Events", bundle: .module),
+                            subtitle: String(localized: "Latest date first, each with the page it was read from", bundle: .module), accent: accent)
                 PlacesOriginLabel(origin: origin)
                 ForEach(items) { event in
                     Button {
@@ -481,7 +487,7 @@ public struct PlaceDetailView: View {
     private func monthName(_ text: String) -> String {
         guard let date = PlaceDates.parse(String(text.prefix(10))) else { return "" }
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
+        f.locale = PlacesLanguage.locale
         f.dateFormat = "MMM"
         return f.string(from: date)
     }
@@ -490,14 +496,14 @@ public struct PlaceDetailView: View {
 
     @ViewBuilder private func agents(_ place: PlaceSummary) -> some View {
         VStack(alignment: .leading, spacing: Space.m) {
-            SectionHead(title: String(localized: "The agents behind \(place.name)"),
-                        subtitle: String(localized: "What each one is doing now, from its own record. Powered by AgentiCCells."), accent: accent)
+            SectionHead(title: String(localized: "The agents behind \(place.name)", bundle: .module),
+                        subtitle: String(localized: "What each one is doing now, from its own record. Powered by AgentiCCells.", bundle: .module), accent: accent)
             if let report = store.agentsReport(for: place) {
                 AgentsPanel(report: report, accent: accent, placeAgent: place.agent)
             } else {
                 HStack(spacing: Space.m) {
                     ProgressView()
-                    Text(String(localized: "Reading the agents' status records")).font(.footnote).foregroundStyle(Palette.muted)
+                    Text(String(localized: "Reading the agents' status records", bundle: .module)).font(.footnote).foregroundStyle(Palette.muted)
                 }
             }
         }
@@ -509,8 +515,8 @@ public struct PlaceDetailView: View {
         let items = file?.gaps ?? []
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: Space.s) {
-                SectionHead(title: String(localized: "What we do not know yet"),
-                            subtitle: String(localized: "The place agent's open questions, shown on purpose"), accent: accent)
+                SectionHead(title: String(localized: "What we do not know yet", bundle: .module),
+                            subtitle: String(localized: "The place agent's open questions, shown on purpose", bundle: .module), accent: accent)
                 ForEach(items, id: \.self) { gap in
                     Label {
                         Text(gap).font(.subheadline).foregroundStyle(Palette.ink).fixedSize(horizontal: false, vertical: true)
@@ -526,18 +532,18 @@ public struct PlaceDetailView: View {
 
     private func provenance(_ place: PlaceSummary) -> some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            SectionHead(title: String(localized: "How this page is made"), accent: accent)
+            SectionHead(title: String(localized: "How this page is made", bundle: .module), accent: accent)
             Grid(alignment: .leading, horizontalSpacing: Space.m, verticalSpacing: 6) {
-                provenanceRow(String(localized: "Written by"), file?.by ?? place.agent)
-                provenanceRow(String(localized: "Updated"), PlaceDates.short(file?.updated ?? place.updated))
+                provenanceRow(String(localized: "Written by", bundle: .module), file?.by ?? place.agent)
+                provenanceRow(String(localized: "Updated", bundle: .module), PlaceDates.short(file?.updated ?? place.updated))
                 if let identity = file?.identity {
-                    provenanceRow(String(localized: "Signed with"), identity.keyID)
+                    provenanceRow(String(localized: "Signed with", bundle: .module), identity.keyID)
                 }
-                provenanceRow(String(localized: "Data"), PlacesStore.placeURL(place.id).absoluteString)
+                provenanceRow(String(localized: "Data", bundle: .module), PlacesStore.placeURL(place.id).absoluteString)
             }
             .font(.footnote)
             if let sources = file?.sources, !sources.isEmpty {
-                Text(String(localized: "Sources the agent reads")).font(.footnote.weight(.semibold)).padding(.top, Space.s)
+                Text(String(localized: "Sources the agent reads", bundle: .module)).font(.footnote.weight(.semibold)).padding(.top, Space.s)
                 FlowChips(items: sources.map { ($0.name, $0.url, $0.kind) }, accent: accent)
             }
         }
@@ -569,7 +575,7 @@ struct ReadAtLine: View {
             Text(label).lineLimit(1)
             Spacer(minLength: Space.s)
             if !readOn.isEmpty {
-                Text(String(localized: "read on \(PlaceDates.short(readOn))"))
+                Text(String(localized: "read on \(PlaceDates.short(readOn))", bundle: .module))
                     .foregroundStyle(Palette.muted)
                     .lineLimit(1)
             }
@@ -579,8 +585,8 @@ struct ReadAtLine: View {
     }
 
     private var label: String {
-        if outlet.isEmpty { return held ? String(localized: "Read it at the source") : String(localized: "Read at the source") }
-        return held ? String(localized: "Read it at \(outlet)") : String(localized: "Read at \(outlet)")
+        if outlet.isEmpty { return held ? String(localized: "Read it at the source", bundle: .module) : String(localized: "Read at the source", bundle: .module) }
+        return held ? String(localized: "Read it at \(outlet)", bundle: .module) : String(localized: "Read at \(outlet)", bundle: .module)
     }
 }
 
@@ -597,7 +603,7 @@ struct LeadStory: View {
         } label: {
             VStack(alignment: .leading, spacing: Space.m) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Kicker(text: String(localized: "The lead"), color: accent)
+                    Kicker(text: String(localized: "The lead", bundle: .module), color: accent)
                     Text([item.publisher, PlaceDates.short(item.date)].filter { !$0.isEmpty }.joined(separator: " · "))
                         .font(.caption).foregroundStyle(Palette.muted)
                 }
@@ -606,7 +612,7 @@ struct LeadStory: View {
                     .foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(item.summary)
+                Text(PlacesTranslation.shared.text(item.summary))
                     .font(.system(.body, design: .serif))
                     .foregroundStyle(Palette.ink.opacity(0.85))
                     .multilineTextAlignment(.leading)
@@ -666,7 +672,7 @@ struct MapEntryCard: View {
                     HStack(spacing: 6) {
                         Text(entry.type.capitalized).font(.caption2.weight(.semibold)).foregroundStyle(Palette.muted)
                         if entry.lookingForWork {
-                            Text(String(localized: "Looking for work"))
+                            Text(String(localized: "Looking for work", bundle: .module))
                                 .font(.caption2.weight(.bold))
                                 .padding(.horizontal, 6).padding(.vertical, 1)
                                 .background(Palette.green, in: Capsule())
@@ -677,7 +683,7 @@ struct MapEntryCard: View {
                 Spacer(minLength: 0)
                 if let url = URL(string: entry.url), !entry.url.isEmpty {
                     Button { openURL(url) } label: { Image(systemName: "arrow.up.right.square") }
-                        .accessibilityLabel(String(localized: "Open \(entry.name)"))
+                        .accessibilityLabel(String(localized: "Open \(entry.name)", bundle: .module))
                 }
             }
             if !entry.what.isEmpty {
@@ -732,7 +738,7 @@ struct ContactRow: View {
             .font(.caption)
             .foregroundStyle(accent)
             .buttonStyle(.plain)
-            SourceLine(title: String(localized: "Published at \(URL(string: contact.sourceURL)?.host() ?? contact.sourceURL)"),
+            SourceLine(title: String(localized: "Published at \(URL(string: contact.sourceURL)?.host() ?? contact.sourceURL)", bundle: .module),
                        url: contact.sourceURL, readOn: contact.readOn, accent: Palette.muted)
         }
         .padding(Space.s)
@@ -750,8 +756,8 @@ struct ProvenanceLine: View {
         HStack(spacing: 6) {
             Image(systemName: valid ? "checkmark.seal.fill" : "seal").foregroundStyle(valid ? Palette.green : Palette.muted)
             Text([provenance.readBy.split(separator: "@").first.map(String.init) ?? "",
-                  provenance.readOn.isEmpty ? "" : String(localized: "read \(PlaceDates.short(provenance.readOn))"),
-                  valid ? String(localized: "signed \(provenance.siteKey)") : String(localized: "signature \(provenance.signature)")]
+                  provenance.readOn.isEmpty ? "" : String(localized: "read \(PlaceDates.short(provenance.readOn))", bundle: .module),
+                  valid ? String(localized: "signed \(provenance.siteKey)", bundle: .module) : String(localized: "signature \(provenance.signature)", bundle: .module)]
                 .filter { !$0.isEmpty }.joined(separator: " · "))
                 .lineLimit(2)
         }
@@ -778,7 +784,7 @@ struct SourceLine: View {
                 Text(title).font(.caption).lineLimit(2).multilineTextAlignment(.leading)
                 Spacer(minLength: 0)
                 if !readOn.isEmpty {
-                    Text(String(localized: "read \(PlaceDates.short(readOn))")).font(.caption2).foregroundStyle(Palette.muted)
+                    Text(String(localized: "read \(PlaceDates.short(readOn))", bundle: .module)).font(.caption2).foregroundStyle(Palette.muted)
                 }
             }
             .foregroundStyle(accent)

@@ -8,6 +8,19 @@ import SwiftUI
 // (the block's `page`, else IPMA's site), never a raw JSON.
 
 public struct PlaceNow: Decodable, Sendable, Equatable {
+    /// The airport named when now.json does not name one.
+    static let defaultAirport = "Faro"
+
+    /// IPMA's warning colours in the app's language; anything else as written.
+    static func levelName(_ level: String) -> String {
+        switch level.lowercased() {
+        case "yellow": String(localized: "Yellow", bundle: .module)
+        case "orange": String(localized: "Orange", bundle: .module)
+        case "red": String(localized: "Red", bundle: .module)
+        default: level.capitalized
+        }
+    }
+
     public var readAt: String
     public var station: Station?
     public var today: Day?
@@ -129,10 +142,10 @@ struct PlaceNowCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Space.m) {
             HStack {
-                Kicker(text: String(localized: "Now in \(placeName)"), color: accent)
+                Kicker(text: String(localized: "Now in \(placeName)", bundle: .module), color: accent)
                 Spacer()
                 if !now.readAt.isEmpty {
-                    Text(String(localized: "read \(PlaceDates.ago(now.readAt))")).font(.caption2).foregroundStyle(Palette.muted)
+                    Text(String(localized: "read \(PlaceDates.ago(now.readAt))", bundle: .module)).font(.caption2).foregroundStyle(Palette.muted)
                 }
             }
             HStack(alignment: .firstTextBaseline, spacing: Space.l) {
@@ -144,20 +157,20 @@ struct PlaceNowCard: View {
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     if let today = now.today, let lo = today.minC, let hi = today.maxC {
-                        Text(String(localized: "Today \(Int(lo.rounded()))° to \(Int(hi.rounded()))°")).font(.headline)
+                        Text(String(localized: "Today \(Int(lo.rounded()))° to \(Int(hi.rounded()))°", bundle: .module)).font(.headline)
                     }
                     if let rain = now.today?.rainPct {
-                        Text(String(localized: "\(Int(rain))% chance of rain")).font(.subheadline).foregroundStyle(Palette.muted)
+                        Text(String(localized: "\(Int(rain))% chance of rain", bundle: .module)).font(.subheadline).foregroundStyle(Palette.muted)
                     }
                     if let st = now.station {
-                        Text([st.name, st.km.map { String(localized: "\(Int($0)) km away") } ?? ""].filter { !$0.isEmpty }.joined(separator: " · "))
+                        Text([st.name, st.km.map { String(localized: "\(Int($0)) km away", bundle: .module) } ?? ""].filter { !$0.isEmpty }.joined(separator: " · "))
                             .font(.caption).foregroundStyle(Palette.muted)
                     }
                 }
             }
             ForEach(now.warnings, id: \.self) { w in
                 Button { open("warnings") } label: {
-                    Label(String(localized: "\(w.level.capitalized) warning: \(w.type)"), systemImage: "exclamationmark.triangle.fill")
+                    Label(String(localized: "\(PlaceNow.levelName(w.level)) warning: \(w.type)", bundle: .module), systemImage: "exclamationmark.triangle.fill")
                         .font(.subheadline.weight(.semibold))
                         .padding(.horizontal, 10).padding(.vertical, 6)
                         .background(Self.warningColor(w.level).opacity(0.2), in: Capsule())
@@ -166,15 +179,15 @@ struct PlaceNowCard: View {
                 .buttonStyle(.plain)
             }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: Space.m)], alignment: .leading, spacing: Space.m) {
-                if let h = now.station?.humidityPct { tile("humidity", "\(Int(h))%", String(localized: "humidity"), "station") }
-                if let w = now.station?.windKmh { tile("wind", "\(Int(w.rounded())) km/h", String(localized: "wind"), "station") }
-                if let f = now.fireRisk { tile("flame", f.capitalized, String(localized: "fire risk"), "fire_risk") }
-                if let uv = now.uv { tile("sun.max", "\(uv)", String(localized: "UV index"), "station") }
-                if let waves = now.sea?.wavesMaxM { tile("water.waves", String(format: "%.1f m", waves), String(localized: "waves"), "sea") }
-                if let sea = now.sea?.seaTempMaxC { tile("thermometer.medium", "\(Int(sea.rounded()))°", String(localized: "sea"), "sea") }
-                if let flights = now.flights { tile("airplane", "\(flights)", String(localized: "flights near \(now.airportName ?? "Faro")"), "airport") }
+                if let h = now.station?.humidityPct { tile("humidity", "\(Int(h))%", String(localized: "humidity", bundle: .module), "station") }
+                if let w = now.station?.windKmh { tile("wind", "\(Int(w.rounded())) km/h", String(localized: "wind", bundle: .module), "station") }
+                if let f = now.fireRisk { tile("flame", f.capitalized, String(localized: "fire risk", bundle: .module), "fire_risk") }
+                if let uv = now.uv { tile("sun.max", "\(uv)", String(localized: "UV index", bundle: .module), "station") }
+                if let waves = now.sea?.wavesMaxM { tile("water.waves", String(format: "%.1f m", waves), String(localized: "waves", bundle: .module), "sea") }
+                if let sea = now.sea?.seaTempMaxC { tile("thermometer.medium", "\(Int(sea.rounded()))°", String(localized: "sea", bundle: .module), "sea") }
+                if let flights = now.flights { tile("airplane", "\(flights)", String(localized: "flights near \(now.airportName ?? PlaceNow.defaultAirport)", bundle: .module), "airport") }
             }
-            Text(String(localized: "From IPMA's open data, read hourly. Not a warning service: follow IPMA and ANEPC."))
+            Text(String(localized: "From IPMA's open data, read hourly. Not a warning service: follow IPMA and ANEPC.", bundle: .module))
                 .font(.caption2).foregroundStyle(Palette.muted)
         }
         .padding(Space.l)

@@ -268,7 +268,7 @@ public enum PlaceAgents {
             let agentRole: String
             let newsroomRole: String
             if role == own {
-                agentRole = status.focus.isEmpty ? "The place agent: researches and writes \(place.name)" : status.focus
+                agentRole = status.focus.isEmpty ? String(localized: "The place agent: researches and writes \(place.name)", bundle: .module) : status.focus
                 newsroomRole = "place"
             } else if role == parent {
                 agentRole = status.focus
@@ -330,7 +330,7 @@ public enum PlaceDates {
         let first = String(text.prefix(10))
         guard let date = parse(first) else { return text }
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
+        f.locale = PlacesLanguage.locale
         f.timeZone = TimeZone(identifier: "Europe/Lisbon")
         f.dateFormat = "d MMM yyyy"
         return f.string(from: date)
