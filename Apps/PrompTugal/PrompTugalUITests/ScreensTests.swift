@@ -14,24 +14,36 @@ import XCTest
 ///   -PTHideTerm <text>    hides events and news containing the text (Debug only), from PT_HIDE_TERM when not empty
 ///   -PTSeedPicks <ids>    seeded picks, from the environment variable PT_SEED_PICKS when it is not empty
 ///
-/// The ids come from ux (c.ios.ux, 25 Nov 2026: local news town by town, agreed with c.ios.design: the news first, then who makes it). A destination that does not
-/// exist yet opens whatever the shell shows by default, so a screenshot is still attached for it. The summit screens
-/// (team.schedule, explore.talk, explore.people, explore.graph, map) are no longer shot. A town page and the Algarve map
-/// have no destination id yet (asked for through the conductor); they join this list once they do.
-/// Run screens.yml with ids "places,now,news.home,local.newsroom,explore.stories", ids_required "places,now,news.home,local.newsroom",
-/// seed_picks empty and now empty (a date in the summit week puts Now in its summit state).
+/// The ids come from ux (c.ios.ux, 26 Nov 2026, Dinis's IA: Home, Places, News, Now; agreed with c.ios.design). The summit
+/// screens are gone. `place:<id>` opens one town page (Shell/Destinations.swift). The attachment, and so the file, is named
+/// with the file-safe form of the id (`place:loule` -> `place.loule`): ":" and "#" are not allowed in artifact paths.
+/// Run screens.yml with ids "home,places,place.loule,now,news.home,local.newsroom", the same as ids_required,
+/// seed_picks empty and now empty.
 final class ScreensTests: XCTestCase {
-    /// ux's list, in store order.
-    static let destinations = ["places", "now", "news.home", "local.newsroom", "explore.stories"]
+    /// ux's list, in store order (launch ids).
+    static let destinations = ["home", "places", "place:loule", "now", "news.home", "local.newsroom"]
 
-    @MainActor func test01_places() { shoot(1, "places") }
-    @MainActor func test02_now() { shoot(2, "now") }
-    @MainActor func test03_news_home() { shoot(3, "news.home") }
-    @MainActor func test04_local_newsroom() { shoot(4, "local.newsroom") }
-    @MainActor func test05_explore_stories() { shoot(5, "explore.stories") }
+    @MainActor func test01_home() { shoot(1, "home") }
+    @MainActor func test02_places() { shoot(2, "places") }
+    @MainActor func test03_place_loule() { shoot(3, "place:loule") }
+    @MainActor func test04_now() { shoot(4, "now") }
+    @MainActor func test05_news_home() { shoot(5, "news.home") }
+    @MainActor func test06_local_newsroom() { shoot(6, "local.newsroom") }
 
     func testListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.destinations.count, 5)
+        XCTAssertEqual(Self.destinations.count, 6)
+    }
+
+    /// The screenshot's name for a launch id: ":" and "#" become ".", so the file can be uploaded and matched by screens.yml.
+    static func fileID(_ id: String) -> String {
+        String(id.map { $0 == ":" || $0 == "#" ? "." : $0 })
+    }
+
+    func testFileIDsAreFileSafe() {
+        XCTAssertEqual(Self.fileID("place:loule"), "place.loule")
+        XCTAssertEqual(Self.fileID("place:loule#lead"), "place.loule.lead")
+        XCTAssertEqual(Self.fileID("news.home"), "news.home")
+        XCTAssertEqual(Self.destinations.map(Self.fileID), ["home", "places", "place.loule", "now", "news.home", "local.newsroom"])
     }
 
     override func setUp() {
@@ -81,7 +93,7 @@ final class ScreensTests: XCTestCase {
         // The whole screen, not app.screenshot(): in landscape on iPad the app element's capture crops the portrait
         // framebuffer and leaves black areas.
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
-        attachment.name = String(format: "%02d-%@", index, id)
+        attachment.name = String(format: "%02d-%@", index, Self.fileID(id))
         attachment.lifetime = .keepAlways
         add(attachment)
         app.terminate()
