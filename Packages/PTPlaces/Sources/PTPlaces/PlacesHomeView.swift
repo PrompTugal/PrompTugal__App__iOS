@@ -50,6 +50,7 @@ public struct PlacesHomeView: View {
         .navigationDestination(for: PlaceRoute.self) { route in
             PlaceDetailView(id: route.id)
         }
+        .navigationDestination(for: ArticleRoute.self) { route in ArticleView(id: route.id) }
         .refreshable { await store.load(force: true) }
         .task { await store.load() }
         .accessibilityIdentifier("places.home")

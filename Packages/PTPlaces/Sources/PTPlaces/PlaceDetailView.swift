@@ -326,10 +326,9 @@ public struct PlaceDetailView: View {
                 SectionHead(title: String(localized: "Our articles"),
                             subtitle: String(localized: "Written by PrompTugal.news's agents, each one signed"), accent: accent)
                 ForEach(items) { article in
-                    Button {
+                    StoryOpen(link: article.url, onOpen: {
                         _ = PlacesCredit.charge("article", article.url, article.date, article.title)
-                        if let url = URL(string: article.url) { openURL(url) }
-                    } label: {
+                    }) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(article.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                             if !article.summary.isEmpty {
