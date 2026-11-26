@@ -17,7 +17,8 @@ struct PrompTugalApp: App {
         // The redesign's softer look (SF throughout, rounder cards; story headlines stay serif), before any view draws.
         // The Team app keeps the classic look.
         Look.current = .soft
-        // The app's own language (default English, never the device's), before any view reads a string.
+        // The app's own language (English or Portuguese, following the device unless a choice is saved), before any
+        // view reads a string.
         AppCulture.start()
         // The app's own URL scheme, before any view reads it (reminder links, deep links).
         AppLinks.scheme = "promptugal"
