@@ -15,5 +15,7 @@ Eight fictional readers walk the current build from its SwiftUI code and the liv
 | 25 Nov 2026 | work/candidate-c2 `5404498` (dev `ccddde5` + c2) | Privacy and support pages describe the summit beta; weather promised but never shown; CI status, Reading credit and summit screens still in the store build. |
 | 25 Nov 2026 | work/candidate-c2c `962e8f9` | [changes-c2c.md](changes-c2c.md): More and iPad sidebar clean; still blocking: weather in the listing, support page beta half, privacy page not deployed, price chips on articles. |
 | 26 Nov 2026 | work/candidate-c2d `a3db74f` | [changes-c2d.md](changes-c2d.md): one blocker left, the listing still promises "Now in", which never shows; "independent" still on the News tab and the Algarve board page. |
+| 26 Nov 2026 | work/candidate-c2e `5cbf730` | [changes-c2e.md](changes-c2e.md): no blocker found; new: 21 languages declared, English only with no switch. |
+| 26 Nov 2026 | work/candidate-c6 `2a58431` (next version) | [changes-c6.md](changes-c6.md), all personas: Home, freshness lines, events and council blocks are real gains; Portuguese reader now stuck (no language at all); rebuilt Explore unreachable; Home leads with placeless industry items. |
 
 Later candidates: only what changed, appended here as new rows and a `changes-<candidate>.md`.
