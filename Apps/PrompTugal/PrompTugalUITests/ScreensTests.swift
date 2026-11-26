@@ -14,24 +14,24 @@ import XCTest
 ///   -PTHideTerm <text>    hides events and news containing the text (Debug only), from PT_HIDE_TERM when not empty
 ///   -PTSeedPicks <ids>    seeded picks, from the environment variable PT_SEED_PICKS when it is not empty
 ///
-/// The ids come from ux. A destination that does not exist yet opens whatever the shell shows by default, so a
-/// screenshot is still attached for it (screens.yml reports the ones it requires: now, team.schedule, explore, news.home).
+/// The ids come from ux (c.ios.ux, 25 Nov 2026: local news town by town, agreed with c.ios.design: the news first, then who makes it). A destination that does not
+/// exist yet opens whatever the shell shows by default, so a screenshot is still attached for it. The summit screens
+/// (team.schedule, explore.talk, explore.people, explore.graph, map) are no longer shot. A town page and the Algarve map
+/// have no destination id yet (asked for through the conductor); they join this list once they do.
+/// Run screens.yml with ids "places,now,news.home,local.newsroom,explore.stories", ids_required "places,now,news.home,local.newsroom",
+/// seed_picks empty and now empty (a date in the summit week puts Now in its summit state).
 final class ScreensTests: XCTestCase {
     /// ux's list, in store order.
-    static let destinations = ["now", "team.schedule", "explore", "explore.talk", "news.home", "explore.people", "explore.graph", "map", "places"]
+    static let destinations = ["places", "now", "news.home", "local.newsroom", "explore.stories"]
 
-    @MainActor func test01_now() { shoot(1, "now") }
-    @MainActor func test02_team_schedule() { shoot(2, "team.schedule") }
-    @MainActor func test03_explore() { shoot(3, "explore") }
-    @MainActor func test04_explore_talk() { shoot(4, "explore.talk") }
-    @MainActor func test05_news_home() { shoot(5, "news.home") }
-    @MainActor func test06_explore_people() { shoot(6, "explore.people") }
-    @MainActor func test07_explore_graph() { shoot(7, "explore.graph") }
-    @MainActor func test08_map() { shoot(8, "map") }
-    @MainActor func test09_places() { shoot(9, "places") }
+    @MainActor func test01_places() { shoot(1, "places") }
+    @MainActor func test02_now() { shoot(2, "now") }
+    @MainActor func test03_news_home() { shoot(3, "news.home") }
+    @MainActor func test04_local_newsroom() { shoot(4, "local.newsroom") }
+    @MainActor func test05_explore_stories() { shoot(5, "explore.stories") }
 
     func testListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.destinations.count, 9)
+        XCTAssertEqual(Self.destinations.count, 5)
     }
 
     override func setUp() {

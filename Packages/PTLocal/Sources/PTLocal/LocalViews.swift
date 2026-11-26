@@ -15,7 +15,7 @@ public struct AlgarveView: View {
     public var body: some View {
         Page {
             header
-            ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
+            ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase, readAt: store.placesReadAt)
             StatGrid(minimum: 120) {
                 StatTile(label: "Places", value: "\(PlaceDirectory.towns.count)", detail: "first wave")
                 StatTile(label: "Live sites", value: "\(store.liveTownCount)", detail: "the rest researching", tone: .good)
@@ -58,7 +58,7 @@ public struct AlgarveView: View {
                 }
             }
             .buttonStyle(.plain)
-            Text("PrompTugal.news is independent. Every fact here links to where it was read. Each town's research is by its own agent.")
+            Text("PrompTugal.news: local news from Portugal, every item with its source. Each town's research is by its own agent.")
                 .font(.caption).foregroundStyle(Palette.muted)
         }
         .navigationTitle("The Algarve")
@@ -219,6 +219,10 @@ struct StoryRow: View {
             if let path = story.aiPath {
                 Text(path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3)
             }
+            if story.isHeld, let url = story.sourceURL {
+                Link(destination: url) { Label(story.readItAt, systemImage: "arrow.up.right.square") }
+                    .font(.caption.weight(.semibold))
+            }
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
@@ -228,35 +232,46 @@ struct StoryRow: View {
 // MARK: - Provenance and simulation
 
 /// Says where the screen's data came from: live, this device's copy, or the copy built into the app.
+/// With `readAt` (the feed's own read time) it says "live" only when the feed read its data in the last 3 hours, and
+/// otherwise "Snapshot, read <date>", even when the file was fetched just now (see `Freshness`).
 public struct ProvenanceLabel: View {
     let provenance: Provenance
     let phase: LoadPhase
+    let readAt: Date?
+    let host: String
 
-    public init(provenance: Provenance, phase: LoadPhase) {
+    public init(provenance: Provenance, phase: LoadPhase, readAt: Date? = nil, host: String = "promptugal.news") {
         self.provenance = provenance
         self.phase = phase
+        self.readAt = readAt
+        self.host = host
     }
 
     public var body: some View {
+        let line = Freshness.line(provenance: provenance, readAt: readAt, host: host)
         HStack(spacing: 6) {
             if phase == .loading { ProgressView().controlSize(.mini) }
-            Image(systemName: icon)
-            Text(provenance.label)
-            if case .live(let date) = provenance {
-                Text(date, format: .relative(presentation: .named, unitsStyle: .abbreviated))
-            }
-            if case .cached(let date?) = provenance {
-                Text(date, format: .relative(presentation: .named, unitsStyle: .abbreviated))
-            }
+            Image(systemName: icon(fresh: line.isLive))
+            Text(line.text)
+            if readAt == nil { relative }
         }
         .font(.caption)
-        .foregroundStyle(provenance.isLive ? Palette.muted : Palette.amber)
+        .foregroundStyle(line.isLive ? Palette.muted : Palette.amber)
         .accessibilityElement(children: .combine)
     }
 
-    private var icon: String {
+    @ViewBuilder private var relative: some View {
+        if case .live(let date) = provenance {
+            Text(date, format: .relative(presentation: .named, unitsStyle: .abbreviated))
+        }
+        if case .cached(let date?) = provenance {
+            Text(date, format: .relative(presentation: .named, unitsStyle: .abbreviated))
+        }
+    }
+
+    private func icon(fresh: Bool) -> String {
         switch provenance {
-        case .live: "dot.radiowaves.left.and.right"
+        case .live: fresh ? "dot.radiowaves.left.and.right" : "clock.badge.exclamationmark"
         case .cached: "wifi.slash"
         case .snapshot: "shippingbox"
         case .none: "questionmark.circle"

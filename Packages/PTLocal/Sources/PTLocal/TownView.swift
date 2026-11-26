@@ -63,7 +63,8 @@ public struct TownView: View {
         .padding(.bottom, Space.xs)
         .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 4).offset(x: -Space.m) }
 
-        ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase)
+        ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase,
+                        readAt: NewsroomDate.parse(site.updated))
         Text("Updated \(site.updated) by \(site.by)").font(.caption.monospaced()).foregroundStyle(Palette.muted)
 
         if let text = algarvio ? (site.voice?.gravity ?? site.gravity?.text) : site.gravity?.text {
@@ -196,7 +197,7 @@ struct TownAgentCard: View {
         TitledCard("The town's agent", kicker: "Newsroom") {
             if let agent {
                 AgentSummary(agent: agent)
-                ProvenanceLabel(provenance: provenance, phase: .idle)
+                ProvenanceLabel(provenance: provenance, phase: .idle, readAt: dashboard?.updated)
             } else if dashboard == nil {
                 Text("Loading the newsroom dashboard…").font(.footnote).foregroundStyle(Palette.muted)
             } else {

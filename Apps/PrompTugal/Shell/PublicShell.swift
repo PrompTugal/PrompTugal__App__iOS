@@ -1,6 +1,7 @@
 import PTAgenda
 import PTCore
 import PTExplore
+import PTLocal
 import PTNews
 import PTPlaces
 import PTWeb
@@ -17,8 +18,8 @@ struct PublicShell: View {
 
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
-    @SceneStorage("shell.selection") private var selection = "places"
-    @SceneStorage("shell.tab") private var tab = "places"
+    @SceneStorage("shell.selection") private var selection = "home"
+    @SceneStorage("shell.tab") private var tab = "home"
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     /// ONB-1: the first-run screen, shown once.
     @AppStorage("onboarding.seen") private var onboardingSeen = false
@@ -33,7 +34,7 @@ struct PublicShell: View {
     /// A screen that is not a tab, opened over the iPhone shell (Settings from the gear, a link to Ask).
     @State private var presented: PresentedScreen?
     /// Where Explore opens (a link such as explore.people picks a segment).
-    @State private var exploreStart: ExploreStart = .speakers
+    @State private var exploreStart: ExploreStart = .stories
 
     var body: some View {
         Group {
@@ -50,6 +51,8 @@ struct PublicShell: View {
         .environment(\.newsSource, reader)
         .environment(newsFeeds)
         .environment(\.openDestination, { open($0) })
+        // A town tapped on the Algarve maps (PTLocal) opens its place page (PTPlaces), not PTLocal's own town view.
+        .localOpenPlace { id in open("place:" + id) }
         .environment(\.exploreStart, exploreStart)
         .publicFeatures(features)
         .pickToasts()

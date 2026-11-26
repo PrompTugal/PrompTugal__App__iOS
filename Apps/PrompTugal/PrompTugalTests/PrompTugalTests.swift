@@ -24,11 +24,11 @@ struct PublicAppTests {
         #expect(AgendaSeed.events().count > 150)
     }
 
-    @Test("iPhone has three tabs in order: Places, News, Now; the summit's My program is no longer listed")
+    @Test("iPhone has four tabs in order: Home, Places, News, Now; the summit's My program is no longer listed")
     @MainActor func fourTabs() {
         let tabs = PublicDestinations.all.filter { $0.phoneTab != nil }.sorted { ($0.phoneTab ?? 0) < ($1.phoneTab ?? 0) }
-        #expect(tabs.map(\.id) == ["places", "news.home", "now"])
-        #expect(tabs.compactMap(\.phoneTab) == [0, 1, 2])
+        #expect(tabs.map(\.id) == ["home", "places", "news.home", "now"])
+        #expect(tabs.compactMap(\.phoneTab) == [0, 1, 2, 3])
         #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("team.schedule"))
         #expect(PublicDestinations.openable("team.schedule", debug: false) != nil)
     }
@@ -43,16 +43,18 @@ struct PublicAppTests {
         #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("local.ci-status"))
     }
 
-    @Test("promptugal://open/map still opens the venue map, now in More")
-    @MainActor func mapLinkStillWorks() {
-        let map = PublicDestinations.openable("map", debug: false)
-        #expect(map != nil)
-        #expect(map?.phoneTab == nil)
+    @Test("old summit links (map, team.schedule) open Places; place:<id> opens a town")
+    @MainActor func summitLinksOpenPlaces() {
+        #expect(PublicDestinations.openable("map", debug: false)?.id == "places")
+        #expect(PublicDestinations.openable("team.schedule", debug: false)?.id == "places")
+        #expect(PublicDestinations.openable("place:loule", debug: false)?.id == "place:loule")
+        #expect(PublicDestinations.openable("place:faro#now", debug: false)?.id == "place:faro#now")
+        #expect(PublicDestinations.listed("More", debug: false).map(\.id).contains("local.sources"))
     }
 
     @Test("promptugal://open/places opens the places magazine; algarve is an alias")
     @MainActor func placesLink() {
-        #expect(PublicDestinations.openable("places", debug: false)?.phoneTab == 0)
+        #expect(PublicDestinations.openable("places", debug: false)?.phoneTab == 1)
         #expect(PublicDestinations.resolve("algarve") == "places")
     }
 

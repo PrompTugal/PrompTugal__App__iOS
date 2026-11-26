@@ -15,6 +15,8 @@ public final class PlacesStore {
     public static let agentsURL = URL(string: "https://promptugal.news/api/v1/by-place/agents.json")!
     /// Every agent's status in one file (the Team app's Agents dashboard reads it too).
     public static let dashboardURL = URL(string: "https://promptugal.news/api/v1/newsroom/dashboard.json")!
+    /// Everything dated in the last 45 days, newest first, with its place and source ("Since you last looked").
+    public static let sinceURL = URL(string: "https://promptugal.news/api/v1/since.json")!
 
     /// JSON first (Dinis, 15 Nov): the place under /api/v1/, the same shape as data/by-place/<id>.json plus provenance and articles.
     public static func placeURL(_ id: String) -> URL { site.appendingPathComponent("api/v1/by-place/\(id).json") }
@@ -27,6 +29,7 @@ public final class PlacesStore {
     public let list = RemoteFeed<PlaceIndex>(name: "places.list", url: PlacesStore.listURL)
     public let teamReport = RemoteFeed<AgentsReport>(name: "places.agents", url: PlacesStore.agentsURL)
     public let dashboard = RemoteFeed<NewsroomDashboard>(name: "places.dashboard", url: PlacesStore.dashboardURL)
+    let since = RemoteFeed<SinceFeed>(name: "places.since", url: PlacesStore.sinceURL)
     public private(set) var files: [String: RemoteFeed<PlaceFile>] = [:]
     public private(set) var statuses: [String: RemoteFeed<AgentStatus>] = [:]
     public private(set) var placeAgents: [String: RemoteFeed<PlaceAgentsFile>] = [:]
@@ -46,12 +49,17 @@ public final class PlacesStore {
         list.freshFor = 3_600
         teamReport.freshFor = 300
         dashboard.freshFor = 120
+        since.freshFor = 300
     }
 
-    /// The places in the website's order, with each town's seat merged in from places.json.
+    /// The places in the website's order, with each town's seat merged in from places.json. A place that only
+    /// places.json has (an index saved on the device before the site added it) still shows, after the index's own.
     public var places: [PlaceSummary] {
-        let seats = Dictionary((list.value?.places ?? []).map { ($0.id, $0.at) }, uniquingKeysWith: { a, _ in a })
-        let base = index.value?.places ?? list.value?.places ?? []
+        let listed = list.value?.places ?? []
+        let seats = Dictionary(listed.map { ($0.id, $0.at) }, uniquingKeysWith: { a, _ in a })
+        let indexed = index.value?.places ?? []
+        let known = Set(indexed.map(\.id))
+        let base = indexed + listed.filter { !known.contains($0.id) }
         return base.map { place in
             var place = place
             if place.at == nil { place.at = seats[place.id] ?? nil }
@@ -86,7 +94,8 @@ public final class PlacesStore {
         async let a: Void = index.load(force: force)
         async let b: Void = list.load(force: force)
         async let c: Void = dashboard.load(force: force)
-        _ = await (a, b, c)
+        async let d: Void = since.load(force: force)
+        _ = await (a, b, c, d)
         await withTaskGroup(of: Void.self) { group in
             for place in places {
                 let placeFeed = feed(for: place.id)
