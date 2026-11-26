@@ -75,3 +75,5 @@ home footer: no Web Summit anywhere in PTPlaces.
 - **Home is local (Dinis via c.ios, ~00:49):** lead and top stories come only from local items: an item with its own
   place, or one whose title names a feed place (Portugal included; accent- and case-blind, whole words). Placeless
   items (industry news) go to a lower "Also in the news" strip. Masthead: "Portugal's news, town by town".
+  English names count too (Lisbon, Oporto, Portuguese, Algarvian), and items whose title names Web Summit stay off
+  Home. On since.json of 26 Nov: 89 local items (lead "AI use in Portugal jumps in 2026"), 37 in "Also in the news".

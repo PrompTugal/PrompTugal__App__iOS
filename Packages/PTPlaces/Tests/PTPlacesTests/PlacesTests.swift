@@ -706,6 +706,10 @@ struct NewsHomeTests {
         #expect(feed.isLocal(SinceItem(date: "2026-11-23", title: "A study in Vila Real, Trás-os-Montes", url: "https://a.pt")))
         #expect(!feed.isLocal(SinceItem(date: "2026-11-23", title: "CrewAI raises a round; Spotify ships agents", url: "https://a.pt")))
         #expect(!feed.isLocal(SinceItem(date: "2026-11-23", title: "Portugalia airline news", url: "https://a.pt")))
+        #expect(feed.isLocal(SinceItem(date: "2026-11-23", title: "Portuguese startups raising", url: "https://a.pt")))
+        let summit = SinceItem(date: "2026-11-23", title: "Web Summit Lisbon: your first day", url: "https://a.pt")
+        #expect(SinceFeed.isAboutWebSummit(summit))
+        #expect(!SinceFeed.isAboutWebSummit(SinceItem(date: "2026-11-23", title: "A summit on the web", url: "https://a.pt")))
     }
 
     @Test("Places opens on Portugal")

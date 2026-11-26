@@ -15,9 +15,25 @@ extension SinceFeed {
         if item.place != nil { return true }
         let title = Self.fold(item.title)
         return places.contains { place in
-            let name = Self.fold(place.name.replacingOccurrences(of: "The ", with: ""))
-            return !name.isEmpty && title.contains(" \(name) ")
+            let names = [place.name.replacingOccurrences(of: "The ", with: "")] + (Self.englishNames[place.id] ?? [])
+            return names.contains { raw in
+                let name = Self.fold(raw)
+                return name.count > 2 && title.contains(name)
+            }
         }
+    }
+
+    /// The names English titles use for some places.
+    static let englishNames: [String: [String]] = [
+        "portugal": ["Portuguese"],
+        "lisboa": ["Lisbon"],
+        "porto": ["Oporto"],
+        "algarve": ["Algarvian"],
+    ]
+
+    /// Nothing about Web Summit on the home (Dinis, 25 Nov): the app is local news, not the summit's.
+    static func isAboutWebSummit(_ item: SinceItem) -> Bool {
+        fold(item.title).contains(" web summit ")
     }
 
     /// Lowercased, accents off, punctuation as spaces, padded: " olhao teacher returns ... ".
@@ -27,14 +43,16 @@ extension SinceFeed {
         return " " + spaced.split(separator: " ").joined(separator: " ") + " "
     }
 
-    var localNewestFirst: [SinceItem] { newestFirst.filter(isLocal) }
+    var localNewestFirst: [SinceItem] {
+        newestFirst.filter { isLocal($0) && !Self.isAboutWebSummit($0) }
+    }
 
     /// The lead: the newest local item.
     var lead: SinceItem? { localNewestFirst.first }
 
     /// Items with no place, for the lower "Also in the news" strip.
     func alsoInTheNews(limit: Int) -> [SinceItem] {
-        Array(newestFirst.filter { !isLocal($0) }.prefix(limit))
+        Array(newestFirst.filter { !isLocal($0) && !Self.isAboutWebSummit($0) }.prefix(limit))
     }
 
     /// The top stories: local items newest first, one per place before any place gets a second (an item with no
