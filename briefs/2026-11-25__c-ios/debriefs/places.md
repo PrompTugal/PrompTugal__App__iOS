@@ -72,3 +72,6 @@ home footer: no Web Summit anywhere in PTPlaces.
   capitals and the Algarve, each pin opening its place, and an "All places" button when `openPlaces` is given.
 - The data sites (data., civic., events.) are not read yet: their collectors stopped on 21 Nov (bigger pass).
 - **Places opens on Portugal**: the home map's first and default tab is Portugal; the Algarve is the second.
+- **Home is local (Dinis via c.ios, ~00:49):** lead and top stories come only from local items: an item with its own
+  place, or one whose title names a feed place (Portugal included; accent- and case-blind, whole words). Placeless
+  items (industry news) go to a lower "Also in the news" strip. Masthead: "Portugal's news, town by town".

@@ -688,15 +688,24 @@ struct DeepLinkTests {
 
 @Suite("PTPlaces: the news home (PortugalHomeView)")
 struct NewsHomeTests {
-    @Test("the lead is our newest article; top stories span places before repeating one")
+    @Test("lead and top stories are local; placeless items go to Also in the news")
     func front() throws {
         let feed = try decode(SinceFeed.self, sinceJSON)
         let lead = try #require(feed.lead)
-        #expect(lead.title == "Our article")
-        let top = feed.topStories(limit: 10, excluding: [lead.id])
-        #expect(top.map(\.title) == ["Link only in provenance", "VRSA story", "Vila Real story"])
-        #expect(feed.topStories(limit: 2).map(\.title) == ["Our article", "VRSA story"])
+        #expect(lead.title == "VRSA story")
+        #expect(feed.topStories(limit: 10, excluding: [lead.id]).map(\.title) == ["Vila Real story"])
+        #expect(feed.alsoInTheNews(limit: 5).map(\.title) == ["Our article", "Link only in provenance"])
         #expect(SinceFeed().lead == nil)
+    }
+
+    @Test("a placeless item is local when its title names a place, accents and case aside, whole words only")
+    func local() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        #expect(feed.isLocal(SinceItem(date: "2026-11-23", title: "AI use in Portugal jumps in 2026", url: "https://a.pt")))
+        #expect(feed.isLocal(SinceItem(date: "2026-11-23", title: "VILA REAL DE SANTO ANTONIO buys AI tools", url: "https://a.pt")))
+        #expect(feed.isLocal(SinceItem(date: "2026-11-23", title: "A study in Vila Real, Trás-os-Montes", url: "https://a.pt")))
+        #expect(!feed.isLocal(SinceItem(date: "2026-11-23", title: "CrewAI raises a round; Spotify ships agents", url: "https://a.pt")))
+        #expect(!feed.isLocal(SinceItem(date: "2026-11-23", title: "Portugalia airline news", url: "https://a.pt")))
     }
 
     @Test("Places opens on Portugal")
