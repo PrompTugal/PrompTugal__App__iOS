@@ -61,3 +61,14 @@ home footer: no Web Summit anywhere in PTPlaces.
   "Now in" card needs now.json; the lead needs a story with a source link).
 - iPhone SE: the home map is at most 55% of the visible height (260 pt minimum, 420 phone / 560 iPad maximum); the
   masthead drops the date and wraps when the line does not fit.
+
+## The news home and Places on Portugal (Dinis via c.ios, 26 Nov ~00:40, after build 675)
+
+- **`PortugalHomeView(openPlaces: (() -> Void)? = nil)`** (public, `PortugalHomeView.swift`; `NewsHomeView` is taken by
+  PTNews). Put it in a NavigationStack; it registers its own `PlaceRoute` destination. Sections: masthead with the
+  since.json origin line; the lead (our newest article, else the newest item) with its trail; "Top stories" (newest,
+  one per place before any place repeats) each with title, "Read at <outlet>", date and its town › region › country
+  trail; "Latest from the towns" from the place files (held items follow the hold rule); a still map strip of the
+  capitals and the Algarve, each pin opening its place, and an "All places" button when `openPlaces` is given.
+- The data sites (data., civic., events.) are not read yet: their collectors stopped on 21 Nov (bigger pass).
+- **Places opens on Portugal**: the home map's first and default tab is Portugal; the Algarve is the second.

@@ -685,3 +685,22 @@ struct DeepLinkTests {
         #expect(PlacesDeepLink(id: "loule").text == "place:loule")
     }
 }
+
+@Suite("PTPlaces: the news home (PortugalHomeView)")
+struct NewsHomeTests {
+    @Test("the lead is our newest article; top stories span places before repeating one")
+    func front() throws {
+        let feed = try decode(SinceFeed.self, sinceJSON)
+        let lead = try #require(feed.lead)
+        #expect(lead.title == "Our article")
+        let top = feed.topStories(limit: 10, excluding: [lead.id])
+        #expect(top.map(\.title) == ["Link only in provenance", "VRSA story", "Vila Real story"])
+        #expect(feed.topStories(limit: 2).map(\.title) == ["Our article", "VRSA story"])
+        #expect(SinceFeed().lead == nil)
+    }
+
+    @Test("Places opens on Portugal")
+    func scope() {
+        #expect(MapScope.allCases.first == .portugal)
+    }
+}
