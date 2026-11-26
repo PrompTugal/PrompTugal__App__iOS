@@ -228,9 +228,14 @@ struct BubblingUpSection: View {
         return VStack(alignment: .leading, spacing: 6) {
             ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
                 LadderStep(place: step.0, count: step.1, share: Double(step.1) / Double(most),
-                           accent: PlaceTheme.accent(store.file(step.0.id), id: step.0.id), indent: CGFloat(index))
+                           accent: ladderColor(step.0, isTown: index == steps.count - 1), indent: CGFloat(index))
             }
         }
+    }
+
+    /// Only towns own colours; the region and the country are ink at 0.6 (design review E).
+    private func ladderColor(_ place: SincePlace, isTown: Bool) -> Color {
+        isTown ? PlaceTheme.accent(store.file(place.id), id: place.id) : Palette.ink.opacity(0.6)
     }
 
     private func trailRow(_ item: SinceItem, feed: SinceFeed) -> some View {
@@ -263,24 +268,40 @@ struct LadderStep: View {
 
     var body: some View {
         NavigationLink(value: PlaceRoute(place.id)) {
-            HStack(spacing: Space.s) {
-                Text(place.name)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Palette.ink)
-                    .frame(width: 130, alignment: .leading)
-                    .lineLimit(1)
-                GeometryReader { geo in
-                    Capsule().fill(accent).frame(width: max(8, geo.size.width * share))
+            // One row when the name fits beside the bar, else the name above it (design review B).
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: Space.s) {
+                    name.fixedSize()
+                    barAndCount
                 }
-                .frame(height: 10)
-                Text("\(count)").font(.caption.weight(.bold)).monospacedDigit().foregroundStyle(Palette.muted)
-                    .frame(width: 34, alignment: .trailing)
+                VStack(alignment: .leading, spacing: 4) {
+                    name.fixedSize(horizontal: false, vertical: true)
+                    barAndCount
+                }
             }
             .padding(.leading, indent * 12)
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(String(localized: "\(place.name): \(count) items"))
+    }
+
+    private var name: some View {
+        Text(place.name)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(Palette.ink)
+    }
+
+    private var barAndCount: some View {
+        HStack(spacing: Space.s) {
+            GeometryReader { geo in
+                Capsule().fill(accent).frame(width: max(8, geo.size.width * share))
+            }
+            .frame(minWidth: 80)
+            .frame(height: 10)
+            Text("\(count)").font(.caption.weight(.bold)).monospacedDigit().foregroundStyle(Palette.muted)
+                .fixedSize()
+        }
     }
 }
 
@@ -289,22 +310,28 @@ struct RingTrail: View {
     let places: [SincePlace]
     let store: PlacesStore
 
+    /// Wraps onto more lines on a small phone or at large text sizes (design review A).
     var body: some View {
-        HStack(spacing: 4) {
+        WrapLayout(spacing: 4) {
             ForEach(Array(places.enumerated()), id: \.element.id) { index, place in
-                if index > 0 {
-                    Image(systemName: "chevron.right").font(.caption2).foregroundStyle(Palette.muted)
-                }
                 NavigationLink(value: PlaceRoute(place.id)) {
-                    Text(place.name)
-                        .font(.caption2.weight(.heavy))
-                        .textCase(.uppercase)
-                        .lineLimit(1)
-                        .foregroundStyle(PlaceTheme.accent(store.file(place.id), id: place.id))
+                    HStack(spacing: 4) {
+                        if index > 0 {
+                            Image(systemName: "chevron.right").font(.caption2).foregroundStyle(Palette.muted)
+                        }
+                        Text(place.name)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(color(index: index, place: place))
+                    }
                 }
                 .buttonStyle(.plain)
             }
         }
         .accessibilityElement(children: .contain)
+    }
+
+    /// Only the town owns a colour; the region and the country are ink (design review E).
+    private func color(index: Int, place: SincePlace) -> Color {
+        index == 0 && place.id != "portugal" ? PlaceTheme.accent(store.file(place.id), id: place.id) : Palette.ink.opacity(0.7)
     }
 }

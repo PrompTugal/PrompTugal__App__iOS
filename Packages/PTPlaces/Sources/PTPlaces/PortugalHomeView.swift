@@ -8,19 +8,60 @@ import SwiftUI
 // opens the places. Read from since.json, the by-place index and the place files PlacesStore already loads.
 
 extension SinceFeed {
-    /// The lead: our newest article, else the newest item.
-    var lead: SinceItem? {
-        let all = newestFirst
-        return all.first(where: \.isArticle) ?? all.first
+    /// Local: the item has a place of its own (a town, the Algarve, a district capital), or its title names one of the
+    /// feed's places (Portugal included), so Portugal-level news about a Portuguese place counts and general
+    /// industry news does not (Dinis, 26 Nov ~00:49).
+    func isLocal(_ item: SinceItem) -> Bool {
+        if item.place != nil { return true }
+        let title = Self.fold(item.title)
+        return places.contains { place in
+            let names = [place.name.replacingOccurrences(of: "The ", with: "")] + (Self.englishNames[place.id] ?? [])
+            return names.contains { raw in
+                let name = Self.fold(raw)
+                return name.count > 2 && title.contains(name)
+            }
+        }
     }
 
-    /// The top stories: newest first, one per place before any place gets a second (an item with no place of its own
-    /// counts as its first ring, else Portugal), so the front page spans the country.
+    /// The names English titles use for some places.
+    static let englishNames: [String: [String]] = [
+        "portugal": ["Portuguese"],
+        "lisboa": ["Lisbon"],
+        "porto": ["Oporto"],
+        "algarve": ["Algarvian"],
+    ]
+
+    /// Nothing about Web Summit on the home (Dinis, 25 Nov): the app is local news, not the summit's.
+    static func isAboutWebSummit(_ item: SinceItem) -> Bool {
+        fold(item.title).contains(" web summit ")
+    }
+
+    /// Lowercased, accents off, punctuation as spaces, padded: " olhao teacher returns ... ".
+    static func fold(_ text: String) -> String {
+        let plain = text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+        let spaced = plain.map { $0.isLetter || $0.isNumber ? String($0) : " " }.joined()
+        return " " + spaced.split(separator: " ").joined(separator: " ") + " "
+    }
+
+    var localNewestFirst: [SinceItem] {
+        newestFirst.filter { isLocal($0) && !Self.isAboutWebSummit($0) }
+    }
+
+    /// The lead: the newest local item.
+    var lead: SinceItem? { localNewestFirst.first }
+
+    /// Items with no place, for the lower "Also in the news" strip.
+    func alsoInTheNews(limit: Int) -> [SinceItem] {
+        Array(newestFirst.filter { !isLocal($0) && !Self.isAboutWebSummit($0) }.prefix(limit))
+    }
+
+    /// The top stories: local items newest first, one per place before any place gets a second (an item with no
+    /// place of its own counts as its first ring, else Portugal), so the front page spans the country.
     func topStories(limit: Int, excluding: Set<String> = []) -> [SinceItem] {
         var places = Set<String>()
         var first: [SinceItem] = []
         var more: [SinceItem] = []
-        for item in newestFirst where !excluding.contains(item.id) {
+        for item in localNewestFirst where !excluding.contains(item.id) {
             let key = item.place ?? item.rings.first ?? "portugal"
             if places.insert(key).inserted { first.append(item) } else { more.append(item) }
         }
@@ -52,6 +93,7 @@ public struct PortugalHomeView: View {
                     waiting
                 }
                 latestFromTowns
+                if let feed = store.since.value { alsoInTheNews(feed) }
                 mapStrip
             }
             .padding(.bottom, Space.xxl)
@@ -77,11 +119,11 @@ public struct PortugalHomeView: View {
             Rectangle().fill(Palette.ink).frame(height: 2)
             ViewThatFits(in: .horizontal) {
                 HStack {
-                    Text(String(localized: "AI news from Portugal, town by town")).fixedSize()
+                    Text(String(localized: "Portugal's news, town by town")).fixedSize()
                     Spacer()
                     Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide)).fixedSize()
                 }
-                Text(String(localized: "AI news from Portugal, town by town")).lineLimit(2)
+                Text(String(localized: "Portugal's news, town by town")).lineLimit(2)
             }
             .font(.caption.weight(.semibold))
             .textCase(.uppercase)
@@ -125,6 +167,23 @@ public struct PortugalHomeView: View {
         }
     }
 
+    // MARK: Also in the news (no place of its own)
+
+    @ViewBuilder private func alsoInTheNews(_ feed: SinceFeed) -> some View {
+        let items = feed.alsoInTheNews(limit: wide ? 6 : 4)
+        if !items.isEmpty {
+            VStack(alignment: .leading, spacing: Space.s) {
+                SectionHead(title: String(localized: "Also in the news"),
+                            subtitle: String(localized: "Read by our desk, not tied to one place"))
+                ForEach(items) { item in
+                    HomeStoryRow(item: item, feed: feed, store: store)
+                    Divider()
+                }
+            }
+            .padding(.horizontal, gutter)
+        }
+    }
+
     // MARK: Latest from the towns (the place files)
 
     @ViewBuilder private var latestFromTowns: some View {
@@ -150,7 +209,7 @@ public struct PortugalHomeView: View {
             SectionHead(title: String(localized: "The places"),
                         subtitle: String(localized: "The district capitals and the Algarve, each with its own agent. Tap one."))
             PortugalMapStrip(store: store)
-                .frame(height: wide ? 260 : 200)
+                .frame(height: wide ? 200 : 150)
                 .clipShape(RoundedRectangle(cornerRadius: Space.radius))
             if let openPlaces {
                 Button(action: openPlaces) {

@@ -93,7 +93,7 @@ struct CouncilNoticesBlock: View {
                                     host: "civic.promptugal.news")
                 }
                 if let layer = file { councilLine(layer) }
-                Text("PrompTugal.news Civic is independent, not a council or government site.")
+                Text("PrompTugal.news Civic is not a council or government site. Every figure links to its source.")
                     .font(.caption).foregroundStyle(Palette.muted)
             }
         }

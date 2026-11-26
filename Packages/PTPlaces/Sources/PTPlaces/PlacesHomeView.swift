@@ -32,15 +32,13 @@ public struct PlacesHomeView: View {
                     PlacesMapHero(store: store, wide: wide)
                     SinceYouLookedSection(store: store, wide: wide)
                     BubblingUpSection(store: store, wide: wide)
-                    caseStudies
                     if let homeAccessory { homeAccessory() }
-                    nationalEdition
+                    // Locality first (design review C): the towns, the capitals, the latest, then the footer.
+                    // Case studies, the national edition, connections, work with us and the agents strip left the
+                    // page; the town pages keep their own agents and connections.
                     townMosaic
                     acrossPortugal
-                    connected
                     latestStories
-                    workWithUs
-                    agentsStrip
                     footer
                 }
             }

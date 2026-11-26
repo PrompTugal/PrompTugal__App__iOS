@@ -11,7 +11,7 @@ public enum LocalPrompts {
     static let budget = 6_000
 
     public static let townInstructions = """
-    You summarise one town's page from PrompTugal.news, an independent site about AI and technology in Portugal. \
+    You summarise one town's page from PrompTugal.news, local news from Portugal about AI and technology, every item with its source. \
     Use only the facts given below; never add facts, names, numbers or dates that are not there. \
     Write one paragraph of at most 120 words, in plain English prose: no lists, no headings, no markdown. \
     If the page says the town is still being researched, say so.
