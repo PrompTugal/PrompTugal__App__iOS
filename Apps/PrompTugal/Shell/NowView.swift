@@ -43,39 +43,12 @@ struct NowView: View {
         // One minute at a time: the clock, the model and the countdowns follow it. `-PTNow` fixes the time in DEBUG builds.
         TimelineView(.everyMinute) { context in
             let now = AgendaClock.override ?? context.date
-            let model = reader.nowModel(at: now)
             Page(maxWidth: Space.readable) {
+                // "Your towns, now" (Dinis, 25 Nov: nothing from the summit): the towns you follow and the latest news.
                 header(now: now)
                 AppNoticeCard(now: now)
-                if reader.agenda.isEmpty {
-                    agendaMissing
-                } else {
-                    switch model.phase {
-                    case .before:
-                        countdown(model)
-                        startProgram(model, now: now)
-                    case .during:
-                        forYou(model, now: now)
-                        whereToBe(model)
-                        InterviewsStrip()
-                        onNow(model, now: now)
-                        upNext(model, now: now)
-                    case .between:
-                        forYou(model, now: now)
-                        whereToBe(model)
-                        InterviewsStrip()
-                        tomorrow(model, now: now)
-                    case .after:
-                        // The summit is over (Dinis, 16 Nov): no "Thanks for coming", no Practical; Now is the towns and
-                        // the news. The talks stay in More (My program) and Explore.
-                        EmptyView()
-                    }
-                }
                 MyTownsCard(openPlaces: { open("places") })
                 LatestNewsCard()
-                if model.phase != .after {
-                    PracticalCard()
-                }
             }
         }
         .background(Palette.paper.ignoresSafeArea())
@@ -85,8 +58,6 @@ struct NowView: View {
             await reader.refresh()
             await AppNoticeStore.shared.load(force: true)
         }
-        .environment(\.openTalk, { opened = $0 })
-        .talkSheet($opened)
     }
 
     // MARK: Header: the date and the time in Lisbon, then how fresh the data is
@@ -97,10 +68,9 @@ struct NowView: View {
             Text(Self.greeting(at: now)).font(Typo.display).foregroundStyle(Palette.ink)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier("pt.now.greeting")
-            Kicker(String(localized: "Lisbon · \(now.formatted(Self.dayStyle)) · \(Lisbon.timeLabel(now))"))
-                .accessibilityLabel(String(localized: "Lisbon, \(now.formatted(Self.dayStyle)) at \(Lisbon.timeLabel(now))"))
-            FreshnessLabel(updated: reader.agendaUpdated ?? reader.newsUpdated,
-                           failed: reader.agendaUnavailable || reader.newsUnavailable)
+            Kicker(String(localized: "Portugal · \(now.formatted(Self.dayStyle)) · \(Lisbon.timeLabel(now))"))
+                .accessibilityLabel(String(localized: "Portugal, \(now.formatted(Self.dayStyle)) at \(Lisbon.timeLabel(now))"))
+            FreshnessLabel(updated: reader.newsUpdated, failed: reader.newsUnavailable)
         }
     }
 
