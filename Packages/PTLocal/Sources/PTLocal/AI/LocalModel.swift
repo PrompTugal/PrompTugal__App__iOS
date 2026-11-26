@@ -18,7 +18,7 @@ public enum LocalModelStatus: Equatable, Sendable {
     public var isAvailable: Bool { self == .available }
     public var text: String {
         switch self {
-        case .available: "Apple Intelligence is available on this device."
+        case .available: LocalText.string("Apple Intelligence is available on this device.")
         case .unavailable(let why): why
         }
     }
@@ -33,8 +33,8 @@ public enum LocalModelError: LocalizedError, Equatable {
     public var errorDescription: String? {
         switch self {
         case .unavailable(let why): why
-        case .declined: "Apple's on-device model declined to answer this."
-        case .tooLong: "This was too long for Apple's on-device model in one request."
+        case .declined: LocalText.string("Apple's on-device model declined to answer this.")
+        case .tooLong: LocalText.string("This was too long for Apple's on-device model in one request.")
         case .failed(let why): why
         }
     }
@@ -43,16 +43,16 @@ public enum LocalModelError: LocalizedError, Equatable {
 /// Apple's Foundation Models framework, on the device. Nothing leaves the phone: one fresh session per request, so
 /// nothing from one question is in the context of the next.
 public enum LocalModel {
-    public static let name = "Apple Intelligence (on this device)"
+    public static let name = LocalText.string("Apple Intelligence (on this device)")
 
     public static var status: LocalModelStatus {
         #if canImport(FoundationModels)
         if #available(iOS 26.0, macOS 26.0, *) {
             return FoundationModelsRunner.status
         }
-        return .unavailable("Apple Intelligence needs iOS 26 or later on a device that supports it.")
+        return .unavailable(LocalText.string("Apple Intelligence needs iOS 26 or later on a device that supports it."))
         #else
-        return .unavailable("This build has no Foundation Models SDK.")
+        return .unavailable(LocalText.string("This build has no Foundation Models SDK."))
         #endif
     }
 
@@ -80,13 +80,13 @@ enum FoundationModelsRunner {
         case .unavailable(let reason):
             switch reason {
             case .deviceNotEligible:
-                return .unavailable("This device does not support Apple Intelligence.")
+                return .unavailable(LocalText.string("This device does not support Apple Intelligence."))
             case .appleIntelligenceNotEnabled:
-                return .unavailable("Apple Intelligence is switched off in Settings.")
+                return .unavailable(LocalText.string("Apple Intelligence is switched off in Settings."))
             case .modelNotReady:
-                return .unavailable("Apple's on-device model is still downloading. Try again later.")
+                return .unavailable(LocalText.string("Apple's on-device model is still downloading. Try again later."))
             @unknown default:
-                return .unavailable("Apple's on-device model is not available right now.")
+                return .unavailable(LocalText.string("Apple's on-device model is not available right now."))
             }
         }
     }

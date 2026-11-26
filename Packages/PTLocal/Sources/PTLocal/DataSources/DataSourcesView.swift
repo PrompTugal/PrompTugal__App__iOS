@@ -11,8 +11,8 @@ public struct DataSourcesView: View {
 
     public var body: some View {
         Page {
-            ScreenHeader(kicker: "PrompTugal.news", title: "Data sources",
-                         summary: "The public sites behind this app: what each covers, how much it holds and when it last read its data. Live means read in the last 3 hours.")
+            ScreenHeader(kicker: LocalText.string("PrompTugal.news"), title: LocalText.string("Data sources"),
+                         summary: LocalText.string("The public sites behind this app: what each covers, how much it holds and when it last read its data. Live means read in the last 3 hours."))
             summaryLine
             ForEach(DataSite.all) { site in
                 DataSiteCard(site: site, reading: store.readings[site.id], provenance: store.provenance[site.id],
@@ -21,10 +21,10 @@ public struct DataSourcesView: View {
             if let index = store.index {
                 DataCatalogueCard(index: index, provenance: store.provenance["data"] ?? .none)
             }
-            GapNote(title: "What is real here",
-                    text: "Each count and read time comes from the site's own feed, read by this device. Weather, events and signals are counted from data.promptugal.news's catalogue. A site without a feed the app reads says so.")
+            GapNote(title: LocalText.string("What is real here"),
+                    text: LocalText.string("Each count and read time comes from the site's own feed, read by this device. Weather, events and signals are counted from data.promptugal.news's catalogue. A site without a feed the app reads says so."))
         }
-        .navigationTitle("Data sources")
+        .navigationTitle(LocalText.string("Data sources"))
         .task { await store.load() }
         .refreshable { await store.load(force: true) }
     }
@@ -32,7 +32,7 @@ public struct DataSourcesView: View {
     @ViewBuilder private var summaryLine: some View {
         let counts = store.freshCounts(now: Date())
         if counts.dated > 0 {
-            Text("\(counts.live) of \(counts.dated) sites read their data in the last 3 hours.")
+            Text(LocalText.string("\(String(describing: counts.live)) of \(String(describing: counts.dated)) sites read their data in the last 3 hours."))
                 .font(.footnote)
                 .foregroundStyle(counts.live == counts.dated ? Palette.muted : Palette.amber)
         } else if store.phase == .loading {
@@ -59,7 +59,7 @@ struct DataSiteCard: View {
             }
             freshness
             Link(destination: site.site) {
-                Label("Open \(site.name)", systemImage: "arrow.up.right.square")
+                Label(LocalText.string("Open \(String(describing: site.name))"), systemImage: "arrow.up.right.square")
             }
             .font(.footnote)
         }
@@ -67,8 +67,8 @@ struct DataSiteCard: View {
 
     private var kicker: String {
         switch site.id {
-        case "weather", "events", "signals": "Through data.promptugal.news"
-        case "startups": "Pages only"
+        case "weather", "events", "signals": LocalText.string("Through data.promptugal.news")
+        case "startups": LocalText.string("Pages only")
         default: "Site"
         }
     }
@@ -82,12 +82,12 @@ struct DataSiteCard: View {
         if let reading, let provenance {
             ProvenanceLabel(provenance: provenance, phase: .idle, readAt: reading.readAt, host: readFrom)
         } else if site.feed == nil && site.id == "startups" {
-            Text("No small feed the app reads: open the site for its pages and their read dates.")
+            Text(LocalText.string("No small feed the app reads: open the site for its pages and their read dates."))
                 .font(.caption).foregroundStyle(Palette.muted)
         } else if phase == .loading {
-            Text("Reading…").font(.caption).foregroundStyle(Palette.muted)
+            Text(LocalText.string("Reading…")).font(.caption).foregroundStyle(Palette.muted)
         } else {
-            Text("Not read: the site could not be reached.").font(.caption).foregroundStyle(Palette.amber)
+            Text(LocalText.string("Not read: the site could not be reached.")).font(.caption).foregroundStyle(Palette.amber)
         }
     }
 }
@@ -98,7 +98,7 @@ struct DataCatalogueCard: View {
     let provenance: Provenance
 
     var body: some View {
-        TitledCard("The \(index.sources.count) sources of data.promptugal.news", kicker: "Catalogue") {
+        TitledCard(LocalText.string("The \(String(describing: index.sources.count)) sources of data.promptugal.news"), kicker: LocalText.string("Catalogue")) {
             ForEach(index.sources) { source in
                 DataSourceRow(source: source)
                 Divider()
@@ -128,7 +128,7 @@ struct DataSourceRow: View {
         if let url = source.pageURL {
             Link(destination: url) { content }
                 .buttonStyle(.plain)
-                .accessibilityHint("Opens the source's page on data.promptugal.news")
+                .accessibilityHint(LocalText.string("Opens the source's page on data.promptugal.news"))
         } else {
             content
         }
@@ -162,7 +162,7 @@ public struct DataSourcesCard: View {
             DataSourcesView()
         } label: {
             Card {
-                Label("Data sources", systemImage: "square.stack.3d.up").font(.headline).foregroundStyle(Palette.ink)
+                Label(LocalText.string("Data sources"), systemImage: "square.stack.3d.up").font(.headline).foregroundStyle(Palette.ink)
                 Text(line).font(.footnote).foregroundStyle(Palette.muted).multilineTextAlignment(.leading)
             }
         }
@@ -172,8 +172,8 @@ public struct DataSourcesCard: View {
 
     private var line: String {
         let counts = store.freshCounts(now: Date())
-        let base = "The \(DataSite.all.count) public sites behind this app, each with its own read time."
+        let base = LocalText.string("The \(String(describing: DataSite.all.count)) public sites behind this app, each with its own read time.")
         guard counts.dated > 0 else { return base }
-        return base + " \(counts.live) of \(counts.dated) read in the last 3 hours."
+        return base + LocalText.string(" \(String(describing: counts.live)) of \(String(describing: counts.dated)) read in the last 3 hours.")
     }
 }

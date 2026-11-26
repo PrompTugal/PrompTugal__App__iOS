@@ -183,7 +183,7 @@ public final class OfflineEdition {
 
     static func describe(_ error: Error) -> String {
         if let offline = error as? OfflineError { return offline.text }
-        return "promptugal.news could not be reached. The saved edition, if any, is kept."
+        return LocalText.string("promptugal.news could not be reached. The saved edition, if any, is kept.")
     }
 }
 
@@ -194,9 +194,9 @@ enum OfflineError: Error, Equatable {
 
     var text: String {
         switch self {
-        case .emptyManifest: "The site's manifest lists no files to save. The saved edition, if any, is kept."
-        case .badPath(let path): "The manifest lists a file the app will not save (\(path)). Nothing was changed."
-        case .hashMismatch(let path): "A file did not match the site's manifest (\(path)), so nothing was changed. Try again later."
+        case .emptyManifest: LocalText.string("The site's manifest lists no files to save. The saved edition, if any, is kept.")
+        case .badPath(let path): LocalText.string("The manifest lists a file the app will not save (\(String(describing: path))). Nothing was changed.")
+        case .hashMismatch(let path): LocalText.string("A file did not match the site's manifest (\(String(describing: path))), so nothing was changed. Try again later.")
         }
     }
 }

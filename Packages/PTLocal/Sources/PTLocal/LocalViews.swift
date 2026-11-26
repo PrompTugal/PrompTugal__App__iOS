@@ -17,34 +17,34 @@ public struct AlgarveView: View {
             header
             ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase, readAt: store.placesReadAt)
             StatGrid(minimum: 120) {
-                StatTile(label: "Places", value: "\(PlaceDirectory.towns.count)", detail: "first wave")
-                StatTile(label: "Live sites", value: "\(store.liveTownCount)", detail: "the rest researching", tone: .good)
-                StatTile(label: "Local AI stories", value: "\(store.storyCount)")
-                StatTile(label: "On the AI map", value: "\(store.mappedCount)")
+                StatTile(label: LocalText.string("Places"), value: "\(PlaceDirectory.towns.count)", detail: LocalText.string("first wave"))
+                StatTile(label: LocalText.string("Live sites"), value: "\(store.liveTownCount)", detail: LocalText.string("the rest researching"), tone: .good)
+                StatTile(label: LocalText.string("Local AI stories"), value: "\(store.storyCount)")
+                StatTile(label: LocalText.string("On the AI map"), value: "\(store.mappedCount)")
             }
             AlgarveMap(store: store)
             if !store.followed.isEmpty {
-                TitledCard("Your towns", kicker: "Following") {
+                TitledCard(LocalText.string("Your towns"), kicker: LocalText.string("Following")) {
                     ForEach(store.followed, id: \.self) { id in
                         if let info = PlaceDirectory.info(id) { TownRow(info: info, site: store.site(id)) }
                     }
                 }
             }
             Columns {
-                TitledCard("The latest from the towns", kicker: "Local AI news") {
+                TitledCard(LocalText.string("The latest from the towns"), kicker: LocalText.string("Local AI news")) {
                     let latest = store.latestFromTowns(limit: 10)
                     if latest.isEmpty {
-                        Text("No stories yet.").font(.footnote).foregroundStyle(Palette.muted)
+                        Text(LocalText.string("No stories yet.")).font(.footnote).foregroundStyle(Palette.muted)
                     }
                     ForEach(latest) { item in StoryRow(story: item.story, town: item.town.name) }
                 }
             } trailing: {
-                TitledCard("The towns", kicker: "\(store.liveTownCount) live · \(PlaceDirectory.towns.count - store.liveTownCount) researching") {
+                TitledCard(LocalText.string("The towns"), kicker: LocalText.string("\(String(describing: store.liveTownCount)) live · \(String(describing: PlaceDirectory.towns.count - store.liveTownCount)) researching")) {
                     ForEach(sortedTowns) { info in TownRow(info: info, site: store.site(info.id)) }
                 }
             }
             if let region = store.region, !region.aiNews.isEmpty {
-                TitledCard("Across the region", kicker: "The Algarve") {
+                TitledCard(LocalText.string("Across the region"), kicker: LocalText.string("The Algarve")) {
                     ForEach(region.aiNews.prefix(8)) { story in StoryRow(story: story, town: nil) }
                 }
             }
@@ -52,21 +52,21 @@ public struct AlgarveView: View {
                 NewsroomCentreView()
             } label: {
                 Card {
-                    Label("The newsroom behind it", systemImage: "person.3.sequence").font(.headline)
-                    Text("One agent per town, and what each is doing now. Read-only.")
+                    Label(LocalText.string("The newsroom behind it"), systemImage: "person.3.sequence").font(.headline)
+                    Text(LocalText.string("One agent per town, and what each is doing now. Read-only."))
                         .font(.footnote).foregroundStyle(Palette.muted)
                 }
             }
             .buttonStyle(.plain)
-            Text("PrompTugal.news: local news from Portugal, every item with its source. Each town's research is by its own agent.")
+            Text(LocalText.string("PrompTugal.news: local news from Portugal, every item with its source. Each town's research is by its own agent."))
                 .font(.caption).foregroundStyle(Palette.muted)
         }
-        .navigationTitle("The Algarve")
+        .navigationTitle(LocalText.string("The Algarve"))
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Toggle(isOn: $algarvio) { Label("Algarvio voice", systemImage: "quote.bubble") }
+                Toggle(isOn: $algarvio) { Label(LocalText.string("Algarvio voice"), systemImage: "quote.bubble") }
                     .toggleStyle(.button)
-                    .accessibilityHint("Shows the playful local voice the sites offer")
+                    .accessibilityHint(LocalText.string("Shows the playful local voice the sites offer"))
             }
         }
         .task { if !store.placeProvenance.isLive { await store.refreshAll() } }
@@ -76,8 +76,8 @@ public struct AlgarveView: View {
     private var header: some View {
         let region = store.region
         let text = algarvio ? (region?.voice?.mandate ?? region?.mandate) : region?.mandate
-        return ScreenHeader(kicker: "PrompTugal.news · by place", title: "The Algarve",
-                            summary: text ?? "AI and technology across the Algarve and its 17 towns, every fact sourced.")
+        return ScreenHeader(kicker: LocalText.string("PrompTugal.news · by place"), title: LocalText.string("The Algarve"),
+                            summary: text ?? LocalText.string("AI and technology across the Algarve and its 17 towns, every fact sourced."))
     }
 
     /// Live sites first, then by number of stories.
@@ -118,7 +118,7 @@ struct AlgarveMap: View {
             .mapStyle(.standard(pointsOfInterest: .excludingAll))
             .frame(height: 300)
             .clipShape(RoundedRectangle(cornerRadius: Space.radius, style: .continuous))
-            .accessibilityLabel("Map of the 17 places in the Algarve")
+            .accessibilityLabel(LocalText.string("Map of the 17 places in the Algarve"))
         }
         .navigationDestination(item: $selected) { id in TownView(id: id) }
     }
@@ -140,7 +140,7 @@ struct PlaceDot: View {
         }
         .frame(width: 26, height: 26)
         .shadow(radius: 1.5)
-        .accessibilityLabel("\(live ? "Live" : "Researching"), \(stories) stories")
+        .accessibilityLabel(LocalText.string("\(String(describing: live ? "Live" : "Researching")), \(String(describing: stories)) stories"))
     }
 }
 
@@ -166,7 +166,7 @@ struct TownRow: View {
                 Spacer(minLength: Space.s)
                 VStack(alignment: .trailing, spacing: 2) {
                     StatusChip(live: site?.isLive == true)
-                    Text("\(site?.aiNews.count ?? 0) stories · \(site?.aiMap.count ?? 0) mapped")
+                    Text(LocalText.string("\(String(describing: site?.aiNews.count ?? 0)) stories · \(String(describing: site?.aiMap.count ?? 0)) mapped"))
                         .font(.caption2.monospacedDigit()).foregroundStyle(Palette.muted)
                 }
                 Image(systemName: "chevron.right").font(.caption).foregroundStyle(Palette.muted)
@@ -212,7 +212,7 @@ struct StoryRow: View {
             }
             HStack(spacing: Space.s) {
                 Text([story.publisher, story.date].compactMap { $0 }.joined(separator: ", "))
-                if let steps = story.stepsLabel { Text("AI path: \(steps)").foregroundStyle(Palette.blue) }
+                if let steps = story.stepsLabel { Text(LocalText.string("AI path: \(String(describing: steps))")).foregroundStyle(Palette.blue) }
             }
             .font(.caption)
             .foregroundStyle(Palette.muted)
@@ -283,11 +283,11 @@ public struct ProvenanceLabel: View {
 public struct SimulatedBadge: View {
     public init() {}
     public var body: some View {
-        Label("Simulated", systemImage: "wand.and.stars")
+        Label(LocalText.string("Simulated"), systemImage: "wand.and.stars")
             .font(.caption2.weight(.bold))
             .padding(.horizontal, 6).padding(.vertical, 2)
             .foregroundStyle(Palette.series(4))
             .background(Palette.series(4).opacity(0.14), in: Capsule())
-            .accessibilityLabel("Simulated, not real data")
+            .accessibilityLabel(LocalText.string("Simulated, not real data"))
     }
 }

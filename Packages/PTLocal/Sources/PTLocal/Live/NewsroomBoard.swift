@@ -122,9 +122,9 @@ struct NewsroomBoard: View {
                               width: band.width * box.width, height: band.height * box.height)
         context.fill(Path(roundedRect: bandRect, cornerRadius: 18), with: .color(Palette.paper2.opacity(0.7)))
         let captionFont = Font.system(size: compact ? 8 : 10, weight: .semibold)
-        context.draw(Text("THE TOWNS · WEST TO EAST").font(captionFont).foregroundStyle(Palette.muted),
+        context.draw(Text(LocalText.string("THE TOWNS · WEST TO EAST")).font(captionFont).foregroundStyle(Palette.muted),
                      at: CGPoint(x: bandRect.minX + 8, y: bandRect.minY + 8), anchor: .topLeading)
-        context.draw(Text("THE DESKS").font(captionFont).foregroundStyle(Palette.muted),
+        context.draw(Text(LocalText.string("THE DESKS")).font(captionFont).foregroundStyle(Palette.muted),
                      at: at(CGPoint(x: 0.0, y: 0.71)), anchor: .leading)
 
         // The places' own hierarchy (each site's `parent`): Portugal over the Algarve over its towns. Hairlines only.
@@ -283,7 +283,7 @@ struct NewsroomBoard: View {
     private func accessibilitySummary(nodes: [NewsroomLayout.Node]) -> String {
         let now = Date()
         let active = nodes.filter { lit($0.id, now: now) > 0 }.count
-        return "The newsroom board: \(nodes.count) agents, \(active) active in the last half hour, \(model.dashboard?.handoffs.count ?? 0) handoff routes."
+        return LocalText.string("The newsroom board: \(String(describing: nodes.count)) agents, \(String(describing: active)) active in the last half hour, \(String(describing: model.dashboard?.handoffs.count ?? 0)) handoff routes.")
     }
 }
 
@@ -299,10 +299,10 @@ struct NewsroomBoardLegend: View {
     }
 
     @ViewBuilder private var items: some View {
-        LegendItem(color: Palette.green, ring: true, text: "Pulse: a sign of life in the last 30 min")
-        LegendItem(color: Palette.sun, ring: true, text: "Spark: changed while you watch")
-        LegendItem(color: Palette.blue, ring: false, text: "Particles: handoffs, last 24 h")
-        LegendItem(color: Palette.muted, ring: false, text: "Faded: quiet or stopped")
+        LegendItem(color: Palette.green, ring: true, text: LocalText.string("Pulse: a sign of life in the last 30 min"))
+        LegendItem(color: Palette.sun, ring: true, text: LocalText.string("Spark: changed while you watch"))
+        LegendItem(color: Palette.blue, ring: false, text: LocalText.string("Particles: handoffs, last 24 h"))
+        LegendItem(color: Palette.muted, ring: false, text: LocalText.string("Faded: quiet or stopped"))
     }
 }
 

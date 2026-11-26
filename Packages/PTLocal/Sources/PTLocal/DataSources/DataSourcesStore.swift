@@ -53,7 +53,7 @@ public final class DataSourcesStore {
                 any = true
             }
         }
-        phase = any ? .loaded : .failed("The PrompTugal.news sites could not be reached.")
+        phase = any ? .loaded : .failed(LocalText.string("The PrompTugal.news sites could not be reached."))
     }
 
     private func accept(id: String, data: Data, live: Bool, now: Date) {

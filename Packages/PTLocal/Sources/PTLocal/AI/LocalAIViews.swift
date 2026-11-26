@@ -46,8 +46,8 @@ struct LocalModelStatusLine: View {
 
     var body: some View {
         Label {
-            Text(status.isAvailable ? "Runs on this device with Apple Intelligence. Nothing is sent anywhere."
-                                    : "Not available on this device: \(status.text)")
+            Text(status.isAvailable ? LocalText.string("Runs on this device with Apple Intelligence. Nothing is sent anywhere.")
+                                    : LocalText.string("Not available on this device: \(String(describing: status.text))"))
         } icon: {
             Image(systemName: status.isAvailable ? "sparkles" : "exclamationmark.circle")
         }
@@ -66,7 +66,7 @@ struct OnDeviceAnswer: View {
                 if ask.text.isEmpty {
                     HStack(spacing: Space.s) {
                         ProgressView().controlSize(.small)
-                        Text("Apple Intelligence is reading the page on this device…").font(.footnote).foregroundStyle(Palette.muted)
+                        Text(LocalText.string("Apple Intelligence is reading the page on this device…")).font(.footnote).foregroundStyle(Palette.muted)
                     }
                 } else {
                     Text(ask.text).font(.callout).foregroundStyle(Palette.ink).textSelection(.enabled)
@@ -74,7 +74,7 @@ struct OnDeviceAnswer: View {
                 }
                 HStack(spacing: 4) {
                     Image(systemName: "sparkles")
-                    Text(ask.running ? "Generating on this device…" : "Generated on this device by Apple Intelligence, from the page's own facts. It can be wrong: the sources are below.")
+                    Text(ask.running ? LocalText.string("Generating on this device…") : LocalText.string("Generated on this device by Apple Intelligence, from the page's own facts. It can be wrong: the sources are below."))
                 }
                 .font(.caption2)
                 .foregroundStyle(Palette.blue)
@@ -113,7 +113,7 @@ struct OnDeviceCard: View {
                     .buttonStyle(.borderedProminent)
                     .disabled(ask.running)
                     if ask.running {
-                        Button("Stop") { ask.cancel() }.buttonStyle(.bordered)
+                        Button(LocalText.string("Stop")) { ask.cancel() }.buttonStyle(.bordered)
                     }
                 }
             }
@@ -141,7 +141,7 @@ struct StoryAISheet: View {
                     if let town { Kicker(town) }
                     Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
                     if let url = story.sourceURL {
-                        Link(destination: url) { Label("Read it at \(story.publisher ?? url.host() ?? "the source")", systemImage: "arrow.up.right") }
+                        Link(destination: url) { Label(LocalText.string("Read it at \(String(describing: story.publisher ?? url.host() ?? "the source"))"), systemImage: "arrow.up.right") }
                             .font(.footnote)
                     }
                     LocalModelStatusLine(status: status)
@@ -149,19 +149,19 @@ struct StoryAISheet: View {
                         HStack {
                             Button {
                                 ask.run(instructions: LocalPrompts.storyInstructions, prompt: LocalPrompts.story(story, town: town))
-                            } label: { Label("Summarise", systemImage: "text.quote") }
+                            } label: { Label(LocalText.string("Summarise"), systemImage: "text.quote") }
                             // A held story's AI path stays hidden, so there is none to explain.
                             if !story.isHeld {
                                 Button {
                                     ask.run(instructions: LocalPrompts.aiPathInstructions, prompt: LocalPrompts.aiPath(story, town: town))
-                                } label: { Label("Explain the AI path", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
+                                } label: { Label(LocalText.string("Explain the AI path"), systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
                             }
                         }
                         .buttonStyle(.bordered)
                         .disabled(ask.running)
                     } else if let path = story.aiPath {
                         // No model: the newsroom's own words are still the answer.
-                        TitledCard("The AI path", kicker: story.stepsLabel ?? "as the newsroom wrote it") {
+                        TitledCard(LocalText.string("The AI path"), kicker: story.stepsLabel ?? LocalText.string("as the newsroom wrote it")) {
                             Text(path).font(.callout)
                         }
                     }
@@ -170,9 +170,9 @@ struct StoryAISheet: View {
                 .padding()
                 .frame(maxWidth: 700, alignment: .leading)
             }
-            .navigationTitle("Apple Intelligence")
+            .navigationTitle(LocalText.string("Apple Intelligence"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button(LocalText.string("Done")) { dismiss() } } }
         }
         .presentationDetents([.medium, .large])
         .onDisappear { ask.cancel() }
@@ -194,13 +194,13 @@ public struct StorySummaryButton: View {
         Button {
             showing = true
         } label: {
-            Label("Ask Apple Intelligence", systemImage: "sparkles").labelStyle(.iconOnly)
+            Label(LocalText.string("Ask Apple Intelligence"), systemImage: "sparkles").labelStyle(.iconOnly)
                 .font(.footnote).foregroundStyle(Palette.blue)
                 .frame(width: 32, height: 32)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Summarise or explain this story with Apple Intelligence on this device")
+        .accessibilityLabel(LocalText.string("Summarise or explain this story with Apple Intelligence on this device"))
         .sheet(isPresented: $showing) { StoryAISheet(story: story, town: town) }
     }
 }
@@ -213,12 +213,12 @@ struct PersonaMatchChip: View {
 
     var body: some View {
         if match.isMatch {
-            Label("For you: " + match.matched.prefix(3).joined(separator: ", "), systemImage: "person.crop.circle.badge.checkmark")
+            Label(LocalText.string("For you: ") + match.matched.prefix(3).joined(separator: ", "), systemImage: "person.crop.circle.badge.checkmark")
                 .font(.caption2.weight(.semibold))
                 .padding(.horizontal, 6).padding(.vertical, 2)
                 .foregroundStyle(Palette.green)
                 .background(Palette.green.opacity(0.12), in: Capsule())
-                .accessibilityLabel("Matches your persona: \(match.matched.joined(separator: ", "))")
+                .accessibilityLabel(LocalText.string("Matches your persona: \(String(describing: match.matched.joined(separator: ", ")))"))
         }
     }
 }
@@ -236,15 +236,15 @@ public struct PersonaBanner: View {
                 HStack(alignment: .top, spacing: Space.m) {
                     Image(systemName: "person.crop.circle.badge.checkmark").font(.title2).foregroundStyle(Palette.green)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Persona mode: \(persona.label)").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                        Text(LocalText.string("Persona mode: \(String(describing: persona.label))")).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                         Text(explanation(persona))
                             .font(.caption).foregroundStyle(Palette.muted)
                         suggestions
                     }
                     Spacer(minLength: Space.s)
                     VStack(spacing: Space.xs) {
-                        Button("Change") { picking = true }.font(.caption)
-                        Button("Off") { personas.persona = nil }.font(.caption).tint(Palette.red)
+                        Button(LocalText.string("Change")) { picking = true }.font(.caption)
+                        Button(LocalText.string("Off")) { personas.persona = nil }.font(.caption).tint(Palette.red)
                     }
                     .buttonStyle(.bordered)
                 }
@@ -255,7 +255,7 @@ public struct PersonaBanner: View {
                 Button {
                     picking = true
                 } label: {
-                    Label("Who are you? Pick a persona and the Algarve reorders for you", systemImage: "person.crop.circle.badge.questionmark")
+                    Label(LocalText.string("Who are you? Pick a persona and the Algarve reorders for you"), systemImage: "person.crop.circle.badge.questionmark")
                         .font(.footnote)
                 }
                 .buttonStyle(.bordered)
@@ -268,19 +268,19 @@ public struct PersonaBanner: View {
     @ViewBuilder
     private var suggestions: some View {
         if !personas.suggested.isEmpty {
-            Label("Apple Intelligence added, on this device: " + personas.suggested.map(\.label).joined(separator: ", "),
+            Label(LocalText.string("Apple Intelligence added, on this device: ") + personas.suggested.map(\.label).joined(separator: ", "),
                   systemImage: "sparkles")
                 .font(.caption2).foregroundStyle(Palette.blue)
         } else if personas.suggesting {
             HStack(spacing: 4) {
                 ProgressView().controlSize(.mini)
-                Text("Apple Intelligence is thinking of more words…").font(.caption2).foregroundStyle(Palette.muted)
+                Text(LocalText.string("Apple Intelligence is thinking of more words…")).font(.caption2).foregroundStyle(Palette.muted)
             }
         } else if LocalModel.status.isAvailable {
             Button {
                 Task { await personas.suggest() }
             } label: {
-                Label("Widen with Apple Intelligence", systemImage: "sparkles").font(.caption)
+                Label(LocalText.string("Widen with Apple Intelligence"), systemImage: "sparkles").font(.caption)
             }
             .buttonStyle(.borderless)
         }
@@ -291,8 +291,8 @@ public struct PersonaBanner: View {
 
     private func explanation(_ persona: Persona) -> String {
         let words = personas.terms.map(\.label).prefix(5).joined(separator: ", ")
-        let ranked = words.isEmpty ? "Ranked on this device by keywords." : "Ranked on this device by keywords (\(words))."
-        return "“\(persona.text)”. What matters to you comes first and is marked “For you”. " + ranked
+        let ranked = words.isEmpty ? LocalText.string("Ranked on this device by keywords.") : LocalText.string("Ranked on this device by keywords (\(String(describing: words))).")
+        return LocalText.string("“\(String(describing: persona.text))”. What matters to you comes first and is marked “For you”. ") + ranked
     }
 }
 
@@ -308,30 +308,30 @@ public struct PersonaPicker: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("I am from… / I invest in… / I care about…", text: $typed, axis: .vertical)
+                    TextField(LocalText.string("I am from… / I invest in… / I care about…"), text: $typed, axis: .vertical)
                         .lineLimit(1...3)
                         .submitLabel(.done)
                         .onSubmit(useTyped)
-                    Button("Use these words", action: useTyped)
+                    Button(LocalText.string("Use these words"), action: useTyped)
                         .disabled(typed.trimmingCharacters(in: .whitespacesAndNewlines).count < 3)
                     if !typed.isEmpty {
                         let terms = PersonaRanker.terms(for: typed)
-                        Text(terms.isEmpty ? "No words to rank by yet." : "Will look for: " + terms.map(\.label).joined(separator: ", "))
+                        Text(terms.isEmpty ? LocalText.string("No words to rank by yet.") : LocalText.string("Will look for: ") + terms.map(\.label).joined(separator: ", "))
                             .font(.caption).foregroundStyle(Palette.muted)
                     }
                 } header: {
-                    Text("In your own words")
+                    Text(LocalText.string("In your own words"))
                 } footer: {
-                    Text("Kept on this device only. Stories and organisations are ranked here by the words you use; Apple Intelligence, where the device has it, writes a briefing for you.")
+                    Text(LocalText.string("Kept on this device only. Stories and organisations are ranked here by the words you use; Apple Intelligence, where the device has it, writes a briefing for you."))
                 }
                 Section {
                     ForEach(fromData) { persona in personaRow(persona) }
                 } header: {
-                    Text("From the Algarve's data")
+                    Text(LocalText.string("From the Algarve's data"))
                 } footer: {
-                    Text("The organisations the towns' AI maps and stories mention most, and a startup in your town.")
+                    Text(LocalText.string("The organisations the towns' AI maps and stories mention most, and a startup in your town."))
                 }
-                Section("Or pick one") {
+                Section(LocalText.string("Or pick one")) {
                     ForEach(Persona.presets) { persona in
                         Button {
                             personas.persona = persona
@@ -350,16 +350,16 @@ public struct PersonaPicker: View {
                 }
                 if personas.isOn {
                     Section {
-                        Button("Turn persona mode off", role: .destructive) {
+                        Button(LocalText.string("Turn persona mode off"), role: .destructive) {
                             personas.persona = nil
                             dismiss()
                         }
                     }
                 }
             }
-            .navigationTitle("Persona")
+            .navigationTitle(LocalText.string("Persona"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(LocalText.string("Close")) { dismiss() } } }
         }
     }
 
@@ -412,9 +412,9 @@ public struct PersonaForYouCard: View {
         if let persona = personas.persona {
             let stories = PersonaRanker.stories(in: sites, terms: personas.allTerms, limit: 6, town: persona.townID)
             let entries = PersonaRanker.entries(in: sites, terms: personas.allTerms, limit: 6, town: persona.townID)
-            TitledCard("For you", kicker: persona.label) {
+            TitledCard(LocalText.string("For you"), kicker: persona.label) {
                 if stories.isEmpty && entries.isEmpty {
-                    Text("Nothing in the Algarve's news matches “\(persona.text)” yet. Try other words: a topic, a sector or an organisation's name.")
+                    Text(LocalText.string("Nothing in the Algarve's news matches “\(String(describing: persona.text))” yet. Try other words: a topic, a sector or an organisation's name."))
                         .font(.footnote).foregroundStyle(Palette.muted)
                 }
                 if status.isAvailable && !(stories.isEmpty && entries.isEmpty) {
@@ -422,7 +422,7 @@ public struct PersonaForYouCard: View {
                         ask.run(instructions: LocalPrompts.personaInstructions,
                                 prompt: LocalPrompts.persona(persona, stories: stories, entries: entries))
                     } label: {
-                        Label(ask.finishedAt == nil ? "Brief me on this device" : "Brief me again", systemImage: "sparkles")
+                        Label(ask.finishedAt == nil ? LocalText.string("Brief me on this device") : LocalText.string("Brief me again"), systemImage: "sparkles")
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(ask.running)
@@ -435,7 +435,7 @@ public struct PersonaForYouCard: View {
                     Divider()
                 }
                 if !entries.isEmpty {
-                    Text("On the AI map").font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
+                    Text(LocalText.string("On the AI map")).font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
                     ForEach(entries) { item in
                         VStack(alignment: .leading, spacing: 2) {
                             HStack {
@@ -464,7 +464,7 @@ public struct PersonaToolbarButton: View {
         Button {
             picking = true
         } label: {
-            Label("Persona", systemImage: personas.isOn ? "person.crop.circle.fill.badge.checkmark" : "person.crop.circle.badge.questionmark")
+            Label(LocalText.string("Persona"), systemImage: personas.isOn ? "person.crop.circle.fill.badge.checkmark" : "person.crop.circle.badge.questionmark")
         }
         .sheet(isPresented: $picking) { PersonaPicker() }
     }
@@ -481,21 +481,21 @@ public struct NearMeView: View {
     public init(store: LocalStore = .shared) { self.store = store }
 
     public var body: some View {
-        TitledCard("Near me", kicker: kicker) {
+        TitledCard(LocalText.string("Near me"), kicker: kicker) {
             switch locator.state {
             case .asking:
-                Text("Asking for your location, only while you use the app…").font(.footnote).foregroundStyle(Palette.muted)
+                Text(LocalText.string("Asking for your location, only while you use the app…")).font(.footnote).foregroundStyle(Palette.muted)
             case .locating:
                 HStack {
                     ProgressView().controlSize(.small)
-                    Text("Finding the nearest town…").font(.footnote).foregroundStyle(Palette.muted)
+                    Text(LocalText.string("Finding the nearest town…")).font(.footnote).foregroundStyle(Palette.muted)
                 }
             case .denied:
-                Text("Location is off for PrompTugal. Pick your town instead, or allow it in Settings.").font(.footnote).foregroundStyle(Palette.amber)
+                Text(LocalText.string("Location is off for PrompTugal. Pick your town instead, or allow it in Settings.")).font(.footnote).foregroundStyle(Palette.amber)
             case .failed(let why):
-                Text("Could not find your location: \(why). Pick your town instead.").font(.footnote).foregroundStyle(Palette.amber)
+                Text(LocalText.string("Could not find your location: \(String(describing: why)). Pick your town instead.")).font(.footnote).foregroundStyle(Palette.amber)
             case .found(let near, _) where !near.isLocal:
-                Text("You are \(near.distanceText) from \(near.town.name), the nearest of the 17 places: not in the Algarve right now. Pick a town to see its news first.")
+                Text(LocalText.string("You are \(String(describing: near.distanceText)) from \(String(describing: near.town.name)), the nearest of the 17 places: not in the Algarve right now. Pick a town to see its news first."))
                     .font(.footnote).foregroundStyle(Palette.muted)
             default:
                 EmptyView()
@@ -503,13 +503,13 @@ public struct NearMeView: View {
             if let id = locator.townID, let info = PlaceDirectory.info(id) {
                 townNews(info)
             } else if locator.state == .idle {
-                Text("See the news of the town you are in first. Your location stays on this device: the app only works out which of the 17 towns is closest.")
+                Text(LocalText.string("See the news of the town you are in first. Your location stays on this device: the app only works out which of the 17 towns is closest."))
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
             HStack {
                 Button {
                     locator.locate()
-                } label: { Label("Use my location", systemImage: "location") }
+                } label: { Label(LocalText.string("Use my location"), systemImage: "location") }
                     .buttonStyle(.bordered)
                     .disabled(locator.state == .asking || locator.state == .locating)
                 Menu {
@@ -518,9 +518,9 @@ public struct NearMeView: View {
                     }
                     if locator.pickedTown != nil {
                         Divider()
-                        Button("Forget my town", role: .destructive) { locator.pick(nil) }
+                        Button(LocalText.string("Forget my town"), role: .destructive) { locator.pick(nil) }
                     }
-                } label: { Label("Pick a town", systemImage: "list.bullet") }
+                } label: { Label(LocalText.string("Pick a town"), systemImage: "list.bullet") }
                     .buttonStyle(.bordered)
             }
             .font(.footnote)
@@ -528,9 +528,9 @@ public struct NearMeView: View {
     }
 
     private var kicker: String {
-        if case .found(let near, _) = locator.state, near.isLocal { return "You are \(near.distanceText) from \(near.town.name)" }
-        if locator.pickedTown != nil { return "Your town" }
-        return "Location, while using the app"
+        if case .found(let near, _) = locator.state, near.isLocal { return LocalText.string("You are \(String(describing: near.distanceText)) from \(String(describing: near.town.name))") }
+        if locator.pickedTown != nil { return LocalText.string("Your town") }
+        return LocalText.string("Location, while using the app")
     }
 
     @ViewBuilder
@@ -540,7 +540,7 @@ public struct NearMeView: View {
         ConditionsLine(placeID: info.id)
         let stories = site?.aiNews.prefix(3) ?? []
         if stories.isEmpty {
-            Text("\(info.name)'s agent has no local AI stories yet: still researching.").font(.footnote).foregroundStyle(Palette.muted)
+            Text(LocalText.string("\(String(describing: info.name))'s agent has no local AI stories yet: still researching.")).font(.footnote).foregroundStyle(Palette.muted)
         }
         ForEach(Array(stories)) { story in AIStoryRow(story: story, town: nil, townForAI: info.name) }
     }
@@ -554,9 +554,9 @@ public struct TownSummaryCard: View {
     public init(site: PlaceSite) { self.site = site }
 
     public var body: some View {
-        OnDeviceCard(title: "\(site.name) in one paragraph",
-                     kicker: personas.persona.map { "Apple Intelligence · for \($0.label)" } ?? "Apple Intelligence",
-                     action: "Summarise on this device",
+        OnDeviceCard(title: LocalText.string("\(String(describing: site.name)) in one paragraph"),
+                     kicker: personas.persona.map { LocalText.string("Apple Intelligence · for \(String(describing: $0.label))") } ?? LocalText.string("Apple Intelligence"),
+                     action: LocalText.string("Summarise on this device"),
                      instructions: LocalPrompts.townInstructions) {
             LocalPrompts.town(site, persona: personas.persona)
         }

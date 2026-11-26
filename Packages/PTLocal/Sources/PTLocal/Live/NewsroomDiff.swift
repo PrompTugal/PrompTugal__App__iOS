@@ -13,7 +13,7 @@ public enum NewsroomDiff {
             }
             if let wake = agent.lastWake, let date = LiveClock.clamp(NewsroomDate.parse(wake.started), now: now) {
                 out.append(LiveEvent(date: date, role: agent.role, kind: .wake,
-                                     text: "\(agent.handle) woke" + (wake.outcome.map { ": \($0)" } ?? ""),
+                                     text: LocalText.string("\(String(describing: agent.handle)) woke") + (wake.outcome.map { ": \($0)" } ?? ""),
                                      detail: wake.line, origin: .latest))
             }
         }
@@ -30,24 +30,24 @@ public enum NewsroomDiff {
             let when = LiveClock.clamp(agent.updatedDate, now: now) ?? now
             guard let was = before[agent.agent] else {
                 out.append(LiveEvent(date: when, role: agent.role, kind: .joined,
-                                     text: "\(agent.handle) joined the newsroom", detail: agent.focus, origin: origin))
+                                     text: LocalText.string("\(String(describing: agent.handle)) joined the newsroom"), detail: agent.focus, origin: origin))
                 continue
             }
             let newDone = agent.done.filter { !was.done.contains($0) }
             if agent.updated != was.updated || agent.state != was.state {
                 var text = updateLine(agent)
-                if !newDone.isEmpty { text += ": \(newDone.count) new done" }
+                if !newDone.isEmpty { text += LocalText.string(": \(String(describing: newDone.count)) new done") }
                 out.append(LiveEvent(date: when, role: agent.role, kind: newDone.isEmpty ? .update : .done, text: text,
                                      detail: newDone.last ?? (agent.state != was.state ? agent.state : nil), origin: origin))
             }
             if let wake = agent.lastWake, wake.started != was.lastWake?.started {
                 let date = LiveClock.clamp(NewsroomDate.parse(wake.started), now: now) ?? now
                 out.append(LiveEvent(date: date, role: agent.role, kind: .wake,
-                                     text: "\(agent.handle) woke" + (wake.outcome.map { ": \($0)" } ?? ""),
+                                     text: LocalText.string("\(String(describing: agent.handle)) woke") + (wake.outcome.map { ": \($0)" } ?? ""),
                                      detail: wake.line, origin: origin))
             }
             for ask in agent.asks where !was.asks.contains(ask) {
-                out.append(LiveEvent(date: when, role: agent.role, kind: .ask, text: "\(agent.handle) asks a person",
+                out.append(LiveEvent(date: when, role: agent.role, kind: .ask, text: LocalText.string("\(String(describing: agent.handle)) asks a person"),
                                      detail: ask, origin: origin))
             }
         }
@@ -57,7 +57,7 @@ public enum NewsroomDiff {
             let delta = handoff.n - (oldHandoffs[handoff.id] ?? 0)
             guard delta > 0 else { continue }
             out.append(LiveEvent(date: now, role: handoff.from, to: handoff.to, kind: .handoff,
-                                 text: "\(handoff.from) → \(handoff.to): \(delta) new handoff\(delta == 1 ? "" : "s")",
+                                 text: delta == 1 ? LocalText.string("\(handoff.from) → \(handoff.to): 1 new handoff") : LocalText.string("\(handoff.from) → \(handoff.to): \(String(describing: delta)) new handoffs"),
                                  origin: origin))
         }
         return out.sorted(by: newestFirst)
@@ -70,23 +70,23 @@ public enum NewsroomDiff {
         for info in [PlaceDirectory.region] + PlaceDirectory.towns {
             guard let was = old[info.id], let site = new[info.id] else { continue }
             let role = "place.\(info.id)"
-            let name = info.id == PlaceDirectory.region.id ? "the Algarve" : info.name
+            let name = info.id == PlaceDirectory.region.id ? LocalText.string("the Algarve") : info.name
             let oldStories = Set(was.aiNews.map(\.url))
             let stories = site.aiNews.filter { !oldStories.contains($0.url) }
             if !stories.isEmpty {
                 out.append(LiveEvent(date: now, role: role, kind: .stories,
-                                     text: "\(role)@ updated \(name): \(stories.count) new stor\(stories.count == 1 ? "y" : "ies")",
+                                     text: stories.count == 1 ? LocalText.string("\(role)@ updated \(name): 1 new story") : LocalText.string("\(role)@ updated \(name): \(String(describing: stories.count)) new stories"),
                                      detail: stories.first?.title, origin: origin))
             }
             let oldMap = Set(was.aiMap.map(\.name))
             let mapped = site.aiMap.filter { !oldMap.contains($0.name) }
             if !mapped.isEmpty {
                 out.append(LiveEvent(date: now, role: role, kind: .mapped,
-                                     text: "\(role)@ mapped \(mapped.count) more in \(name)",
+                                     text: LocalText.string("\(String(describing: role))@ mapped \(String(describing: mapped.count)) more in \(String(describing: name))"),
                                      detail: mapped.prefix(3).map(\.name).joined(separator: ", "), origin: origin))
             }
             if site.isLive && !was.isLive {
-                out.append(LiveEvent(date: now, role: role, kind: .live, text: "\(name)'s site went live", origin: origin))
+                out.append(LiveEvent(date: now, role: role, kind: .live, text: LocalText.string("\(String(describing: name))'s site went live"), origin: origin))
             }
         }
         return out
@@ -111,7 +111,7 @@ public enum NewsroomDiff {
     }
 
     static func updateLine(_ agent: NewsroomDashboard.Agent) -> String {
-        if let place = agent.placeName { return "\(agent.handle) updated \(place)" }
+        if let place = agent.placeName { return LocalText.string("\(String(describing: agent.handle)) updated \(String(describing: place))") }
         return "\(agent.handle) updated"
     }
 

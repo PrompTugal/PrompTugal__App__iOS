@@ -35,9 +35,9 @@ public enum StoryAgents {
             let role = String(address.split(separator: "@").first ?? "")
             guard seen.insert(role).inserted else { continue }
             if info.id != PlaceDirectory.region.id && info.id != PlaceDirectory.country.id { towns.append(info.name) }
-            let page = info.id == PlaceDirectory.country.id ? "Portugal's page" : info.id == PlaceDirectory.region.id ? "the Algarve's page" : "\(info.name)'s site"
-            let read = story.readOn.map { ", read on \($0)" } ?? ""
-            out.append(Credit(role: role, address: address, how: .wrote, note: "Found and wrote it up for \(page)\(read)"))
+            let page = info.id == PlaceDirectory.country.id ? "Portugal's page" : info.id == PlaceDirectory.region.id ? LocalText.string("the Algarve's page") : "\(info.name)'s site"
+            let read = story.readOn.map { LocalText.string(", read on \(String(describing: $0))") } ?? ""
+            out.append(Credit(role: role, address: address, how: .wrote, note: LocalText.string("Found and wrote it up for \(String(describing: page))\(String(describing: read))")))
         }
         guard let dashboard else { return out }
         let needles = (towns + [story.publisher].compactMap { $0 }).filter { $0.count >= 4 }
@@ -46,7 +46,7 @@ public enum StoryAgents {
             if let hit = needles.first(where: { notes.localizedStandardContains($0) }) {
                 seen.insert(agent.role)
                 out.append(Credit(role: agent.role, address: agent.agent, how: .mentions,
-                                  note: "Its notes on the dashboard mention \(hit)"))
+                                  note: LocalText.string("Its notes on the dashboard mention \(String(describing: hit))")))
             }
         }
         return out

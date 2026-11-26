@@ -38,7 +38,7 @@ public struct AIStoryRow: View {
                 }
                 HStack(spacing: Space.s) {
                     Text([story.publisher, story.date].compactMap { $0 }.joined(separator: ", "))
-                    if let steps = story.stepsLabel { Text("AI path: \(steps)").foregroundStyle(Palette.blue) }
+                    if let steps = story.stepsLabel { Text(LocalText.string("AI path: \(String(describing: steps))")).foregroundStyle(Palette.blue) }
                 }
                 .font(.caption)
                 .foregroundStyle(Palette.muted)
@@ -85,11 +85,11 @@ public struct AIEntryRow: View {
                 if let type = entry.type { Text(type).font(.caption2).foregroundStyle(Palette.muted) }
             }
             if let what = entry.what { Text(what).font(.footnote).foregroundStyle(Palette.ink).lineLimit(4) }
-            if let path = entry.aiPath { Text("AI path: \(path)").font(.caption).foregroundStyle(Palette.blue).lineLimit(2) }
+            if let path = entry.aiPath { Text(LocalText.string("AI path: \(String(describing: path))")).font(.caption).foregroundStyle(Palette.blue).lineLimit(2) }
             HStack(spacing: 4) {
                 Image(systemName: "link")
                 if let source = entry.source { Link(entry.sourceHost, destination: source) } else { Text(entry.sourceHost) }
-                if let read = entry.readOn { Text("· read \(read)") }
+                if let read = entry.readOn { Text(LocalText.string("· read \(String(describing: read))")) }
             }
             .font(.caption2)
             .foregroundStyle(Palette.muted)
@@ -109,12 +109,12 @@ struct AITownHeader: View {
             RoundedRectangle(cornerRadius: 3).fill(accent).frame(width: 6, height: 40)
             VStack(alignment: .leading, spacing: 2) {
                 Text(info.name).font(.system(.title3, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
-                Text([site?.look?.landmark, site.map { $0.isLive ? "Live site" : "Researching" }].compactMap { $0 }.joined(separator: " · "))
+                Text([site?.look?.landmark, site.map { $0.isLive ? LocalText.string("Live site") : "Researching" }].compactMap { $0 }.joined(separator: " · "))
                     .font(.caption).foregroundStyle(Palette.muted).lineLimit(1)
             }
             Spacer(minLength: Space.s)
             Link(destination: info.page) {
-                Label("Site", systemImage: "safari").font(.caption)
+                Label(LocalText.string("Site"), systemImage: "safari").font(.caption)
             }
         }
     }

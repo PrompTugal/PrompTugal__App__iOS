@@ -12,6 +12,13 @@ public struct NewsroomCentreView: View {
     enum Filter: String, CaseIterable, Identifiable {
         case places = "Places", newsroom = "Newsroom", all = "All"
         var id: Self { self }
+        var title: String {
+            switch self {
+            case .places: LocalText.string("Places")
+            case .newsroom: LocalText.string("Newsroom")
+            case .all: LocalText.string("All")
+            }
+        }
     }
 
     public init() {}
@@ -40,33 +47,33 @@ public struct NewsroomCentreView: View {
 
     public var body: some View {
         Page {
-            ScreenHeader(kicker: "Command centre", title: "The newsroom",
-                         summary: "Every agent behind PrompTugal.news: what it is doing, what it did last, what it needs. Read-only.")
+            ScreenHeader(kicker: LocalText.string("Command centre"), title: LocalText.string("The newsroom"),
+                         summary: LocalText.string("Every agent behind PrompTugal.news: what it is doing, what it did last, what it needs. Read-only."))
             HStack {
                 ProvenanceLabel(provenance: store.dashboardProvenance, phase: store.dashboardPhase,
                                 readAt: dashboard?.updated)
                 Spacer()
-                if let built = dashboard?.built { Text("site \(built)").font(.caption.monospaced()).foregroundStyle(Palette.muted) }
+                if let built = dashboard?.built { Text(LocalText.string("site \(String(describing: built))")).font(.caption.monospaced()).foregroundStyle(Palette.muted) }
             }
             if let dashboard {
                 NavigationLink {
                     NewsroomLiveView()
                 } label: {
                     Card {
-                        Label("Watch the newsroom in action", systemImage: "waveform.path.ecg").font(.headline)
-                        Text("The agents on a live board: pulses when one wakes, handoffs in flight, the latest changes as they land.")
+                        Label(LocalText.string("Watch the newsroom in action"), systemImage: "waveform.path.ecg").font(.headline)
+                        Text(LocalText.string("The agents on a live board: pulses when one wakes, handoffs in flight, the latest changes as they land."))
                             .font(.footnote).foregroundStyle(Palette.muted)
                     }
                 }
                 .buttonStyle(.plain)
                 tiles(dashboard)
                 CityNewsroomFlow(store: store)
-                Picker("Agents", selection: $group) {
-                    ForEach(Filter.allCases) { Text($0.rawValue).tag($0) }
+                Picker(LocalText.string("Agents"), selection: $group) {
+                    ForEach(Filter.allCases) { Text($0.title).tag($0) }
                 }
                 .pickerStyle(.segmented)
-                TitledCard("The agents", kicker: "\(agents.count) shown") {
-                    Text("Status is read from what each agent writes about itself on the dashboard.")
+                TitledCard(LocalText.string("The agents"), kicker: LocalText.string("\(String(describing: agents.count)) shown")) {
+                    Text(LocalText.string("Status is read from what each agent writes about itself on the dashboard."))
                         .font(.caption).foregroundStyle(Palette.muted)
                     ForEach(agents) { agent in
                         NavigationLink {
@@ -80,11 +87,11 @@ public struct NewsroomCentreView: View {
                 }
                 Columns {
                     if !dashboard.asks.isEmpty {
-                        TitledCard("Waiting on a person", kicker: "\(dashboard.asks.count) asks") {
+                        TitledCard(LocalText.string("Waiting on a person"), kicker: LocalText.string("\(String(describing: dashboard.asks.count)) asks")) {
                             ForEach(dashboard.asks.prefix(12)) { ask in
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(ask.ask ?? "").font(.footnote).lineLimit(4)
-                                    Text([ask.from, ask.since.map { "since \($0)" }].compactMap { $0 }.joined(separator: " · "))
+                                    Text([ask.from, ask.since.map { LocalText.string("since \(String(describing: $0))") }].compactMap { $0 }.joined(separator: " · "))
                                         .font(.caption2).foregroundStyle(Palette.muted)
                                 }
                                 .padding(.vertical, 2)
@@ -93,7 +100,7 @@ public struct NewsroomCentreView: View {
                     }
                 } trailing: {
                     if !dashboard.handoffs.isEmpty {
-                        TitledCard("Who hands work to whom", kicker: "Last 24 hours") {
+                        TitledCard(LocalText.string("Who hands work to whom"), kicker: LocalText.string("Last 24 hours")) {
                             ForEach(dashboard.handoffs) { handoff in
                                 HStack {
                                     Text(handoff.from).font(.footnote.weight(.medium))
@@ -106,16 +113,16 @@ public struct NewsroomCentreView: View {
                         }
                     }
                 }
-                GapNote(title: "Read-only, and only the public newsroom",
-                        text: "This shows the agents PrompTugal.news publishes. Connecting your own conductor, to see every session of yours, comes next; nothing here can steer an agent yet.")
+                GapNote(title: LocalText.string("Read-only, and only the public newsroom"),
+                        text: LocalText.string("This shows the agents PrompTugal.news publishes. Connecting your own conductor, to see every session of yours, comes next; nothing here can steer an agent yet."))
             } else {
-                StateView(phase: store.dashboardPhase, hasData: false, title: "newsroom") {
+                StateView(phase: store.dashboardPhase, hasData: false, title: LocalText.string("newsroom")) {
                     Task { await store.refreshDashboard() }
                 }
             }
         }
-        .navigationTitle("Newsroom")
-        .searchable(text: $query, prompt: "Find an agent")
+        .navigationTitle(LocalText.string("Newsroom"))
+        .searchable(text: $query, prompt: LocalText.string("Find an agent"))
         .task { if !store.dashboardProvenance.isLive { await store.refreshDashboard() } }
         .refreshable { await store.refreshAll() }
         .toolbar { ToolbarItem(placement: .topBarTrailing) { CreditChip() } }
@@ -125,11 +132,11 @@ public struct NewsroomCentreView: View {
         let all = dashboard.agents
         let count = { (status: NewsroomDashboard.Status) in all.filter { $0.status == status }.count }
         return StatGrid(minimum: 120) {
-            StatTile(label: "Agents", value: "\(all.count)")
-            StatTile(label: "Town agents", value: "\(all.filter { $0.group == .places }.count)")
-            StatTile(label: "Working", value: "\(count(.working))", tone: .good)
-            StatTile(label: "Waiting on a person", value: "\(count(.waiting))", tone: count(.waiting) > 0 ? .warn : .neutral)
-            StatTile(label: "Quiet or stopped", value: "\(count(.stale) + count(.stopped))", tone: .neutral)
+            StatTile(label: LocalText.string("Agents"), value: "\(all.count)")
+            StatTile(label: LocalText.string("Town agents"), value: "\(all.filter { $0.group == .places }.count)")
+            StatTile(label: LocalText.string("Working"), value: "\(count(.working))", tone: .good)
+            StatTile(label: LocalText.string("Waiting on a person"), value: "\(count(.waiting))", tone: count(.waiting) > 0 ? .warn : .neutral)
+            StatTile(label: LocalText.string("Quiet or stopped"), value: "\(count(.stale) + count(.stopped))", tone: .neutral)
         }
     }
 }
@@ -148,7 +155,7 @@ struct StatusDot: View {
         }
     }
     var body: some View {
-        Circle().fill(color).frame(width: 9, height: 9).accessibilityLabel(status.rawValue)
+        Circle().fill(color).frame(width: 9, height: 9).accessibilityLabel(status.label)
     }
 }
 
@@ -162,11 +169,11 @@ struct AgentRow: View {
                 HStack {
                     Text(agent.role).font(.body.weight(.semibold).monospaced()).foregroundStyle(Palette.ink)
                     Spacer()
-                    Text(agent.status.rawValue).font(.caption2.weight(.semibold)).foregroundStyle(StatusDot(status: agent.status).color)
+                    Text(agent.status.label).font(.caption2.weight(.semibold)).foregroundStyle(StatusDot(status: agent.status).color)
                 }
                 if let state = agent.state { Text(state).font(.footnote).foregroundStyle(Palette.ink).lineLimit(2) }
                 if let next = agent.next.first {
-                    Text("Next: \(next)").font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                    Text(LocalText.string("Next: \(String(describing: next))")).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
                 }
                 if let updated = agent.updatedDate {
                     Text(updated, format: .relative(presentation: .named, unitsStyle: .abbreviated))
@@ -191,18 +198,18 @@ struct AgentSummary: View {
                 StatusDot(status: agent.status)
                 Text(agent.agent).font(.footnote.monospaced())
                 Spacer()
-                Text(agent.status.rawValue).font(.caption2.weight(.semibold))
+                Text(agent.status.label).font(.caption2.weight(.semibold))
             }
             if let state = agent.state { Text(state).font(.footnote) }
             if !agent.next.isEmpty {
-                Text("Next").font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
+                Text(LocalText.string("Next")).font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
                 ForEach(agent.next.prefix(4), id: \.self) { Text("• \($0)").font(.caption) }
             }
             if !agent.asks.isEmpty {
-                Text("Asks").font(.caption.weight(.semibold)).foregroundStyle(Palette.amber)
+                Text(LocalText.string("Asks")).font(.caption.weight(.semibold)).foregroundStyle(Palette.amber)
                 ForEach(agent.asks.prefix(3), id: \.self) { Text("• \($0)").font(.caption).lineLimit(4) }
             }
-            NavigationLink("Everything it reports") { AgentDetailView(agent: agent) }.font(.footnote)
+            NavigationLink(LocalText.string("Everything it reports")) { AgentDetailView(agent: agent) }.font(.footnote)
         }
     }
 }
@@ -213,27 +220,27 @@ struct AgentDetailView: View {
     var body: some View {
         List {
             Section {
-                LabeledContent("Agent") { Text(agent.agent).font(.footnote.monospaced()) }
-                LabeledContent("Status") { HStack { StatusDot(status: agent.status); Text(agent.status.rawValue) } }
-                if let minute = agent.minute { LabeledContent("Wakes", value: agent.scheduled ? "hourly at :\(String(format: "%02d", minute))" : "not scheduled") }
+                LabeledContent(LocalText.string("Agent")) { Text(agent.agent).font(.footnote.monospaced()) }
+                LabeledContent(LocalText.string("Status")) { HStack { StatusDot(status: agent.status); Text(agent.status.label) } }
+                if let minute = agent.minute { LabeledContent(LocalText.string("Wakes"), value: agent.scheduled ? LocalText.string("hourly at :\(String(describing: String(format: "%02d", minute)))") : LocalText.string("not scheduled")) }
                 if let updated = agent.updatedDate {
-                    LabeledContent("Updated") { Text(updated, format: .dateTime.day().month().hour().minute()) }
+                    LabeledContent(LocalText.string("Updated")) { Text(updated, format: .dateTime.day().month().hour().minute()) }
                 }
             }
-            if let focus = agent.focus { Section("Focus") { Text(focus) } }
-            if let state = agent.state { Section("What it says now") { Text(state) } }
+            if let focus = agent.focus { Section(LocalText.string("Focus")) { Text(focus) } }
+            if let state = agent.state { Section(LocalText.string("What it says now")) { Text(state) } }
             if let wake = agent.lastWake {
-                Section("Last wake") {
-                    if let started = wake.started { LabeledContent("Started", value: started) }
-                    if let outcome = wake.outcome { LabeledContent("Outcome", value: outcome) }
+                Section(LocalText.string("Last wake")) {
+                    if let started = wake.started { LabeledContent(LocalText.string("Started"), value: started) }
+                    if let outcome = wake.outcome { LabeledContent(LocalText.string("Outcome"), value: outcome) }
                     if let line = wake.line { Text(line) }
                 }
             }
-            if !agent.next.isEmpty { Section("Next") { ForEach(agent.next, id: \.self) { Text($0) } } }
-            if !agent.asks.isEmpty { Section("Asks") { ForEach(agent.asks, id: \.self) { Text($0) } } }
-            if !agent.done.isEmpty { Section("Done") { ForEach(agent.done.reversed(), id: \.self) { Text($0).font(.footnote) } } }
+            if !agent.next.isEmpty { Section(LocalText.string("Next")) { ForEach(agent.next, id: \.self) { Text($0) } } }
+            if !agent.asks.isEmpty { Section(LocalText.string("Asks")) { ForEach(agent.asks, id: \.self) { Text($0) } } }
+            if !agent.done.isEmpty { Section(LocalText.string("Done")) { ForEach(agent.done.reversed(), id: \.self) { Text($0).font(.footnote) } } }
             Section {
-                Text("Read-only: from the newsroom dashboard on promptugal.news.").font(.caption).foregroundStyle(.secondary)
+                Text(LocalText.string("Read-only: from the newsroom dashboard on promptugal.news.")).font(.caption).foregroundStyle(.secondary)
             }
         }
         .navigationTitle(agent.role)
@@ -252,8 +259,8 @@ struct CityNewsroomFlow: View {
 
     var body: some View {
         let site = store.site(town)
-        TitledCard("A town's newsroom, step by step", kicker: "The flow") {
-            Picker("Town", selection: $town) {
+        TitledCard(LocalText.string("A town's newsroom, step by step"), kicker: LocalText.string("The flow")) {
+            Picker(LocalText.string("Town"), selection: $town) {
                 ForEach(PlaceDirectory.towns) { Text($0.name).tag($0.id) }
             }
             .pickerStyle(.menu)
@@ -261,7 +268,7 @@ struct CityNewsroomFlow: View {
                 HStack(alignment: .top, spacing: Space.s) { stages(site) }
                 VStack(alignment: .leading, spacing: Space.s) { stages(site) }
             }
-            Text("Today one agent per town does all four steps. The verify step (asking each organisation \"is this correct?\", drafted by agents and sent by a person) is not running yet: its numbers are simulated.")
+            Text(LocalText.string("Today one agent per town does all four steps. The verify step (asking each organisation \"is this correct?\", drafted by agents and sent by a person) is not running yet: its numbers are simulated."))
                 .font(.caption).foregroundStyle(Palette.muted)
         }
     }
@@ -269,13 +276,13 @@ struct CityNewsroomFlow: View {
     @ViewBuilder
     private func stages(_ site: PlaceSite?) -> some View {
         let mapped = site?.aiMap.count ?? 0
-        FlowStage(step: "1", title: "Research", value: "\(site?.sources.count ?? 0) sources · \(mapped) mapped", simulated: false)
+        FlowStage(step: "1", title: LocalText.string("Research"), value: "\(site?.sources.count ?? 0) sources · \(mapped) mapped", simulated: false)
         FlowArrow()
-        FlowStage(step: "2", title: "Verify", value: "\(Self.simulatedAsked(mapped)) asked · \(Self.simulatedConfirmed(mapped)) confirmed", simulated: true)
+        FlowStage(step: "2", title: LocalText.string("Verify"), value: "\(Self.simulatedAsked(mapped)) asked · \(Self.simulatedConfirmed(mapped)) confirmed", simulated: true)
         FlowArrow()
-        FlowStage(step: "3", title: "Write", value: "\(site?.aiNews.count ?? 0) local stories", simulated: false)
+        FlowStage(step: "3", title: LocalText.string("Write"), value: LocalText.string("\(String(describing: site?.aiNews.count ?? 0)) local stories"), simulated: false)
         FlowArrow()
-        FlowStage(step: "4", title: "Edit and publish", value: site?.isLive == true ? "Live" : "Researching", simulated: false)
+        FlowStage(step: "4", title: LocalText.string("Edit and publish"), value: site?.isLive == true ? "Live" : "Researching", simulated: false)
     }
 
     /// Deterministic stand-ins, so the screen does not jump on every redraw. Not real data.

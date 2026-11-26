@@ -14,10 +14,10 @@ public enum Provenance: Equatable, Sendable {
 
     public var label: String {
         switch self {
-        case .live: "Live from promptugal.news"
-        case .cached: "Offline: the last copy this device read"
-        case .snapshot(let day): "Built-in copy of \(day): connect to update"
-        case .none: "Not loaded"
+        case .live: LocalText.string("Live from promptugal.news")
+        case .cached: LocalText.string("Offline: the last copy this device read")
+        case .snapshot(let day): LocalText.string("Built-in copy of \(String(describing: day)): connect to update")
+        case .none: LocalText.string("Not loaded")
         }
     }
 
@@ -154,9 +154,9 @@ public final class LocalStore {
             phase = .loaded
         } else if fromCache > 0 {
             placeProvenance = .cached(cache.modified(key: "place-\(PlaceDirectory.region.id)"))
-            phase = .failed("promptugal.news could not be reached.")
+            phase = .failed(LocalText.string("promptugal.news could not be reached."))
         } else {
-            phase = places.isEmpty ? .failed("promptugal.news could not be reached.") : .loaded
+            phase = places.isEmpty ? .failed(LocalText.string("promptugal.news could not be reached.")) : .loaded
         }
     }
 
@@ -175,7 +175,7 @@ public final class LocalStore {
                 dashboard = stored
                 dashboardProvenance = .cached(cache.modified(key: "newsroom-dashboard"))
             }
-            dashboardPhase = .failed("The newsroom dashboard could not be reached.")
+            dashboardPhase = .failed(LocalText.string("The newsroom dashboard could not be reached."))
         }
     }
 

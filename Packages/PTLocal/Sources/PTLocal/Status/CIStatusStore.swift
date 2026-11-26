@@ -23,10 +23,10 @@ public final class CIStatusStore {
 
         public var label: String {
             switch self {
-            case .live: "Live from the ci-status branch"
-            case .siteCopy: "The copy from the last site build"
-            case .cached: "Offline: the last copy this device read"
-            case .none: "Not loaded"
+            case .live: LocalText.string("Live from the ci-status branch")
+            case .siteCopy: LocalText.string("The copy from the last site build")
+            case .cached: LocalText.string("Offline: the last copy this device read")
+            case .none: LocalText.string("Not loaded")
             }
         }
 
@@ -91,7 +91,7 @@ public final class CIStatusStore {
             if case .live = source { source = .cached(cache.modified(key: Self.cacheKey)) }
             phase = .loaded
         } else {
-            phase = .failed("Could not read the CI status. Check the connection and try again.")
+            phase = .failed(LocalText.string("Could not read the CI status. Check the connection and try again."))
         }
     }
 }
