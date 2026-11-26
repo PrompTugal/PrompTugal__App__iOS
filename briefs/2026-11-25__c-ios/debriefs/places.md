@@ -110,3 +110,10 @@ home footer: no Web Summit anywhere in PTPlaces.
   keys not loaded). Form 1 (legacy) is reported as not checked rather than verified.
 - Tests: a throwaway P-256 key (public half only in the test) signs a small twin in form 2; good, version-bumped,
   changed, missing-key, old-form and junk cases; the real reviewer key's fingerprint; lenient decoders; link parsing.
+- Aligned with c.ios.explore's spec (work/c-explore 261edbd, s. 2): states "Signed by <agent>, checked on this
+  device", "Signed with a key since handed over (<agent>)" (status superseded), "Signed in an older form that cannot
+  be checked" (no form or form 1, never "invalid"), "The signature does not match this text", "Not signed" (.sig 404),
+  "Signature not checked: <reason>" (withdrawn, more than one "built by" line, a key marked other than active or
+  superseded, files not loaded). The trust limit is said under the verdict, with links to the signed text, the
+  signature and the key list. The .sig is fetched directly so a 404 reads as "Not signed".
+- Offline edition (c.ios.local's EditionFiles): not wired; a `placesOfflineData` hook can come later if wanted.

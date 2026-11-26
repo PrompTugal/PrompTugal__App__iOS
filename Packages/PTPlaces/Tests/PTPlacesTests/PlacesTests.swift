@@ -793,11 +793,11 @@ struct ArticleTests {
         let key = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", signPEM: testPEM)
         let other = SigningKey(id: "reviewer", agent: "reviewer@PrompTugal.vicky", signPEM: reviewerPEM)
         #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [other, key])
-                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key"))
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: false))
         // A new site version does not break it: the version is not signed.
         let newVersion = testTwin.replacingOccurrences(of: "v0.1.2293", with: "v0.1.9999")
         #expect(ArticleSigning.check(twin: newVersion, signature: testSignature, keys: [key])
-                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key"))
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: false))
         let changed = testTwin.replacingOccurrences(of: "Body line.", with: "Body line, changed.")
         if case .failed = ArticleSigning.check(twin: changed, signature: testSignature, keys: [key]) {} else {
             Issue.record("a changed text must fail")
@@ -807,8 +807,15 @@ struct ArticleTests {
         }
         var old = testSignature
         old.form = "twin-without-version/1"
-        if case .notChecked = ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) {} else {
-            Issue.record("an older form must not be checked")
+        #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
+        old.form = ""
+        #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
+        let handedOver = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "superseded", signPEM: testPEM)
+        #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [handedOver])
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: true))
+        let twoBuilders = testTwin + "built by: someone else\n"
+        if case .notChecked = ArticleSigning.check(twin: twoBuilders, signature: testSignature, keys: [key]) {} else {
+            Issue.record("two built-by lines must not be checked")
         }
         var junk = testSignature
         junk.signature = "bm90IGEgc2lnbmF0dXJl"
