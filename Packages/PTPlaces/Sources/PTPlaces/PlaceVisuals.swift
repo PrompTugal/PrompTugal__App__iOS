@@ -1,6 +1,7 @@
 import MapKit
 import PTCore
 import SwiftUI
+import UIKit
 
 // The visual parts of the places magazine: covers in each town's own accent, satellite imagery from MapKit
 // (real pictures of the place at no asset cost), the PrompTugal test as dots, big numbers, the agents' faces.
@@ -18,9 +19,48 @@ extension Color {
 
 enum PlaceTheme {
     /// The town's accent from its file, else a stable colour from its id.
+    /// In light mode the colour is darkened to at most 45% lightness, so text and pins in it read on paper and on
+    /// the map's pale land (design review D); dark mode keeps it as the town wrote it.
     static func accent(_ file: PlaceFile?, id: String) -> Color {
-        if let hex = file?.look?.accent, let color = Color(hexString: hex) { return color }
-        return Palette.stable(id)
+        let base: Color = file?.look?.accent.flatMap { Color(hexString: $0) } ?? Palette.stable(id)
+        let resolved = UIColor(base)
+        return Color(uiColor: UIColor { traits in
+            let color = resolved.resolvedColor(with: traits)
+            guard traits.userInterfaceStyle != .dark else { return color }
+            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+            guard color.getRed(&r, green: &g, blue: &b, alpha: &a) else { return color }
+            let c = clamp(red: Double(r), green: Double(g), blue: Double(b))
+            return UIColor(red: c.red, green: c.green, blue: c.blue, alpha: a)
+        })
+    }
+
+    /// The same hue and saturation with HSL lightness at most `maxLightness`.
+    static func clamp(red: Double, green: Double, blue: Double, maxLightness: Double = 0.45)
+        -> (red: Double, green: Double, blue: Double) {
+        let high = max(red, green, blue), low = min(red, green, blue)
+        let lightness = (high + low) / 2
+        guard lightness > maxLightness else { return (red, green, blue) }
+        let delta = high - low
+        if delta == 0 { return (maxLightness, maxLightness, maxLightness) }
+        let saturation = delta / (1 - abs(2 * lightness - 1))
+        var hue: Double
+        if high == red { hue = ((green - blue) / delta).truncatingRemainder(dividingBy: 6) }
+        else if high == green { hue = (blue - red) / delta + 2 }
+        else { hue = (red - green) / delta + 4 }
+        hue = hue < 0 ? hue + 6 : hue
+        let chroma = (1 - abs(2 * maxLightness - 1)) * min(saturation, 1)
+        let x = chroma * (1 - abs(hue.truncatingRemainder(dividingBy: 2) - 1))
+        let m = maxLightness - chroma / 2
+        let rgb: [Double]
+        switch hue {
+        case ..<1: rgb = [chroma, x, 0]
+        case ..<2: rgb = [x, chroma, 0]
+        case ..<3: rgb = [0, chroma, x]
+        case ..<4: rgb = [0, x, chroma]
+        case ..<5: rgb = [x, 0, chroma]
+        default: rgb = [chroma, 0, x]
+        }
+        return (rgb[0] + m, rgb[1] + m, rgb[2] + m)
     }
 
     static func coordinate(_ place: PlaceSummary) -> CLLocationCoordinate2D? {

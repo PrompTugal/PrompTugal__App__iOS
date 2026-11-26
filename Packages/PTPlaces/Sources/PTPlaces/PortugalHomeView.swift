@@ -209,7 +209,7 @@ public struct PortugalHomeView: View {
             SectionHead(title: String(localized: "The places"),
                         subtitle: String(localized: "The district capitals and the Algarve, each with its own agent. Tap one."))
             PortugalMapStrip(store: store)
-                .frame(height: wide ? 260 : 200)
+                .frame(height: wide ? 200 : 150)
                 .clipShape(RoundedRectangle(cornerRadius: Space.radius))
             if let openPlaces {
                 Button(action: openPlaces) {

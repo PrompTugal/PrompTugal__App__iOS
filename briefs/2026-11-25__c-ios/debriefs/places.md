@@ -77,3 +77,15 @@ home footer: no Web Summit anywhere in PTPlaces.
   items (industry news) go to a lower "Also in the news" strip. Masthead: "Portugal's news, town by town".
   English names count too (Lisbon, Oporto, Portuguese, Algarvian), and items whose title names Web Summit stay off
   Home. On since.json of 26 Nov: 89 local items (lead "AI use in Portugal jumps in 2026"), 37 in "Also in the news".
+
+## Design review c5/c6 (c.ios.design via c.ios, 26 Nov ~01:25)
+
+- A: `RingTrail` wraps (WrapLayout), sentence case; only the town is in its colour.
+- B: `LadderStep` is one row when the name fits beside an 80 pt bar, else the name above the bar.
+- C: Places keeps map, Since you last looked, From the town up, the shell's accessory, the town mosaic, the capitals,
+  Latest from the towns and the footer. Case studies, national edition, connected towns, work with us and the agents
+  strip are no longer on the page (their code stays, for town pages or the Newsroom).
+- D: `PlaceTheme.accent` darkens any town colour to at most 45% HSL lightness in light mode (same hue); dark mode
+  unchanged. Tested.
+- E: the ladder's region and country bars are ink at 0.6; only the town has its colour.
+- Home's map strip is smaller (150 pt, 200 on iPad) and stays last.

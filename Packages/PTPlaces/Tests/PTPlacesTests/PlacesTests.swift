@@ -717,3 +717,20 @@ struct NewsHomeTests {
         #expect(MapScope.allCases.first == .portugal)
     }
 }
+
+@Suite("PTPlaces: town colours in light mode (design review D)")
+struct AccentClampTests {
+    @Test("a light colour is darkened to 45% lightness, keeping its hue; a dark one is left alone")
+    func clamp() {
+        // #F2C14E, a light amber: L about 0.63.
+        let light = PlaceTheme.clamp(red: 0xF2 / 255.0, green: 0xC1 / 255.0, blue: 0x4E / 255.0)
+        let high = max(light.red, light.green, light.blue), low = min(light.red, light.green, light.blue)
+        #expect(abs((high + low) / 2 - 0.45) < 0.001)
+        #expect(light.red > light.green && light.green > light.blue)
+        // #9A3412, Loulé's terracotta: L about 0.34, unchanged.
+        let dark = PlaceTheme.clamp(red: 0x9A / 255.0, green: 0x34 / 255.0, blue: 0x12 / 255.0)
+        #expect(dark.red == 0x9A / 255.0 && dark.green == 0x34 / 255.0 && dark.blue == 0x12 / 255.0)
+        let white = PlaceTheme.clamp(red: 1, green: 1, blue: 1)
+        #expect(white.red == 0.45 && white.green == 0.45 && white.blue == 0.45)
+    }
+}
