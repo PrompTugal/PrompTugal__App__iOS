@@ -58,7 +58,7 @@ public struct AlgarveView: View {
                 }
             }
             .buttonStyle(.plain)
-            Text("PrompTugal.news is independent. Every fact here links to where it was read. Each town's research is by its own agent.")
+            Text("PrompTugal.news: local news from Portugal, every item with its source. Each town's research is by its own agent.")
                 .font(.caption).foregroundStyle(Palette.muted)
         }
         .navigationTitle("The Algarve")
