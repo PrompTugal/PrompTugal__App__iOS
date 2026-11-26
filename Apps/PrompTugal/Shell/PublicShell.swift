@@ -18,8 +18,8 @@ struct PublicShell: View {
 
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.scenePhase) private var scenePhase
-    @SceneStorage("shell.selection") private var selection = "places"
-    @SceneStorage("shell.tab") private var tab = "places"
+    @SceneStorage("shell.selection") private var selection = "home"
+    @SceneStorage("shell.tab") private var tab = "home"
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     /// ONB-1: the first-run screen, shown once.
     @AppStorage("onboarding.seen") private var onboardingSeen = false
@@ -218,7 +218,6 @@ private struct PublicSidebar: View {
         }
         .listStyle(.sidebar)
         .navigationTitle("PrompTugal")
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { LanguageButton() } }
     }
 
     @ViewBuilder private func rowViews(_ rows: [ShellDestination]) -> some View {
@@ -266,7 +265,6 @@ private struct PublicPhoneShell: View {
                         NavigationStack {
                             destination.view().destinationID(destination.id).surfaceKind(destination.kind)
                                 .toolbar {
-                                    ToolbarItem(placement: .topBarLeading) { LanguageButton() }
                                     ToolbarItem(placement: .topBarTrailing) { MoreButton(action: openMore) }
                                 }
                         }

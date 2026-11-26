@@ -85,19 +85,24 @@ enum PublicDestinations {
         all.filter { $0.group == group && $0.listed && (debug || !$0.debugOnly) }
     }
 
-    // MARK: The five tabs
+    // MARK: The tabs (Explore left the tabs on 26 Nov, Dinis: its content was the summit; still routable)
 
     static let tabs: [ShellDestination] = [
+        // Home (Dinis, 26 Nov): the PrompTugal.news front page, top news from the towns, the Algarve and Portugal (PTPlaces).
+        ShellDestination(id: "home", title: String(localized: "Home"), symbol: "newspaper.fill", group: "Tabs",
+                         summary: String(localized: "The top news from every town, the Algarve and Portugal"), phoneTab: 0) {
+            AnyView(PortugalHomeView())
+        },
         ShellDestination(id: "places", title: String(localized: "Places"), symbol: "map.fill", group: "Tabs",
-                         summary: String(localized: "Portugal, the Algarve and its 17 towns: local AI news, the AI map, the agents"), phoneTab: 0) {
+                         summary: String(localized: "Portugal, the Algarve and its 17 towns: local AI news, the AI map, the agents"), phoneTab: 1) {
             AnyView(PlacesHomeView())
         },
         ShellDestination(id: "news.home", title: String(localized: "News"), symbol: "newspaper", group: "Tabs",
-                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 1) { AnyView(NewsHomeView()) },
+                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 2) { AnyView(NewsHomeView()) },
         ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
-                         summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 2) { AnyView(NowView()) },
+                         summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 3) { AnyView(NowView()) },
         ShellDestination(id: "explore", title: String(localized: "Explore"), symbol: "magnifyingglass", group: "Tabs",
-                         summary: String(localized: "Stories, companies, places and the library"), phoneTab: 3, wrapsStack: false) {
+                         summary: String(localized: "Stories, companies, places and the library"), wrapsStack: false, listed: false) {
             AnyView(ExploreView())
         },
     ]

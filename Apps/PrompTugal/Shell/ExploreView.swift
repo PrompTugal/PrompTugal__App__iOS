@@ -33,7 +33,6 @@ struct ExploreView: View {
     private var hooks: ExploreHooks {
         ExploreHooks(
             graph: { AnyView(GraphExplorerView()) },
-            leadingToolbar: { AnyView(LanguageButton()) },
             trailingToolbar: moreButton,
             showsTalks: false,
             showsGraphRow: true)
