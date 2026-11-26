@@ -122,7 +122,7 @@ home footer: no Web Summit anywhere in PTPlaces.
 
 - **Catalogue:** every `String(localized:)` in PTPlaces (241 calls, 229 keys) now has `bundle: .module`;
   `Sources/PTPlaces/Resources/Localizable.xcstrings` holds en and pt-PT for all of them (European Portuguese:
-  ecrã-free wording, "dispositivo", "concelho", "capitais de distrito", "Início"). `Package.swift` processes
+  "dispositivo", "concelho", "capitais de distrito", "Início"). `Package.swift` processes
   `Resources`. Interpolated keys use `%@` / `%lld` (`%%` for a literal percent); pt-PT reorders with `%1$…`.
   Three call sites with nested quotes were rewritten so every key is a plain literal. Dates follow the app's
   language (`PlacesLanguage.locale`: pt_PT or en_GB); IPMA warning colours and "Researching" are translated.
