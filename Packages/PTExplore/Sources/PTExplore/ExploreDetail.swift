@@ -17,12 +17,54 @@ public struct ExploreDetail: Sendable, Hashable {
         public var id: String { verb + "|" + ref }
     }
 
+    /// One source the record cites: what it is and where it lives.
+    public struct Source: Sendable, Hashable, Identifiable {
+        public var label: String
+        public var url: URL
+        public var id: String { url.absoluteString }
+    }
+
     public var title: String
     public var facts: [Fact]
     public var website: URL?
     /// The talk or entry's page on the site, when the record names it.
     public var pageURL: URL?
     public var links: [Link]
+    /// The sources the record cites, in its order (an article's sources, a company's).
+    public var sources: [Source] = []
+    /// Live, this device's copy or the built-in copy, when the source says.
+    public var origin: ExploreOrigin?
+
+    public init(title: String, facts: [Fact], website: URL? = nil, pageURL: URL? = nil, links: [Link] = [],
+                sources: [Source] = []) {
+        self.title = title
+        self.facts = facts
+        self.website = website
+        self.pageURL = pageURL
+        self.links = links
+        self.sources = sources
+    }
+
+    /// A detail made from what the list already knows (library items and videos have no record to fetch).
+    public init(item: ExploreItem) {
+        self.init(title: item.title,
+                  facts: (item.facts ?? []).map { Fact(label: $0.label, value: $0.value) })
+    }
+
+    /// `sources` of a record: a list of objects with a `url` and, at best, a `text`, `title` or `host`.
+    static func parseSources(_ any: Any?) -> [Source] {
+        var out: [Source] = []
+        var seen = Set<String>()
+        for entry in (any as? [[String: Any]]) ?? [] {
+            guard let raw = entry["url"] as? String, let url = URL(string: raw), url.scheme?.hasPrefix("http") == true,
+                  seen.insert(url.absoluteString).inserted else { continue }
+            let words = [entry["text"], entry["title"], entry["name"], entry["supports"]]
+                .compactMap { $0 as? String }.first { !$0.isEmpty }
+            let label = words ?? (entry["host"] as? String) ?? url.host() ?? raw
+            out.append(Source(label: String(label.prefix(240)), url: url))
+        }
+        return out
+    }
 
     static var placeLabel: String { String(localized: "Where", bundle: .module) }
     static var kindLabel: String { String(localized: "Kind", bundle: .module) }
@@ -42,11 +84,17 @@ public struct ExploreDetail: Sendable, Hashable {
             [("role", String(localized: "Role", bundle: .module)), ("organisation", String(localized: "Organisation", bundle: .module))]
         case .company:
             [("what", String(localized: "What it does", bundle: .module)), ("country", String(localized: "Country", bundle: .module)),
-             ("category", String(localized: "Category", bundle: .module)), ("attending_as", String(localized: "At the summit as", bundle: .module))]
+             ("category", String(localized: "Category", bundle: .module))]
         case .organisation:
             []
         case .place:
             [("kind", String(localized: "Kind", bundle: .module)), ("note", String(localized: "Note", bundle: .module))]
+        case .article:
+            [("summary", String(localized: "Summary", bundle: .module)), ("date", String(localized: "Published", bundle: .module)),
+             ("author", String(localized: "By", bundle: .module)), ("town", String(localized: "Town", bundle: .module)),
+             ("region", String(localized: "Region", bundle: .module))]
+        case .library:
+            []
         }
     }
 
@@ -54,10 +102,12 @@ public struct ExploreDetail: Sendable, Hashable {
         guard let root = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw URLError(.cannotParseResponse)
         }
-        let record = root["data"] as? [String: Any] ?? [:]
+        // Graph records keep their fields under `data`; an article's record is flat.
+        let record = root["data"] as? [String: Any] ?? root
         let title = (root["label"] as? String) ?? (record["name"] as? String) ?? (record["title"] as? String) ?? ""
         let facts: [Fact] = fields(kind).compactMap { key, label in
             guard let value = record[key] as? String, !value.isEmpty else { return nil }
+            if key == "date", kind == .article { return Fact(label: label, value: ExploreFormat.date(value)) }
             return Fact(label: label, value: key == "kind" && kind == .event ? ExploreFormat.kindTitle(value) : value)
         }
         let website = (record["website"] as? String).flatMap { URL(string: $0) }
@@ -75,6 +125,7 @@ public struct ExploreDetail: Sendable, Hashable {
             }
         }
         let page = (root["page"] as? String).flatMap { URL(string: $0) }
-        return ExploreDetail(title: title, facts: facts, website: website, pageURL: page, links: links)
+        let sources = Self.parseSources(record["sources"] ?? root["sources"])
+        return ExploreDetail(title: title, facts: facts, website: website, pageURL: page, links: links, sources: sources)
     }
 }

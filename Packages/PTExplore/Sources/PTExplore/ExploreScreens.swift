@@ -19,6 +19,8 @@ public struct ExploreHooks {
     public var trailingToolbar: (@MainActor () -> AnyView)?
     /// False leaves Talks out: no Talks segment and no talks in search. The screen then opens on Speakers.
     public var showsTalks: Bool
+    /// True adds, with `graph`, a row for the newsroom's graph at the end of each list. The newsroom's Explore sets it.
+    public var showsGraphRow: Bool
 
     public init(talks: (@MainActor () -> AnyView)? = nil,
                 talkDetail: (@MainActor (ExploreItem) -> AnyView)? = nil,
@@ -27,7 +29,8 @@ public struct ExploreHooks {
                 talkActions: TalkActions = TalkActions(),
                 leadingToolbar: (@MainActor () -> AnyView)? = nil,
                 trailingToolbar: (@MainActor () -> AnyView)? = nil,
-                showsTalks: Bool = true) {
+                showsTalks: Bool = true,
+                showsGraphRow: Bool = false) {
         self.talks = talks
         self.talkDetail = talkDetail
         self.header = header
@@ -36,6 +39,7 @@ public struct ExploreHooks {
         self.leadingToolbar = leadingToolbar
         self.trailingToolbar = trailingToolbar
         self.showsTalks = showsTalks
+        self.showsGraphRow = showsGraphRow
     }
 }
 
@@ -44,6 +48,8 @@ public struct ExploreHooks {
 /// `explore.graph` → `.graph`.
 public enum ExploreStart: Equatable, Sendable {
     case talks, speakers, companies, places
+    /// The newsroom's segments.
+    case stories, library
     /// A talk's detail. `nil` opens the first talk of 10 Nov (or the first talk there is).
     case talk(ref: String?)
     /// The graph screen from `ExploreHooks.graph`.
@@ -55,13 +61,16 @@ public enum ExploreStart: Equatable, Sendable {
         case .speakers: .person
         case .companies: .company
         case .places: .place
+        case .stories: .article
+        case .library: .library
         }
     }
 }
 
 struct ExploreGraphRoute: Hashable {}
 
-/// The Explore screen: search across talks, speakers, companies and places, a segment for each, and a detail page.
+/// The Explore screen: search across the store's kinds (the newsroom's stories, companies, places and library), a
+/// segment for each, and a detail page.
 /// Open it with `ExploreScreen()`; it brings its own navigation stack.
 public struct ExploreScreen: View {
     @State private var store: ExploreStore
@@ -72,7 +81,7 @@ public struct ExploreScreen: View {
 
     public init(store: ExploreStore? = nil, hooks: ExploreHooks = ExploreHooks(), start: ExploreStart = .talks) {
         let store = store ?? ExploreStore()
-        if !hooks.showsTalks { store.kinds = ExploreKind.browsable.filter { $0 != .event } }
+        if !hooks.showsTalks { store.kinds.removeAll { $0 == .event } }
         store.kind = store.kinds.contains(start.kind) ? start.kind : (store.kinds.first ?? start.kind)
         _store = State(initialValue: store)
         self.hooks = hooks
@@ -141,20 +150,38 @@ public struct ExploreListView: View {
     public var body: some View {
         VStack(spacing: 0) {
             if let header = hooks.header { header().padding(.horizontal, Space.l).padding(.top, Space.s) }
-            Picker(String(localized: "Show", bundle: .module), selection: $store.kind) {
-                ForEach(store.kinds) { Text($0.title).tag($0) }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, Space.l)
-            .padding(.vertical, Space.s)
+            picker
+            ExploreOriginLine(origin: store.origin, loading: store.phase == .loading)
+                .padding(.horizontal, Space.l)
+                .padding(.bottom, Space.xs)
             content
         }
-        .searchable(text: $store.query, prompt: hooks.showsTalks
-                    ? String(localized: "Search talks, speakers, companies, places", bundle: .module)
-                    : String(localized: "Search speakers, companies, places", bundle: .module))
+        .searchable(text: $store.query, prompt: searchPrompt)
         .task { if store.index == nil { await store.load() } }
         .refreshable { await store.load() }
     }
+
+    private var picker: some View {
+        Picker(String(localized: "Show", bundle: .module), selection: $store.kind) {
+            ForEach(store.shownKinds) { Text($0.title).tag($0) }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, Space.l)
+        .padding(.vertical, Space.s)
+    }
+
+    private var searchPrompt: String {
+        if store.kinds.contains(.article) {
+            return String(localized: "Search stories, companies, places, library", bundle: .module)
+        }
+        if store.kinds.contains(.event) {
+            return String(localized: "Search talks, speakers, companies, places", bundle: .module)
+        }
+        return String(localized: "Search speakers, companies, places", bundle: .module)
+    }
+
+    /// The graph row at the end of the newsroom's lists.
+    private var showsFooter: Bool { hooks.showsGraphRow && hooks.graph != nil }
 
     @ViewBuilder private var content: some View {
         if store.isSearching {
@@ -166,7 +193,7 @@ public struct ExploreListView: View {
                 ContentUnavailableView {
                     Label(String(localized: "Nothing to show yet", bundle: .module), systemImage: "wifi.slash")
                 } description: {
-                    Text(String(localized: "The summit data loads once online, then works offline. \(message)", bundle: .module))
+                    Text(String(localized: "Explore loads once online, then works offline. \(message)", bundle: .module))
                 } actions: {
                     Button(String(localized: "Try again", bundle: .module)) { Task { await store.load() } }
                 }
@@ -175,8 +202,45 @@ public struct ExploreListView: View {
             }
         } else if store.kind == .event {
             talkList
+        } else if store.kind == .article || store.kind == .library {
+            datedList
         } else {
             alphabetical
+        }
+    }
+
+    /// Stories and library items, newest first.
+    private var datedList: some View {
+        List {
+            Section {
+                ForEach(store.results) { row($0) }
+            }
+            footer
+        }
+        .listStyle(.plain)
+    }
+
+    /// The newsroom's graph, at the end of each newsroom list.
+    @ViewBuilder private var footer: some View {
+        if showsFooter {
+            Section {
+                NavigationLink(value: ExploreGraphRoute()) {
+                    footerRow(String(localized: "The newsroom's graph", bundle: .module),
+                              String(localized: "How its companies, places and stories connect", bundle: .module),
+                              symbol: "point.3.connected.trianglepath.dotted")
+                }
+                .accessibilityIdentifier("pt.explore.graph")
+            }
+        }
+    }
+
+    private func footerRow(_ title: String, _ subtitle: String, symbol: String) -> some View {
+        HStack(spacing: Space.m) {
+            Image(systemName: symbol).foregroundStyle(Palette.red).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(Typo.headline)
+                Text(subtitle).font(Typo.meta).foregroundStyle(Palette.muted)
+            }
         }
     }
 
@@ -217,6 +281,7 @@ public struct ExploreListView: View {
                     ForEach(section.items) { row($0) }
                 }
             }
+            footer
         }
         .listStyle(.plain)
     }
@@ -232,19 +297,25 @@ public struct ExploreListView: View {
     }
 
     private func row(_ item: ExploreItem) -> some View {
-        NavigationLink(value: item) {
-            HStack(alignment: .firstTextBaseline, spacing: Space.m) {
-                if let time = ExploreFormat.time(item) {
-                    // One line, never wrapped: "12:00–12:45" or "11:05 AM" does not fit a fixed 64 pt.
-                    Text(time).font(Typo.dataSmall).foregroundStyle(Palette.red)
-                        .lineLimit(1).fixedSize()
-                        .frame(minWidth: 64, alignment: .leading)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(item.title).font(Typo.headline)
-                    if !item.subtitle.isEmpty {
-                        Text(item.subtitle).font(Typo.meta).foregroundStyle(Palette.muted).lineLimit(2)
-                    }
+        NavigationLink(value: item) { rowLabel(item) }
+    }
+
+    private func rowLabel(_ item: ExploreItem) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: Space.m) {
+            if item.kind == .library {
+                Image(systemName: item.id.hasPrefix("video:") ? "play.rectangle" : "books.vertical")
+                    .foregroundStyle(Palette.red).accessibilityHidden(true)
+            }
+            if let time = ExploreFormat.time(item) {
+                // One line, never wrapped: "12:00–12:45" or "11:05 AM" does not fit a fixed 64 pt.
+                Text(time).font(Typo.dataSmall).foregroundStyle(Palette.red)
+                    .lineLimit(1).fixedSize()
+                    .frame(minWidth: 64, alignment: .leading)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.title).font(Typo.headline)
+                if !item.subtitle.isEmpty {
+                    Text(item.subtitle).font(Typo.meta).foregroundStyle(Palette.muted).lineLimit(2)
                 }
             }
         }
@@ -264,58 +335,17 @@ public struct ExploreDetailView: View {
 
     public var body: some View {
         List {
-            Section {
-                VStack(alignment: .leading, spacing: Space.xs) {
-                    Label(item.kind.title, systemImage: item.kind.symbol)
-                        .font(Typo.kicker).foregroundStyle(Palette.red)
-                    Text(item.title).font(Typo.title)
-                    if let time = ExploreFormat.time(item) { Text(time).font(Typo.data).foregroundStyle(Palette.muted) }
-                    if !item.subtitle.isEmpty { Text(item.subtitle).font(Typo.body).foregroundStyle(Palette.muted) }
-                }
-            }
+            Section { header }
             if let detail {
-                if !detail.facts.isEmpty {
-                    Section {
-                        ForEach(detail.facts) { fact in
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(fact.label).font(Typo.meta).foregroundStyle(Palette.muted)
-                                Text(fact.value)
-                            }
-                        }
-                    }
-                }
-                if !detail.speakers.isEmpty {
-                    Section(String(localized: "Speakers", bundle: .module)) {
-                        ForEach(detail.speakers) { link in
-                            if let target = store.index?.item(ref: link.ref) {
-                                NavigationLink(value: target) { Text(link.label) }
-                            } else {
-                                Text(link.label)
-                            }
-                        }
-                    }
-                }
-                if !detail.otherLinks.isEmpty {
-                    Section(String(localized: "Connections", bundle: .module)) {
-                        ForEach(detail.otherLinks) { link in
-                            if let target = store.index?.item(ref: link.ref) {
-                                NavigationLink(value: target) { linkRow(link) }
-                            } else {
-                                linkRow(link)
-                            }
-                        }
-                    }
-                }
-                if let website = detail.website {
-                    Section { Link(destination: website) { Label(String(localized: "Website", bundle: .module), systemImage: "safari") } }
-                }
+                detailSections(detail)
             } else if failed {
-                Section { Text(item.kind == .event ? String(localized: "Connect to see speakers", bundle: .module) : String(localized: "Saved details not available offline yet", bundle: .module)).foregroundStyle(Palette.muted) }
+                Section { Text(failureText).foregroundStyle(Palette.muted) }
             } else {
                 Section { ProgressView() }
             }
-            if let page = item.page {
-                Section { Link(destination: page) { Label(String(localized: "Open on promptugal.news", bundle: .module), systemImage: "arrow.up.right.square") } }
+            openSection
+            Section {
+                ExploreOriginLine(origin: detail?.origin ?? store.origin, loading: detail == nil && !failed)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -325,10 +355,151 @@ public struct ExploreDetailView: View {
         }
     }
 
+    private var header: some View {
+        VStack(alignment: .leading, spacing: Space.xs) {
+            Label(kindTitle, systemImage: kindSymbol)
+                .font(Typo.kicker).foregroundStyle(Palette.red)
+            Text(item.title).font(Typo.title)
+            if let time = ExploreFormat.time(item) { Text(time).font(Typo.data).foregroundStyle(Palette.muted) }
+            if !item.subtitle.isEmpty { Text(item.subtitle).font(Typo.body).foregroundStyle(Palette.muted) }
+        }
+    }
+
+    private var isVideo: Bool { item.id.hasPrefix("video:") }
+    private var kindTitle: String { isVideo ? String(localized: "Video", bundle: .module) : item.kind.title }
+    private var kindSymbol: String { isVideo ? "play.rectangle" : item.kind.symbol }
+
+    private var failureText: String {
+        item.kind == .event ? String(localized: "Connect to see speakers", bundle: .module)
+            : String(localized: "Saved details not available offline yet", bundle: .module)
+    }
+
+    @ViewBuilder private func detailSections(_ detail: ExploreDetail) -> some View {
+        if !detail.facts.isEmpty {
+            Section {
+                ForEach(detail.facts) { fact in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(fact.label).font(Typo.meta).foregroundStyle(Palette.muted)
+                        Text(fact.value)
+                    }
+                }
+            }
+        }
+        if !detail.speakers.isEmpty {
+            Section(String(localized: "Speakers", bundle: .module)) {
+                ForEach(detail.speakers) { link in linked(link) { Text(link.label) } }
+            }
+        }
+        if !detail.otherLinks.isEmpty {
+            Section(String(localized: "Connections", bundle: .module)) {
+                ForEach(detail.otherLinks) { link in linked(link) { linkRow(link) } }
+            }
+        }
+        if !detail.sources.isEmpty {
+            Section(String(localized: "Sources", bundle: .module)) {
+                ForEach(detail.sources) { source in sourceRow(source) }
+            }
+        }
+        if let website = detail.website {
+            Section { Link(destination: website) { Label(String(localized: "Website", bundle: .module), systemImage: "safari") } }
+        }
+    }
+
+    /// A row that opens the other entry when the index has it, else plain text.
+    @ViewBuilder private func linked<Content: View>(_ link: ExploreDetail.Link, @ViewBuilder label: () -> Content) -> some View {
+        if let target = store.index?.item(ref: link.ref) {
+            NavigationLink(value: target) { label() }
+        } else {
+            label()
+        }
+    }
+
+    private func sourceRow(_ source: ExploreDetail.Source) -> some View {
+        Link(destination: source.url) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(source.label).lineLimit(3)
+                Text(source.url.host() ?? source.url.absoluteString).font(Typo.meta).foregroundStyle(Palette.muted)
+            }
+        }
+    }
+
+    /// The original (a video, a replay) and the entry's own page.
+    @ViewBuilder private var openSection: some View {
+        let page = detail?.pageURL ?? item.page
+        if item.link != nil || page != nil {
+            Section {
+                if let link = item.link {
+                    Link(destination: link) {
+                        Label(Self.originalTitle(link),
+                              systemImage: NewsroomWire.youTubeID(link) != nil ? "play.rectangle" : "arrow.up.right.square")
+                    }
+                }
+                if let page {
+                    Link(destination: page) { Label(Self.pageTitle(page), systemImage: "arrow.up.right.square") }
+                }
+            }
+        }
+    }
+
+    static func originalTitle(_ url: URL) -> String {
+        if NewsroomWire.youTubeID(url) != nil { return String(localized: "Watch on YouTube", bundle: .module) }
+        return String(localized: "Open the original", bundle: .module)
+    }
+
+    static func pageTitle(_ url: URL) -> String {
+        let host = (url.host() ?? "promptugal.news").replacingOccurrences(of: "www.", with: "")
+        if host == "promptugal.news" { return String(localized: "Open on promptugal.news", bundle: .module) }
+        return String(localized: "Open on \(host)", bundle: .module)
+    }
+
     private func linkRow(_ link: ExploreDetail.Link) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(link.verb).font(Typo.meta).foregroundStyle(Palette.muted)
             Text(link.label)
+        }
+    }
+}
+
+/// Says where the screen's entries came from: live, this device's copy, or the copy built into the app.
+struct ExploreOriginLine: View {
+    let origin: ExploreOrigin?
+    let loading: Bool
+
+    var body: some View {
+        HStack(spacing: 6) {
+            if loading { ProgressView().controlSize(.mini) }
+            Image(systemName: icon).accessibilityHidden(true)
+            Text(Self.label(origin, loading: loading))
+            if let date = origin?.date, origin?.kind != .builtIn {
+                Text(date, format: .relative(presentation: .named, unitsStyle: .abbreviated))
+            }
+            Spacer(minLength: 0)
+        }
+        .font(.caption)
+        .foregroundStyle(origin?.kind == .live ? Palette.muted : Palette.amber)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("pt.explore.provenance")
+    }
+
+    static func label(_ origin: ExploreOrigin?, loading: Bool) -> String {
+        guard let origin else {
+            return loading ? String(localized: "Loading…", bundle: .module) : String(localized: "Not loaded", bundle: .module)
+        }
+        switch origin.kind {
+        case .live: return String(localized: "Live from PrompTugal.news", bundle: .module)
+        case .cached: return String(localized: "Offline: the last copy this device read", bundle: .module)
+        case .builtIn:
+            let day = origin.snapshotDay ?? NewsroomExploreSource.snapshotDay
+            return String(localized: "Built-in copy of \(day): connect to update", bundle: .module)
+        }
+    }
+
+    private var icon: String {
+        switch origin?.kind {
+        case .live: "dot.radiowaves.left.and.right"
+        case .cached: "wifi.slash"
+        case .builtIn: "shippingbox"
+        case nil: "questionmark.circle"
         }
     }
 }
@@ -361,6 +532,20 @@ enum ExploreFormat {
         out.timeZone = lisbon
         out.locale = AppCulture.locale
         out.setLocalizedDateFormatFromTemplate("EEEEdMMMM")
+        return out.string(from: date)
+    }
+
+    /// `2026-11-24` → "24 Nov 2026" in the person's language; anything else as given.
+    static func date(_ day: String) -> String {
+        let parser = DateFormatter()
+        parser.locale = Locale(identifier: "en_US_POSIX")
+        parser.timeZone = lisbon
+        parser.dateFormat = "yyyy-MM-dd"
+        guard let date = parser.date(from: String(day.prefix(10))) else { return day }
+        let out = DateFormatter()
+        out.timeZone = lisbon
+        out.locale = AppCulture.locale
+        out.setLocalizedDateFormatFromTemplate("dMMMyyyy")
         return out.string(from: date)
     }
 

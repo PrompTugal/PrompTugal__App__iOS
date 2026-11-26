@@ -22,26 +22,32 @@ enum PublicDestinations {
 
     /// Old and extra ids that still open something sensible: the screen moved into another one.
     static let aliases: [String: String] = [
-        "reader.agenda": "explore",      // the agenda is the Talks list in Explore
+        // The summit's screens are gone (Dinis, 25 Nov): their old links open Places.
+        "reader.agenda": "places",
+        "team.schedule": "places",
+        "team.planner": "places",
+        "map": "places",
+        "settings.reminders": "places",
+        "explore.talk": "places",
+        "explore.summit": "places",
+        "explore.people": "places",
         "news.graph": "explore",         // the graph is opened from Explore
-        "team.planner": "team.schedule", // the planner is a section of My program
-        "explore.people": "explore",
         "explore.companies": "explore",
         "explore.places": "explore",
-        "explore.talk": "explore",
         "explore.graph": "explore",
+        "explore.stories": "explore",
+        "explore.library": "explore",
         "algarve": "places",
         "places.algarve": "places",
     ]
 
     /// Where Explore opens for each id that leads there (the App Store screenshots use these ids).
     static let exploreStarts: [String: ExploreStart] = [
-        "explore": .speakers,
-        "reader.agenda": .speakers,
-        "explore.people": .speakers,
+        "explore": .stories,
+        "explore.stories": .stories,
+        "explore.library": .library,
         "explore.companies": .companies,
         "explore.places": .places,
-        "explore.talk": .talk(ref: nil),
         "explore.graph": .graph,
         "news.graph": .graph,
     ]
@@ -54,7 +60,18 @@ enum PublicDestinations {
 
     static func destination(_ id: String?) -> ShellDestination? {
         guard let id = resolve(id) else { return nil }
+        if id.hasPrefix("place:") { return place(String(id.dropFirst("place:".count))) }
         return all.first { $0.id == id }
+    }
+
+    /// `place:<id>` (promptugal://open/place:loule, -PTDestination place:loule): one town or region page, built on the fly.
+    static func place(_ rest: String) -> ShellDestination? {
+        // place:loule, place:loule#lead, place:faro#now: the page scrolls once to the anchor (PTPlaces PlacesDeepLink).
+        guard let link = PlacesDeepLink("place:" + rest) else { return destination("places") }
+        return ShellDestination(id: link.text, title: String(localized: "Place"), symbol: "mappin.and.ellipse", group: "More",
+                                listed: false) {
+            AnyView(PlaceDetailView(id: link.id, anchor: link.anchor))
+        }
     }
 
     /// A destination that may be opened now: the debug screens only in a DEBUG build with debug mode on.
@@ -71,16 +88,21 @@ enum PublicDestinations {
     // MARK: The tabs (Explore left the tabs on 26 Nov, Dinis: its content was the summit; still routable)
 
     static let tabs: [ShellDestination] = [
+        // Home (Dinis, 26 Nov): the PrompTugal.news front page, top news from the towns, the Algarve and Portugal (PTPlaces).
+        ShellDestination(id: "home", title: String(localized: "Home"), symbol: "newspaper.fill", group: "Tabs",
+                         summary: String(localized: "The top news from every town, the Algarve and Portugal"), phoneTab: 0) {
+            AnyView(PortugalHomeView())
+        },
         ShellDestination(id: "places", title: String(localized: "Places"), symbol: "map.fill", group: "Tabs",
-                         summary: String(localized: "Portugal, the Algarve and its 17 towns: local AI news, the AI map, the agents"), phoneTab: 0) {
+                         summary: String(localized: "Portugal, the Algarve and its 17 towns: local AI news, the AI map, the agents"), phoneTab: 1) {
             AnyView(PlacesHomeView())
         },
         ShellDestination(id: "news.home", title: String(localized: "News"), symbol: "newspaper", group: "Tabs",
-                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 1) { AnyView(NewsHomeView()) },
+                         summary: String(localized: "Latest, newsletter, stories"), phoneTab: 2) { AnyView(NewsHomeView()) },
         ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
-                         summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 2) { AnyView(NowView()) },
+                         summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 3) { AnyView(NowView()) },
         ShellDestination(id: "explore", title: String(localized: "Explore"), symbol: "magnifyingglass", group: "Tabs",
-                         summary: String(localized: "Speakers, companies and places"), wrapsStack: false, listed: false) {
+                         summary: String(localized: "Stories, companies, places and the library"), wrapsStack: false, listed: false) {
             AnyView(ExploreView())
         },
     ]
@@ -88,14 +110,7 @@ enum PublicDestinations {
     // MARK: More (the iPad sidebar; on iPhone a sheet from the round button on every tab)
 
     static let more: [ShellDestination] = [
-        // Not listed (Dinis, 25 Nov: "move away from the Web Summit"; the App Store build lists no summit, CI or credit
-        // screens). They stay routable for old links until the next version removes them.
-        ShellDestination(id: "team.schedule", title: String(localized: "My program"), symbol: "star", group: "More", kind: .hybrid,
-                         summary: String(localized: "The talks you picked at the Summit, clashes and free time"), listed: false) { AnyView(MyProgramScreen()) },
-        ShellDestination(id: "map", title: String(localized: "Venue map"), symbol: "map", group: "More",
-                         summary: String(localized: "Where each talk was, and the walks between them"), listed: false) {
-            AnyView(VenueMapView())
-        },
+        // Not listed: Reading credit and CI status stay routable (old links) but are not in More (25 Nov).
         // The newsroom behind PrompTugal.news by place (read-only). The Places reader itself is PTPlaces (ios.places@).
         ShellDestination(id: "local.newsroom", title: String(localized: "Newsroom"), symbol: "person.3.sequence", group: "More",
                          summary: String(localized: "The agents behind the sites, read-only")) { AnyView(NewsroomCentreView()) },
@@ -105,13 +120,17 @@ enum PublicDestinations {
         // How long a push takes to reach the site and TestFlight, and whether this device's build is the latest (PTLocal/Status).
         ShellDestination(id: "local.ci-status", title: String(localized: "CI status"), symbol: "gauge.with.dots.needle.67percent", group: "More",
                          summary: String(localized: "From push to production, read-only"), listed: false) { AnyView(CIStatusView()) },
+        // Every site behind the app, with what it covers and how fresh it is (Dinis, 25 Nov; PTLocal/DataSources).
+        ShellDestination(id: "local.sources", title: String(localized: "Data sources"), symbol: "server.rack", group: "More",
+                         summary: String(localized: "The sites behind every story and number, and how fresh each is")) { AnyView(DataSourcesView()) },
+        // The Algarve maps: every town coloured by its news (PTLocal/Live).
+        ShellDestination(id: "local.maps", title: String(localized: "Algarve maps"), symbol: "map", group: "More",
+                         summary: String(localized: "Every town coloured by its news: map, 3D and grid")) { AnyView(AlgarveMapsView()) },
         // Apple Intelligence on the device, persona mode and Near me over the by-place data (PTLocal/AI, appdev.ai@).
         ShellDestination(id: "local.ask", title: String(localized: "Ask and summarise"), symbol: "sparkles", group: "More",
                          summary: String(localized: "Apple Intelligence on this device, persona mode, near me")) { AnyView(AskAndSummariseView()) },
         ShellDestination(id: "settings", title: String(localized: "More"), symbol: "ellipsis.circle", group: "More",
                          summary: settingsSummary) { AnyView(PublicSettingsView()) },
-        ShellDestination(id: "settings.reminders", title: String(localized: "Reminders"), symbol: "bell.badge", group: "More",
-                         summary: String(localized: "Before each pick"), listed: false) { AnyView(ReminderSettingsView()) },
     ]
 
     // MARK: Opened by id or from another screen, never in a tab or the sidebar
@@ -129,7 +148,7 @@ enum PublicDestinations {
     ]
 
     static var settingsSummary: String {
-        String(localized: "Reminders, about, privacy, support")
+        String(localized: "Data sources, newsroom, about, privacy, support")
     }
 
     // MARK: DEBUG builds only

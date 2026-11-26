@@ -22,6 +22,8 @@ enum PlacesWiring {
 struct PlacesHomeLayers: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Space.xl) {
+            // The sites behind the towns' news and numbers (Dinis, 25 Nov): a card that opens Data sources.
+            DataSourcesCard()
             NewsroomLiveSection()
             PersonaBanner()
             PersonaForYouCard()
@@ -39,6 +41,8 @@ struct PlaceLayers: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Space.xl) {
             TownNewsroomLive(placeID: placeID)
+            // Events and open council notices for the town (data.promptugal.news, civic.promptugal.news), hidden when empty.
+            TownLayers(placeID: placeID)
             if let site = store.site(placeID) {
                 TownSummaryCard(site: site)
             }

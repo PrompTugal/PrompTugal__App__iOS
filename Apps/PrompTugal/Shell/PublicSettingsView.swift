@@ -27,6 +27,18 @@ struct PublicSettingsView: View {
             }
             Section {
                 NavigationLink {
+                    DataSourcesView()
+                } label: {
+                    Label("Data sources", systemImage: "server.rack")
+                }
+                .accessibilityIdentifier("pt.more.sources")
+                NavigationLink {
+                    AlgarveMapsView()
+                } label: {
+                    Label("Algarve maps", systemImage: "map")
+                }
+                .accessibilityIdentifier("pt.more.maps")
+                NavigationLink {
                     NewsroomCentreView()
                 } label: {
                     Label("Newsroom", systemImage: "person.3.sequence")
