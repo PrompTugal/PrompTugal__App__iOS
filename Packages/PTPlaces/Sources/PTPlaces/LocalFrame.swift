@@ -47,7 +47,7 @@ extension SinceFeed {
 // MARK: - The map hero
 
 enum MapScope: String, CaseIterable, Identifiable {
-    case algarve, portugal
+    case portugal, algarve
     var id: String { rawValue }
 
     var title: String {
@@ -72,8 +72,9 @@ enum MapScope: String, CaseIterable, Identifiable {
 struct PlacesMapHero: View {
     let store: PlacesStore
     let wide: Bool
-    @State private var scope: MapScope = .algarve
-    @State private var position: MapCameraPosition = .camera(MapScope.algarve.camera)
+    /// Places opens on Portugal (Dinis, 26 Nov); the Algarve is one tap away.
+    @State private var scope: MapScope = .portugal
+    @State private var position: MapCameraPosition = .camera(MapScope.portugal.camera)
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.m) {
