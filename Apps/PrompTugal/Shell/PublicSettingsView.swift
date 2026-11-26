@@ -33,6 +33,12 @@ struct PublicSettingsView: View {
                 }
                 .accessibilityIdentifier("pt.more.sources")
                 NavigationLink {
+                    OfflineEditionView()
+                } label: {
+                    Label("Offline edition", systemImage: "arrow.down.circle")
+                }
+                .accessibilityIdentifier("pt.more.offline")
+                NavigationLink {
                     AlgarveMapsView()
                 } label: {
                     Label("Algarve maps", systemImage: "map")
