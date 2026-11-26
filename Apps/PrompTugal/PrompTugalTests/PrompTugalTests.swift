@@ -24,11 +24,11 @@ struct PublicAppTests {
         #expect(AgendaSeed.events().count > 150)
     }
 
-    @Test("iPhone has four tabs in order: Places, News, Now, Explore; the summit's My program is no longer listed")
+    @Test("iPhone has three tabs in order: Places, News, Now; the summit's My program is no longer listed")
     @MainActor func fourTabs() {
         let tabs = PublicDestinations.all.filter { $0.phoneTab != nil }.sorted { ($0.phoneTab ?? 0) < ($1.phoneTab ?? 0) }
-        #expect(tabs.map(\.id) == ["places", "news.home", "now", "explore"])
-        #expect(tabs.compactMap(\.phoneTab) == [0, 1, 2, 3])
+        #expect(tabs.map(\.id) == ["places", "news.home", "now"])
+        #expect(tabs.compactMap(\.phoneTab) == [0, 1, 2])
         #expect(!PublicDestinations.listed("More", debug: false).map(\.id).contains("team.schedule"))
         #expect(PublicDestinations.openable("team.schedule", debug: false) != nil)
     }

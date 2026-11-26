@@ -39,7 +39,6 @@ struct ExploreView: View {
             header: { AnyView(GraphCard(picks: reader.saved.count)) },
             graph: { AnyView(GraphExplorerView()) },
             talkActions: TalkActions(),  // no Pick or Add to Calendar: the summit is over (25 Nov)
-            leadingToolbar: { AnyView(LanguageButton()) },
             trailingToolbar: moreButton,
             // No Talks in Explore (Dinis, 25 Nov): the summit agenda is over; My program in More keeps the picks.
             showsTalks: false)
