@@ -17,8 +17,42 @@ public struct PlaceDetailView: View {
     @Environment(\.placesRegionMap) private var regionMap
     /// A place opened from the region map hook.
     @State private var opened: PlaceRoute?
+    /// Where to open the page (spec S5): from the initialiser, else from the app's deep link when it names this place.
+    private let anchor: PlaceAnchor?
+    @Environment(\.placesDeepLink) private var deepLink
+    @State private var scrolledTo: PlaceAnchor?
 
-    public init(id: String) { self.id = id }
+    public init(id: String, anchor: PlaceAnchor? = nil) {
+        self.id = id
+        self.anchor = anchor
+    }
+
+    private var target: PlaceAnchor? {
+        anchor ?? (deepLink?.id == id ? deepLink?.anchor : nil)
+    }
+
+    public var body: some View {
+        ScrollViewReader { proxy in
+            page
+                .task(id: readyFor(target)) { await scroll(proxy) }
+        }
+    }
+
+    /// True once the section the anchor points at has its data.
+    private func readyFor(_ anchor: PlaceAnchor?) -> Bool {
+        switch anchor {
+        case .now: !(store.nows[id]?.value?.isEmpty ?? true)
+        case .lead: !(file?.newsNewestFirst.isEmpty ?? true)
+        case nil: false
+        }
+    }
+
+    private func scroll(_ proxy: ScrollViewProxy) async {
+        guard let target, scrolledTo != target, readyFor(target) else { return }
+        try? await Task.sleep(for: .milliseconds(250))
+        withAnimation(.easeInOut) { proxy.scrollTo(target.rawValue, anchor: .top) }
+        scrolledTo = target
+    }
 
     private var place: PlaceSummary? { store.place(id) }
     private var file: PlaceFile? { store.file(id) }
@@ -26,20 +60,20 @@ public struct PlaceDetailView: View {
     private var wide: Bool { width == .regular }
     private var gutter: CGFloat { wide ? Space.xxl : Space.l }
 
-    public var body: some View {
+    private var page: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Space.xl) {
                 if let place {
                     hero(place)
                     VStack(alignment: .leading, spacing: Space.xl) {
-                        nowPanel(place)
+                        nowPanel(place).id(PlaceAnchor.now.rawValue)
                         mandate
                         talkRow(place)
                         if let accessory { accessory(id) }
                         numbers(place)
                         gravity
                         children
-                        news
+                        news.id(PlaceAnchor.lead.rawValue)
                         articles
                         aiMap
                         events

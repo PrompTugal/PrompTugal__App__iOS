@@ -32,3 +32,7 @@ Tests: `FreshnessTests`, `NewsroomStatusTests`, `TownLayersTests` (fixtures incl
 - One card per site (13): what it covers, its count, its freshness by its own read time, and a link to the site. Weather, events and signals are counted from data.promptugal.news's catalogue (`/api/v1/index.json`), which also lists its 30 sources with cadence, state, headline and last read, each linking to its page. Startups has no small feed (its facts.json is 1.25 MB), so its card says so and links to the site.
 - `DataSourcesStore.shared`: one small feed per site, in parallel, at most every 10 minutes, cached. Tests in `DataSourcesTests`.
 - Shell (the conductor's): add `DataSourcesView()` to More and `DataSourcesCard()` to `PlacesHomeLayers`.
+
+## Batch 3: place taps through a hook
+
+- `LocalHooks.swift`: `EnvironmentValues.localOpenPlace` and `View.localOpenPlace { id in ... }`. `AlgarveMapsView` calls it on a town tap when set (the shell routes `place:<id>`); without it, PTLocal pushes its own `TownView` as before.

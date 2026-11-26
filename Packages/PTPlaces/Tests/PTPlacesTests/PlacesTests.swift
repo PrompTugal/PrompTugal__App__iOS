@@ -668,3 +668,20 @@ struct BubblingTests {
         #expect(SinceFeed().featuredTown(followed: ["faro"]) == nil)
     }
 }
+
+@Suite("PTPlaces: deep links into a place page (spec S5)")
+struct DeepLinkTests {
+    @Test("place:<id>, #now and #lead read; anything else is refused or loses only the anchor")
+    func parse() {
+        #expect(PlacesDeepLink("place:loule") == PlacesDeepLink(id: "loule"))
+        #expect(PlacesDeepLink("place:loule#lead") == PlacesDeepLink(id: "loule", anchor: .lead))
+        #expect(PlacesDeepLink("place:vila-real-de-santo-antonio#now")?.anchor == .now)
+        #expect(PlacesDeepLink("place:vila-real#now")?.id == "vila-real")
+        #expect(PlacesDeepLink("place:faro#map") == PlacesDeepLink(id: "faro"))
+        #expect(PlacesDeepLink("place:") == nil)
+        #expect(PlacesDeepLink("place:#lead") == nil)
+        #expect(PlacesDeepLink("local.maps") == nil)
+        #expect(PlacesDeepLink(id: "loule", anchor: .lead).text == "place:loule#lead")
+        #expect(PlacesDeepLink(id: "loule").text == "place:loule")
+    }
+}

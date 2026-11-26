@@ -471,6 +471,7 @@ struct AlgarveAbstractMap: View {
 public struct AlgarveMapsView: View {
     @State private var store = LocalStore.shared
     @State private var opened: String?
+    @Environment(\.localOpenPlace) private var openPlace
 
     public init() {}
 
@@ -479,7 +480,10 @@ public struct AlgarveMapsView: View {
             ScreenHeader(kicker: "PrompTugal.news · the Algarve", title: "The towns, four ways",
                          summary: "The 17 places of the Algarve: on the map, in 3D over the terrain, as a grid that keeps the region's shape, and as a cartogram where each town grows with what its agent has found.")
             ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase, readAt: store.placesReadAt)
-            AlgarveStyledMap(towns: AlgarveMapTown.fromLocalStore(store)) { opened = $0 }
+            AlgarveStyledMap(towns: AlgarveMapTown.fromLocalStore(store)) { id in
+                // The shell's place page when it routes places; PTLocal's own town page otherwise.
+                if let openPlace { openPlace(id) } else { opened = id }
+            }
         }
         .navigationTitle("Algarve maps")
         .navigationDestination(item: $opened) { id in TownView(id: id) }

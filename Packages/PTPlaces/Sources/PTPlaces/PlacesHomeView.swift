@@ -75,10 +75,14 @@ public struct PlacesHomeView: View {
                 PersonBadge()
             }
             Rectangle().fill(Palette.ink).frame(height: 2)
-            HStack {
-                Text(mastheadLine)
-                Spacer()
-                Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide))
+            // One line on a wide screen; on a small phone (iPhone SE) the date goes and the line may wrap.
+            ViewThatFits(in: .horizontal) {
+                HStack {
+                    Text(mastheadLine).fixedSize()
+                    Spacer()
+                    Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide)).fixedSize()
+                }
+                Text(mastheadLine).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
             }
             .font(.caption.weight(.semibold))
             .textCase(.uppercase)
