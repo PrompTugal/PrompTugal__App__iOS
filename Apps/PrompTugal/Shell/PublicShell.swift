@@ -215,7 +215,6 @@ private struct PublicSidebar: View {
         }
         .listStyle(.sidebar)
         .navigationTitle("PrompTugal")
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { LanguageButton() } }
     }
 
     @ViewBuilder private func rowViews(_ rows: [ShellDestination]) -> some View {
@@ -263,7 +262,6 @@ private struct PublicPhoneShell: View {
                         NavigationStack {
                             destination.view().destinationID(destination.id).surfaceKind(destination.kind)
                                 .toolbar {
-                                    ToolbarItem(placement: .topBarLeading) { LanguageButton() }
                                     ToolbarItem(placement: .topBarTrailing) { MoreButton(action: openMore) }
                                 }
                         }
