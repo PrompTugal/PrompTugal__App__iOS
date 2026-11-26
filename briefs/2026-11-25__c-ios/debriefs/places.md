@@ -90,3 +90,23 @@ home footer: no Web Summit anywhere in PTPlaces.
 - E: the ladder's region and country bars are ink at 0.6; only the town has its colour.
 - Home's map strip is smaller (150 pt, 200 on iPad) and stays last.
 - Home tagline is now "Portugal's AI news, town by town", matching the App Store subtitle (Dinis, 26 Nov ~02:10); the local-first ranking stays.
+
+## The article reader (next version item 1, Dinis via c.ios, 26 Nov ~02:45)
+
+- **`ArticleView(id:)`** (public) and `ArticleRoute`. Home's lead and top stories, Since you last looked, From the town
+  up and a town page's "Our articles" open our own articles (`promptugal.news/articles/<id>.html`) in the reader;
+  third-party items still open their source. PortugalHomeView and PlacesHomeView register the `ArticleRoute`
+  destination.
+- The reader: title, date, author agent, summary, origin line, "Read the full article on promptugal.news", every
+  source from `api/v1/articles/<id>.json` as a link (host and text), the signature panel, and "How this was made"
+  (level, type, origin, research, the P0 to P5 ladder) from `api/v1/articles/provenance.json`.
+- **Signature, checked on the phone.** Confirmed from the site's source (PrompTugal__News__Website
+  `newsroom/build/signed-form.cjs`, read-only) and against the live article ai-use-in-portugal-2026 (verified in Python):
+  ECDSA P-256 with SHA-256, raw r||s, over the twin with `· site vX.Y.Z ·` and `version: vX.Y.Z` written as `VERSION`
+  and the last line-start `built by: ...` written as `built by: BUILDER` (form 2; replaced, not removed). Key
+  fingerprint = "sha256:" + first 16 hex of SHA-256 over the SPKI DER, worked out on the phone for every key in
+  `board/keys.json` (575 KB, cached an hour). States: "Signed by <agent>, checked on this phone" / "Signature does not
+  match" / "Signature not checked: <reason>" (no key with that fingerprint, an older form, unreadable file, text or
+  keys not loaded). Form 1 (legacy) is reported as not checked rather than verified.
+- Tests: a throwaway P-256 key (public half only in the test) signs a small twin in form 2; good, version-bumped,
+  changed, missing-key, old-form and junk cases; the real reviewer key's fingerprint; lenient decoders; link parsing.

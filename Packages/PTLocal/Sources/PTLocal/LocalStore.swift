@@ -51,12 +51,15 @@ public final class LocalStore {
     @ObservationIgnored private let fetch: LocalFetch
     @ObservationIgnored private let cache: LocalDiskCache
     @ObservationIgnored private let bundle: Bundle
+    @ObservationIgnored private let edition: EditionFiles
     static let followedKey = "local.followed"
 
-    public init(fetch: @escaping LocalFetch = LocalStore.liveFetch, cache: LocalDiskCache = .standard(), bundle: Bundle = LocalResources.bundle) {
+    public init(fetch: @escaping LocalFetch = LocalStore.liveFetch, cache: LocalDiskCache = .standard(),
+                bundle: Bundle = LocalResources.bundle, edition: EditionFiles = .standard()) {
         self.fetch = fetch
         self.cache = cache
         self.bundle = bundle
+        self.edition = edition
         followed = UserDefaults.standard.stringArray(forKey: Self.followedKey) ?? []
         loadSnapshot()
     }
@@ -119,7 +122,7 @@ public final class LocalStore {
         var fromCache = 0
         await withTaskGroup(of: (String, PlaceSite?, Bool).self) { group in
             for info in PlaceDirectory.all {
-                group.addTask { [fetch, cache] in
+                group.addTask { [fetch, cache, edition] in
                     let url = Self.site.appendingPathComponent("data/by-place/\(info.id).json")
                     do {
                         let data = try await fetch(url)
@@ -128,6 +131,11 @@ public final class LocalStore {
                         return (info.id, site, true)
                     } catch {
                         if let data = cache.load(key: "place-\(info.id)"),
+                           let site = try? JSONDecoder().decode(PlaceSite.self, from: data) {
+                            return (info.id, site, false)
+                        }
+                        // The saved offline edition (Offline edition in More), when this device has one.
+                        if let data = edition.load("api/v1/by-place/\(info.id).json"),
                            let site = try? JSONDecoder().decode(PlaceSite.self, from: data) {
                             return (info.id, site, false)
                         }
