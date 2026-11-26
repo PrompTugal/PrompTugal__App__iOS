@@ -106,4 +106,94 @@ let ok = key.isValidSignature(signature, for: Data(signedForm(twin, form: sig.fo
 
 ## 1. Languages
 
-(Written next; see below.)
+### What the site translates (`https://promptugal.news/api/v1/i18n/`, read 26 Nov)
+
+- **19 cultures** have files: ar, de-CH, de-DE, es-AR, es-ES, es-MX, fr-CA, fr-FR, hi-IN, hr-HR, it-IT, ja-JP, ko-KR, nl-NL, pl-PL, pt-BR, pt-PT, ro-RO, zh-Hans. en-GB is the source; en-US needs nothing. These are the same ids as the app's `AppCulture.all`, minus the two English ones.
+- **What is translated is the place pages only.** `api/v1/i18n/<culture>/index.json` lists 35 pages per culture (Portugal and the 17 district capitals, the Algarve and its towns). Each has the translated page (`/pt-PT/algarve/faro/`) and its English original. The JSON API stays English (the site's own spec, `board/spec-translations.md` item 8).
+- **Articles, the home page and the rest of the site are English only.** There is no translated article and no translated `api/v1/*` record.
+- **The site's own words** (menus, labels, about 21 keys such as "Now", "News", "Back to English") are in `assets/i18n/site.json` for 21 cultures, with `machine: true` on the machine-made ones. The app has its own catalogues, so this file is only a reference.
+- **The translation memory** is public and meant for the app (spec item 8: "readable at `data/i18n/tm/` for the iOS app, the same ids, so the app translates its own text from the same memory"):
+  - Shards: `https://promptugal.news/data/i18n/tm/<culture>/<2 hex>.json` (256 per culture).
+  - Each entry is `{ "<key>": { "t": translation, "by": "translator@PrompTugal.dinis", "model": "claude-sonnet-5-5", "at": "2026-11-16", "src": first 60 chars of the English, "ok": false|true } }`.
+  - **The key** is the first 16 hex of SHA-256 over the normalised English. Normalised means Unicode NFC, CR/CRLF → LF, runs of space/tab/NBSP → one space, spaces around newlines removed, 3+ newlines → 2, trimmed (`board/team/translator/tools/tm.mjs`, `norm`).
+  - Names in `data/i18n/glossary.json` (`never`) are kept untranslated.
+- **How complete:**
+  - The by-place prose (each `ai_news[].title` and `.summary`, `mandate`, `gravity`, `voice.*`) is complete. Checked live with `briefs/2026-11-26__next-version/tools/tm_lookup.py`: Faro pt-PT 61 of 61 strings, Monchique pt-PT 15 of 15, Algarve ja-JP 43 of 43.
+  - The rest of the place pages (headings, tables, page copy) is not done: the pt-PT queue lists 2,990 of 3,886 segments missing.
+  - **Review:** 913 pt-PT entries, all by translator@ with claude-sonnet-5-5; 40 marked `ok: true`, 873 `ok: false` (not checked by a second reader).
+
+### What the app does today (dev v0.4.127)
+
+- `PTCore/Culture/AppCulture.swift`: the default is always en-GB. The app does not follow the device. `start()` pins `AppleLanguages` to the current choice on every launch, so even the system's own strings follow it. A Bundle swizzle makes every catalogue read the chosen `.lproj`.
+- The only way to choose was the language button. Dev removed it on 26 Nov (`2a58431`, `5cbf730`, "no language button"), so today the app is English for everyone. Info.plist still declares 21 localisations.
+- Catalogue coverage (keys with a pt-PT translation / all keys):
+
+| Where | Keys | pt-PT | Other languages |
+| --- | --- | --- | --- |
+| App (`Apps/PrompTugal` Localizable, InfoPlist, Intents, Widgets, AppShortcuts) | 214 | all | 16 to 21 languages |
+| PTCore | 37 | all | 20 |
+| PTNews | 68 | all | 20 |
+| PTAgenda | 152 | all | 20 |
+| PTWeb | 22 | all | 19 |
+| PTExplore | 60 | all | 36 keys in 18 languages; the 24 new Explore keys are en + pt-PT |
+| PTAsk, PTVaultUI | 111, 42 | all | en, pt-PT, one more |
+| **PTPlaces** (Home, places, town pages) | 193 `String(localized:)` with no `bundle:` | **6** (they read the app's catalogue, which has 6 of them) | none |
+| **PTLocal** (Algarve layers, provenance labels) | 81 `Text("…")` literals, no catalogue | 0 | none |
+| PTTalk, PTDeck | about 26 literals | 0 | none |
+
+### Proposal
+
+**A. Follow the device language (PTCore change, one file plus its test).**
+
+1. A saved choice (`app.culture` in UserDefaults) still wins, in case a picker returns.
+2. With no saved choice, take the device's preferred languages and pick the closest of `AppCulture.all` with `Bundle.preferredLocalizations(from: all.map(\.id), forPreferences: preferred)`. Fall back to en-GB.
+3. Pin `AppleLanguages` only for an explicit choice. When following the device, remove the app-domain `AppleLanguages` key. Builds up to now wrote `["en-GB"]` there on every launch, and that override would otherwise keep the device language out forever.
+4. Because of that old pin, `Locale.preferredLanguages` in the first launch after the update can still say en-GB. Read the device list from the global domain:
+
+```swift
+// PTCore/Culture/AppCulture.swift (sketch)
+public static func start(defaults: UserDefaults = .standard, device: [String]? = nil) {
+    if let saved = defaults.string(forKey: storageKey), all.contains(where: { $0.id == saved }) {
+        currentID = saved
+        defaults.set([saved], forKey: "AppleLanguages")          // an explicit choice, as today
+    } else {
+        defaults.removeObject(forKey: "AppleLanguages")           // undo the old builds' pin
+        let preferred = device ?? deviceLanguages()
+        currentID = Bundle.preferredLocalizations(from: all.map(\.id), forPreferences: preferred).first
+            .flatMap { id in all.first { $0.id == id }?.id } ?? english
+    }
+    LocalizedBundle.install()
+}
+
+/// The device's languages, not this app's override: the global domain, else Locale.preferredLanguages.
+static func deviceLanguages() -> [String] {
+    (CFPreferencesCopyValue("AppleLanguages" as CFString, kCFPreferencesAnyApplication,
+                            kCFPreferencesCurrentUser, kCFPreferencesAnyHost) as? [String]) ?? Locale.preferredLanguages
+}
+
+public static var followsDevice: Bool { UserDefaults.standard.string(forKey: storageKey) == nil }
+```
+
+`select(_:)` is unchanged (it saves and pins), plus a `followDevice()` that removes both keys. The test `defaultIsEnglish` becomes three tests, using the injected `device:`:
+
+- `["pt-PT"]` gives pt-PT.
+- `["pt-AO", "en"]` gives pt-PT. Check what `preferredLocalizations` actually returns for pt-AO: it may pick pt-BR. If so, add an explicit mapping for pt-* other than pt-BR to pt-PT, since the app is about Portugal.
+- `["sw"]` gives en-GB.
+
+The CFPreferences read needs a device check. If it returns nothing in the sandbox, the cost is one launch of English after the update.
+
+**B. What would be Portuguese now, and what stays English.**
+
+- **Portuguese with A alone:** the tab bar and shell (app catalogue), News (PTNews), the newsroom board and status screens (PTWeb), Explore's chrome, My program (PTAgenda), PTAsk, the vault screens, widgets and intents. Dates and numbers follow the locale everywhere, already (`AppCulture.locale`).
+- **Still English:** the Home tab and every place screen (PTPlaces, 193 keys not in any catalogue), the Algarve layers and their provenance lines (PTLocal, 81 literals), the talk screens (PTTalk), and **all content**: article titles, summaries and bodies; company, place and library records; video titles.
+- **So A alone gives a mixed Home screen** (Portuguese tabs over an English Home). Ship A together with:
+  - **B1, PTPlaces catalogue:** move PTPlaces's `String(localized:)` to `bundle: .module` with its own `Resources/Localizable.xcstrings` (193 keys; en + pt-PT first, the other cultures later). Same for PTLocal's literals: `Text(String(localized: "…", bundle: .module))`, because a bare `Text("…")` in a package looks in the app's catalogue.
+  - **B2, place prose from the memory (optional, after B1):** for a non-English culture, PTPlaces looks up each by-place string in the memory: key = `sha256(norm(text))[:16]`, shard = first 2 hex, cached per shard on the device. Where an entry exists, show it with a visible line: "Translated by an AI agent (translator@PrompTugal.dinis), not reviewed. Show the English", linking to the English and to the site's `/pt-PT/...` page. Where an entry has `ok: true`, say "checked". A missing entry stays in English. This is the same rule as the site ("a segment still missing stays in English").
+  - **Articles stay English** and say so in the culture's language: "Os artigos estão em inglês", the site's own wording.
+- **Hard rules this keeps:**
+  - Every translated line says it is machine translation and by whom, with the English one tap away.
+  - Provenance lines (live, this device's copy, built-in) are translated chrome, never translated data.
+  - Glossary names are never translated.
+  - No translation is made on the device.
+
+**Order:** B1 (PTPlaces and PTLocal catalogues, en + pt-PT) → A (PTCore) → B2 (memory) → the other 17 cultures in the catalogues. A on its own before B1 is not recommended.

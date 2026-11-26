@@ -23,8 +23,10 @@ struct PublicShell: View {
     @AppStorage(DebugMode.key) private var debug = DebugMode.defaultOn
     /// ONB-1: the first-run screen, shown once.
     @AppStorage("onboarding.seen") private var onboardingSeen = false
-    /// The reader's culture (default English); changing it rebuilds the screens in the new language.
-    @AppStorage(AppCulture.storageKey) private var cultureID = AppCulture.english
+    /// A culture the reader chose, if any; changing it rebuilds the screens in the new language. With none saved the
+    /// app follows the device (pt* → pt-PT, anything else → en-GB), resolved once at launch by `AppCulture.start()`.
+    @AppStorage(AppCulture.storageKey) private var savedCulture: String?
+    private var cultureID: String { savedCulture ?? AppCulture.currentID }
     @State private var onboarding = false
     /// Light by default (the brand is paper and ink); Dark or the iPhone's own setting in More.
     @AppStorage(Appearance.key) private var appearance = Appearance.light.rawValue
