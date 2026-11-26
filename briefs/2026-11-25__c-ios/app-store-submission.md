@@ -93,3 +93,10 @@ The 0.4.24 screenshots show the summit agenda and must be replaced: 6.9", 6.5" a
 1. Subtitle choice.
 2. Place comments and "Connect to the newsroom" in the App Store build: hide them in this version (recommended: they need a person key and a lane link a reviewer cannot have, and once a public user can send, the privacy answer changes), or keep them.
 3. 0.4.24 is the summit app with a known notification-tap crash: leave it on sale until the new version is approved, or remove it from sale now.
+
+## Submitted (26 Nov 2026, ~02:10 UTC)
+
+- Dinis submitted **0.4.125 (680)** for App Review; status "Waiting for Review".
+- Name **PrompTugal.news**, subtitle **Portugal's AI news, by town**, primary language English (U.K.); the English (U.S.), Portuguese (Portugal) and Portuguese (Brazil) localisations of 0.4.24 were removed.
+- Screenshots: Places, News, Newsroom (iPhone 6.3" medium and iPad 13"), from screens.yml run 45737100778 on work/screens-c2e (dev's app code, only ScreensTests changed).
+- Do not edit the version's metadata while it is in review. New TestFlight builds from dev do not affect it.
