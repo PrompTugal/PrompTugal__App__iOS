@@ -36,3 +36,10 @@ Tests: `FreshnessTests`, `NewsroomStatusTests`, `TownLayersTests` (fixtures incl
 ## Batch 3: place taps through a hook
 
 - `LocalHooks.swift`: `EnvironmentValues.localOpenPlace` and `View.localOpenPlace { id in ... }`. `AlgarveMapsView` calls it on a town tap when set (the shell routes `place:<id>`); without it, PTLocal pushes its own `TownView` as before.
+
+## Batch 4: Offline edition (next version, item 4; Dinis 26 Nov ~02:45 via c.ios)
+
+- `public struct OfflineEditionView` (a More row) and `OfflineEdition.shared` (`Offline/`). Reads `api/v1/manifest.json` (0.7 MB, 3,222 files), saves the same subset for every reader so the requests say nothing about who reads what: `articles.json` and each `articles/*.json`, `since.json`, `by-place/index.json`, the `by-place/<id>.json` of all 19 places the app knows (not only the followed ones, for that reason), `newsletter.json` and `newsletter/*.txt`. About 2.2 MB. Each file's SHA-256 is checked against the manifest; any mismatch changes nothing. Files go to a staging folder and replace the saved copy only when all are verified.
+- Screen: "Saved for offline, read <date, time>", edition version, file count, size on this device, Save and Delete (with confirmation). A save on mobile data or in Low Data Mode asks first. Automatic saves only after a first save by hand, at most every 6 hours, only on a free connection (NWPathMonitor: not expensive, not constrained).
+- Readers: `LocalStore.refreshPlaces` falls back to the saved place file when the network and the device copy both fail. Others can read `OfflineEdition.shared.data(for: "api/v1/...")` or `EditionFiles.standard().load(_:)` (nonisolated). PTPlaces and the articles reader are not mine: wiring them to prefer the edition offline is for their owners.
+- Tests: `OfflineEditionTests`.
