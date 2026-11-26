@@ -4,8 +4,8 @@
 
 ## Version and build
 
-- **Version:** the c2d build's version (0.4.124 or the next number the release bot gives). It must match the build's CFBundleShortVersionString.
-- **Build:** the c2d TestFlight build once it is processed.
+- **Version:** 0.4.124 (must match the build).
+- **Build:** 675 (c2d, dev 9c802e6, processed 26 Nov 00:21 UTC).
 
 ## Name and subtitle (30 each)
 
