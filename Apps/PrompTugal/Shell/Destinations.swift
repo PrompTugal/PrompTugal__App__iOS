@@ -68,7 +68,7 @@ enum PublicDestinations {
         all.filter { $0.group == group && $0.listed && (debug || !$0.debugOnly) }
     }
 
-    // MARK: The five tabs
+    // MARK: The tabs (Explore left the tabs on 26 Nov, Dinis: its content was the summit; still routable)
 
     static let tabs: [ShellDestination] = [
         ShellDestination(id: "places", title: String(localized: "Places"), symbol: "map.fill", group: "Tabs",
@@ -80,7 +80,7 @@ enum PublicDestinations {
         ShellDestination(id: "now", title: String(localized: "Now"), symbol: "dot.radiowaves.left.and.right", group: "Tabs",
                          summary: String(localized: "Your towns, what is new, what is on"), phoneTab: 2) { AnyView(NowView()) },
         ShellDestination(id: "explore", title: String(localized: "Explore"), symbol: "magnifyingglass", group: "Tabs",
-                         summary: String(localized: "Speakers, companies and places"), phoneTab: 3, wrapsStack: false) {
+                         summary: String(localized: "Speakers, companies and places"), wrapsStack: false, listed: false) {
             AnyView(ExploreView())
         },
     ]

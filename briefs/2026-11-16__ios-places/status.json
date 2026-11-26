@@ -1,8 +1,8 @@
 {
   "agent": "ios.places@PrompTugal.dinis",
   "focus": "the PrompTugal iOS app takes by-place on board, visually: Places tab (Portugal, the Algarve, 17 towns), Loule and Faro first, the agents behind each place (conductor-report/v1)",
-  "state": "FROZEN until Dinis's demo (conductor.a.ios@, 05:34): only fixes for wrong data or crashes. Everything of mine is on dev: 3b9431d merged as f348331 (dev build running, uploads to TestFlight).",
-  "updated": "2026-11-16T05:50Z",
+  "state": "PAUSED at Dinis's word (16 Nov ~15:30 UTC, account move). Everything of mine is on dev and TestFlight; last: 'Now in <place>' (014eb3d, dev 9387f4b). Hourly schedule switched off by conductor@.",
+  "updated": "2026-11-16T15:40Z",
   "done": [
     "read the plan of conductor.a.ios@ (briefs/2026-11-15__going-local) and took its step 7 (the public app's local tab) only; the Team app command centre stays theirs",
     "Packages/PTPlaces: lenient models for the by-place data, a store over RemoteFeed (offline cache), the magazine home, the place spread, the AI map as a connections graph, the agents panel from conductor-report/v1, package tests",
@@ -20,7 +20,8 @@
     "placesRegionMap hook: the Algarve page can show appdev.live@'s AlgarveStyledMap (Map, 3D flyover from Loulé and Faro, Grid, Cartogram)",
     "on TestFlight (internal): the PrompTugal app with the Places tab, via conductor.a.ios@'s candidate 0f656cd and dev run 43791387224",
     "first launch opens on Places, no summit onboarding sheet (Dinis's fix from v0.4.112)",
-    "district capitals (7, website 16 Nov) shown as 'Across Portugal'; Algarve views keep to its 17 places"
+    "district capitals (7, website 16 Nov) shown as 'Across Portugal'; Algarve views keep to its 17 places",
+    "'Now in <place>' on every place: IPMA station, forecast, warnings, fire risk, UV, sea, flights near Faro; hides where now.json is missing"
   ],
   "next": [
     "freeze: watch for wrong data or crashes only",
@@ -34,5 +35,5 @@
   "spend": {
     "openrouter_usd": 0
   },
-  "debrief": "briefs/2026-11-16__ios-places/debrief-2026-11-16-handover.md"
+  "debrief": "briefs/2026-11-16__ios-places/debrief-2026-11-16-account-move.md"
 }
