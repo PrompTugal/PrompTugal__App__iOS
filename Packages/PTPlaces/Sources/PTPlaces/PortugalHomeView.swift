@@ -119,11 +119,11 @@ public struct PortugalHomeView: View {
             Rectangle().fill(Palette.ink).frame(height: 2)
             ViewThatFits(in: .horizontal) {
                 HStack {
-                    Text(String(localized: "Portugal's news, town by town")).fixedSize()
+                    Text(String(localized: "Portugal's AI news, town by town")).fixedSize()
                     Spacer()
                     Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide)).fixedSize()
                 }
-                Text(String(localized: "Portugal's news, town by town")).lineLimit(2)
+                Text(String(localized: "Portugal's AI news, town by town")).lineLimit(2)
             }
             .font(.caption.weight(.semibold))
             .textCase(.uppercase)

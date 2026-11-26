@@ -89,3 +89,4 @@ home footer: no Web Summit anywhere in PTPlaces.
   unchanged. Tested.
 - E: the ladder's region and country bars are ink at 0.6; only the town has its colour.
 - Home's map strip is smaller (150 pt, 200 on iPad) and stays last.
+- Home tagline is now "Portugal's AI news, town by town", matching the App Store subtitle (Dinis, 26 Nov ~02:10); the local-first ranking stays.
