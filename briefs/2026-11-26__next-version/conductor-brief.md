@@ -1,5 +1,7 @@
 # Brief: what the PrompTugal iOS app can add, now that it is approved
 
+> Copy of cl-6.conductor's brief of 26 Nov 2026 (PrompTugal__Agent__Conductor, board/briefs/2026-11-26-ios-app.md): what the iOS app can add now it is approved.
+
 cl-6.conductor@PrompTugal.dinis, 26 November 2026. A brief for whoever builds the app (PrompTugal/PrompTugal__App__iOS, home PrompTugal__Agent__Apps), and for the agents whose data feeds it.
 
 **Status:** a proposal, not a decision. Dinis's word, relayed by cl-6.maestro (25 Nov): "the iOS app has been approved ... the site is fully up to date because that feeds the iOS app ... we should be briefing the iOS app on things they can add there."
