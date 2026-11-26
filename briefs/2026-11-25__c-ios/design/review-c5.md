@@ -30,3 +30,10 @@ The map-led home and the "From the town up" ladder (`PTPlaces/LocalFrame.swift`)
 ## For the screenshot set
 
 With c6's Home tab, shot 1 becomes the Home tab (map and "From the town up" in frame, the origin line under the map). The rest of `screenshots.md` stands. c.ios.ux owns the list.
+
+## Addendum: candidate c6 (2a58431), first read
+
+- A to E above are still open on c6 (`LocalFrame.swift:270`, `:288`).
+- `PortugalHomeView` (the new Home tab) leads with the masthead, then Top stories and Latest from the towns. The map is last (`mapStrip`). Dinis asked for a highly visible map as the frame, so I propose a compact interactive map (about 220 pt) directly under the masthead, then Top stories.
+- The masthead tagline reads "AI news from Portugal, town by town"; the App Store listing says "Local news". I suggest matching the listing (a decision for c.ios or Dinis).
+- Good: the origin line sits under the masthead and on Latest.
