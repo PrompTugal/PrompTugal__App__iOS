@@ -12,6 +12,9 @@ public enum SourceState: Equatable, Sendable {
     case saved(Date?)
     /// The copy built into the app, read on the given day (for example "21 Nov 2026").
     case builtIn(String)
+    /// Read just now, but the data itself carries an older date (for example "21 Nov"): the feed has not moved.
+    /// Same rule as PTPlaces' `PlacesOrigin.dated`: data older than a day never says "Live".
+    case dated(String)
     /// Nothing to show yet.
     case notLoaded
 
@@ -23,6 +26,7 @@ public enum SourceState: Equatable, Sendable {
         case .live: String(localized: "Live", bundle: .module)
         case .saved: String(localized: "Saved copy", bundle: .module)
         case .builtIn: String(localized: "Built-in", bundle: .module)
+        case .dated: String(localized: "Data dated", bundle: .module)
         case .notLoaded: String(localized: "Not loaded", bundle: .module)
         }
     }
@@ -32,6 +36,7 @@ public enum SourceState: Equatable, Sendable {
         case .live: "circle.fill"
         case .saved: "arrow.down.circle"
         case .builtIn: "shippingbox"
+        case .dated: "calendar"
         case .notLoaded: "wifi.slash"
         }
     }
@@ -45,7 +50,8 @@ public enum SourceState: Equatable, Sendable {
     }
 }
 
-/// "Live · promptugal.news · 2 min ago", "Saved copy · read 24 Nov, 18:40", "Built-in · read 21 Nov".
+/// "Live · promptugal.news · 2 min ago", "Saved copy · read 24 Nov, 18:40", "Built-in · read 21 Nov",
+/// "Data dated 21 Nov · data.promptugal.news".
 /// Only the icon carries colour; the text stays muted, so an honest note never reads as an alarm.
 public struct SourceStamp: View {
     public let state: SourceState
@@ -99,6 +105,9 @@ public struct SourceStamp: View {
             parts.append(String(localized: "read \(Self.when(date, now: now))", bundle: .module))
         case .builtIn(let day):
             if !day.isEmpty { parts.append(String(localized: "read \(day)", bundle: .module)) }
+        case .dated(let day):
+            parts[0] = String(localized: "Data dated \(day)", bundle: .module)
+            if let source { parts.append(source) }
         case .saved(nil), .notLoaded:
             break
         }
@@ -154,6 +163,7 @@ extension View {
         SourceStamp(.live(.now.addingTimeInterval(-3 * 24 * 3600)), source: "IPMA")
         SourceStamp(.saved(.now.addingTimeInterval(-26 * 3600)))
         SourceStamp(.builtIn("21 Nov 2026"))
+        SourceStamp(.dated("21 Nov"), source: "data.promptugal.news")
         SourceStamp(.notLoaded) {}
         Card {
             Text("The city newsroom, replayed").font(Typo.headline)

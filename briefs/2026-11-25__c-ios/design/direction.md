@@ -58,6 +58,7 @@ One component, `SourceStamp` (PTCore, proposal 1), used at the top of every data
 | Live | filled dot | **Live** · promptugal.news · 2 min ago | ok green dot, muted text |
 | Saved copy | `arrow.down.circle` | **Saved copy** · read 24 Nov, 18:40 | warn amber icon, muted text |
 | Built-in | `shippingbox` | **Built-in** · read 21 Nov | warn amber icon, muted text |
+| Data dated | `calendar` | **Data dated 21 Nov** · data.promptugal.news | warn amber icon, muted text (read just now, but the feed has not moved: PTPlaces' rule) |
 | Not loaded | `wifi.slash` | **Not loaded** · Try again | warn amber |
 
 - Only the *icon* carries the colour; the text stays muted. Amber text all over a screen feels like an alarm; an amber icon is a calm, honest note.
