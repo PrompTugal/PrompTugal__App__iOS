@@ -6,7 +6,6 @@ import SwiftUI
 final class ArticleReader {
     let id: String
     let record: RemoteFeed<ArticleRecord>
-    let signature: RemoteFeed<ArticleSignature>
     private(set) var check: SignatureCheck = .checking
 
     /// Shared across articles: the keys file is large and changes rarely; provenance covers every article.
@@ -24,23 +23,42 @@ final class ArticleReader {
     init(id: String) {
         self.id = id
         record = RemoteFeed(name: "article.\(id)", url: ArticleLinks.record(id))
-        signature = RemoteFeed(name: "article.\(id).sig", url: ArticleLinks.signature(id))
         record.freshFor = 600
-        signature.freshFor = 600
     }
 
     func load(force: Bool = false) async {
         async let a: Void = record.load(force: force)
-        async let b: Void = signature.load(force: force)
         async let c: Void = Self.keys.load(force: force)
         async let d: Void = Self.provenance.load(force: force)
-        _ = await (a, b, c, d)
+        _ = await (a, c, d)
         await verify()
     }
 
+    /// The bytes at a URL and its status code; nil when it could not be reached.
+    private func fetch(_ url: URL) async -> (Data, Int)? {
+        var request = URLRequest(url: url, timeoutInterval: 20)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        guard let (data, response) = try? await HTTPClient.shared.data(for: request, label: "article.signature") else { return nil }
+        return (data, response.statusCode)
+    }
+
     private func verify() async {
-        guard let sig = signature.value else {
+        if record.value?.status == "withdrawn" {
+            check = .notChecked(String(localized: "the article has been withdrawn"))
+            return
+        }
+        let sigURL = record.value.flatMap { URL(string: $0.signature) } ?? ArticleLinks.signature(id)
+        guard let fetched = await fetch(sigURL) else {
             check = .notChecked(String(localized: "the signature file did not load"))
+            return
+        }
+        let (sigData, sigStatus) = fetched
+        if sigStatus == 404 {
+            check = .notSigned
+            return
+        }
+        guard (200..<300).contains(sigStatus), let sig = try? JSONDecoder().decode(ArticleSignature.self, from: sigData) else {
+            check = .notChecked(String(localized: "the signature file could not be read"))
             return
         }
         guard let keys = Self.keys.value else {
@@ -48,21 +66,15 @@ final class ArticleReader {
             return
         }
         let twinURL = record.value.flatMap { URL(string: $0.twin) } ?? ArticleLinks.twin(id)
-        do {
-            var request = URLRequest(url: twinURL, timeoutInterval: 20)
-            request.cachePolicy = .reloadIgnoringLocalCacheData
-            let (data, response) = try await HTTPClient.shared.data(for: request, label: "article.twin")
-            guard (200..<300).contains(response.statusCode), let text = String(data: data, encoding: .utf8) else {
-                check = .notChecked(String(localized: "the signed text did not load"))
-                return
-            }
-            let keyList = keys.keys
-            check = await Task.detached(priority: .userInitiated) {
-                ArticleSigning.check(twin: text, signature: sig, keys: keyList)
-            }.value
-        } catch {
+        guard let twin = await fetch(twinURL), (200..<300).contains(twin.1),
+              let text = String(data: twin.0, encoding: .utf8) else {
             check = .notChecked(String(localized: "the signed text did not load"))
+            return
         }
+        let keyList = keys.keys
+        check = await Task.detached(priority: .userInitiated) {
+            ArticleSigning.check(twin: text, signature: sig, keys: keyList)
+        }.value
     }
 }
 
@@ -88,7 +100,7 @@ public struct ArticleView: View {
                     header(record)
                     fullPage(record)
                     sources(record)
-                    SignaturePanel(check: reader.check)
+                    SignaturePanel(check: reader.check, id: id)
                     made
                 } else if reader.record.failed {
                     ContentUnavailableView {
@@ -220,8 +232,35 @@ struct SourceRow: View {
 /// The signature, said as it is: checked on this phone, failed, or not checked and why.
 struct SignaturePanel: View {
     let check: SignatureCheck
+    let id: String
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
+        VStack(alignment: .leading, spacing: Space.s) {
+            verdict
+            // The trust limit, said plainly (spec s. 2).
+            Text(String(localized: "The key list comes from the same site as the article: a good signature shows the text was signed with the key listed under that agent's name on promptugal.news, not who holds the key."))
+                .font(.caption)
+                .foregroundStyle(Palette.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: Space.m) {
+                link(String(localized: "Signed text"), ArticleLinks.twin(id))
+                link(String(localized: "Signature"), ArticleLinks.signature(id))
+                link(String(localized: "Keys"), ArticleLinks.keys)
+            }
+        }
+        .padding(Space.l)
+        .background(Palette.paper2, in: RoundedRectangle(cornerRadius: Space.radius))
+        .accessibilityIdentifier("article.signature")
+    }
+
+    private func link(_ title: String, _ url: URL) -> some View {
+        Button(title) { openURL(url) }
+            .font(.caption.weight(.semibold))
+            .tint(Palette.red)
+    }
+
+    private var verdict: some View {
         HStack(alignment: .top, spacing: Space.m) {
             if check == .checking {
                 ProgressView()
@@ -234,26 +273,26 @@ struct SignaturePanel: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(Space.l)
-        .background(Palette.paper2, in: RoundedRectangle(cornerRadius: Space.radius))
         .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("article.signature")
     }
 
     private var title: String {
         switch check {
-        case .checking: String(localized: "Checking the signature on this phone")
-        case .verified(let agent, _): String(localized: "Signed by \(agent), checked on this phone")
-        case .failed: String(localized: "Signature does not match")
+        case .checking: String(localized: "Checking the signature on this device")
+        case .verified(let agent, _, false): String(localized: "Signed by \(agent), checked on this device")
+        case .verified(let agent, _, true): String(localized: "Signed with a key since handed over (\(agent)), checked on this device")
+        case .failed: String(localized: "The signature does not match this text")
+        case .olderForm: String(localized: "Signed in an older form that cannot be checked")
+        case .notSigned: String(localized: "Not signed")
         case .notChecked: String(localized: "Signature not checked")
         }
     }
 
     private var detail: String? {
         switch check {
-        case .checking: nil
-        case .verified(_, let keyID): String(localized: "Key \(keyID), published in promptugal.news/board/keys.json")
-        case .failed(let reason), .notChecked(let reason): reason.prefix(1).uppercased() + reason.dropFirst()
+        case .checking, .failed, .olderForm, .notSigned: nil
+        case .verified(_, let keyID, _): String(localized: "Key \(keyID), from promptugal.news/board/keys.json")
+        case .notChecked(let reason): reason.prefix(1).uppercased() + reason.dropFirst()
         }
     }
 
@@ -261,6 +300,7 @@ struct SignaturePanel: View {
         switch check {
         case .verified: "checkmark.seal.fill"
         case .failed: "xmark.seal.fill"
+        case .notSigned: "seal"
         default: "seal"
         }
     }

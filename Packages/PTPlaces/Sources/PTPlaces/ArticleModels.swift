@@ -52,6 +52,8 @@ struct ArticleRecord: Decodable, Sendable, Equatable {
     var author: String
     var summary: String
     var licence: String
+    /// "published", or "withdrawn" for an article taken down.
+    var status: String
     var page: String
     var twin: String
     var signature: String
@@ -66,6 +68,7 @@ struct ArticleRecord: Decodable, Sendable, Equatable {
         author = c.string("author") ?? ""
         summary = c.string("summary") ?? ""
         licence = c.string("licence") ?? c.string("license") ?? ""
+        status = c.string("status") ?? ""
         page = c.string("page") ?? ArticleLinks.page(id).absoluteString
         twin = c.string("twin") ?? ArticleLinks.twin(id).absoluteString
         signature = c.string("signature") ?? ArticleLinks.signature(id).absoluteString
@@ -150,12 +153,18 @@ struct SigningKey: Decodable, Sendable, Equatable {
 }
 
 /// What the phone found when it checked an article's signature. Never a tick it did not earn.
+/// States and words from c.ios.explore's spec (briefs/2026-11-26__next-version/spec-languages-and-signatures.md, s. 2).
 enum SignatureCheck: Equatable, Sendable {
     case checking
-    /// The signature matches the text, with a published key; `agent` is the key's owner.
-    case verified(agent: String, keyID: String)
+    /// The signature matches the text, with a published key; `agent` is the key's owner. `handedOver` when the key's
+    /// status is not "active" (superseded: the key has since been handed over).
+    case verified(agent: String, keyID: String, handedOver: Bool)
     /// Checked, and it does not match.
     case failed(String)
+    /// Signed in an older form (no form, or form 1) that cannot be checked after a release; never "invalid".
+    case olderForm
+    /// No .sig is published for the article.
+    case notSigned
     /// Not checked, with the reason.
     case notChecked(String)
 }
@@ -187,9 +196,12 @@ enum ArticleSigning {
     /// Checks the signature over the twin against the published key with the signature's fingerprint. The
     /// fingerprint is worked out here from each key, never taken from the key list's own label.
     static func check(twin: String, signature: ArticleSignature, keys: [SigningKey]) -> SignatureCheck {
-        guard signature.form == form else {
-            let named = signature.form.isEmpty ? String(localized: "no form named") : signature.form
-            return .notChecked(String(localized: "it is in a signed form this app does not check (\(named))"))
+        guard signature.form == form else { return .olderForm }
+        // The site refuses a twin with more than one "built by" line; so does the phone.
+        let builders = (try? NSRegularExpression(pattern: "^built by: .*$", options: [.anchorsMatchLines]))?
+            .numberOfMatches(in: twin, range: NSRange(location: 0, length: (twin as NSString).length)) ?? 0
+        guard builders <= 1 else {
+            return .notChecked(String(localized: "the text has more than one \"built by\" line"))
         }
         guard let raw = Data(base64Encoded: signature.signature), raw.count == 64,
               let ecdsa = try? P256.Signing.ECDSASignature(rawRepresentation: raw) else {
@@ -203,9 +215,14 @@ enum ArticleSigning {
         }
         let message = Data(signedForm(twin).utf8)
         guard publicKey.isValidSignature(ecdsa, for: message) else {
-            return .failed(String(localized: "the text does not match its signature"))
+            return .failed(String(localized: "the signature does not match this text"))
         }
-        return .verified(agent: key.agent.isEmpty ? key.id : key.agent, keyID: key.id)
+        let agent = key.agent.isEmpty ? key.id : key.agent
+        switch key.status {
+        case "active", "": return .verified(agent: agent, keyID: key.id, handedOver: false)
+        case "superseded": return .verified(agent: agent, keyID: key.id, handedOver: true)
+        default: return .notChecked(String(localized: "the key is marked \(key.status) in the key list"))
+        }
     }
 
     private static func regex(_ pattern: String) -> NSRegularExpression? {
