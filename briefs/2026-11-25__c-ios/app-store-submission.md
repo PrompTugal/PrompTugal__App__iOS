@@ -10,7 +10,7 @@
 ## Name and subtitle (30 each)
 
 - Name: **PrompTugal.news** (approved by Dinis, 25 Nov)
-- Subtitle: **Local news, every fact sourced** (30). Dinis's line "Local news, town by town, every fact sourced" is 44. Alternatives: "Local news, town by town" (24), "Town by town, sourced" (21).
+- Subtitle: **Portugal's AI news, by town** (Dinis, 26 Nov; set in App Store Connect). Dinis's line "Local news, town by town, every fact sourced" is 44. Alternatives: "Local news, town by town" (24), "Town by town, sourced" (21).
 - Home Screen name stays "PrompTugal" (CFBundleDisplayName): "PrompTugal.news" is cut off under the icon.
 
 ## Promotional text (170)
@@ -22,7 +22,7 @@ Local news for Portugal, town by town: the Algarve's 17 towns and the district c
 ## Description (4000)
 
 ```
-PrompTugal.news is local news for Portugal, town by town. It starts with the Algarve and its 17 towns and now covers the district capitals too.
+PrompTugal.news is Portugal's AI news, town by town: how AI touches each place, from the Algarve and its 17 towns to the district capitals, with every story linked to its source.
 
 PLACES
 • Portugal, the Algarve and each town: its latest stories, the organisations on its map, and what is happening there now
