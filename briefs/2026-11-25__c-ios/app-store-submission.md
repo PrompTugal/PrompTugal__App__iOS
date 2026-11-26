@@ -4,8 +4,8 @@
 
 ## Version and build
 
-- **Version:** 0.4.124 (must match the build).
-- **Build:** 675 (c2d, dev 9c802e6, processed 26 Nov 00:21 UTC).
+- **Version:** 0.4.125 (must match the build).
+- **Build:** 680 (c2e, dev b729fa4, processed 26 Nov 01:19 UTC). No Explore tab, no language button.
 
 ## Name and subtitle (30 each)
 
