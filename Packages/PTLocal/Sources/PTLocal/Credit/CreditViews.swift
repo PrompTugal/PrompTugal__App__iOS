@@ -38,13 +38,13 @@ public struct CreditChip: View {
             .animation(.snappy, value: credit.balance)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Reading credit: \(credit.balanceText)")
-        .accessibilityHint(credit.isBelowZero ? "Below zero. Nothing is blocked. Opens your credit." : "Opens your credit and its history.")
+        .accessibilityLabel(LocalText.string("Reading credit: \(String(describing: credit.balanceText))"))
+        .accessibilityHint(credit.isBelowZero ? LocalText.string("Below zero. Nothing is blocked. Opens your credit.") : LocalText.string("Opens your credit and its history."))
         .sheet(isPresented: $showing) {
             NavigationStack {
                 LocalCreditView()
                     .toolbar {
-                        ToolbarItem(placement: .confirmationAction) { Button("Done") { showing = false } }
+                        ToolbarItem(placement: .confirmationAction) { Button(LocalText.string("Done")) { showing = false } }
                     }
             }
         }
@@ -65,7 +65,7 @@ public struct CostTag: View {
             .padding(.horizontal, 5).padding(.vertical, 1)
             .foregroundStyle(credit.wouldCharge(kind) ? Palette.blue : Palette.muted)
             .overlay(Capsule().strokeBorder(Palette.muted.opacity(0.35)))
-            .accessibilityLabel(text == "read" ? "Already paid for" : "Costs \(text)")
+            .accessibilityLabel(text == "read" ? LocalText.string("Already paid for") : LocalText.string("Costs \(String(describing: text))"))
     }
 }
 
@@ -100,20 +100,20 @@ public struct LocalCreditView: View {
             pricesSection
         }
         .listStyle(.insetGrouped)
-        .navigationTitle("Reading credit")
+        .navigationTitle(LocalText.string("Reading credit"))
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await topUps.loadProducts()
             await credit.refreshPrices()
         }
-        .confirmationDialog("Don't charge me for this", isPresented: decliningBinding, titleVisibility: .visible,
+        .confirmationDialog(LocalText.string("Don't charge me for this"), isPresented: decliningBinding, titleVisibility: .visible,
                             presenting: declining) { entry in
             ForEach(CreditBook.declineReasons, id: \.self) { reason in
                 Button(reason) { credit.decline(entry, reason: reason) }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(LocalText.string("Cancel"), role: .cancel) {}
         } message: { entry in
-            Text("\(credit.money(-entry.amount)) back for “\(entry.text)”, and the reason kept in your history on this device.")
+            Text(LocalText.string("\(String(describing: credit.money(-entry.amount))) back for “\(String(describing: entry.text))”, and the reason kept in your history on this device."))
         }
     }
 
@@ -124,15 +124,15 @@ public struct LocalCreditView: View {
     private var balance: some View {
         Section {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Reading credit").font(.caption).foregroundStyle(.secondary)
+                Text(LocalText.string("Reading credit")).font(.caption).foregroundStyle(.secondary)
                 Text(credit.balanceText)
                     .font(.system(.largeTitle, design: .rounded, weight: .bold).monospacedDigit())
                     .foregroundStyle(credit.isBelowZero ? Palette.amber : Palette.ink)
                     .contentTransition(.numericText(value: Double(credit.balance)))
-                Text("\(credit.book.reads) things read · \(credit.money(credit.book.spent)) spent · \(credit.money(credit.book.toppedUp)) topped up")
+                Text(LocalText.string("\(String(describing: credit.book.reads)) things read · \(String(describing: credit.money(credit.book.spent))) spent · \(String(describing: credit.money(credit.book.toppedUp))) topped up"))
                     .font(.footnote).foregroundStyle(.secondary)
                 if credit.isBelowZero {
-                    Text("Below zero: nothing is blocked.")
+                    Text(LocalText.string("Below zero: nothing is blocked."))
                         .font(.footnote).foregroundStyle(Palette.amber)
                 }
                 if let problem = credit.problem {
@@ -141,7 +141,7 @@ public struct LocalCreditView: View {
             }
             .padding(.vertical, 4)
         } footer: {
-            Text("Every story, town and AI answer in the app costs what the same kind of page costs on promptugal.news. You start with \(credit.money(credit.startingCredit)), as on the site. The history is kept on this device only.")
+            Text(LocalText.string("Every story, town and AI answer in the app costs what the same kind of page costs on promptugal.news. You start with \(String(describing: credit.money(credit.startingCredit))), as on the site. The history is kept on this device only."))
         }
     }
 
@@ -151,7 +151,7 @@ public struct LocalCreditView: View {
         Section {
             if topUps.products.isEmpty {
                 if topUps.unavailable {
-                    Text("Top-ups are not available from the App Store yet.").foregroundStyle(.secondary)
+                    Text(LocalText.string("Top-ups are not available from the App Store yet.")).foregroundStyle(.secondary)
                 } else {
                     ProgressView()
                 }
@@ -162,7 +162,7 @@ public struct LocalCreditView: View {
                 } label: {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("\(credit.money(CreditMoney.micro(pence: Double(topUps.pence(for: product))))) of reading credit")
+                            Text(LocalText.string("\(String(describing: credit.money(CreditMoney.micro(pence: Double(topUps.pence(for: product)))))) of reading credit"))
                                 .foregroundStyle(.primary)
                             Text(product.description).font(.caption).foregroundStyle(.secondary)
                         }
@@ -178,7 +178,7 @@ public struct LocalCreditView: View {
             }
             statusLine
         } header: {
-            Text("Top up")
+            Text(LocalText.string("Top up"))
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
                 if topUps.environment.isTest {
@@ -186,7 +186,7 @@ public struct LocalCreditView: View {
                 } else {
                     Text(topUps.environment.words)
                 }
-                Text("A top-up adds to the balance on this device. Nothing renews.")
+                Text(LocalText.string("A top-up adds to the balance on this device. Nothing renews."))
             }
         }
     }
@@ -194,12 +194,12 @@ public struct LocalCreditView: View {
     @ViewBuilder private var statusLine: some View {
         switch topUps.status {
         case .purchased(let pence, let test):
-            Label(test ? "Test purchase: \(credit.money(CreditMoney.micro(pence: Double(pence)))) added, no money taken."
-                       : "Thank you: \(credit.money(CreditMoney.micro(pence: Double(pence)))) added.",
+            Label(test ? LocalText.string("Test purchase: \(String(describing: credit.money(CreditMoney.micro(pence: Double(pence))))) added, no money taken.")
+                       : LocalText.string("Thank you: \(String(describing: credit.money(CreditMoney.micro(pence: Double(pence))))) added."),
                   systemImage: "checkmark.circle.fill")
                 .foregroundStyle(.green)
         case .pending:
-            Label("Waiting for approval.", systemImage: "hourglass")
+            Label(LocalText.string("Waiting for approval."), systemImage: "hourglass")
         case .failed(let message):
             Label(message, systemImage: "exclamationmark.triangle").foregroundStyle(.orange)
         default:
@@ -213,7 +213,7 @@ public struct LocalCreditView: View {
         Section {
             let lines = credit.byOutlet
             if lines.isEmpty {
-                Text("Nothing yet. Stories you pay to read show here, by the outlet that published them.")
+                Text(LocalText.string("Nothing yet. Stories you pay to read show here, by the outlet that published them."))
                     .font(.footnote).foregroundStyle(.secondary)
             }
             ForEach(lines) { line in
@@ -230,29 +230,29 @@ public struct LocalCreditView: View {
             }
         } header: {
             HStack {
-                Text("Where your credit goes")
+                Text(LocalText.string("Where your credit goes"))
                 Spacer()
                 PlannedBadge()
             }
         } footer: {
-            Text("What your reading of each outlet's stories was worth on this device. Sharing reading revenue with the local media whose stories you read is planned, not yet in place: no money has been sent to any outlet.")
+            Text(LocalText.string("What your reading of each outlet's stories was worth on this device. Sharing reading revenue with the local media whose stories you read is planned, not yet in place: no money has been sent to any outlet."))
         }
     }
 
     private func outletDetail(_ line: OutletLine) -> String {
-        let reads = line.reads == 1 ? "1 paid read" : "\(line.reads) paid reads"
-        return line.declined == 0 ? reads : "\(reads), \(line.declined) not charged"
+        let reads = line.reads == 1 ? LocalText.string("1 paid read") : LocalText.string("\(String(describing: line.reads)) paid reads")
+        return line.declined == 0 ? reads : LocalText.string("\(String(describing: reads)), \(String(describing: line.declined)) not charged")
     }
 
     // MARK: History
 
     private var historySection: some View {
-        Section("History") {
+        Section(LocalText.string("History")) {
             ForEach(credit.history.prefix(200)) { entry in
                 CreditEntryRow(entry: entry, declined: credit.isDeclined(entry), symbol: credit.symbol)
                     .swipeActions {
                         if entry.kind == .charge && !credit.isDeclined(entry) {
-                            Button("Don't charge me") { declining = entry }.tint(.orange)
+                            Button(LocalText.string("Don't charge me")) { declining = entry }.tint(.orange)
                         }
                     }
             }
@@ -273,13 +273,13 @@ public struct LocalCreditView: View {
                 .font(.subheadline)
             }
             Link(destination: LocalCredit.pricesPage) {
-                Label("How the site prices a page", systemImage: "arrow.up.right.square")
+                Label(LocalText.string("How the site prices a page"), systemImage: "arrow.up.right.square")
             }
         } header: {
-            Text("What things cost")
+            Text(LocalText.string("What things cost"))
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("From promptugal.news's meter (\(credit.config.meter ?? "sg-meter"), \(credit.config.version ?? "built in")): price by kind of page and how fresh it is, never less than \(CreditMoney.price(CreditMoney.micro(pence: credit.config.floor))). Reading the same thing again in one session is not charged twice. Swipe a charge to say why you won't pay for it.")
+                Text(LocalText.string("From promptugal.news's meter (\(String(describing: credit.config.meter ?? "sg-meter")), \(String(describing: credit.config.version ?? "built in"))): price by kind of page and how fresh it is, never less than \(String(describing: CreditMoney.price(CreditMoney.micro(pence: credit.config.floor)))). Reading the same thing again in one session is not charged twice. Swipe a charge to say why you won't pay for it."))
                 ProvenanceLabel(provenance: credit.priceProvenance, phase: .loaded)
             }
         }
@@ -306,7 +306,7 @@ struct CreditEntryRow: View {
                 }
                 .font(.caption).foregroundStyle(.secondary)
                 if entry.isTestPurchase {
-                    Label("Test purchase: no money taken", systemImage: "testtube.2")
+                    Label(LocalText.string("Test purchase: no money taken"), systemImage: "testtube.2")
                         .font(.caption2.weight(.semibold)).foregroundStyle(Palette.amber)
                 }
             }
@@ -342,12 +342,12 @@ struct CreditEntryRow: View {
 public struct PlannedBadge: View {
     public init() {}
     public var body: some View {
-        Label("Planned, not yet paid", systemImage: "calendar.badge.clock")
+        Label(LocalText.string("Planned, not yet paid"), systemImage: "calendar.badge.clock")
             .font(.caption2.weight(.bold))
             .textCase(nil)
             .padding(.horizontal, 6).padding(.vertical, 2)
             .foregroundStyle(Palette.amber)
             .background(Palette.amber.opacity(0.14), in: Capsule())
-            .accessibilityLabel("Planned, not yet paid: no money has been sent to outlets")
+            .accessibilityLabel(LocalText.string("Planned, not yet paid: no money has been sent to outlets"))
     }
 }

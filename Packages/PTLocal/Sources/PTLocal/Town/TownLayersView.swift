@@ -31,13 +31,13 @@ struct TownEventsBlock: View {
     var body: some View {
         let upcoming = layer.value.upcoming(now: now)
         if !upcoming.isEmpty {
-            TitledCard("What is on", kicker: "Events") {
+            TitledCard(LocalText.string("What is on"), kicker: LocalText.string("Events")) {
                 ForEach(upcoming) { event in
                     if let link = event.link { EventRow(event: event, link: link) }
                 }
                 ProvenanceLabel(provenance: layer.provenance, phase: .idle, readAt: layer.value.readDate,
                                 host: "data.promptugal.news")
-                Text("From the venues' and councils' own agendas, as data.promptugal.news reads them. A dated list, not a ticket office.")
+                Text(LocalText.string("From the venues' and councils' own agendas, as data.promptugal.news reads them. A dated list, not a ticket office."))
                     .font(.caption).foregroundStyle(Palette.muted)
             }
         }
@@ -57,7 +57,7 @@ struct EventRow: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityHint("Opens the event's source")
+        .accessibilityHint(LocalText.string("Opens the event's source"))
     }
 
     private var detail: String {
@@ -81,9 +81,9 @@ struct CouncilNoticesBlock: View {
     var body: some View {
         let open = notices?.value.open(council: council, now: now) ?? []
         if !open.isEmpty || file != nil {
-            TitledCard(title, kicker: "Council notices") {
+            TitledCard(title, kicker: LocalText.string("Council notices")) {
                 if open.isEmpty {
-                    Text("No procurement notice of this council is open today.").font(.footnote).foregroundStyle(Palette.muted)
+                    Text(LocalText.string("No procurement notice of this council is open today.")).font(.footnote).foregroundStyle(Palette.muted)
                 }
                 ForEach(open) { notice in
                     if let link = notice.link { NoticeRow(notice: notice, link: link) }
@@ -93,7 +93,7 @@ struct CouncilNoticesBlock: View {
                                     host: "civic.promptugal.news")
                 }
                 if let layer = file { councilLine(layer) }
-                Text("PrompTugal.news Civic is not a council or government site. Every figure links to its source.")
+                Text(LocalText.string("PrompTugal.news Civic is not a council or government site. Every figure links to its source."))
                     .font(.caption).foregroundStyle(Palette.muted)
             }
         }
@@ -101,7 +101,7 @@ struct CouncilNoticesBlock: View {
 
     private var title: String {
         let name = file?.value.name ?? PlaceDirectory.info(council)?.name ?? council
-        return "\(name) council"
+        return LocalText.string("\(name) council")
     }
 
     @ViewBuilder private func councilLine(_ file: TownLayersStore.Layer<CivicCouncil>) -> some View {
@@ -112,15 +112,15 @@ struct CouncilNoticesBlock: View {
                         host: "civic.promptugal.news")
         if let page = file.value.pageURL {
             Link(destination: page) {
-                Label("The council on PrompTugal.news Civic", systemImage: "arrow.up.right.square")
+                Label(LocalText.string("The council on PrompTugal.news Civic"), systemImage: "arrow.up.right.square")
             }
             .font(.footnote)
         }
     }
 
     private func contractsText(_ contracts: Int, value: Double?) -> String {
-        guard let value else { return "\(contracts) public contracts in 2026 on the Portal BASE." }
-        return "\(contracts) public contracts in 2026 on the Portal BASE, \(TownLayerDates.euros(value)) in all."
+        guard let value else { return LocalText.string("\(String(describing: contracts)) public contracts in 2026 on the Portal BASE.") }
+        return LocalText.string("\(String(describing: contracts)) public contracts in 2026 on the Portal BASE, \(String(describing: TownLayerDates.euros(value))) in all.")
     }
 }
 
@@ -137,13 +137,13 @@ struct NoticeRow: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityHint("Opens the notice in the Diário da República")
+        .accessibilityHint(LocalText.string("Opens the notice in the Diário da República"))
     }
 
     private var detail: String {
-        var parts: [String] = ["Notice \(notice.notice)"]
-        if let deadline = notice.deadline { parts.append("bids by " + TownLayerDates.day(deadline)) }
-        if let price = notice.basePriceEUR { parts.append("base price " + TownLayerDates.euros(price)) }
+        var parts: [String] = [LocalText.string("Notice \(String(describing: notice.notice))")]
+        if let deadline = notice.deadline { parts.append(LocalText.string("bids by ") + TownLayerDates.day(deadline)) }
+        if let price = notice.basePriceEUR { parts.append(LocalText.string("base price ") + TownLayerDates.euros(price)) }
         return parts.joined(separator: " · ")
     }
 }

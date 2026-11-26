@@ -67,6 +67,15 @@ public struct AlgarveMapTown: Identifiable, Hashable, Sendable {
 public enum AlgarveMapStyle: String, CaseIterable, Identifiable, Sendable {
     case flat = "Map", flight = "3D", tiles = "Grid", bubbles = "Cartogram"
     public var id: Self { self }
+    /// The style in the reader's language.
+    public var title: String {
+        switch self {
+        case .flat: LocalText.string("Map")
+        case .flight: "3D"
+        case .tiles: LocalText.string("Grid")
+        case .bubbles: LocalText.string("Cartogram")
+        }
+    }
     var symbol: String {
         switch self {
         case .flat: "map"
@@ -81,6 +90,15 @@ public enum AlgarveMapStyle: String, CaseIterable, Identifiable, Sendable {
 public enum AlgarveMetric: String, CaseIterable, Identifiable, Sendable {
     case stories = "Stories", mapped = "On the map", fresh = "Agent activity"
     public var id: Self { self }
+
+    /// The metric in the reader's language.
+    public var title: String {
+        switch self {
+        case .stories: LocalText.string("Stories")
+        case .mapped: LocalText.string("On the map")
+        case .fresh: LocalText.string("Agent activity")
+        }
+    }
 
     public func value(_ town: AlgarveMapTown, now: Date) -> Double {
         switch self {
@@ -104,9 +122,9 @@ public enum AlgarveMetric: String, CaseIterable, Identifiable, Sendable {
 
     var caption: String {
         switch self {
-        case .stories: "Local AI stories on each town's site"
-        case .mapped: "Organisations on each town's AI map"
-        case .fresh: "How long since each town's agent showed a sign of life"
+        case .stories: LocalText.string("Local AI stories on each town's site")
+        case .mapped: LocalText.string("Organisations on each town's AI map")
+        case .fresh: LocalText.string("How long since each town's agent showed a sign of life")
         }
     }
 }
@@ -129,8 +147,8 @@ public struct AlgarveStyledMap: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            Picker("Map style", selection: style.animation(reduceMotion ? nil : .spring(duration: 0.6))) {
-                ForEach(AlgarveMapStyle.allCases) { Label($0.rawValue, systemImage: $0.symbol).tag($0) }
+            Picker(LocalText.string("Map style"), selection: style.animation(reduceMotion ? nil : .spring(duration: 0.6))) {
+                ForEach(AlgarveMapStyle.allCases) { Label($0.title, systemImage: $0.symbol).tag($0) }
             }
             .pickerStyle(.segmented)
             switch style.wrappedValue {
@@ -158,7 +176,7 @@ struct TownMapDot: View {
         }
         .frame(width: size, height: size)
         .shadow(radius: 1.5)
-        .accessibilityLabel("\(town.name): \(town.live ? "live" : "researching"), \(town.stories) stories")
+        .accessibilityLabel(LocalText.string("\(String(describing: town.name)): \(String(describing: town.live ? "live" : "researching")), \(String(describing: town.stories)) stories"))
     }
 }
 
@@ -269,13 +287,13 @@ struct AlgarveFlightMap: View {
     private func controls(count: Int) -> some View {
         HStack(spacing: Space.m) {
             Button { step(-1, count: count) } label: { Image(systemName: "backward.fill") }
-                .accessibilityLabel("Previous town")
+                .accessibilityLabel(LocalText.string("Previous town"))
             if !reduceMotion {
                 Button { playing.toggle() } label: { Image(systemName: playing ? "pause.fill" : "play.fill") }
-                    .accessibilityLabel(playing ? "Pause the flight" : "Play the flight")
+                    .accessibilityLabel(playing ? LocalText.string("Pause the flight") : LocalText.string("Play the flight"))
             }
             Button { step(1, count: count) } label: { Image(systemName: "forward.fill") }
-                .accessibilityLabel("Next town")
+                .accessibilityLabel(LocalText.string("Next town"))
         }
         .font(.footnote)
         .padding(.horizontal, Space.m).padding(.vertical, Space.s)
@@ -296,7 +314,7 @@ struct AlgarveFlightMap: View {
                     Text(town.name).font(.system(.title3, design: .serif, weight: .bold))
                     StatusChip(live: town.live)
                 }
-                Text("\(town.stories) stories · \(town.mapped) on the AI map").font(.caption.monospacedDigit())
+                Text(LocalText.string("\(String(describing: town.stories)) stories · \(String(describing: town.mapped)) on the AI map")).font(.caption.monospacedDigit())
                 if let story = town.latestStory {
                     Label(story, systemImage: "newspaper")
                         .font(.system(.footnote, design: .serif, weight: .semibold))
@@ -324,7 +342,7 @@ struct AlgarveFlightMap: View {
         .id(town.id)
         .transition(.opacity)
         .animation(.easeInOut, value: town.id)
-        .accessibilityLabel("Now over \(town.name), \(town.stories) stories. Opens the town.")
+        .accessibilityLabel(LocalText.string("Now over \(String(describing: town.name)), \(String(describing: town.stories)) stories. Opens the town."))
     }
 }
 
@@ -341,8 +359,8 @@ struct AlgarveAbstractMap: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            Picker("Size and colour by", selection: $metric.animation(reduceMotion ? nil : .spring(duration: 0.5))) {
-                ForEach(AlgarveMetric.allCases) { Text($0.rawValue).tag($0) }
+            Picker(LocalText.string("Size and colour by"), selection: $metric.animation(reduceMotion ? nil : .spring(duration: 0.5))) {
+                ForEach(AlgarveMetric.allCases) { Text($0.title).tag($0) }
             }
             .pickerStyle(.segmented)
             GeometryReader { proxy in
@@ -354,7 +372,7 @@ struct AlgarveAbstractMap: View {
                             .buttonStyle(.plain)
                             .frame(width: mark.size.width, height: mark.size.height)
                             .position(mark.center)
-                            .accessibilityLabel("\(mark.town.name): \(metric.rawValue) \(metric.label(mark.value)), \(mark.town.live ? "live" : "researching")")
+                            .accessibilityLabel("\(mark.town.name): \(metric.title) \(metric.label(mark.value)), \(mark.town.live ? LocalText.string("live") : LocalText.string("researching"))")
                     }
                 }
             }
@@ -456,8 +474,8 @@ struct AlgarveAbstractMap: View {
 
     private var legend: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(bubbles ? "Each circle sits near its town; its area is the measure." : "Every town the same size, placed to keep the region's shape.")
-            Text("\(metric.caption). Solid ring: live site; dashed: still researching. Tap a town to open it.")
+            Text(bubbles ? LocalText.string("Each circle sits near its town; its area is the measure.") : LocalText.string("Every town the same size, placed to keep the region's shape."))
+            Text(LocalText.string("\(String(describing: metric.caption)). Solid ring: live site; dashed: still researching. Tap a town to open it."))
         }
         .font(.caption)
         .foregroundStyle(Palette.muted)
@@ -477,15 +495,15 @@ public struct AlgarveMapsView: View {
 
     public var body: some View {
         Page {
-            ScreenHeader(kicker: "PrompTugal.news · the Algarve", title: "The towns, four ways",
-                         summary: "The 17 places of the Algarve: on the map, in 3D over the terrain, as a grid that keeps the region's shape, and as a cartogram where each town grows with what its agent has found.")
+            ScreenHeader(kicker: LocalText.string("PrompTugal.news · the Algarve"), title: LocalText.string("The towns, four ways"),
+                         summary: LocalText.string("The 17 places of the Algarve: on the map, in 3D over the terrain, as a grid that keeps the region's shape, and as a cartogram where each town grows with what its agent has found."))
             ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase, readAt: store.placesReadAt)
             AlgarveStyledMap(towns: AlgarveMapTown.fromLocalStore(store)) { id in
                 // The shell's place page when it routes places; PTLocal's own town page otherwise.
                 if let openPlace { openPlace(id) } else { opened = id }
             }
         }
-        .navigationTitle("Algarve maps")
+        .navigationTitle(LocalText.string("Algarve maps"))
         .navigationDestination(item: $opened) { id in TownView(id: id) }
         .task {
             if !store.placeProvenance.isLive { await store.refreshPlaces() }

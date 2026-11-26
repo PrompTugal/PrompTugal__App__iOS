@@ -27,9 +27,9 @@ public struct ConditionsCard: View {
 
     @ViewBuilder
     private func content(_ c: TownConditions, regionWide: Bool) -> some View {
-        TitledCard("Conditions now", kicker: regionWide ? "The Algarve · readings near Faro · IPMA" : "\(c.town.name) · IPMA") {
+        TitledCard(LocalText.string("Conditions now"), kicker: regionWide ? LocalText.string("The Algarve · readings near Faro · IPMA") : "\(c.town.name) · IPMA") {
             if c.warnings.isEmpty && store.provenance != .none {
-                Label("No IPMA warnings above green for the Algarve.", systemImage: "checkmark.shield")
+                Label(LocalText.string("No IPMA warnings above green for the Algarve."), systemImage: "checkmark.shield")
                     .font(.footnote).foregroundStyle(Palette.green)
             }
             ForEach(c.warnings) { warning in WarningBanner(warning: warning) }
@@ -39,10 +39,10 @@ public struct ConditionsCard: View {
             } else if store.provenance == .none {
                 HStack(spacing: Space.s) {
                     ProgressView().controlSize(.small)
-                    Text("Reading IPMA's stations…").font(.footnote).foregroundStyle(Palette.muted)
+                    Text(LocalText.string("Reading IPMA's stations…")).font(.footnote).foregroundStyle(Palette.muted)
                 }
             } else {
-                Text("No IPMA station within 40 km of \(c.town.name) has a reading in the last three hours.")
+                Text(LocalText.string("No IPMA station within 40 km of \(String(describing: c.town.name)) has a reading in the last three hours."))
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
 
@@ -58,7 +58,7 @@ public struct ConditionsCard: View {
                     Text(date, format: .relative(presentation: .named, unitsStyle: .abbreviated))
                 }
                 Spacer(minLength: Space.s)
-                Link(destination: IPMA.page) { Label("ipma.pt", systemImage: "arrow.up.right").labelStyle(.titleAndIcon) }
+                Link(destination: IPMA.page) { Label(LocalText.string("ipma.pt"), systemImage: "arrow.up.right").labelStyle(.titleAndIcon) }
             }
             .font(.caption)
             .foregroundStyle(store.provenance.isLive ? Palette.muted : Palette.amber)
@@ -86,9 +86,9 @@ struct WarningBanner: View {
         HStack(alignment: .top, spacing: Space.s) {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(colour)
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(warning.level.label) warning: \(warning.typeEnglish)")
+                Text(LocalText.string("\(String(describing: warning.level.label)) warning: \(String(describing: warning.typeEnglish))"))
                     .font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
-                Text("IPMA: \(warning.type)\(window)").font(.caption).foregroundStyle(Palette.muted)
+                Text(LocalText.string("IPMA: \(String(describing: warning.type))\(String(describing: window))")).font(.caption).foregroundStyle(Palette.muted)
                 if !warning.text.isEmpty {
                     Text(warning.text).font(.caption).foregroundStyle(Palette.ink).italic()
                 }
@@ -106,7 +106,7 @@ struct WarningBanner: View {
         formatter.dateFormat = "EEE d MMM, HH:mm"
         formatter.timeZone = TimeZone(identifier: "Europe/Lisbon")
         guard let start = warning.start, let end = warning.end else { return "" }
-        return " · \(formatter.string(from: start)) to \(formatter.string(from: end)) (Portugal time)"
+        return LocalText.string(" · \(String(describing: formatter.string(from: start))) to \(String(describing: formatter.string(from: end))) (Portugal time)")
     }
 }
 
@@ -125,23 +125,23 @@ struct ReadingRow: View {
                         .rotationEffect(.degrees(o.wind?.arrowDegrees ?? 0))
                         .opacity(o.wind == nil ? 0.3 : 1)
                     Text(o.windKmh.map { "\(Int($0.rounded())) km/h" } ?? "wind –").font(.caption.monospacedDigit())
-                    Text(o.wind.map { "from \($0.label)" } ?? "calm or variable").font(.caption2).foregroundStyle(Palette.muted)
+                    Text(o.wind.map { LocalText.string("from \(String(describing: $0.label))") } ?? LocalText.string("calm or variable")).font(.caption2).foregroundStyle(Palette.muted)
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(windWords(o))
-                metric(o.temperature.map { String(format: "%.1f°C", $0) }, label: "temperature")
-                metric(o.rainMm.map { String(format: "%.1f mm", $0) }, label: "rain, last hour")
-                metric(o.humidity.map { "\(Int($0.rounded()))%" }, label: "humidity")
+                metric(o.temperature.map { String(format: "%.1f°C", $0) }, label: LocalText.string("temperature"))
+                metric(o.rainMm.map { String(format: "%.1f mm", $0) }, label: LocalText.string("rain, last hour"))
+                metric(o.humidity.map { "\(Int($0.rounded()))%" }, label: LocalText.string("humidity"))
             }
-            Text("\(reading.station.name) station, \(NearMe.text(distance: reading.distance)) away · read \(reading.time.formatted(date: .omitted, time: .shortened))")
+            Text(LocalText.string("\(String(describing: reading.station.name)) station, \(String(describing: NearMe.text(distance: reading.distance))) away · read \(String(describing: reading.time.formatted(date: .omitted, time: .shortened)))"))
                 .font(.caption2).foregroundStyle(Palette.muted)
         }
     }
 
     private func windWords(_ o: IPMA.Observation) -> String {
-        guard let kmh = o.windKmh else { return "No wind reading" }
+        guard let kmh = o.windKmh else { return LocalText.string("No wind reading") }
         let from = o.wind.map { " from " + $0.label } ?? ""
-        return "Wind \(Int(kmh.rounded())) kilometres an hour" + from
+        return LocalText.string("Wind \(String(describing: Int(kmh.rounded()))) kilometres an hour") + from
     }
 
     private func metric(_ value: String?, label: String) -> some View {
@@ -161,8 +161,8 @@ struct ForecastRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(summary).font(.footnote).foregroundStyle(Palette.ink)
-            Text(city.name == town.name ? "IPMA forecast for \(city.name), \(day.forecastDate)"
-                                        : "IPMA forecast for \(city.name), the nearest forecast point to \(town.name), \(day.forecastDate)")
+            Text(city.name == town.name ? LocalText.string("IPMA forecast for \(String(describing: city.name)), \(String(describing: day.forecastDate))")
+                                        : LocalText.string("IPMA forecast for \(String(describing: city.name)), the nearest forecast point to \(String(describing: town.name)), \(String(describing: day.forecastDate))"))
                 .font(.caption2).foregroundStyle(Palette.muted)
         }
     }
@@ -171,11 +171,11 @@ struct ForecastRow: View {
         var parts: [String] = []
         if let weather = day.weather { parts.append(weather) }
         if let low = day.tMin, let high = day.tMax { parts.append("\(low)–\(high)°C") }
-        if let rain = day.rainChance { parts.append("rain \(rain)%") }
+        if let rain = day.rainChance { parts.append(LocalText.string("rain \(String(describing: rain))%")) }
         if let dir = day.predWindDir {
-            parts.append("wind \(day.windClass.map { $0 + " " } ?? "")from \(dir)")
+            parts.append(LocalText.string("wind \(String(describing: day.windClass.map { $0 + " " } ?? ""))from \(String(describing: dir))"))
         }
-        return parts.isEmpty ? "No forecast details." : "Today: " + parts.joined(separator: ", ")
+        return parts.isEmpty ? LocalText.string("No forecast details.") : "Today: " + parts.joined(separator: ", ")
     }
 }
 
@@ -193,16 +193,16 @@ public struct ConditionsLine: View {
             HStack(spacing: 6) {
                 if let warning = c.warnings.first {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(warning.level == .yellow ? Palette.amber : Palette.red)
-                    Text("\(warning.level.label) warning: \(warning.typeEnglish)").fontWeight(.semibold)
+                    Text(LocalText.string("\(String(describing: warning.level.label)) warning: \(String(describing: warning.typeEnglish))")).fontWeight(.semibold)
                 }
                 if let o = c.reading?.observation {
                     if let t = o.temperature { Text(String(format: "%.0f°C", t)) }
                     if let kmh = o.windKmh {
                         Image(systemName: "location.north.fill").rotationEffect(.degrees(o.wind?.arrowDegrees ?? 0)).foregroundStyle(Palette.blue)
-                        Text("\(Int(kmh.rounded())) km/h")
+                        Text(LocalText.string("\(String(describing: Int(kmh.rounded()))) km/h"))
                     }
                 }
-                Text("· IPMA").foregroundStyle(Palette.muted)
+                Text(LocalText.string("· IPMA")).foregroundStyle(Palette.muted)
             }
             .font(.caption)
             .foregroundStyle(Palette.ink)

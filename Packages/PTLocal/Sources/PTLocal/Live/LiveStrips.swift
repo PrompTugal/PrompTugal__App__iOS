@@ -88,7 +88,7 @@ public struct NewsroomLiveSection: View {
         let working = model.dashboard?.agents.filter { model.activity($0.role, now: now) > 0 }.count ?? 0
         return VStack(alignment: .leading, spacing: Space.m) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("The newsroom, live").font(.system(.title2, design: .serif, weight: .black)).foregroundStyle(Palette.ink)
+                Text(LocalText.string("The newsroom, live")).font(.system(.title2, design: .serif, weight: .black)).foregroundStyle(Palette.ink)
                 Text(Self.subtitle(working: working, total: model.dashboard?.agents.count))
                     .font(.system(.subheadline, design: .serif).italic()).foregroundStyle(Palette.red)
             }
@@ -111,7 +111,7 @@ public struct NewsroomLiveSection: View {
                         }
                         .buttonStyle(.plain)
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("\(agent.handle), \(agent.status.rawValue)")
+                        .accessibilityLabel("\(agent.handle), \(agent.status.label)")
                     }
                 }
             }
@@ -128,7 +128,7 @@ public struct NewsroomLiveSection: View {
             }
             .animation(reduceMotion ? nil : .spring(duration: 0.45), value: model.events.first?.id)
             NavigationLink { NewsroomLiveView() } label: {
-                Label("Watch the newsroom in action", systemImage: "waveform.path.ecg").font(.footnote.weight(.semibold))
+                Label(LocalText.string("Watch the newsroom in action"), systemImage: "waveform.path.ecg").font(.footnote.weight(.semibold))
             }
             ProvenanceLabel(provenance: model.provenance, phase: model.phase,
                             readAt: model.dashboard?.updated)
@@ -136,8 +136,8 @@ public struct NewsroomLiveSection: View {
     }
 
     static func subtitle(working: Int, total: Int?) -> String {
-        guard let total else { return "Reading the agents…" }
-        return "\(working) of \(total) agents active in the last half hour"
+        guard let total else { return LocalText.string("Reading the agents…") }
+        return LocalText.string("\(String(describing: working)) of \(String(describing: total)) agents active in the last half hour")
     }
 
     /// The agents with the latest sign of life first.
@@ -177,7 +177,7 @@ public struct TownNewsroomLive: View {
     @ViewBuilder
     private func content(now: Date) -> some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            Text("Its agent at work").font(.system(.title3, design: .serif, weight: .black)).foregroundStyle(Palette.ink)
+            Text(LocalText.string("Its agent at work")).font(.system(.title3, design: .serif, weight: .black)).foregroundStyle(Palette.ink)
             Rectangle().fill(Palette.ink).frame(height: 1)
             if let agent = model.agent(role) {
                 HStack(alignment: .top, spacing: Space.m) {
@@ -190,14 +190,14 @@ public struct TownNewsroomLive: View {
                             StatusDot(status: agent.status)
                         }
                         if let date = agent.lastSign(now: now) {
-                            Text("\(agent.status.rawValue) · last sign of life \(LiveTicker.ago(date, now: now))")
+                            Text(LocalText.string("\(String(describing: agent.status.label)) · last sign of life \(String(describing: LiveTicker.ago(date, now: now)))"))
                                 .font(.caption).foregroundStyle(Palette.muted)
                         }
                         if let state = agent.state {
                             Text(state).font(.footnote).foregroundStyle(Palette.ink).lineLimit(3)
                         }
                         if let next = agent.next.first {
-                            Text("Next: \(next)").font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                            Text(LocalText.string("Next: \(String(describing: next))")).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
                         }
                     }
                 }
@@ -219,15 +219,15 @@ public struct TownNewsroomLive: View {
                     }
                 }
                 NavigationLink { NewsroomLiveView(selecting: role) } label: {
-                    Label("See it on the live board", systemImage: "waveform.path.ecg").font(.footnote.weight(.semibold))
+                    Label(LocalText.string("See it on the live board"), systemImage: "waveform.path.ecg").font(.footnote.weight(.semibold))
                 }
             } else if model.dashboard == nil {
                 HStack(spacing: Space.s) {
                     ProgressView().controlSize(.small)
-                    Text("Reading the newsroom…").font(.caption).foregroundStyle(Palette.muted)
+                    Text(LocalText.string("Reading the newsroom…")).font(.caption).foregroundStyle(Palette.muted)
                 }
             } else {
-                Text("The newsroom dashboard lists no agent for this place yet.").font(.caption).foregroundStyle(Palette.muted)
+                Text(LocalText.string("The newsroom dashboard lists no agent for this place yet.")).font(.caption).foregroundStyle(Palette.muted)
             }
         }
         .accessibilityElement(children: .contain)

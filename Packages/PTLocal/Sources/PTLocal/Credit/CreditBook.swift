@@ -87,10 +87,10 @@ public struct CreditBook: Codable, Equatable, Sendable {
 
     /// Why a charge was declined, after the site's "Don't charge me".
     public static let declineReasons = [
-        "It was not useful",
-        "I opened it by mistake",
-        "It was a test",
-        "Another reason",
+        LocalText.string("It was not useful"),
+        LocalText.string("I opened it by mistake"),
+        LocalText.string("It was a test"),
+        LocalText.string("Another reason"),
     ]
 
     public var v: Int
@@ -100,7 +100,7 @@ public struct CreditBook: Codable, Equatable, Sendable {
     public init(startingCredit: Int, at: Date = .now) {
         v = Self.version
         entries = []
-        add(.start, text: "Starting credit (as on promptugal.news)", amount: startingCredit, at: at)
+        add(.start, text: LocalText.string("Starting credit (as on promptugal.news)"), amount: startingCredit, at: at)
     }
 
     /// May be below zero: nothing is ever blocked.
@@ -138,7 +138,7 @@ public struct CreditBook: Codable, Equatable, Sendable {
     public mutating func topUp(_ amount: Int, ref: String, source: String, at: Date = .now) -> CreditEntry? {
         guard amount > 0, !ref.isEmpty, !hasTopUp(ref: ref) else { return nil }
         let test = source != "appstore:production"
-        return add(.topUp, text: test ? "Top-up (test purchase, no money taken)" : "Top-up", amount: amount, at: at) {
+        return add(.topUp, text: test ? LocalText.string("Top-up (test purchase, no money taken)") : "Top-up", amount: amount, at: at) {
             $0.ref = ref
             $0.source = source
         }
@@ -154,7 +154,7 @@ public struct CreditBook: Codable, Equatable, Sendable {
     @discardableResult
     public mutating func decline(_ entryId: String, reason: String, at: Date = .now) -> CreditEntry? {
         guard let charge = entries.first(where: { $0.id == entryId }), charge.kind == .charge, !isDeclined(charge) else { return nil }
-        return add(.refund, text: "Not charged: \(charge.text)", amount: -charge.amount, at: at) {
+        return add(.refund, text: LocalText.string("Not charged: \(String(describing: charge.text))"), amount: -charge.amount, at: at) {
             $0.action = charge.action
             $0.pageType = charge.pageType
             $0.ref = charge.id

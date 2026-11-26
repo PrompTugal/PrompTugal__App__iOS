@@ -81,7 +81,7 @@ public final class LiveNewsroom {
                 accept(stored, extras: try? JSONDecoder().decode(LiveDashboardExtras.self, from: data), now: now)
                 provenance = .cached(cache.modified(key: Self.cacheKey))
             }
-            phase = .failed("The newsroom dashboard could not be reached.")
+            phase = .failed(LocalText.string("The newsroom dashboard could not be reached."))
         }
         lastPoll = now
         if polls % 5 == 0 {

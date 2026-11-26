@@ -39,17 +39,17 @@ public final class LocalTopUps {
         /// In words for the top-up screen.
         public var words: String {
             switch self {
-            case .xcode: return "Test purchases: this build buys from Xcode's StoreKit test file. No money is taken."
-            case .sandbox: return "Test purchases: this build buys in the App Store sandbox (TestFlight). No money is taken."
-            case .production: return "Purchases are real and charged by the App Store."
+            case .xcode: return LocalText.string("Test purchases: this build buys from Xcode's StoreKit test file. No money is taken.")
+            case .sandbox: return LocalText.string("Test purchases: this build buys in the App Store sandbox (TestFlight). No money is taken.")
+            case .production: return LocalText.string("Purchases are real and charged by the App Store.")
             case .unknown: return Self.unknownWords
             }
         }
 
         #if DEBUG
-        static let unknownWords = "Debug build: purchases go to the StoreKit test file or the App Store sandbox. No money is taken."
+        static let unknownWords = LocalText.string("Debug build: purchases go to the StoreKit test file or the App Store sandbox. No money is taken.")
         #else
-        static let unknownWords = "Purchases are charged by the App Store, unless this is a TestFlight build (sandbox, no money)."
+        static let unknownWords = LocalText.string("Purchases are charged by the App Store, unless this is a TestFlight build (sandbox, no money).")
         #endif
     }
 
@@ -103,7 +103,7 @@ public final class LocalTopUps {
             status = .idle
         } catch {
             unavailable = true
-            status = .failed("The App Store could not be reached.")
+            status = .failed(LocalText.string("The App Store could not be reached."))
         }
     }
 
@@ -125,7 +125,7 @@ public final class LocalTopUps {
                 status = .idle
             }
         } catch {
-            status = .failed("The purchase did not complete.")
+            status = .failed(LocalText.string("The purchase did not complete."))
         }
     }
 
@@ -133,7 +133,7 @@ public final class LocalTopUps {
     /// the ledger. A transaction that arrives already revoked is not credited, and is finished.
     func handle(_ result: VerificationResult<Transaction>) async {
         guard case .verified(let transaction) = result else {
-            status = .failed("The App Store could not verify this purchase, so no credit was added.")
+            status = .failed(LocalText.string("The App Store could not verify this purchase, so no credit was added."))
             return                                  // not finished: an unverified transaction is left to StoreKit
         }
         guard transaction.productType == .consumable,
@@ -152,7 +152,7 @@ public final class LocalTopUps {
             try credit.addTopUp(micro: CreditMoney.micro(pence: Double(pence)), ref: Self.reference(for: transaction.id),
                                 source: Self.source(env))
         } catch {
-            status = .failed("Your credit could not be saved on this device. It will be added the next time the app opens.")
+            status = .failed(LocalText.string("Your credit could not be saved on this device. It will be added the next time the app opens."))
             return                                  // not finished: StoreKit offers it again (Transaction.unfinished)
         }
         if environment == .unknown { environment = env }

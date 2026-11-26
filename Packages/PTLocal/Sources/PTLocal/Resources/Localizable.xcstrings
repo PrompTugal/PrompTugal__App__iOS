@@ -1,0 +1,5656 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    " %@ of %@ read in the last 3 hours.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " %@ de %@ lidos nas últimas 3 horas."
+          }
+        }
+      }
+    },
+    " so far": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " até agora"
+          }
+        }
+      }
+    },
+    " · %@ to %@ (Portugal time)": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · das %@ às %@ (hora de Portugal)"
+          }
+        }
+      }
+    },
+    "%@ Persona mode and Near me still work: the ranking is keywords on the device, no model needed.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ O modo persona e Perto de mim continuam a funcionar: a ordenação é feita por palavras-chave no dispositivo, sem modelo."
+          }
+        }
+      }
+    },
+    "%@ apps": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ apps"
+          }
+        }
+      }
+    },
+    "%@ asks": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pedidos"
+          }
+        }
+      }
+    },
+    "%@ asks a person": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pede algo a uma pessoa"
+          }
+        }
+      }
+    },
+    "%@ back for “%@”, and the reason kept in your history on this device.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ devolvido por “%@”, e o motivo guardado no seu histórico neste dispositivo."
+          }
+        }
+      }
+    },
+    "%@ council": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Câmara Municipal de %@"
+          }
+        }
+      }
+    },
+    "%@ for %@ at check": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ para %@ na verificação"
+          }
+        }
+      }
+    },
+    "%@ hours ago": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "há %@ horas"
+          }
+        }
+      }
+    },
+    "%@ in one paragraph": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ num parágrafo"
+          }
+        }
+      }
+    },
+    "%@ joined the newsroom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ juntou-se à redação"
+          }
+        }
+      }
+    },
+    "%@ km/h": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ km/h"
+          }
+        }
+      }
+    },
+    "%@ live · %@ researching": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ em direto · %@ em pesquisa"
+          }
+        }
+      }
+    },
+    "%@ local AI stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ notícias locais de IA"
+          }
+        }
+      }
+    },
+    "%@ local stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ notícias locais"
+          }
+        }
+      }
+    },
+    "%@ min ago": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "há %@ min"
+          }
+        }
+      }
+    },
+    "%@ minutes ago": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "há %@ minutos"
+          }
+        }
+      }
+    },
+    "%@ more": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mais %@"
+          }
+        }
+      }
+    },
+    "%@ of %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ de %@"
+          }
+        }
+      }
+    },
+    "%@ of %@ agents active in the last half hour": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ de %@ agentes ativos na última meia hora"
+          }
+        }
+      }
+    },
+    "%@ of %@ sites read their data in the last 3 hours.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ de %@ sites leram os seus dados nas últimas 3 horas."
+          }
+        }
+      }
+    },
+    "%@ of reading credit": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ de crédito de leitura"
+          }
+        }
+      }
+    },
+    "%@ on this device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ neste dispositivo"
+          }
+        }
+      }
+    },
+    "%@ organisations": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ organizações"
+          }
+        }
+      }
+    },
+    "%@ paid reads": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ leituras pagas"
+          }
+        }
+      }
+    },
+    "%@ public contracts in 2026 on the Portal BASE, %@ in all.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ contratos públicos em 2026 no Portal BASE, %@ no total."
+          }
+        }
+      }
+    },
+    "%@ public contracts in 2026 on the Portal BASE.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ contratos públicos em 2026 no Portal BASE."
+          }
+        }
+      }
+    },
+    "%@ seen live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ vistas em direto"
+          }
+        }
+      }
+    },
+    "%@ shown": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ mostrados"
+          }
+        }
+      }
+    },
+    "%@ sources": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ fontes"
+          }
+        }
+      }
+    },
+    "%@ station, %@ away · read %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estação de %@, a %@ · lida a %@"
+          }
+        }
+      }
+    },
+    "%@ stories · %@ mapped": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ notícias · %@ no mapa"
+          }
+        }
+      }
+    },
+    "%@ stories · %@ on the AI map": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ notícias · %@ no mapa da IA"
+          }
+        }
+      }
+    },
+    "%@ things read · %@ spent · %@ topped up": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ coisas lidas · %@ gastos · %@ carregados"
+          }
+        }
+      }
+    },
+    "%@ updated %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ atualizou %@"
+          }
+        }
+      }
+    },
+    "%@ warning: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aviso %@: %@"
+          }
+        }
+      }
+    },
+    "%@ woke": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ acordou"
+          }
+        }
+      }
+    },
+    "%@ · last sign of life %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · último sinal de vida %@"
+          }
+        }
+      }
+    },
+    "%@ → %@: %@ new handoffs": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ → %@: %@ passagens de trabalho novas"
+          }
+        }
+      }
+    },
+    "%@ → %@: 1 new handoff": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ → %@: 1 passagem de trabalho nova"
+          }
+        }
+      }
+    },
+    "%@'s agent has no local AI stories yet: still researching.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O agente de %@ ainda não tem notícias locais de IA: ainda está a pesquisar."
+          }
+        }
+      }
+    },
+    "%@'s site went live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O site de %@ entrou em direto"
+          }
+        }
+      }
+    },
+    "%@, %@ not charged": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ não cobradas"
+          }
+        }
+      }
+    },
+    "%@, %@ stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ notícias"
+          }
+        }
+      }
+    },
+    "%@, from %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, de %@"
+          }
+        }
+      }
+    },
+    "%@. Open IPMA for the details.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Abra o IPMA para os detalhes."
+          }
+        }
+      }
+    },
+    "%@. Solid ring: live site; dashed: still researching. Tap a town to open it.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Anel contínuo: site em direto; tracejado: ainda em pesquisa. Toque numa localidade para a abrir."
+          }
+        }
+      }
+    },
+    "%@: %@, %@ stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: %@, %@ notícias"
+          }
+        }
+      }
+    },
+    "%@@ mapped %@ more in %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@@ mapeou mais %2$@ em %3$@"
+          }
+        }
+      }
+    },
+    "%@@ updated %@: %@ new stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@@ atualizou %@: %@ notícias novas"
+          }
+        }
+      }
+    },
+    "%@@ updated %@: 1 new story": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@@ atualizou %@: 1 notícia nova"
+          }
+        }
+      }
+    },
+    ", read on %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", lida a %@"
+          }
+        }
+      }
+    },
+    ". The collector runs about every ten minutes; this is older than that.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ". O coletor corre mais ou menos a cada dez minutos; isto é mais antigo."
+          }
+        }
+      }
+    },
+    "...": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "..."
+          }
+        }
+      }
+    },
+    "1 minute ago": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "há 1 minuto"
+          }
+        }
+      }
+    },
+    "1 paid read": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 leitura paga"
+          }
+        }
+      }
+    },
+    ": %@ new done": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ": %@ concluídos novos"
+          }
+        }
+      }
+    },
+    "; the site last rebuilt this feed on %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "; o site reconstruiu este feed pela última vez a %@"
+          }
+        }
+      }
+    },
+    "A file did not match the site's manifest (%@), so nothing was changed. Try again later.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um ficheiro não corresponde ao manifesto do site (%@), por isso nada foi alterado. Tente mais tarde."
+          }
+        }
+      }
+    },
+    "A notification when IPMA issues a yellow, orange or red warning for the district of a place you follow. Opens IPMA for the details.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma notificação quando o IPMA emite um aviso amarelo, laranja ou vermelho para o distrito de um local que segue. Abre o IPMA para os detalhes."
+          }
+        }
+      }
+    },
+    "A notification when a town you follow has a new story, with its headline and source.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma notificação quando uma localidade que segue tem uma notícia nova, com o título e a fonte."
+          }
+        }
+      }
+    },
+    "A push to %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um push para %@"
+          }
+        }
+      }
+    },
+    "A push to dev deploys the website and uploads the apps to TestFlight. How long each takes, what is running now, and whether this device needs the newer build.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um push para dev publica o site e envia as apps para o TestFlight. Quanto demora cada passo, o que está a correr agora e se este dispositivo precisa da compilação mais recente."
+          }
+        }
+      }
+    },
+    "A question to a town's agent": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma pergunta ao agente de uma localidade"
+          }
+        }
+      }
+    },
+    "A startup in %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma startup em %@"
+          }
+        }
+      }
+    },
+    "A story": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma notícia"
+          }
+        }
+      }
+    },
+    "A story, a few days old": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma notícia, com alguns dias"
+          }
+        }
+      }
+    },
+    "A story, older than a month": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma notícia, com mais de um mês"
+          }
+        }
+      }
+    },
+    "A story, the day it was published": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma notícia, no dia em que foi publicada"
+          }
+        }
+      }
+    },
+    "A story, two weeks old": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma notícia, com duas semanas"
+          }
+        }
+      }
+    },
+    "A top-up adds to the balance on this device. Nothing renews.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um carregamento soma-se ao saldo neste dispositivo. Nada se renova."
+          }
+        }
+      }
+    },
+    "A town's newsroom, step by step": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A redação de uma localidade, passo a passo"
+          }
+        }
+      }
+    },
+    "A weekly pulse of known-exploited and new vulnerabilities.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um pulso semanal de vulnerabilidades novas e já exploradas."
+          }
+        }
+      }
+    },
+    "AI and technology across the Algarve and its 17 towns, every fact sourced.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA e tecnologia no Algarve e nas suas 17 localidades, cada facto com a sua fonte."
+          }
+        }
+      }
+    },
+    "AI in %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA em %@"
+          }
+        }
+      }
+    },
+    "AI path: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caminho até à IA: %@"
+          }
+        }
+      }
+    },
+    "AI summary: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumo de IA: %@"
+          }
+        }
+      }
+    },
+    "Across the region": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em toda a região"
+          }
+        }
+      }
+    },
+    "Active now": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativos agora"
+          }
+        }
+      }
+    },
+    "Agent": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agente"
+          }
+        }
+      }
+    },
+    "Agent activity": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atividade dos agentes"
+          }
+        }
+      }
+    },
+    "Agent-hours fired": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horas-agente de trabalho"
+          }
+        }
+      }
+    },
+    "Agents": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agentes"
+          }
+        }
+      }
+    },
+    "Alerts": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alertas"
+          }
+        }
+      }
+    },
+    "Algarve": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algarve"
+          }
+        }
+      }
+    },
+    "Algarve Evolution": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algarve Evolution"
+          }
+        }
+      }
+    },
+    "Algarve maps": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapas do Algarve"
+          }
+        }
+      }
+    },
+    "Algarvio voice": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voz algarvia"
+          }
+        }
+      }
+    },
+    "All": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tudo"
+          }
+        }
+      }
+    },
+    "Already paid for": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já pago"
+          }
+        }
+      }
+    },
+    "An AI summary": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um resumo de IA"
+          }
+        }
+      }
+    },
+    "An investor": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um investidor"
+          }
+        }
+      }
+    },
+    "Another reason": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outro motivo"
+          }
+        }
+      }
+    },
+    "Apple Intelligence": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence"
+          }
+        }
+      }
+    },
+    "Apple Intelligence (on this device)": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence (neste dispositivo)"
+          }
+        }
+      }
+    },
+    "Apple Intelligence added, on this device: ": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Apple Intelligence acrescentou, neste dispositivo: "
+          }
+        }
+      }
+    },
+    "Apple Intelligence is available on this device.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Apple Intelligence está disponível neste dispositivo."
+          }
+        }
+      }
+    },
+    "Apple Intelligence is reading the page on this device…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Apple Intelligence está a ler a página neste dispositivo…"
+          }
+        }
+      }
+    },
+    "Apple Intelligence is switched off in Settings.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Apple Intelligence está desligado nas Definições."
+          }
+        }
+      }
+    },
+    "Apple Intelligence is thinking of more words…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Apple Intelligence está a pensar em mais palavras…"
+          }
+        }
+      }
+    },
+    "Apple Intelligence needs iOS 26 or later on a device that supports it.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Apple Intelligence precisa do iOS 26 ou posterior num dispositivo compatível."
+          }
+        }
+      }
+    },
+    "Apple Intelligence reads the Algarve's town pages on your device: a town in one paragraph, a story in two sentences, why a story is about AI. Tell it who you are and the news reorders for you. The weather and IPMA's warnings, live, for the town you are in.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Apple Intelligence lê as páginas das localidades do Algarve no seu dispositivo: uma localidade num parágrafo, uma notícia em duas frases, porque é que uma notícia é sobre IA. Diga-lhe quem é e as notícias reordenam-se para si. O tempo e os avisos do IPMA, em direto, para a localidade onde está."
+          }
+        }
+      }
+    },
+    "Apple Intelligence · for %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence · para %@"
+          }
+        }
+      }
+    },
+    "Apple Intelligence: not available on this device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence: não disponível neste dispositivo"
+          }
+        }
+      }
+    },
+    "Apple Intelligence: on this device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Intelligence: neste dispositivo"
+          }
+        }
+      }
+    },
+    "Apple's on-device model declined to answer this.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O modelo da Apple no dispositivo recusou-se a responder."
+          }
+        }
+      }
+    },
+    "Apple's on-device model is not available right now.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O modelo da Apple no dispositivo não está disponível neste momento."
+          }
+        }
+      }
+    },
+    "Apple's on-device model is still downloading. Try again later.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O modelo da Apple no dispositivo ainda está a ser descarregado. Tente mais tarde."
+          }
+        }
+      }
+    },
+    "Ask Apple Intelligence": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perguntar ao Apple Intelligence"
+          }
+        }
+      }
+    },
+    "Ask and summarise": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perguntar e resumir"
+          }
+        }
+      }
+    },
+    "Asking for your location, only while you use the app…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A pedir a sua localização, só enquanto usa a app…"
+          }
+        }
+      }
+    },
+    "Asks": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pedidos"
+          }
+        }
+      }
+    },
+    "Back to live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voltar ao direto"
+          }
+        }
+      }
+    },
+    "Below zero. Nothing is blocked. Opens your credit.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abaixo de zero. Nada fica bloqueado. Abre o seu crédito."
+          }
+        }
+      }
+    },
+    "Below zero: nothing is blocked.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abaixo de zero: nada fica bloqueado."
+          }
+        }
+      }
+    },
+    "Brief me again": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fazer novo resumo"
+          }
+        }
+      }
+    },
+    "Brief me on this device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fazer um resumo neste dispositivo"
+          }
+        }
+      }
+    },
+    "Browsing": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Navegação"
+          }
+        }
+      }
+    },
+    "Browsing places, lists and the newsroom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Navegar por locais, listas e pela redação"
+          }
+        }
+      }
+    },
+    "Built-in copy of %@: connect to update": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia incluída na app, de %@: ligue-se para atualizar"
+          }
+        }
+      }
+    },
+    "Built-in copy. %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia incluída na app. %@"
+          }
+        }
+      }
+    },
+    "CI status": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estado da CI"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        }
+      }
+    },
+    "Cartogram": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cartograma"
+          }
+        }
+      }
+    },
+    "Catalogue": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Catálogo"
+          }
+        }
+      }
+    },
+    "Change": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mudar"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechar"
+          }
+        }
+      }
+    },
+    "Command centre": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centro de comando"
+          }
+        }
+      }
+    },
+    "Command centre · live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Centro de comando · em direto"
+          }
+        }
+      }
+    },
+    "Conditions now": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Condições agora"
+          }
+        }
+      }
+    },
+    "Contribution: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contribuição: %@"
+          }
+        }
+      }
+    },
+    "Costs %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custa %@"
+          }
+        }
+      }
+    },
+    "Could not find your location: %@. Pick your town instead.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível encontrar a sua localização: %@. Escolha a sua localidade."
+          }
+        }
+      }
+    },
+    "Could not read the CI status. Check the connection and try again.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler o estado da CI. Verifique a ligação e tente de novo."
+          }
+        }
+      }
+    },
+    "Council notices": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anúncios da câmara"
+          }
+        }
+      }
+    },
+    "Covering: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cobrir: %@"
+          }
+        }
+      }
+    },
+    "Data sources": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fontes de dados"
+          }
+        }
+      }
+    },
+    "Debug build: purchases go to the StoreKit test file or the App Store sandbox. No money is taken.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilação de depuração: as compras vão para o ficheiro de teste StoreKit ou para o ambiente de testes da App Store. Não é cobrado dinheiro."
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apagar"
+          }
+        }
+      }
+    },
+    "Delete the saved edition": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apagar a edição guardada"
+          }
+        }
+      }
+    },
+    "Delete the saved edition?": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apagar a edição guardada?"
+          }
+        }
+      }
+    },
+    "Desks": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secções"
+          }
+        }
+      }
+    },
+    "Developer": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Programador"
+          }
+        }
+      }
+    },
+    "Don't charge me": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não me cobrem"
+          }
+        }
+      }
+    },
+    "Don't charge me for this": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não me cobrem isto"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feito"
+          }
+        }
+      }
+    },
+    "Each circle sits near its town; its area is the measure.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada círculo fica perto da sua localidade; a área é a medida."
+          }
+        }
+      }
+    },
+    "Each count and read time comes from the site's own feed, read by this device. Weather, events and signals are counted from data.promptugal.news's catalogue. A site without a feed the app reads says so.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada contagem e hora de leitura vem do próprio feed do site, lido por este dispositivo. O tempo, os eventos e os sinais são contados a partir do catálogo de data.promptugal.news. Um site sem feed que a app leia diz isso mesmo."
+          }
+        }
+      }
+    },
+    "Edit and publish": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar e publicar"
+          }
+        }
+      }
+    },
+    "Edition %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edição %@"
+          }
+        }
+      }
+    },
+    "Events": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eventos"
+          }
+        }
+      }
+    },
+    "Every agent behind PrompTugal.news, read every minute from the newsroom's own dashboard. A pulse is an agent that showed a sign of life in the last half hour; a spark, one you saw change. Read-only.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos os agentes por trás de PrompTugal.news, lidos a cada minuto a partir do próprio painel da redação. Um pulso é um agente que deu sinal de vida na última meia hora; uma faísca, um que viu mudar. Só leitura."
+          }
+        }
+      }
+    },
+    "Every agent behind PrompTugal.news: what it is doing, what it did last, what it needs. Read-only.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos os agentes por trás de PrompTugal.news: o que estão a fazer, o que fizeram por último, do que precisam. Só leitura."
+          }
+        }
+      }
+    },
+    "Every answer here is generated on the device from the page's own facts, and nothing is sent anywhere. It can be wrong: each story links to its source.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada resposta aqui é gerada no dispositivo a partir dos factos da própria página, e nada é enviado para lado nenhum. Pode estar errada: cada notícia tem ligação à sua fonte."
+          }
+        }
+      }
+    },
+    "Every node, pulse and line is read from promptugal.news/api/v1/newsroom/dashboard.json and the place files; the pipeline and runs from /api/v1/newsroom/status.json. Handoffs are the dashboard's 24-hour counts, drawn as a flow, not one particle per handoff. Times an agent wrote ahead of the clock are shown as now.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada nó, pulso e linha vem de promptugal.news/api/v1/newsroom/dashboard.json e dos ficheiros dos locais; o fluxo e as execuções de /api/v1/newsroom/status.json. As passagens de trabalho são as contagens de 24 horas do painel, desenhadas como um fluxo, não uma partícula por passagem. As horas que um agente escreveu à frente do relógio aparecem como agora."
+          }
+        }
+      }
+    },
+    "Every story, town and AI answer in the app costs what the same kind of page costs on promptugal.news. You start with %@, as on the site. The history is kept on this device only.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cada notícia, localidade e resposta de IA na app custa o mesmo que esse tipo de página custa em promptugal.news. Começa com %@, como no site. O histórico fica guardado só neste dispositivo."
+          }
+        }
+      }
+    },
+    "Every town the same size, placed to keep the region's shape.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas as localidades do mesmo tamanho, dispostas para manter a forma da região."
+          }
+        }
+      }
+    },
+    "Everything it reports": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tudo o que reporta"
+          }
+        }
+      }
+    },
+    "Explain the AI path": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explicar o caminho até à IA"
+          }
+        }
+      }
+    },
+    "Faded: quiet or stopped": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esbatido: em silêncio ou parado"
+          }
+        }
+      }
+    },
+    "Find an agent": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurar um agente"
+          }
+        }
+      }
+    },
+    "Finding the nearest town…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A procurar a localidade mais próxima…"
+          }
+        }
+      }
+    },
+    "Fired in %@ of the last %@ hours": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trabalhou em %@ das últimas %@ horas"
+          }
+        }
+      }
+    },
+    "Focus": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foco"
+          }
+        }
+      }
+    },
+    "Following": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A seguir"
+          }
+        }
+      }
+    },
+    "For you": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para si"
+          }
+        }
+      }
+    },
+    "For you first": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Primeiro o que é para si"
+          }
+        }
+      }
+    },
+    "For you: ": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para si: "
+          }
+        }
+      }
+    },
+    "Forget my town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esquecer a minha localidade"
+          }
+        }
+      }
+    },
+    "Found and wrote it up for %@%@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encontrou-a e escreveu sobre ela para %@%@"
+          }
+        }
+      }
+    },
+    "From promptugal.news's meter (%@, %@): price by kind of page and how fresh it is, never less than %@. Reading the same thing again in one session is not charged twice. Swipe a charge to say why you won't pay for it.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do contador de promptugal.news (%@, %@): preço por tipo de página e pela sua atualidade, nunca menos de %@. Ler a mesma coisa outra vez na mesma sessão não é cobrado duas vezes. Deslize uma cobrança para dizer porque não a quer pagar."
+          }
+        }
+      }
+    },
+    "From push to production": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do push à produção"
+          }
+        }
+      }
+    },
+    "From the Algarve's data": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A partir dos dados do Algarve"
+          }
+        }
+      }
+    },
+    "From the latest dashboard": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do painel mais recente"
+          }
+        }
+      }
+    },
+    "From the venues' and councils' own agendas, as data.promptugal.news reads them. A dated list, not a ticket office.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das agendas das próprias salas e câmaras, tal como data.promptugal.news as lê. Uma lista datada, não uma bilheteira."
+          }
+        }
+      }
+    },
+    "Generated on this device by Apple Intelligence, from the page's own facts. It can be wrong: the sources are below.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerado neste dispositivo pelo Apple Intelligence, a partir dos factos da própria página. Pode estar errado: as fontes estão abaixo."
+          }
+        }
+      }
+    },
+    "Generating on this device…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A gerar neste dispositivo…"
+          }
+        }
+      }
+    },
+    "Green": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "verde"
+          }
+        }
+      }
+    },
+    "Grid": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grelha"
+          }
+        }
+      }
+    },
+    "Handoffs": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passagens de trabalho"
+          }
+        }
+      }
+    },
+    "Health tech investor": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Investidor em tecnologia da saúde"
+          }
+        }
+      }
+    },
+    "History": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Histórico"
+          }
+        }
+      }
+    },
+    "Hour of the replay": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hora da revisão"
+          }
+        }
+      }
+    },
+    "How long since each town's agent showed a sign of life": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Há quanto tempo o agente de cada localidade deu sinal de vida"
+          }
+        }
+      }
+    },
+    "How the site prices a page": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Como o site define o preço de uma página"
+          }
+        }
+      }
+    },
+    "I am from… / I invest in… / I care about…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sou de… / Invisto em… / Interessa-me…"
+          }
+        }
+      }
+    },
+    "I opened it by mistake": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abri por engano"
+          }
+        }
+      }
+    },
+    "IPMA and MeteoAlarm feeds": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "feeds do IPMA e do MeteoAlarm"
+          }
+        }
+      }
+    },
+    "IPMA could not be reached.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível contactar o IPMA."
+          }
+        }
+      }
+    },
+    "IPMA forecast for %@, %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previsão do IPMA para %@, %@"
+          }
+        }
+      }
+    },
+    "IPMA forecast for %@, the nearest forecast point to %@, %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previsão do IPMA para %1$@, o ponto de previsão mais próximo de %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "IPMA warnings, forecasts, fire risk, sea and UV, and MeteoAlarm. Not a warning service: follow IPMA and ANEPC.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avisos, previsões, risco de incêndio, mar e UV do IPMA, e MeteoAlarm. Não é um serviço de avisos: siga o IPMA e a ANEPC."
+          }
+        }
+      }
+    },
+    "IPMA weather warnings": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avisos meteorológicos do IPMA"
+          }
+        }
+      }
+    },
+    "IPMA: %@ warning, %@ district": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPMA: aviso %1$@, distrito de %2$@"
+          }
+        }
+      }
+    },
+    "IPMA: %@%@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPMA: %@%@"
+          }
+        }
+      }
+    },
+    "Idle": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inativo"
+          }
+        }
+      }
+    },
+    "In your own words": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Por palavras suas"
+          }
+        }
+      }
+    },
+    "Installed build": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilação instalada"
+          }
+        }
+      }
+    },
+    "It was a test": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foi um teste"
+          }
+        }
+      }
+    },
+    "It was not useful": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi útil"
+          }
+        }
+      }
+    },
+    "Its AI map": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O seu mapa da IA"
+          }
+        }
+      }
+    },
+    "Its agent at work": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O seu agente a trabalhar"
+          }
+        }
+      }
+    },
+    "Its latest stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas notícias mais recentes"
+          }
+        }
+      }
+    },
+    "Its notes on the dashboard mention %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas notas no painel mencionam %@"
+          }
+        }
+      }
+    },
+    "Its own words on what it is doing, its last wake, where it fired today and, for a town, its newest stories.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas próprias palavras sobre o que está a fazer, o último despertar, onde trabalhou hoje e, para uma localidade, as notícias mais recentes."
+          }
+        }
+      }
+    },
+    "Its stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas notícias"
+          }
+        }
+      }
+    },
+    "Kept on this device only. Stories and organisations are ranked here by the words you use; Apple Intelligence, where the device has it, writes a briefing for you.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardado só neste dispositivo. As notícias e as organizações são ordenadas aqui pelas palavras que usa; o Apple Intelligence, onde o dispositivo o tem, escreve um resumo para si."
+          }
+        }
+      }
+    },
+    "Last 24 h": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Últimas 24 h"
+          }
+        }
+      }
+    },
+    "Last 24 hours": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Últimas 24 horas"
+          }
+        }
+      }
+    },
+    "Last 24 hours, UTC": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Últimas 24 horas, UTC"
+          }
+        }
+      }
+    },
+    "Last checked %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Última verificação %@"
+          }
+        }
+      }
+    },
+    "Last read: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Última leitura: %@"
+          }
+        }
+      }
+    },
+    "Last wake": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Último despertar"
+          }
+        }
+      }
+    },
+    "Latest TestFlight build per app": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compilação mais recente no TestFlight por app"
+          }
+        }
+      }
+    },
+    "Latest in TestFlight: %@ (%@)": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mais recente no TestFlight: %@ (%@)"
+          }
+        }
+      }
+    },
+    "Live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto"
+          }
+        }
+      }
+    },
+    "Live from IPMA": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto do IPMA"
+          }
+        }
+      }
+    },
+    "Live from promptugal.news": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto de promptugal.news"
+          }
+        }
+      }
+    },
+    "Live from the ci-status branch": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto do ramo ci-status"
+          }
+        }
+      }
+    },
+    "Live site": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Site em direto"
+          }
+        }
+      }
+    },
+    "Live sites": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sites em direto"
+          }
+        }
+      }
+    },
+    "Live, read %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em direto, lido às %@"
+          }
+        }
+      }
+    },
+    "Loading the newsroom dashboard…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A carregar o painel da redação…"
+          }
+        }
+      }
+    },
+    "Local AI news": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias locais de IA"
+          }
+        }
+      }
+    },
+    "Local AI stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias locais de IA"
+          }
+        }
+      }
+    },
+    "Local AI stories on each town's site": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias locais de IA no site de cada localidade"
+          }
+        }
+      }
+    },
+    "Local notifications only. The app reads public files that are the same for everyone and picks what concerns your towns on this phone. Which towns you follow never leaves it.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só notificações locais. A app lê ficheiros públicos, iguais para todos, e escolhe neste telemóvel o que diz respeito às suas localidades. As localidades que segue nunca saem dele."
+          }
+        }
+      }
+    },
+    "Location is off for PrompTugal. Pick your town instead, or allow it in Settings.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A localização está desligada para o PrompTugal. Escolha a sua localidade, ou permita-a nas Definições."
+          }
+        }
+      }
+    },
+    "Location, while using the app": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localização, enquanto usa a app"
+          }
+        }
+      }
+    },
+    "Map": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa"
+          }
+        }
+      }
+    },
+    "Map of the 17 places in the Algarve": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapa dos 17 locais do Algarve"
+          }
+        }
+      }
+    },
+    "Map style": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estilo do mapa"
+          }
+        }
+      }
+    },
+    "Matches your persona: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corresponde à sua persona: %@"
+          }
+        }
+      }
+    },
+    "NEW · seen while watching": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOVO · visto enquanto via"
+          }
+        }
+      }
+    },
+    "Near me": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perto de mim"
+          }
+        }
+      }
+    },
+    "New in %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Novo em %@"
+          }
+        }
+      }
+    },
+    "New stories in my towns": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias novas nas minhas localidades"
+          }
+        }
+      }
+    },
+    "Newsroom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redação"
+          }
+        }
+      }
+    },
+    "Newsroom status": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estado da redação"
+          }
+        }
+      }
+    },
+    "Next": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A seguir"
+          }
+        }
+      }
+    },
+    "Next town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localidade seguinte"
+          }
+        }
+      }
+    },
+    "Next: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A seguir: %@"
+          }
+        }
+      }
+    },
+    "No IPMA station within 40 km of %@ has a reading in the last three hours.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma estação do IPMA a menos de 40 km de %@ tem leituras nas últimas três horas."
+          }
+        }
+      }
+    },
+    "No IPMA warnings above green for the Algarve.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem avisos do IPMA acima de verde para o Algarve."
+          }
+        }
+      }
+    },
+    "No TestFlight upload of this app in the latest runs on dev.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum envio desta app para o TestFlight nas últimas execuções em dev."
+          }
+        }
+      }
+    },
+    "No agent fired in the last 24 hours.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum agente trabalhou nas últimas 24 horas."
+          }
+        }
+      }
+    },
+    "No agent is named for this story in the data.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os dados não indicam nenhum agente para esta notícia."
+          }
+        }
+      }
+    },
+    "No edition saved": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma edição guardada"
+          }
+        }
+      }
+    },
+    "No forecast details.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem detalhes da previsão."
+          }
+        }
+      }
+    },
+    "No local AI stories yet: %@'s agent is still researching.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não há notícias locais de IA: o agente de %@ ainda está a pesquisar."
+          }
+        }
+      }
+    },
+    "No local AI stories yet: the town's agent is still researching.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não há notícias locais de IA: o agente da localidade ainda está a pesquisar."
+          }
+        }
+      }
+    },
+    "No procurement notice of this council is open today.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum anúncio de procedimento desta câmara está aberto hoje."
+          }
+        }
+      }
+    },
+    "No runs since %@: the ledger's newest entry is from then%@.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma execução desde %@: a entrada mais recente do registo é dessa data%@."
+          }
+        }
+      }
+    },
+    "No small feed the app reads: open the site for its pages and their read dates.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum feed pequeno que a app leia: abra o site para ver as páginas e as datas de leitura."
+          }
+        }
+      }
+    },
+    "No stories yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não há notícias."
+          }
+        }
+      }
+    },
+    "No upload found in the latest runs on dev.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum envio encontrado nas últimas execuções em dev."
+          }
+        }
+      }
+    },
+    "No wind reading": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem leitura de vento"
+          }
+        }
+      }
+    },
+    "No words to rank by yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não há palavras para ordenar."
+          }
+        }
+      }
+    },
+    "Not a TestFlight build": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não é uma compilação do TestFlight"
+          }
+        }
+      }
+    },
+    "Not available on this device: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não disponível neste dispositivo: %@"
+          }
+        }
+      }
+    },
+    "Not charged: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não cobrado: %@"
+          }
+        }
+      }
+    },
+    "Not checked yet": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não verificado"
+          }
+        }
+      }
+    },
+    "Not known yet": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não se sabe"
+          }
+        }
+      }
+    },
+    "Not loaded": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não carregado"
+          }
+        }
+      }
+    },
+    "Not loaded yet": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não carregado"
+          }
+        }
+      }
+    },
+    "Not read: the site could not be reached.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não lido: não foi possível contactar o site."
+          }
+        }
+      }
+    },
+    "Not readable: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ilegível: %@"
+          }
+        }
+      }
+    },
+    "Nothing in the Algarve's news matches “%@” yet. Try other words: a topic, a sector or an organisation's name.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda nada nas notícias do Algarve corresponde a “%@”. Experimente outras palavras: um tema, um setor ou o nome de uma organização."
+          }
+        }
+      }
+    },
+    "Nothing of this kind yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda nada deste tipo."
+          }
+        }
+      }
+    },
+    "Nothing yet. Stories you pay to read show here, by the outlet that published them.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda nada. As notícias que paga para ler aparecem aqui, pelo meio que as publicou."
+          }
+        }
+      }
+    },
+    "Notice %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anúncio %@"
+          }
+        }
+      }
+    },
+    "Notifications are off for PrompTugal in Settings, so alerts cannot be shown.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As notificações do PrompTugal estão desligadas nas Definições, por isso os alertas não podem ser mostrados."
+          }
+        }
+      }
+    },
+    "Now over %@, %@ stories. Opens the town.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora sobre %@, %@ notícias. Abre a localidade."
+          }
+        }
+      }
+    },
+    "Now: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora: %@"
+          }
+        }
+      }
+    },
+    "Off": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desligado"
+          }
+        }
+      }
+    },
+    "Official events from councils, theatres and venues, place by place.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eventos oficiais de câmaras, teatros e salas, local a local."
+          }
+        }
+      }
+    },
+    "Offline edition": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edição offline"
+          }
+        }
+      }
+    },
+    "Offline: the last IPMA data this device read": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem ligação: os últimos dados do IPMA lidos neste dispositivo"
+          }
+        }
+      }
+    },
+    "Offline: the last copy this device read": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem ligação: a última cópia lida neste dispositivo"
+          }
+        }
+      }
+    },
+    "Offline: this device's copy. %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem ligação: a cópia deste dispositivo. %@"
+          }
+        }
+      }
+    },
+    "On its way now": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A caminho"
+          }
+        }
+      }
+    },
+    "On the AI map": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No mapa da IA"
+          }
+        }
+      }
+    },
+    "On the map": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No mapa"
+          }
+        }
+      }
+    },
+    "One agent per town, and what each is doing now. Read-only.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um agente por localidade, e o que cada um está a fazer agora. Só leitura."
+          }
+        }
+      }
+    },
+    "Open %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir %@"
+          }
+        }
+      }
+    },
+    "Open %@'s page": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir a página de %@"
+          }
+        }
+      }
+    },
+    "Open PrompTugal to see them all.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abra o PrompTugal para as ver todas."
+          }
+        }
+      }
+    },
+    "Open TestFlight to update": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir o TestFlight para atualizar"
+          }
+        }
+      }
+    },
+    "Opens the agent's page on promptugal.news": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre a página do agente em promptugal.news"
+          }
+        }
+      }
+    },
+    "Opens the event's source": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre a fonte do evento"
+          }
+        }
+      }
+    },
+    "Opens the notice in the Diário da República": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre o anúncio no Diário da República"
+          }
+        }
+      }
+    },
+    "Opens the source's page on data.promptugal.news": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre a página da fonte em data.promptugal.news"
+          }
+        }
+      }
+    },
+    "Opens your credit and its history.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre o seu crédito e o histórico."
+          }
+        }
+      }
+    },
+    "Or pick one": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ou escolha uma"
+          }
+        }
+      }
+    },
+    "Orange": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "laranja"
+          }
+        }
+      }
+    },
+    "Organisations on each town's AI map": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizações no mapa da IA de cada localidade"
+          }
+        }
+      }
+    },
+    "Outcome": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resultado"
+          }
+        }
+      }
+    },
+    "Pages only": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só páginas"
+          }
+        }
+      }
+    },
+    "Particles: handoffs, last 24 h": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partículas: passagens de trabalho, últimas 24 h"
+          }
+        }
+      }
+    },
+    "Pause the flight": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausar o voo"
+          }
+        }
+      }
+    },
+    "Pause the replay": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausar a revisão"
+          }
+        }
+      }
+    },
+    "Persona": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Persona"
+          }
+        }
+      }
+    },
+    "Persona mode: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modo persona: %@"
+          }
+        }
+      }
+    },
+    "Pick a story: the agents that found it light up on the board.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha uma notícia: os agentes que a encontraram acendem-se no quadro."
+          }
+        }
+      }
+    },
+    "Pick a town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolher uma localidade"
+          }
+        }
+      }
+    },
+    "Pipeline and recent runs": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fluxo e execuções recentes"
+          }
+        }
+      }
+    },
+    "Places": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locais"
+          }
+        }
+      }
+    },
+    "Planned, not yet paid": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planeado, ainda não pago"
+          }
+        }
+      }
+    },
+    "Planned, not yet paid: no money has been sent to outlets": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planeado, ainda não pago: não foi enviado dinheiro aos meios"
+          }
+        }
+      }
+    },
+    "Play the flight": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reproduzir o voo"
+          }
+        }
+      }
+    },
+    "Play the last 24 hours": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reproduzir as últimas 24 horas"
+          }
+        }
+      }
+    },
+    "Portugal": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portugal"
+          }
+        }
+      }
+    },
+    "Previous town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localidade anterior"
+          }
+        }
+      }
+    },
+    "Processing or unknown": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em processamento ou desconhecido"
+          }
+        }
+      }
+    },
+    "PrompTugal.news": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news"
+          }
+        }
+      }
+    },
+    "PrompTugal.news Civic is not a council or government site. Every figure links to its source.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news Civic não é um site de uma câmara nem do Governo. Cada número tem ligação à sua fonte."
+          }
+        }
+      }
+    },
+    "PrompTugal.news deploy": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicação de PrompTugal.news"
+          }
+        }
+      }
+    },
+    "PrompTugal.news · %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news · %@"
+          }
+        }
+      }
+    },
+    "PrompTugal.news · by place": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news · por local"
+          }
+        }
+      }
+    },
+    "PrompTugal.news · on this device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news · neste dispositivo"
+          }
+        }
+      }
+    },
+    "PrompTugal.news · the Algarve": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news · o Algarve"
+          }
+        }
+      }
+    },
+    "PrompTugal.news: local news from Portugal, every item with its source. Each town's research is by its own agent.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news: notícias locais de Portugal, cada uma com a sua fonte. A pesquisa de cada localidade é feita pelo seu próprio agente."
+          }
+        }
+      }
+    },
+    "Public cameras by place: what each shows and the operator's own link.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Câmaras públicas por local: o que cada uma mostra e a ligação do próprio operador."
+          }
+        }
+      }
+    },
+    "Public posts by organisations, by link, topic and place.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicações públicas de organizações, por ligação, tema e local."
+          }
+        }
+      }
+    },
+    "Public sector": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setor público"
+          }
+        }
+      }
+    },
+    "Pulse: a sign of life in the last 30 min": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulso: um sinal de vida nos últimos 30 min"
+          }
+        }
+      }
+    },
+    "Purchases are charged by the App Store, unless this is a TestFlight build (sandbox, no money).": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As compras são cobradas pela App Store, exceto numa compilação do TestFlight (ambiente de testes, sem dinheiro)."
+          }
+        }
+      }
+    },
+    "Purchases are real and charged by the App Store.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As compras são reais e cobradas pela App Store."
+          }
+        }
+      }
+    },
+    "Push to %@: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Push para %@: %@"
+          }
+        }
+      }
+    },
+    "Push to TestFlight ready": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do push ao TestFlight pronto"
+          }
+        }
+      }
+    },
+    "Push to TestFlight upload": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do push ao envio para o TestFlight"
+          }
+        }
+      }
+    },
+    "Push to TestFlight upload: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do push ao envio para o TestFlight: %@"
+          }
+        }
+      }
+    },
+    "Push to website live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do push ao site em direto"
+          }
+        }
+      }
+    },
+    "Question to %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pergunta a %@"
+          }
+        }
+      }
+    },
+    "Quiet": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em silêncio"
+          }
+        }
+      }
+    },
+    "Quiet or stopped": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parados ou em silêncio"
+          }
+        }
+      }
+    },
+    "Ranked on this device by keywords (%@).": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordenado neste dispositivo por palavras-chave (%@)."
+          }
+        }
+      }
+    },
+    "Ranked on this device by keywords.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordenado neste dispositivo por palavras-chave."
+          }
+        }
+      }
+    },
+    "Read it at %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ler em %@"
+          }
+        }
+      }
+    },
+    "Read time not given": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hora de leitura não indicada"
+          }
+        }
+      }
+    },
+    "Read-only, and only the public newsroom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só leitura, e só a redação pública"
+          }
+        }
+      }
+    },
+    "Read-only, from GitHub Actions": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só leitura, do GitHub Actions"
+          }
+        }
+      }
+    },
+    "Read-only: from the newsroom dashboard on promptugal.news.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só leitura: do painel da redação em promptugal.news."
+          }
+        }
+      }
+    },
+    "Reading IPMA's stations…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler as estações do IPMA…"
+          }
+        }
+      }
+    },
+    "Reading credit": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crédito de leitura"
+          }
+        }
+      }
+    },
+    "Reading credit: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crédito de leitura: %@"
+          }
+        }
+      }
+    },
+    "Reading the agents…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler os agentes…"
+          }
+        }
+      }
+    },
+    "Reading the manifest": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler o manifesto"
+          }
+        }
+      }
+    },
+    "Reading the newsroom…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler a redação…"
+          }
+        }
+      }
+    },
+    "Reading…": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler…"
+          }
+        }
+      }
+    },
+    "Red": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vermelho"
+          }
+        }
+      }
+    },
+    "Replay the last 24 hours": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rever as últimas 24 horas"
+          }
+        }
+      }
+    },
+    "Research": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pesquisar"
+          }
+        }
+      }
+    },
+    "Runs on this device with Apple Intelligence. Nothing is sent anywhere.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corre neste dispositivo com o Apple Intelligence. Nada é enviado para lado nenhum."
+          }
+        }
+      }
+    },
+    "Save now": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar agora"
+          }
+        }
+      }
+    },
+    "Save over mobile data?": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar com dados móveis?"
+          }
+        }
+      }
+    },
+    "Save the edition": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar a edição"
+          }
+        }
+      }
+    },
+    "Save the last edition to read the articles, the towns and the newsletter with no connection.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guarde a última edição para ler os artigos, as localidades e a newsletter sem ligação."
+          }
+        }
+      }
+    },
+    "Save the newest edition": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar a edição mais recente"
+          }
+        }
+      }
+    },
+    "Saved for offline, read %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardada para ler offline, lida a %@"
+          }
+        }
+      }
+    },
+    "Saving %@ of %@ files": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A guardar %@ de %@ ficheiros"
+          }
+        }
+      }
+    },
+    "See it on the live board": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver no quadro em direto"
+          }
+        }
+      }
+    },
+    "See the news of the town you are in first. Your location stays on this device: the app only works out which of the 17 towns is closest.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veja primeiro as notícias da localidade onde está. A sua localização fica neste dispositivo: a app só calcula qual das 17 localidades fica mais perto."
+          }
+        }
+      }
+    },
+    "Share the site": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partilhar o site"
+          }
+        }
+      }
+    },
+    "Short teletext-style bulletins written by agents from the data, every fact sourced.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boletins curtos ao estilo do teletexto, escritos por agentes a partir dos dados, cada facto com a sua fonte."
+          }
+        }
+      }
+    },
+    "Show": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar"
+          }
+        }
+      }
+    },
+    "Show all %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar todas (%@)"
+          }
+        }
+      }
+    },
+    "Show fewer": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar menos"
+          }
+        }
+      }
+    },
+    "Shows the playful local voice the sites offer": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra a voz local e bem-disposta que os sites oferecem"
+          }
+        }
+      }
+    },
+    "Simulated": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simulado"
+          }
+        }
+      }
+    },
+    "Simulated, not real data": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simulado, não são dados reais"
+          }
+        }
+      }
+    },
+    "Site": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Site"
+          }
+        }
+      }
+    },
+    "Size and colour by": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tamanho e cor por"
+          }
+        }
+      }
+    },
+    "Snapshot, read %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia, lida a %@"
+          }
+        }
+      }
+    },
+    "Some IPMA feeds could not be read; their last copy is shown.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alguns feeds do IPMA não puderam ser lidos; é mostrada a última cópia."
+          }
+        }
+      }
+    },
+    "Sources": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fontes"
+          }
+        }
+      }
+    },
+    "Spark: changed while you watch": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faísca: mudou enquanto via"
+          }
+        }
+      }
+    },
+    "Started": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Início"
+          }
+        }
+      }
+    },
+    "Starting credit (as on promptugal.news)": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crédito inicial (como em promptugal.news)"
+          }
+        }
+      }
+    },
+    "Startup founder": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fundador de startup"
+          }
+        }
+      }
+    },
+    "Startups and their funding: incubators, programmes, rounds, grants and investors, place by place.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startups e o seu financiamento: incubadoras, programas, rondas, apoios e investidores, local a local."
+          }
+        }
+      }
+    },
+    "Status": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estado"
+          }
+        }
+      }
+    },
+    "Status is read from what each agent writes about itself on the dashboard.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O estado vem do que cada agente escreve sobre si próprio no painel."
+          }
+        }
+      }
+    },
+    "Stop": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parar"
+          }
+        }
+      }
+    },
+    "Stopped": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parado"
+          }
+        }
+      }
+    },
+    "Stories": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias"
+          }
+        }
+      }
+    },
+    "Student or researcher": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estudante ou investigador"
+          }
+        }
+      }
+    },
+    "Summarise": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumir"
+          }
+        }
+      }
+    },
+    "Summarise a town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumir uma localidade"
+          }
+        }
+      }
+    },
+    "Summarise on this device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumir neste dispositivo"
+          }
+        }
+      }
+    },
+    "Summarise or explain this story with Apple Intelligence on this device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumir ou explicar esta notícia com o Apple Intelligence neste dispositivo"
+          }
+        }
+      }
+    },
+    "THE DESKS": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AS SECÇÕES"
+          }
+        }
+      }
+    },
+    "THE TOWNS · WEST TO EAST": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AS LOCALIDADES · DE OESTE PARA ESTE"
+          }
+        }
+      }
+    },
+    "Talks, replays and articles, catalogued with their publishers.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palestras, gravações e artigos, catalogados com os seus editores."
+          }
+        }
+      }
+    },
+    "Tap any agent on the board": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque em qualquer agente no quadro"
+          }
+        }
+      }
+    },
+    "Test purchase: %@ added, no money taken.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compra de teste: %@ adicionado, sem dinheiro cobrado."
+          }
+        }
+      }
+    },
+    "Test purchase: no money taken": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compra de teste: sem dinheiro cobrado"
+          }
+        }
+      }
+    },
+    "Test purchases: this build buys from Xcode's StoreKit test file. No money is taken.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras de teste: esta compilação compra a partir do ficheiro de teste StoreKit do Xcode. Não é cobrado dinheiro."
+          }
+        }
+      }
+    },
+    "Test purchases: this build buys in the App Store sandbox (TestFlight). No money is taken.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras de teste: esta compilação compra no ambiente de testes da App Store (TestFlight). Não é cobrado dinheiro."
+          }
+        }
+      }
+    },
+    "Thank you: %@ added.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrigado: %@ adicionado."
+          }
+        }
+      }
+    },
+    "The %@ public sites behind this app, each with its own read time.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os %@ sites públicos por trás desta app, cada um com a sua hora de leitura."
+          }
+        }
+      }
+    },
+    "The %@ sources of data.promptugal.news": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As %@ fontes de data.promptugal.news"
+          }
+        }
+      }
+    },
+    "The 16 Algarve councils: public contracts, procurement notices and where each publishes its papers.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os 16 concelhos do Algarve: contratos públicos, anúncios de procedimentos e onde cada um publica os seus documentos."
+          }
+        }
+      }
+    },
+    "The 17 places": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os 17 locais"
+          }
+        }
+      }
+    },
+    "The 17 places of the Algarve: on the map, in 3D over the terrain, as a grid that keeps the region's shape, and as a cartogram where each town grows with what its agent has found.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os 17 locais do Algarve: no mapa, em 3D sobre o relevo, numa grelha que mantém a forma da região e num cartograma em que cada localidade cresce com o que o seu agente encontrou."
+          }
+        }
+      }
+    },
+    "The AI map": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O mapa da IA"
+          }
+        }
+      }
+    },
+    "The AI path": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O caminho até à IA"
+          }
+        }
+      }
+    },
+    "The Algarve": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Algarve"
+          }
+        }
+      }
+    },
+    "The Algarve on the map, in 3D flying town to town, as a tile grid, and as a cartogram sized by what each agent found.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Algarve no mapa, em 3D a voar de localidade em localidade, numa grelha de mosaicos e num cartograma dimensionado pelo que cada agente encontrou."
+          }
+        }
+      }
+    },
+    "The Algarve · readings near Faro · IPMA": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Algarve · leituras perto de Faro · IPMA"
+          }
+        }
+      }
+    },
+    "The App Store could not be reached.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível contactar a App Store."
+          }
+        }
+      }
+    },
+    "The App Store could not verify this purchase, so no credit was added.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A App Store não conseguiu verificar esta compra, por isso não foi adicionado crédito."
+          }
+        }
+      }
+    },
+    "The PrompTugal.news sites could not be reached.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível contactar os sites de PrompTugal.news."
+          }
+        }
+      }
+    },
+    "The agents": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os agentes"
+          }
+        }
+      }
+    },
+    "The agents on a live board: pulses when one wakes, handoffs in flight, the latest changes as they land.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os agentes num quadro em direto: pulsam quando um acorda, passagens de trabalho em curso, as últimas alterações à medida que chegam."
+          }
+        }
+      }
+    },
+    "The app then needs a connection to read promptugal.news.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A app passa a precisar de ligação para ler promptugal.news."
+          }
+        }
+      }
+    },
+    "The catalogue gives no read time.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O catálogo não indica a hora de leitura."
+          }
+        }
+      }
+    },
+    "The centre of gravity": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O centro de gravidade"
+          }
+        }
+      }
+    },
+    "The companies, institutions and communities with a path to AI, each from a public source.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As empresas, instituições e comunidades com um caminho até à IA, cada uma de uma fonte pública."
+          }
+        }
+      }
+    },
+    "The copy from the last site build": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A cópia da última compilação do site"
+          }
+        }
+      }
+    },
+    "The council on PrompTugal.news Civic": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A câmara em PrompTugal.news Civic"
+          }
+        }
+      }
+    },
+    "The credit history could not be saved on this device: %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível guardar o histórico de crédito neste dispositivo: %@"
+          }
+        }
+      }
+    },
+    "The credit history on this device could not be read. It was kept as %@ and a new one started.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler o histórico de crédito neste dispositivo. Foi guardado como %@ e começou um novo."
+          }
+        }
+      }
+    },
+    "The flow": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O fluxo"
+          }
+        }
+      }
+    },
+    "The latest from the towns": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O mais recente das localidades"
+          }
+        }
+      }
+    },
+    "The manifest lists a file the app will not save (%@). Nothing was changed.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O manifesto indica um ficheiro que a app não guarda (%@). Nada foi alterado."
+          }
+        }
+      }
+    },
+    "The newsroom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A redação"
+          }
+        }
+      }
+    },
+    "The newsroom behind it": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A redação por trás"
+          }
+        }
+      }
+    },
+    "The newsroom board: %@ agents, %@ active in the last half hour, %@ handoff routes.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O quadro da redação: %@ agentes, %@ ativos na última meia hora, %@ rotas de passagem de trabalho."
+          }
+        }
+      }
+    },
+    "The newsroom dashboard could not be reached.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível contactar o painel da redação."
+          }
+        }
+      }
+    },
+    "The newsroom dashboard lists no agent for this place yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O painel da redação ainda não tem nenhum agente para este local."
+          }
+        }
+      }
+    },
+    "The newsroom in action": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A redação em ação"
+          }
+        }
+      }
+    },
+    "The newsroom's status page": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A página de estado da redação"
+          }
+        }
+      }
+    },
+    "The newsroom, live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A redação, em direto"
+          }
+        }
+      }
+    },
+    "The newsroom: articles, stories, companies and events, place by place, each with its source.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A redação: artigos, notícias, empresas e eventos, local a local, cada um com a sua fonte."
+          }
+        }
+      }
+    },
+    "The numbers come from the workflows' own runs, read with the workflow token every ten minutes. Push to live is from the push to the moment the site serves the release, or App Store Connect has processed the build.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os números vêm das próprias execuções dos workflows, lidas com o token do workflow a cada dez minutos. Do push ao direto conta do push até o site servir a versão, ou até o App Store Connect ter processado a compilação."
+          }
+        }
+      }
+    },
+    "The organisations the towns' AI maps and stories mention most, and a startup in your town.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As organizações que os mapas da IA e as notícias das localidades mais mencionam, e uma startup na sua localidade."
+          }
+        }
+      }
+    },
+    "The public sites behind this app: what each covers, how much it holds and when it last read its data. Live means read in the last 3 hours.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os sites públicos por trás desta app: o que cada um cobre, quanto contém e quando leu os seus dados pela última vez. Em direto quer dizer lido nas últimas 3 horas."
+          }
+        }
+      }
+    },
+    "The purchase did not complete.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A compra não foi concluída."
+          }
+        }
+      }
+    },
+    "The raw public data behind every site, collected by code: weather, events, contracts, flights, cameras, signals, cyber.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os dados públicos em bruto por trás de cada site, recolhidos por código: tempo, eventos, contratos, voos, câmaras, sinais, ciber."
+          }
+        }
+      }
+    },
+    "The same files for every reader, checked against promptugal.news's manifest. Nothing about you is sent. After the first save, the app saves a newer edition by itself, on Wi-Fi only.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os mesmos ficheiros para todos os leitores, verificados com o manifesto de promptugal.news. Nada sobre si é enviado. Depois da primeira vez, a app guarda sozinha uma edição mais recente, só em Wi-Fi."
+          }
+        }
+      }
+    },
+    "The sea economy": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A economia do mar"
+          }
+        }
+      }
+    },
+    "The site's manifest lists no files to save. The saved edition, if any, is kept.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O manifesto do site não indica ficheiros para guardar. A edição guardada, se houver, mantém-se."
+          }
+        }
+      }
+    },
+    "The town's agent": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O agente da localidade"
+          }
+        }
+      }
+    },
+    "The towns": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As localidades"
+          }
+        }
+      }
+    },
+    "The towns, four ways": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As localidades, de quatro maneiras"
+          }
+        }
+      }
+    },
+    "This build has no Foundation Models SDK.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta compilação não tem o SDK Foundation Models."
+          }
+        }
+      }
+    },
+    "This device": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este dispositivo"
+          }
+        }
+      }
+    },
+    "This device does not support Apple Intelligence.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este dispositivo não suporta o Apple Intelligence."
+          }
+        }
+      }
+    },
+    "This shows the agents PrompTugal.news publishes. Connecting your own conductor, to see every session of yours, comes next; nothing here can steer an agent yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra os agentes que PrompTugal.news publica. Ligar o seu próprio maestro, para ver todas as suas sessões, vem a seguir; nada aqui pode ainda orientar um agente."
+          }
+        }
+      }
+    },
+    "This story, these agents": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta notícia, estes agentes"
+          }
+        }
+      }
+    },
+    "This town's page has not loaded yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A página desta localidade ainda não carregou."
+          }
+        }
+      }
+    },
+    "This uses mobile data, about %@.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto usa dados móveis, cerca de %@."
+          }
+        }
+      }
+    },
+    "This uses mobile data, about 2.5 MB.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto usa dados móveis, cerca de 2,5 MB."
+          }
+        }
+      }
+    },
+    "This was too long for Apple's on-device model in one request.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isto era demasiado longo para o modelo da Apple no dispositivo num só pedido."
+          }
+        }
+      }
+    },
+    "Through data.promptugal.news": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Através de data.promptugal.news"
+          }
+        }
+      }
+    },
+    "Today one agent per town does all four steps. The verify step (asking each organisation \"is this correct?\", drafted by agents and sent by a person) is not running yet: its numbers are simulated.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoje um agente por localidade faz os quatro passos. O passo de verificação (perguntar a cada organização \"isto está correto?\", redigido por agentes e enviado por uma pessoa) ainda não está a funcionar: os seus números são simulados."
+          }
+        }
+      }
+    },
+    "Top up": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregar"
+          }
+        }
+      }
+    },
+    "Top-up (test purchase, no money taken)": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carregamento (compra de teste, sem dinheiro cobrado)"
+          }
+        }
+      }
+    },
+    "Top-ups are not available from the App Store yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os carregamentos ainda não estão disponíveis na App Store."
+          }
+        }
+      }
+    },
+    "Tourism and hotels": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turismo e hotelaria"
+          }
+        }
+      }
+    },
+    "Town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localidade"
+          }
+        }
+      }
+    },
+    "Town agents": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agentes das localidades"
+          }
+        }
+      }
+    },
+    "Towns": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localidades"
+          }
+        }
+      }
+    },
+    "Travel in the Algarve: flights at Faro, getting around, disruptions, weather and sea for visitors.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Viajar no Algarve: voos em Faro, deslocações, perturbações, tempo e mar para quem visita."
+          }
+        }
+      }
+    },
+    "Turn persona mode off": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desligar o modo persona"
+          }
+        }
+      }
+    },
+    "UTC, from the dashboard's grid of where each agent fired": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "UTC, da grelha do painel com os sítios onde cada agente trabalhou"
+          }
+        }
+      }
+    },
+    "Up to date": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em dia"
+          }
+        }
+      }
+    },
+    "Update available: build %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualização disponível: compilação %@"
+          }
+        }
+      }
+    },
+    "Updated": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizado"
+          }
+        }
+      }
+    },
+    "Updated %@ by %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizado a %@ por %@"
+          }
+        }
+      }
+    },
+    "Use my location": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar a minha localização"
+          }
+        }
+      }
+    },
+    "Use these words": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar estas palavras"
+          }
+        }
+      }
+    },
+    "Verify": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verificar"
+          }
+        }
+      }
+    },
+    "Videos, summit replays among them, with their platforms.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vídeos, entre eles gravações da cimeira, com as suas plataformas."
+          }
+        }
+      }
+    },
+    "Waiting for approval.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À espera de aprovação."
+          }
+        }
+      }
+    },
+    "Waiting on a person": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À espera de uma pessoa"
+          }
+        }
+      }
+    },
+    "Wakes": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acorda"
+          }
+        }
+      }
+    },
+    "Watch the newsroom in action": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver a redação em ação"
+          }
+        }
+      }
+    },
+    "What is on": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que há"
+          }
+        }
+      }
+    },
+    "What is real here": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que aqui é real"
+          }
+        }
+      }
+    },
+    "What it says now": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que diz agora"
+          }
+        }
+      }
+    },
+    "What the agents just did": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que os agentes acabaram de fazer"
+          }
+        }
+      }
+    },
+    "What things cost": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quanto custam as coisas"
+          }
+        }
+      }
+    },
+    "What your reading of each outlet's stories was worth on this device. Sharing reading revenue with the local media whose stories you read is planned, not yet in place: no money has been sent to any outlet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quanto valeu, neste dispositivo, a sua leitura das notícias de cada meio. Partilhar as receitas de leitura com os meios locais que lê está planeado, mas ainda não existe: não foi enviado dinheiro a nenhum meio."
+          }
+        }
+      }
+    },
+    "Where the agent reads": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onde o agente lê"
+          }
+        }
+      }
+    },
+    "Where they fired": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onde trabalharam"
+          }
+        }
+      }
+    },
+    "Where your credit goes": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para onde vai o seu crédito"
+          }
+        }
+      }
+    },
+    "Who are you? Pick a persona and the Algarve reorders for you": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quem é? Escolha uma persona e o Algarve reordena-se para si"
+          }
+        }
+      }
+    },
+    "Who brought it in": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quem a trouxe"
+          }
+        }
+      }
+    },
+    "Who hands work to whom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quem passa trabalho a quem"
+          }
+        }
+      }
+    },
+    "Widen with Apple Intelligence": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alargar com o Apple Intelligence"
+          }
+        }
+      }
+    },
+    "Will look for: ": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vai procurar: "
+          }
+        }
+      }
+    },
+    "Wind %@ kilometres an hour": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vento a %@ quilómetros por hora"
+          }
+        }
+      }
+    },
+    "Working": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A trabalhar"
+          }
+        }
+      }
+    },
+    "Write": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escrever"
+          }
+        }
+      }
+    },
+    "Yellow": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "amarelo"
+          }
+        }
+      }
+    },
+    "You are %@ from %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Está a %1$@ de %2$@"
+          }
+        }
+      }
+    },
+    "You are %@ from %@, the nearest of the 17 places: not in the Algarve right now. Pick a town to see its news first.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Está a %1$@ de %2$@, o mais próximo dos 17 locais: não está agora no Algarve. Escolha uma localidade para ver primeiro as suas notícias."
+          }
+        }
+      }
+    },
+    "You follow no towns yet. Follow one on its page and alerts will cover it.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda não segue nenhuma localidade. Siga uma na sua página e os alertas passam a cobri-la."
+          }
+        }
+      }
+    },
+    "Your credit could not be saved on this device. It will be added the next time the app opens.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível guardar o seu crédito neste dispositivo. Será adicionado da próxima vez que abrir a app."
+          }
+        }
+      }
+    },
+    "Your town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua localidade"
+          }
+        }
+      }
+    },
+    "Your towns": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas localidades"
+          }
+        }
+      }
+    },
+    "a town": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "uma localidade"
+          }
+        }
+      }
+    },
+    "active now": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ativo agora"
+          }
+        }
+      }
+    },
+    "as the newsroom wrote it": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tal como a redação o escreveu"
+          }
+        }
+      }
+    },
+    "base price ": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "preço base "
+          }
+        }
+      }
+    },
+    "bids by ": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "propostas até "
+          }
+        }
+      }
+    },
+    "bulletins": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "boletins"
+          }
+        }
+      }
+    },
+    "calm or variable": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "calmo ou variável"
+          }
+        }
+      }
+    },
+    "commits": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "commits"
+          }
+        }
+      }
+    },
+    "councils": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "concelhos"
+          }
+        }
+      }
+    },
+    "country agent": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "agente do país"
+          }
+        }
+      }
+    },
+    "events": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "eventos"
+          }
+        }
+      }
+    },
+    "first wave": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "primeira vaga"
+          }
+        }
+      }
+    },
+    "from %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "de %@"
+          }
+        }
+      }
+    },
+    "hourly at :%@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "de hora a hora, aos :%@"
+          }
+        }
+      }
+    },
+    "humidity": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "humidade"
+          }
+        }
+      }
+    },
+    "in the app": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na app"
+          }
+        }
+      }
+    },
+    "ipma.pt": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ipma.pt"
+          }
+        }
+      }
+    },
+    "items": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "itens"
+          }
+        }
+      }
+    },
+    "items in the last %@ days": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "itens nos últimos %@ dias"
+          }
+        }
+      }
+    },
+    "just now": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "agora mesmo"
+          }
+        }
+      }
+    },
+    "last 24 hours": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "últimas 24 horas"
+          }
+        }
+      }
+    },
+    "last sign of life %@ h ago": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "último sinal de vida há %@ h"
+          }
+        }
+      }
+    },
+    "last sign of life %@ min ago": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "último sinal de vida há %@ min"
+          }
+        }
+      }
+    },
+    "live": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "em direto"
+          }
+        }
+      }
+    },
+    "median %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mediana %@"
+          }
+        }
+      }
+    },
+    "median %@, processed by Apple": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mediana %@, processado pela Apple"
+          }
+        }
+      }
+    },
+    "newsroom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "redação"
+          }
+        }
+      }
+    },
+    "next read in %@s": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "próxima leitura em %@ s"
+          }
+        }
+      }
+    },
+    "no processed build timed": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nenhuma compilação processada cronometrada"
+          }
+        }
+      }
+    },
+    "not read": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "não lido"
+          }
+        }
+      }
+    },
+    "not scheduled": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sem horário"
+          }
+        }
+      }
+    },
+    "outside the newsroom": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fora da redação"
+          }
+        }
+      }
+    },
+    "place.%@@PrompTugal.dinis is not on the newsroom dashboard yet.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "place.%@@PrompTugal.dinis ainda não está no painel da redação."
+          }
+        }
+      }
+    },
+    "places": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "locais"
+          }
+        }
+      }
+    },
+    "posts": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "publicações"
+          }
+        }
+      }
+    },
+    "processing or unknown": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "em processamento ou desconhecido"
+          }
+        }
+      }
+    },
+    "promptugal.news could not be reached.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível contactar promptugal.news."
+          }
+        }
+      }
+    },
+    "promptugal.news could not be reached. The saved edition, if any, is kept.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível contactar promptugal.news. A edição guardada, se houver, mantém-se."
+          }
+        }
+      }
+    },
+    "rain %@%%": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chuva %@%%"
+          }
+        }
+      }
+    },
+    "rain, last hour": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chuva, última hora"
+          }
+        }
+      }
+    },
+    "region agent": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "agente de região"
+          }
+        }
+      }
+    },
+    "researching": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "em pesquisa"
+          }
+        }
+      }
+    },
+    "sign of life in 30 min": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sinal de vida em 30 min"
+          }
+        }
+      }
+    },
+    "since %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "desde %@"
+          }
+        }
+      }
+    },
+    "since your last visit": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "desde a sua última visita"
+          }
+        }
+      }
+    },
+    "site %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "site %@"
+          }
+        }
+      }
+    },
+    "sources": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fontes"
+          }
+        }
+      }
+    },
+    "temperature": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "temperatura"
+          }
+        }
+      }
+    },
+    "the Algarve": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "o Algarve"
+          }
+        }
+      }
+    },
+    "the Algarve's page": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a página do Algarve"
+          }
+        }
+      }
+    },
+    "the rest researching": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "os restantes em pesquisa"
+          }
+        }
+      }
+    },
+    "this place": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "este local"
+          }
+        }
+      }
+    },
+    "town agent": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "agente de localidade"
+          }
+        }
+      }
+    },
+    "update available": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "atualização disponível"
+          }
+        }
+      }
+    },
+    "videos": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vídeos"
+          }
+        }
+      }
+    },
+    "weekly series": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "séries semanais"
+          }
+        }
+      }
+    },
+    "wind %@from %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vento %@de %@"
+          }
+        }
+      }
+    },
+    "· IPMA": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· IPMA"
+          }
+        }
+      }
+    },
+    "· read %@": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· lido a %@"
+          }
+        }
+      }
+    },
+    "“%@”. What matters to you comes first and is marked “For you”. ": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”. O que lhe interessa aparece primeiro e está marcado “Para si”. "
+          }
+        }
+      }
+    }
+  }
+}

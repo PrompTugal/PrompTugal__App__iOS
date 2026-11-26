@@ -17,19 +17,19 @@ struct ReplayControl: View {
         let top = max(1, counts.max() ?? 1)
         VStack(alignment: .leading, spacing: Space.s) {
             HStack {
-                Text(position == nil ? "Replay the last 24 hours" : label(counts))
+                Text(position == nil ? LocalText.string("Replay the last 24 hours") : label(counts))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Palette.ink)
                     .contentTransition(.numericText())
                 Spacer()
                 if position != nil {
-                    Button("Back to live") { stop(); position = nil }.font(.footnote)
+                    Button(LocalText.string("Back to live")) { stop(); position = nil }.font(.footnote)
                 }
                 if !reduceMotion {
                     Button { playing ? stop() : play() } label: {
                         Image(systemName: playing ? "pause.circle.fill" : "play.circle.fill").font(.title2)
                     }
-                    .accessibilityLabel(playing ? "Pause the replay" : "Play the last 24 hours")
+                    .accessibilityLabel(playing ? LocalText.string("Pause the replay") : LocalText.string("Play the last 24 hours"))
                 }
             }
             Canvas { context, size in
@@ -46,12 +46,12 @@ struct ReplayControl: View {
             .frame(height: 36)
             .accessibilityHidden(true)
             Slider(value: scrub, in: 0...upper)
-                .accessibilityLabel("Hour of the replay")
+                .accessibilityLabel(LocalText.string("Hour of the replay"))
                 .accessibilityValue(spokenHour)
             HStack {
                 Text((extras.gridHours.first ?? "") + ":00")
                 Spacer()
-                Text("UTC, from the dashboard's grid of where each agent fired")
+                Text(LocalText.string("UTC, from the dashboard's grid of where each agent fired"))
                 Spacer()
                 Text((extras.gridHours.last ?? "") + ":00")
             }

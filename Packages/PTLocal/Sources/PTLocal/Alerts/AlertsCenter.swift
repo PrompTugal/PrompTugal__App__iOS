@@ -135,7 +135,7 @@ public final class AlertsCenter {
         var out = Array(alerts.prefix(perCheck - 1))
         let rest = alerts.count - out.count
         out.append(AlertCandidate(id: "more|\(topic)|\(alerts[perCheck - 1].id)", topic: topic,
-                                  title: LocalText.string("\(rest) more"),
+                                  title: LocalText.string("\(String(describing: rest)) more"),
                                   body: LocalText.string("Open PrompTugal to see them all."), link: nil))
         return out
     }

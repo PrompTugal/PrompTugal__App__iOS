@@ -40,9 +40,9 @@ public enum NewsroomLayout {
         for role in roles where role.hasPrefix("place.") {
             let id = String(role.dropFirst("place.".count))
             if id == PlaceDirectory.region.id {
-                add(Node(id: role, label: "Algarve", kind: .region, point: CGPoint(x: 0.5, y: 0.25), placeID: id))
+                add(Node(id: role, label: LocalText.string("Algarve"), kind: .region, point: CGPoint(x: 0.5, y: 0.25), placeID: id))
             } else if id == PlaceDirectory.country.id {
-                add(Node(id: role, label: "Portugal", kind: .country, point: CGPoint(x: 0.5, y: 0.08), placeID: id))
+                add(Node(id: role, label: LocalText.string("Portugal"), kind: .country, point: CGPoint(x: 0.5, y: 0.08), placeID: id))
             } else if let info = PlaceDirectory.info(id) {
                 add(Node(id: role, label: info.name, kind: .town,
                          point: townPoint(latitude: info.latitude, longitude: info.longitude), placeID: id))
@@ -119,17 +119,17 @@ public enum NewsroomLayout {
     public static func spoken(_ node: Node, agent: NewsroomDashboard.Agent?, now: Date) -> String {
         var parts: [String] = [node.label]
         switch node.kind {
-        case .town: parts.append("town agent")
-        case .region: parts.append("region agent")
-        case .country: parts.append("country agent")
+        case .town: parts.append(LocalText.string("town agent"))
+        case .region: parts.append(LocalText.string("region agent"))
+        case .country: parts.append(LocalText.string("country agent"))
         case .placeDesk, .desk: parts.append("desk " + node.id)
-        case .outside: parts.append("outside the newsroom")
+        case .outside: parts.append(LocalText.string("outside the newsroom"))
         }
         if let agent {
             parts.append(agent.status.rawValue)
             if let sign = agent.lastSign(now: now) {
                 let minutes = max(0, Int(now.timeIntervalSince(sign) / 60))
-                parts.append(minutes < 1 ? "active now" : minutes < 120 ? "last sign of life \(minutes) min ago" : "last sign of life \(minutes / 60) h ago")
+                parts.append(minutes < 1 ? LocalText.string("active now") : minutes < 120 ? LocalText.string("last sign of life \(String(describing: minutes)) min ago") : LocalText.string("last sign of life \(String(describing: minutes / 60)) h ago"))
             }
             if let state = agent.state { parts.append(state) }
         }

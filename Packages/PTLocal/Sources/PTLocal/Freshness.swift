@@ -38,9 +38,9 @@ public enum Freshness: Equatable, Sendable {
     /// "Live, read 22:10", "Snapshot, read 21 Nov" (with the year when it is not this year), or "Read time not given".
     public func label(now: Date = Date(), timeZone: TimeZone = .current) -> String {
         switch self {
-        case .live(let date): "Live, read \(Self.time(date, timeZone: timeZone))"
-        case .snapshot(let date): "Snapshot, read \(Self.day(date, now: now, timeZone: timeZone))"
-        case .unknown: "Read time not given"
+        case .live(let date): LocalText.string("Live, read \(String(describing: Self.time(date, timeZone: timeZone)))")
+        case .snapshot(let date): LocalText.string("Snapshot, read \(String(describing: Self.day(date, now: now, timeZone: timeZone)))")
+        case .unknown: LocalText.string("Read time not given")
         }
     }
 
@@ -72,11 +72,11 @@ public enum Freshness: Equatable, Sendable {
         let label = freshness.label(now: now, timeZone: timeZone)
         switch provenance {
         case .live:
-            return ("\(label), from \(host)", freshness.isLive)
+            return (LocalText.string("\(String(describing: label)), from \(String(describing: host))"), freshness.isLive)
         case .cached:
-            return ("Offline: this device's copy. \(label)", false)
+            return (LocalText.string("Offline: this device's copy. \(String(describing: label))"), false)
         case .snapshot:
-            return ("Built-in copy. \(label)", false)
+            return (LocalText.string("Built-in copy. \(String(describing: label))"), false)
         case .none:
             return (provenance.label, false)
         }

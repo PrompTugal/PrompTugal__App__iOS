@@ -10,9 +10,9 @@ public enum ConditionsProvenance: Equatable, Sendable {
 
     public var label: String {
         switch self {
-        case .live: "Live from IPMA"
-        case .cached: "Offline: the last IPMA data this device read"
-        case .none: "Not loaded yet"
+        case .live: LocalText.string("Live from IPMA")
+        case .cached: LocalText.string("Offline: the last IPMA data this device read")
+        case .none: LocalText.string("Not loaded yet")
         }
     }
 
@@ -112,10 +112,10 @@ public final class ConditionsStore {
             problem = nil
         } else if live > 0 {
             provenance = .live(Date())
-            problem = "Some IPMA feeds could not be read; their last copy is shown."
+            problem = LocalText.string("Some IPMA feeds could not be read; their last copy is shown.")
         } else {
             provenance = .cached(cache.modified(key: "ipma-observations") ?? cache.modified(key: "ipma-warnings"))
-            problem = "IPMA could not be reached."
+            problem = LocalText.string("IPMA could not be reached.")
         }
     }
 

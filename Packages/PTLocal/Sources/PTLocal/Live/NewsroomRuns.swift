@@ -14,7 +14,7 @@ struct NewsroomRunsCard: View {
     }
 
     private func content(_ status: NewsroomStatus, now: Date) -> some View {
-        TitledCard("Pipeline and recent runs", kicker: "Newsroom status") {
+        TitledCard(LocalText.string("Pipeline and recent runs"), kicker: LocalText.string("Newsroom status")) {
             if !status.pipeline.isEmpty { pipeline(status.pipeline, now: now) }
             Divider()
             ForEach(status.recentRuns(limit: limit, now: now)) { run in
@@ -23,7 +23,7 @@ struct NewsroomRunsCard: View {
             ledgerNote(status, now: now)
             ProvenanceLabel(provenance: model.statusProvenance, phase: .idle, readAt: status.builtAt)
             Link(destination: status.pageURL) {
-                Label("The newsroom's status page", systemImage: "arrow.up.right.square")
+                Label(LocalText.string("The newsroom's status page"), systemImage: "arrow.up.right.square")
             }
             .font(.footnote)
         }
@@ -69,15 +69,15 @@ struct NewsroomRunsCard: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityHint("Opens the agent's page on promptugal.news")
+        .accessibilityHint(LocalText.string("Opens the agent's page on promptugal.news"))
     }
 
     @ViewBuilder private func ledgerNote(_ status: NewsroomStatus, now: Date) -> some View {
         if let newest = status.newestRun(now: now) {
             let freshness = Freshness.of(newest, now: now)
             if !freshness.isLive {
-                let rebuilt = status.builtAt.map { "; the site last rebuilt this feed on \(NewsroomRunsCard.day($0))" } ?? ""
-                Text("No runs since \(NewsroomRunsCard.day(newest)): the ledger's newest entry is from then\(rebuilt).")
+                let rebuilt = status.builtAt.map { LocalText.string("; the site last rebuilt this feed on \(String(describing: NewsroomRunsCard.day($0)))") } ?? ""
+                Text(LocalText.string("No runs since \(String(describing: NewsroomRunsCard.day(newest))): the ledger's newest entry is from then\(String(describing: rebuilt))."))
                     .font(.caption).foregroundStyle(Palette.amber)
             }
         }
