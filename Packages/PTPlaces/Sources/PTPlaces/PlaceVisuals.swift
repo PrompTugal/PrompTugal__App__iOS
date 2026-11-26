@@ -22,7 +22,8 @@ enum PlaceTheme {
     /// In light mode the colour is darkened to at most 45% lightness, so text and pins in it read on paper and on
     /// the map's pale land (design review D); dark mode keeps it as the town wrote it.
     static func accent(_ file: PlaceFile?, id: String) -> Color {
-        let base: Color = file?.look?.accent.flatMap { Color(hexString: $0) } ?? Palette.stable(id)
+        var base = Palette.stable(id)
+        if let hex = file?.look?.accent, let color = Color(hexString: hex) { base = color }
         let resolved = UIColor(base)
         return Color(uiColor: UIColor { traits in
             let color = resolved.resolvedColor(with: traits)
