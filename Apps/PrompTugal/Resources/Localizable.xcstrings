@@ -3740,6 +3740,56 @@
           }
         }
       }
+    },
+    "Alerts": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alertas"
+          }
+        }
+      }
+    },
+    "New stories in your towns and weather warnings, only if you turn them on": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notícias novas das suas terras e avisos meteorológicos, só se os ativar"
+          }
+        }
+      }
+    },
+    "Offline edition": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edição offline"
+          }
+        }
+      }
+    },
+    "Save the latest edition to read without a connection": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guarde a última edição para ler sem ligação"
+          }
+        }
+      }
+    },
+    "Contribute or report a mistake": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contribuir ou reportar um erro"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -120,6 +120,9 @@ enum PublicDestinations {
         // How long a push takes to reach the site and TestFlight, and whether this device's build is the latest (PTLocal/Status).
         ShellDestination(id: "local.ci-status", title: String(localized: "CI status"), symbol: "gauge.with.dots.needle.67percent", group: "More",
                          summary: String(localized: "From push to production, read-only"), listed: false) { AnyView(CIStatusView()) },
+        // Opt-in local alerts: new stories in followed towns, IPMA warnings (Dinis, 26 Nov). Nothing leaves the phone.
+        ShellDestination(id: "local.alerts", title: String(localized: "Alerts"), symbol: "bell.badge", group: "More",
+                         summary: String(localized: "New stories in your towns and weather warnings, only if you turn them on")) { AnyView(AlertsSettingsView()) },
         // The last edition saved on this phone for offline reading, hash-checked against the site's manifest (PTLocal).
         ShellDestination(id: "local.offline", title: String(localized: "Offline edition"), symbol: "arrow.down.circle", group: "More",
                          summary: String(localized: "Save the latest edition to read without a connection")) { AnyView(OfflineEditionView()) },

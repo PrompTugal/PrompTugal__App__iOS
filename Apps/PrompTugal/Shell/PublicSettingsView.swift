@@ -33,6 +33,12 @@ struct PublicSettingsView: View {
                 }
                 .accessibilityIdentifier("pt.more.sources")
                 NavigationLink {
+                    AlertsSettingsView()
+                } label: {
+                    Label("Alerts", systemImage: "bell.badge")
+                }
+                .accessibilityIdentifier("pt.more.alerts")
+                NavigationLink {
                     OfflineEditionView()
                 } label: {
                     Label("Offline edition", systemImage: "arrow.down.circle")

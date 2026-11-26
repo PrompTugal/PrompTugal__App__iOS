@@ -40,6 +40,8 @@ struct PrompTugalApp: App {
         LocalCredit.start()
         // The places reader (PTPlaces) charges through that same ledger (Shell/PlacesWiring.swift).
         PlacesWiring.start()
+        // Opt-in local alerts (followed towns' new stories, IPMA warnings): one background task, registered at launch.
+        AlertsCenter.registerBackgroundTask()
     }
 
     var body: some Scene {
@@ -50,7 +52,10 @@ struct PrompTugalApp: App {
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { PublicLive.foreground() }
-            if phase == .background { SyncBackground.schedule() }
+            if phase == .background {
+                SyncBackground.schedule()
+                AlertsCenter.scheduleRefresh()
+            }
         }
     }
 }

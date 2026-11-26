@@ -15,6 +15,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>news.promptugal.reader.refresh</string>
+		<string>news.promptugal.reader.alerts</string>
 	</array>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
