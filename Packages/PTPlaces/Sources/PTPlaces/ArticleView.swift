@@ -44,12 +44,12 @@ final class ArticleReader {
 
     private func verify() async {
         if record.value?.status == "withdrawn" {
-            check = .notChecked(String(localized: "the article has been withdrawn"))
+            check = .notChecked(String(localized: "the article has been withdrawn", bundle: .module))
             return
         }
         let sigURL = record.value.flatMap { URL(string: $0.signature) } ?? ArticleLinks.signature(id)
         guard let fetched = await fetch(sigURL) else {
-            check = .notChecked(String(localized: "the signature file did not load"))
+            check = .notChecked(String(localized: "the signature file did not load", bundle: .module))
             return
         }
         let (sigData, sigStatus) = fetched
@@ -58,17 +58,17 @@ final class ArticleReader {
             return
         }
         guard (200..<300).contains(sigStatus), let sig = try? JSONDecoder().decode(ArticleSignature.self, from: sigData) else {
-            check = .notChecked(String(localized: "the signature file could not be read"))
+            check = .notChecked(String(localized: "the signature file could not be read", bundle: .module))
             return
         }
         guard let keys = Self.keys.value else {
-            check = .notChecked(String(localized: "the published keys did not load"))
+            check = .notChecked(String(localized: "the published keys did not load", bundle: .module))
             return
         }
         let twinURL = record.value.flatMap { URL(string: $0.twin) } ?? ArticleLinks.twin(id)
         guard let twin = await fetch(twinURL), (200..<300).contains(twin.1),
               let text = String(data: twin.0, encoding: .utf8) else {
-            check = .notChecked(String(localized: "the signed text did not load"))
+            check = .notChecked(String(localized: "the signed text did not load", bundle: .module))
             return
         }
         let keyList = keys.keys
@@ -104,9 +104,9 @@ public struct ArticleView: View {
                     made
                 } else if reader.record.failed {
                     ContentUnavailableView {
-                        Label(String(localized: "The article did not load"), systemImage: "wifi.exclamationmark")
+                        Label(String(localized: "The article did not load", bundle: .module), systemImage: "wifi.exclamationmark")
                     } actions: {
-                        Button(String(localized: "Open it on promptugal.news")) { openURL(ArticleLinks.page(id)) }
+                        Button(String(localized: "Open it on promptugal.news", bundle: .module)) { openURL(ArticleLinks.page(id)) }
                     }
                 } else {
                     ProgressView().frame(maxWidth: .infinity, minHeight: 300)
@@ -118,7 +118,7 @@ public struct ArticleView: View {
             .frame(maxWidth: .infinity)
         }
         .background(Palette.paper)
-        .navigationTitle(String(localized: "Article"))
+        .navigationTitle(String(localized: "Article", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -134,7 +134,7 @@ public struct ArticleView: View {
 
     private func header(_ record: ArticleRecord) -> some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            Kicker(text: String(localized: "Our article"), color: Palette.red)
+            Kicker(text: String(localized: "Our article", bundle: .module), color: Palette.red)
             Text(record.title)
                 .font(.system(size: wide ? 40 : 28, weight: .black, design: .serif))
                 .foregroundStyle(Palette.ink)
@@ -143,6 +143,11 @@ public struct ArticleView: View {
                 .font(.subheadline)
                 .foregroundStyle(Palette.muted)
             PlacesOriginLabel(origin: reader.record.origin(dataDate: nil))
+            if PlacesLanguage.isPortuguese {
+                Label(String(localized: "Articles are in English", bundle: .module), systemImage: "character.bubble")
+                    .font(.caption)
+                    .foregroundStyle(Palette.muted)
+            }
             if !record.summary.isEmpty {
                 Text(record.summary)
                     .font(.system(.title3, design: .serif))
@@ -157,7 +162,7 @@ public struct ArticleView: View {
         Button {
             openURL(URL(string: record.page) ?? ArticleLinks.page(id))
         } label: {
-            Label(String(localized: "Read the full article on promptugal.news"), systemImage: "safari")
+            Label(String(localized: "Read the full article on promptugal.news", bundle: .module), systemImage: "safari")
                 .font(.headline)
         }
         .buttonStyle(.borderedProminent)
@@ -167,8 +172,8 @@ public struct ArticleView: View {
     @ViewBuilder private func sources(_ record: ArticleRecord) -> some View {
         if !record.sources.isEmpty {
             VStack(alignment: .leading, spacing: Space.s) {
-                SectionHead(title: String(localized: "Sources"),
-                            subtitle: String(localized: "Every source the article cites, as published"), accent: Palette.red)
+                SectionHead(title: String(localized: "Sources", bundle: .module),
+                            subtitle: String(localized: "Every source the article cites, as published", bundle: .module), accent: Palette.red)
                 ForEach(record.sources, id: \.self) { source in
                     SourceRow(source: source)
                     Divider()
@@ -181,7 +186,7 @@ public struct ArticleView: View {
         let file = ArticleReader.provenance.value
         if let entry = file?.entry(for: id), !entry.isEmpty {
             VStack(alignment: .leading, spacing: Space.s) {
-                SectionHead(title: String(localized: "How this was made"), accent: Palette.red)
+                SectionHead(title: String(localized: "How this was made", bundle: .module), accent: Palette.red)
                 if !entry.level.isEmpty {
                     let name = entry.levelName.isEmpty ? (file?.ladder[entry.level] ?? "") : entry.levelName
                     Text("\(entry.level) · \(name)").font(.headline).foregroundStyle(Palette.ink)
@@ -239,14 +244,14 @@ struct SignaturePanel: View {
         VStack(alignment: .leading, spacing: Space.s) {
             verdict
             // The trust limit, said plainly (spec s. 2).
-            Text(String(localized: "The key list comes from the same site as the article: a good signature shows the text was signed with the key listed under that agent's name on promptugal.news, not who holds the key."))
+            Text(String(localized: "The key list comes from the same site as the article: a good signature shows the text was signed with the key listed under that agent's name on promptugal.news, not who holds the key.", bundle: .module))
                 .font(.caption)
                 .foregroundStyle(Palette.muted)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: Space.m) {
-                link(String(localized: "Signed text"), ArticleLinks.twin(id))
-                link(String(localized: "Signature"), ArticleLinks.signature(id))
-                link(String(localized: "Keys"), ArticleLinks.keys)
+                link(String(localized: "Signed text", bundle: .module), ArticleLinks.twin(id))
+                link(String(localized: "Signature", bundle: .module), ArticleLinks.signature(id))
+                link(String(localized: "Keys", bundle: .module), ArticleLinks.keys)
             }
         }
         .padding(Space.l)
@@ -278,20 +283,20 @@ struct SignaturePanel: View {
 
     private var title: String {
         switch check {
-        case .checking: String(localized: "Checking the signature on this device")
-        case .verified(let agent, _, false): String(localized: "Signed by \(agent), checked on this device")
-        case .verified(let agent, _, true): String(localized: "Signed with a key since handed over (\(agent)), checked on this device")
-        case .failed: String(localized: "The signature does not match this text")
-        case .olderForm: String(localized: "Signed in an older form that cannot be checked")
-        case .notSigned: String(localized: "Not signed")
-        case .notChecked: String(localized: "Signature not checked")
+        case .checking: String(localized: "Checking the signature on this device", bundle: .module)
+        case .verified(let agent, _, false): String(localized: "Signed by \(agent), checked on this device", bundle: .module)
+        case .verified(let agent, _, true): String(localized: "Signed with a key since handed over (\(agent)), checked on this device", bundle: .module)
+        case .failed: String(localized: "The signature does not match this text", bundle: .module)
+        case .olderForm: String(localized: "Signed in an older form that cannot be checked", bundle: .module)
+        case .notSigned: String(localized: "Not signed", bundle: .module)
+        case .notChecked: String(localized: "Signature not checked", bundle: .module)
         }
     }
 
     private var detail: String? {
         switch check {
         case .checking, .failed, .olderForm, .notSigned: nil
-        case .verified(_, let keyID, _): String(localized: "Key \(keyID), from promptugal.news/board/keys.json")
+        case .verified(_, let keyID, _): String(localized: "Key \(keyID), from promptugal.news/board/keys.json", bundle: .module)
         case .notChecked(let reason): reason.prefix(1).uppercased() + reason.dropFirst()
         }
     }

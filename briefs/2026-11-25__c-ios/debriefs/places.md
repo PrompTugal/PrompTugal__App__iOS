@@ -117,3 +117,20 @@ home footer: no Web Summit anywhere in PTPlaces.
   superseded, files not loaded). The trust limit is said under the verdict, with links to the signed text, the
   signature and the key list. The .sig is fetched directly so a 404 reads as "Not signed".
 - Offline edition (c.ios.local's EditionFiles): not wired; a `placesOfflineData` hook can come later if wanted.
+
+## English and Portuguese (Portugal) (Dinis via c.ios, 26 Nov ~23:40)
+
+- **Catalogue:** every `String(localized:)` in PTPlaces (241 calls, 229 keys) now has `bundle: .module`;
+  `Sources/PTPlaces/Resources/Localizable.xcstrings` holds en and pt-PT for all of them (European Portuguese:
+  "dispositivo", "concelho", "capitais de distrito", "Início"). `Package.swift` processes
+  `Resources`. Interpolated keys use `%@` / `%lld` (`%%` for a literal percent); pt-PT reorders with `%1$…`.
+  Three call sites with nested quotes were rewritten so every key is a plain literal. Dates follow the app's
+  language (`PlacesLanguage.locale`: pt_PT or en_GB); IPMA warning colours and "Researching" are translated.
+- **Place prose from the site's memory** (`PlacesTranslation`, `TMKey`, `TMShard`): when the app runs in pt-PT, a town
+  page's mandate, centre of gravity and story summaries come from `data/i18n/tm/pt-PT/<2 hex>.json` (key = first 16
+  hex of SHA-256 over the site's normalised English; shards fetched as needed and kept a day on the device). Each
+  section says "Tradução automática, não revista · ver em inglês" (or "verificada" for `ok: true`); a tap shows the
+  English ("Em inglês, como publicado · ver a tradução"). Headlines, articles and since.json titles stay as published;
+  the reader says "Os artigos estão em inglês". Nothing is translated on the device; a missing entry stays English.
+- Tests: keys against values computed with the site's normalisation (NFC, NBSP, CRLF, blank lines), a lenient shard,
+  English untouched, the compiled pt-PT catalogue (with a positional format), and which prose is translated.

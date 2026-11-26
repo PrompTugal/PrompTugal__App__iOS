@@ -10,14 +10,14 @@ public enum PlaceKind: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .government: String(localized: "Government")
-        case .companies: String(localized: "Companies")
-        case .startups: String(localized: "Startups")
-        case .investors: String(localized: "Investors")
-        case .research: String(localized: "Universities and research")
-        case .community: String(localized: "Not-for-profits and communities")
-        case .talent: String(localized: "Talent")
-        case .other: String(localized: "Other")
+        case .government: String(localized: "Government", bundle: .module)
+        case .companies: String(localized: "Companies", bundle: .module)
+        case .startups: String(localized: "Startups", bundle: .module)
+        case .investors: String(localized: "Investors", bundle: .module)
+        case .research: String(localized: "Universities and research", bundle: .module)
+        case .community: String(localized: "Not-for-profits and communities", bundle: .module)
+        case .talent: String(localized: "Talent", bundle: .module)
+        case .other: String(localized: "Other", bundle: .module)
         }
     }
 

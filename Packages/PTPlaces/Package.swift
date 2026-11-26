@@ -17,7 +17,8 @@ let package = Package(
     targets: [
         .target(
             name: "PTPlaces",
-            dependencies: [.product(name: "PTCore", package: "PTCore")]
+            dependencies: [.product(name: "PTCore", package: "PTCore")],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "PTPlacesTests",

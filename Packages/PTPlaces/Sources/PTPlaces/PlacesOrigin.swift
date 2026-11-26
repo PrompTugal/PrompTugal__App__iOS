@@ -31,21 +31,21 @@ struct PlacesOrigin: Equatable {
     /// - dataDate: the date the data itself carries ("2026-11-21" or an ISO time); a day counts until its end.
     static func describe(pinned: Bool, phase: LoadPhase, fetched: Date?, dataDate: String?, now: Date = .now) -> PlacesOrigin {
         if pinned {
-            return PlacesOrigin(kind: .snapshot, text: String(localized: "Built-in snapshot, not live"))
+            return PlacesOrigin(kind: .snapshot, text: String(localized: "Built-in snapshot, not live", bundle: .module))
         }
         guard let fetched else {
             if case .failed = phase {
-                return PlacesOrigin(kind: .missing, text: String(localized: "Not loaded: promptugal.news could not be reached"))
+                return PlacesOrigin(kind: .missing, text: String(localized: "Not loaded: promptugal.news could not be reached", bundle: .module))
             }
-            return PlacesOrigin(kind: .loading, text: String(localized: "Reading promptugal.news"))
+            return PlacesOrigin(kind: .loading, text: String(localized: "Reading promptugal.news", bundle: .module))
         }
         if phase != .loaded {
-            return PlacesOrigin(kind: .deviceCopy, text: String(localized: "This device's copy, saved \(PlacesOrigin.day(fetched))"))
+            return PlacesOrigin(kind: .deviceCopy, text: String(localized: "This device's copy, saved \(PlacesOrigin.day(fetched))", bundle: .module))
         }
         if let dataDate, let end = endOf(dataDate), now.timeIntervalSince(end) > 86_400 {
-            return PlacesOrigin(kind: .dated, text: String(localized: "From promptugal.news, data dated \(PlaceDates.short(dataDate))"))
+            return PlacesOrigin(kind: .dated, text: String(localized: "From promptugal.news, data dated \(PlaceDates.short(dataDate))", bundle: .module))
         }
-        return PlacesOrigin(kind: .live, text: String(localized: "Live from promptugal.news"))
+        return PlacesOrigin(kind: .live, text: String(localized: "Live from promptugal.news", bundle: .module))
     }
 
     /// The moment a date stops being current: the end of its day for a bare day, the time itself otherwise.
@@ -58,7 +58,7 @@ struct PlacesOrigin: Equatable {
 
     static func day(_ date: Date) -> String {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_GB")
+        f.locale = PlacesLanguage.locale
         f.timeZone = TimeZone(identifier: "Europe/Lisbon")
         f.dateFormat = "d MMM, HH:mm"
         return f.string(from: date)

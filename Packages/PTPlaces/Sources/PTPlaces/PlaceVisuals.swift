@@ -81,10 +81,10 @@ enum PlaceTheme {
 
     static func kindLabel(_ kind: String) -> String {
         switch kind {
-        case "country": String(localized: "Country")
-        case "region": String(localized: "Region")
-        case "city": String(localized: "City")
-        default: String(localized: "Municipality")
+        case "country": String(localized: "Country", bundle: .module)
+        case "region": String(localized: "Region", bundle: .module)
+        case "city": String(localized: "City", bundle: .module)
+        default: String(localized: "Municipality", bundle: .module)
         }
     }
 }
@@ -151,7 +151,8 @@ struct StepsBadge: View {
                         .fill(i <= steps ? accent : accent.opacity(0.18))
                         .frame(width: 6, height: 6)
                 }
-                Text(steps == 0 ? String(localized: "AI itself") : String(localized: "\(steps) step\(steps == 1 ? "" : "s") from AI"))
+                Text(steps == 0 ? String(localized: "AI itself", bundle: .module)
+                     : steps == 1 ? String(localized: "1 step from AI", bundle: .module) : String(localized: "\(steps) steps from AI", bundle: .module))
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(accent)
             }
@@ -166,7 +167,8 @@ struct StatusPill: View {
 
     var body: some View {
         let live = status == "live"
-        Text(live ? String(localized: "Live") : status.capitalized)
+        Text(live ? String(localized: "Live", bundle: .module)
+             : status == "researching" ? String(localized: "Researching", bundle: .module) : status.capitalized)
             .font(.caption2.weight(.bold))
             .textCase(.uppercase)
             .padding(.horizontal, 8).padding(.vertical, 3)

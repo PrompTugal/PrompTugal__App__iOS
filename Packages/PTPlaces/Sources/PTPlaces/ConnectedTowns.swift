@@ -155,10 +155,10 @@ struct ConnectedTownsView: View {
                     HStack {
                         Text(place.name).font(.headline)
                         Spacer()
-                        NavigationLink(value: PlaceRoute(focus)) { Text(String(localized: "Open")).font(.subheadline.weight(.semibold)) }
+                        NavigationLink(value: PlaceRoute(focus)) { Text(String(localized: "Open", bundle: .module)).font(.subheadline.weight(.semibold)) }
                     }
                     if mine.isEmpty {
-                        Text(String(localized: "No organisation on its AI map is shared with another town yet.")).font(.caption).foregroundStyle(Palette.muted)
+                        Text(String(localized: "No organisation on its AI map is shared with another town yet.", bundle: .module)).font(.caption).foregroundStyle(Palette.muted)
                     }
                     ForEach(mine, id: \.self) { link in
                         let other = store.place(link.a == focus ? link.b : link.a)?.name ?? ""
