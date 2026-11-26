@@ -48,7 +48,7 @@ struct PublicAppTests {
         #expect(PublicDestinations.openable("map", debug: false)?.id == "places")
         #expect(PublicDestinations.openable("team.schedule", debug: false)?.id == "places")
         #expect(PublicDestinations.openable("place:loule", debug: false)?.id == "place:loule")
-        #expect(PublicDestinations.openable("place:faro#now", debug: false)?.id == "place:faro")
+        #expect(PublicDestinations.openable("place:faro#now", debug: false)?.id == "place:faro#now")
         #expect(PublicDestinations.listed("More", debug: false).map(\.id).contains("local.sources"))
     }
 

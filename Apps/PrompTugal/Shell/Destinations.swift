@@ -65,12 +65,12 @@ enum PublicDestinations {
     }
 
     /// `place:<id>` (promptugal://open/place:loule, -PTDestination place:loule): one town or region page, built on the fly.
-    static func place(_ placeID: String) -> ShellDestination? {
-        let placeID = placeID.split(separator: "#").first.map(String.init) ?? placeID
-        guard !placeID.isEmpty else { return destination("places") }
-        return ShellDestination(id: "place:" + placeID, title: String(localized: "Place"), symbol: "mappin.and.ellipse", group: "More",
+    static func place(_ rest: String) -> ShellDestination? {
+        // place:loule, place:loule#lead, place:faro#now: the page scrolls once to the anchor (PTPlaces PlacesDeepLink).
+        guard let link = PlacesDeepLink("place:" + rest) else { return destination("places") }
+        return ShellDestination(id: link.text, title: String(localized: "Place"), symbol: "mappin.and.ellipse", group: "More",
                                 listed: false) {
-            AnyView(PlaceDetailView(id: placeID))
+            AnyView(PlaceDetailView(id: link.id, anchor: link.anchor))
         }
     }
 

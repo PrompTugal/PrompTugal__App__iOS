@@ -1,6 +1,7 @@
 import PTAgenda
 import PTCore
 import PTExplore
+import PTLocal
 import PTNews
 import PTPlaces
 import PTWeb
@@ -50,6 +51,8 @@ struct PublicShell: View {
         .environment(\.newsSource, reader)
         .environment(newsFeeds)
         .environment(\.openDestination, { open($0) })
+        // A town tapped on the Algarve maps (PTLocal) opens its place page (PTPlaces), not PTLocal's own town view.
+        .localOpenPlace { id in open("place:" + id) }
         .environment(\.exploreStart, exploreStart)
         .publicFeatures(features)
         .pickToasts()
