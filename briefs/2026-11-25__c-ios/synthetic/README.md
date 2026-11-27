@@ -18,5 +18,6 @@ Eight fictional readers walk the current build from its SwiftUI code and the liv
 | 26 Nov 2026 | work/candidate-c2e `5cbf730` | [changes-c2e.md](changes-c2e.md): no blocker found; new: 21 languages declared, English only with no switch. |
 | 26 Nov 2026 | work/candidate-c6 `2a58431` (next version) | [changes-c6.md](changes-c6.md), all personas: Home, freshness lines, events and council blocks are real gains; Portuguese reader now stuck (no language at all); rebuilt Explore unreachable; Home leads with placeless industry items. |
 | 26 Nov 2026 | dev `2403d92` = c7, TestFlight 683 | [changes-c7.md](changes-c7.md): local-first Home, shorter Places, two of three "independent" lines gone; Work with us link lost; Portuguese reader still stuck; nothing blocks TestFlight. |
+| 27 Nov 2026 | dev `6cc9ae2` = c8b, TestFlight 688 | [changes-c8b.md](changes-c8b.md): article reader and signature check verified live (14/14); offline edition not read by Home, Places or articles; mistake link goes to the contributor page. |
 
 Later candidates: only what changed, appended here as new rows and a `changes-<candidate>.md`.
