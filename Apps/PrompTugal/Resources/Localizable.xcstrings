@@ -20156,6 +20156,26 @@
           }
         }
       }
+    },
+    "Report a mistake": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reportar um erro"
+          }
+        }
+      }
+    },
+    "Write for us": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escreva para nós"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

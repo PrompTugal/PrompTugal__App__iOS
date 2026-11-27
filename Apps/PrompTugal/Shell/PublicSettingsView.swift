@@ -76,7 +76,8 @@ struct PublicSettingsView: View {
                 }
                 Link("PrompTugal.news", destination: FeedClient.site)
                 // Contribute or report a mistake: the site's own page, where a person reads it (no data sent from the app).
-                Link("Contribute or report a mistake", destination: URL(string: "https://promptugal.news/contribute/")!)
+                Link("Report a mistake", destination: URL(string: "https://promptugal.news/report/")!)
+                Link("Write for us", destination: URL(string: "https://promptugal.news/contribute/")!)
                 Link("About this coverage", destination: FeedClient.disclosure)
                 Link("Privacy", destination: SupportLinks.privacy)
                 Link("Support", destination: SupportLinks.support)
