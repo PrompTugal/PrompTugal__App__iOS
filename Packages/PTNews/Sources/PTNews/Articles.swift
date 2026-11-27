@@ -145,11 +145,15 @@ public struct SitePage: View {
     }
 
     public var body: some View {
-        if ArticleTwin.twinURL(for: url) != nil {
-            ArticleReader(url: url, title: title)
-        } else {
-            WebPage(url: url, title: title)
+        Group {
+            if ArticleTwin.twinURL(for: url) != nil {
+                ArticleReader(url: url, title: title)
+            } else {
+                WebPage(url: url, title: title)
+            }
         }
+        // The shell counts finished reads for the one-time rating prompt (ReviewPrompt); nothing else listens.
+        .onDisappear { NotificationCenter.default.post(name: Notification.Name("news.promptugal.reader.articleRead"), object: nil) }
     }
 }
 

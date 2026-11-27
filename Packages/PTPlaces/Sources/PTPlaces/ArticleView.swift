@@ -128,6 +128,8 @@ public struct ArticleView: View {
         }
         .background(Palette.paper)
         .navigationTitle(String(localized: "Article", bundle: .module))
+        // The shell counts finished reads for the one-time rating prompt (ReviewPrompt); nothing else listens.
+        .onDisappear { NotificationCenter.default.post(name: Notification.Name("news.promptugal.reader.articleRead"), object: nil) }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
