@@ -297,6 +297,7 @@ public struct PlaceDetailView: View {
         guard let feed = store.files[id] else {
             return PlacesOrigin.describe(pinned: false, phase: .loading, fetched: nil, dataDate: nil)
         }
+        if let newest = file?.newsNewestFirst.first?.date { return feed.origin(dataDate: newest, story: true) }
         return feed.origin(dataDate: file?.updated ?? place?.updated)
     }
 

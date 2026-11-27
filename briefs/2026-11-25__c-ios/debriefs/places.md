@@ -135,3 +135,18 @@ home footer: no Web Summit anywhere in PTPlaces.
 - Tests: keys against values computed with the site's normalisation (NFC, NBSP, CRLF, blank lines), a lenient shard,
   English untouched, the compiled pt-PT catalogue (with a positional format), and which prose is translated.
 - c9 fix: Xcode's symbol generation rejected keys differing only in case. Merged events/Events, sources/Sources (BigNumber uppercases anyway) and the two "signature does not match" keys; reworded Open %@ → Visit %@, signature %@ → signature is %@, The towns → Its towns, so no two keys share a symbol once case, punctuation and format specifiers are dropped. 226 keys.
+
+## Recent first, age said plainly (Dinis via c.ios, build 683, 27 Nov ~00:15)
+
+The data is old (by-place newest ai_news 16 to 17 Nov; since.json's newest placed items 17 Nov), so the app says so:
+- Ages: `PlaceDates.age` ("today", "yesterday", "10 days ago", the date past two months) on Latest from the towns,
+  My towns, Since you last looked, Home's lead and top stories, From the town up.
+- My towns: when a followed town's newest story is over 3 days old, "No new local stories since 16 Nov" and the story
+  under "Last story". The green "Live" pill is gone everywhere (StatusPill shows only "Researching").
+- Home top stories: by date first, one per place within a day; today and yesterday on top, then an "Earlier" divider.
+  A placeless article takes the finest place its title names (town over region over country; `placeID`, `namedPlace`)
+  for its place name and its town › region › country trail.
+- Origin lines on news say "Live from promptugal.news" only when the newest story shown is under a day old, else
+  "From promptugal.news, newest story <date>" (Home masthead, Latest from the towns, Since you last looked, a town
+  page's news and events).
+- 232 catalogue keys, all with pt-PT, no symbol collisions.

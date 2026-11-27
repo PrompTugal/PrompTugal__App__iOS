@@ -542,7 +542,7 @@ struct StoryRow: View {
                                 .padding(.horizontal, 6).padding(.vertical, 2)
                                 .background(accent, in: Capsule()).foregroundStyle(.white)
                         }
-                        Text([item.publisher, PlaceDates.short(item.date)].filter { !$0.isEmpty }.joined(separator: " · "))
+                        Text([item.publisher, PlaceDates.age(item.date)].filter { !$0.isEmpty }.joined(separator: " · "))
                             .font(.caption2).foregroundStyle(Palette.muted)
                     }
                     Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)

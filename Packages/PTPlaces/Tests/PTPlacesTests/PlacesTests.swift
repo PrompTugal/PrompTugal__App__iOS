@@ -920,3 +920,52 @@ struct LanguageTests {
         #expect(!file.translatableProse.contains("Council buys AI tools"))
     }
 }
+
+// MARK: - Recent first, age said plainly (Dinis, 27 Nov)
+
+@Suite("PTPlaces: age and recency")
+struct RecencyTests {
+    let now = PlaceDates.parse("2026-11-27T00:15Z")!
+
+    @Test("a story's age reads today, yesterday, n days ago, then the date")
+    func age() {
+        #expect(PlaceDates.daysOld("2026-11-27", now: now) == 0)
+        #expect(PlaceDates.daysOld("2026-11-16", now: now) == 11)
+        #expect(PlaceDates.age("2026-11-27", now: now) == "today")
+        #expect(PlaceDates.age("2026-11-26", now: now) == "yesterday")
+        #expect(PlaceDates.age("2026-11-17", now: now) == "10 days ago")
+        #expect(PlaceDates.age("2025-11-03", now: now) == "3 Nov 2025")
+        #expect(PlaceDates.age("not a date", now: now) == "not a date")
+    }
+
+    @Test("top stories run by date first: a 16 Nov item never sits above a 26 Nov one; one per place within a day")
+    func dateFirst() throws {
+        let feed = try PTPlacesTestsDecode.decode(SinceFeed.self, """
+        {"places":[{"id":"portugal","name":"Portugal","kind":"country"},{"id":"algarve","name":"The Algarve","kind":"region","parent":"portugal"},
+                   {"id":"faro","name":"Faro","kind":"municipality","parent":"algarve"},{"id":"olhao","name":"Olhão","kind":"municipality","parent":"algarve"}],
+         "items":[
+          {"kind":"story","date":"2026-11-16","title":"Faro old A","url":"https://a.pt/1","place":"faro","rings":["faro","algarve","portugal"]},
+          {"kind":"story","date":"2026-11-16","title":"Faro old B","url":"https://a.pt/2","place":"faro","rings":["faro","algarve","portugal"]},
+          {"kind":"story","date":"2026-11-16","title":"Olhao old","url":"https://a.pt/3","place":"olhao","rings":["olhao","algarve","portugal"]},
+          {"kind":"article","date":"2026-11-26","title":"New firms set up in Faro","url":"https://promptugal.news/articles/faro-firms.html","place":null,"rings":["portugal"]},
+          {"kind":"article","date":"2026-11-26","title":"AI use in Portugal jumps","url":"https://promptugal.news/articles/ai-use.html","place":null,"rings":["portugal"]}
+         ]}
+        """)
+        let top = feed.topStories(limit: 10)
+        #expect(top.map(\.title) == ["New firms set up in Faro", "AI use in Portugal jumps", "Faro old A", "Olhao old", "Faro old B"])
+        // A placeless article takes the finest place its title names, and that place's way up.
+        #expect(feed.placeID(for: top[0]) == "faro")
+        #expect(feed.trail(for: top[0]).map(\.id) == ["faro", "algarve", "portugal"])
+        #expect(feed.placeID(for: top[1]) == "portugal")
+        #expect(feed.placeName(for: top[0]) == "Faro")
+    }
+
+    @Test("the origin line says live only for a story under a day old, else the newest story's date")
+    func origin() {
+        let fresh = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-26", story: true, now: now)
+        #expect(fresh.kind == .live)
+        let old = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-16", story: true, now: now)
+        #expect(old.kind == .dated)
+        #expect(old.text == "From promptugal.news, newest story 16 Nov 2026")
+    }
+}

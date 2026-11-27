@@ -86,10 +86,15 @@ public struct MyTownsCard: View {
                         HStack(spacing: Space.s) {
                             Circle().fill(accent).frame(width: 10, height: 10)
                             Text(place.name).font(.headline)
-                            StatusPill(status: place.status)
                             Spacer()
                         }
-                        if let item = store.file(place.id)?.newsByDate.first {
+                        if let item = store.file(place.id)?.newsNewestFirst.first {
+                            if (PlaceDates.daysOld(item.date) ?? 0) > 3 {
+                                Text(String(localized: "No new local stories since \(PlaceDates.short(item.date))", bundle: .module))
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(Palette.muted)
+                                Kicker(text: String(localized: "Last story", bundle: .module), color: Palette.muted)
+                            }
                             StoryRow(item: item, place: nil, accent: accent)
                         } else {
                             Text(String(localized: "No local AI story yet.", bundle: .module)).font(.caption).foregroundStyle(Palette.muted)

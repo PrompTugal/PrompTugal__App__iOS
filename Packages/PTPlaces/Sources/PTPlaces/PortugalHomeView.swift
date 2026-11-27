@@ -57,15 +57,53 @@ extension SinceFeed {
 
     /// The top stories: local items newest first, one per place before any place gets a second (an item with no
     /// place of its own counts as its first ring, else Portugal), so the front page spans the country.
+    /// Date first (Dinis, 27 Nov): newer days always above older ones; within one day, one item per place before a
+    /// place gets a second, so a day's front spans the country.
     func topStories(limit: Int, excluding: Set<String> = []) -> [SinceItem] {
-        var places = Set<String>()
-        var first: [SinceItem] = []
-        var more: [SinceItem] = []
-        for item in localNewestFirst where !excluding.contains(item.id) {
-            let key = item.place ?? item.rings.first ?? "portugal"
-            if places.insert(key).inserted { first.append(item) } else { more.append(item) }
+        let pool = localNewestFirst.filter { !excluding.contains($0.id) }
+        var days: [String] = []
+        var byDay: [String: [SinceItem]] = [:]
+        for item in pool {
+            if byDay[item.date] == nil { days.append(item.date) }
+            byDay[item.date, default: []].append(item)
         }
-        return Array((first + more).prefix(limit))
+        var ordered: [SinceItem] = []
+        for day in days {
+            var places = Set<String>()
+            var first: [SinceItem] = []
+            var more: [SinceItem] = []
+            for item in byDay[day] ?? [] {
+                if places.insert(placeID(for: item)).inserted { first.append(item) } else { more.append(item) }
+            }
+            ordered += first + more
+        }
+        return Array(ordered.prefix(limit))
+    }
+
+    /// An item's place: its own, else the finest place its title names (a town over a region over the country), else
+    /// its first ring, else Portugal.
+    func placeID(for item: SinceItem) -> String {
+        if let own = item.place { return own }
+        if let named = namedPlace(in: item.title) { return named.id }
+        return item.rings.first ?? "portugal"
+    }
+
+    /// The finest place a title names, by whole words (accents and case aside).
+    func namedPlace(in title: String) -> SincePlace? {
+        let folded = Self.fold(title)
+        let rank: (SincePlace) -> Int = { place in
+            if place.kind == "country" { return 2 }
+            return place.kind == "region" ? 1 : 0
+        }
+        return places
+            .filter { place in
+                let names = [place.name.replacingOccurrences(of: "The ", with: "")] + (Self.englishNames[place.id] ?? [])
+                return names.contains { raw in
+                    let name = Self.fold(raw)
+                    return name.count > 2 && folded.contains(name)
+                }
+            }
+            .min { rank($0) < rank($1) }
     }
 }
 
@@ -129,7 +167,7 @@ public struct PortugalHomeView: View {
             .font(.caption.weight(.semibold))
             .textCase(.uppercase)
             .foregroundStyle(Palette.muted)
-            PlacesOriginLabel(origin: store.since.origin(dataDate: store.since.value?.built))
+            PlacesOriginLabel(origin: store.since.origin(dataDate: store.since.value?.lead?.date, story: true))
         }
         .padding(.horizontal, gutter)
         .padding(.top, Space.m)
@@ -155,13 +193,23 @@ public struct PortugalHomeView: View {
             HomeLead(item: lead, feed: feed, store: store, wide: wide)
                 .padding(.horizontal, gutter)
             let top = feed.topStories(limit: wide ? 10 : 7, excluding: [lead.id])
+            let recent = top.filter { (PlaceDates.daysOld($0.date) ?? 99) <= 1 }
+            let earlier = top.filter { (PlaceDates.daysOld($0.date) ?? 99) > 1 }
             VStack(alignment: .leading, spacing: Space.s) {
                 SectionHead(title: String(localized: "Top stories", bundle: .module),
-                            subtitle: String(localized: "Across the country, each with where it happened and its source", bundle: .module),
+                            subtitle: String(localized: "Across the country, newest first, each with where it happened and its source", bundle: .module),
                             accent: Palette.red)
-                ForEach(top) { item in
+                ForEach(recent) { item in
                     HomeStoryRow(item: item, feed: feed, store: store)
                     Divider()
+                }
+                if !earlier.isEmpty {
+                    Kicker(text: String(localized: "Earlier", bundle: .module), color: Palette.muted)
+                        .padding(.top, Space.m)
+                    ForEach(earlier) { item in
+                        HomeStoryRow(item: item, feed: feed, store: store)
+                        Divider()
+                    }
                 }
             }
             .padding(.horizontal, gutter)
@@ -197,7 +245,7 @@ public struct PortugalHomeView: View {
                     StoryRow(item: entry.item, place: entry.place,
                              accent: PlaceTheme.accent(store.file(entry.place.id), id: entry.place.id))
                 }
-                PlacesOriginLabel(origin: store.index.origin(dataDate: latest.map(\.place.updated).max()))
+                PlacesOriginLabel(origin: store.index.origin(dataDate: latest.map(\.item.date).max(), story: true))
             }
             .padding(.horizontal, gutter)
         }
@@ -247,7 +295,7 @@ struct HomeLead: View {
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                     ReadAtLine(outlet: item.byline, readOn: "", accent: Palette.red)
-                    Text(PlaceDates.short(item.date)).font(.caption).foregroundStyle(Palette.muted)
+                    Text(PlaceDates.age(item.date)).font(.caption).foregroundStyle(Palette.muted)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
@@ -281,7 +329,7 @@ struct HomeStoryRow: View {
                         .fixedSize(horizontal: false, vertical: true)
                     HStack(spacing: 6) {
                         ReadAtLine(outlet: item.byline, readOn: "", accent: Palette.red)
-                        Text(PlaceDates.short(item.date)).font(.caption2).foregroundStyle(Palette.muted).fixedSize()
+                        Text(PlaceDates.age(item.date)).font(.caption2).foregroundStyle(Palette.muted).fixedSize()
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
