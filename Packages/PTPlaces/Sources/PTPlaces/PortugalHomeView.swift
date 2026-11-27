@@ -254,7 +254,7 @@ public struct PortugalHomeView: View {
                     StoryRow(item: entry.item, place: entry.place,
                              accent: PlaceTheme.accent(store.file(entry.place.id), id: entry.place.id))
                 }
-                PlacesOriginLabel(origin: store.index.origin(dataDate: latest.map(\.item.date).max(), story: true))
+                PlacesOriginLabel(origin: store.indexOrigin(dataDate: latest.map(\.item.date).max(), story: true))
             }
             .padding(.horizontal, gutter)
         }

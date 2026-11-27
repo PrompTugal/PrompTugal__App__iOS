@@ -92,7 +92,7 @@ struct PlacesMapHero: View {
             header
             map
             chips
-            PlacesOriginLabel(origin: store.index.origin(dataDate: places.map(\.updated).max()))
+            PlacesOriginLabel(origin: store.indexOrigin(dataDate: places.map(\.updated).max()))
         }
         .padding(.horizontal, wide ? Space.xxl : Space.l)
         .accessibilityIdentifier("places.map")

@@ -19,7 +19,7 @@ struct PublicSettingsView: View {
             // Which build this is, first thing in More (on iPad the sidebar header shows it too).
             Section {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(verbatim: "PrompTugal.news · the Algarve").font(.subheadline.weight(.semibold))
+                    Text(verbatim: "PrompTugal.news · Portugal").font(.subheadline.weight(.semibold))
                     Text(verbatim: AppVersion.label).font(.caption.monospacedDigit()).foregroundStyle(Palette.muted)
                         .accessibilityIdentifier("pt.more.version")
                 }

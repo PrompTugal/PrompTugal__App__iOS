@@ -400,7 +400,7 @@ private struct LatestNewsCard: View {
             ForEach(stories) { story in
                 NavigationLink { SitePage(url: story.url, title: story.title) } label: {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
+                        Text(englishHeadline(story.title)).font(Typo.story).foregroundStyle(Palette.ink)
                             .multilineTextAlignment(.leading)
                         if !story.summary.isEmpty {
                             Text(story.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(2)
@@ -504,4 +504,11 @@ struct PracticalCard: View {
 
 #Preview("Now · iPhone") {
     NavigationStack { NowView() }.environment(ReaderStore()).phonePreview()
+}
+
+/// The site's headlines are English; marked so VoiceOver reads them in an English voice when the app runs in Portuguese.
+func englishHeadline(_ string: String) -> AttributedString {
+    var text = AttributedString(string)
+    text.languageIdentifier = "en"
+    return text
 }

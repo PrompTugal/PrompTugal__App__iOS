@@ -209,7 +209,7 @@ public struct PlacesHomeView: View {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "Across Portugal", bundle: .module),
                             subtitle: capitalsSubtitle(cities.count), accent: Palette.red)
-                PlacesOriginLabel(origin: store.index.origin(dataDate: cities.map(\.updated).max()))
+                PlacesOriginLabel(origin: store.indexOrigin(dataDate: cities.map(\.updated).max()))
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: wide ? 200 : 150), spacing: Space.m)], spacing: Space.m) {
                     ForEach(Array(cities.enumerated()), id: \.element.id) { index, place in
                         NavigationLink(value: PlaceRoute(place.id)) {

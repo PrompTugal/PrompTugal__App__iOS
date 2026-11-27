@@ -393,6 +393,40 @@
         }
       }
     },
+    "Built-in copy, newest %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Built-in copy, newest %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia incluída na app, mais recente de %@"
+          }
+        }
+      }
+    },
+    "Built-in copy, not live": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Built-in copy, not live"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia incluída na app, não em direto"
+          }
+        }
+      }
+    },
     "Built-in snapshot, not live": {
       "extractionState": "manual",
       "localizations": {
@@ -2331,6 +2365,23 @@
         }
       }
     },
+    "Signature checked when online": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signature checked when online"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assinatura verificada quando houver ligação"
+          }
+        }
+      }
+    },
     "Signature not checked": {
       "extractionState": "manual",
       "localizations": {
@@ -3041,6 +3092,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "O artigo está em inglês"
+          }
+        }
+      }
+    },
+    "This device is offline: the signed text, its signature and the keys are read from promptugal.news.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device is offline: the signed text, its signature and the keys are read from promptugal.news."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este dispositivo está sem ligação: o texto assinado, a assinatura e as chaves são lidos de promptugal.news."
           }
         }
       }
@@ -3810,23 +3878,6 @@
         }
       }
     },
-    "the published keys did not load": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "the published keys did not load"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "as chaves publicadas não carregaram"
-          }
-        }
-      }
-    },
     "the signature file could not be read": {
       "extractionState": "manual",
       "localizations": {
@@ -3840,23 +3891,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "não foi possível ler o ficheiro da assinatura"
-          }
-        }
-      }
-    },
-    "the signature file did not load": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "the signature file did not load"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "o ficheiro da assinatura não carregou"
           }
         }
       }

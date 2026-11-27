@@ -1,0 +1,963 @@
+{
+  "about": "PrompTugal.news by place: each place, its status, its agent, its counts, its page and its own JSON (api/v1/by-place/<id>.json)",
+  "version": "v0.1.2364",
+  "built": "2026-11-27",
+  "places": [
+    {
+      "id": "portugal",
+      "name": "Portugal",
+      "kind": "country",
+      "parent": null,
+      "path": "portugal/",
+      "agent": "place.portugal@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 22,
+      "ai_map": 40,
+      "articles": 4,
+      "page": "https://promptugal.news/portugal/",
+      "api": "https://promptugal.news/api/v1/by-place/portugal.json",
+      "at": null,
+      "accent": "#0B5D3B",
+      "landmark": "Torre de Belém",
+      "identity": {
+        "key_id": "site.portugal-promptugal",
+        "signed_by": "place.portugal@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "algarve",
+      "name": "The Algarve",
+      "kind": "region",
+      "parent": "portugal",
+      "path": "algarve/",
+      "agent": "place.algarve@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 19,
+      "ai_map": 33,
+      "articles": 14,
+      "page": "https://promptugal.news/algarve/",
+      "api": "https://promptugal.news/api/v1/by-place/algarve.json",
+      "at": null,
+      "accent": "#0B5C7A",
+      "landmark": "Ponta da Piedade and the Faro lagoon",
+      "identity": {
+        "key_id": "site.algarve-promptugal-2",
+        "signed_by": "place.algarve.east@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "faro",
+      "name": "Faro",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/faro/",
+      "agent": "place.faro@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 28,
+      "ai_map": 26,
+      "articles": 1,
+      "page": "https://promptugal.news/algarve/faro/",
+      "api": "https://promptugal.news/api/v1/by-place/faro.json",
+      "at": {
+        "lon": -7.935,
+        "lat": 37.019
+      },
+      "accent": "#0B5C7A",
+      "landmark": "Arco da Vila, the neoclassical gate into Faro's old town",
+      "identity": {
+        "key_id": "site.faro-promptugal",
+        "signed_by": "place.faro@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "loule",
+      "name": "Loulé",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/loule/",
+      "agent": "place.loule@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 13,
+      "ai_map": 13,
+      "articles": 4,
+      "page": "https://promptugal.news/algarve/loule/",
+      "api": "https://promptugal.news/api/v1/by-place/loule.json",
+      "at": {
+        "lon": -8.023,
+        "lat": 37.138
+      },
+      "accent": "#9A3412",
+      "landmark": "The neo-Moorish domes of the Mercado Municipal",
+      "identity": {
+        "key_id": "site.loule-promptugal",
+        "signed_by": "place.loule@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "quarteira",
+      "name": "Quarteira",
+      "kind": "city",
+      "parent": "loule",
+      "path": "algarve/quarteira/",
+      "agent": "place.quarteira@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 6,
+      "ai_map": 11,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/quarteira/",
+      "api": "https://promptugal.news/api/v1/by-place/quarteira.json",
+      "at": {
+        "lon": -8.103,
+        "lat": 37.069
+      },
+      "accent": "#0B5C7A",
+      "landmark": "The Fort of Armação on the Quarteira seafront",
+      "identity": {
+        "key_id": "site.quarteira-promptugal",
+        "signed_by": "place.quarteira@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "silves",
+      "name": "Silves",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/silves/",
+      "agent": "place.silves@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 2,
+      "ai_map": 1,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/silves/",
+      "api": "https://promptugal.news/api/v1/by-place/silves.json",
+      "at": {
+        "lon": -8.44,
+        "lat": 37.189
+      },
+      "accent": "#B34700",
+      "landmark": "Silves Castle, the red sandstone fortress above the Arade river",
+      "identity": {
+        "key_id": "site.silves-promptugal",
+        "signed_by": "place.silves@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "tavira",
+      "name": "Tavira",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/tavira/",
+      "agent": "place.tavira@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 4,
+      "ai_map": 7,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/tavira/",
+      "api": "https://promptugal.news/api/v1/by-place/tavira.json",
+      "at": {
+        "lon": -7.649,
+        "lat": 37.127
+      },
+      "accent": "#A4452C",
+      "landmark": "The seven-arched Roman Bridge over the Gilão river",
+      "identity": {
+        "key_id": "site.tavira-promptugal-2",
+        "signed_by": "place.algarve.east@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "vila-real-de-santo-antonio",
+      "name": "Vila Real de Santo António",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/vila-real-de-santo-antonio/",
+      "agent": "place.vila-real-de-santo-antonio@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 4,
+      "ai_map": 7,
+      "articles": 1,
+      "page": "https://promptugal.news/algarve/vila-real-de-santo-antonio/",
+      "api": "https://promptugal.news/api/v1/by-place/vila-real-de-santo-antonio.json",
+      "at": {
+        "lon": -7.418,
+        "lat": 37.195
+      },
+      "accent": "#1F4E79",
+      "landmark": "the Pombaline grid town and its riverfront customs house on the Guadiana",
+      "identity": {
+        "key_id": "site.vila-real-de-santo-antonio-promptugal-2",
+        "signed_by": "place.algarve.east@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "portimao",
+      "name": "Portimão",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/portimao/",
+      "agent": "place.portimao@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 10,
+      "ai_map": 19,
+      "articles": 1,
+      "page": "https://promptugal.news/algarve/portimao/",
+      "api": "https://promptugal.news/api/v1/by-place/portimao.json",
+      "at": {
+        "lon": -8.537,
+        "lat": 37.138
+      },
+      "accent": "#1A5276",
+      "landmark": "Praia da Rocha",
+      "identity": {
+        "key_id": "site.portimao-promptugal",
+        "signed_by": "place.portimao@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "lagos",
+      "name": "Lagos",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/lagos/",
+      "agent": "place.lagos@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 3,
+      "ai_map": 13,
+      "articles": 1,
+      "page": "https://promptugal.news/algarve/lagos/",
+      "api": "https://promptugal.news/api/v1/by-place/lagos.json",
+      "at": {
+        "lon": -8.673,
+        "lat": 37.102
+      },
+      "accent": "#9A4A12",
+      "landmark": "Ponta da Piedade, the golden cliffs and sea grottoes",
+      "identity": {
+        "key_id": "site.lagos-promptugal",
+        "signed_by": "place.lagos@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "olhao",
+      "name": "Olhão",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/olhao/",
+      "agent": "place.olhao@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 11,
+      "ai_map": 12,
+      "articles": 1,
+      "page": "https://promptugal.news/algarve/olhao/",
+      "api": "https://promptugal.news/api/v1/by-place/olhao.json",
+      "at": {
+        "lon": -7.841,
+        "lat": 37.026
+      },
+      "accent": "#0B5E7A",
+      "landmark": "The Mercados de Olhão, the red brick market halls on the Ria Formosa waterfront",
+      "identity": {
+        "key_id": "site.olhao-promptugal",
+        "signed_by": "place.olhao@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "albufeira",
+      "name": "Albufeira",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/albufeira/",
+      "agent": "place.albufeira@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 6,
+      "ai_map": 3,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/albufeira/",
+      "api": "https://promptugal.news/api/v1/by-place/albufeira.json",
+      "at": {
+        "lon": -8.25,
+        "lat": 37.089
+      },
+      "accent": "#0A5C7A",
+      "landmark": "The Old Town and its seafront beaches",
+      "identity": {
+        "key_id": "site.albufeira-promptugal",
+        "signed_by": "place.albufeira@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "lagoa",
+      "name": "Lagoa",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/lagoa/",
+      "agent": "place.lagoa@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 4,
+      "ai_map": 5,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/lagoa/",
+      "api": "https://promptugal.news/api/v1/by-place/lagoa.json",
+      "at": {
+        "lon": -8.453,
+        "lat": 37.135
+      },
+      "accent": "#9A4A12",
+      "landmark": "The Benagil sea cave with its open roof",
+      "identity": {
+        "key_id": "site.lagoa-promptugal",
+        "signed_by": "place.lagoa@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "monchique",
+      "name": "Monchique",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/monchique/",
+      "agent": "place.monchique@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 5,
+      "ai_map": 3,
+      "articles": 1,
+      "page": "https://promptugal.news/algarve/monchique/",
+      "api": "https://promptugal.news/api/v1/by-place/monchique.json",
+      "at": {
+        "lon": -8.555,
+        "lat": 37.317
+      },
+      "accent": "#2E5E3E",
+      "landmark": "Fóia, the highest point of the Serra de Monchique",
+      "identity": {
+        "key_id": "site.monchique-promptugal",
+        "signed_by": "place.monchique@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "aljezur",
+      "name": "Aljezur",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/aljezur/",
+      "agent": "place.aljezur@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 5,
+      "ai_map": 6,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/aljezur/",
+      "api": "https://promptugal.news/api/v1/by-place/aljezur.json",
+      "at": {
+        "lon": -8.803,
+        "lat": 37.318
+      },
+      "accent": "#0A5C6E",
+      "landmark": "Praia da Arrifana and the ruins of its Moorish-era fortified settlement",
+      "identity": {
+        "key_id": "site.aljezur-promptugal",
+        "signed_by": "place.aljezur@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "vila-do-bispo",
+      "name": "Vila do Bispo",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/vila-do-bispo/",
+      "agent": "place.vila-do-bispo@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 0,
+      "ai_map": 6,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/vila-do-bispo/",
+      "api": "https://promptugal.news/api/v1/by-place/vila-do-bispo.json",
+      "at": {
+        "lon": -8.911,
+        "lat": 37.083
+      },
+      "accent": "#1F4E79",
+      "landmark": "The Fortaleza de Sagres and the cliffs of Cape St Vincent",
+      "identity": {
+        "key_id": "site.vila-do-bispo-promptugal",
+        "signed_by": "place.vila-do-bispo@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "castro-marim",
+      "name": "Castro Marim",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/castro-marim/",
+      "agent": "place.castro-marim@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 4,
+      "ai_map": 4,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/castro-marim/",
+      "api": "https://promptugal.news/api/v1/by-place/castro-marim.json",
+      "at": {
+        "lon": -7.443,
+        "lat": 37.218
+      },
+      "accent": "#1B6A7A",
+      "landmark": "Castro Marim Castle above the salt pans and the Guadiana",
+      "identity": {
+        "key_id": "site.castro-marim-promptugal-2",
+        "signed_by": "place.algarve.east@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "alcoutim",
+      "name": "Alcoutim",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/alcoutim/",
+      "agent": "place.alcoutim@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 7,
+      "ai_map": 13,
+      "articles": 2,
+      "page": "https://promptugal.news/algarve/alcoutim/",
+      "api": "https://promptugal.news/api/v1/by-place/alcoutim.json",
+      "at": {
+        "lon": -7.471,
+        "lat": 37.471
+      },
+      "accent": "#2F5D50",
+      "landmark": "Alcoutim castle above the Guadiana",
+      "identity": {
+        "key_id": "site.alcoutim-promptugal-2",
+        "signed_by": "place.algarve.east@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "sao-bras-de-alportel",
+      "name": "São Brás de Alportel",
+      "kind": "municipality",
+      "parent": "algarve",
+      "path": "algarve/sao-bras-de-alportel/",
+      "agent": "place.sao-bras-de-alportel@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 7,
+      "ai_map": 12,
+      "articles": 0,
+      "page": "https://promptugal.news/algarve/sao-bras-de-alportel/",
+      "api": "https://promptugal.news/api/v1/by-place/sao-bras-de-alportel.json",
+      "at": {
+        "lon": -7.888,
+        "lat": 37.153
+      },
+      "accent": "#8A4B1F",
+      "landmark": "Museu do Traje",
+      "identity": {
+        "key_id": "site.sao-bras-de-alportel-promptugal",
+        "signed_by": "place.sao-bras-de-alportel@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "lisboa",
+      "name": "Lisboa",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/lisboa/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 10,
+      "ai_map": 33,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/lisboa/",
+      "api": "https://promptugal.news/api/v1/by-place/lisboa.json",
+      "at": {
+        "lon": -9.139,
+        "lat": 38.722
+      },
+      "accent": "#1D4E89",
+      "landmark": "The Torre de Belém and the yellow trams climbing the hills of Alfama",
+      "identity": {
+        "key_id": "site.lisboa-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "porto",
+      "name": "Porto",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/porto/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 15,
+      "ai_map": 70,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/porto/",
+      "api": "https://promptugal.news/api/v1/by-place/porto.json",
+      "at": {
+        "lon": -8.611,
+        "lat": 41.15
+      },
+      "accent": "#1F4E8C",
+      "landmark": "The Dom Luís I bridge over the Douro, with the Ribeira below it",
+      "identity": {
+        "key_id": "site.porto-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "vila-real",
+      "name": "Vila Real",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/vila-real/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 14,
+      "ai_map": 18,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/vila-real/",
+      "api": "https://promptugal.news/api/v1/by-place/vila-real.json",
+      "at": {
+        "lon": -7.745,
+        "lat": 41.301
+      },
+      "accent": "#6B2D3C",
+      "landmark": "Palácio de Mateus, the baroque manor on the Douro wine country's most famous label",
+      "identity": {
+        "key_id": "site.vila-real-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "aveiro",
+      "name": "Aveiro",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/aveiro/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 6,
+      "ai_map": 18,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/aveiro/",
+      "api": "https://promptugal.news/api/v1/by-place/aveiro.json",
+      "at": {
+        "lon": -8.654,
+        "lat": 40.64
+      },
+      "accent": "#0F6E6E",
+      "landmark": "The central canal and its painted moliceiro boats",
+      "identity": {
+        "key_id": "site.aveiro-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "braganca",
+      "name": "Bragança",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/braganca/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 12,
+      "ai_map": 12,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/braganca/",
+      "api": "https://promptugal.news/api/v1/by-place/braganca.json",
+      "at": {
+        "lon": -6.757,
+        "lat": 41.806
+      },
+      "accent": "#7A3E12",
+      "landmark": "The castle keep and the Domus Municipalis, the pentagonal medieval building in the old citadel",
+      "identity": {
+        "key_id": "site.braganca-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "viana-do-castelo",
+      "name": "Viana do Castelo",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/viana-do-castelo/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 7,
+      "ai_map": 12,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/viana-do-castelo/",
+      "api": "https://promptugal.news/api/v1/by-place/viana-do-castelo.json",
+      "at": {
+        "lon": -8.832,
+        "lat": 41.693
+      },
+      "accent": "#1F5A7A",
+      "landmark": "The Basílica de Santa Luzia on its hill above the Lima estuary",
+      "identity": {
+        "key_id": "site.viana-do-castelo-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "braga",
+      "name": "Braga",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/braga/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 8,
+      "ai_map": 25,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/braga/",
+      "api": "https://promptugal.news/api/v1/by-place/braga.json",
+      "at": {
+        "lon": -8.426,
+        "lat": 41.551
+      },
+      "accent": "#7A4B2A",
+      "landmark": "The Bom Jesus do Monte stairway above the city",
+      "identity": {
+        "key_id": "site.braga-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "coimbra",
+      "name": "Coimbra",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/coimbra/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 12,
+      "ai_map": 35,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/coimbra/",
+      "api": "https://promptugal.news/api/v1/by-place/coimbra.json",
+      "at": {
+        "lon": -8.429,
+        "lat": 40.205
+      },
+      "accent": "#8A5A00",
+      "landmark": "the University of Coimbra on its hill above the Mondego",
+      "identity": {
+        "key_id": "site.coimbra-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "castelo-branco",
+      "name": "Castelo Branco",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/castelo-branco/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 7,
+      "ai_map": 12,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/castelo-branco/",
+      "api": "https://promptugal.news/api/v1/by-place/castelo-branco.json",
+      "at": {
+        "lon": -7.508,
+        "lat": 39.822
+      },
+      "accent": "#A3262A",
+      "landmark": "The Jardim do Paço Episcopal, the baroque bishop's palace garden with its granite statues",
+      "identity": {
+        "key_id": "site.castelo-branco-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "guarda",
+      "name": "Guarda",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/guarda/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 5,
+      "ai_map": 8,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/guarda/",
+      "api": "https://promptugal.news/api/v1/by-place/guarda.json",
+      "at": {
+        "lon": -7.268,
+        "lat": 40.538
+      },
+      "accent": "#4A5568",
+      "landmark": "The Sé, Guarda's cathedral, whose new organ the council says will be inaugurated on 27 November 2026",
+      "identity": {
+        "key_id": "site.guarda-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "viseu",
+      "name": "Viseu",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/viseu/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 11,
+      "ai_map": 13,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/viseu/",
+      "api": "https://promptugal.news/api/v1/by-place/viseu.json",
+      "at": {
+        "lon": -7.912,
+        "lat": 40.661
+      },
+      "accent": "#7B4B2A",
+      "landmark": "The Sé Catedral and the granite old town on the hill, home of the Grão Vasco museum",
+      "identity": {
+        "key_id": "site.viseu-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "leiria",
+      "name": "Leiria",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/leiria/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 9,
+      "ai_map": 22,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/leiria/",
+      "api": "https://promptugal.news/api/v1/by-place/leiria.json",
+      "at": {
+        "lon": -8.807,
+        "lat": 39.744
+      },
+      "accent": "#9A3412",
+      "landmark": "Castelo de Leiria, the medieval hilltop castle above the Lis river",
+      "identity": {
+        "key_id": "site.leiria-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "santarem",
+      "name": "Santarém",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/santarem/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 9,
+      "ai_map": 14,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/santarem/",
+      "api": "https://promptugal.news/api/v1/by-place/santarem.json",
+      "at": {
+        "lon": -8.686,
+        "lat": 39.236
+      },
+      "accent": "#8A5A00",
+      "landmark": "Jardim das Portas do Sol, the viewpoint over the Tejo and the Lezíria plain",
+      "identity": {
+        "key_id": "site.santarem-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "portalegre",
+      "name": "Portalegre",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/portalegre/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 9,
+      "ai_map": 13,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/portalegre/",
+      "api": "https://promptugal.news/api/v1/by-place/portalegre.json",
+      "at": {
+        "lon": -7.431,
+        "lat": 39.294
+      },
+      "accent": "#8A3B2A",
+      "landmark": "The Portalegre tapestry, the town's woven heritage that the council still campaigns for",
+      "identity": {
+        "key_id": "site.portalegre-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "setubal",
+      "name": "Setúbal",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/setubal/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 8,
+      "ai_map": 7,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/setubal/",
+      "api": "https://promptugal.news/api/v1/by-place/setubal.json",
+      "at": {
+        "lon": -8.893,
+        "lat": 38.524
+      },
+      "accent": "#0A6A6E",
+      "landmark": "Forte de São Filipe above the Sado estuary and the bay of Setúbal",
+      "identity": {
+        "key_id": "site.setubal-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "evora",
+      "name": "Évora",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/evora/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 6,
+      "ai_map": 10,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/evora/",
+      "api": "https://promptugal.news/api/v1/by-place/evora.json",
+      "at": {
+        "lon": -7.909,
+        "lat": 38.571
+      },
+      "accent": "#8A4B1F",
+      "landmark": "The Roman Temple of Évora, the columns in the old town square",
+      "identity": {
+        "key_id": "site.evora-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "beja",
+      "name": "Beja",
+      "kind": "city",
+      "parent": "portugal",
+      "path": "portugal/beja/",
+      "agent": "place.districts@PrompTugal.dinis",
+      "status": "live",
+      "updated": "2026-11-26",
+      "ai_news": 8,
+      "ai_map": 8,
+      "articles": 0,
+      "page": "https://promptugal.news/portugal/beja/",
+      "api": "https://promptugal.news/api/v1/by-place/beja.json",
+      "at": {
+        "lon": -7.863,
+        "lat": 38.015
+      },
+      "accent": "#8A5A12",
+      "landmark": "the Torre de Menagem, the keep of Beja's castle over the plain",
+      "identity": {
+        "key_id": "site.beja-promptugal-2",
+        "signed_by": "place.districts@PrompTugal.dinis"
+      },
+      "signature": "missing"
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "kind": "city",
+      "parent": "united-kingdom",
+      "path": "europe/london/",
+      "agent": "cl-6.place.london@PrompTugal.dinis",
+      "status": "stub",
+      "updated": null,
+      "ai_news": 0,
+      "ai_map": 0,
+      "articles": 0,
+      "page": "https://promptugal.news/europe/london/",
+      "api": "https://promptugal.news/api/v1/by-place/london.json",
+      "at": null,
+      "accent": "#1f5f3f",
+      "landmark": null,
+      "identity": null,
+      "signature": "missing"
+    }
+  ],
+  "license": {
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "by": "PrompTugal.news",
+    "scope": "what PrompTugal.news made in this file; an item taken from someone else carries its own license"
+  }
+}
