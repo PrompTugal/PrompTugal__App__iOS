@@ -139,7 +139,7 @@ struct StoryAISheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: Space.m) {
                     if let town { Kicker(town) }
-                    Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
+                    Text(content: story.title).font(Typo.story).foregroundStyle(Palette.ink)
                     if let url = story.sourceURL {
                         Link(destination: url) { Label(LocalText.string("Read it at \(String(describing: story.publisher ?? url.host() ?? "the source"))"), systemImage: "arrow.up.right") }
                             .font(.footnote)
@@ -162,7 +162,7 @@ struct StoryAISheet: View {
                     } else if let path = story.aiPath {
                         // No model: the newsroom's own words are still the answer.
                         TitledCard(LocalText.string("The AI path"), kicker: story.stepsLabel ?? LocalText.string("as the newsroom wrote it")) {
-                            Text(path).font(.callout)
+                            Text(content: path).font(.callout)
                         }
                     }
                     OnDeviceAnswer(ask: ask)

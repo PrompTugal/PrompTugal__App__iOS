@@ -46,7 +46,7 @@ public enum Freshness: Equatable, Sendable {
 
     static func time(_ date: Date, timeZone: TimeZone) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_GB")
+        formatter.locale = LocalText.locale
         formatter.timeZone = timeZone
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
@@ -57,7 +57,7 @@ public enum Freshness: Equatable, Sendable {
         calendar.timeZone = timeZone
         let sameYear = calendar.component(.year, from: date) == calendar.component(.year, from: now)
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_GB")
+        formatter.locale = LocalText.locale
         formatter.timeZone = timeZone
         formatter.dateFormat = sameYear ? "d MMM" : "d MMM yyyy"
         return formatter.string(from: date)

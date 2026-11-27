@@ -160,7 +160,7 @@ struct TownRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(info.name).font(.body.weight(.medium)).foregroundStyle(Palette.ink)
                     if let landmark = site?.look?.landmark {
-                        Text(landmark).font(.caption).foregroundStyle(Palette.muted).lineLimit(1)
+                        Text(content: landmark).font(.caption).foregroundStyle(Palette.muted).lineLimit(1)
                     }
                 }
                 Spacer(minLength: Space.s)
@@ -200,15 +200,15 @@ struct StoryRow: View {
             if let url = story.sourceURL {
                 Link(destination: url) {
                     HStack(alignment: .firstTextBaseline, spacing: 4) {
-                        Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                        Text(content: story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                         Image(systemName: "arrow.up.right").font(.caption2).foregroundStyle(Palette.muted)
                     }
                 }
             } else {
-                Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
+                Text(content: story.title).font(Typo.story).foregroundStyle(Palette.ink)
             }
             if let summary = story.summary {
-                Text(summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(4)
+                Text(content: summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(4)
             }
             HStack(spacing: Space.s) {
                 Text([story.publisher, story.date].compactMap { $0 }.joined(separator: ", "))
@@ -217,7 +217,7 @@ struct StoryRow: View {
             .font(.caption)
             .foregroundStyle(Palette.muted)
             if let path = story.aiPath {
-                Text(path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3)
+                Text(content: path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3)
             }
             if story.isHeld, let url = story.sourceURL {
                 Link(destination: url) { Label(story.readItAt, systemImage: "arrow.up.right.square") }
