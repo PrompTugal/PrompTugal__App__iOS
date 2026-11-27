@@ -11,7 +11,7 @@
 	     Location (when in use only) is here: "Near me" in PTLocal works out which of the 17 Algarve towns is closest, on the
 	     device, and keeps only that town's id. The location is never sent or stored. Asked only when the reader taps it. -->
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>PrompTugal uses your location, only while you use the app and only when you tap Near me, to find the nearest Algarve town and show its news first. Your location stays on this device.</string>
+	<string>PrompTugal.news uses your location only while you use the app and only when you tap Near me, to find the nearest town and show its news first. Your location stays on this device.</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>news.promptugal.reader.refresh</string>
