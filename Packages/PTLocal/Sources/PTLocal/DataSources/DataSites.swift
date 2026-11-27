@@ -14,51 +14,51 @@ public struct DataSite: Sendable, Hashable, Identifiable {
     /// The 13 sites, in the order the screen shows them.
     public static let all: [DataSite] = [
         DataSite(id: "news", name: "promptugal.news",
-                 covers: "The newsroom: articles, stories, companies and events, place by place, each with its source.",
+                 covers: LocalText.string("The newsroom: articles, stories, companies and events, place by place, each with its source."),
                  site: URL(string: "https://promptugal.news")!,
                  feed: URL(string: "https://promptugal.news/api/v1/since.json")!),
         DataSite(id: "data", name: "data.promptugal.news",
-                 covers: "The raw public data behind every site, collected by code: weather, events, contracts, flights, cameras, signals, cyber.",
+                 covers: LocalText.string("The raw public data behind every site, collected by code: weather, events, contracts, flights, cameras, signals, cyber."),
                  site: URL(string: "https://data.promptugal.news")!,
                  feed: DataIndex.url),
         DataSite(id: "weather", name: "weather.promptugal.news",
-                 covers: "IPMA warnings, forecasts, fire risk, sea and UV, and MeteoAlarm. Not a warning service: follow IPMA and ANEPC.",
+                 covers: LocalText.string("IPMA warnings, forecasts, fire risk, sea and UV, and MeteoAlarm. Not a warning service: follow IPMA and ANEPC."),
                  site: URL(string: "https://weather.promptugal.news")!, feed: nil),
         DataSite(id: "events", name: "events.promptugal.news",
-                 covers: "Official events from councils, theatres and venues, place by place.",
+                 covers: LocalText.string("Official events from councils, theatres and venues, place by place."),
                  site: URL(string: "https://events.promptugal.news")!, feed: nil),
         DataSite(id: "civic", name: "civic.promptugal.news",
-                 covers: "The 16 Algarve councils: public contracts, procurement notices and where each publishes its papers.",
+                 covers: LocalText.string("The 16 Algarve councils: public contracts, procurement notices and where each publishes its papers."),
                  site: URL(string: "https://civic.promptugal.news")!,
                  feed: URL(string: "https://civic.promptugal.news/api/v1/councils.json")!),
         DataSite(id: "live", name: "live.promptugal.news",
-                 covers: "Public cameras by place: what each shows and the operator's own link.",
+                 covers: LocalText.string("Public cameras by place: what each shows and the operator's own link."),
                  site: URL(string: "https://live.promptugal.news")!,
                  feed: URL(string: "https://live.promptugal.news/api/v1/places/index.json")!),
         DataSite(id: "bulletins", name: "bulletins.promptugal.news",
-                 covers: "Short teletext-style bulletins written by agents from the data, every fact sourced.",
+                 covers: LocalText.string("Short teletext-style bulletins written by agents from the data, every fact sourced."),
                  site: URL(string: "https://bulletins.promptugal.news")!,
                  feed: URL(string: "https://bulletins.promptugal.news/api/v1/index.json")!),
         DataSite(id: "signals", name: "signals.promptugal.news",
-                 covers: "Public posts by organisations, by link, topic and place.",
+                 covers: LocalText.string("Public posts by organisations, by link, topic and place."),
                  site: URL(string: "https://signals.promptugal.news")!, feed: nil),
         DataSite(id: "cyber", name: "cyber.promptugal.news",
-                 covers: "A weekly pulse of known-exploited and new vulnerabilities.",
+                 covers: LocalText.string("A weekly pulse of known-exploited and new vulnerabilities."),
                  site: URL(string: "https://cyber.promptugal.news")!,
                  feed: URL(string: "https://cyber.promptugal.news/api/v1/pulse/index.json")!),
         DataSite(id: "library", name: "library.promptugal.news",
-                 covers: "Talks, replays and articles, catalogued with their publishers.",
+                 covers: LocalText.string("Talks, replays and articles, catalogued with their publishers."),
                  site: URL(string: "https://library.promptugal.news")!,
                  feed: URL(string: "https://library.promptugal.news/api/v1/items/index.json")!),
         DataSite(id: "videos", name: "videos.promptugal.news",
-                 covers: "Videos, summit replays among them, with their platforms.",
+                 covers: LocalText.string("Videos, summit replays among them, with their platforms."),
                  site: URL(string: "https://videos.promptugal.news")!,
                  feed: URL(string: "https://videos.promptugal.news/api/v1/videos/index.json")!),
         DataSite(id: "startups", name: "startups.promptugal.news",
-                 covers: "Startups and their funding: incubators, programmes, rounds, grants and investors, place by place.",
+                 covers: LocalText.string("Startups and their funding: incubators, programmes, rounds, grants and investors, place by place."),
                  site: URL(string: "https://startups.promptugal.news")!, feed: nil),
         DataSite(id: "travel", name: "travel.promptugal.news",
-                 covers: "Travel in the Algarve: flights at Faro, getting around, disruptions, weather and sea for visitors.",
+                 covers: LocalText.string("Travel in the Algarve: flights at Faro, getting around, disruptions, weather and sea for visitors."),
                  site: URL(string: "https://travel.promptugal.news")!,
                  feed: URL(string: "https://travel.promptugal.news/api/v1/manifest.json")!),
     ]
@@ -141,28 +141,28 @@ public enum DataSiteProbe {
         switch id {
         case "news":
             let days = json["days"] as? Int
-            let unit = days.map { "items in the last \($0) days" } ?? "items"
+            let unit = days.map { LocalText.string("items in the last \(String(describing: $0)) days") } ?? "items"
             return SiteReading(count: count(json["items"]), unit: unit, readAt: date(json["built"]))
         case "data":
-            return SiteReading(count: count(json["sources"]), unit: "sources", readAt: newest(json["sources"], key: "read_at"))
+            return SiteReading(count: count(json["sources"]), unit: LocalText.string("sources"), readAt: newest(json["sources"], key: "read_at"))
         case "civic":
-            return SiteReading(count: count(json["councils"]), unit: "councils", readAt: newest(json["sources"], key: "read_on"))
+            return SiteReading(count: count(json["councils"]), unit: LocalText.string("councils"), readAt: newest(json["sources"], key: "read_on"))
         case "live":
             let cameras = firstNumber(json["register_state"] as? String)
             return SiteReading(count: cameras ?? count(json["places"]), unit: cameras == nil ? "places" : "cameras",
                                readAt: date(json["read_at"]))
         case "bulletins":
-            return SiteReading(count: count(json["bulletins"]), unit: "bulletins", readAt: date(json["made"]))
+            return SiteReading(count: count(json["bulletins"]), unit: LocalText.string("bulletins"), readAt: date(json["made"]))
         case "cyber":
-            return SiteReading(count: count(json["series"]), unit: "weekly series", readAt: date(json["updated"]))
+            return SiteReading(count: count(json["series"]), unit: LocalText.string("weekly series"), readAt: date(json["updated"]))
         case "library":
             let total = (json["count"] as? Int) ?? count(json["items"])
-            return SiteReading(count: total, unit: "items", readAt: nil, note: "The catalogue gives no read time.")
+            return SiteReading(count: total, unit: LocalText.string("items"), readAt: nil, note: LocalText.string("The catalogue gives no read time."))
         case "videos":
             let total = (json["count"] as? Int) ?? count(json["videos"])
-            return SiteReading(count: total, unit: "videos", readAt: date(json["updated"]))
+            return SiteReading(count: total, unit: LocalText.string("videos"), readAt: date(json["updated"]))
         case "travel":
-            return SiteReading(count: count(json["places"]), unit: "places", readAt: date(json["read_at"]))
+            return SiteReading(count: count(json["places"]), unit: LocalText.string("places"), readAt: date(json["read_at"]))
         default:
             return nil
         }
@@ -175,12 +175,12 @@ public enum DataSiteProbe {
             let feeds = index.weatherSources
             guard !feeds.isEmpty else { return nil }
             let warnings = index.source("ipma-warnings")?.headline
-            return SiteReading(count: feeds.count, unit: "IPMA and MeteoAlarm feeds",
+            return SiteReading(count: feeds.count, unit: LocalText.string("IPMA and MeteoAlarm feeds"),
                                readAt: feeds.compactMap(\.readDate).max(), note: warnings.map { "IPMA: \($0)" })
         case "events":
-            return fromSource(index.source("events-pt"), unit: "events")
+            return fromSource(index.source("events-pt"), unit: LocalText.string("events"))
         case "signals":
-            return fromSource(index.source("social"), unit: "posts")
+            return fromSource(index.source("social"), unit: LocalText.string("posts"))
         default:
             return nil
         }
@@ -188,7 +188,7 @@ public enum DataSiteProbe {
 
     private static func fromSource(_ source: DataIndex.Source?, unit: String) -> SiteReading? {
         guard let source else { return nil }
-        let note = source.status == "ok" ? nil : source.status.map { "Last read: \($0)" }
+        let note = source.status == "ok" ? nil : source.status.map { LocalText.string("Last read: \(String(describing: $0))") }
         return SiteReading(count: firstNumber(source.headline), unit: unit, readAt: source.readDate, note: note)
     }
 

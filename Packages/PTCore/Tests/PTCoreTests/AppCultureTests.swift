@@ -4,70 +4,95 @@ import Testing
 
 @Suite("App culture", .serialized)
 struct AppCultureTests {
-    private func defaults() -> UserDefaults {
-        let suite = "AppCultureTests-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suite)!
-        defaults.removePersistentDomain(forName: suite)
-        return defaults
+    private func defaults() -> UserDefaults { suite().store }
+
+    private func suite() -> (store: UserDefaults, name: String) {
+        let name = "AppCultureTests-\(UUID().uuidString)"
+        let store = UserDefaults(suiteName: name)!
+        store.removePersistentDomain(forName: name)
+        return (store, name)
     }
 
-    @Test("There are 21 cultures, English first, with unique ids")
+    /// The pin as this suite holds it. Reading the key through the suite also sees the global and argument domains
+    /// (on the simulator AppleLanguages is always set there), so "no pin" is checked in the suite's own domain.
+    private func pin(_ name: String, in store: UserDefaults) -> Any? {
+        store.persistentDomain(forName: name)?["AppleLanguages"]
+    }
+
+    @Test("There are two cultures, English first")
     func list() {
-        #expect(AppCulture.all.count == 21)
-        #expect(AppCulture.all.first?.id == "en-GB")
-        #expect(Set(AppCulture.all.map(\.id)).count == 21)
-        for id in ["pt-PT", "pt-BR", "de-CH", "es-AR", "fr-CA", "zh-Hans", "ja-JP", "ko-KR", "hi-IN", "ar"] {
-            #expect(AppCulture.all.contains { $0.id == id }, "missing \\(id)")
-        }
-    }
-
-    @Test("Each culture is named in its own language")
-    func names() {
-        #expect(AppCulture.culture("de-CH").name == "Deutsch (Schweiz)")
-        #expect(AppCulture.culture("pt-BR").name == "Português (Brasil)")
-        #expect(AppCulture.culture("ja-JP").name == "日本語")
+        #expect(AppCulture.all.map(\.id) == ["en-GB", "pt-PT"])
+        #expect(AppCulture.culture("pt-PT").name == "Português")
         #expect(AppCulture.culture("en-GB").name == "English")
+        #expect(AppCulture.culture("de-DE").id == "en-GB")
     }
 
-    @Test("The default is English, whatever the saved value or the device")
-    func defaultIsEnglish() {
+    @Test("Any Portuguese gives pt-PT, English or anything else gives en-GB")
+    func resolve() {
+        #expect(AppCulture.resolve(device: ["pt-PT"]) == "pt-PT")
+        #expect(AppCulture.resolve(device: ["pt-BR", "en-GB"]) == "pt-PT")
+        #expect(AppCulture.resolve(device: ["pt_AO"]) == "pt-PT")
+        #expect(AppCulture.resolve(device: ["en-US", "pt-PT"]) == "en-GB")
+        #expect(AppCulture.resolve(device: ["fr-FR", "pt-PT"]) == "pt-PT")
+        #expect(AppCulture.resolve(device: ["ja-JP"]) == "en-GB")
+        #expect(AppCulture.resolve(device: []) == "en-GB")
+    }
+
+    @Test("With no choice the app follows the device and clears the old AppleLanguages pin")
+    func followsDevice() {
+        let (store, name) = suite()
+        store.set(["en-GB"], forKey: "AppleLanguages")
+        AppCulture.start(defaults: store, device: ["pt-PT", "en-GB"])
+        #expect(AppCulture.currentID == "pt-PT")
+        #expect(AppCulture.followsDevice(defaults: store))
+        #expect(pin(name, in: store) == nil)
+        AppCulture.start(defaults: store, device: ["de-DE"])
+        #expect(AppCulture.currentID == "en-GB")
+    }
+
+    @Test("A culture saved by an older build that is no longer offered is dropped")
+    func staleChoice() {
         let store = defaults()
-        AppCulture.start(defaults: store)
-        #expect(AppCulture.currentID == "en-GB")
-        store.set("xx-YY", forKey: AppCulture.storageKey)
-        AppCulture.start(defaults: store)
-        #expect(AppCulture.currentID == "en-GB")
+        store.set("de-DE", forKey: AppCulture.storageKey)
+        AppCulture.start(defaults: store, device: ["pt-PT"])
+        #expect(AppCulture.currentID == "pt-PT")
+        #expect(store.string(forKey: AppCulture.storageKey) == nil)
     }
 
-    @Test("A choice is kept on the device and can go back to English")
+    @Test("A saved choice wins over the device, is pinned, and can be forgotten")
     func choose() {
-        let store = defaults()
-        AppCulture.select("pt-BR", defaults: store)
-        #expect(AppCulture.current.id == "pt-BR")
-        #expect(store.string(forKey: AppCulture.storageKey) == "pt-BR")
-        AppCulture.start(defaults: store)
-        #expect(AppCulture.currentID == "pt-BR")
+        let (store, name) = suite()
         AppCulture.select("en-GB", defaults: store)
-        #expect(AppCulture.isEnglish)
+        AppCulture.start(defaults: store, device: ["pt-PT"])
+        #expect(AppCulture.currentID == "en-GB")
+        #expect(!AppCulture.followsDevice(defaults: store))
+        #expect(pin(name, in: store) as? [String] == ["en-GB"])
+        AppCulture.select("pt-PT", defaults: store)
+        #expect(AppCulture.current.id == "pt-PT")
         AppCulture.select("not-a-culture", defaults: store)
+        #expect(AppCulture.currentID == "pt-PT")
+        AppCulture.followDevice(defaults: store, device: ["en-US"])
         #expect(AppCulture.isEnglish)
+        #expect(AppCulture.followsDevice(defaults: store))
+        #expect(pin(name, in: store) == nil)
     }
 
-    @Test("Arabic is right to left, the others are not")
+    @Test("Neither culture is right to left")
     func direction() {
-        #expect(AppCulture.culture("ar").isRightToLeft)
-        #expect(!AppCulture.culture("de-CH").isRightToLeft)
-        #expect(!AppCulture.culture("ja-JP").isRightToLeft)
+        #expect(!AppCulture.culture("en-GB").isRightToLeft)
+        #expect(!AppCulture.culture("pt-PT").isRightToLeft)
+        #expect(Culture(id: "ar", name: "", code: "").isRightToLeft)
     }
 
     @Test("Times follow the chosen culture and stay in Lisbon time")
     func times() {
         let store = defaults()
-        let noon = Lisbon.instant(day: "2026-11-10", clock: "14:05")!
-        AppCulture.select("en-US", defaults: store)
-        #expect(Lisbon.timeLabel(noon).contains("PM"))
-        AppCulture.select("de-DE", defaults: store)
-        #expect(Lisbon.timeLabel(noon).contains("14:05"))
+        let afternoon = Lisbon.instant(day: "2026-11-10", clock: "14:05")!
+        AppCulture.select("pt-PT", defaults: store)
+        let portuguese = Lisbon.timeLabel(afternoon)
+        #expect(portuguese.contains("14:05"))
         AppCulture.select("en-GB", defaults: store)
+        let english = Lisbon.timeLabel(afternoon)
+        #expect(english.contains("14:05"))
     }
 }

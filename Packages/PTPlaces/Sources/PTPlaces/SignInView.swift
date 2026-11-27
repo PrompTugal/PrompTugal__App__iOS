@@ -28,7 +28,7 @@ public final class PersonSession {
             let candidate = try PersonKey(link: text)
             await register.load(force: true)
             guard let list = register.value else {
-                problem = String(localized: "The register of keys could not be read. Try again online.")
+                problem = String(localized: "The register of keys could not be read. Try again online.", bundle: .module)
                 return false
             }
             try candidate.prove(against: list)
@@ -66,11 +66,11 @@ public final class PersonSession {
 
     static func message(_ failure: PersonKey.Failure) -> String {
         switch failure {
-        case .noKeyInLink: String(localized: "That is not a sign-in link. Paste the link or scan the QR code your conductor gave you.")
-        case .unreadable: String(localized: "The key in that link could not be read.")
-        case .wrongFingerprint: String(localized: "The key does not match its fingerprint.")
-        case .notInRegister: String(localized: "This key is not in promptugal.news's register of person keys.")
-        case .replaced: String(localized: "This key was replaced by a newer one. Ask your conductor for a new link.")
+        case .noKeyInLink: String(localized: "That is not a sign-in link. Paste the link or scan the QR code your conductor gave you.", bundle: .module)
+        case .unreadable: String(localized: "The key in that link could not be read.", bundle: .module)
+        case .wrongFingerprint: String(localized: "The key does not match its fingerprint.", bundle: .module)
+        case .notInRegister: String(localized: "This key is not in promptugal.news's register of person keys.", bundle: .module)
+        case .replaced: String(localized: "This key was replaced by a newer one. Ask your conductor for a new link.", bundle: .module)
         }
     }
 }
@@ -92,7 +92,7 @@ public struct PersonBadge: View {
             if let person = session.person {
                 Label(person, systemImage: session.proved ? "person.badge.key.fill" : "person.badge.key")
             } else {
-                Label(String(localized: "Sign in"), systemImage: "key")
+                Label(String(localized: "Sign in", bundle: .module), systemImage: "key")
             }
         }
         .font(.caption.weight(.semibold))
@@ -117,15 +117,15 @@ public struct SignInView: View {
             Form {
                 if let key = session.key {
                     Section {
-                        LabeledContent(String(localized: "Signed in as"), value: key.person)
-                        LabeledContent(String(localized: "Key"), value: key.fingerprint)
-                        LabeledContent(String(localized: "Checked against the register"),
-                                       value: session.proved ? String(localized: "Yes") : String(localized: "Not yet (offline?)"))
+                        LabeledContent(String(localized: "Signed in as", bundle: .module), value: key.person)
+                        LabeledContent(String(localized: "Key", bundle: .module), value: key.fingerprint)
+                        LabeledContent(String(localized: "Checked against the register", bundle: .module),
+                                       value: session.proved ? String(localized: "Yes", bundle: .module) : String(localized: "Not yet (offline?)", bundle: .module))
                     } footer: {
-                        Text(String(localized: "Your comments are signed with this key and sealed to the conductor. Replies are sealed to you and opened only on this device."))
+                        Text(String(localized: "Your comments are signed with this key and sealed to the conductor. Replies are sealed to you and opened only on this device.", bundle: .module))
                     }
                     Section {
-                        Button(String(localized: "Sign out"), role: .destructive) { session.signOut() }
+                        Button(String(localized: "Sign out", bundle: .module), role: .destructive) { session.signOut() }
                     }
                 } else {
                     Section {
@@ -133,13 +133,13 @@ public struct SignInView: View {
                             Button {
                                 scanning = true
                             } label: {
-                                Label(String(localized: "Scan the QR code"), systemImage: "qrcode.viewfinder")
+                                Label(String(localized: "Scan the QR code", bundle: .module), systemImage: "qrcode.viewfinder")
                             }
                         }
                         PasteButton(payloadType: String.self) { strings in
                             if let first = strings.first { text = first; Task { await submit() } }
                         }
-                        TextField(String(localized: "or paste the sign-in link"), text: $text, axis: .vertical)
+                        TextField(String(localized: "or paste the sign-in link", bundle: .module), text: $text, axis: .vertical)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                             .font(.footnote.monospaced())
@@ -147,23 +147,23 @@ public struct SignInView: View {
                         Button {
                             Task { await submit() }
                         } label: {
-                            if working { ProgressView() } else { Text(String(localized: "Sign in")) }
+                            if working { ProgressView() } else { Text(String(localized: "Sign in", bundle: .module)) }
                         }
                         .disabled(text.isEmpty || working)
                     } header: {
-                        Text(String(localized: "Your person key"))
+                        Text(String(localized: "Your person key", bundle: .module))
                     } footer: {
-                        Text(String(localized: "Your conductor gives you a sign-in link or its QR code. The key never leaves this device: it is kept in the Keychain and checked against promptugal.news/board/person-keys.json."))
+                        Text(String(localized: "Your conductor gives you a sign-in link or its QR code. The key never leaves this device: it is kept in the Keychain and checked against promptugal.news/board/person-keys.json.", bundle: .module))
                     }
                 }
                 if let problem = session.problem {
                     Section { Label(problem, systemImage: "exclamationmark.triangle").foregroundStyle(Palette.red) }
                 }
             }
-            .navigationTitle(String(localized: "Sign in"))
+            .navigationTitle(String(localized: "Sign in", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) { Button(String(localized: "Done")) { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) { Button(String(localized: "Done", bundle: .module)) { dismiss() } }
             }
             .sheet(isPresented: $scanning) {
                 QRScanner { found in

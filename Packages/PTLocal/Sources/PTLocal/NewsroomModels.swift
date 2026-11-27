@@ -89,10 +89,22 @@ public struct NewsroomDashboard: Decodable, Sendable {
     public enum Group: String, CaseIterable, Sendable, Identifiable {
         case places = "Places", newsroom = "Newsroom"
         public var id: Self { self }
+        public var label: String { self == .places ? LocalText.string("Places") : LocalText.string("Newsroom") }
     }
 
     public enum Status: String, CaseIterable, Sendable {
         case working = "Working", waiting = "Waiting on a person", stale = "Quiet", stopped = "Stopped", idle = "Idle"
+
+        /// The status in the reader's language.
+        public var label: String {
+            switch self {
+            case .working: LocalText.string("Working")
+            case .waiting: LocalText.string("Waiting on a person")
+            case .stale: LocalText.string("Quiet")
+            case .stopped: LocalText.string("Stopped")
+            case .idle: LocalText.string("Idle")
+            }
+        }
     }
 
     public struct Wake: Decodable, Sendable, Hashable {

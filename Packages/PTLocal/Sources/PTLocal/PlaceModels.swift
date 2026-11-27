@@ -132,8 +132,8 @@ public struct PlaceSite: Decodable, Sendable, Identifiable, Hashable {
         /// "Read it at Barlavento": for a held story, the way to the full piece.
         public var readItAt: String {
             let outlet = (publisher ?? "").trimmingCharacters(in: .whitespaces)
-            if !outlet.isEmpty { return "Read it at \(outlet)" }
-            return "Read it at \(sourceURL?.host() ?? "the source")"
+            if !outlet.isEmpty { return LocalText.string("Read it at \(String(describing: outlet))") }
+            return LocalText.string("Read it at \(String(describing: sourceURL?.host() ?? "the source"))")
         }
 
         /// "direct" or "1 step", "2 steps".

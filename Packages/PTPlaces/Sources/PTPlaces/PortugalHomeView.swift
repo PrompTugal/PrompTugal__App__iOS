@@ -101,7 +101,7 @@ public struct PortugalHomeView: View {
             .frame(maxWidth: .infinity)
         }
         .background(Palette.paper)
-        .navigationTitle(String(localized: "Home"))
+        .navigationTitle(String(localized: "Home", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: PlaceRoute.self) { route in PlaceDetailView(id: route.id) }
         .navigationDestination(for: ArticleRoute.self) { route in ArticleView(id: route.id) }
@@ -120,11 +120,11 @@ public struct PortugalHomeView: View {
             Rectangle().fill(Palette.ink).frame(height: 2)
             ViewThatFits(in: .horizontal) {
                 HStack {
-                    Text(String(localized: "Portugal's AI news, town by town")).fixedSize()
+                    Text(String(localized: "Portugal's AI news, town by town", bundle: .module)).fixedSize()
                     Spacer()
                     Text(Date.now, format: .dateTime.weekday(.wide).day().month(.wide)).fixedSize()
                 }
-                Text(String(localized: "Portugal's AI news, town by town")).lineLimit(2)
+                Text(String(localized: "Portugal's AI news, town by town", bundle: .module)).lineLimit(2)
             }
             .font(.caption.weight(.semibold))
             .textCase(.uppercase)
@@ -138,9 +138,9 @@ public struct PortugalHomeView: View {
     @ViewBuilder private var waiting: some View {
         if store.since.failed {
             ContentUnavailableView {
-                Label(String(localized: "The news did not load"), systemImage: "wifi.exclamationmark")
+                Label(String(localized: "The news did not load", bundle: .module), systemImage: "wifi.exclamationmark")
             } actions: {
-                Button(String(localized: "Try again")) { Task { await store.load(force: true) } }
+                Button(String(localized: "Try again", bundle: .module)) { Task { await store.load(force: true) } }
                     .buttonStyle(.borderedProminent)
             }
         } else {
@@ -156,8 +156,8 @@ public struct PortugalHomeView: View {
                 .padding(.horizontal, gutter)
             let top = feed.topStories(limit: wide ? 10 : 7, excluding: [lead.id])
             VStack(alignment: .leading, spacing: Space.s) {
-                SectionHead(title: String(localized: "Top stories"),
-                            subtitle: String(localized: "Across the country, each with where it happened and its source"),
+                SectionHead(title: String(localized: "Top stories", bundle: .module),
+                            subtitle: String(localized: "Across the country, each with where it happened and its source", bundle: .module),
                             accent: Palette.red)
                 ForEach(top) { item in
                     HomeStoryRow(item: item, feed: feed, store: store)
@@ -174,8 +174,8 @@ public struct PortugalHomeView: View {
         let items = feed.alsoInTheNews(limit: wide ? 6 : 4)
         if !items.isEmpty {
             VStack(alignment: .leading, spacing: Space.s) {
-                SectionHead(title: String(localized: "Also in the news"),
-                            subtitle: String(localized: "Read by our desk, not tied to one place"))
+                SectionHead(title: String(localized: "Also in the news", bundle: .module),
+                            subtitle: String(localized: "Read by our desk, not tied to one place", bundle: .module))
                 ForEach(items) { item in
                     HomeStoryRow(item: item, feed: feed, store: store)
                     Divider()
@@ -191,8 +191,8 @@ public struct PortugalHomeView: View {
         let latest = store.latestAcrossTowns(limit: wide ? 8 : 5)
         if !latest.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: String(localized: "Latest from the towns"),
-                            subtitle: String(localized: "What the town agents read this week, each with its source"))
+                SectionHead(title: String(localized: "Latest from the towns", bundle: .module),
+                            subtitle: String(localized: "What the town agents read this week, each with its source", bundle: .module))
                 ForEach(latest, id: \.item.id) { entry in
                     StoryRow(item: entry.item, place: entry.place,
                              accent: PlaceTheme.accent(store.file(entry.place.id), id: entry.place.id))
@@ -207,14 +207,14 @@ public struct PortugalHomeView: View {
 
     private var mapStrip: some View {
         VStack(alignment: .leading, spacing: Space.s) {
-            SectionHead(title: String(localized: "The places"),
-                        subtitle: String(localized: "The district capitals and the Algarve, each with its own agent. Tap one."))
+            SectionHead(title: String(localized: "The places", bundle: .module),
+                        subtitle: String(localized: "The district capitals and the Algarve, each with its own agent. Tap one.", bundle: .module))
             PortugalMapStrip(store: store)
                 .frame(height: wide ? 200 : 150)
                 .clipShape(RoundedRectangle(cornerRadius: Space.radius))
             if let openPlaces {
                 Button(action: openPlaces) {
-                    Label(String(localized: "All places"), systemImage: "map")
+                    Label(String(localized: "All places", bundle: .module), systemImage: "map")
                         .font(.headline)
                 }
                 .buttonStyle(.borderedProminent)
@@ -240,7 +240,7 @@ struct HomeLead: View {
         VStack(alignment: .leading, spacing: Space.m) {
             StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: Space.s) {
-                    Kicker(text: item.isArticle ? String(localized: "Our article") : item.byline, color: Palette.red)
+                    Kicker(text: item.isArticle ? String(localized: "Our article", bundle: .module) : item.byline, color: Palette.red)
                     Text(item.title)
                         .font(.system(size: wide ? 40 : 28, weight: .black, design: .serif))
                         .foregroundStyle(Palette.ink)

@@ -18,42 +18,42 @@ public struct OfflineEditionView: View {
                 progress
                 saveButton
             } footer: {
-                Text("The same files for every reader, checked against promptugal.news's manifest. Nothing about you is sent. After the first save, the app saves a newer edition by itself, on Wi-Fi only.")
+                Text(LocalText.string("The same files for every reader, checked against promptugal.news's manifest. Nothing about you is sent. After the first save, the app saves a newer edition by itself, on Wi-Fi only."))
             }
             if edition.saved != nil {
                 Section {
-                    Button("Delete the saved edition", role: .destructive) { confirmDelete = true }
+                    Button(LocalText.string("Delete the saved edition"), role: .destructive) { confirmDelete = true }
                 }
             }
         }
-        .navigationTitle("Offline edition")
+        .navigationTitle(LocalText.string("Offline edition"))
         .task { await edition.refreshIfFree() }
-        .confirmationDialog("Save over mobile data?", isPresented: $askMobile, titleVisibility: .visible) {
-            Button("Save now") { Task { await edition.save() } }
-            Button("Cancel", role: .cancel) {}
+        .confirmationDialog(LocalText.string("Save over mobile data?"), isPresented: $askMobile, titleVisibility: .visible) {
+            Button(LocalText.string("Save now")) { Task { await edition.save() } }
+            Button(LocalText.string("Cancel"), role: .cancel) {}
         } message: {
             Text(mobileMessage)
         }
-        .confirmationDialog("Delete the saved edition?", isPresented: $confirmDelete, titleVisibility: .visible) {
-            Button("Delete", role: .destructive) { edition.delete() }
-            Button("Cancel", role: .cancel) {}
+        .confirmationDialog(LocalText.string("Delete the saved edition?"), isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button(LocalText.string("Delete"), role: .destructive) { edition.delete() }
+            Button(LocalText.string("Cancel"), role: .cancel) {}
         } message: {
-            Text("The app then needs a connection to read promptugal.news.")
+            Text(LocalText.string("The app then needs a connection to read promptugal.news."))
         }
     }
 
     @ViewBuilder private var savedSummary: some View {
         if let saved = edition.saved {
             VStack(alignment: .leading, spacing: 4) {
-                Label("Saved for offline, read \(OfflineEditionText.day(saved.savedAt))", systemImage: "arrow.down.circle.fill")
+                Label(LocalText.string("Saved for offline, read \(String(describing: OfflineEditionText.day(saved.savedAt)))"), systemImage: "arrow.down.circle.fill")
                     .font(.headline).foregroundStyle(Palette.ink)
                 Text(OfflineEditionText.detail(saved)).font(.footnote).foregroundStyle(Palette.muted)
             }
             .accessibilityElement(children: .combine)
         } else {
             VStack(alignment: .leading, spacing: 4) {
-                Label("No edition saved", systemImage: "arrow.down.circle").font(.headline).foregroundStyle(Palette.ink)
-                Text("Save the last edition to read the articles, the towns and the newsletter with no connection.")
+                Label(LocalText.string("No edition saved"), systemImage: "arrow.down.circle").font(.headline).foregroundStyle(Palette.ink)
+                Text(LocalText.string("Save the last edition to read the articles, the towns and the newsletter with no connection."))
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
         }
@@ -64,10 +64,10 @@ public struct OfflineEditionView: View {
         case .saving(let done, let total):
             if total > 0 {
                 ProgressView(value: Double(done), total: Double(total)) {
-                    Text("Saving \(done) of \(total) files").font(.footnote)
+                    Text(LocalText.string("Saving \(String(describing: done)) of \(String(describing: total)) files")).font(.footnote)
                 }
             } else {
-                ProgressView("Reading the manifest").font(.footnote)
+                ProgressView(LocalText.string("Reading the manifest")).font(.footnote)
             }
         case .failed(let text):
             Text(text).font(.footnote).foregroundStyle(Palette.amber)
@@ -82,15 +82,15 @@ public struct OfflineEditionView: View {
                 if await edition.onMobileData() { askMobile = true } else { await edition.save() }
             }
         } label: {
-            Label(edition.saved == nil ? "Save the edition" : "Save the newest edition", systemImage: "square.and.arrow.down")
+            Label(edition.saved == nil ? LocalText.string("Save the edition") : LocalText.string("Save the newest edition"), systemImage: "square.and.arrow.down")
         }
         .disabled(edition.isSaving)
     }
 
     private var mobileMessage: String {
         let size = edition.plannedBytes ?? edition.saved?.bytes
-        guard let size else { return "This uses mobile data, about 2.5 MB." }
-        return "This uses mobile data, about \(OfflineEditionText.size(size))."
+        guard let size else { return LocalText.string("This uses mobile data, about 2.5 MB.") }
+        return LocalText.string("This uses mobile data, about \(String(describing: OfflineEditionText.size(size))).")
     }
 }
 
@@ -106,9 +106,9 @@ enum OfflineEditionText {
 
     static func detail(_ saved: SavedEdition) -> String {
         var parts: [String] = []
-        if let version = saved.version { parts.append("Edition \(version)") }
+        if let version = saved.version { parts.append(LocalText.string("Edition \(String(describing: version))")) }
         parts.append("\(saved.files.count) files")
-        parts.append("\(size(saved.bytes)) on this device")
+        parts.append(LocalText.string("\(String(describing: size(saved.bytes))) on this device"))
         return parts.joined(separator: " · ")
     }
 }

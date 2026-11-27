@@ -4,7 +4,7 @@ import SwiftUI
 /// The language button: a globe and the current culture's code ("🌐 EN"), at the top of every main screen. When another
 /// culture is active, a small "EN" beside it goes straight back to English. The choice is kept on this device only.
 struct LanguageButton: View {
-    @AppStorage(AppCulture.storageKey) private var cultureID = AppCulture.english
+    @AppStorage(AppCulture.storageKey) private var cultureID = AppCulture.currentID
     @State private var choosing = false
 
     var body: some View {

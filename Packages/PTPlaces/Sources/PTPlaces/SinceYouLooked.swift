@@ -222,7 +222,7 @@ struct SinceYouLookedSection: View {
         let shown: [SinceItem] = fresh.isEmpty ? all : fresh
         let pool: [SinceItem] = showAll ? shown : Array(shown.prefix(limit))
         return VStack(alignment: .leading, spacing: Space.m) {
-            SectionHead(title: String(localized: "Since you last looked"),
+            SectionHead(title: String(localized: "Since you last looked", bundle: .module),
                         subtitle: subtitle(baseline: baseline, fresh: fresh.count, days: feed.days), accent: Palette.red)
             PlacesOriginLabel(origin: store.since.origin(dataDate: feed.built))
             VStack(spacing: 0) {
@@ -248,7 +248,7 @@ struct SinceYouLookedSection: View {
             Button {
                 withAnimation(.snappy) { showAll.toggle() }
             } label: {
-                Text(showAll ? String(localized: "Show fewer") : String(localized: "Show all \(total)"))
+                Text(showAll ? String(localized: "Show fewer", bundle: .module) : String(localized: "Show all \(total)", bundle: .module))
                     .font(.subheadline.weight(.semibold))
             }
             .tint(Palette.red)
@@ -257,11 +257,11 @@ struct SinceYouLookedSection: View {
 
     private func subtitle(baseline: SinceMarker?, fresh: Int, days: Int) -> String {
         guard let baseline else {
-            return String(localized: "Your first look: the newest from the last \(days) days, each with its source")
+            return String(localized: "Your first look: the newest from the last \(days) days, each with its source", bundle: .module)
         }
         let when = PlacesOrigin.day(baseline.at)
-        if fresh == 0 { return String(localized: "Nothing new since \(when). The newest, each with its source:") }
-        return fresh == 1 ? String(localized: "1 new since \(when)") : String(localized: "\(fresh) new since \(when)")
+        if fresh == 0 { return String(localized: "Nothing new since \(when). The newest, each with its source:", bundle: .module) }
+        return fresh == 1 ? String(localized: "1 new since \(when)", bundle: .module) : String(localized: "\(fresh) new since \(when)", bundle: .module)
     }
 }
 
@@ -298,7 +298,7 @@ struct SinceRow: View {
     private var meta: some View {
         HStack(spacing: 6) {
             if isNew {
-                Text(String(localized: "New"))
+                Text(String(localized: "New", bundle: .module))
                     .font(.caption2.weight(.heavy))
                     .padding(.horizontal, 6).padding(.vertical, 2)
                     .background(Palette.red, in: Capsule())
@@ -307,7 +307,7 @@ struct SinceRow: View {
             Text(place)
                 .font(.caption2.weight(.heavy)).textCase(.uppercase)
                 .foregroundStyle(accent)
-            Text(item.isArticle ? String(localized: "Our article") : String(localized: "Story"))
+            Text(item.isArticle ? String(localized: "Our article", bundle: .module) : String(localized: "Story", bundle: .module))
                 .font(.caption2).foregroundStyle(Palette.muted)
             Spacer(minLength: 0)
             Text(PlaceDates.short(item.date)).font(.caption2).foregroundStyle(Palette.muted)
@@ -317,7 +317,7 @@ struct SinceRow: View {
     private var source: some View {
         HStack(spacing: 4) {
             Image(systemName: "arrow.up.right.square")
-            Text(String(localized: "Read at \(item.byline)"))
+            Text(String(localized: "Read at \(item.byline)", bundle: .module))
         }
         .font(.caption.weight(.semibold))
         .foregroundStyle(accent)

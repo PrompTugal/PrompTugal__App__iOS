@@ -72,22 +72,22 @@ public struct CreditKind: Hashable, Sendable, Identifiable {
 
     /// The newsroom behind the sites.
     public static var newsroom: CreditKind {
-        CreditKind(pageType: "site", action: "newsroom", ref: "newsroom", title: "The newsroom")
+        CreditKind(pageType: "site", action: "newsroom", ref: "newsroom", title: LocalText.string("The newsroom"))
     }
 
     /// An Apple Intelligence summary of a town or a story, or the AI path explained. Once per thing per session.
     public static func aiSummary(of ref: String, title: String) -> CreditKind {
-        CreditKind(pageType: "topic", action: "ai.summary", ref: ref, title: "AI summary: \(title)")
+        CreditKind(pageType: "topic", action: "ai.summary", ref: ref, title: LocalText.string("AI summary: \(String(describing: title))"))
     }
 
     /// One question to a town's agent (or the on-device stand-in). Each question is charged.
     public static func talk(to agent: String) -> CreditKind {
-        CreditKind(pageType: "article", action: "talk", ref: agent, title: "Question to \(agent)", oncePerSession: false)
+        CreditKind(pageType: "article", action: "talk", ref: agent, title: LocalText.string("Question to \(String(describing: agent))"), oncePerSession: false)
     }
 
     /// A contribution sent from the app: a photo, screenshot, video or recorded interview. Each is charged.
     public static func contribution(_ what: String) -> CreditKind {
-        CreditKind(pageType: "evidence", action: "contribution", title: "Contribution: \(what)", oncePerSession: false)
+        CreditKind(pageType: "evidence", action: "contribution", title: LocalText.string("Contribution: \(String(describing: what))"), oncePerSession: false)
     }
 
     /// The live view of the agents, or the CI status page.
@@ -125,14 +125,14 @@ public struct CreditKind: Hashable, Sendable, Identifiable {
 
     /// The rows of the app's price list: what is paid in the app. Browsing lists is free.
     public static var priceList: [(label: String, kind: CreditKind)] { [
-        ("A story, the day it was published", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 0)),
-        ("A story, a few days old", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 3)),
-        ("A story, two weeks old", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 14)),
-        ("A story, older than a month", .story(url: "example", title: "A story", date: nil).withDate(ageDays: 45)),
-        ("An AI summary", .aiSummary(of: "example", title: "a town")),
-        ("A question to a town's agent", .talk(to: "a town")),
+        (LocalText.string("A story, the day it was published"), .story(url: "example", title: LocalText.string("A story"), date: nil).withDate(ageDays: 0)),
+        (LocalText.string("A story, a few days old"), .story(url: "example", title: LocalText.string("A story"), date: nil).withDate(ageDays: 3)),
+        (LocalText.string("A story, two weeks old"), .story(url: "example", title: LocalText.string("A story"), date: nil).withDate(ageDays: 14)),
+        (LocalText.string("A story, older than a month"), .story(url: "example", title: LocalText.string("A story"), date: nil).withDate(ageDays: 45)),
+        (LocalText.string("An AI summary"), .aiSummary(of: "example", title: LocalText.string("a town"))),
+        (LocalText.string("A question to a town's agent"), .talk(to: "a town")),
         ("A contribution (photo, video, interview)", .contribution("a photo")),
-        ("Browsing places, lists and the newsroom", .page(type: "account", ref: "browse", title: "Browsing")),
+        (LocalText.string("Browsing places, lists and the newsroom"), .page(type: "account", ref: "browse", title: LocalText.string("Browsing"))),
     ] }
 
     /// The same kind dated this many days ago (for the price list).

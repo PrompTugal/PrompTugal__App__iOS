@@ -201,27 +201,27 @@ enum ArticleSigning {
         let builders = (try? NSRegularExpression(pattern: "^built by: .*$", options: [.anchorsMatchLines]))?
             .numberOfMatches(in: twin, range: NSRange(location: 0, length: (twin as NSString).length)) ?? 0
         guard builders <= 1 else {
-            return .notChecked(String(localized: "the text has more than one \"built by\" line"))
+            return .notChecked(String(localized: "the text has more than one \"built by\" line", bundle: .module))
         }
         guard let raw = Data(base64Encoded: signature.signature), raw.count == 64,
               let ecdsa = try? P256.Signing.ECDSASignature(rawRepresentation: raw) else {
-            return .notChecked(String(localized: "the signature file could not be read"))
+            return .notChecked(String(localized: "the signature file could not be read", bundle: .module))
         }
         guard let key = keys.first(where: { fingerprint(pem: $0.signPEM) == signature.fingerprint }) else {
-            return .notChecked(String(localized: "no published key has the fingerprint \(signature.fingerprint)"))
+            return .notChecked(String(localized: "no published key has the fingerprint \(signature.fingerprint)", bundle: .module))
         }
         guard let publicKey = try? P256.Signing.PublicKey(pemRepresentation: key.signPEM) else {
-            return .notChecked(String(localized: "the signing key is not a P-256 key"))
+            return .notChecked(String(localized: "the signing key is not a P-256 key", bundle: .module))
         }
         let message = Data(signedForm(twin).utf8)
         guard publicKey.isValidSignature(ecdsa, for: message) else {
-            return .failed(String(localized: "the signature does not match this text"))
+            return .failed(String(localized: "The signature does not match this text", bundle: .module))
         }
         let agent = key.agent.isEmpty ? key.id : key.agent
         switch key.status {
         case "active", "": return .verified(agent: agent, keyID: key.id, handedOver: false)
         case "superseded": return .verified(agent: agent, keyID: key.id, handedOver: true)
-        default: return .notChecked(String(localized: "the key is marked \(key.status) in the key list"))
+        default: return .notChecked(String(localized: "the key is marked \(key.status) in the key list", bundle: .module))
         }
     }
 

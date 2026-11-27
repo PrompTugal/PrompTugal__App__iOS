@@ -18,7 +18,7 @@ public struct TownView: View {
             if let site {
                 content(site)
             } else {
-                StateView(phase: store.phase, hasData: false, title: info?.name ?? "this place") {
+                StateView(phase: store.phase, hasData: false, title: info?.name ?? LocalText.string("this place")) {
                     Task { await store.refreshPlaces() }
                 }
             }
@@ -36,7 +36,7 @@ public struct TownView: View {
             }
             ToolbarItem(placement: .secondaryAction) {
                 if let page = info?.page {
-                    ShareLink(item: page) { Label("Share the site", systemImage: "square.and.arrow.up") }
+                    ShareLink(item: page) { Label(LocalText.string("Share the site"), systemImage: "square.and.arrow.up") }
                 }
             }
         }
@@ -49,7 +49,7 @@ public struct TownView: View {
         let accent = Color(hex: site.look?.accent)
         VStack(alignment: .leading, spacing: Space.s) {
             HStack(spacing: Space.s) {
-                Kicker("PrompTugal.news · \(site.name)", color: accent)
+                Kicker(LocalText.string("PrompTugal.news · \(String(describing: site.name))"), color: accent)
                 StatusChip(live: site.isLive)
             }
             Text(site.name).font(Typo.display).foregroundStyle(Palette.ink).accessibilityAddTraits(.isHeader)
@@ -58,25 +58,25 @@ public struct TownView: View {
             }
             Text(algarvio ? (site.voice?.lede ?? site.mandate) : site.mandate)
                 .font(.callout).foregroundStyle(Palette.ink)
-            Toggle("Algarvio voice", isOn: $algarvio).font(.caption).tint(accent).fixedSize()
+            Toggle(LocalText.string("Algarvio voice"), isOn: $algarvio).font(.caption).tint(accent).fixedSize()
         }
         .padding(.bottom, Space.xs)
         .overlay(alignment: .leading) { Rectangle().fill(accent).frame(width: 4).offset(x: -Space.m) }
 
         ProvenanceLabel(provenance: store.placeProvenance, phase: store.phase,
                         readAt: NewsroomDate.parse(site.updated))
-        Text("Updated \(site.updated) by \(site.by)").font(.caption.monospaced()).foregroundStyle(Palette.muted)
+        Text(LocalText.string("Updated \(String(describing: site.updated)) by \(String(describing: site.by))")).font(.caption.monospaced()).foregroundStyle(Palette.muted)
 
         if let text = algarvio ? (site.voice?.gravity ?? site.gravity?.text) : site.gravity?.text {
-            TitledCard("The centre of gravity", kicker: site.name) {
+            TitledCard(LocalText.string("The centre of gravity"), kicker: site.name) {
                 Text(text).font(.callout)
                 SourceLinks(links: site.gravity?.sources ?? [])
             }
         }
 
-        TitledCard("AI in \(site.name)", kicker: "\(site.aiNews.count) local stories") {
+        TitledCard(LocalText.string("AI in \(String(describing: site.name))"), kicker: LocalText.string("\(String(describing: site.aiNews.count)) local stories")) {
             if site.aiNews.isEmpty {
-                Text("No local AI stories yet: the town's agent is still researching.").font(.footnote).foregroundStyle(Palette.muted)
+                Text(LocalText.string("No local AI stories yet: the town's agent is still researching.")).font(.footnote).foregroundStyle(Palette.muted)
             }
             ForEach(site.aiNews) { story in
                 StoryRow(story: story, town: nil)
@@ -85,7 +85,7 @@ public struct TownView: View {
         }
 
         if !site.events.isEmpty {
-            TitledCard("Events", kicker: "\(site.events.count)") {
+            TitledCard(LocalText.string("Events"), kicker: "\(site.events.count)") {
                 ForEach(site.events) { event in
                     VStack(alignment: .leading, spacing: 2) {
                         if let link = event.link {
@@ -101,8 +101,8 @@ public struct TownView: View {
             }
         }
 
-        TitledCard("The AI map", kicker: "\(site.aiMap.count) organisations") {
-            Text("The companies, institutions and communities with a path to AI, each from a public source.")
+        TitledCard(LocalText.string("The AI map"), kicker: LocalText.string("\(String(describing: site.aiMap.count)) organisations")) {
+            Text(LocalText.string("The companies, institutions and communities with a path to AI, each from a public source."))
                 .font(.footnote).foregroundStyle(Palette.muted)
             ForEach(site.aiMap) { entry in MapEntryRow(entry: entry) }
         }
@@ -115,13 +115,13 @@ public struct TownView: View {
                     Text(intro).font(.footnote).italic()
                 }
                 ForEach(Array(site.gaps.enumerated()), id: \.offset) { _, gap in
-                    GapNote(title: "Not known yet", text: gap)
+                    GapNote(title: LocalText.string("Not known yet"), text: gap)
                 }
             }
         }
 
         if !site.sources.isEmpty {
-            TitledCard("Where the agent reads", kicker: "\(site.sources.count) sources") {
+            TitledCard(LocalText.string("Where the agent reads"), kicker: LocalText.string("\(String(describing: site.sources.count)) sources")) {
                 ForEach(site.sources) { source in
                     HStack {
                         if let link = source.link { Link(source.name, destination: link) } else { Text(source.name) }
@@ -140,7 +140,7 @@ struct SourceLinks: View {
     var body: some View {
         if !links.isEmpty {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Sources").font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
+                Text(LocalText.string("Sources")).font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
                 ForEach(links, id: \.url) { link in
                     if let url = PlaceSite.safeURL(link.url) {
                         Link(destination: url) {
@@ -168,7 +168,7 @@ struct MapEntryRow: View {
                 if let type = entry.type { Text(type).font(.caption2).foregroundStyle(Palette.muted) }
             }
             if let what = entry.what { Text(what).font(.footnote).foregroundStyle(Palette.ink).lineLimit(5) }
-            if let path = entry.aiPath { Text("AI path: \(path)").font(.caption).foregroundStyle(Palette.blue).lineLimit(3) }
+            if let path = entry.aiPath { Text(LocalText.string("AI path: \(String(describing: path))")).font(.caption).foregroundStyle(Palette.blue).lineLimit(3) }
             HStack(spacing: 4) {
                 Image(systemName: "link")
                 if let source = entry.source {
@@ -176,7 +176,7 @@ struct MapEntryRow: View {
                 } else {
                     Text(entry.sourceHost)
                 }
-                if let read = entry.readOn { Text("· read \(read)") }
+                if let read = entry.readOn { Text(LocalText.string("· read \(String(describing: read))")) }
             }
             .font(.caption2)
             .foregroundStyle(Palette.muted)
@@ -194,14 +194,14 @@ struct TownAgentCard: View {
 
     var body: some View {
         let agent = dashboard?.agent(forPlace: placeID)
-        TitledCard("The town's agent", kicker: "Newsroom") {
+        TitledCard(LocalText.string("The town's agent"), kicker: LocalText.string("Newsroom")) {
             if let agent {
                 AgentSummary(agent: agent)
                 ProvenanceLabel(provenance: provenance, phase: .idle, readAt: dashboard?.updated)
             } else if dashboard == nil {
-                Text("Loading the newsroom dashboard…").font(.footnote).foregroundStyle(Palette.muted)
+                Text(LocalText.string("Loading the newsroom dashboard…")).font(.footnote).foregroundStyle(Palette.muted)
             } else {
-                Text("place.\(placeID)@PrompTugal.dinis is not on the newsroom dashboard yet.")
+                Text(LocalText.string("place.\(String(describing: placeID))@PrompTugal.dinis is not on the newsroom dashboard yet."))
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
         }

@@ -62,7 +62,7 @@ public final class LocalCredit {
             provenance = .cached(cache.modified(key: Self.cacheKey))
         } else if let built = MeterConfig.builtIn(bundle: bundle) {
             loaded = built
-            provenance = .snapshot("prices " + (built.version ?? "in the app"))
+            provenance = .snapshot("prices " + (built.version ?? LocalText.string("in the app")))
         } else {
             loaded = .fallback
             provenance = .snapshot("prices v0.1.1514")
@@ -78,7 +78,7 @@ public final class LocalCredit {
                 // A ledger that cannot be read is kept beside the new one, never overwritten.
                 let aside = ledgerFile.deletingPathExtension().appendingPathExtension("unreadable-\(Int(now.timeIntervalSince1970)).json")
                 try? FileManager.default.moveItem(at: ledgerFile, to: aside)
-                trouble = "The credit history on this device could not be read. It was kept as \(aside.lastPathComponent) and a new one started."
+                trouble = LocalText.string("The credit history on this device could not be read. It was kept as \(String(describing: aside.lastPathComponent)) and a new one started.")
             }
         }
         // The site's starting balance (meter.json `start`, in pence), once, when this device's ledger is new.
@@ -217,7 +217,7 @@ public final class LocalCredit {
             try save()
             problem = nil
         } catch {
-            problem = "The credit history could not be saved on this device: \(error.localizedDescription)"
+            problem = LocalText.string("The credit history could not be saved on this device: \(String(describing: error.localizedDescription))")
         }
     }
 

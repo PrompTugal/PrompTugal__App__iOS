@@ -35,15 +35,15 @@ public struct Persona: Codable, Sendable, Hashable, Identifiable {
 
     /// Ready-made personas, each matching things the Algarve sites really cover.
     public static let presets: [Persona] = [
-        Persona(id: "algarve-evolution", label: "Algarve Evolution", text: "I am from Algarve Evolution"),
-        Persona(id: "health-investor", label: "Health tech investor", text: "I invest in health tech"),
-        Persona(id: "investor", label: "An investor", text: "I invest in companies and startups"),
-        Persona(id: "startup-founder", label: "Startup founder", text: "I am a startup founder looking for partners and funding"),
-        Persona(id: "tourism", label: "Tourism and hotels", text: "I work in tourism and hotels"),
-        Persona(id: "university", label: "Student or researcher", text: "I study or do research at the university"),
-        Persona(id: "council", label: "Public sector", text: "I work for a council or the public sector"),
-        Persona(id: "sea", label: "The sea economy", text: "I care about the ocean, fishing and the sea economy"),
-        Persona(id: "developer", label: "Developer", text: "I am a software developer looking for events and meetups"),
+        Persona(id: "algarve-evolution", label: LocalText.string("Algarve Evolution"), text: "I am from Algarve Evolution"),
+        Persona(id: "health-investor", label: LocalText.string("Health tech investor"), text: "I invest in health tech"),
+        Persona(id: "investor", label: LocalText.string("An investor"), text: "I invest in companies and startups"),
+        Persona(id: "startup-founder", label: LocalText.string("Startup founder"), text: "I am a startup founder looking for partners and funding"),
+        Persona(id: "tourism", label: LocalText.string("Tourism and hotels"), text: "I work in tourism and hotels"),
+        Persona(id: "university", label: LocalText.string("Student or researcher"), text: "I study or do research at the university"),
+        Persona(id: "council", label: LocalText.string("Public sector"), text: "I work for a council or the public sector"),
+        Persona(id: "sea", label: LocalText.string("The sea economy"), text: "I care about the ocean, fishing and the sea economy"),
+        Persona(id: "developer", label: LocalText.string("Developer"), text: "I am a software developer looking for events and meetups"),
     ]
 }
 
@@ -89,7 +89,7 @@ extension Persona {
 
     /// "A startup founder in <town>": startups, ranked first in that town.
     public static func startup(in town: PlaceInfo) -> Persona {
-        Persona(id: "startup-\(town.id)", label: "A startup in \(town.name)", text: "I am a startup founder in \(town.name)",
+        Persona(id: "startup-\(town.id)", label: LocalText.string("A startup in \(String(describing: town.name))"), text: "I am a startup founder in \(town.name)",
                 townID: town.id)
     }
 
