@@ -20,5 +20,6 @@ Eight fictional readers walk the current build from its SwiftUI code and the liv
 | 26 Nov 2026 | dev `2403d92` = c7, TestFlight 683 | [changes-c7.md](changes-c7.md): local-first Home, shorter Places, two of three "independent" lines gone; Work with us link lost; Portuguese reader still stuck; nothing blocks TestFlight. |
 | 27 Nov 2026 | dev `6cc9ae2` = c8b, TestFlight 688 | [changes-c8b.md](changes-c8b.md): article reader and signature check verified live (14/14); offline edition not read by Home, Places or articles; mistake link goes to the contributor page. |
 | 27 Nov 2026 | dev `01cacd8` = c9, TestFlight 692 | [changes-c9.md](changes-c9.md): Portuguese is complete and European (0 missing keys in 14 catalogues; town prose 56/56 segments in the memory); location prompt still English; headlines and articles English, spoken in a Portuguese voice. |
+| 27 Nov 2026 | dev `a5c930d` = c10 (693) and `f5f3103` = c11 (0.4.131) | [changes-c10-c11.md](changes-c10-c11.md): c8b F1/F2/F3/F6 and c9 P1/P3/P4/P6 fixed; Portuguese reader mostly fine; Now and News headlines not marked English; header still says "the Algarve"; no blocker. |
 
 Later candidates: only what changed, appended here as new rows and a `changes-<candidate>.md`.
