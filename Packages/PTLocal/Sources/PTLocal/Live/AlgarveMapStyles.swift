@@ -321,11 +321,11 @@ struct AlgarveFlightMap: View {
                         .lineLimit(2)
                 }
                 if let line = town.agentLine {
-                    Text(line).font(.caption).italic().lineLimit(2).foregroundStyle(Palette.muted)
+                    Text(content: line).font(.caption).italic().lineLimit(2).foregroundStyle(Palette.muted)
                 }
                 if let agent = town.agent {
                     HStack(spacing: 4) {
-                        Text(agent).font(.caption2.monospaced())
+                        Text(content: agent).font(.caption2.monospaced())
                         if let date = town.agentLastSign {
                             Text(date, format: .relative(presentation: .named, unitsStyle: .abbreviated)).font(.caption2)
                         }

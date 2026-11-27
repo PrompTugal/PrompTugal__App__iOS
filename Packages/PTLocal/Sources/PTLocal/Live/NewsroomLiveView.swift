@@ -190,7 +190,7 @@ public struct NewsroomLiveView: View {
                         } label: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(item.town.name).font(.caption2.weight(.bold)).foregroundStyle(Palette.red)
-                                Text(item.story.title).font(.caption).foregroundStyle(Palette.ink)
+                                Text(content: item.story.title).font(.caption).foregroundStyle(Palette.ink)
                                     .lineLimit(3).multilineTextAlignment(.leading)
                             }
                             .padding(Space.s)

@@ -43,7 +43,7 @@ struct NewsroomRunsCard: View {
         return HStack(alignment: .firstTextBaseline, spacing: Space.s) {
             Circle().fill(color).frame(width: 8, height: 8)
             Text(stage.title).font(.footnote.weight(.semibold)).foregroundStyle(Palette.ink)
-            Text(stage.state ?? "").font(.caption).foregroundStyle(Palette.muted)
+            Text(content: stage.state ?? "").font(.caption).foregroundStyle(Palette.muted)
             Spacer(minLength: Space.s)
             if let last = stage.lastRun, let date = LiveClock.clamp(NewsroomDate.parse(last.when), now: now) {
                 Text(NewsroomRunsCard.day(date)).font(.caption.monospacedDigit()).foregroundStyle(Palette.muted)
@@ -57,14 +57,14 @@ struct NewsroomRunsCard: View {
         return Link(destination: link) {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: Space.s) {
-                    Text(run.handle).font(.caption.weight(.semibold)).foregroundStyle(Palette.ink)
+                    Text(content: run.handle).font(.caption.weight(.semibold)).foregroundStyle(Palette.ink)
                     if let kind = run.kind { Text(kind).font(.caption2).foregroundStyle(Palette.muted) }
                     Spacer(minLength: Space.s)
                     if let date {
                         Text(NewsroomRunsCard.stamp(date)).font(.caption2.monospacedDigit()).foregroundStyle(Palette.muted)
                     }
                 }
-                Text(run.what).font(.footnote).foregroundStyle(Palette.ink)
+                Text(content: run.what).font(.footnote).foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading).lineLimit(3)
             }
         }

@@ -115,10 +115,10 @@ struct DataSourceRow: View {
         let freshness = Freshness.of(source.readDate)
         let content = VStack(alignment: .leading, spacing: 2) {
             HStack(alignment: .firstTextBaseline, spacing: Space.s) {
-                Text(source.title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                Text(content: source.title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading)
                 Spacer(minLength: Space.s)
-                Text(source.status ?? "").font(.caption2).foregroundStyle(statusColor)
+                Text(content: source.status ?? "").font(.caption2).foregroundStyle(statusColor)
             }
             if let headline = source.headline {
                 Text(headline).font(.footnote).foregroundStyle(Palette.ink)

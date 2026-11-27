@@ -26,15 +26,15 @@ public struct AIStoryRow: View {
                 if let url = story.sourceURL {
                     Link(destination: url) {
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
-                            Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                            Text(content: story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                             Image(systemName: "arrow.up.right").font(.caption2).foregroundStyle(Palette.muted)
                         }
                     }
                 } else {
-                    Text(story.title).font(Typo.story).foregroundStyle(Palette.ink)
+                    Text(content: story.title).font(Typo.story).foregroundStyle(Palette.ink)
                 }
                 if let summary = story.summary {
-                    Text(summary).font(.system(.footnote, design: .serif)).foregroundStyle(Palette.ink.opacity(0.8)).lineLimit(4)
+                    Text(content: summary).font(.system(.footnote, design: .serif)).foregroundStyle(Palette.ink.opacity(0.8)).lineLimit(4)
                 }
                 HStack(spacing: Space.s) {
                     Text([story.publisher, story.date].compactMap { $0 }.joined(separator: ", "))
@@ -43,7 +43,7 @@ public struct AIStoryRow: View {
                 .font(.caption)
                 .foregroundStyle(Palette.muted)
                 if let path = story.aiPath {
-                    Text(path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3)
+                    Text(content: path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3)
                 }
                 if story.isHeld, let url = story.sourceURL {
                     Link(destination: url) { Label(story.readItAt, systemImage: "arrow.up.right.square") }
@@ -79,12 +79,12 @@ public struct AIEntryRow: View {
                 if let home = entry.home {
                     Link(entry.name, destination: home).font(.body.weight(.semibold))
                 } else {
-                    Text(entry.name).font(.body.weight(.semibold))
+                    Text(content: entry.name).font(.body.weight(.semibold))
                 }
                 Spacer(minLength: Space.s)
                 if let type = entry.type { Text(type).font(.caption2).foregroundStyle(Palette.muted) }
             }
-            if let what = entry.what { Text(what).font(.footnote).foregroundStyle(Palette.ink).lineLimit(4) }
+            if let what = entry.what { Text(content: what).font(.footnote).foregroundStyle(Palette.ink).lineLimit(4) }
             if let path = entry.aiPath { Text(LocalText.string("AI path: \(String(describing: path))")).font(.caption).foregroundStyle(Palette.blue).lineLimit(2) }
             HStack(spacing: 4) {
                 Image(systemName: "link")

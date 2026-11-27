@@ -1477,7 +1477,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Feito"
+            "value": "OK"
           }
         }
       }
@@ -4818,6 +4818,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "O que aqui é real"
+          }
+        }
+      }
+    },
+    "What it has done": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O que fez"
           }
         }
       }
