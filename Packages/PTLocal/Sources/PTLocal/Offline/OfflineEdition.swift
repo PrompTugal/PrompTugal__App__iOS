@@ -100,7 +100,8 @@ public final class OfflineEdition {
         do {
             let manifestData = try await fetch(EditionManifest.url)
             let manifest = try JSONDecoder().decode(EditionManifest.self, from: manifestData)
-            let wanted = manifest.editionFiles()
+            let places = await placeIDs(manifest)
+            let wanted = manifest.editionFiles(places: places)
             guard !wanted.isEmpty else { throw OfflineError.emptyManifest }
             plannedBytes = wanted.reduce(0) { $0 + $1.bytes }
             let staged = files.directory.appendingPathComponent("staging-\(UUID().uuidString)", isDirectory: true)
@@ -160,6 +161,17 @@ public final class OfflineEdition {
             state = .saving(done: done, total: wanted.count)
             start += 6
         }
+    }
+
+    /// Every place in the site's by-place index (the towns, the Algarve, Portugal and the district capitals), checked
+    /// against the manifest like every other file; the places the app knows if the index cannot be read.
+    private func placeIDs(_ manifest: EditionManifest) async -> [String] {
+        let known = PlaceDirectory.all.map(\.id)
+        guard let index = manifest.files.first(where: { $0.path == EditionManifest.placeIndexPath }),
+              let url = URL(string: index.path, relativeTo: EditionManifest.base)?.absoluteURL,
+              let data = try? await fetch(url), EditionHash.matches(data, index.sha256),
+              let ids = EditionManifest.placeIDs(fromIndex: data), !ids.isEmpty else { return known }
+        return ids
     }
 
     /// One batch, each file checked against its SHA-256; any mismatch fails the whole save.

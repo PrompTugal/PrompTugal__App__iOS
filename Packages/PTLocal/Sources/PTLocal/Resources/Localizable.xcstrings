@@ -192,16 +192,6 @@
         }
       }
     },
-    "%@ more": {
-      "localizations": {
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "mais %@"
-          }
-        }
-      }
-    },
     "%@ of %@": {
       "localizations": {
         "pt-PT": {
@@ -938,6 +928,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Um investidor"
+          }
+        }
+      }
+    },
+    "And %@ more in PrompTugal.": {
+      "localizations": {
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "E mais %@ no PrompTugal."
           }
         }
       }
@@ -2282,12 +2282,12 @@
         }
       }
     },
-    "Local notifications only. The app reads public files that are the same for everyone and picks what concerns your towns on this phone. Which towns you follow never leaves it.": {
+    "Local notifications only, at most one a day for each and none between 22:00 and 08:00. The app reads public files that are the same for everyone and picks what concerns your towns on this phone. Which towns you follow never leaves it.": {
       "localizations": {
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Só notificações locais. A app lê ficheiros públicos, iguais para todos, e escolhe neste telemóvel o que diz respeito às suas localidades. As localidades que segue nunca saem dele."
+            "value": "Só notificações locais, no máximo uma por dia de cada tipo e nenhuma entre as 22:00 e as 08:00. A app lê ficheiros públicos, iguais para todos, e escolhe neste telemóvel o que diz respeito às suas localidades. As localidades que segue nunca saem dele."
           }
         }
       }
@@ -2878,16 +2878,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abrir a página de %@"
-          }
-        }
-      }
-    },
-    "Open PrompTugal to see them all.": {
-      "localizations": {
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abra o PrompTugal para as ver todas."
           }
         }
       }
@@ -3592,12 +3582,12 @@
         }
       }
     },
-    "Save the last edition to read the articles, the towns and the newsletter with no connection.": {
+    "Save the last edition to read the town pages with no connection. The other saved files wait on this device for the screens that will read them.": {
       "localizations": {
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Guarde a última edição para ler os artigos, as localidades e a newsletter sem ligação."
+            "value": "Guarde a última edição para ler as páginas das localidades sem ligação. Os outros ficheiros guardados ficam neste dispositivo à espera dos ecrãs que os vão ler."
           }
         }
       }
@@ -4552,12 +4542,12 @@
         }
       }
     },
-    "This uses mobile data, about 2.5 MB.": {
+    "This uses mobile data, about 4 MB.": {
       "localizations": {
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Isto usa dados móveis, cerca de 2,5 MB."
+            "value": "Isto usa dados móveis, cerca de 4 MB."
           }
         }
       }

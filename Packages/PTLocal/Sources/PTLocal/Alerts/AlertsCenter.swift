@@ -59,16 +59,22 @@ public final class AlertsCenter {
 
     nonisolated static let enabledKey = "local.alerts.enabled"
     nonisolated static let seenKey = "local.alerts.seen"
-    /// At most this many notifications per topic per check; more become one summary line.
-    nonisolated static let perCheck = 3
+    nonisolated static let postedKey = "local.alerts.posted"
     nonisolated static let seenLimit = 600
+    /// No alert between these hours, local time (22:00 to 08:00).
+    nonisolated static let quietFrom = 22
+    nonisolated static let quietUntil = 8
+
+    @ObservationIgnored private let calendar: Calendar
 
     public init(defaults: UserDefaults = .standard, fetch: @escaping LocalFetch = LocalStore.liveFetch,
-                notifier: any AlertNotifier = SystemNotifier(), clock: @escaping @Sendable () -> Date = { Date() }) {
+                notifier: any AlertNotifier = SystemNotifier(), clock: @escaping @Sendable () -> Date = { Date() },
+                calendar: Calendar = .current) {
         self.defaults = defaults
         self.fetch = fetch
         self.notifier = notifier
         self.clock = clock
+        self.calendar = calendar
         enabled = Set(defaults.stringArray(forKey: Self.enabledKey) ?? [])
     }
 
@@ -100,7 +106,8 @@ public final class AlertsCenter {
         }
     }
 
-    /// Reads each enabled topic once and posts what is new for the followed places.
+    /// Reads each enabled topic and posts at most one alert a topic a day, never between 22:00 and 08:00. What is
+    /// new but held back (quiet hours, or already one today) stays unseen and goes into the next alert allowed.
     public func check() async {
         guard !running, !enabled.isEmpty else { return }
         running = true
@@ -110,34 +117,65 @@ public final class AlertsCenter {
         for topic in AlertTopics.all where enabled.contains(topic.id) {
             guard let data = try? await fetch(topic.feed) else { continue }
             let found = topic.candidates(from: data, followed: places, now: now)
-            let fresh = newAlerts(found, topic: topic.id)
-            for alert in Self.limit(fresh, topic: topic.id) { await notifier.post(alert) }
+            if !hasSeen(topic.id) {
+                markSeen(found, topic: topic.id)          // first run: note what is there, post nothing
+                continue
+            }
+            let fresh = unseen(found, topic: topic.id)
+            guard !fresh.isEmpty, !Self.isQuiet(now, calendar: calendar), !postedToday(topic.id, now: now),
+                  let alert = Self.combine(fresh) else { continue }
+            await notifier.post(alert)
+            markSeen(found, topic: topic.id)
+            notePosted(topic.id, now: now)
         }
         lastCheck = now
     }
 
-    /// What has not been seen, and notes all of `found` as seen. The first time a topic runs, nothing is new.
-    func newAlerts(_ found: [AlertCandidate], topic: String) -> [AlertCandidate] {
+    /// Between 22:00 and 08:00 on the reader's clock.
+    nonisolated static func isQuiet(_ date: Date, calendar: Calendar) -> Bool {
+        let hour = calendar.component(.hour, from: date)
+        return hour >= quietFrom || hour < quietUntil
+    }
+
+    /// One alert for everything new in a topic: the first as it is, the rest counted.
+    nonisolated static func combine(_ alerts: [AlertCandidate]) -> AlertCandidate? {
+        guard let first = alerts.first else { return nil }
+        guard alerts.count > 1 else { return first }
+        let more = LocalText.string("And \(String(describing: alerts.count - 1)) more in PrompTugal.")
+        return AlertCandidate(id: first.id, topic: first.topic, title: first.title, body: first.body + " " + more,
+                              link: first.link)
+    }
+
+    func hasSeen(_ topic: String) -> Bool { seenIDs()[topic] != nil }
+
+    func unseen(_ found: [AlertCandidate], topic: String) -> [AlertCandidate] {
+        let known = Set(seenIDs()[topic] ?? [])
+        return found.filter { !known.contains($0.id) }
+    }
+
+    func markSeen(_ found: [AlertCandidate], topic: String) {
         var seen = seenIDs()
-        let firstRun = seen[topic] == nil
-        let known = Set(seen[topic] ?? [])
-        let fresh = firstRun ? [] : found.filter { !known.contains($0.id) }
         var list = seen[topic] ?? []
+        let known = Set(list)
         for alert in found where !known.contains(alert.id) { list.append(alert.id) }
         seen[topic] = Array(list.suffix(Self.seenLimit))
         defaults.set(seen, forKey: Self.seenKey)
-        return fresh
     }
 
-    /// Up to three alerts as they are; any more become one line that says how many.
-    nonisolated static func limit(_ alerts: [AlertCandidate], topic: String) -> [AlertCandidate] {
-        guard alerts.count > perCheck else { return alerts }
-        var out = Array(alerts.prefix(perCheck - 1))
-        let rest = alerts.count - out.count
-        out.append(AlertCandidate(id: "more|\(topic)|\(alerts[perCheck - 1].id)", topic: topic,
-                                  title: LocalText.string("\(String(describing: rest)) more"),
-                                  body: LocalText.string("Open PrompTugal to see them all."), link: nil))
-        return out
+    private func dayString(_ date: Date) -> String {
+        let parts = calendar.dateComponents([.year, .month, .day], from: date)
+        return "\(parts.year ?? 0)-\(parts.month ?? 0)-\(parts.day ?? 0)"
+    }
+
+    private func postedToday(_ topic: String, now: Date) -> Bool {
+        let posted = defaults.dictionary(forKey: Self.postedKey) as? [String: String] ?? [:]
+        return posted[topic] == dayString(now)
+    }
+
+    private func notePosted(_ topic: String, now: Date) {
+        var posted = defaults.dictionary(forKey: Self.postedKey) as? [String: String] ?? [:]
+        posted[topic] = dayString(now)
+        defaults.set(posted, forKey: Self.postedKey)
     }
 
     private func seenIDs() -> [String: [String]] {

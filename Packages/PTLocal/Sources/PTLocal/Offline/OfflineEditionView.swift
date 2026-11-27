@@ -53,7 +53,7 @@ public struct OfflineEditionView: View {
         } else {
             VStack(alignment: .leading, spacing: 4) {
                 Label(LocalText.string("No edition saved"), systemImage: "arrow.down.circle").font(.headline).foregroundStyle(Palette.ink)
-                Text(LocalText.string("Save the last edition to read the articles, the towns and the newsletter with no connection."))
+                Text(LocalText.string("Save the last edition to read the town pages with no connection. The other saved files wait on this device for the screens that will read them."))
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
         }
@@ -89,7 +89,7 @@ public struct OfflineEditionView: View {
 
     private var mobileMessage: String {
         let size = edition.plannedBytes ?? edition.saved?.bytes
-        guard let size else { return LocalText.string("This uses mobile data, about 2.5 MB.") }
+        guard let size else { return LocalText.string("This uses mobile data, about 4 MB.") }
         return LocalText.string("This uses mobile data, about \(String(describing: OfflineEditionText.size(size))).")
     }
 }

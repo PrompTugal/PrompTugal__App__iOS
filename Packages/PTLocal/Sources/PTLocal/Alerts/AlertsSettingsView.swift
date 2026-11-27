@@ -16,7 +16,7 @@ public struct AlertsSettingsView: View {
                     topicRow(AlertTopics.all[index])
                 }
             } footer: {
-                Text(LocalText.string("Local notifications only. The app reads public files that are the same for everyone and picks what concerns your towns on this phone. Which towns you follow never leaves it."))
+                Text(LocalText.string("Local notifications only, at most one a day for each and none between 22:00 and 08:00. The app reads public files that are the same for everyone and picks what concerns your towns on this phone. Which towns you follow never leaves it."))
             }
             Section {
                 followedLine
