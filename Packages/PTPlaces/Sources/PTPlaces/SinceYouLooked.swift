@@ -274,9 +274,7 @@ struct SinceRow: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        Button {
-            if let url = URL(string: item.url) { openURL(url) }
-        } label: {
+        StoryOpen(link: item.url) {
             HStack(alignment: .top, spacing: Space.m) {
                 Rectangle().fill(accent).frame(width: 4)
                 VStack(alignment: .leading, spacing: 4) {

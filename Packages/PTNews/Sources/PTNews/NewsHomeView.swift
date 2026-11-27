@@ -39,11 +39,13 @@ public struct NewsHomeView: View {
     public var body: some View {
         Page(maxWidth: 900) {
             ScreenHeader(kicker: "PrompTugal.news", title: String(localized: "The news", bundle: .module),
-                         summary: String(localized: "Independent coverage from Lisbon: the latest, the newsletter and the stories being made.", bundle: .module))
+                         summary: String(localized: "The latest from PrompTugal.news, the newsletter and the stories being made, every one with its sources.", bundle: .module))
             Picker(String(localized: "Form", bundle: .module), selection: $form) {
-                ForEach(Form.allCases) { Text($0.label).tag($0) }
+                // No Interviews segment: they were the summit's (Dinis, 25 Nov).
+                ForEach(Form.allCases.filter { $0 != .videos }) { Text($0.label).tag($0) }
             }
             .pickerStyle(.segmented)
+            .onAppear { if form == .videos { form = .feed } }
             switch form {
             case .feed: feed
             case .editions: editions

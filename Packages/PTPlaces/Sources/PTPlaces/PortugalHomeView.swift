@@ -104,6 +104,7 @@ public struct PortugalHomeView: View {
         .navigationTitle(String(localized: "Home"))
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: PlaceRoute.self) { route in PlaceDetailView(id: route.id) }
+        .navigationDestination(for: ArticleRoute.self) { route in ArticleView(id: route.id) }
         .refreshable { await store.load(force: true) }
         .task { await store.load() }
         .accessibilityIdentifier("home.news")
@@ -237,9 +238,7 @@ struct HomeLead: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.m) {
-            Button {
-                if let url = URL(string: item.url) { openURL(url) }
-            } label: {
+            StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: Space.s) {
                     Kicker(text: item.isArticle ? String(localized: "Our article") : item.byline, color: Palette.red)
                     Text(item.title)
@@ -273,9 +272,7 @@ struct HomeStoryRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Button {
-                if let url = URL(string: item.url) { openURL(url) }
-            } label: {
+            StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title)
                         .font(Typo.story)

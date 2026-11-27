@@ -1,7 +1,7 @@
 {
-  "_comment": "App Store Connect app info for set-app-info (tf.py; testflight-ops.yml action set-app-info). Name APPROVED by Dinis 25 Nov 2026 (\"PrompTugal.news\"). His subtitle \"Local news, town by town, every fact sourced\" is 44 characters, over Apple's 30, so this holds the 30-character cut until he picks another. Locale en-GB: the primary listing language in App Store Connect is English (U.K.). Leave a field out to keep what App Store Connect has.",
+  "_comment": "App Store Connect app info for set-app-info (tf.py; testflight-ops.yml action set-app-info). Name APPROVED by Dinis 25 Nov 2026 (\"PrompTugal.news\"). Subtitle set by Dinis in App Store Connect, 26 Nov. Locale en-GB: the primary listing language in App Store Connect is English (U.K.). Leave a field out to keep what App Store Connect has.",
   "locale": "en-GB",
   "name": "PrompTugal.news",
-  "subtitle": "Local news, every fact sourced",
+  "subtitle": "Portugal's AI news, by town",
   "betaDescription": "PrompTugal.news is local news for Portugal, town by town, starting with the Algarve and its 17 towns, then the district capitals. Read each place's stories and what is happening there now, see the newsroom of AI agents that writes them (read-only), and read offline. Every story opens its source, and every screen says whether its data is live, a saved copy or the built-in copy. No account needed.\n\nPrivacy: https://ios.app.promptugal.news/privacy.html\nSupport: https://ios.app.promptugal.news/support.html"
 }
