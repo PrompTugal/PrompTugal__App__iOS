@@ -86,7 +86,7 @@ struct WarningBanner: View {
         HStack(alignment: .top, spacing: Space.s) {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(colour)
             VStack(alignment: .leading, spacing: 2) {
-                Text(LocalText.string("\(String(describing: warning.level.label)) warning: \(String(describing: warning.typeEnglish))"))
+                Text(LocalText.string("\(String(describing: warning.level.localized)) warning: \(String(describing: LocalText.warningType(warning.type)))"))
                     .font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                 Text(LocalText.string("IPMA: \(String(describing: warning.type))\(String(describing: window))")).font(.caption).foregroundStyle(Palette.muted)
                 if !warning.text.isEmpty {
@@ -193,7 +193,7 @@ public struct ConditionsLine: View {
             HStack(spacing: 6) {
                 if let warning = c.warnings.first {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(warning.level == .yellow ? Palette.amber : Palette.red)
-                    Text(LocalText.string("\(String(describing: warning.level.label)) warning: \(String(describing: warning.typeEnglish))")).fontWeight(.semibold)
+                    Text(LocalText.string("\(String(describing: warning.level.localized)) warning: \(String(describing: LocalText.warningType(warning.type)))")).fontWeight(.semibold)
                 }
                 if let o = c.reading?.observation {
                     if let t = o.temperature { Text(String(format: "%.0f°C", t)) }
