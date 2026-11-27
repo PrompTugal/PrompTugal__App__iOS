@@ -53,3 +53,7 @@ Audit on c11: **0 keys missing pt-PT in all 14 catalogues**; no Brazilian forms;
 ## Blocking
 
 Nothing blocks TestFlight or an App Store submission of c11 that I can find. Before submitting: decide the widget, and change "PrompTugal.news · the Algarve".
+
+## Follow-up check: work/c-ios `fed761c` (27 Nov ~02:40 UTC)
+
+Verified in the diff: Now's Latest news (`NowView.swift`, `englishHeadline`) and the News tab lead and list (`NewsHomeView.swift`, `newsEnglish`) now mark headlines `languageIdentifier = "en"`; the More header and the iPad sidebar read "PrompTugal.news · Portugal". Those two items are closed. The PTLocal "laranja" fix (`42782c2`) is not re-checked here.
