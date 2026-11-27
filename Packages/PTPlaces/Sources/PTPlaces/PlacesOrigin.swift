@@ -29,7 +29,9 @@ struct PlacesOrigin: Equatable {
     ///   copy saved on this device.
     /// - fetched: when the value was read (network or saved copy).
     /// - dataDate: the date the data itself carries ("2026-11-21" or an ISO time); a day counts until its end.
-    static func describe(pinned: Bool, phase: LoadPhase, fetched: Date?, dataDate: String?, now: Date = .now) -> PlacesOrigin {
+    /// - story: the date is the newest story shown (Dinis, 27 Nov), so an old one reads "newest story <date>".
+    static func describe(pinned: Bool, phase: LoadPhase, fetched: Date?, dataDate: String?, story: Bool = false,
+                         now: Date = .now) -> PlacesOrigin {
         if pinned {
             return PlacesOrigin(kind: .snapshot, text: String(localized: "Built-in snapshot, not live", bundle: .module))
         }
@@ -43,7 +45,10 @@ struct PlacesOrigin: Equatable {
             return PlacesOrigin(kind: .deviceCopy, text: String(localized: "This device's copy, saved \(PlacesOrigin.day(fetched))", bundle: .module))
         }
         if let dataDate, let end = endOf(dataDate), now.timeIntervalSince(end) > 86_400 {
-            return PlacesOrigin(kind: .dated, text: String(localized: "From promptugal.news, data dated \(PlaceDates.short(dataDate))", bundle: .module))
+            let day = PlaceDates.short(dataDate)
+            return PlacesOrigin(kind: .dated, text: story
+                ? String(localized: "From promptugal.news, newest story \(day)", bundle: .module)
+                : String(localized: "From promptugal.news, data dated \(day)", bundle: .module))
         }
         return PlacesOrigin(kind: .live, text: String(localized: "Live from promptugal.news", bundle: .module))
     }
@@ -67,8 +72,8 @@ struct PlacesOrigin: Equatable {
 
 extension RemoteFeed {
     /// This feed's origin, with the date the data carries.
-    func origin(dataDate: String?, now: Date = .now) -> PlacesOrigin {
-        PlacesOrigin.describe(pinned: pinned, phase: phase, fetched: updated, dataDate: dataDate, now: now)
+    func origin(dataDate: String?, story: Bool = false, now: Date = .now) -> PlacesOrigin {
+        PlacesOrigin.describe(pinned: pinned, phase: phase, fetched: updated, dataDate: dataDate, story: story, now: now)
     }
 }
 

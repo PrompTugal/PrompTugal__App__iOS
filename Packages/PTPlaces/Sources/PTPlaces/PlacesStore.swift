@@ -57,7 +57,9 @@ public final class PlacesStore {
     public var places: [PlaceSummary] {
         let listed = list.value?.places ?? []
         let seats = Dictionary(listed.map { ($0.id, $0.at) }, uniquingKeysWith: { a, _ in a })
-        let indexed = index.value?.places ?? []
+        let indexed = index.value?.places
+            ?? (list.value == nil ? PlacesOffline.shared.value(PlaceIndex.self, PlacesOffline.Path.index)?.places : nil)
+            ?? []
         let known = Set(indexed.map(\.id))
         let base = indexed + listed.filter { !known.contains($0.id) }
         return base.map { place in
@@ -85,7 +87,9 @@ public final class PlacesStore {
     }
     public func place(_ id: String) -> PlaceSummary? { places.first { $0.id == id } }
     public func children(of id: String) -> [PlaceSummary] { places.filter { $0.parent == id } }
-    public func file(_ id: String) -> PlaceFile? { files[id]?.value }
+    public func file(_ id: String) -> PlaceFile? {
+        files[id]?.value ?? PlacesOffline.shared.value(PlaceFile.self, PlacesOffline.Path.place(id))
+    }
 
     public var phase: LoadPhase { index.value == nil && list.value != nil ? list.phase : index.phase }
 

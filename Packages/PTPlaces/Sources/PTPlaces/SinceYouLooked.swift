@@ -34,7 +34,7 @@ struct SinceFeed: Decodable, Sendable, Equatable {
 
     /// The place's name: its own place, else the first ring, from the feed's places (the id as written otherwise).
     func placeName(for item: SinceItem) -> String {
-        let id = item.place ?? item.rings.first ?? "portugal"
+        let id = placeID(for: item)
         return places.first { $0.id == id }?.name ?? id.capitalized
     }
 }
@@ -205,7 +205,9 @@ struct SinceYouLookedSection: View {
         return session
     }
 
-    private var feed: SinceFeed? { store.since.value }
+    private var feed: SinceFeed? { store.sinceFeed }
+
+    private static func newestDate(_ items: [SinceItem]) -> String? { items.map(\.date).max() }
 
     var body: some View {
         if let feed, !feed.items.isEmpty {
@@ -224,7 +226,7 @@ struct SinceYouLookedSection: View {
         return VStack(alignment: .leading, spacing: Space.m) {
             SectionHead(title: String(localized: "Since you last looked", bundle: .module),
                         subtitle: subtitle(baseline: baseline, fresh: fresh.count, days: feed.days), accent: Palette.red)
-            PlacesOriginLabel(origin: store.since.origin(dataDate: feed.built))
+            PlacesOriginLabel(origin: store.sinceOrigin(dataDate: Self.newestDate(feed.items)))
             VStack(spacing: 0) {
                 ForEach(pool) { item in
                     SinceRow(item: item, place: feed.placeName(for: item), isNew: baseline?.isNew(item) ?? false,
@@ -310,7 +312,7 @@ struct SinceRow: View {
             Text(item.isArticle ? String(localized: "Our article", bundle: .module) : String(localized: "Story", bundle: .module))
                 .font(.caption2).foregroundStyle(Palette.muted)
             Spacer(minLength: 0)
-            Text(PlaceDates.short(item.date)).font(.caption2).foregroundStyle(Palette.muted)
+            Text(PlaceDates.age(item.date)).font(.caption2).foregroundStyle(Palette.muted)
         }
     }
 

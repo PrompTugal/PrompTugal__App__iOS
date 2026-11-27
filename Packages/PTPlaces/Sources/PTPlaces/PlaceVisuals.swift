@@ -165,15 +165,17 @@ struct StatusPill: View {
     let status: String
     var onDark = false
 
+    /// A live town site is the norm, so it shows nothing: a green "Live" read as fresh news (Dinis, 27 Nov).
+    /// Only a site still being researched says so.
     var body: some View {
-        let live = status == "live"
-        Text(live ? String(localized: "Live", bundle: .module)
-             : status == "researching" ? String(localized: "Researching", bundle: .module) : status.capitalized)
-            .font(.caption2.weight(.bold))
-            .textCase(.uppercase)
-            .padding(.horizontal, 8).padding(.vertical, 3)
-            .background(live ? Palette.green : (onDark ? Color.white.opacity(0.22) : Palette.paper2), in: Capsule())
-            .foregroundStyle(live ? .white : (onDark ? .white : Palette.muted))
+        if status != "live" && !status.isEmpty {
+            Text(status == "researching" ? String(localized: "Researching", bundle: .module) : status.capitalized)
+                .font(.caption2.weight(.bold))
+                .textCase(.uppercase)
+                .padding(.horizontal, 8).padding(.vertical, 3)
+                .background(onDark ? Color.white.opacity(0.22) : Palette.paper2, in: Capsule())
+                .foregroundStyle(onDark ? .white : Palette.muted)
+        }
     }
 }
 
