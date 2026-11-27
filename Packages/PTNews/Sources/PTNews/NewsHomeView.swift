@@ -89,7 +89,7 @@ public struct NewsHomeView: View {
                     // The lead story's focal point: a short sun band above the kicker.
                     Capsule().fill(Palette.sun).frame(width: 44, height: 6).accessibilityHidden(true)
                     if !lead.category.isEmpty { Kicker(lead.category, color: Palette.accent(for: lead.category)) }
-                    Text(lead.title).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
+                    Text(newsEnglish(lead.title)).font(.system(.title, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
                     if !lead.summary.isEmpty { Text(lead.summary).font(.body).foregroundStyle(Palette.muted) }
                     if let published = lead.published {
                         Text(published, format: .dateTime.weekday(.wide).day().month(.wide)).font(.caption).foregroundStyle(Palette.muted)
@@ -104,7 +104,7 @@ public struct NewsHomeView: View {
                 NavigationLink { SitePage(url: story.url, title: story.title) } label: {
                     Card {
                         if !story.category.isEmpty { Kicker(story.category, color: Palette.accent(for: story.category)) }
-                        Text(story.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                        Text(newsEnglish(story.title)).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                         if !story.summary.isEmpty {
                             Text(story.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(3)
                         }
@@ -282,4 +282,11 @@ struct TextBlock: Identifiable, Sendable {
     - 09:30 Registration (https://promptugal.news/events/registration/) · Airport
     """
     return Page { ForEach(TextBlock.parse(sample)) { Text($0.attributed) } }
+}
+
+/// The newsroom writes in English; marked so VoiceOver reads headlines in an English voice when the app runs in Portuguese.
+private func newsEnglish(_ string: String) -> AttributedString {
+    var text = AttributedString(string)
+    text.languageIdentifier = "en"
+    return text
 }
