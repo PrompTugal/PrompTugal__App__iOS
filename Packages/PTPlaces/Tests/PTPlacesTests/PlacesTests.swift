@@ -734,3 +734,133 @@ struct AccentClampTests {
         #expect(white.red == 0.45 && white.green == 0.45 && white.blue == 0.45)
     }
 }
+
+// MARK: - The article reader (api/v1/articles/<id>.json, the .md.sig and board/keys.json, 26 Nov)
+
+// A throwaway P-256 key made for this test; only its public half is here. The twin is signed in form 2.
+private let testTwin = """
+# Test article
+
+*Source: <https://promptugal.news/articles/test-article.html> · site v0.1.2293 · generated from the same content as the page.*
+
+Body line. built by: a body line that stays
+
+```
+version: v0.1.2293
+built by: the agents, operator X
+```
+
+"""
+private let testPEM = """
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEALkaGKd4PKiMVyL6Soa0l4COF8jG
+MjTsO0T/atiy4UYbPEkCB9mt4ffs/3DLOcplyxRHB7Vr6FR++ctSUIrYDg==
+-----END PUBLIC KEY-----
+"""
+private let testSignature = ArticleSignature(
+    signature: "OyI9W/gtDCdDVRkhQULjNQekyH/9/VnC3gNr7FMp945HhqHWcwBG9S/LyMJTRhAojsbS2CzwcbBVu24jV3lIKg==",
+    fingerprint: "sha256:33909fb7bd6a1a1a", form: "twin-without-version-or-builder/2")
+
+// reviewer@PrompTugal.vicky's public signing key as published in board/keys.json (signing_fingerprint 9bdecdbf857ccf8b).
+private let reviewerPEM = """
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyYn9R4s7OjGqDNZVt76p0ZJmPLYq
+N0Mu4DqYRfpJcFly5Yqo2ZEsyDu7Zb2sI73DwebxyVveGoJmoEqq+UP9aA==
+-----END PUBLIC KEY-----
+"""
+
+@Suite("PTPlaces: the article reader and its signature check")
+struct ArticleTests {
+    @Test("the signed form writes the versions as VERSION and only the last line-start 'built by' as BUILDER")
+    func form() {
+        let form = ArticleSigning.signedForm(testTwin)
+        #expect(form.contains("· site VERSION ·"))
+        #expect(form.contains("\nversion: VERSION\n"))
+        #expect(form.contains("\nbuilt by: BUILDER\n"))
+        #expect(form.contains("Body line. built by: a body line that stays"))
+        #expect(!form.contains("v0.1.2293"))
+    }
+
+    @Test("fingerprints are SHA-256 of the key's DER, 16 hex digits, as the site writes them")
+    func fingerprint() {
+        #expect(ArticleSigning.fingerprint(pem: reviewerPEM) == "sha256:9bdecdbf857ccf8b")
+        #expect(ArticleSigning.fingerprint(pem: testPEM) == "sha256:33909fb7bd6a1a1a")
+        #expect(ArticleSigning.fingerprint(pem: "not a key") == nil)
+    }
+
+    @Test("a good signature verifies; a changed text fails; a missing key, an old form or junk is not checked")
+    func check() {
+        let key = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", signPEM: testPEM)
+        let other = SigningKey(id: "reviewer", agent: "reviewer@PrompTugal.vicky", signPEM: reviewerPEM)
+        #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [other, key])
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: false))
+        // A new site version does not break it: the version is not signed.
+        let newVersion = testTwin.replacingOccurrences(of: "v0.1.2293", with: "v0.1.9999")
+        #expect(ArticleSigning.check(twin: newVersion, signature: testSignature, keys: [key])
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: false))
+        let changed = testTwin.replacingOccurrences(of: "Body line.", with: "Body line, changed.")
+        if case .failed = ArticleSigning.check(twin: changed, signature: testSignature, keys: [key]) {} else {
+            Issue.record("a changed text must fail")
+        }
+        if case .notChecked = ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [other]) {} else {
+            Issue.record("no key with that fingerprint must not be checked")
+        }
+        var old = testSignature
+        old.form = "twin-without-version/1"
+        #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
+        old.form = ""
+        #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
+        let handedOver = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "superseded", signPEM: testPEM)
+        #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [handedOver])
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: true))
+        let twoBuilders = testTwin + "built by: someone else\n"
+        if case .notChecked = ArticleSigning.check(twin: twoBuilders, signature: testSignature, keys: [key]) {} else {
+            Issue.record("two built-by lines must not be checked")
+        }
+        var junk = testSignature
+        junk.signature = "bm90IGEgc2lnbmF0dXJl"
+        if case .notChecked = ArticleSigning.check(twin: testTwin, signature: junk, keys: [key]) {} else {
+            Issue.record("junk must not be checked")
+        }
+    }
+
+    @Test("the record, the signature file, the keys and the provenance decode leniently")
+    func decode() throws {
+        let record = try PTPlacesTestsDecode.decode(ArticleRecord.self, """
+        {"id":"ai-use-in-portugal-2026","title":"AI use in Portugal jumps in 2026","date":"2026-11-23","author":"analyst@PrompTugal.vicky",
+         "summary":"s","words":"819","town":null,
+         "sources":[{"url":"https://www.ine.pt/x","host":"www.ine.pt","text":"INE"},{"url":"javascript:x","text":"dropped"},{"text":"no url, dropped"},
+                    {"url":"https://ec.europa.eu/eurostat/y"}]}
+        """)
+        #expect(record.sources.map(\.host) == ["www.ine.pt", "ec.europa.eu"])
+        #expect(record.words == 819)
+        #expect(record.page == "https://promptugal.news/articles/ai-use-in-portugal-2026.html")
+        let keys = try PTPlacesTestsDecode.decode(SigningKeys.self, """
+        {"about":"x","keys":[{"id":"a","agent":"a@x","status":"active","bundle":{"v":1,"sign":"PEM"}},{"id":"b","bundle":{"v":1}},{"id":"c"}]}
+        """)
+        #expect(keys.keys.map(\.id) == ["a"])
+        let provenance = try PTPlacesTestsDecode.decode(ArticleProvenanceFile.self, """
+        {"ladder":{"P0":"Draft","P2":"Sourced"},"articles":[
+         {"url":"articles/cocus-hubs.html","level":"P2","words":{"type":"News","origin":"written by an AI agent","research":"researched by AI agents","level":"P2","level_name":"Sourced"}},
+         {"url":"articles/cocus.html","type":null,"level":null,"words":null}]}
+        """)
+        #expect(provenance.entry(for: "cocus-hubs")?.levelName == "Sourced")
+        #expect(provenance.entry(for: "cocus")?.isEmpty == true)
+        #expect(provenance.entry(for: "cocus-h") == nil)
+    }
+
+    @Test("only our article links open the reader; ids that start with another id stay apart")
+    func links() {
+        #expect(ArticleLinks.id(from: "https://promptugal.news/articles/ai-use-in-portugal-2026.html") == "ai-use-in-portugal-2026")
+        #expect(ArticleLinks.id(from: "https://promptugal.news/articles/cocus.md") == "cocus")
+        #expect(ArticleLinks.id(from: "https://postal.pt/articles/x.html") == nil)
+        #expect(ArticleLinks.id(from: "https://promptugal.news/algarve/faro/") == nil)
+        #expect(ArticleLinks.id(from: "https://promptugal.news/articles/../x.html") == nil)
+    }
+}
+
+enum PTPlacesTestsDecode {
+    static func decode<T: Decodable>(_ type: T.Type, _ json: String) throws -> T {
+        try JSONDecoder().decode(T.self, from: Data(json.utf8))
+    }
+}

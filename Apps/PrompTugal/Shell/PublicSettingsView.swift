@@ -33,6 +33,12 @@ struct PublicSettingsView: View {
                 }
                 .accessibilityIdentifier("pt.more.sources")
                 NavigationLink {
+                    OfflineEditionView()
+                } label: {
+                    Label("Offline edition", systemImage: "arrow.down.circle")
+                }
+                .accessibilityIdentifier("pt.more.offline")
+                NavigationLink {
                     AlgarveMapsView()
                 } label: {
                     Label("Algarve maps", systemImage: "map")
@@ -69,6 +75,8 @@ struct PublicSettingsView: View {
                     versionText
                 }
                 Link("PrompTugal.news", destination: FeedClient.site)
+                // Contribute or report a mistake: the site's own page, where a person reads it (no data sent from the app).
+                Link("Contribute or report a mistake", destination: URL(string: "https://promptugal.news/contribute/")!)
                 Link("About this coverage", destination: FeedClient.disclosure)
                 Link("Privacy", destination: SupportLinks.privacy)
                 Link("Support", destination: SupportLinks.support)

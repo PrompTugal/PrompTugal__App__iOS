@@ -240,9 +240,7 @@ struct BubblingUpSection: View {
 
     private func trailRow(_ item: SinceItem, feed: SinceFeed) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Button {
-                if let url = URL(string: item.url) { openURL(url) }
-            } label: {
+            StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                     Text(String(localized: "Read at \(item.byline)") + " · " + PlaceDates.short(item.date))
