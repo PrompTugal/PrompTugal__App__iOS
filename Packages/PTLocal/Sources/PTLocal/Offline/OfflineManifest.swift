@@ -26,7 +26,7 @@ public struct EditionManifest: Decodable, Sendable {
 
     /// The offline edition: the same files for every reader (so the requests say nothing about who reads what):
     /// the articles index and each article, since.json, the by-place index and the file of every place the app knows
-    /// (Portugal, the Algarve and its 17 towns), and the newsletter. Only safe relative paths under api/v1/.
+    /// (every id in the by-place index: Portugal, the Algarve, its towns and the district capitals), and the newsletter. Only safe relative paths under api/v1/.
     public func editionFiles(places: [String] = PlaceDirectory.all.map(\.id)) -> [File] {
         let placeFiles = Set(places.map { "api/v1/by-place/\($0).json" })
         var out: [File] = []
@@ -49,6 +49,20 @@ public struct EditionManifest: Decodable, Sendable {
             return !path.dropFirst("api/v1/newsletter/".count).contains("/")
         }
         return false
+    }
+
+    static let placeIndexPath = "api/v1/by-place/index.json"
+
+    /// The place ids in by-place/index.json (`places[].id`), only plain ids (letters, digits, dashes).
+    static func placeIDs(fromIndex data: Data) -> [String]? {
+        struct Index: Decodable {
+            struct Place: Decodable { let id: String }
+            let places: [Place]
+        }
+        guard let index = try? JSONDecoder().decode(Index.self, from: data) else { return nil }
+        return index.places.map(\.id).filter { id in
+            !id.isEmpty && id.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-") }
+        }
     }
 
     /// A relative path under api/v1/ with no "..", no leading slash and no scheme.
