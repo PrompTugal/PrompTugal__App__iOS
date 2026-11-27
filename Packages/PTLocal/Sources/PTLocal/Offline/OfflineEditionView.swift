@@ -1,0 +1,114 @@
+import PTCore
+import SwiftUI
+
+/// Offline edition: save the last edition of promptugal.news on this device (articles, since, every place, the
+/// newsletter), each file checked against the site's manifest, so the app can be read with no connection. Shows the
+/// edition's version, when it was saved, its size on disk, and a Delete button. Saves by itself only on Wi-Fi.
+public struct OfflineEditionView: View {
+    @State private var edition = OfflineEdition.shared
+    @State private var askMobile = false
+    @State private var confirmDelete = false
+
+    public init() {}
+
+    public var body: some View {
+        List {
+            Section {
+                savedSummary
+                progress
+                saveButton
+            } footer: {
+                Text("The same files for every reader, checked against promptugal.news's manifest. Nothing about you is sent. After the first save, the app saves a newer edition by itself, on Wi-Fi only.")
+            }
+            if edition.saved != nil {
+                Section {
+                    Button("Delete the saved edition", role: .destructive) { confirmDelete = true }
+                }
+            }
+        }
+        .navigationTitle("Offline edition")
+        .task { await edition.refreshIfFree() }
+        .confirmationDialog("Save over mobile data?", isPresented: $askMobile, titleVisibility: .visible) {
+            Button("Save now") { Task { await edition.save() } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(mobileMessage)
+        }
+        .confirmationDialog("Delete the saved edition?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete", role: .destructive) { edition.delete() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("The app then needs a connection to read promptugal.news.")
+        }
+    }
+
+    @ViewBuilder private var savedSummary: some View {
+        if let saved = edition.saved {
+            VStack(alignment: .leading, spacing: 4) {
+                Label("Saved for offline, read \(OfflineEditionText.day(saved.savedAt))", systemImage: "arrow.down.circle.fill")
+                    .font(.headline).foregroundStyle(Palette.ink)
+                Text(OfflineEditionText.detail(saved)).font(.footnote).foregroundStyle(Palette.muted)
+            }
+            .accessibilityElement(children: .combine)
+        } else {
+            VStack(alignment: .leading, spacing: 4) {
+                Label("No edition saved", systemImage: "arrow.down.circle").font(.headline).foregroundStyle(Palette.ink)
+                Text("Save the last edition to read the articles, the towns and the newsletter with no connection.")
+                    .font(.footnote).foregroundStyle(Palette.muted)
+            }
+        }
+    }
+
+    @ViewBuilder private var progress: some View {
+        switch edition.state {
+        case .saving(let done, let total):
+            if total > 0 {
+                ProgressView(value: Double(done), total: Double(total)) {
+                    Text("Saving \(done) of \(total) files").font(.footnote)
+                }
+            } else {
+                ProgressView("Reading the manifest").font(.footnote)
+            }
+        case .failed(let text):
+            Text(text).font(.footnote).foregroundStyle(Palette.amber)
+        case .idle:
+            EmptyView()
+        }
+    }
+
+    private var saveButton: some View {
+        Button {
+            Task {
+                if await edition.onMobileData() { askMobile = true } else { await edition.save() }
+            }
+        } label: {
+            Label(edition.saved == nil ? "Save the edition" : "Save the newest edition", systemImage: "square.and.arrow.down")
+        }
+        .disabled(edition.isSaving)
+    }
+
+    private var mobileMessage: String {
+        let size = edition.plannedBytes ?? edition.saved?.bytes
+        guard let size else { return "This uses mobile data, about 2.5 MB." }
+        return "This uses mobile data, about \(OfflineEditionText.size(size))."
+    }
+}
+
+/// Plain text for the offline edition, testable.
+enum OfflineEditionText {
+    static func day(_ date: Date, now: Date = Date(), timeZone: TimeZone = .current) -> String {
+        "\(Freshness.day(date, now: now, timeZone: timeZone)), \(Freshness.time(date, timeZone: timeZone))"
+    }
+
+    static func size(_ bytes: Int) -> String {
+        ByteCountFormatter.string(fromByteCount: Int64(bytes), countStyle: .file)
+    }
+
+    static func detail(_ saved: SavedEdition) -> String {
+        var parts: [String] = []
+        if let version = saved.version { parts.append("Edition \(version)") }
+        parts.append("\(saved.files.count) files")
+        parts.append("\(size(saved.bytes)) on this device")
+        return parts.joined(separator: " · ")
+    }
+}
