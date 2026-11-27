@@ -4,11 +4,19 @@ import Testing
 
 @Suite("App culture", .serialized)
 struct AppCultureTests {
-    private func defaults() -> UserDefaults {
-        let suite = "AppCultureTests-\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suite)!
-        defaults.removePersistentDomain(forName: suite)
-        return defaults
+    private func defaults() -> UserDefaults { suite().store }
+
+    private func suite() -> (store: UserDefaults, name: String) {
+        let name = "AppCultureTests-\(UUID().uuidString)"
+        let store = UserDefaults(suiteName: name)!
+        store.removePersistentDomain(forName: name)
+        return (store, name)
+    }
+
+    /// The pin as this suite holds it. Reading the key through the suite also sees the global and argument domains
+    /// (on the simulator AppleLanguages is always set there), so "no pin" is checked in the suite's own domain.
+    private func pin(_ name: String, in store: UserDefaults) -> Any? {
+        store.persistentDomain(forName: name)?["AppleLanguages"]
     }
 
     @Test("There are two cultures, English first")
@@ -32,12 +40,12 @@ struct AppCultureTests {
 
     @Test("With no choice the app follows the device and clears the old AppleLanguages pin")
     func followsDevice() {
-        let store = defaults()
+        let (store, name) = suite()
         store.set(["en-GB"], forKey: "AppleLanguages")
         AppCulture.start(defaults: store, device: ["pt-PT", "en-GB"])
         #expect(AppCulture.currentID == "pt-PT")
         #expect(AppCulture.followsDevice(defaults: store))
-        #expect(store.object(forKey: "AppleLanguages") == nil)
+        #expect(pin(name, in: store) == nil)
         AppCulture.start(defaults: store, device: ["de-DE"])
         #expect(AppCulture.currentID == "en-GB")
     }
@@ -53,12 +61,12 @@ struct AppCultureTests {
 
     @Test("A saved choice wins over the device, is pinned, and can be forgotten")
     func choose() {
-        let store = defaults()
+        let (store, name) = suite()
         AppCulture.select("en-GB", defaults: store)
         AppCulture.start(defaults: store, device: ["pt-PT"])
         #expect(AppCulture.currentID == "en-GB")
         #expect(!AppCulture.followsDevice(defaults: store))
-        #expect(store.stringArray(forKey: "AppleLanguages") == ["en-GB"])
+        #expect(pin(name, in: store) as? [String] == ["en-GB"])
         AppCulture.select("pt-PT", defaults: store)
         #expect(AppCulture.current.id == "pt-PT")
         AppCulture.select("not-a-culture", defaults: store)
@@ -66,7 +74,7 @@ struct AppCultureTests {
         AppCulture.followDevice(defaults: store, device: ["en-US"])
         #expect(AppCulture.isEnglish)
         #expect(AppCulture.followsDevice(defaults: store))
-        #expect(store.object(forKey: "AppleLanguages") == nil)
+        #expect(pin(name, in: store) == nil)
     }
 
     @Test("Neither culture is right to left")
