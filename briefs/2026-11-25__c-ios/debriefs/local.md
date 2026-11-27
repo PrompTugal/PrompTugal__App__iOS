@@ -61,3 +61,8 @@ Tests: `FreshnessTests`, `NewsroomStatusTests`, `TownLayersTests` (fixtures incl
 - Language and formats follow PTCore's `AppCulture` (not the device alone): `LocalText.string` picks the pt-PT table when the culture is Portuguese; dates and euros use `AppCulture.locale` ("21 nov.", "6 640 085 €").
 - `Text(content:language:)` marks content in another language than the interface so VoiceOver switches voice: the sites' English (titles, summaries, AI paths, agents' own words, map entries) as "en", agenda events and council notices as "pt".
 - Toolbar "Done" is "OK" in Portuguese; the agent's done list is "What it has done" / "O que fez".
+
+## Batch 8: c.ios.synthetic's walk of c11
+
+- IPMA levels as IPMA writes them in Portuguese ("Aviso Laranja"), and the conditions card's warning line in the reader's language (level and IPMA's own warning name), not English.
+- Not PTLocal's, passed back: first launch with no signal (the empty screens are PTPlaces'; PTLocal's places store already starts from its built-in snapshot with its "Built-in copy" label), offline signature checks (the article reader's text; the edition holds api/v1 only, the .md/.sig files are not in the manifest), and the translation memory's missing titles (data side).

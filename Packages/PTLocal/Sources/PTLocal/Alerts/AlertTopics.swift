@@ -160,3 +160,8 @@ public struct IPMAWarningsAlert: AlertTopic {
         }
     }
 }
+
+extension IPMA.Level {
+    /// The level as IPMA names it in the reader's language ("Orange", "Laranja").
+    var localized: String { LocalText.string(IPMAWarningsAlert.levelKey(self)) }
+}
