@@ -281,7 +281,7 @@ struct SinceRow: View {
                 Rectangle().fill(accent).frame(width: 4)
                 VStack(alignment: .leading, spacing: 4) {
                     meta
-                    Text(item.title)
+                    Text(english: item.title)
                         .font(Typo.story)
                         .foregroundStyle(Palette.ink)
                         .multilineTextAlignment(.leading)

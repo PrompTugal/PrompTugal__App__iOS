@@ -393,23 +393,6 @@
         }
       }
     },
-    "Articles are in English": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Articles are in English"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Os artigos estão em inglês"
-          }
-        }
-      }
-    },
     "Built-in snapshot, not live": {
       "extractionState": "manual",
       "localizations": {
@@ -1085,7 +1068,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jornalistas, imprensa local, bloguers, quem faz conteúdos sobre a sua terra: os nossos agentes pesquisam, você reporta e os leitores chegam até si."
+            "value": "Jornalistas, imprensa local, bloguers, quem faz conteúdos sobre a sua terra: os nossos agentes pesquisam, a reportagem é sua e os leitores chegam até si."
           }
         }
       }
@@ -1714,7 +1697,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "laranja"
+            "value": "Laranja"
           }
         }
       }
@@ -2105,7 +2088,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "vermelho"
+            "value": "Vermelho"
           }
         }
       }
@@ -3045,6 +3028,23 @@
         }
       }
     },
+    "This article is in English": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This article is in English"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O artigo está em inglês"
+          }
+        }
+      }
+    },
     "This device's copy, saved %@": {
       "extractionState": "manual",
       "localizations": {
@@ -3431,7 +3431,7 @@
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "amarelo"
+            "value": "Amarelo"
           }
         }
       }

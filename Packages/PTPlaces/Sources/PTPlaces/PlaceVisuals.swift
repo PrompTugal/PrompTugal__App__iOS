@@ -187,7 +187,7 @@ struct BigNumber: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("\(value)")
-                .font(.system(size: 40, weight: .bold, design: .serif))
+                .font(.system(.largeTitle, design: .serif, weight: .bold))
                 .monospacedDigit()
                 .foregroundStyle(accent)
                 .contentTransition(.numericText())
