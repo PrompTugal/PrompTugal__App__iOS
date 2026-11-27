@@ -39,7 +39,7 @@ public enum AppCulture {
 
     /// The chosen culture's id. Read by the Bundle override on every lookup, so it is a plain cached value:
     /// set it only with `start`, `select(_:)` or `followDevice()`.
-    nonisolated(unsafe) private(set) static var currentID: String = english
+    nonisolated(unsafe) public private(set) static var currentID: String = english
 
     public static var current: Culture { culture(currentID) }
     public static var locale: Locale { current.locale }
