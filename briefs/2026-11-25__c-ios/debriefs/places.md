@@ -134,3 +134,4 @@ home footer: no Web Summit anywhere in PTPlaces.
   the reader says "Os artigos estão em inglês". Nothing is translated on the device; a missing entry stays English.
 - Tests: keys against values computed with the site's normalisation (NFC, NBSP, CRLF, blank lines), a lenient shard,
   English untouched, the compiled pt-PT catalogue (with a positional format), and which prose is translated.
+- c9 fix: Xcode's symbol generation rejected keys differing only in case. Merged events/Events, sources/Sources (BigNumber uppercases anyway) and the two "signature does not match" keys; reworded Open %@ → Visit %@, signature %@ → signature is %@, The towns → Its towns, so no two keys share a symbol once case, punctuation and format specifiers are dropped. 226 keys.

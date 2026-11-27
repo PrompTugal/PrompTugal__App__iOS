@@ -227,8 +227,8 @@ public struct PlaceDetailView: View {
     @ViewBuilder private func numbers(_ place: PlaceSummary) -> some View {
         let stories = BigNumber(value: file?.aiNews.count ?? place.aiNews, label: String(localized: "AI stories", bundle: .module), accent: accent)
         let map = BigNumber(value: file?.aiMap.count ?? place.aiMap, label: String(localized: "on the AI map", bundle: .module), accent: accent)
-        let events = BigNumber(value: file?.events.count ?? 0, label: String(localized: "events", bundle: .module), accent: accent)
-        let sources = BigNumber(value: file?.sources.count ?? 0, label: String(localized: "sources", bundle: .module), accent: accent)
+        let events = BigNumber(value: file?.events.count ?? 0, label: String(localized: "Events", bundle: .module), accent: accent)
+        let sources = BigNumber(value: file?.sources.count ?? 0, label: String(localized: "Sources", bundle: .module), accent: accent)
         if wide {
             HStack(spacing: Space.xxl) { stories; map; events; sources }
         } else {
@@ -266,7 +266,7 @@ public struct PlaceDetailView: View {
         let kids = store.children(of: id)
         if !kids.isEmpty {
             VStack(alignment: .leading, spacing: Space.m) {
-                SectionHead(title: id == "portugal" ? String(localized: "Regions and cities", bundle: .module) : String(localized: "The towns", bundle: .module), accent: accent)
+                SectionHead(title: id == "portugal" ? String(localized: "Regions and cities", bundle: .module) : String(localized: "Its towns", bundle: .module), accent: accent)
                 if id == "algarve" {
                     Group {
                         if let regionMap {
@@ -683,7 +683,7 @@ struct MapEntryCard: View {
                 Spacer(minLength: 0)
                 if let url = URL(string: entry.url), !entry.url.isEmpty {
                     Button { openURL(url) } label: { Image(systemName: "arrow.up.right.square") }
-                        .accessibilityLabel(String(localized: "Open \(entry.name)", bundle: .module))
+                        .accessibilityLabel(String(localized: "Visit \(entry.name)", bundle: .module))
                 }
             }
             if !entry.what.isEmpty {
@@ -757,7 +757,7 @@ struct ProvenanceLine: View {
             Image(systemName: valid ? "checkmark.seal.fill" : "seal").foregroundStyle(valid ? Palette.green : Palette.muted)
             Text([provenance.readBy.split(separator: "@").first.map(String.init) ?? "",
                   provenance.readOn.isEmpty ? "" : String(localized: "read \(PlaceDates.short(provenance.readOn))", bundle: .module),
-                  valid ? String(localized: "signed \(provenance.siteKey)", bundle: .module) : String(localized: "signature \(provenance.signature)", bundle: .module)]
+                  valid ? String(localized: "signed \(provenance.siteKey)", bundle: .module) : String(localized: "signature is \(provenance.signature)", bundle: .module)]
                 .filter { !$0.isEmpty }.joined(separator: " · "))
                 .lineLimit(2)
         }

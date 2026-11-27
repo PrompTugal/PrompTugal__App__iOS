@@ -215,7 +215,7 @@ enum ArticleSigning {
         }
         let message = Data(signedForm(twin).utf8)
         guard publicKey.isValidSignature(ecdsa, for: message) else {
-            return .failed(String(localized: "the signature does not match this text", bundle: .module))
+            return .failed(String(localized: "The signature does not match this text", bundle: .module))
         }
         let agent = key.agent.isEmpty ? key.id : key.agent
         switch key.status {
