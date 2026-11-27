@@ -4,13 +4,13 @@
 
 ## Version and build
 
-- **Version:** the c1 build's version (0.4.124 or the next number the release bot gives). It must match the build's CFBundleShortVersionString.
-- **Build:** the c1 TestFlight build once it is processed (fallback: 667, 0.4.120, which still has the Talks segment and the top-up message).
+- **Version:** 0.4.125 (must match the build).
+- **Build:** 680 (c2e, dev b729fa4, processed 26 Nov 01:19 UTC). No Explore tab, no language button.
 
 ## Name and subtitle (30 each)
 
 - Name: **PrompTugal.news** (approved by Dinis, 25 Nov)
-- Subtitle: **Local news, every fact sourced** (30). Dinis's line "Local news, town by town, every fact sourced" is 44. Alternatives: "Local news, town by town" (24), "Town by town, sourced" (21).
+- Subtitle: **Portugal's AI news, by town** (Dinis, 26 Nov; set in App Store Connect). Dinis's line "Local news, town by town, every fact sourced" is 44. Alternatives: "Local news, town by town" (24), "Town by town, sourced" (21).
 - Home Screen name stays "PrompTugal" (CFBundleDisplayName): "PrompTugal.news" is cut off under the icon.
 
 ## Promotional text (170)
@@ -22,11 +22,10 @@ Local news for Portugal, town by town: the Algarve's 17 towns and the district c
 ## Description (4000)
 
 ```
-PrompTugal.news is local news for Portugal, town by town. It starts with the Algarve and its 17 towns and now covers the district capitals too.
+PrompTugal.news is Portugal's AI news, town by town: how AI touches each place, from the Algarve and its 17 towns to the district capitals, with every story linked to its source.
 
 PLACES
 • Portugal, the Algarve and each town: its latest stories, the organisations on its map, and what is happening there now
-• "Now in" a town: what the newsroom's live data says about the place right now, with its source and read time
 • Maps of the Algarve in several styles, with each town coloured by how much news it has
 • Near me: the closest town and its news (your location stays on your phone)
 
@@ -72,9 +71,9 @@ The newsroom board can replay the last 24 hours of the agents' real activity (la
 
 ## App Privacy (**manual**)
 
-Answer stays **Data Not Collected**, on one condition: a public user cannot send anything. In c1 the place comments, thumbs votes ("Sign in with your person key") and More > "Connect to the newsroom" are still visible; nothing is sent without a person key and a pasted lane link, but a reviewer sees an unusable sign-in. See the open question below.
+Answer: **Data Not Collected**. In c2d a public user cannot send anything: comments, sign-in, thumbs votes and "Connect to the newsroom" are hidden.
 
-What leaves the device in c1 for a public user: plain GETs of public files from promptugal.news, ios.app.promptugal.news and raw.githubusercontent.com (CI status), and api.ipma.pt (weather). Location, Apple Intelligence, reading credit and the ledger stay on the device. No analytics, crash reporting, ads or third-party SDKs.
+What leaves the device in c2d for a public user: plain GETs of public files from promptugal.news and its data sites, ios.app.promptugal.news and raw.githubusercontent.com. Location, Apple Intelligence and the on-device reading count stay on the device. No analytics, crash reporting, ads or third-party SDKs.
 
 ## Age rating (**manual**)
 
@@ -87,10 +86,17 @@ What leaves the device in c1 for a public user: plain GETs of public files from 
 
 ## Screenshots (**manual**, or screens.yml)
 
-The 0.4.24 screenshots show the summit agenda and must be replaced: 6.9", 6.5" and iPad 13". Places home, the Algarve map, a town with "Now in", a story with its source, Newsroom. `screens.yml` still shoots the summit destinations (explore.talk, team.schedule, map) and needs its list changed first.
+The 0.4.24 screenshots show the summit agenda and must be replaced: 6.9", 6.5" and iPad 13". Places home, the Algarve map, a town page, a story with its source, Newsroom. `screens.yml` still shoots the summit destinations (explore.talk, team.schedule, map) and needs its list changed first.
 
 ## Open, for Dinis
 
 1. Subtitle choice.
 2. Place comments and "Connect to the newsroom" in the App Store build: hide them in this version (recommended: they need a person key and a lane link a reviewer cannot have, and once a public user can send, the privacy answer changes), or keep them.
 3. 0.4.24 is the summit app with a known notification-tap crash: leave it on sale until the new version is approved, or remove it from sale now.
+
+## Submitted (26 Nov 2026, ~02:10 UTC)
+
+- Dinis submitted **0.4.125 (680)** for App Review; status "Waiting for Review".
+- Name **PrompTugal.news**, subtitle **Portugal's AI news, by town**, primary language English (U.K.); the English (U.S.), Portuguese (Portugal) and Portuguese (Brazil) localisations of 0.4.24 were removed.
+- Screenshots: Places, News, Newsroom (iPhone 6.3" medium and iPad 13"), from screens.yml run 45737100778 on work/screens-c2e (dev's app code, only ScreensTests changed).
+- Do not edit the version's metadata while it is in review. New TestFlight builds from dev do not affect it.

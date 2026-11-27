@@ -120,6 +120,9 @@ enum PublicDestinations {
         // How long a push takes to reach the site and TestFlight, and whether this device's build is the latest (PTLocal/Status).
         ShellDestination(id: "local.ci-status", title: String(localized: "CI status"), symbol: "gauge.with.dots.needle.67percent", group: "More",
                          summary: String(localized: "From push to production, read-only"), listed: false) { AnyView(CIStatusView()) },
+        // The last edition saved on this phone for offline reading, hash-checked against the site's manifest (PTLocal).
+        ShellDestination(id: "local.offline", title: String(localized: "Offline edition"), symbol: "arrow.down.circle", group: "More",
+                         summary: String(localized: "Save the latest edition to read without a connection")) { AnyView(OfflineEditionView()) },
         // Every site behind the app, with what it covers and how fresh it is (Dinis, 25 Nov; PTLocal/DataSources).
         ShellDestination(id: "local.sources", title: String(localized: "Data sources"), symbol: "server.rack", group: "More",
                          summary: String(localized: "The sites behind every story and number, and how fresh each is")) { AnyView(DataSourcesView()) },
