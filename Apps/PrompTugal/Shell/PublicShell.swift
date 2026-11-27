@@ -242,7 +242,7 @@ private struct PublicSidebar: View {
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Kicker("PrompTugal")
-                Text(verbatim: "PrompTugal.news · the Algarve").font(.caption).foregroundStyle(Palette.muted)
+                Text(verbatim: "PrompTugal.news · Portugal").font(.caption).foregroundStyle(Palette.muted)
                 Text(verbatim: AppVersion.label).font(.caption2.monospacedDigit()).foregroundStyle(Palette.muted)
                     .accessibilityIdentifier("pt.version")
             }
