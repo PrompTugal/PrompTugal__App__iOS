@@ -3,6 +3,7 @@ import PTCore
 import PTAgenda
 import PTDeck
 import PTLocal
+import PTPlaces
 import PTSync
 import PTWeb
 
@@ -49,12 +50,16 @@ struct PrompTugalApp: App {
             PublicShell()
                 // PTLocal's layers on PTPlaces' screens, above every navigation stack so pushed place pages get them.
                 .placesLayers()
+                // One rating request, after the third article read (Dinis, 27 Nov).
+                .reviewPrompt()
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { PublicLive.foreground() }
             if phase == .background {
                 SyncBackground.schedule()
                 AlertsCenter.scheduleRefresh()
+                // The "My town" widget follows the towns and stories the person saw in this session.
+                MyTownPublisher.publish()
             }
         }
     }

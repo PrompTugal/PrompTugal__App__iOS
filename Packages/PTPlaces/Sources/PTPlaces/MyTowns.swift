@@ -105,7 +105,17 @@ public struct MyTownsCard: View {
         }
         .padding(Space.l)
         .background(Palette.card, in: RoundedRectangle(cornerRadius: Space.radius))
-        .task { if store.places.isEmpty { await store.load() } }
+        .task {
+            if store.places.isEmpty { await store.load() }
+            for id in ids where store.files[id]?.value == nil { await store.loadPlace(id) }
+            MyTownPublisher.publish(store: store)
+        }
+        .onChange(of: followed) { _, _ in
+            Task {
+                for id in PlaceFollows.ids(followed) where store.files[id]?.value == nil { await store.loadPlace(id) }
+                MyTownPublisher.publish(store: store)
+            }
+        }
         .accessibilityIdentifier("places.mytowns")
     }
 }

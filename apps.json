@@ -13,7 +13,7 @@
     "PTDeck": {"path": "Packages/PTDeck", "deps": ["PTCore"]},
     "PTExplore": {"path": "Packages/PTExplore", "deps": ["PTCore"]},
     "PTFringe": {"path": "Packages/PTFringe", "deps": ["PTCore"]},
-    "PTPlaces": {"path": "Packages/PTPlaces", "deps": ["PTCore"]},
+    "PTPlaces": {"path": "Packages/PTPlaces", "deps": ["PTCore", "PTNowNext"]},
     "PTLocal": {"path": "Packages/PTLocal", "deps": ["PTCore"]},
     "PTTalk": {"path": "Packages/PTTalk", "deps": ["PTCore", "PTLanes"]}
   },
