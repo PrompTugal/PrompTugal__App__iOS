@@ -36,6 +36,23 @@
         }
       }
     },
+    "%lld days ago": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld days ago"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "há %lld dias"
+          }
+        }
+      }
+    },
     "%lld done · %lld next · %lld commits": {
       "extractionState": "manual",
       "localizations": {
@@ -274,19 +291,19 @@
         }
       }
     },
-    "Across the country, each with where it happened and its source": {
+    "Across the country, newest first, each with where it happened and its source": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Across the country, each with where it happened and its source"
+            "value": "Across the country, newest first, each with where it happened and its source"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "De todo o país, cada uma com o lugar onde aconteceu e a sua fonte"
+            "value": "De todo o país, as mais recentes primeiro, cada uma com o lugar onde aconteceu e a sua fonte"
           }
         }
       }
@@ -665,6 +682,23 @@
         }
       }
     },
+    "Earlier": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Earlier"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteriores"
+          }
+        }
+      }
+    },
     "Events": {
       "extractionState": "manual",
       "localizations": {
@@ -814,6 +848,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "De promptugal.news, dados de %@"
+          }
+        }
+      }
+    },
+    "From promptugal.news, newest story %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From promptugal.news, newest story %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De promptugal.news, notícia mais recente de %@"
           }
         }
       }
@@ -1090,6 +1141,23 @@
         }
       }
     },
+    "Last story": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last story"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Última notícia"
+          }
+        }
+      }
+    },
     "Latest date first, each with the page it was read from": {
       "extractionState": "manual",
       "localizations": {
@@ -1120,23 +1188,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "O mais recente das localidades"
-          }
-        }
-      }
-    },
-    "Live": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Live"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Em direto"
           }
         }
       }
@@ -1375,6 +1426,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ainda não há notícias locais de IA."
+          }
+        }
+      }
+    },
+    "No new local stories since %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No new local stories since %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem notícias locais novas desde %@"
           }
         }
       }
@@ -2382,19 +2450,19 @@
         }
       }
     },
-    "Signed with a key since handed over (%@), checked on this device": {
+    "Signed with an earlier key of %@, still valid, checked on this device": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Signed with a key since handed over (%@), checked on this device"
+            "value": "Signed with an earlier key of %@, still valid, checked on this device"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Assinado com uma chave entretanto passada a outro agente (%@), verificado neste dispositivo"
+            "value": "Assinado com uma chave anterior de %@, ainda válida, verificado neste dispositivo"
           }
         }
       }
@@ -2990,6 +3058,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cópia deste dispositivo, guardada a %@"
+          }
+        }
+      }
+    },
+    "This device's offline copy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device's offline copy"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia offline deste dispositivo"
+          }
+        }
+      }
+    },
+    "This device's offline copy, newest %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device's offline copy, newest %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia offline deste dispositivo, mais recente de %@"
           }
         }
       }
@@ -3810,6 +3912,23 @@
         }
       }
     },
+    "today": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "today"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hoje"
+          }
+        }
+      }
+    },
     "waves": {
       "extractionState": "manual",
       "localizations": {
@@ -3840,6 +3959,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "vento"
+          }
+        }
+      }
+    },
+    "yesterday": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "yesterday"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ontem"
           }
         }
       }

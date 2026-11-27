@@ -55,6 +55,8 @@ struct PublicShell: View {
         .environment(\.openDestination, { open($0) })
         // A town tapped on the Algarve maps (PTLocal) opens its place page (PTPlaces), not PTLocal's own town view.
         .localOpenPlace { id in open("place:" + id) }
+        // When offline, Home, Places, town pages and our articles fall back to the saved edition (PTLocal, hash-checked).
+        .placesOfflineData { path in EditionFiles.standard().load(path) }
         .environment(\.exploreStart, exploreStart)
         .publicFeatures(features)
         .pickToasts()

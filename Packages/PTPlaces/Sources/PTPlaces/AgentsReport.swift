@@ -336,6 +336,26 @@ public enum PlaceDates {
         return f.string(from: date)
     }
 
+    /// Whole days between a story's day and today (Lisbon), nil when the text is not a date; negative for a future day.
+    public static func daysOld(_ text: String, now: Date = .now) -> Int? {
+        guard let date = parse(String(text.prefix(10))) else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/Lisbon") ?? .current
+        return calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: now)).day
+    }
+
+    /// A story's age in plain words (Dinis, 27 Nov): "today", "yesterday", "10 days ago"; past two months, or a future
+    /// day, the date itself.
+    public static func age(_ text: String, now: Date = .now) -> String {
+        guard let days = daysOld(text, now: now) else { return text }
+        switch days {
+        case 0: return String(localized: "today", bundle: .module)
+        case 1: return String(localized: "yesterday", bundle: .module)
+        case 2...60: return String(localized: "\(days) days ago", bundle: .module)
+        default: return short(text)
+        }
+    }
+
     /// "12 min ago" for a status time.
     public static func ago(_ text: String, now: Date = .now) -> String {
         guard let date = parse(text) else { return text }

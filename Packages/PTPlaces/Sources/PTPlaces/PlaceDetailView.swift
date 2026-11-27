@@ -17,6 +17,7 @@ public struct PlaceDetailView: View {
     @Environment(\.placesRegionMap) private var regionMap
     /// A place opened from the region map hook.
     @State private var opened: PlaceRoute?
+    @Environment(\.placesOfflineData) private var offlineData
     /// The place's prose in Portuguese, from the site's translation memory.
     @State private var translation = PlacesTranslation.shared
     /// Where to open the page (spec S5): from the initialiser, else from the app's deep link when it names this place.
@@ -125,6 +126,7 @@ public struct PlaceDetailView: View {
             if let place { await store.loadAgents(for: place, force: true) }
         }
         .task {
+            PlacesOffline.shared.use(offlineData)
             if store.places.isEmpty { await store.load() }
             await store.loadPlace(id)
             if let file { await translation.load(file.translatableProse) }
@@ -294,9 +296,13 @@ public struct PlaceDetailView: View {
 
     /// Where this page's data came from, and how old it is.
     private var origin: PlacesOrigin {
+        if store.placeIsOffline(id) {
+            return PlacesOffline.origin(dataDate: file?.newsNewestFirst.first?.date ?? file?.updated)
+        }
         guard let feed = store.files[id] else {
             return PlacesOrigin.describe(pinned: false, phase: .loading, fetched: nil, dataDate: nil)
         }
+        if let newest = file?.newsNewestFirst.first?.date { return feed.origin(dataDate: newest, story: true) }
         return feed.origin(dataDate: file?.updated ?? place?.updated)
     }
 

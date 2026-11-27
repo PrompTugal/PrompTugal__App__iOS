@@ -810,6 +810,13 @@ struct ArticleTests {
         #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
         old.form = ""
         #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
+        let current = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "current", signPEM: testPEM)
+        #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [current])
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: false))
+        let revoked = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "revoked", signPEM: testPEM)
+        if case .verified = ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [revoked]) {
+            Issue.record("a revoked key must never verify")
+        }
         let handedOver = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "superseded", signPEM: testPEM)
         #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [handedOver])
                 == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: true))
@@ -918,5 +925,77 @@ struct LanguageTests {
         #expect(file.translatableProse.contains("PrompTugal.news Loulé: AI and technology in Loulé."))
         #expect(file.translatableProse.contains("Institutional more than corporate."))
         #expect(!file.translatableProse.contains("Council buys AI tools"))
+    }
+}
+
+// MARK: - Recent first, age said plainly (Dinis, 27 Nov)
+
+@Suite("PTPlaces: age and recency")
+struct RecencyTests {
+    let now = PlaceDates.parse("2026-11-27T00:15Z")!
+
+    @Test("a story's age reads today, yesterday, n days ago, then the date")
+    func age() {
+        #expect(PlaceDates.daysOld("2026-11-27", now: now) == 0)
+        #expect(PlaceDates.daysOld("2026-11-16", now: now) == 11)
+        #expect(PlaceDates.age("2026-11-27", now: now) == "today")
+        #expect(PlaceDates.age("2026-11-26", now: now) == "yesterday")
+        #expect(PlaceDates.age("2026-11-17", now: now) == "10 days ago")
+        #expect(PlaceDates.age("2025-11-03", now: now) == "3 Nov 2025")
+        #expect(PlaceDates.age("not a date", now: now) == "not a date")
+    }
+
+    @Test("top stories run by date first: a 16 Nov item never sits above a 26 Nov one; one per place within a day")
+    func dateFirst() throws {
+        let feed = try PTPlacesTestsDecode.decode(SinceFeed.self, """
+        {"places":[{"id":"portugal","name":"Portugal","kind":"country"},{"id":"algarve","name":"The Algarve","kind":"region","parent":"portugal"},
+                   {"id":"faro","name":"Faro","kind":"municipality","parent":"algarve"},{"id":"olhao","name":"Olhão","kind":"municipality","parent":"algarve"}],
+         "items":[
+          {"kind":"story","date":"2026-11-16","title":"Faro old A","url":"https://a.pt/1","place":"faro","rings":["faro","algarve","portugal"]},
+          {"kind":"story","date":"2026-11-16","title":"Faro old B","url":"https://a.pt/2","place":"faro","rings":["faro","algarve","portugal"]},
+          {"kind":"story","date":"2026-11-16","title":"Olhao old","url":"https://a.pt/3","place":"olhao","rings":["olhao","algarve","portugal"]},
+          {"kind":"article","date":"2026-11-26","title":"New firms set up in Faro","url":"https://promptugal.news/articles/faro-firms.html","place":null,"rings":["portugal"]},
+          {"kind":"article","date":"2026-11-26","title":"AI use in Portugal jumps","url":"https://promptugal.news/articles/ai-use.html","place":null,"rings":["portugal"]}
+         ]}
+        """)
+        let top = feed.topStories(limit: 10)
+        #expect(top.map(\.title) == ["New firms set up in Faro", "AI use in Portugal jumps", "Faro old A", "Olhao old", "Faro old B"])
+        // A placeless article takes the finest place its title names, and that place's way up.
+        #expect(feed.placeID(for: top[0]) == "faro")
+        #expect(feed.trail(for: top[0]).map(\.id) == ["faro", "algarve", "portugal"])
+        #expect(feed.placeID(for: top[1]) == "portugal")
+        #expect(feed.placeName(for: top[0]) == "Faro")
+    }
+
+    @Test("the origin line says live only for a story under a day old, else the newest story's date")
+    func origin() {
+        let fresh = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-26", story: true, now: now)
+        #expect(fresh.kind == .live)
+        let old = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-16", story: true, now: now)
+        #expect(old.kind == .dated)
+        #expect(old.text == "From promptugal.news, newest story 16 Nov 2026")
+    }
+}
+
+@Suite("PTPlaces: the offline edition as a fallback")
+struct OfflineTests {
+    @Test("with nothing from the network, the store reads since.json and a place file from the offline edition")
+    @MainActor func fallback() throws {
+        let offline = PlacesOffline()
+        #expect(offline.value(SinceFeed.self, PlacesOffline.Path.since) == nil)
+        offline.use { path in
+            switch path {
+            case "api/v1/since.json": Data(#"{"built":"2026-11-26","items":[{"kind":"story","date":"2026-11-17","title":"T","url":"https://a.pt/1","place":"faro"}]}"#.utf8)
+            case "api/v1/by-place/faro.json": Data(#"{"id":"faro","name":"Faro","updated":"2026-11-26"}"#.utf8)
+            default: nil
+            }
+        }
+        #expect(offline.value(SinceFeed.self, PlacesOffline.Path.since)?.items.first?.title == "T")
+        #expect(offline.value(PlaceFile.self, PlacesOffline.Path.place("faro"))?.name == "Faro")
+        #expect(offline.value(PlaceFile.self, PlacesOffline.Path.place("faro-2")) == nil)
+        #expect(PlacesOffline.Path.article("ai-use") == "api/v1/articles/ai-use.json")
+        let origin = PlacesOffline.origin(dataDate: "2026-11-17")
+        #expect(origin.kind == .deviceCopy)
+        #expect(origin.text == "This device's offline copy, newest 17 Nov 2026")
     }
 }

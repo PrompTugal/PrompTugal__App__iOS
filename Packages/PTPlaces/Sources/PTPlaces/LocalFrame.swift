@@ -19,6 +19,17 @@ extension SinceFeed {
         var seen = Set<String>()
         var ids = item.rings
         if ids.isEmpty, let own = item.place { ids = [own] }
+        // A placeless item takes the finest place its title names, then that place's parents.
+        if item.place == nil, let named = namedPlace(in: item.title) {
+            var chain: [String] = []
+            var next: String? = named.id
+            while let id = next, !chain.contains(id), chain.count < 4 {
+                chain.append(id)
+                let parent = place(id).parent
+                next = parent.isEmpty ? nil : parent
+            }
+            ids = chain
+        }
         return ids.filter { seen.insert($0).inserted }.map(place)
     }
 
@@ -195,7 +206,7 @@ struct BubblingUpSection: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        if let feed = store.since.value, let town = feed.featuredTown(followed: PlaceFollows.ids(followed)) {
+        if let feed = store.sinceFeed, let town = feed.featuredTown(followed: PlaceFollows.ids(followed)) {
             content(feed, town: town)
         }
     }
@@ -243,7 +254,7 @@ struct BubblingUpSection: View {
             StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
-                    Text(String(localized: "Read at \(item.byline)", bundle: .module) + " · " + PlaceDates.short(item.date))
+                    Text(String(localized: "Read at \(item.byline)", bundle: .module) + " · " + PlaceDates.age(item.date))
                         .font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

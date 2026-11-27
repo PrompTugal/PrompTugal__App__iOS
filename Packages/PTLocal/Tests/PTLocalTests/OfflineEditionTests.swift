@@ -70,6 +70,19 @@ struct OfflineEditionTests {
         #expect(!paths.contains("api/v1/by-place/faro/now.json"))
     }
 
+    @Test("Every place in the by-place index is saved, district capitals included; odd ids are dropped")
+    func places() throws {
+        let index = Data(#"{"places":[{"id":"portugal"},{"id":"faro"},{"id":"lisboa"},{"id":"../etc"},{"id":"porto"}]}"#.utf8)
+        #expect(EditionManifest.placeIDs(fromIndex: index) == ["portugal", "faro", "lisboa", "porto"])
+        #expect(EditionManifest.placeIDs(fromIndex: Data("nope".utf8)) == nil)
+        let extra = entry("api/v1/by-place/lisboa.json", body: "{}")
+        let manifest = try JSONDecoder().decode(EditionManifest.self, from: Data(manifestJSON(extra: [extra]).utf8))
+        let paths = manifest.editionFiles(places: ["faro", "lisboa"]).map(\.path)
+        #expect(paths.contains("api/v1/by-place/lisboa.json"))
+        #expect(paths.contains("api/v1/by-place/faro.json"))
+        #expect(!paths.contains("api/v1/by-place/faro-sul.json"))
+    }
+
     @Test("Unsafe paths are never saved")
     func safety() {
         #expect(EditionManifest.isSafe("api/v1/since.json"))

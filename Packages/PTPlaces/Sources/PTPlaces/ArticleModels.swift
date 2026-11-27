@@ -219,7 +219,7 @@ enum ArticleSigning {
         }
         let agent = key.agent.isEmpty ? key.id : key.agent
         switch key.status {
-        case "active", "": return .verified(agent: agent, keyID: key.id, handedOver: false)
+        case "active", "current", "": return .verified(agent: agent, keyID: key.id, handedOver: false)
         case "superseded": return .verified(agent: agent, keyID: key.id, handedOver: true)
         default: return .notChecked(String(localized: "the key is marked \(key.status) in the key list", bundle: .module))
         }
