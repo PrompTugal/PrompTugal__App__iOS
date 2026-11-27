@@ -150,3 +150,14 @@ The data is old (by-place newest ai_news 16 to 17 Nov; since.json's newest place
   "From promptugal.news, newest story <date>" (Home masthead, Latest from the towns, Since you last looked, a town
   page's news and events).
 - 232 catalogue keys, all with pt-PT, no symbol collisions.
+
+## Offline edition hook and signature statuses (c.ios.synthetic via c.ios, build 688, 27 Nov ~01:00)
+
+- `.placesOfflineData { path in ... }` (public environment value, `@Sendable (String) -> Data?`), set by the shell from
+  PTLocal's EditionFiles. Paths: `api/v1/since.json`, `api/v1/by-place/index.json`, `api/v1/by-place/<id>.json`,
+  `api/v1/articles/<id>.json`. Home, Places, town pages and the article reader use it only when neither the network
+  nor the feed's own saved copy gave anything (`PlacesStore.sinceFeed`, `file(_:)`, `places`), and their origin line
+  then says "This device's offline copy, newest <date>". The signature check still needs the twin and .sig online.
+- Signature: key status "current" counts as active; a superseded key reads "Signed with an earlier key of <agent>,
+  still valid, checked on this device"; a revoked (or any other) status never verifies.
+- 234 catalogue keys, all with pt-PT.

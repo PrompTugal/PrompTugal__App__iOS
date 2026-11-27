@@ -2450,19 +2450,19 @@
         }
       }
     },
-    "Signed with a key since handed over (%@), checked on this device": {
+    "Signed with an earlier key of %@, still valid, checked on this device": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Signed with a key since handed over (%@), checked on this device"
+            "value": "Signed with an earlier key of %@, still valid, checked on this device"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Assinado com uma chave entretanto passada a outro agente (%@), verificado neste dispositivo"
+            "value": "Assinado com uma chave anterior de %@, ainda válida, verificado neste dispositivo"
           }
         }
       }
@@ -3058,6 +3058,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cópia deste dispositivo, guardada a %@"
+          }
+        }
+      }
+    },
+    "This device's offline copy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device's offline copy"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia offline deste dispositivo"
+          }
+        }
+      }
+    },
+    "This device's offline copy, newest %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device's offline copy, newest %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cópia offline deste dispositivo, mais recente de %@"
           }
         }
       }

@@ -85,6 +85,12 @@ public struct ArticleView: View {
     @State private var reader: ArticleReader
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openURL) private var openURL
+    @Environment(\.placesOfflineData) private var offlineData
+
+    /// The article from the offline edition, when the network gave nothing.
+    private var offlineRecord: ArticleRecord? {
+        PlacesOffline.shared.value(ArticleRecord.self, PlacesOffline.Path.article(id))
+    }
 
     public init(id: String) {
         self.id = id
@@ -96,7 +102,7 @@ public struct ArticleView: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Space.xl) {
-                if let record = reader.record.value {
+                if let record = reader.record.value ?? offlineRecord {
                     header(record)
                     fullPage(record)
                     sources(record)
@@ -126,7 +132,10 @@ public struct ArticleView: View {
             }
         }
         .refreshable { await reader.load(force: true) }
-        .task { await reader.load() }
+        .task {
+            PlacesOffline.shared.use(offlineData)
+            await reader.load()
+        }
         .accessibilityIdentifier("article.\(id)")
     }
 
@@ -142,7 +151,7 @@ public struct ArticleView: View {
             Text([PlaceDates.short(record.date), record.author].filter { !$0.isEmpty }.joined(separator: " · "))
                 .font(.subheadline)
                 .foregroundStyle(Palette.muted)
-            PlacesOriginLabel(origin: reader.record.origin(dataDate: nil))
+            PlacesOriginLabel(origin: reader.record.value == nil ? PlacesOffline.origin(dataDate: record.date) : reader.record.origin(dataDate: nil))
             if PlacesLanguage.isPortuguese {
                 Label(String(localized: "Articles are in English", bundle: .module), systemImage: "character.bubble")
                     .font(.caption)
@@ -285,7 +294,7 @@ struct SignaturePanel: View {
         switch check {
         case .checking: String(localized: "Checking the signature on this device", bundle: .module)
         case .verified(let agent, _, false): String(localized: "Signed by \(agent), checked on this device", bundle: .module)
-        case .verified(let agent, _, true): String(localized: "Signed with a key since handed over (\(agent)), checked on this device", bundle: .module)
+        case .verified(let agent, _, true): String(localized: "Signed with an earlier key of \(agent), still valid, checked on this device", bundle: .module)
         case .failed: String(localized: "The signature does not match this text", bundle: .module)
         case .olderForm: String(localized: "Signed in an older form that cannot be checked", bundle: .module)
         case .notSigned: String(localized: "Not signed", bundle: .module)

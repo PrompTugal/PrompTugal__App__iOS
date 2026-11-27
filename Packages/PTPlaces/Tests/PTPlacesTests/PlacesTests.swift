@@ -810,6 +810,13 @@ struct ArticleTests {
         #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
         old.form = ""
         #expect(ArticleSigning.check(twin: testTwin, signature: old, keys: [key]) == .olderForm)
+        let current = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "current", signPEM: testPEM)
+        #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [current])
+                == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: false))
+        let revoked = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "revoked", signPEM: testPEM)
+        if case .verified = ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [revoked]) {
+            Issue.record("a revoked key must never verify")
+        }
         let handedOver = SigningKey(id: "test-key", agent: "tester@PrompTugal.test", status: "superseded", signPEM: testPEM)
         #expect(ArticleSigning.check(twin: testTwin, signature: testSignature, keys: [handedOver])
                 == .verified(agent: "tester@PrompTugal.test", keyID: "test-key", handedOver: true))
@@ -967,5 +974,28 @@ struct RecencyTests {
         let old = PlacesOrigin.describe(pinned: false, phase: .loaded, fetched: now, dataDate: "2026-11-16", story: true, now: now)
         #expect(old.kind == .dated)
         #expect(old.text == "From promptugal.news, newest story 16 Nov 2026")
+    }
+}
+
+@Suite("PTPlaces: the offline edition as a fallback")
+struct OfflineTests {
+    @Test("with nothing from the network, the store reads since.json and a place file from the offline edition")
+    @MainActor func fallback() throws {
+        let offline = PlacesOffline()
+        #expect(offline.value(SinceFeed.self, PlacesOffline.Path.since) == nil)
+        offline.use { path in
+            switch path {
+            case "api/v1/since.json": Data(#"{"built":"2026-11-26","items":[{"kind":"story","date":"2026-11-17","title":"T","url":"https://a.pt/1","place":"faro"}]}"#.utf8)
+            case "api/v1/by-place/faro.json": Data(#"{"id":"faro","name":"Faro","updated":"2026-11-26"}"#.utf8)
+            default: nil
+            }
+        }
+        #expect(offline.value(SinceFeed.self, PlacesOffline.Path.since)?.items.first?.title == "T")
+        #expect(offline.value(PlaceFile.self, PlacesOffline.Path.place("faro"))?.name == "Faro")
+        #expect(offline.value(PlaceFile.self, PlacesOffline.Path.place("faro-2")) == nil)
+        #expect(PlacesOffline.Path.article("ai-use") == "api/v1/articles/ai-use.json")
+        let origin = PlacesOffline.origin(dataDate: "2026-11-17")
+        #expect(origin.kind == .deviceCopy)
+        #expect(origin.text == "This device's offline copy, newest 17 Nov 2026")
     }
 }

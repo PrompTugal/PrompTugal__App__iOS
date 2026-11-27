@@ -205,7 +205,7 @@ struct SinceYouLookedSection: View {
         return session
     }
 
-    private var feed: SinceFeed? { store.since.value }
+    private var feed: SinceFeed? { store.sinceFeed }
 
     private static func newestDate(_ items: [SinceItem]) -> String? { items.map(\.date).max() }
 
@@ -226,7 +226,7 @@ struct SinceYouLookedSection: View {
         return VStack(alignment: .leading, spacing: Space.m) {
             SectionHead(title: String(localized: "Since you last looked", bundle: .module),
                         subtitle: subtitle(baseline: baseline, fresh: fresh.count, days: feed.days), accent: Palette.red)
-            PlacesOriginLabel(origin: store.since.origin(dataDate: Self.newestDate(feed.items), story: true))
+            PlacesOriginLabel(origin: store.sinceOrigin(dataDate: Self.newestDate(feed.items)))
             VStack(spacing: 0) {
                 ForEach(pool) { item in
                     SinceRow(item: item, place: feed.placeName(for: item), isNew: baseline?.isNew(item) ?? false,

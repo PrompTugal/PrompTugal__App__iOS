@@ -206,7 +206,7 @@ struct BubblingUpSection: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        if let feed = store.since.value, let town = feed.featuredTown(followed: PlaceFollows.ids(followed)) {
+        if let feed = store.sinceFeed, let town = feed.featuredTown(followed: PlaceFollows.ids(followed)) {
             content(feed, town: town)
         }
     }

@@ -112,6 +112,7 @@ extension SinceFeed {
 public struct PortugalHomeView: View {
     @State private var store = PlacesStore.shared
     @Environment(\.horizontalSizeClass) private var width
+    @Environment(\.placesOfflineData) private var offlineData
     private let openPlaces: (() -> Void)?
 
     public init(openPlaces: (() -> Void)? = nil) {
@@ -125,13 +126,13 @@ public struct PortugalHomeView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: Space.xl) {
                 masthead
-                if let feed = store.since.value, !feed.items.isEmpty {
+                if let feed = store.sinceFeed, !feed.items.isEmpty {
                     front(feed)
                 } else {
                     waiting
                 }
                 latestFromTowns
-                if let feed = store.since.value { alsoInTheNews(feed) }
+                if let feed = store.sinceFeed { alsoInTheNews(feed) }
                 mapStrip
             }
             .padding(.bottom, Space.xxl)
@@ -144,7 +145,10 @@ public struct PortugalHomeView: View {
         .navigationDestination(for: PlaceRoute.self) { route in PlaceDetailView(id: route.id) }
         .navigationDestination(for: ArticleRoute.self) { route in ArticleView(id: route.id) }
         .refreshable { await store.load(force: true) }
-        .task { await store.load() }
+        .task {
+            PlacesOffline.shared.use(offlineData)
+            await store.load()
+        }
         .accessibilityIdentifier("home.news")
     }
 
@@ -167,7 +171,7 @@ public struct PortugalHomeView: View {
             .font(.caption.weight(.semibold))
             .textCase(.uppercase)
             .foregroundStyle(Palette.muted)
-            PlacesOriginLabel(origin: store.since.origin(dataDate: store.since.value?.lead?.date, story: true))
+            PlacesOriginLabel(origin: store.sinceOrigin(dataDate: store.sinceFeed?.lead?.date))
         }
         .padding(.horizontal, gutter)
         .padding(.top, Space.m)

@@ -16,6 +16,7 @@ public struct PlacesHomeView: View {
     @Environment(\.horizontalSizeClass) private var width
     @Environment(\.openURL) private var openURL
     @Environment(\.placesHomeAccessory) private var homeAccessory
+    @Environment(\.placesOfflineData) private var offlineData
 
     /// The case studies, deepest first (Dinis, 15 November).
     static let caseStudies = ["loule", "faro"]
@@ -52,7 +53,10 @@ public struct PlacesHomeView: View {
         }
         .navigationDestination(for: ArticleRoute.self) { route in ArticleView(id: route.id) }
         .refreshable { await store.load(force: true) }
-        .task { await store.load() }
+        .task {
+            PlacesOffline.shared.use(offlineData)
+            await store.load()
+        }
         .accessibilityIdentifier("places.home")
     }
 
