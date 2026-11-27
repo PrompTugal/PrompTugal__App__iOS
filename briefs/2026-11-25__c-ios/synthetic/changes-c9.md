@@ -14,7 +14,7 @@
 
 ## The Portuguese, checked
 
-**Good.** It is European Portuguese throughout: ficheiro, ligação, registo, fotografia, ecrã-free phrasing, "está a ler", "câmara", "terra a terra" for "town by town", AO90 spelling (setor, atividade). No "tela", "celular", "arquivo", "usuário" or gerund forms anywhere. IPMA warning levels are translated before they go into alerts ("IPMA: aviso amarelo, distrito de Faro"). Every PTPlaces/PTLocal/PTNews literal reaches its own catalogue (only "PrompTugal.news", "Portugal" and "24 h" are untranslated, rightly). Translation memory coverage is complete for the four towns I computed: **Tavira 6/6, Loulé 15/15, Lagos 5/5, Faro 30/30** segments, and the Portuguese reads naturally.
+**Good.** It is European Portuguese throughout: ficheiro, ligação, registo, fotografia, "está a ler", "câmara", "terra a terra" for "town by town", AO90 spelling (setor, atividade). No "tela", "celular", "arquivo", "usuário" or gerund forms anywhere. IPMA warning levels are translated before they go into alerts ("IPMA: aviso amarelo, distrito de Faro"). Every PTPlaces/PTLocal/PTNews literal reaches its own catalogue (only "PrompTugal.news", "Portugal" and "24 h" are untranslated, rightly). Translation memory coverage is complete for the four towns I computed: **Tavira 6/6, Loulé 15/15, Lagos 5/5, Faro 30/30** segments, and the Portuguese reads naturally.
 
 | # | Severity | What | Where | Fix |
 | --- | --- | --- | --- | --- |
@@ -29,7 +29,7 @@
 ## Per persona
 
 - **P6 Sr. Joaquim (pt, XL, VoiceOver): from stuck to annoying.** The app now opens in Portuguese on his phone with no setting to find; the Tavira page's mandate, centre of gravity and story summaries are in good Portuguese, marked as machine translation; events were already Portuguese. What remains: English headlines and articles (P2) read in a Portuguese voice (P3), the English location prompt (P1), and titles that do not grow (P7).
-- **P1 Graça:** Portuguese UI if her phone is Portuguese. Alerts for Loulé would suit her, but IPMA warnings are by district (Faro) and new-story alerts depend on since.json, whose newest Loulé item is from 21 Nov. Translation shards add round trips on poor signal (P6).
+- **P1 Graça:** Portuguese UI if her phone is Portuguese. Alerts for Loulé would suit her, but IPMA warnings are by district (Faro) and new-story alerts only fire when since.json gains a Loulé item. Translation shards add round trips on poor signal (P6).
 - **P2 Rui (en):** no change in English. Privacy page now describes alerts and language accurately.
 - **P3 Marta (pt):** her council's page reads in Portuguese, with the machine-translation note: good for checking what is said about her council; the report-a-mistake link (F2 in c8b) still goes to /contribute/.
 - **P4, P8 (en):** unchanged.
