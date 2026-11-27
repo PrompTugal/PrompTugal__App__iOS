@@ -982,7 +982,12 @@ struct OfflineTests {
     @Test("with nothing from the network, the store reads since.json and a place file from the offline edition")
     @MainActor func fallback() throws {
         let offline = PlacesOffline()
-        #expect(offline.value(SinceFeed.self, PlacesOffline.Path.since) == nil)
+        // With no edition, since.json and the index come from the copy built into the app, labelled as such.
+        #expect((offline.value(SinceFeed.self, PlacesOffline.Path.since)?.items.count ?? 0) > 100)
+        #expect(offline.source(PlacesOffline.Path.since) == .builtIn)
+        #expect((offline.value(PlaceIndex.self, PlacesOffline.Path.index)?.places.count ?? 0) >= 36)
+        #expect(offline.origin(PlacesOffline.Path.since, dataDate: "2026-11-26").kind == .snapshot)
+        #expect(offline.value(PlaceFile.self, PlacesOffline.Path.place("faro")) == nil)
         offline.use { path in
             switch path {
             case "api/v1/since.json": Data(#"{"built":"2026-11-26","items":[{"kind":"story","date":"2026-11-17","title":"T","url":"https://a.pt/1","place":"faro"}]}"#.utf8)
@@ -991,6 +996,7 @@ struct OfflineTests {
             }
         }
         #expect(offline.value(SinceFeed.self, PlacesOffline.Path.since)?.items.first?.title == "T")
+        #expect(offline.source(PlacesOffline.Path.since) == .edition)
         #expect(offline.value(PlaceFile.self, PlacesOffline.Path.place("faro"))?.name == "Faro")
         #expect(offline.value(PlaceFile.self, PlacesOffline.Path.place("faro-2")) == nil)
         #expect(PlacesOffline.Path.article("ai-use") == "api/v1/articles/ai-use.json")

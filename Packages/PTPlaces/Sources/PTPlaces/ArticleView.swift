@@ -49,7 +49,7 @@ final class ArticleReader {
         }
         let sigURL = record.value.flatMap { URL(string: $0.signature) } ?? ArticleLinks.signature(id)
         guard let fetched = await fetch(sigURL) else {
-            check = .notChecked(String(localized: "the signature file did not load", bundle: .module))
+            check = .checkedWhenOnline
             return
         }
         let (sigData, sigStatus) = fetched
@@ -62,12 +62,15 @@ final class ArticleReader {
             return
         }
         guard let keys = Self.keys.value else {
-            check = .notChecked(String(localized: "the published keys did not load", bundle: .module))
+            check = .checkedWhenOnline
             return
         }
         let twinURL = record.value.flatMap { URL(string: $0.twin) } ?? ArticleLinks.twin(id)
-        guard let twin = await fetch(twinURL), (200..<300).contains(twin.1),
-              let text = String(data: twin.0, encoding: .utf8) else {
+        guard let twin = await fetch(twinURL) else {
+            check = .checkedWhenOnline
+            return
+        }
+        guard (200..<300).contains(twin.1), let text = String(data: twin.0, encoding: .utf8) else {
             check = .notChecked(String(localized: "the signed text did not load", bundle: .module))
             return
         }
@@ -312,6 +315,7 @@ struct SignaturePanel: View {
         case .failed: String(localized: "The signature does not match this text", bundle: .module)
         case .olderForm: String(localized: "Signed in an older form that cannot be checked", bundle: .module)
         case .notSigned: String(localized: "Not signed", bundle: .module)
+        case .checkedWhenOnline: String(localized: "Signature checked when online", bundle: .module)
         case .notChecked: String(localized: "Signature not checked", bundle: .module)
         }
     }
@@ -319,6 +323,7 @@ struct SignaturePanel: View {
     private var detail: String? {
         switch check {
         case .checking, .failed, .olderForm, .notSigned: nil
+        case .checkedWhenOnline: String(localized: "This device is offline: the signed text, its signature and the keys are read from promptugal.news.", bundle: .module)
         case .verified(_, let keyID, _): String(localized: "Key \(keyID), from promptugal.news/board/keys.json", bundle: .module)
         case .notChecked(let reason): reason.prefix(1).uppercased() + reason.dropFirst()
         }

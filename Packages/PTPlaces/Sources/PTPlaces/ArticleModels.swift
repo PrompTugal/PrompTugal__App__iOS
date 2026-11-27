@@ -165,6 +165,8 @@ enum SignatureCheck: Equatable, Sendable {
     case olderForm
     /// No .sig is published for the article.
     case notSigned
+    /// Offline: the signed text, its signature or the keys could not be fetched (the offline edition has none of them).
+    case checkedWhenOnline
     /// Not checked, with the reason.
     case notChecked(String)
 }

@@ -175,3 +175,16 @@ The data is old (by-place newest ai_news 16 to 17 Nov; since.json's newest place
 - Dynamic Type: article title, Home lead, mastheads, place hero, case-study names, big numbers and the temperature use
   text styles (largeTitle/title) with a minimum scale where space is tight. Map pins and decorative letters stay fixed.
 - pt-PT: IPMA levels capitalised (Amarelo, Laranja, Vermelho); "você reporta" rewritten impersonally.
+
+## First launch with no signal; offline signatures (c.ios.synthetic / c.ios.local via c.ios, 27 Nov ~02:40)
+
+- PTPlaces ships its own built-in copy: `Resources/snapshot-since.json` and `snapshot-index.json` (since.json and
+  by-place/index.json read 27 Nov 02:38 UTC, 176 KB). Fallback order: network, the feed's saved copy, the offline
+  edition (`placesOfflineData`), then the built-in copy, labelled "Built-in copy, newest <date>". Once the edition
+  reader arrives it replaces anything read from the built-in copy. Place files are not bundled (3.6 MB): a town page
+  offline on a first launch shows the index's summary only. Refresh the two files at each release if wanted
+  (curl the two URLs into Resources).
+- The reader offline: when the .sig, the keys or the twin cannot be fetched, "Signature checked when online", with
+  "This device is offline: the signed text, its signature and the keys are read from promptugal.news." The offline
+  edition has no .md/.sig/keys, so nothing is bundled for that.
+- 236 catalogue keys, all with pt-PT.
