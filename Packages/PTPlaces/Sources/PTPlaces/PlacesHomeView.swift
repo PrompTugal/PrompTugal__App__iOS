@@ -419,7 +419,7 @@ struct CaseStudyCard: View {
                 HStack(spacing: Space.xl) {
                     BigNumber(value: place.aiNews, label: String(localized: "AI stories", bundle: .module), accent: accent)
                     BigNumber(value: place.aiMap, label: String(localized: "AI map", bundle: .module), accent: accent)
-                    BigNumber(value: file?.events.count ?? 0, label: String(localized: "events", bundle: .module), accent: accent)
+                    BigNumber(value: file?.events.count ?? 0, label: String(localized: "Events", bundle: .module), accent: accent)
                 }
                 .padding(.top, Space.s)
             }

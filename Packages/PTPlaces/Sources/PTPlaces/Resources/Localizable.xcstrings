@@ -1005,6 +1005,23 @@
         }
       }
     },
+    "Its towns": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Its towns"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas localidades"
+          }
+        }
+      }
+    },
     "Journalists, local media, bloggers, anyone who makes content about their town: our agents research, you report, and readers come to you.": {
       "extractionState": "manual",
       "localizations": {
@@ -1562,23 +1579,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abrir"
-          }
-        }
-      }
-    },
-    "Open %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open %@"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abrir %@"
           }
         }
       }
@@ -2977,23 +2977,6 @@
         }
       }
     },
-    "The towns": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The towns"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "As localidades"
-          }
-        }
-      }
-    },
     "This device's copy, saved %@": {
       "extractionState": "manual",
       "localizations": {
@@ -3177,6 +3160,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Útil"
+          }
+        }
+      }
+    },
+    "Visit %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visit %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visitar %@"
           }
         }
       }
@@ -3487,23 +3487,6 @@
         }
       }
     },
-    "events": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "events"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "eventos"
-          }
-        }
-      }
-    },
     "fire risk": {
       "extractionState": "manual",
       "localizations": {
@@ -3657,19 +3640,19 @@
         }
       }
     },
-    "signature %@": {
+    "signature is %@": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "signature %@"
+            "value": "signature is %@"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "assinatura %@"
+            "value": "assinatura: %@"
           }
         }
       }
@@ -3687,23 +3670,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "assinado %@"
-          }
-        }
-      }
-    },
-    "sources": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "sources"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "fontes"
           }
         }
       }
@@ -3755,23 +3721,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "as chaves publicadas não carregaram"
-          }
-        }
-      }
-    },
-    "the signature does not match this text": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "the signature does not match this text"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "a assinatura não corresponde a este texto"
           }
         }
       }
