@@ -53,4 +53,5 @@ Tests: `FreshnessTests`, `NewsroomStatusTests`, `TownLayersTests` (fixtures incl
 ## Batch 6: from c.ios.synthetic's walk of 688
 
 - Offline edition saves every place in `by-place/index.json` (37 today: towns, the Algarve, Portugal, the district capitals), the index itself checked against the manifest; about 3.7 MB. Its text now promises only what is wired: town pages offline, the other saved files waiting for the screens that will read them (to widen once c.ios.places' fallback hook is wired).
+- Offline wording widened with c10 (c.ios.places hook de89f68 + shell): Home, Places, town pages and our articles read offline; the newsletter, the News tab and signature checks still need a connection.
 - Alerts: at most one alert a topic a day, none between 22:00 and 08:00 on the reader's clock; what is held back stays unseen and goes into the next allowed alert as "first item, and N more".

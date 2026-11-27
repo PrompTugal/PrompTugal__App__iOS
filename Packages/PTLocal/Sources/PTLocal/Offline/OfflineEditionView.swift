@@ -53,7 +53,7 @@ public struct OfflineEditionView: View {
         } else {
             VStack(alignment: .leading, spacing: 4) {
                 Label(LocalText.string("No edition saved"), systemImage: "arrow.down.circle").font(.headline).foregroundStyle(Palette.ink)
-                Text(LocalText.string("Save the last edition to read the town pages with no connection. The other saved files wait on this device for the screens that will read them."))
+                Text(LocalText.string("Save the last edition to read Home, Places, the town pages and our articles with no connection. The newsletter and the News tab still need a connection, and so do signature checks."))
                     .font(.footnote).foregroundStyle(Palette.muted)
             }
         }

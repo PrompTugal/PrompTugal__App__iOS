@@ -3582,12 +3582,12 @@
         }
       }
     },
-    "Save the last edition to read the town pages with no connection. The other saved files wait on this device for the screens that will read them.": {
+    "Save the last edition to read Home, Places, the town pages and our articles with no connection. The newsletter and the News tab still need a connection, and so do signature checks.": {
       "localizations": {
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Guarde a última edição para ler as páginas das localidades sem ligação. Os outros ficheiros guardados ficam neste dispositivo à espera dos ecrãs que os vão ler."
+            "value": "Guarde a última edição para ler o Início, os Locais, as páginas das localidades e os nossos artigos sem ligação. A newsletter e o separador Notícias ainda precisam de ligação, tal como a verificação das assinaturas."
           }
         }
       }
