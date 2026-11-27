@@ -151,7 +151,7 @@ struct PlaceNowCard: View {
             HStack(alignment: .firstTextBaseline, spacing: Space.l) {
                 if let t = now.station?.tempC {
                     Button { open("station") } label: {
-                        Text("\(Int(t.rounded()))°").font(.system(size: 64, weight: .bold, design: .serif)).foregroundStyle(Palette.ink)
+                        Text("\(Int(t.rounded()))°").font(.system(.largeTitle, design: .serif, weight: .bold)).foregroundStyle(Palette.ink)
                     }
                     .buttonStyle(.plain)
                 }

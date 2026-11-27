@@ -148,6 +148,9 @@ public struct PortugalHomeView: View {
         .task {
             PlacesOffline.shared.use(offlineData)
             await store.load()
+            // The followed towns' prose in Portuguese, ready before their pages open.
+            let followed = PlaceFollows.ids(UserDefaults.standard.string(forKey: PlaceFollows.key) ?? "")
+            await PlacesTranslation.shared.load(followed.compactMap { store.file($0)?.translatableProse }.flatMap { $0 })
         }
         .accessibilityIdentifier("home.news")
     }
@@ -157,7 +160,9 @@ public struct PortugalHomeView: View {
     private var masthead: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("PrompTugal.news")
-                .font(.system(size: wide ? 44 : 32, weight: .black, design: .serif))
+                .font(.system(wide ? .largeTitle : .title, design: .serif, weight: .black))
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
                 .foregroundStyle(Palette.ink)
             Rectangle().fill(Palette.ink).frame(height: 2)
             ViewThatFits(in: .horizontal) {
@@ -293,8 +298,8 @@ struct HomeLead: View {
             StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: Space.s) {
                     Kicker(text: item.isArticle ? String(localized: "Our article", bundle: .module) : item.byline, color: Palette.red)
-                    Text(item.title)
-                        .font(.system(size: wide ? 40 : 28, weight: .black, design: .serif))
+                    Text(english: item.title)
+                        .font(.system(wide ? .largeTitle : .title, design: .serif, weight: .black))
                         .foregroundStyle(Palette.ink)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
@@ -326,7 +331,7 @@ struct HomeStoryRow: View {
         VStack(alignment: .leading, spacing: 6) {
             StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(item.title)
+                    Text(english: item.title)
                         .font(Typo.story)
                         .foregroundStyle(Palette.ink)
                         .multilineTextAlignment(.leading)

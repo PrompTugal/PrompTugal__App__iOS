@@ -135,6 +135,9 @@ public struct ArticleView: View {
         .task {
             PlacesOffline.shared.use(offlineData)
             await reader.load()
+            if let record = reader.record.value ?? offlineRecord {
+                await PlacesTranslation.shared.load([record.title, record.summary])
+            }
         }
         .accessibilityIdentifier("article.\(id)")
     }
@@ -144,25 +147,36 @@ public struct ArticleView: View {
     private func header(_ record: ArticleRecord) -> some View {
         VStack(alignment: .leading, spacing: Space.s) {
             Kicker(text: String(localized: "Our article", bundle: .module), color: Palette.red)
-            Text(record.title)
-                .font(.system(size: wide ? 40 : 28, weight: .black, design: .serif))
+            PlacesTranslation.shared.content(record.title)
+                .font(.system(wide ? .largeTitle : .title, design: .serif, weight: .black))
                 .foregroundStyle(Palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
             Text([PlaceDates.short(record.date), record.author].filter { !$0.isEmpty }.joined(separator: " · "))
                 .font(.subheadline)
                 .foregroundStyle(Palette.muted)
             PlacesOriginLabel(origin: reader.record.value == nil ? PlacesOffline.origin(dataDate: record.date) : reader.record.origin(dataDate: nil))
-            if PlacesLanguage.isPortuguese {
-                Label(String(localized: "Articles are in English", bundle: .module), systemImage: "character.bubble")
-                    .font(.caption)
-                    .foregroundStyle(Palette.muted)
-            }
+            languageNote(record)
             if !record.summary.isEmpty {
-                Text(record.summary)
+                PlacesTranslation.shared.content(record.summary)
                     .font(.system(.title3, design: .serif))
                     .foregroundStyle(Palette.ink.opacity(0.9))
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, Space.s)
+            }
+        }
+    }
+
+    /// In Portuguese: the site's translation of the title and summary (from its memory, marked as machine
+    /// translation, English one tap away) when there is one, else "O artigo está em inglês".
+    @ViewBuilder private func languageNote(_ record: ArticleRecord) -> some View {
+        if PlacesLanguage.isPortuguese {
+            let translation = PlacesTranslation.shared
+            if let entry = translation.entry(record.title) ?? translation.entry(record.summary) {
+                TranslationNote(entry: entry)
+            } else {
+                Label(String(localized: "This article is in English", bundle: .module), systemImage: "character.bubble")
+                    .font(.caption)
+                    .foregroundStyle(Palette.muted)
             }
         }
     }
@@ -228,7 +242,7 @@ struct SourceRow: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(Palette.red)
                 if !source.text.isEmpty {
-                    Text(source.text)
+                    Text(english: source.text)
                         .font(.subheadline)
                         .foregroundStyle(Palette.ink)
                         .multilineTextAlignment(.leading)

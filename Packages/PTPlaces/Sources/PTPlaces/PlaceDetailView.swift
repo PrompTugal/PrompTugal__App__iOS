@@ -159,7 +159,8 @@ public struct PlaceDetailView: View {
                     if place.isTown { FollowButton(id: place.id, accent: accent, onDark: true) }
                 }
                 Text(place.name)
-                    .font(.system(size: wide ? 84 : 56, weight: .black, design: .serif))
+                    .font(.system(.largeTitle, design: .serif, weight: .black))
+                    .minimumScaleFactor(0.6)
                     .foregroundStyle(.white)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
@@ -210,12 +211,12 @@ public struct PlaceDetailView: View {
 
     @ViewBuilder private var mandate: some View {
         if let file {
-            let text = algarvio ? (file.voice?.mandate ?? file.mandate) : translation.text(file.mandate)
+            let text = algarvio ? Text(english: file.voice?.mandate ?? file.mandate) : translation.content(file.mandate)
             HStack(alignment: .top, spacing: Space.m) {
                 Rectangle().fill(accent).frame(width: 5)
                 VStack(alignment: .leading, spacing: Space.s) {
                     Kicker(text: algarvio ? String(localized: "The mandate, in Algarvio (same facts)", bundle: .module) : String(localized: "The mandate", bundle: .module), color: accent)
-                    Text(text)
+                    text
                         .font(.system(wide ? .title2 : .title3, design: .serif))
                         .foregroundStyle(Palette.ink)
                         .fixedSize(horizontal: false, vertical: true)
@@ -248,7 +249,7 @@ public struct PlaceDetailView: View {
             VStack(alignment: .leading, spacing: Space.m) {
                 SectionHead(title: String(localized: "Centre of gravity", bundle: .module),
                             subtitle: String(localized: "Where AI weighs in this place, found from sources, never invented", bundle: .module), accent: accent)
-                Text(algarvio ? (file?.voice?.gravity ?? gravity.text) : translation.text(gravity.text))
+                gravityText(gravity)
                     .font(.body)
                     .foregroundStyle(Palette.ink)
                     .fixedSize(horizontal: false, vertical: true)
@@ -260,6 +261,10 @@ public struct PlaceDetailView: View {
             .padding(Space.l)
             .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: Space.radius))
         }
+    }
+
+    private func gravityText(_ gravity: Gravity) -> Text {
+        algarvio ? Text(english: file?.voice?.gravity ?? gravity.text) : translation.content(gravity.text)
     }
 
     // MARK: The places under this one (the country and the region)
@@ -342,9 +347,9 @@ public struct PlaceDetailView: View {
                         _ = PlacesCredit.charge("article", article.url, article.date, article.title)
                     }) {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(article.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                            Text(english: article.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                             if !article.summary.isEmpty {
-                                Text(article.summary).font(.subheadline).foregroundStyle(Palette.muted).multilineTextAlignment(.leading)
+                                Text(english: article.summary).font(.subheadline).foregroundStyle(Palette.muted).multilineTextAlignment(.leading)
                             }
                             HStack(spacing: 6) {
                                 Image(systemName: "signature")
@@ -613,12 +618,12 @@ struct LeadStory: View {
                     Text([item.publisher, PlaceDates.short(item.date)].filter { !$0.isEmpty }.joined(separator: " · "))
                         .font(.caption).foregroundStyle(Palette.muted)
                 }
-                Text(item.title)
+                Text(english: item.title)
                     .font(Typo.storyDisplay)
                     .foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(PlacesTranslation.shared.text(item.summary))
+                PlacesTranslation.shared.content(item.summary)
                     .font(.system(.body, design: .serif))
                     .foregroundStyle(Palette.ink.opacity(0.85))
                     .multilineTextAlignment(.leading)
@@ -628,7 +633,7 @@ struct LeadStory: View {
                         Image(systemName: "point.topleft.down.to.point.bottomright.curvepath").foregroundStyle(accent)
                         VStack(alignment: .leading, spacing: 4) {
                             StepsBadge(steps: item.steps, accent: accent)
-                            Text(item.aiPath).font(.footnote).foregroundStyle(Palette.muted)
+                            Text(english: item.aiPath).font(.footnote).foregroundStyle(Palette.muted)
                         }
                     }
                     .padding(Space.m)
