@@ -105,22 +105,37 @@ final class PlacesTranslation {
         return entry.text
     }
 
-    /// Fetches the shards these segments need (nothing in English).
+    /// The same as a Text: the translation, or the English marked as English so VoiceOver uses an English voice.
+    func content(_ english: String) -> Text {
+        guard !showEnglish, let entry = entry(english) else { return Text(english: english) }
+        return Text(entry.text)
+    }
+
+    /// Shards already asked for in this session: each is fetched at most once per launch, and kept a week on the device.
+    @ObservationIgnored private var requested: Set<String> = []
+
+    /// Fetches the shards these segments need (nothing in English), six at a time.
     func load(_ segments: [String]) async {
         guard PlacesLanguage.isPortuguese else { return }
         let needed = Set(segments.filter { !$0.isEmpty }.map { String(TMKey.key($0).prefix(2)) })
-        await withTaskGroup(of: Void.self) { group in
-            for shard in needed {
-                let feed = feed(shard)
-                group.addTask { await feed.load() }
+            .subtracting(requested)
+            .sorted()
+        requested.formUnion(needed)
+        var start = 0
+        while start < needed.count {
+            let batch = needed[start..<min(start + 6, needed.count)].map { feed($0) }
+            await withTaskGroup(of: Void.self) { group in
+                for feed in batch { group.addTask { await feed.load() } }
             }
+            start += 6
         }
     }
 
     private func feed(_ shard: String) -> RemoteFeed<TMShard> {
         if let feed = shards[shard] { return feed }
         let feed = RemoteFeed<TMShard>(name: "tm.\(PlacesLanguage.culture).\(shard)", url: Self.shardURL(shard))
-        feed.freshFor = 86_400
+        // The memory changes slowly: a saved shard is good for a week.
+        feed.freshFor = 7 * 86_400
         shards[shard] = feed
         return feed
     }
@@ -160,5 +175,15 @@ struct TranslationNote: View {
         return entry.checked
             ? String(localized: "Machine translation, checked · see in English", bundle: .module)
             : String(localized: "Machine translation, not reviewed · see in English", bundle: .module)
+    }
+}
+
+extension Text {
+    /// Content written in English (headlines, articles, untranslated prose), marked as English so VoiceOver reads it
+    /// with an English voice when the app runs in Portuguese.
+    init(english string: String) {
+        var text = AttributedString(string)
+        text.languageIdentifier = "en"
+        self.init(text)
     }
 }

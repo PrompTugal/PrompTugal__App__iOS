@@ -54,7 +54,7 @@ public struct TownView: View {
             }
             Text(site.name).font(Typo.display).foregroundStyle(Palette.ink).accessibilityAddTraits(.isHeader)
             if let landmark = site.look?.landmark {
-                Text(landmark).font(.subheadline).foregroundStyle(Palette.muted)
+                Text(content: landmark).font(.subheadline).foregroundStyle(Palette.muted)
             }
             Text(algarvio ? (site.voice?.lede ?? site.mandate) : site.mandate)
                 .font(.callout).foregroundStyle(Palette.ink)
@@ -69,7 +69,7 @@ public struct TownView: View {
 
         if let text = algarvio ? (site.voice?.gravity ?? site.gravity?.text) : site.gravity?.text {
             TitledCard(LocalText.string("The centre of gravity"), kicker: site.name) {
-                Text(text).font(.callout)
+                Text(content: text).font(.callout)
                 SourceLinks(links: site.gravity?.sources ?? [])
             }
         }
@@ -91,10 +91,10 @@ public struct TownView: View {
                         if let link = event.link {
                             Link(event.title, destination: link).font(.body.weight(.medium))
                         } else {
-                            Text(event.title).font(.body.weight(.medium))
+                            Text(content: event.title).font(.body.weight(.medium))
                         }
                         if let date = event.date { Text(date).font(.caption).foregroundStyle(Palette.muted) }
-                        if let path = event.aiPath { Text(path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3) }
+                        if let path = event.aiPath { Text(content: path).font(.caption).italic().foregroundStyle(Palette.muted).lineLimit(3) }
                     }
                     .padding(.vertical, 2)
                 }
@@ -162,12 +162,12 @@ struct MapEntryRow: View {
                 if let home = entry.home {
                     Link(entry.name, destination: home).font(.body.weight(.semibold))
                 } else {
-                    Text(entry.name).font(.body.weight(.semibold))
+                    Text(content: entry.name).font(.body.weight(.semibold))
                 }
                 Spacer(minLength: Space.s)
                 if let type = entry.type { Text(type).font(.caption2).foregroundStyle(Palette.muted) }
             }
-            if let what = entry.what { Text(what).font(.footnote).foregroundStyle(Palette.ink).lineLimit(5) }
+            if let what = entry.what { Text(content: what).font(.footnote).foregroundStyle(Palette.ink).lineLimit(5) }
             if let path = entry.aiPath { Text(LocalText.string("AI path: \(String(describing: path))")).font(.caption).foregroundStyle(Palette.blue).lineLimit(3) }
             HStack(spacing: 4) {
                 Image(systemName: "link")

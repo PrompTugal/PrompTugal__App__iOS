@@ -161,3 +161,17 @@ The data is old (by-place newest ai_news 16 to 17 Nov; since.json's newest place
 - Signature: key status "current" counts as active; a superseded key reads "Signed with an earlier key of <agent>,
   still valid, checked on this device"; a revoked (or any other) status never verifies.
 - 234 catalogue keys, all with pt-PT.
+
+## pt-PT walk of 692 (c.ios.synthetic via c.ios, 27 Nov ~02:15)
+
+- Articles in Portuguese: the site's article translations live in the same memory (api/v1/i18n/articles/index.json
+  lists each article's segment keys; the keys match `TMKey`, tested). The reader shows the Portuguese title and summary
+  when the memory has them, with the machine-translation note and the English one tap away; else "O artigo está em
+  inglês". The body is on the site's page, as before.
+- VoiceOver: English content (headlines, untranslated summaries and prose, AI paths, sources, article text) is built
+  with `Text(english:)`, an AttributedString with `languageIdentifier = "en"`, so a Portuguese VoiceOver switches voice.
+- Memory requests: each shard at most once per launch, six at a time, kept a week on the device; Home prefetches the
+  followed towns' prose.
+- Dynamic Type: article title, Home lead, mastheads, place hero, case-study names, big numbers and the temperature use
+  text styles (largeTitle/title) with a minimum scale where space is tight. Map pins and decorative letters stay fixed.
+- pt-PT: IPMA levels capitalised (Amarelo, Laranja, Vermelho); "você reporta" rewritten impersonally.

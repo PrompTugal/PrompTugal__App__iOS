@@ -34,6 +34,24 @@
           }
         }
       }
+    },
+    "NSLocationWhenInUseUsageDescription": {
+      "comment": "Location permission prompt (Near me).",
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PrompTugal.news uses your location only while you use the app and only when you tap Near me, to find the nearest town and show its news first. Your location stays on this device."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PrompTugal.news usa a sua localização só enquanto usa a app e só quando toca em Perto de mim, para encontrar a terra mais próxima e mostrar primeiro as suas notícias. A sua localização fica neste dispositivo."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -51,7 +51,7 @@ struct EventRow: View {
     var body: some View {
         Link(destination: link) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(event.name).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                Text(content: event.name, language: "pt").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading)
                 Text(detail).font(.caption).foregroundStyle(Palette.muted)
             }
@@ -131,7 +131,7 @@ struct NoticeRow: View {
     var body: some View {
         Link(destination: link) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(notice.what).font(.subheadline).foregroundStyle(Palette.ink)
+                Text(content: notice.what, language: "pt").font(.subheadline).foregroundStyle(Palette.ink)
                     .multilineTextAlignment(.leading).lineLimit(4)
                 Text(detail).font(.caption).foregroundStyle(Palette.muted)
             }
@@ -158,18 +158,19 @@ enum TownLayerDates {
         parser.dateFormat = "yyyy-MM-dd"
         guard let date = parser.date(from: TownDay.prefix(text)) else { return text }
         let out = DateFormatter()
-        out.locale = Locale(identifier: "en_GB")
+        out.locale = LocalText.locale
         out.timeZone = TimeZone(identifier: "Europe/Lisbon")
         out.dateFormat = "d MMM"
         return out.string(from: date)
     }
 
-    /// "€6,640,085" style, no cents.
+    /// "€6,640,085" in English, "6 640 085 €" in Portuguese, no cents.
     static func euros(_ value: Double) -> String {
         let formatter = NumberFormatter()
-        formatter.locale = Locale(identifier: "en_GB")
-        formatter.numberStyle = .decimal
+        formatter.locale = LocalText.locale
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "EUR"
         formatter.maximumFractionDigits = 0
-        return "€" + (formatter.string(from: NSNumber(value: value)) ?? String(Int(value)))
+        return formatter.string(from: NSNumber(value: value)) ?? "€\(Int(value))"
     }
 }

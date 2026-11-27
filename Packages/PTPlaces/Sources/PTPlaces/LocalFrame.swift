@@ -253,7 +253,7 @@ struct BubblingUpSection: View {
         VStack(alignment: .leading, spacing: 6) {
             StoryOpen(link: item.url) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                    Text(english: item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                     Text(String(localized: "Read at \(item.byline)", bundle: .module) + " · " + PlaceDates.age(item.date))
                         .font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
                 }

@@ -69,7 +69,9 @@ public struct PlacesHomeView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
                 Text("PrompTugal.news")
-                    .font(.system(size: wide ? 44 : 32, weight: .black, design: .serif))
+                    .font(.system(wide ? .largeTitle : .title, design: .serif, weight: .black))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
                     .foregroundStyle(Palette.ink)
                 Text(String(localized: "by place", bundle: .module))
                     .font(.system(wide ? .title2 : .title3, design: .serif).italic())
@@ -399,7 +401,8 @@ struct CaseStudyCard: View {
                         StatusPill(status: place.status, onDark: true)
                     }
                     Text(place.name)
-                        .font(.system(size: 48, weight: .black, design: .serif))
+                        .font(.system(.largeTitle, design: .serif, weight: .black))
+                        .minimumScaleFactor(0.6)
                         .foregroundStyle(.white)
                     if let landmark = file?.look?.landmark, !landmark.isEmpty {
                         Text(landmark).font(.footnote).foregroundStyle(.white.opacity(0.9)).lineLimit(2)
@@ -412,8 +415,8 @@ struct CaseStudyCard: View {
             VStack(alignment: .leading, spacing: Space.s) {
                 if let lead = file?.newsByWeight.first {
                     StepsBadge(steps: lead.steps, accent: accent)
-                    Text(lead.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).lineLimit(3)
-                    Text(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
+                    Text(english: lead.title).font(Typo.storyTitle).foregroundStyle(Palette.ink).lineLimit(3)
+                    PlacesTranslation.shared.content(lead.summary).font(.subheadline).foregroundStyle(Palette.muted).lineLimit(3)
                     if lead.isHeld {
                         ReadAtLine(outlet: lead.outlet, readOn: "", accent: accent, held: true)
                     }
@@ -500,8 +503,8 @@ struct StoryTile: View {
                     Spacer()
                     Text(PlaceDates.short(item.date)).font(.caption2).foregroundStyle(Palette.muted)
                 }
-                Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).lineLimit(4)
-                Text(PlacesTranslation.shared.text(item.summary)).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
+                Text(english: item.title).font(Typo.story).foregroundStyle(Palette.ink).lineLimit(4)
+                PlacesTranslation.shared.content(item.summary).font(.footnote).foregroundStyle(Palette.muted).lineLimit(5)
                 Spacer(minLength: 0)
                 if !item.isHeld { StepsBadge(steps: item.steps, accent: accent) }
                 ReadAtLine(outlet: item.outlet, readOn: item.readOn, accent: accent, held: item.isHeld)
@@ -549,12 +552,12 @@ struct StoryRow: View {
                         Text([item.publisher, PlaceDates.age(item.date)].filter { !$0.isEmpty }.joined(separator: " · "))
                             .font(.caption2).foregroundStyle(Palette.muted)
                     }
-                    Text(item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
+                    Text(english: item.title).font(Typo.story).foregroundStyle(Palette.ink).multilineTextAlignment(.leading)
                     if item.isHeld {
                         ReadAtLine(outlet: item.outlet, readOn: "", accent: accent, held: true)
                     } else {
                         if !item.aiPath.isEmpty {
-                            Text(item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
+                            Text(english: item.aiPath).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
                         }
                         StepsBadge(steps: item.steps, accent: accent)
                     }

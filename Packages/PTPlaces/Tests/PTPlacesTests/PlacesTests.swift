@@ -999,3 +999,12 @@ struct OfflineTests {
         #expect(origin.text == "This device's offline copy, newest 17 Nov 2026")
     }
 }
+
+@Suite("PTPlaces: article translations from the memory")
+struct ArticleLanguageTests {
+    @Test("an article's title keys the same as the site's article index (api/v1/i18n/articles/index.json)")
+    func articleKeys() {
+        #expect(TMKey.key("AI use in Portugal jumps in 2026, for people and companies") == "c7527a6b93d74852")
+        #expect(TMKey.key("Set up your AI agents and decide what each may do") == "f64ac6cac9a47b26")
+    }
+}

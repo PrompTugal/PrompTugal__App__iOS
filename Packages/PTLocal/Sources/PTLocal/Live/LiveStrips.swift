@@ -186,7 +186,7 @@ public struct TownNewsroomLive: View {
                         .padding(6)
                     VStack(alignment: .leading, spacing: 3) {
                         HStack(spacing: Space.s) {
-                            Text(agent.agent).font(.footnote.monospaced()).foregroundStyle(Palette.ink).lineLimit(1)
+                            Text(content: agent.agent).font(.footnote.monospaced()).foregroundStyle(Palette.ink).lineLimit(1)
                             StatusDot(status: agent.status)
                         }
                         if let date = agent.lastSign(now: now) {
@@ -194,7 +194,7 @@ public struct TownNewsroomLive: View {
                                 .font(.caption).foregroundStyle(Palette.muted)
                         }
                         if let state = agent.state {
-                            Text(state).font(.footnote).foregroundStyle(Palette.ink).lineLimit(3)
+                            Text(content: state).font(.footnote).foregroundStyle(Palette.ink).lineLimit(3)
                         }
                         if let next = agent.next.first {
                             Text(LocalText.string("Next: \(String(describing: next))")).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)

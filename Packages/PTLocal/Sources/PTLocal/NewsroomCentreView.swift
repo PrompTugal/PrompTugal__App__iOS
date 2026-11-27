@@ -167,11 +167,11 @@ struct AgentRow: View {
             StatusDot(status: agent.status).padding(.top, 6)
             VStack(alignment: .leading, spacing: 3) {
                 HStack {
-                    Text(agent.role).font(.body.weight(.semibold).monospaced()).foregroundStyle(Palette.ink)
+                    Text(content: agent.role).font(.body.weight(.semibold).monospaced()).foregroundStyle(Palette.ink)
                     Spacer()
                     Text(agent.status.label).font(.caption2.weight(.semibold)).foregroundStyle(StatusDot(status: agent.status).color)
                 }
-                if let state = agent.state { Text(state).font(.footnote).foregroundStyle(Palette.ink).lineLimit(2) }
+                if let state = agent.state { Text(content: state).font(.footnote).foregroundStyle(Palette.ink).lineLimit(2) }
                 if let next = agent.next.first {
                     Text(LocalText.string("Next: \(String(describing: next))")).font(.caption).foregroundStyle(Palette.muted).lineLimit(2)
                 }
@@ -196,11 +196,11 @@ struct AgentSummary: View {
         VStack(alignment: .leading, spacing: Space.xs) {
             HStack(spacing: Space.s) {
                 StatusDot(status: agent.status)
-                Text(agent.agent).font(.footnote.monospaced())
+                Text(content: agent.agent).font(.footnote.monospaced())
                 Spacer()
                 Text(agent.status.label).font(.caption2.weight(.semibold))
             }
-            if let state = agent.state { Text(state).font(.footnote) }
+            if let state = agent.state { Text(content: state).font(.footnote) }
             if !agent.next.isEmpty {
                 Text(LocalText.string("Next")).font(.caption.weight(.semibold)).foregroundStyle(Palette.muted)
                 ForEach(agent.next.prefix(4), id: \.self) { Text("• \($0)").font(.caption) }
@@ -220,25 +220,25 @@ struct AgentDetailView: View {
     var body: some View {
         List {
             Section {
-                LabeledContent(LocalText.string("Agent")) { Text(agent.agent).font(.footnote.monospaced()) }
+                LabeledContent(LocalText.string("Agent")) { Text(content: agent.agent).font(.footnote.monospaced()) }
                 LabeledContent(LocalText.string("Status")) { HStack { StatusDot(status: agent.status); Text(agent.status.label) } }
                 if let minute = agent.minute { LabeledContent(LocalText.string("Wakes"), value: agent.scheduled ? LocalText.string("hourly at :\(String(describing: String(format: "%02d", minute)))") : LocalText.string("not scheduled")) }
                 if let updated = agent.updatedDate {
                     LabeledContent(LocalText.string("Updated")) { Text(updated, format: .dateTime.day().month().hour().minute()) }
                 }
             }
-            if let focus = agent.focus { Section(LocalText.string("Focus")) { Text(focus) } }
-            if let state = agent.state { Section(LocalText.string("What it says now")) { Text(state) } }
+            if let focus = agent.focus { Section(LocalText.string("Focus")) { Text(content: focus) } }
+            if let state = agent.state { Section(LocalText.string("What it says now")) { Text(content: state) } }
             if let wake = agent.lastWake {
                 Section(LocalText.string("Last wake")) {
                     if let started = wake.started { LabeledContent(LocalText.string("Started"), value: started) }
                     if let outcome = wake.outcome { LabeledContent(LocalText.string("Outcome"), value: outcome) }
-                    if let line = wake.line { Text(line) }
+                    if let line = wake.line { Text(content: line) }
                 }
             }
             if !agent.next.isEmpty { Section(LocalText.string("Next")) { ForEach(agent.next, id: \.self) { Text($0) } } }
             if !agent.asks.isEmpty { Section(LocalText.string("Asks")) { ForEach(agent.asks, id: \.self) { Text($0) } } }
-            if !agent.done.isEmpty { Section(LocalText.string("Done")) { ForEach(agent.done.reversed(), id: \.self) { Text($0).font(.footnote) } } }
+            if !agent.done.isEmpty { Section(LocalText.string("What it has done")) { ForEach(agent.done.reversed(), id: \.self) { Text($0).font(.footnote) } } }
             Section {
                 Text(LocalText.string("Read-only: from the newsroom dashboard on promptugal.news.")).font(.caption).foregroundStyle(.secondary)
             }
